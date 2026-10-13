@@ -1,0 +1,331 @@
+import { PrismaClient } from '@prisma/client'
+
+const db = new PrismaClient()
+
+async function seed() {
+  console.log('Seeding additional homepage data...')
+
+  // ─── UNIVERSITIES ──────────────────────────────────────
+  const universities = [
+    {
+      slug: 'aston-university',
+      name: 'Aston University',
+      countrySlug: 'uk',
+      city: 'Birmingham',
+      ranking: 'QS 421',
+      studentsCount: '15,000+',
+      logo: '/images/partners/aston university.webp',
+      campusImage: '/images/blogs/Copy of pexels-rdne-7092364.webp',
+      overview: 'Aston University is a leading UK university located in the heart of Birmingham, known for its strong industry connections, graduate employment rates, and world-class business school.',
+      strengths: JSON.stringify(['Graduate Employability', 'Industry Links', 'Business School Triple Crown']),
+      quickFacts: JSON.stringify({ founded: 1895, campusSize: 'City centre', internationalStudents: '35%' }),
+      tuitionRange: '£18,000–£24,000/yr',
+      scholarshipAvailable: true,
+      popularSubjects: JSON.stringify(['Business & Management', 'Engineering', 'Computer Science', 'Optometry', 'Pharmacy']),
+    },
+    {
+      slug: 'university-of-kent',
+      name: 'University of Kent',
+      countrySlug: 'uk',
+      city: 'Canterbury',
+      ranking: 'QS 347',
+      studentsCount: '20,000+',
+      logo: '/images/partners/university of kent.webp',
+      campusImage: '/images/blogs/Copy of pexels-rdne-7092573.webp',
+      overview: 'The University of Kent is a top-rated UK university with a beautiful campus in historic Canterbury. Known for its research excellence and vibrant international community.',
+      strengths: JSON.stringify(['Research Excellence', 'Beautiful Campus', 'Strong International Community']),
+      quickFacts: JSON.stringify({ founded: 1965, campusSize: '300 acres', internationalStudents: '25%' }),
+      tuitionRange: '£17,000–£22,000/yr',
+      scholarshipAvailable: true,
+      popularSubjects: JSON.stringify(['Law', 'Computer Science', 'Business', 'Psychology', 'Politics']),
+    },
+    {
+      slug: 'university-of-south-wales',
+      name: 'University of South Wales',
+      countrySlug: 'uk',
+      city: 'Cardiff',
+      ranking: 'QS 801–850',
+      studentsCount: '25,000+',
+      logo: '/images/partners/university of south wales.webp',
+      campusImage: '/images/blogs/Copy of pexels-yankrukov-8199562.webp',
+      overview: 'The University of South Wales is one of the largest universities in the UK, offering career-focused programmes with strong industry partnerships and affordable tuition.',
+      strengths: JSON.stringify(['Affordable Tuition', 'Career-Focused', 'Diverse Programmes']),
+      quickFacts: JSON.stringify({ founded: 2013, campusSize: 'Multiple campuses', internationalStudents: '20%' }),
+      tuitionRange: '£13,000–£17,000/yr',
+      scholarshipAvailable: true,
+      popularSubjects: JSON.stringify(['Business', 'Engineering', 'Computing', 'Creative Industries', 'Health Sciences']),
+    },
+    {
+      slug: 'university-of-derby',
+      name: 'University of Derby',
+      countrySlug: 'uk',
+      city: 'Derby',
+      ranking: 'QS 801–850',
+      studentsCount: '18,000+',
+      logo: '/images/partners/university of derby.webp',
+      campusImage: '/images/blogs/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp',
+      overview: 'The University of Derby is a modern, innovative university offering hands-on learning and excellent student satisfaction. Located in the heart of England with strong industry links.',
+      strengths: JSON.stringify(['Student Satisfaction', 'Hands-On Learning', 'Industry Partnerships']),
+      quickFacts: JSON.stringify({ founded: 1992, campusSize: 'City centre', internationalStudents: '15%' }),
+      tuitionRange: '£14,000–£18,000/yr',
+      scholarshipAvailable: true,
+      popularSubjects: JSON.stringify(['Business', 'Computing', 'Engineering', 'Education', 'Health & Social Care']),
+    },
+  ]
+
+  for (const u of universities) {
+    await db.universityPage.upsert({ where: { slug: u.slug }, update: u, create: u })
+  }
+  console.log(`✓ Universities added: ${universities.length}`)
+
+  // ─── COURSES ───────────────────────────────────────────
+  const courses = [
+    {
+      slug: 'msc-data-science-ai-hertfordshire',
+      name: 'MSc Data Science & AI',
+      universitySlug: 'university-of-hertfordshire',
+      countrySlug: 'uk',
+      city: 'Hatfield',
+      level: 'Masters',
+      subject: 'Data Science & AI',
+      duration: '1 Year',
+      intake: 'Sep 2025, Jan 2026',
+      tuition: '19,500',
+      tuitionCurrency: 'GBP',
+      scholarship: '£4,000 International Excellence',
+      scholarshipAvailable: true,
+      englishRequirement: 'IELTS 6.5 (no band < 6.0)',
+      academicRequirement: '2:2 in STEM or related discipline',
+      overview: 'Gain expertise in machine learning, deep learning, and data engineering with real-world projects and industry placements.',
+      modules: JSON.stringify(['Machine Learning', 'Deep Learning', 'Data Engineering', 'Natural Language Processing', 'Research Project']),
+      careerOutcomes: JSON.stringify(['Data Scientist', 'AI Engineer', 'ML Engineer', 'Data Analyst']),
+      deadline: '1 August 2025',
+      matchScore: 89,
+    },
+    {
+      slug: 'msc-international-business-portsmouth',
+      name: 'MSc International Business',
+      universitySlug: 'university-of-portsmouth',
+      countrySlug: 'uk',
+      city: 'Portsmouth',
+      level: 'Masters',
+      subject: 'International Business',
+      duration: '1 Year',
+      intake: 'Sep 2025, Feb 2026',
+      tuition: '18,200',
+      tuitionCurrency: 'GBP',
+      scholarship: '£1,500 Global Scholarship',
+      scholarshipAvailable: true,
+      englishRequirement: 'IELTS 6.5 (no band < 6.0)',
+      academicRequirement: '2:2 in Business or related discipline',
+      overview: 'Develop global business acumen with modules in cross-cultural management, international strategy, and global supply chains.',
+      modules: JSON.stringify(['Global Strategy', 'Cross-Cultural Management', 'International Marketing', 'Supply Chain Management', 'Dissertation']),
+      careerOutcomes: JSON.stringify(['International Business Manager', 'Global Strategy Consultant', 'Trade Analyst', 'Business Development Manager']),
+      deadline: '15 August 2025',
+      matchScore: 85,
+    },
+    {
+      slug: 'ba-accounting-finance-sunderland',
+      name: 'BA (Hons) Accounting & Finance',
+      universitySlug: 'university-of-sunderland',
+      countrySlug: 'uk',
+      city: 'Sunderland',
+      level: 'Bachelor',
+      subject: 'Accounting & Finance',
+      duration: '3 Years',
+      intake: 'Sep 2025, Jan 2026',
+      tuition: '14,000',
+      tuitionCurrency: 'GBP',
+      scholarship: '£1,500–£3,000 International',
+      scholarshipAvailable: true,
+      englishRequirement: 'IELTS 6.0 (no band < 5.5)',
+      academicRequirement: 'High school diploma + foundation',
+      overview: 'A professionally accredited accounting and finance degree with ACCA/CIMA exemptions and industry placements.',
+      modules: JSON.stringify(['Financial Accounting', 'Management Accounting', 'Corporate Finance', 'Taxation', 'Audit & Assurance']),
+      careerOutcomes: JSON.stringify(['Accountant', 'Financial Analyst', 'Tax Consultant', 'Auditor', 'Finance Manager']),
+      deadline: '15 January 2025',
+      matchScore: 76,
+    },
+    {
+      slug: 'msc-computing-derby',
+      name: 'MSc Computing',
+      universitySlug: 'university-of-derby',
+      countrySlug: 'uk',
+      city: 'Derby',
+      level: 'Masters',
+      subject: 'Computing',
+      duration: '1–2 Years',
+      intake: 'Sep 2025, Jan 2026',
+      tuition: '15,500',
+      tuitionCurrency: 'GBP',
+      scholarship: '£1,000 International Scholarship',
+      scholarshipAvailable: true,
+      englishRequirement: 'IELTS 6.0 (no band < 5.5)',
+      academicRequirement: '2:2 in Computing or related discipline',
+      overview: 'A flexible Masters programme covering software development, cloud computing, and cybersecurity with practical project work.',
+      modules: JSON.stringify(['Advanced Software Development', 'Cloud Computing', 'Cybersecurity Fundamentals', 'Data Science', 'Research Project']),
+      careerOutcomes: JSON.stringify(['Software Developer', 'Cloud Engineer', 'IT Consultant', 'Systems Analyst']),
+      deadline: '1 August 2025',
+      matchScore: 82,
+    },
+  ]
+
+  for (const c of courses) {
+    await db.coursePage.upsert({ where: { slug: c.slug }, update: c, create: c })
+  }
+  console.log(`✓ Courses added: ${courses.length}`)
+
+  // ─── SCHOLARSHIPS ───────────────────────────────────────
+  const scholarships = [
+    {
+      scholarshipCode: 'SCH-UK-009',
+      name: 'Kent International Scholarship',
+      slug: 'kent-international-scholarship',
+      countrySlug: 'uk',
+      universitySlug: 'university-of-kent',
+      amount: '£3,000',
+      amountType: 'FIXED',
+      currency: 'GBP',
+      fundingType: 'Tuition fee reduction',
+      eligibility: 'International students applying for full-time postgraduate programmes',
+      courseEligibility: 'Full-time postgraduate taught programmes',
+      deadline: '31 July 2025',
+      overview: 'The Kent International Scholarship rewards outstanding international students with a £3,000 tuition fee reduction for their first year of study.',
+      description: 'The Kent International Scholarship rewards outstanding international students with a £3,000 tuition fee reduction for their first year of study.',
+      covers: 'Tuition fee reduction of £3,000 for the first year',
+      doesNotCover: 'Living expenses, travel, accommodation, or other fees',
+      whoCanApply: 'International fee-paying students who have received an offer to study a full-time postgraduate taught programme at the University of Kent.',
+      howToApply: 'No separate application required. Eligible students are automatically considered based on their academic achievement in their previous degree.',
+      selectionProcess: 'Academic merit assessment based on previous degree performance.',
+      whatALOdoes: 'ALO Education helps you prepare a strong application to the University of Kent and ensures all scholarship criteria are met before submission.',
+      internationalStudents: true,
+    },
+    {
+      scholarshipCode: 'SCH-UK-010',
+      name: 'Aston Global Excellence Scholarship',
+      slug: 'aston-global-excellence-scholarship',
+      countrySlug: 'uk',
+      universitySlug: 'aston-university',
+      amount: '£5,000',
+      amountType: 'FIXED',
+      currency: 'GBP',
+      fundingType: 'Tuition fee reduction',
+      eligibility: 'High-achieving international students with equivalent 2:1 or above',
+      courseEligibility: 'Full-time postgraduate programmes',
+      academicReq: 'Equivalent UK 2:1 or above in previous degree',
+      deadline: '30 June 2025',
+      overview: 'The Aston Global Excellence Scholarship offers £5,000 to exceptional international applicants who demonstrate academic excellence and leadership potential.',
+      description: 'The Aston Global Excellence Scholarship offers £5,000 to exceptional international applicants who demonstrate academic excellence and leadership potential.',
+      covers: 'Tuition fee reduction of £5,000',
+      doesNotCover: 'Living expenses, accommodation, travel costs',
+      whoCanApply: 'International students applying for eligible postgraduate programmes at Aston University who hold an offer and demonstrate academic excellence.',
+      howToApply: 'Apply online through the Aston University scholarship portal after receiving a course offer.',
+      selectionProcess: 'Based on academic achievement, leadership potential, and the quality of a brief personal statement.',
+      whatALOdoes: 'ALO Education guides you through the Aston scholarship application process and helps craft a compelling personal statement.',
+      internationalStudents: true,
+    },
+    {
+      scholarshipCode: 'SCH-UK-011',
+      name: 'South Wales Bangladesh Scholarship',
+      slug: 'south-wales-bangladesh-scholarship',
+      countrySlug: 'uk',
+      universitySlug: 'university-of-south-wales',
+      amount: '£2,500',
+      amountType: 'FIXED',
+      currency: 'GBP',
+      fundingType: 'Tuition fee reduction',
+      eligibility: 'Bangladeshi nationals with strong academic records applying for any programme',
+      nationalityReq: 'Bangladeshi nationals',
+      courseEligibility: 'Any full-time programme at University of South Wales',
+      deadline: '1 August 2025',
+      overview: 'A dedicated scholarship for Bangladeshi students at the University of South Wales, providing £2,500 towards tuition fees.',
+      description: 'A dedicated scholarship for Bangladeshi students at the University of South Wales, providing £2,500 towards tuition fees to support students from Bangladesh.',
+      covers: 'Tuition fee reduction of £2,500',
+      doesNotCover: 'Living costs, travel, visa fees, or health surcharge',
+      whoCanApply: 'Bangladeshi nationals who have received an offer for a full-time programme and can demonstrate strong academic achievement.',
+      howToApply: 'Contact ALO Education or apply through the University of South Wales international scholarship page.',
+      selectionProcess: 'Academic merit and country-specific criteria assessment.',
+      whatALOdoes: 'ALO Education is the official partner for this scholarship. We handle your application from eligibility check to submission.',
+      internationalStudents: true,
+    },
+    {
+      scholarshipCode: 'SCH-UK-012',
+      name: 'Derby Sports Scholarship',
+      slug: 'derby-sports-scholarship',
+      countrySlug: 'uk',
+      universitySlug: 'university-of-derby',
+      amount: '£1,000',
+      amountType: 'FIXED',
+      currency: 'GBP',
+      fundingType: 'Tuition fee reduction',
+      eligibility: 'Students with sports achievements at national or regional level',
+      courseEligibility: 'Any full-time programme',
+      deadline: 'Rolling',
+      overview: 'The Derby Sports Scholarship recognises talented student-athletes with £1,000 towards tuition fees, along with access to sports facilities.',
+      description: 'The Derby Sports Scholarship recognises talented student-athletes with £1,000 towards tuition fees, along with access to sports facilities and support services.',
+      covers: '£1,000 tuition fee reduction and sports facility access',
+      doesNotCover: 'Living expenses, travel, accommodation',
+      whoCanApply: 'Students who have represented their country, region, or competed at national level in any sport.',
+      howToApply: 'Submit evidence of sporting achievements alongside your course application.',
+      selectionProcess: 'Based on verified sporting achievements and level of competition.',
+      whatALOdoes: 'ALO Education helps you document your sporting achievements and submit a complete scholarship application.',
+      internationalStudents: true,
+    },
+  ]
+
+  for (const s of scholarships) {
+    await db.scholarship.upsert({ where: { scholarshipCode: s.scholarshipCode }, update: s, create: s })
+  }
+  console.log(`✓ Scholarships added: ${scholarships.length}`)
+
+  // ─── BLOG POSTS ─────────────────────────────────────────
+  const blogs = [
+    {
+      slug: 'uk-vs-canada-which-is-better',
+      title: 'UK vs Canada: Which Country is Better for Bangladeshi Students?',
+      category: 'Country Comparison',
+      summary: 'A comprehensive comparison of UK and Canada as study destinations — covering tuition, visas, scholarships, job prospects, and immigration pathways for Bangladeshi students.',
+      heroImage: '/images/blogs/Copy of pexels-rdne-7092573.webp',
+      author: 'ALO Team',
+      readingTime: 10,
+    },
+    {
+      slug: 'ielts-preparation-tips-30-days',
+      title: 'IELTS Preparation in 30 Days: A Complete Study Plan',
+      category: 'English Tests',
+      summary: 'A day-by-day study plan to prepare for IELTS in just 30 days, including free resources, practice strategies, and tips for each section.',
+      heroImage: '/images/blogs/Copy of 167794.webp',
+      author: 'Tushar Imran Nahid',
+      readingTime: 15,
+    },
+    {
+      slug: 'uk-post-study-work-visa-guide',
+      title: 'UK Post-Study Work Visa: Complete Guide 2025',
+      category: 'Visa Guide',
+      summary: 'Everything you need to know about the UK Graduate Route visa — eligibility, application process, timeline, and how to maximise your 2-year work opportunity.',
+      heroImage: '/images/blogs/Copy of vecteezy_beautiful-classic-stack-of-books-with-graduation-cap-cutout_57157289.webp',
+      author: 'Ummaye Mayesha Manna',
+      readingTime: 8,
+    },
+    {
+      slug: 'top-scholarships-bangladeshi-students-2025',
+      title: 'Top 10 Scholarships for Bangladeshi Students in 2025',
+      category: 'Scholarships',
+      summary: 'Discover the best scholarships available for Bangladeshi students studying abroad — from fully funded government awards to university-specific merit scholarships.',
+      heroImage: '/images/blogs/Copy of pexels-yankrukov-8199562.webp',
+      author: 'ALO Team',
+      readingTime: 12,
+    },
+  ]
+
+  for (const b of blogs) {
+    await db.blogPost.upsert({ where: { slug: b.slug }, update: b, create: b })
+  }
+  console.log(`✓ Blog posts added: ${blogs.length}`)
+
+  console.log('\n✅ Additional seed complete!')
+}
+
+seed()
+  .catch(console.error)
+  .finally(() => db.$disconnect())

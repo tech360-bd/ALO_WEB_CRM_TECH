@@ -1,0 +1,248 @@
+'use client';
+
+import { useState, useCallback, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { PublicNavbar } from '@/components/public/public-navbar';
+import { PublicFooter } from '@/components/public/public-footer';
+
+// Dynamic imports to prevent SSR window errors
+const NewHomepage = dynamic(() => import('@/components/alo/new/home/homepage').then(m => ({ default: m.NewHomepage })), { ssr: false });
+const CountryPage = dynamic(() => import('@/components/alo/new/pages/country-page').then(m => ({ default: m.CountryPage })), { ssr: false });
+const CourseFinder = dynamic(() => import('@/components/alo/new/course-finder/course-finder').then(m => ({ default: m.CourseFinder })), { ssr: false });
+const CourseDetail = dynamic(() => import('@/components/alo/new/course-finder/course-detail').then(m => ({ default: m.CourseDetail })), { ssr: false });
+const UniversityDetail = dynamic(() => import('@/components/alo/new/course-finder/university-detail').then(m => ({ default: m.UniversityDetail })), { ssr: false });
+const ApplicationCommunication = dynamic(() => import('@/components/alo/new/communication/application-communication').then(m => ({ default: m.ApplicationCommunication })), { ssr: false });
+
+const AboutPage = dynamic(() => import('@/components/platform/about-page').then(m => ({ default: m.AboutPage })), { ssr: false });
+const ContactPage = dynamic(() => import('@/components/platform/contact-page').then(m => ({ default: m.ContactPage })), { ssr: false });
+const ServicesPage = dynamic(() => import('@/components/platform/services-page').then(m => ({ default: m.ServicesPage })), { ssr: false });
+const ScholarshipsPage = dynamic(() => import('@/components/platform/scholarships-page').then(m => ({ default: m.ScholarshipsPage })), { ssr: false });
+const StudentInfoCenter = dynamic(() => import('@/components/platform/student-info-center').then(m => ({ default: m.StudentInfoCenter })), { ssr: false });
+const BlogPage = dynamic(() => import('@/components/platform/blog-page').then(m => ({ default: m.BlogPage })), { ssr: false });
+const SuccessStoriesPage = dynamic(() => import('@/components/platform/success-stories-page').then(m => ({ default: m.SuccessStoriesPage })), { ssr: false });
+const FaqPage = dynamic(() => import('@/components/platform/faq-page').then(m => ({ default: m.FaqPage })), { ssr: false });
+const StudentDashboard = dynamic(() => import('@/components/platform/student-dashboard'), { ssr: false });
+const CrmDashboard = dynamic(() => import('@/components/platform/crm-dashboard'), { ssr: false });
+const DestinationsPage = dynamic(() => import('@/components/platform/destinations-page').then(m => ({ default: m.DestinationsPage })), { ssr: false });
+const UniversitiesPage = dynamic(() => import('@/components/platform/universities-page').then(m => ({ default: m.UniversitiesPage })), { ssr: false });
+const ResourcesPage = dynamic(() => import('@/components/platform/resources-page').then(m => ({ default: m.ResourcesPage })), { ssr: false });
+const ExamsPage = dynamic(() => import('@/components/platform/exams-page').then(m => ({ default: m.ExamsPage })), { ssr: false });
+const AuthModal = dynamic(() => import('@/components/platform/auth-modal'), { ssr: false });
+const LeadModal = dynamic(() => import('@/components/platform/lead-modal'), { ssr: false });
+
+// Diagram components
+const DiagramShowcase = dynamic(() => import('@/components/alo/new/pages/diagram-showcase').then(m => ({ default: m.DiagramShowcase })), { ssr: false });
+const StudentJourneyPage = dynamic(() => import('@/components/alo/new/pages/student-journey-page').then(m => ({ default: m.StudentJourneyPage })), { ssr: false });
+
+// CRM & Marketing Kit pages
+const CrmKanbanPage = dynamic(() => import('@/components/alo/new/pages/crm-kanban-page').then(m => ({ default: m.CrmKanbanPage })), { ssr: false });
+const MarketingKitPage = dynamic(() => import('@/components/alo/new/pages/marketing-kit-page').then(m => ({ default: m.MarketingKitPage })), { ssr: false });
+
+// AI & Student Tools pages
+const AIStudyAssistant = dynamic(() => import('@/components/alo/new/ai/ai-study-assistant').then(m => ({ default: m.AIStudyAssistant })), { ssr: false });
+const VisaGuidePage = dynamic(() => import('@/components/alo/new/pages/visa-guide-page').then(m => ({ default: m.VisaGuidePage })), { ssr: false });
+const CostPlannerPage = dynamic(() => import('@/components/alo/new/pages/cost-planner-page').then(m => ({ default: m.CostPlannerPage })), { ssr: false });
+const LoanComparisonPage = dynamic(() => import('@/components/alo/new/pages/loan-comparison-page').then(m => ({ default: m.LoanComparisonPage })), { ssr: false });
+const CvSopBuilderPage = dynamic(() => import('@/components/alo/new/pages/cv-sop-builder-page').then(m => ({ default: m.CvSopBuilderPage })), { ssr: false });
+
+// Video Studio, SEO Dashboard, Omnichannel
+const VideoStudioPage = dynamic(() => import('@/components/alo/new/pages/video-studio-page').then(m => ({ default: m.VideoStudioPage })), { ssr: false });
+const SeoDashboardPage = dynamic(() => import('@/components/alo/new/pages/seo-dashboard-page').then(m => ({ default: m.SeoDashboardPage })), { ssr: false });
+const OmnichannelCenter = dynamic(() => import('@/components/alo/new/communication/omnichannel-center').then(m => ({ default: m.OmnichannelCenter })), { ssr: false });
+
+// Command Palette (global overlay)
+const CommandPalette = dynamic(() => import('@/components/alo/new/platform/command-palette').then(m => ({ default: m.CommandPalette })), { ssr: false });
+
+type PageView =
+  | 'home' | 'country' | 'course-finder' | 'course-detail' | 'university-detail'
+  | 'app-communication' | 'about' | 'contact' | 'services' | 'scholarships'
+  | 'info-center' | 'blog' | 'success-stories' | 'faq'
+  | 'student-dashboard' | 'crm-dashboard' | 'crm-kanban' | 'marketing-kit'
+  | 'destinations' | 'universities' | 'resources' | 'exams' | 'events' | 'news'
+  | 'terms' | 'privacy' | 'cookie-policy' | 'journey' | 'careers' | 'partners'
+  | 'diagram-showcase' | 'student-journey' | 'application-flow'
+  | 'ai-assistant' | 'visa-guide' | 'cost-planner' | 'loan-comparison' | 'cv-sop-builder'
+  | 'video-studio' | 'seo-dashboard' | 'omnichannel';
+
+const VIEW_FROM_HASH: Record<string, PageView> = {
+  '': 'home', '0': 'home',
+  'course-finder': 'course-finder', 'app-communication': 'app-communication',
+  'about': 'about', 'contact': 'contact', 'services': 'services',
+  'scholarships': 'scholarships', 'info-center': 'info-center',
+  'blog': 'blog', 'success-stories': 'success-stories', 'faq': 'faq',
+  'student-dashboard': 'student-dashboard', 'crm-dashboard': 'crm-dashboard',
+  'destinations': 'destinations', 'universities': 'universities',
+  'resources': 'resources', 'exams': 'exams', 'events': 'events', 'news': 'news',
+  'terms': 'terms', 'privacy': 'privacy', 'cookie-policy': 'cookie-policy',
+  'journey': 'journey', 'careers': 'careers', 'partners': 'partners',
+  'diagram-showcase': 'diagram-showcase', 'student-journey': 'student-journey', 'application-flow': 'application-flow',
+  'crm-kanban': 'crm-kanban', 'marketing-kit': 'marketing-kit',
+  'ai-assistant': 'ai-assistant', 'visa-guide': 'visa-guide', 'cost-planner': 'cost-planner',
+  'loan-comparison': 'loan-comparison', 'cv-sop-builder': 'cv-sop-builder',
+  'video-studio': 'video-studio', 'seo-dashboard': 'seo-dashboard', 'omnichannel': 'omnichannel',
+};
+
+function parseHash(hash: string): { view: PageView; slug?: string } {
+  const h = hash.replace('#', '');
+  if (!h || h === '0') return { view: 'home' };
+  if (h.startsWith('country/')) return { view: 'country', slug: h.replace('country/', '') };
+  if (h.startsWith('course/')) return { view: 'course-detail', slug: h.replace('course/', '') };
+  if (h.startsWith('university/')) return { view: 'university-detail', slug: h.replace('university/', '') };
+  const mapped = VIEW_FROM_HASH[h];
+  if (mapped) return { view: mapped };
+  return { view: 'home' };
+}
+
+// Portal views that should NOT show public navbar/footer
+const PORTAL_VIEWS: PageView[] = ['student-dashboard', 'crm-dashboard', 'crm-kanban', 'marketing-kit', 'ai-assistant', 'video-studio', 'seo-dashboard', 'omnichannel'];
+
+// Static placeholder for pages not yet built as full components (declared outside render to avoid lint error)
+function StaticPlaceholder({ title, desc, onBack }: { title: string; desc: string; onBack: () => void }) {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center max-w-lg px-4">
+        <h1 className="text-3xl font-bold text-slate-900 mb-4">{title}</h1>
+        <p className="text-slate-600 mb-8">{desc}</p>
+        <button onClick={onBack} className="text-[#0066CC] hover:underline font-medium">
+          ← Back to Home
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [initial] = useState(() => {
+    if (typeof window === 'undefined') return { view: 'home' as PageView, slug: undefined as string | undefined };
+    return parseHash(window.location.hash);
+  });
+  const [view, setView] = useState<PageView>(initial.view);
+  const [countrySlug, setCountrySlug] = useState(initial.slug || 'uk');
+  const [courseSlug, setCourseSlug] = useState(initial.slug || '');
+  const [universitySlug, setUniversitySlug] = useState(initial.slug || '');
+  const [leadOpen, setLeadOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+
+  const navigateTo = useCallback((page: string, slug?: string) => {
+    const hashMap: Record<string, string> = {
+      country: `country/${slug}`, 'course-finder': 'course-finder', home: '',
+      course: `course/${slug}`, university: `university/${slug}`,
+      'app-communication': 'app-communication', about: 'about', contact: 'contact',
+      services: 'services', scholarships: 'scholarships', 'info-center': 'info-center',
+      blog: 'blog', 'success-stories': 'success-stories', faq: 'faq',
+      'student-dashboard': 'student-dashboard', 'crm-dashboard': 'crm-dashboard',
+      destinations: 'destinations', universities: 'universities',
+      resources: 'resources', exams: 'exams', events: 'events', news: 'news',
+      terms: 'terms', privacy: 'privacy', 'cookie-policy': 'cookie-policy',
+      journey: 'journey', careers: 'careers', partners: 'partners',
+      'diagram-showcase': 'diagram-showcase', 'student-journey': 'student-journey', 'application-flow': 'application-flow',
+      'crm-kanban': 'crm-kanban', 'marketing-kit': 'marketing-kit',
+      'ai-assistant': 'ai-assistant', 'visa-guide': 'visa-guide', 'cost-planner': 'cost-planner',
+      'loan-comparison': 'loan-comparison', 'cv-sop-builder': 'cv-sop-builder',
+      'video-studio': 'video-studio', 'seo-dashboard': 'seo-dashboard', 'omnichannel': 'omnichannel',
+    };
+    const hash = hashMap[page];
+    if (hash === undefined) return;
+    if (page === 'country' && slug) setCountrySlug(slug);
+    if (page === 'course' && slug) setCourseSlug(slug);
+    if (page === 'university' && slug) setUniversitySlug(slug);
+    setView(page as PageView);
+    window.location.hash = hash;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setView('home'); window.location.hash = ''; window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleLeadOpen = useCallback(() => setLeadOpen(true), []);
+  const handleFinderOpen = useCallback(() => navigateTo('course-finder'), [navigateTo]);
+  const handleLoginSuccess = useCallback((role: string) => {
+    navigateTo(role === 'STUDENT' ? 'student-dashboard' : 'crm-dashboard');
+  }, [navigateTo]);
+
+  useEffect(() => {
+    const handler = () => {
+      const { view: v, slug } = parseHash(window.location.hash);
+      if (v === 'country' && slug) setCountrySlug(slug);
+      if (v === 'course-detail' && slug) setCourseSlug(slug);
+      if (v === 'university-detail' && slug) setUniversitySlug(slug);
+      setView(v);
+    };
+    window.addEventListener('hashchange', handler);
+    return () => window.removeEventListener('hashchange', handler);
+  }, []);
+
+  const pp = { onBack: handleBack, onNavigate: navigateTo, onLeadOpen: handleLeadOpen };
+  const isPortal = PORTAL_VIEWS.includes(view);
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Public navbar — only for non-portal views */}
+      {!isPortal && <PublicNavbar onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+
+      <main className="flex-1">
+        {view === 'home' && <NewHomepage onNavigate={navigateTo} onLeadOpen={handleLeadOpen} onFinderOpen={handleFinderOpen} />}
+        {view === 'country' && <CountryPage countrySlug={countrySlug} {...pp} />}
+        {view === 'course-finder' && <CourseFinder onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'course-detail' && <CourseDetail courseSlug={courseSlug} onBack={() => navigateTo('course-finder')} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'university-detail' && <UniversityDetail universitySlug={universitySlug} onBack={() => navigateTo('course-finder')} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'app-communication' && <ApplicationCommunication onBack={handleBack} />}
+        {view === 'about' && <AboutPage {...pp} />}
+        {view === 'contact' && <ContactPage {...pp} />}
+        {view === 'services' && <ServicesPage {...pp} />}
+        {view === 'scholarships' && <ScholarshipsPage {...pp} />}
+        {view === 'info-center' && <StudentInfoCenter {...pp} />}
+        {view === 'blog' && <BlogPage {...pp} />}
+        {view === 'success-stories' && <SuccessStoriesPage {...pp} />}
+        {view === 'faq' && <FaqPage {...pp} />}
+        {view === 'student-dashboard' && <StudentDashboard onBack={handleBack} onNavigate={navigateTo} />}
+        {view === 'crm-dashboard' && <CrmDashboard onBack={handleBack} />}
+
+        {/* Placeholder pages for routes that need content */}
+        {view === 'destinations' && <DestinationsPage {...pp} />}
+        {view === 'universities' && <UniversitiesPage {...pp} />}
+        {view === 'resources' && <ResourcesPage {...pp} />}
+        {view === 'exams' && <ExamsPage {...pp} />}
+        {view === 'events' && <StaticPlaceholder title="Events & Webinars" desc="Join our upcoming university fairs, webinars, and information sessions. Meet university representatives and get your questions answered." onBack={handleBack} />}
+        {view === 'news' && <StaticPlaceholder title="News & Updates" desc="Stay updated with the latest in international education — policy changes, new programs, scholarship announcements, and more." onBack={handleBack} />}
+        {view === 'terms' && <StaticPlaceholder title="Terms of Service" desc="By using ALO Education's services, you agree to our terms and conditions designed to protect both students and our organization." onBack={handleBack} />}
+        {view === 'privacy' && <StaticPlaceholder title="Privacy Policy" desc="Your privacy matters to us. Learn how ALO Education collects, uses, and protects your personal information." onBack={handleBack} />}
+        {view === 'cookie-policy' && <StaticPlaceholder title="Cookie Policy" desc="Understand how ALO Education uses cookies and similar technologies to improve your browsing experience." onBack={handleBack} />}
+        {view === 'journey' && <StudentJourneyPage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'careers' && <StaticPlaceholder title="Careers at ALO" desc="Join our team and help students achieve their global education dreams. View current openings and apply." onBack={handleBack} />}
+        {view === 'partners' && <StaticPlaceholder title="Partner With ALO" desc="Become an ALO Education partner. We work with universities, agents, and organizations worldwide to create pathways for students." onBack={handleBack} />}
+
+        {/* Diagram & Journey pages */}
+        {view === 'diagram-showcase' && <DiagramShowcase onBack={handleBack} onNavigate={navigateTo} />}
+        {view === 'student-journey' && <StudentJourneyPage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'application-flow' && <StudentJourneyPage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+
+        {/* CRM Kanban & Marketing Kit */}
+        {view === 'crm-kanban' && <CrmKanbanPage onBack={handleBack} />}
+        {view === 'marketing-kit' && <MarketingKitPage onBack={handleBack} />}
+
+        {/* AI & Student Tools */}
+        {view === 'ai-assistant' && <AIStudyAssistant onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'visa-guide' && <VisaGuidePage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'cost-planner' && <CostPlannerPage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'loan-comparison' && <LoanComparisonPage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+        {view === 'cv-sop-builder' && <CvSopBuilderPage onBack={handleBack} onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+
+        {/* Video Studio, SEO Dashboard, Omnichannel */}
+        {view === 'video-studio' && <VideoStudioPage onBack={handleBack} onNavigate={navigateTo} />}
+        {view === 'seo-dashboard' && <SeoDashboardPage onBack={handleBack} onNavigate={navigateTo} />}
+        {view === 'omnichannel' && <OmnichannelCenter onBack={handleBack} onNavigate={navigateTo} />}
+      </main>
+
+      {/* Public footer — only for non-portal views */}
+      {!isPortal && <PublicFooter onNavigate={navigateTo} onLeadOpen={handleLeadOpen} />}
+
+      <LeadModal open={leadOpen} onClose={() => setLeadOpen(false)} />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onLoginSuccess={handleLoginSuccess} />
+
+      {/* Command Palette — always available via Ctrl+K / Cmd+K */}
+      <CommandPalette onNavigate={navigateTo} />
+    </div>
+  );
+}
