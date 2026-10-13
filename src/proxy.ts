@@ -43,6 +43,11 @@ const PUBLIC_ROUTES = [
   "/services",
   "/scholarships",
   "/resources",
+  // Published editorial guides (/guides index + /guides/[slug]). Both read
+  // only ContentAsset rows with status=PUBLISHED and the short-form-builder
+  // tag, and sitemap.ts already advertises them, so anonymous visitors and
+  // crawlers must reach them instead of the login gate.
+  "/guides",
   "/blog",
   "/success-stories",
   "/team",

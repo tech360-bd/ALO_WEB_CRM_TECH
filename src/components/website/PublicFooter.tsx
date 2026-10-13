@@ -80,63 +80,106 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 
 /* ------------------------------------------------------------------ */
 /*  DECORATIVE CAP-ICON STRIP                                          */
-/*  Three brand colours (Education Blue · ALO Orange · Accent) drifting in   */
-/*  opposite directions — always live, paused for prefers-reduced-motion.    */
+/*                                                                     */
+/*  Three ALO brand colours — Education Blue #0066CC, ALO Orange        */
+/*  #F37021 and Accent #FFB347 — drifting in opposite directions behind  */
+/*  the footer. Each row renders the same sequence of graduation caps    */
+/*  four times inside a `width: max-content` track and animates it by    */
+/*  exactly one sequence (-25%), so the loop is seamless and the strip   */
+/*  is never empty on any screen width. Decorative only: the strip is    */
+/*  aria-hidden and every animation stops for prefers-reduced-motion.    */
 /* ------------------------------------------------------------------ */
 
 const CAP_COLORS = ['#0066CC', '#F37021', '#FFB347'] as const;
 
+/** One sequence of caps. Rendered CAP_SEQUENCE_COPIES times per row. */
+const CAP_SEQUENCE = [
+  'h-6 w-6 mx-4 sm:mx-6',
+  'h-9 w-9 mx-6 sm:mx-10',
+  'h-7 w-7 mx-5 sm:mx-8',
+  'h-11 w-11 mx-7 sm:mx-12',
+  'h-8 w-8 mx-4 sm:mx-7',
+  'h-6 w-6 mx-6 sm:mx-9',
+  'h-10 w-10 mx-5 sm:mx-11',
+  'h-7 w-7 mx-7 sm:mx-9',
+  'h-9 w-9 mx-4 sm:mx-8',
+  'h-12 w-12 mx-6 sm:mx-12',
+  'h-6 w-6 mx-5 sm:mx-7',
+  'h-8 w-8 mx-7 sm:mx-10',
+  'h-10 w-10 mx-4 sm:mx-6',
+] as const;
+
+/** Copies per row. (copies - 1) × sequence width must exceed the widest screen. */
+const CAP_SEQUENCE_COPIES = 4;
+
+interface CapRowConfig {
+  color: string;
+  opacity: string;
+  duration: string;
+  direction: 'left' | 'right';
+}
+
+const CAP_ROWS: CapRowConfig[] = [
+  { color: CAP_COLORS[0], opacity: 'opacity-35', duration: '42s', direction: 'left' },
+  { color: CAP_COLORS[1], opacity: 'opacity-60', duration: '34s', direction: 'right' },
+  { color: CAP_COLORS[2], opacity: 'opacity-100', duration: '26s', direction: 'left' },
+];
+
+function CapRow({ color, opacity, duration, direction }: CapRowConfig) {
+  return (
+    <div className="flex items-center">
+      <div
+        className={`alo-cap-track ${direction === 'left' ? 'alo-cap-left' : 'alo-cap-right'} ${opacity}`}
+        style={{ color, animationDuration: duration }}
+      >
+        {Array.from({ length: CAP_SEQUENCE_COPIES }).map((_, copy) => (
+          <React.Fragment key={copy}>
+            {CAP_SEQUENCE.map((size, index) => (
+              <GraduationCap
+                key={`${copy}-${index}`}
+                className={`${size} shrink-0`}
+                aria-hidden="true"
+              />
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function GraduationCapStrip() {
   return (
     <div
+      data-testid="alo-cap-strip"
       aria-hidden="true"
       className="relative h-16 w-full overflow-hidden border-y border-alo-border bg-alo-brand-light/60"
     >
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        @keyframes alo-cap-drift-a {
-          0%   { transform: translateX(-15%) translateY(0) rotate(0deg); }
-          50%  { transform: translateX(15vw) translateY(-5px) rotate(10deg); }
-          100% { transform: translateX(115%) translateY(0) rotate(-10deg); }
+        @keyframes alo-cap-left {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-25%); }
         }
-        @keyframes alo-cap-drift-b {
-          0%   { transform: translateX(115%) translateY(0) rotate(0deg); }
-          50%  { transform: translateX(60vw) translateY(6px) rotate(-8deg); }
-          100% { transform: translateX(-20%) translateY(0) rotate(8deg); }
+        @keyframes alo-cap-right {
+          from { transform: translateX(-25%); }
+          to   { transform: translateX(0); }
         }
-        .alo-cap-row { position: absolute; inset: 0; display: flex; align-items: center; will-change: transform; }
-        .alo-cap-row-a { animation: alo-cap-drift-a 30s linear infinite; }
-        .alo-cap-row-b { animation: alo-cap-drift-b 38s linear infinite; }
-        .alo-cap-row-c { animation: alo-cap-drift-a 22s linear infinite; animation-delay: -8s; }
+        .alo-cap-stack { height: 100%; display: flex; flex-direction: column; justify-content: space-evenly; }
+        .alo-cap-track { display: flex; align-items: center; width: max-content; will-change: transform; }
+        .alo-cap-left { animation-name: alo-cap-left; animation-timing-function: linear; animation-iteration-count: infinite; }
+        .alo-cap-right { animation-name: alo-cap-right; animation-timing-function: linear; animation-iteration-count: infinite; }
         @media (prefers-reduced-motion: reduce) {
-          .alo-cap-row-a, .alo-cap-row-b, .alo-cap-row-c { animation: none; }
+          .alo-cap-left, .alo-cap-right { animation: none; }
         }
       `,
         }}
       />
-
-      {/* Education Blue — slowest, quietest */}
-      <div className="alo-cap-row alo-cap-row-a opacity-30" style={{ color: CAP_COLORS[0] }}>
-        <GraduationCap className="mx-10 h-8 w-8 sm:mx-16" />
-        <GraduationCap className="mx-24 h-11 w-11 sm:mx-40" />
-        <GraduationCap className="mx-14 h-6 w-6 sm:mx-24" />
-        <GraduationCap className="mx-28 h-9 w-9 sm:mx-52" />
-      </div>
-
-      {/* ALO Orange — mid layer */}
-      <div className="alo-cap-row alo-cap-row-b opacity-60" style={{ color: CAP_COLORS[1] }}>
-        <GraduationCap className="mx-16 h-10 w-10 sm:mx-32" />
-        <GraduationCap className="mx-28 h-7 w-7 sm:mx-48" />
-        <GraduationCap className="mx-20 h-12 w-12 sm:mx-36" />
-      </div>
-
-      {/* Accent — fastest, full strength */}
-      <div className="alo-cap-row alo-cap-row-c opacity-100" style={{ color: CAP_COLORS[2] }}>
-        <GraduationCap className="mx-12 h-8 w-8 sm:mx-20" />
-        <GraduationCap className="mx-32 h-10 w-10 sm:mx-60" />
-        <GraduationCap className="mx-24 h-6 w-6 sm:mx-28" />
-        <GraduationCap className="mx-40 h-9 w-9 sm:mx-44" />
+      <div className="alo-cap-stack">
+        {CAP_ROWS.map((row) => (
+          <CapRow key={row.color} {...row} />
+        ))}
       </div>
     </div>
   );

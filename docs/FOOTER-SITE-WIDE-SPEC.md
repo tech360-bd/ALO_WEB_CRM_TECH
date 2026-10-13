@@ -13,7 +13,7 @@ Status: implemented 2026-10-13. Single source of truth for the public footer.
 | Quick Links | Course Finder · Services · Language Prep · Scholarships |
 | Company | About Us · Contact Us · Code of Conduct · Student Complaint Policy · AQF Compliance |
 | CTA | **Book Free Counseling** (ALO Orange) → `/book-consultation` |
-| Decorative strip | Graduation-cap icons in three ALO brand colours, always animating (paused for `prefers-reduced-motion`) |
+| Decorative strip | Graduation-cap icons in three ALO brand colours (`#0066CC`, `#F37021`, `#FFB347`), always moving (paused for `prefers-reduced-motion`) |
 | Bottom bar | ALO Orange bar: **© ALO Education. All rights reserved.** + legal links (black text on #F37021 — white would be 2.94:1 and fail WCAG AA) |
 
 No B2B / partner-recruitment content is published in the footer (`Become A Partner`,
@@ -81,7 +81,9 @@ Routing wiring (required — both lists previously omitted these paths, so the
 pages would have 307-redirected anonymous visitors to `/login`):
 
 * `src/proxy.ts` → `PUBLIC_ROUTES` gained `/code-of-conduct`,
-  `/student-complaint-policy`, `/aqf-compliance`
+  `/student-complaint-policy`, `/aqf-compliance`, and later `/guides` (the
+  published editorial guides index, already advertised in `sitemap.ts`, was
+  still being redirected to `/login`)
 * `src/app/sitemap.ts` → static entries added (monthly, priority 0.3)
 
 ## 5. Verification performed
@@ -93,7 +95,8 @@ pages would have 307-redirected anonymous visitors to `/login`):
 | `GET /` + 8 public routes on a live dev server | 200, `#alo-public-footer` present on each |
 | Rendered footer HTML | socials in order Facebook → Instagram → LinkedIn → YouTube; Destinations/Quick Links/Company in exact order; contact links `share.google/...`, `wa.me/8801805020101`, `tel:+8801805020101`, `mailto:info@aloeducation.com` |
 | `GET /code-of-conduct`, `/student-complaint-policy`, `/aqf-compliance` | 200 (no `/login` redirect), header + footer rendered |
-| Cap strip | 3 colour rows (`#0066CC`, `#F37021`, `#FFB347`) with live keyframe animations |
+| Cap strip | 3 colour rows (`#0066CC`, `#F37021`, `#FFB347`), 52 caps per row, seamless `-25%` marquee (one sequence × 4 copies) so the strip is never empty at any width; `animation-iteration-count: infinite`; reduced-motion stops it |
+| `GET /guides` | was 307 → `/login`; now 200 with header + footer (added to `PUBLIC_ROUTES` — it was the only sitemap route still missing) |
 | Bottom bar | ALO Orange `#F37021` background, black text, `© <year> ALO Education. All rights reserved.` |
 | `tests/e2e/public-footer.spec.ts` | added — columns/order, social order + hrefs, every column link resolves < 400, contact details, cap strip colours, no B2B text, footer scope |
 

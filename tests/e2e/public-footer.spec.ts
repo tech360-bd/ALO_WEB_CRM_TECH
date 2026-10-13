@@ -110,13 +110,31 @@ test.describe('site-wide footer', () => {
     const footer = page.locator('#alo-public-footer');
 
     // Decorative strip: one row per brand colour (Education Blue, ALO Orange, Accent).
-    const strip = footer.locator('div[aria-hidden="true"]').filter({ has: page.locator('svg.lucide-graduation-cap') });
+    const strip = footer.getByTestId('alo-cap-strip');
     await expect(strip).toHaveCount(1);
-    for (const colour of ['rgb(0, 102, 204)', 'rgb(243, 112, 33)', 'rgb(255, 179, 71)']) {
-      await expect(strip.locator(`div[style*="${colour}"]`)).toHaveCount(1);
+    await expect(strip.locator('svg.lucide-graduation-cap').first()).toBeAttached();
+
+    for (const colour of ['#0066CC', '#F37021', '#FFB347']) {
+      await expect(strip.locator(`div[style*="${colour}"]`), `${colour} row missing`).toHaveCount(1);
     }
-    // Animation classes are present (the strip is "live moving").
-    await expect(strip.locator('.alo-cap-row-a')).toHaveCount(1);
+
+    // The strip is "live moving": three animated tracks, each holding the cap
+    // sequence four times so the loop never shows a gap.
+    await expect(strip.locator('.alo-cap-left')).toHaveCount(2);
+    await expect(strip.locator('.alo-cap-right')).toHaveCount(1);
+    await expect(strip.locator('.alo-cap-left').first().locator('svg.lucide-graduation-cap')).toHaveCount(52);
+
+    const animations = await strip.locator('.alo-cap-track').evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const style = getComputedStyle(node);
+        return { name: style.animationName, duration: style.animationDuration, iteration: style.animationIterationCount };
+      })
+    );
+    expect(animations).toHaveLength(3);
+    for (const animation of animations) {
+      expect(animation.name, 'cap strip is not animated').toMatch(/alo-cap-(left|right)/);
+      expect(animation.iteration).toBe('infinite');
+    }
 
     // No B2B partner-recruitment content in the footer.
     const footerText = (await footer.innerText()).toLowerCase();
