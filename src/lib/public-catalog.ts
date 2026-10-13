@@ -204,6 +204,9 @@ export { INTAKE_WINDOW_MONTHS, INTAKE_WINDOW_LABEL } from '@/lib/course-finder/i
 
 export const ENGLISH_TEST_KEYS = [
   'ielts', 'pte', 'toefl', 'duolingo', 'moi', 'oietc', 'oxford', 'languagecert', 'oet',
+  // Spec-supported tests that had no filter entry: the university's own English
+  // test (a real course flag) and the catch-all for anything else recorded.
+  'university_test', 'other',
 ] as const;
 export type EnglishTestKey = (typeof ENGLISH_TEST_KEYS)[number];
 
@@ -211,7 +214,7 @@ const ENGLISH_TEST_DEFINITIONS: Record<EnglishTestKey, {
   testTypes: string[];
   requirementLabel: string;
   overallField?: 'ieltsOverall' | 'pteOverall' | 'toeflOverall' | 'detOverall';
-  courseFlag?: 'moiAccepted';
+  courseFlag?: 'moiAccepted' | 'universityOwnEnglishTest';
 }> = {
   ielts: { testTypes: ['IELTS', 'IELTS UKVI'], requirementLabel: 'IELTS', overallField: 'ieltsOverall' },
   pte: { testTypes: ['PTE'], requirementLabel: 'PTE', overallField: 'pteOverall' },
@@ -222,6 +225,12 @@ const ENGLISH_TEST_DEFINITIONS: Record<EnglishTestKey, {
   oxford: { testTypes: ['Oxford ELLT'], requirementLabel: 'Oxford ELLT' },
   languagecert: { testTypes: ['LanguageCert'], requirementLabel: 'LanguageCert' },
   oet: { testTypes: ['OET'], requirementLabel: 'OET' },
+  university_test: {
+    testTypes: ['University English Test', 'University Own English Test', 'University Test'],
+    requirementLabel: 'University English Test',
+    courseFlag: 'universityOwnEnglishTest',
+  },
+  other: { testTypes: ['Other'], requirementLabel: 'Other' },
 };
 
 export interface IntakePeriodFilter {
