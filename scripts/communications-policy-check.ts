@@ -20,6 +20,7 @@ import { resolveContactIdentity, phoneVariants, resolveInboundCaller, shouldAuto
 import { formatLeadReference, isLeadReference, leadReferenceCandidates, createLeadWithReference, isUniqueViolation } from '../src/lib/lead-reference';
 import { toSlaChannel, toSlaPriority, toSlaIntent, SLA_STATES } from '../src/lib/communications/sla-policy';
 import { classifyDocument, decideDocumentMatch, validateOutboundFileMetadata, OUTBOUND_FILE_METADATA_FIELDS } from '../src/lib/communications/document-match';
+import { DEFAULT_TEMPLATES, OFFICIAL_TEMPLATE_MAP, LOCKED_TEMPLATE_CODES, isLockedTemplate, validateTemplateEdit } from '../src/lib/communication/template-engine';
 
 let pass = 0, fail = 0;
 const check = (name: string, cond: boolean, detail = '') => {
@@ -206,6 +207,21 @@ check('§131 outbound metadata must be complete', OUTBOUND_FILE_METADATA_FIELDS.
   validateOutboundFileMetadata({ messageId: 'm1', studentId: 's1', applicationId: 'a1', documentId: 'd1', sender: 'counselor', recipient: '8801805020101', fileId: 'f1', fileName: 'offer.pdf', fileType: 'application/pdf', timestamp: '2026-10-13T10:00:00Z', deliveryStatus: 'sent' }).valid === true);
 const incomplete = validateOutboundFileMetadata({ messageId: 'm1', fileName: 'offer.pdf' });
 check('§131 missing metadata is reported by name', !incomplete.valid && incomplete.missing.includes('fileId') && incomplete.missing.includes('deliveryStatus'));
+
+console.log('\n── §174 locked official template engine ──');
+const templateCodes = DEFAULT_TEMPLATES.map((t) => t.templateCode);
+check('every spec-named official template has a code', Object.keys(OFFICIAL_TEMPLATE_MAP).length === 8 &&
+  Object.values(OFFICIAL_TEMPLATE_MAP).flat().every((code) => templateCodes.includes(code)),
+  Object.entries(OFFICIAL_TEMPLATE_MAP).filter(([, codes]) => !codes.every((c) => templateCodes.includes(c))).map(([k]) => k).join(', '));
+check('payment instruction and review request now exist', templateCodes.includes('TPL-PAYMENT-INSTRUCTION') && templateCodes.includes('TPL-REVIEW-REQUEST'));
+check('every locked code is marked locked in the seeds', LOCKED_TEMPLATE_CODES.every((code) =>
+  DEFAULT_TEMPLATES.find((t) => t.templateCode === code)?.locked === true));
+check('payment instruction requires approval (§130 high-risk)', DEFAULT_TEMPLATES.find((t) => t.templateCode === 'TPL-PAYMENT-INSTRUCTION')?.requiresApproval === true);
+check('locked templates cannot be deleted', validateTemplateEdit({ templateCode: 'TPL-DOC-MISSING', actorRoles: ['super_admin'], action: 'delete', reason: 'tidy up the list' }).code === 'LOCKED_TEMPLATE_DELETE_FORBIDDEN');
+check('only a super admin may re-word a locked template', validateTemplateEdit({ templateCode: 'TPL-DOC-MISSING', actorRoles: ['counselor'], action: 'edit', reason: 'shorten the wording' }).code === 'LOCKED_TEMPLATE_ROLE_REQUIRED');
+check('a super-admin edit still needs a stated reason', validateTemplateEdit({ templateCode: 'TPL-DOC-MISSING', actorRoles: ['super_admin'], action: 'edit', reason: 'tweak' }).code === 'LOCKED_TEMPLATE_REASON_REQUIRED');
+check('a reasoned super-admin edit is allowed', validateTemplateEdit({ templateCode: 'TPL-DOC-MISSING', actorRoles: ['super_admin'], action: 'edit', reason: 'University asked for a clearer upload instruction.' }).allowed === true);
+check('non-locked templates stay freely editable', isLockedTemplate('TPL-COURSE-RECO') === false && validateTemplateEdit({ templateCode: 'TPL-COURSE-RECO', actorRoles: ['counselor'], action: 'edit' }).allowed === true);
 
 console.log('\n── §147/§148 stored-value adapters ──');
 check('db channel values map onto the policy vocabulary',
