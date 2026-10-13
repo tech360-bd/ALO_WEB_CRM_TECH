@@ -34,8 +34,22 @@ export function processApprovalDecision(
   action: 'APPROVE' | 'REJECT' | 'EDIT_AND_APPROVE' | 'ROLLBACK',
   reviewerId: string,
   editedValue?: any,
-  rejectionReason?: string
+  rejectionReason?: string,
+  isAuthorizedReviewer?: boolean // Must be set by the caller from server-side authorization
 ): ProposedFieldChange {
+  // Security: enforce authorization at the function boundary
+  if (!isAuthorizedReviewer) {
+    throw new Error('Authorization required: reviewer must have SUPER_ADMIN role or approved reviewer permission');
+  }
+  // Security: enforce state-transition rules (prevent decisions on finalized items)
+  if (change.status === 'APPROVED' || change.status === 'REJECTED') {
+    throw new Error(`State transition blocked: approval is already finalized (${change.status})`);
+  }
+  // Security: prevent rollback on non-approved/rejected items (optional strict rule)
+  if (action === 'ROLLBACK' && change.status !== 'APPROVED' && change.status !== 'REJECTED') {
+    throw new Error('State transition blocked: rollback requires a finalized approval');
+  }
+
   const timestamp = new Date().toISOString();
   const updated = { ...change, reviewedBy: reviewerId, reviewedAt: timestamp };
 

@@ -17,10 +17,10 @@ export async function generateMetadata({
   const test = getTestPrepBySlug(slug);
 
   if (!test) {
-    return {
-      title: 'English Test Preparation | ALO Education Bangladesh',
-      description: 'Master IELTS, PTE, TOEFL, and Duolingo with ALO Education test prep coaches.',
-    };
+  return {
+    title: 'English Test Preparation | ALO Education Bangladesh',
+    description: 'Master IELTS, PTE, TOEFL, Duolingo, LanguageCert, Kaplan, OET, Cambridge (CAE/CPE) with ALO Education test prep coaches. Clear image and video quality for every section.',
+  };
   }
 
   return {
