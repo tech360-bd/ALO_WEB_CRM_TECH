@@ -395,6 +395,59 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
   };
 }
 
+/**
+ * English-test clause for public course search.
+ *
+ * A course matches when ANY of these is verified evidence:
+ *   • a verified requirement row naming the test, or one of its aliases;
+ *   • a verified per-test requirement record with a source URL;
+ *   • a verified requirement carrying that test's overall score;
+ *   • the course flag (e.g. MOI accepted / university's own English test).
+ *
+ * `minScore` (the student's own IELTS score) keeps only courses whose verified
+ * IELTS overall requirement is at or below it — never a guessed band.
+ *
+ * Exported because the canonical /api/courses/search endpoint must apply exactly
+ * the same rule; two implementations would drift.
+ */
+export function buildEnglishTestWhere(
+  englishTest: EnglishTestKey | undefined,
+  minScore?: number
+): Record<string, unknown> | null {
+  const options: Record<string, unknown>[] = [];
+
+  if (englishTest) {
+    const def = ENGLISH_TEST_DEFINITIONS[englishTest];
+    options.push({
+      requirements: {
+        some: {
+          ...publicRequirementWhere(),
+          OR: [
+            { englishTest: { contains: def.requirementLabel } },
+            ...def.testTypes.map((testType) => ({ englishTest: { contains: testType } })),
+          ],
+        },
+      },
+    });
+    options.push({ englishRequirements: { some: { testType: { in: def.testTypes }, sourceUrl: { not: '' } } } });
+    if (def.overallField) {
+      options.push({ requirements: { some: { ...publicRequirementWhere(), [def.overallField]: { gt: 0 } } } });
+    }
+    if (def.courseFlag) {
+      options.push({ [def.courseFlag]: true });
+      options.push({ requirements: { some: { ...publicRequirementWhere(), moiAccepted: true } } });
+    }
+  }
+
+  if (minScore !== undefined) {
+    const scoreClause = { requirements: { some: { ...publicRequirementWhere(), ieltsOverall: { gt: 0, lte: minScore } } } };
+    if (options.length === 0) return scoreClause;
+    options.push(scoreClause);
+  }
+
+  return options.length > 0 ? { OR: options } : null;
+}
+
 /** Builds the Prisma `where` for public course search. Every filter is applied server-side. */
 export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, unknown> {
   const and: Record<string, unknown>[] = [publicCourseWhere()];
@@ -485,26 +538,8 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
     and.push({ intakeFees: { some: { ...publicIntakeWhere(), applicationDeadline: { contains: 'olling' } } } });
   }
 
-  if (f.englishTest) {
-    const def = ENGLISH_TEST_DEFINITIONS[f.englishTest];
-    const options: Record<string, unknown>[] = [
-      { requirements: { some: { ...publicRequirementWhere(), OR: [{ englishTest: { contains: def.requirementLabel } }, ...def.testTypes.map((t) => ({ englishTest: { contains: t } }))] } } },
-      { englishRequirements: { some: { testType: { in: def.testTypes }, sourceUrl: { not: '' } } } },
-    ];
-    if (def.overallField) {
-      options.push({ requirements: { some: { ...publicRequirementWhere(), [def.overallField]: { gt: 0 } } } });
-    }
-    if (def.courseFlag) {
-      options.push({ [def.courseFlag]: true });
-      options.push({ requirements: { some: { ...publicRequirementWhere(), moiAccepted: true } } });
-    }
-    and.push({ OR: options });
-  }
-
-  if (f.ieltsScore !== undefined) {
-    // "My IELTS score": show courses whose verified IELTS overall requirement is at or below it.
-    and.push({ requirements: { some: { ...publicRequirementWhere(), ieltsOverall: { gt: 0, lte: f.ieltsScore } } } });
-  }
+  const englishClause = buildEnglishTestWhere(f.englishTest, f.ieltsScore);
+  if (englishClause) and.push(englishClause);
 
   return { AND: and };
 }
