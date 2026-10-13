@@ -4704,6 +4704,32 @@ model CronJobLog {
   @@index([startedAt])
 }
 
+/// Distributed lease for scheduled jobs.
+///
+/// Added 2026-10-13 to replace the `DeploymentSequence` fallback in
+/// `src/cron/worker.ts`, which had no owner and no expiry column, so a second
+/// process could never be excluded and a crashed holder could never be
+/// replaced. One row per job key; `expiresAt` is the lease deadline. A holder
+/// may only be replaced once its lease has expired, which makes the claim a
+/// single conditional statement instead of a read-then-write race.
+///
+/// Purely additive: no existing table, column, index or row is modified.
+model CronLock {
+  id         String    @id @default(cuid())
+  jobKey     String    @unique
+  ownerId    String    @default("")
+  lockedAt   DateTime  @default(now())
+  expiresAt  DateTime
+  runCount   Int       @default(0)
+  lastRunAt  DateTime?
+  lastStatus String    @default("")
+  lastError  String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([expiresAt])
+}
+
 model CommunicationDeleteRequest {
   id              String    @id @default(cuid())
   messageId       String

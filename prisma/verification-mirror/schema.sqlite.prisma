@@ -4706,6 +4706,32 @@ model CronJobLog {
   @@index([startedAt])
 }
 
+/// Distributed lease for scheduled jobs.
+///
+/// Added 2026-10-13 to replace the `DeploymentSequence` fallback in
+/// `src/cron/worker.ts`, which had no owner and no expiry column, so a second
+/// process could never be excluded and a crashed holder could never be
+/// replaced. One row per job key; `expiresAt` is the lease deadline. A holder
+/// may only be replaced once its lease has expired, which makes the claim a
+/// single conditional statement instead of a read-then-write race.
+///
+/// Purely additive: no existing table, column, index or row is modified.
+model CronLock {
+  id         String    @id @default(cuid())
+  jobKey     String    @unique
+  ownerId    String    @default("")
+  lockedAt   DateTime  @default(now())
+  expiresAt  DateTime
+  runCount   Int       @default(0)
+  lastRunAt  DateTime?
+  lastStatus String    @default("")
+  lastError  String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([expiresAt])
+}
+
 model CommunicationDeleteRequest {
   id              String    @id @default(cuid())
   messageId       String
@@ -5752,20 +5778,24 @@ model ApplicationFinance {
 }
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  userId      String   @default("")
-  action      String
-  resource    String   @default("")
-  resourceId  String   @default("")
-  details     String   @default("{}")
-  ipAddress   String   @default("")
-  userAgent   String   @default("")
-  actorRole   String   @default("")
-  studentId   String   @default("")
-  beforeValue String   @default("{}")
-  afterValue  String   @default("{}")
-  createdAt   DateTime @default(now())
-  user        User?    @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  // Nullable: system/automation events (e.g. public lead intake) have no
+  // acting user. The previous `String @default("")` violated the FK to User
+  // on every system-generated audit row, turning successful lead submissions
+  // into HTTP 500s (found live, 2026-09-28).
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  action       String
+  resource     String   @default("")
+  resourceId   String   @default("")
+  details      String   @default("{}")
+  ipAddress    String   @default("")
+  userAgent    String   @default("")
+  actorRole    String   @default("")
+  studentId    String   @default("")
+  beforeValue  String   @default("{}")
+  afterValue   String   @default("{}")
+  createdAt    DateTime @default(now())
 
   @@index([userId])
   @@index([action])
@@ -7596,6 +7626,8 @@ model ThreeCxIntegration {
 }
 
 model SmsLog {
+  provider       String?
+  providerMessageId String?
   id             String    @id @default(cuid())
   direction      String    @default("OUTBOUND")
   fromNumber     String
@@ -7614,6 +7646,7 @@ model SmsLog {
   @@index([studentId])
   @@index([leadId])
   @@index([toNumber])
+  @@unique([provider, providerMessageId])
 }
 
 model CallOutcome {
@@ -11683,4 +11716,18 @@ model EmailEvent {
 
   @@index([campaignId, type, createdAt])
   @@index([type, createdAt])
+}
+
+// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNN, AEP-, EMP-).
+// Rows are advanced inside the allocating transaction (see src/lib/identity/student-id.ts).
+// Numbers are never reused: a rolled-back transaction also rolls back its increment,
+// and a committed number is never handed out again.
+model StudentIdSequence {
+  id        String   @id
+  scope     String
+  year      Int
+  lastValue Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([scope, year])
 }
