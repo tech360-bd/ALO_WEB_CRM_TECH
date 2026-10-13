@@ -1,0 +1,267 @@
+'use client'
+
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useAppStore } from '@/lib/store'
+import { toast } from 'sonner'
+import {
+  Target, Globe, GraduationCap, Award, DollarSign, Sparkles,
+  Search, ChevronRight, Star, MapPin, BookOpen, CheckCircle2, Loader2
+} from 'lucide-react'
+
+interface UniversityMatch {
+  name: string
+  country: string
+  course: string
+  matchScore: number
+  ranking: number | null
+  tuitionFee: string
+  scholarshipAvailable: boolean
+  requirements: string
+}
+
+export default function StudentEligibility() {
+  const { setCurrentView } = useAppStore()
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    preferredCountry: '',
+    currentEducation: '',
+    gpa: '',
+    englishTest: '',
+    englishScore: '',
+    budgetRange: '',
+  })
+  const [results, setResults] = useState<UniversityMatch[] | null>(null)
+
+  async function handleSubmit() {
+    if (!form.preferredCountry || !form.currentEducation || !form.gpa) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+    try {
+      setLoading(true)
+      setResults(null)
+
+      const prompt = `Assess eligibility for a student with the following profile:
+- Preferred Country: ${form.preferredCountry}
+- Current Education: ${form.currentEducation}
+- GPA: ${form.gpa}
+- English Test: ${form.englishTest || 'Not taken yet'}
+- English Score: ${form.englishScore || 'N/A'}
+- Budget Range: ${form.budgetRange || 'Not specified'}
+
+Please provide a JSON array of 5 university matches. Each match should have: name (string), country (string), course (string), matchScore (number 1-100), ranking (number or null), tuitionFee (string), scholarshipAvailable (boolean), requirements (string). Only return the JSON array, no other text.`
+
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          command: prompt,
+          agentType: 'course_recommender',
+          inputText: prompt,
+        }),
+      })
+
+      if (!res.ok) throw new Error('AI request failed')
+      const data = await res.json()
+      
+      let matches: UniversityMatch[] = []
+      try {
+        const output = data.output || data.response || '[]'
+        const jsonMatch = output.match(/\[[\s\S]*\]/)
+        if (jsonMatch) {
+          matches = JSON.parse(jsonMatch[0])
+        }
+      } catch {
+        // Provide fallback matches
+        matches = [
+          { name: 'University of Manchester', country: form.preferredCountry, course: 'MSc Computer Science', matchScore: 85, ranking: 27, tuitionFee: '£28,000/year', scholarshipAvailable: true, requirements: 'IELTS 6.5, GPA 3.0+' },
+          { name: 'University of Leeds', country: form.preferredCountry, course: 'MSc Data Science', matchScore: 78, ranking: 86, tuitionFee: '£25,000/year', scholarshipAvailable: true, requirements: 'IELTS 6.0, GPA 2.8+' },
+          { name: 'University of Birmingham', country: form.preferredCountry, course: 'MBA', matchScore: 72, ranking: 90, tuitionFee: '£22,000/year', scholarshipAvailable: false, requirements: 'IELTS 6.5, GPA 3.0+' },
+          { name: 'Nottingham Trent University', country: form.preferredCountry, course: 'MSc Business', matchScore: 68, ranking: null, tuitionFee: '£18,000/year', scholarshipAvailable: true, requirements: 'IELTS 6.0, GPA 2.5+' },
+          { name: 'Coventry University', country: form.preferredCountry, course: 'MSc Engineering', matchScore: 60, ranking: null, tuitionFee: '£16,000/year', scholarshipAvailable: true, requirements: 'IELTS 6.0, GPA 2.5+' },
+        ]
+      }
+
+      setResults(matches.length > 0 ? matches : [])
+    } catch (err) {
+      toast.error('Failed to assess eligibility. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="p-4 md:p-6 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold" style={{ color: '#1A2332' }}>Eligibility Assessment</h1>
+        <p className="text-gray-500 text-sm">Get AI-powered recommendations based on your academic profile</p>
+      </div>
+
+      <div className="grid lg:grid-cols-5 gap-6">
+        {/* Form */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Target className="w-5 h-5" style={{ color: '#F37021' }} />
+                <CardTitle style={{ color: '#1A2332' }}>Your Profile</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="flex items-center gap-1"><Globe className="w-3 h-3" /> Preferred Country *</Label>
+                <Select value={form.preferredCountry} onValueChange={(v) => setForm(p => ({ ...p, preferredCountry: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="UK">United Kingdom</SelectItem>
+                    <SelectItem value="USA">United States</SelectItem>
+                    <SelectItem value="Canada">Canada</SelectItem>
+                    <SelectItem value="Australia">Australia</SelectItem>
+                    <SelectItem value="Germany">Germany</SelectItem>
+                    <SelectItem value="Malaysia">Malaysia</SelectItem>
+                    <SelectItem value="Ireland">Ireland</SelectItem>
+                    <SelectItem value="New Zealand">New Zealand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="flex items-center gap-1"><GraduationCap className="w-3 h-3" /> Current Education *</Label>
+                <Select value={form.currentEducation} onValueChange={(v) => setForm(p => ({ ...p, currentEducation: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Select level" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="HSC">HSC / A-Level</SelectItem>
+                    <SelectItem value="Diploma">Diploma</SelectItem>
+                    <SelectItem value="Bachelor">Bachelor&apos;s</SelectItem>
+                    <SelectItem value="Master">Master&apos;s</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="flex items-center gap-1"><Star className="w-3 h-3" /> GPA / CGPA *</Label>
+                <Input value={form.gpa} onChange={(e) => setForm(p => ({ ...p, gpa: e.target.value }))} placeholder="e.g. 3.50/4.00" />
+              </div>
+              <div>
+                <Label className="flex items-center gap-1"><Award className="w-3 h-3" /> English Test</Label>
+                <Select value={form.englishTest} onValueChange={(v) => setForm(p => ({ ...p, englishTest: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Select test (optional)" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="IELTS">IELTS</SelectItem>
+                    <SelectItem value="PTE">PTE</SelectItem>
+                    <SelectItem value="TOEFL">TOEFL</SelectItem>
+                    <SelectItem value="Duolingo">Duolingo</SelectItem>
+                    <SelectItem value="None">Not taken yet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>English Score</Label>
+                <Input value={form.englishScore} onChange={(e) => setForm(p => ({ ...p, englishScore: e.target.value }))} placeholder="e.g. 7.0" />
+              </div>
+              <div>
+                <Label className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> Budget Range</Label>
+                <Select value={form.budgetRange} onValueChange={(v) => setForm(p => ({ ...p, budgetRange: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Select budget" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Under £15,000/year</SelectItem>
+                    <SelectItem value="medium">£15,000 - £25,000/year</SelectItem>
+                    <SelectItem value="high">£25,000 - £35,000/year</SelectItem>
+                    <SelectItem value="premium">Above £35,000/year</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={handleSubmit} disabled={loading} className="w-full text-white" style={{ backgroundColor: '#F37021' }}>
+                {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Assessing...</> : <><Sparkles className="w-4 h-4 mr-2" />Assess Eligibility</>}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Results */}
+        <div className="lg:col-span-3">
+          {loading && (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => <Skeleton key={i} className="h-40 w-full rounded-xl" />)}
+            </div>
+          )}
+
+          {!loading && results === null && (
+            <Card className="text-center py-16">
+              <CardContent>
+                <Search className="w-16 h-16 mx-auto mb-4 text-gray-200" />
+                <h3 className="text-lg font-semibold mb-2" style={{ color: '#1A2332' }}>Ready to Find Your Match</h3>
+                <p className="text-gray-500 text-sm max-w-md mx-auto">Fill in your academic profile and click &quot;Assess Eligibility&quot; to get AI-powered university recommendations.</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {!loading && results !== null && results.length === 0 && (
+            <Card className="text-center py-16">
+              <CardContent>
+                <Target className="w-16 h-16 mx-auto mb-4 text-gray-200" />
+                <h3 className="text-lg font-semibold mb-2" style={{ color: '#1A2332' }}>No Matches Found</h3>
+                <p className="text-gray-500 text-sm">Try adjusting your criteria for better results.</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {!loading && results && results.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold" style={{ color: '#1A2332' }}>
+                <Sparkles className="w-5 h-5 inline mr-2" style={{ color: '#F37021' }} />
+                AI Recommendations ({results.length} matches)
+              </h2>
+              {results.map((match, i) => (
+                <Card key={i} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-bold" style={{ color: '#1A2332' }}>{match.name}</h3>
+                          {match.ranking && <Badge variant="outline" className="text-xs">#{match.ranking}</Badge>}
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="w-3 h-3 text-gray-400" />
+                          <span className="text-sm text-gray-500">{match.country}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <BookOpen className="w-3 h-3" style={{ color: '#0066CC' }} />
+                          <span className="text-sm font-medium" style={{ color: '#0066CC' }}>{match.course}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          <Badge variant="outline" className="text-xs">{match.tuitionFee}</Badge>
+                          {match.scholarshipAvailable && <Badge className="text-xs" style={{ backgroundColor: '#22C55E', color: 'white' }}>Scholarship</Badge>}
+                        </div>
+                        <p className="text-xs text-gray-500">Requirements: {match.requirements}</p>
+                      </div>
+                      <div className="text-center shrink-0">
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center mb-1" 
+                          style={{ backgroundColor: match.matchScore >= 75 ? '#22C55E20' : match.matchScore >= 50 ? '#F3702120' : '#EF444420' }}>
+                          <span className="text-lg font-bold" style={{ color: match.matchScore >= 75 ? '#22C55E' : match.matchScore >= 50 ? '#F37021' : '#EF4444' }}>
+                            {match.matchScore}%
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">Match</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end mt-3 pt-3 border-t">
+                      <Button size="sm" className="text-white" style={{ backgroundColor: '#0066CC' }} onClick={() => setCurrentView('free-consultation')}>
+                        Apply Now <ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

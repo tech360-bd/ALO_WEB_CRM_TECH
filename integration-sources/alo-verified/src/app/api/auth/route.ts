@@ -1,0 +1,142 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { randomUUID } from 'crypto';
+import { comparePassword } from '@/lib/auth';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { email, password } = body;
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      );
+    }
+
+    const user = await db.user.findUnique({
+      where: { email },
+      include: {
+        userRoles: {
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: { permission: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
+    // Compare password using bcrypt
+    if (!await comparePassword(password, user.password)) {
+      // Log failed attempt
+      await db.loginAttempt.create({
+        data: {
+          userId: user.id,
+          email: user.email,
+          success: false,
+        }
+      });
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
+    if (user.status !== 'active') {
+      return NextResponse.json(
+        { error: 'Account is ' + user.status + '. Please contact administrator.' },
+        { status: 403 }
+      );
+    }
+
+    // Create session token
+    const token = randomUUID();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 day session
+
+    await db.userSession.create({
+      data: {
+        userId: user.id,
+        token,
+        expiresAt,
+      }
+    });
+
+    // Update last login
+    await db.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() }
+    });
+
+    // Log successful attempt
+    await db.loginAttempt.create({
+      data: {
+        userId: user.id,
+        email: user.email,
+        success: true,
+      }
+    });
+
+    // Determine redirect URL based on role
+    const primaryRole = user.userRoles[0]?.role;
+    let redirectUrl = '/dashboard';
+    if (user.userType === 'student') {
+      redirectUrl = '/student/dashboard';
+    } else if (user.userType === 'partner') {
+      redirectUrl = '/partner/dashboard';
+    } else {
+      // All employee roles go to /crm/dashboard — the CRM dashboard
+      // auto-renders the correct specialized dashboard based on primary role
+      redirectUrl = '/crm/dashboard';
+    }
+
+    const permissions = user.userRoles.flatMap(ur =>
+      ur.role.rolePermissions.map(rp => ({
+        module: rp.permission.module,
+        action: rp.permission.action,
+        granted: rp.granted
+      }))
+    );
+
+    return NextResponse.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        profilePhoto: user.profilePhoto,
+        userType: user.userType,
+        referenceId: user.referenceId,
+        forcePasswordChange: user.forcePasswordChange,
+        status: user.status,
+      },
+      roles: user.userRoles.map(ur => ({
+        id: ur.role.id,
+        name: ur.role.name,
+        displayName: ur.role.displayName,
+      })),
+      permissions,
+      token,
+      redirectUrl,
+    });
+  } catch (error) {
+    console.error('Auth error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

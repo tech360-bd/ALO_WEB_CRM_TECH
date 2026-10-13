@@ -1,0 +1,364 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { AuthProvider, useAuth } from '@/components/alo/portal/AuthContext'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import {
+  GraduationCap, Building2, Briefcase, ArrowRight, Globe2, Shield,
+  Sparkles, FileText, Plane, Award, BookOpen, Users, ChevronRight, LogIn, X,
+} from 'lucide-react'
+
+function HomeContent() {
+  const router = useRouter()
+  const { login, isAuthenticated, user } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
+
+  // If already authenticated, show portal selector
+  useEffect(() => {
+    if (isAuthenticated && user && !showLogin) {
+      // stay on home; user picks portal
+    }
+  }, [isAuthenticated, user, showLogin])
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email || !password) {
+      toast.error('Please enter email and password')
+      return
+    }
+    setLoading(true)
+    try {
+      const { redirectUrl } = await login(email, password)
+      toast.success('Welcome back to ALO Education!')
+      // Navigate to the role-based redirect
+      router.push(redirectUrl)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Login failed. Check your credentials.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const portals = [
+    {
+      id: 'student',
+      title: 'Student Portal',
+      desc: 'Your complete study-abroad success platform — find courses, apply, track applications, manage documents & visa.',
+      icon: GraduationCap,
+      href: '/student/dashboard',
+      accent: 'from-[#0057B8] to-[#0073E6]',
+      userType: 'student',
+      cta: 'Enter Student Portal',
+    },
+    {
+      id: 'partner',
+      title: 'Partner / Agent Portal',
+      desc: 'Register students, manage applications, search programs, track commissions and grow your education business.',
+      icon: Building2,
+      href: '/partner/dashboard',
+      accent: 'from-[#E8501A] to-[#FF7A45]',
+      userType: 'partner',
+      cta: 'Enter Partner Portal',
+    },
+    {
+      id: 'crm',
+      title: 'Employee CRM',
+      desc: 'Full CRM for counselors, application team, visa officers, finance & admins — leads, students, applications, reports.',
+      icon: Briefcase,
+      href: '/crm/dashboard',
+      accent: 'from-[#0f172a] to-[#1e293b]',
+      userType: 'employee',
+      cta: 'Enter CRM',
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* ─── Top Nav ─── */}
+      <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#0073E6] flex items-center justify-center text-white font-bold text-sm shadow-md">
+              ALO
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-base font-bold text-[#0f172a]">ALO Education</span>
+              <span className="text-[10px] uppercase tracking-wider text-[#0057B8] font-semibold">Web CRM Platform</span>
+            </div>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-1">
+            <Link href="/" className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#0057B8]">Home</Link>
+            <a href="#destinations" className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#0057B8]">Destinations</a>
+            <a href="#services" className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#0057B8]">Services</a>
+            <a href="#portals" className="px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#0057B8]">Portals</a>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
+              <Button onClick={() => router.push(user?.userType === 'student' ? '/student/dashboard' : user?.userType === 'partner' ? '/partner/dashboard' : '/crm/dashboard')} className="bg-[#E8501A] hover:bg-[#c8431a] text-white">
+                Go to my portal <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button onClick={() => setShowLogin(true)} className="bg-[#0057B8] hover:bg-[#004a99] text-white">
+                <LogIn className="mr-1.5 h-4 w-4" /> Sign in
+              </Button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* ─── Hero ─── */}
+      <section className="relative overflow-hidden border-b border-slate-100">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-orange-50/30" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0057B8]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#E8501A]/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
+
+        <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-3xl">
+            <Badge className="mb-4 bg-blue-50 text-[#0057B8] border-blue-200 hover:bg-blue-50">
+              <Sparkles className="mr-1 h-3 w-3" /> AI-Powered Education Operating System
+            </Badge>
+            <h1 className="text-4xl lg:text-6xl font-bold text-[#0f172a] leading-[1.1] tracking-tight">
+              One connected platform for{' '}
+              <span className="bg-gradient-to-r from-[#0057B8] to-[#E8501A] bg-clip-text text-transparent">
+                students, partners & staff
+              </span>
+            </h1>
+            <p className="mt-6 text-lg text-slate-600 max-w-2xl">
+              ALO Education connects the entire study-abroad journey — course discovery, applications,
+              documents, visa, communications and AI guidance — into a single operating system trusted
+              by Bangladeshi students and global recruitment partners.
+            </p>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Button size="lg" onClick={() => setShowLogin(true)} className="bg-[#E8501A] hover:bg-[#c8431a] text-white h-12 px-8 text-base">
+                Sign in to your portal <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button size="lg" variant="outline" asChild className="h-12 px-8 text-base border-[#0057B8] text-[#0057B8] hover:bg-blue-50">
+                <Link href="#portals">Explore the portals</Link>
+              </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {[
+                { v: '150+', l: 'Partner Universities' },
+                { v: '10,000+', l: 'Students Guided' },
+                { v: '7', l: 'Study Destinations' },
+                { v: '4.9/5', l: 'Student Rating' },
+              ].map((s) => (
+                <div key={s.l}>
+                  <p className="text-2xl lg:text-3xl font-bold text-[#0f172a]">{s.v}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{s.l}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Portals ─── */}
+      <section id="portals" className="py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0f172a]">Three connected workspaces</h2>
+            <p className="mt-3 text-slate-600">
+              Every role gets a purpose-built portal — all powered by one database, one backend, one Student ID.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {portals.map((p) => {
+              const Icon = p.icon
+              const canEnter = isAuthenticated && (user?.userType === p.userType || user?.userType === 'employee')
+              return (
+                <Card key={p.id} className="p-6 border-slate-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${p.accent} flex items-center justify-center mb-4 shadow-md`}>
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-[#0f172a]">{p.title}</h3>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{p.desc}</p>
+                  <Button
+                    className="mt-5 w-full bg-[#0057B8] hover:bg-[#004a99] text-white group-hover:bg-[#E8501A] group-hover:hover:bg-[#c8431a] transition-colors"
+                    onClick={() => {
+                      if (canEnter) {
+                        router.push(p.href)
+                      } else {
+                        setShowLogin(true)
+                      }
+                    }}
+                  >
+                    {p.cta} <ChevronRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </Card>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Destinations ─── */}
+      <section id="destinations" className="py-16 lg:py-20 bg-slate-50/50 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0f172a]">Study destinations</h2>
+            <p className="mt-3 text-slate-600">Expert guidance for the world&apos;s top education destinations.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+            {['United Kingdom', 'United States', 'Canada', 'Australia', 'Ireland', 'New Zealand', 'Dubai'].map((c) => (
+              <Card key={c} className="p-4 border-slate-200 hover:border-[#0057B8] hover:shadow-md transition-all text-center cursor-pointer">
+                <Globe2 className="h-7 w-7 mx-auto text-[#0057B8] mb-2" />
+                <p className="text-xs font-semibold text-[#0f172a]">{c}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Services ─── */}
+      <section id="services" className="py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#0f172a]">End-to-end student services</h2>
+            <p className="mt-3 text-slate-600">Everything a student needs, from first enquiry to enrollment.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: Sparkles, t: 'AI Course Match', d: 'Smart matching based on profile, scores & budget.' },
+              { icon: FileText, t: 'Application Engine', d: 'Apply to multiple universities with one profile.' },
+              { icon: Plane, t: 'Visa Center', d: 'Country checklists, readiness score & mock interviews.' },
+              { icon: Award, t: 'Scholarships', d: 'Discover & apply to eligible scholarships automatically.' },
+              { icon: BookOpen, t: 'SOP & CV Studio', d: 'AI writing assistant with counselor review.' },
+              { icon: Users, t: 'Counselor Chat', d: 'Real-time messaging with your assigned counselor.' },
+              { icon: Shield, t: 'Document Vault', d: 'Upload once, reuse across all applications.' },
+              { icon: Briefcase, t: 'Partner Network', d: 'Trusted recruitment partners across Bangladesh.' },
+            ].map((s) => {
+              const Icon = s.icon
+              return (
+                <Card key={s.t} className="p-5 border-slate-200 hover:border-[#0057B8]/30 hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-3">
+                    <Icon className="h-5 w-5 text-[#0057B8]" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-[#0f172a]">{s.t}</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{s.d}</p>
+                </Card>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CTA ─── */}
+      <section className="py-16 bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white">
+        <div className="max-w-4xl mx-auto px-4 lg:px-8 text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold">Ready to start your global education journey?</h2>
+          <p className="mt-4 text-slate-300 max-w-xl mx-auto">
+            Sign in to access your portal, or register as a new student or partner.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button size="lg" onClick={() => setShowLogin(true)} className="bg-[#E8501A] hover:bg-[#c8431a] text-white h-12 px-8">
+              Sign in
+            </Button>
+            <Button size="lg" variant="outline" asChild className="h-12 px-8 bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white">
+              <Link href="/student/register">Register as student</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Footer ─── */}
+      <footer className="bg-[#0f172a] text-slate-400 py-10 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#0057B8] to-[#0073E6] flex items-center justify-center text-white font-bold text-sm">
+                ALO
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">ALO Education</p>
+                <p className="text-[10px] text-slate-500">Your Gateway to Global Education</p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-500">© {new Date().getFullYear()} ALO Education. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+
+      {/* ─── Login Modal ─── */}
+      {showLogin && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowLogin(false)}>
+          <Card className="w-full max-w-md p-6 border-slate-200 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-5">
+              <div>
+                <h2 className="text-xl font-bold text-[#0f172a]">Sign in to ALO Education</h2>
+                <p className="text-xs text-slate-500 mt-1">Access your role-based portal workspace.</p>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowLogin(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-xs font-semibold text-slate-700">Email address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-xs font-semibold text-slate-700">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-11"
+                  required
+                />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full h-11 bg-[#0057B8] hover:bg-[#004a99] text-white">
+                {loading ? 'Signing in…' : 'Sign in'}
+              </Button>
+            </form>
+
+            <div className="mt-5 pt-5 border-t border-slate-100">
+              <p className="text-[11px] text-slate-500 mb-2 font-semibold uppercase tracking-wide">Demo credentials (Super Admin)</p>
+              <div className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-mono text-slate-600">
+                admin@aloeducation.com / ChangeMe@12345
+              </div>
+              <p className="text-[10px] text-slate-400 mt-2">
+                In production, demo credentials are disabled. All passwords are bcrypt-hashed.
+              </p>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function HomeContentWrapped() {
+  return (
+    <AuthProvider>
+      <HomeContent />
+    </AuthProvider>
+  )
+}

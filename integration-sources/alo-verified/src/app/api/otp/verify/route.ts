@@ -1,0 +1,156 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import crypto from 'crypto';
+
+// ============================================================
+// OTP VERIFY API
+// ============================================================
+
+const MAX_VERIFY_ATTEMPTS = 5;
+
+// ----------------------------------------------------------
+// POST /api/otp/verify - Verify OTP
+// ----------------------------------------------------------
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { phone, email, otp, purpose } = body;
+
+    // Validate input
+    if (!phone && !email) {
+      return NextResponse.json(
+        { error: 'Phone number or email is required' },
+        { status: 400 }
+      );
+    }
+
+    if (!otp) {
+      return NextResponse.json(
+        { error: 'OTP code is required' },
+        { status: 400 }
+      );
+    }
+
+    if (!purpose) {
+      return NextResponse.json(
+        { error: 'Purpose is required' },
+        { status: 400 }
+      );
+    }
+
+    const identifier = phone || email;
+    const identifierField = phone ? 'phone' : 'email';
+
+    // Find matching OTP record (not expired, not already verified)
+    const otpRecord = await db.otpVerification.findFirst({
+      where: {
+        [identifierField]: identifier,
+        purpose,
+        verified: false,
+        expiresAt: { gte: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!otpRecord) {
+      return NextResponse.json(
+        { error: 'No valid OTP found. It may have expired or already been used.' },
+        { status: 404 }
+      );
+    }
+
+    // Check if max attempts exceeded
+    if (otpRecord.attempts >= MAX_VERIFY_ATTEMPTS) {
+      // Mark as verified (used up) to prevent further attempts
+      await db.otpVerification.update({
+        where: { id: otpRecord.id },
+        data: { verified: true },
+      });
+
+      return NextResponse.json(
+        {
+          error: 'Maximum verification attempts exceeded. Please request a new OTP.',
+          attemptsRemaining: 0,
+        },
+        { status: 429 }
+      );
+    }
+
+    // Increment attempts
+    const updatedRecord = await db.otpVerification.update({
+      where: { id: otpRecord.id },
+      data: { attempts: { increment: 1 } },
+    });
+
+    // Compare OTP hash
+    const isValid = verifyOtpHash(otp, otpRecord.otpHash);
+
+    if (isValid) {
+      // Mark as verified
+      await db.otpVerification.update({
+        where: { id: otpRecord.id },
+        data: { verified: true },
+      });
+
+      // Create activity log
+      try {
+        await db.activityLog.create({
+          data: {
+            action: 'OTP_VERIFIED',
+            description: `OTP verified for ${identifier} (${purpose})`,
+            module: 'auth',
+          },
+        });
+      } catch {
+        // Non-critical, don't fail verification
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'OTP verified successfully',
+        purpose,
+      });
+    }
+
+    // OTP does not match
+    const attemptsRemaining = MAX_VERIFY_ATTEMPTS - updatedRecord.attempts;
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Invalid OTP code',
+        attemptsRemaining,
+      },
+      { status: 401 }
+    );
+  } catch (error) {
+    console.error('[OTP Verify API] POST error:', error);
+    return NextResponse.json(
+      { error: 'OTP verification failed' },
+      { status: 500 }
+    );
+  }
+}
+
+// ----------------------------------------------------------
+// Helper: Hash OTP using SHA-256 (must match the one in otp/route.ts)
+// ----------------------------------------------------------
+function hashOtp(otp: string): string {
+  const secret = process.env.OTP_SECRET;
+  if (!secret) {
+    throw new Error('OTP_SECRET environment variable is not configured.');
+  }
+  return crypto.createHash('sha256').update(otp + secret).digest('hex');
+}
+
+// ----------------------------------------------------------
+// Helper: Verify OTP hash with timing-safe comparison
+// ----------------------------------------------------------
+function verifyOtpHash(otp: string, hash: string): boolean {
+  const computedHash = hashOtp(otp);
+  try {
+    return crypto.timingSafeEqual(Buffer.from(computedHash), Buffer.from(hash));
+  } catch {
+    return false;
+  }
+}

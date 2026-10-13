@@ -1,0 +1,2536 @@
+-- CreateTable
+CREATE TABLE `User` (
+    `id` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NULL,
+    `whatsappNumber` VARCHAR(191) NULL,
+    `profilePhoto` VARCHAR(191) NULL,
+    `userType` VARCHAR(191) NOT NULL DEFAULT 'employee',
+    `referenceId` VARCHAR(191) NULL,
+    `forcePasswordChange` BOOLEAN NOT NULL DEFAULT true,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `lastLoginAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `User_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Role` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `displayName` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Role_name_key`(`name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Permission` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `module` VARCHAR(191) NOT NULL,
+    `action` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Permission_name_key`(`name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UserRole` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `roleId` VARCHAR(191) NOT NULL,
+    `assignedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `UserRole_userId_roleId_key`(`userId`, `roleId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RolePermission` (
+    `id` VARCHAR(191) NOT NULL,
+    `roleId` VARCHAR(191) NOT NULL,
+    `permissionId` VARCHAR(191) NOT NULL,
+    `granted` BOOLEAN NOT NULL DEFAULT true,
+
+    UNIQUE INDEX `RolePermission_roleId_permissionId_key`(`roleId`, `permissionId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Branch` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `code` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NULL,
+    `city` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Branch_code_key`(`code`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Department` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `code` VARCHAR(191) NULL,
+    `branchId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Designation` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `level` INTEGER NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Employee` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `firstName` VARCHAR(191) NOT NULL,
+    `lastName` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NULL,
+    `whatsappNumber` VARCHAR(191) NULL,
+    `profilePhoto` VARCHAR(191) NULL,
+    `gender` VARCHAR(191) NULL,
+    `dateOfBirth` DATETIME(3) NULL,
+    `nidNumber` VARCHAR(191) NULL,
+    `passportNumber` VARCHAR(191) NULL,
+    `address` VARCHAR(191) NULL,
+    `city` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
+    `emergencyContact` VARCHAR(191) NULL,
+    `emergencyPhone` VARCHAR(191) NULL,
+    `bankName` VARCHAR(191) NULL,
+    `bankAccount` VARCHAR(191) NULL,
+    `bankBranch` VARCHAR(191) NULL,
+    `routingNumber` VARCHAR(191) NULL,
+    `branchId` VARCHAR(191) NULL,
+    `departmentId` VARCHAR(191) NULL,
+    `designationId` VARCHAR(191) NULL,
+    `role` VARCHAR(191) NOT NULL DEFAULT 'employee',
+    `employmentType` VARCHAR(191) NOT NULL DEFAULT 'full-time',
+    `joiningDate` DATETIME(3) NULL,
+    `exitDate` DATETIME(3) NULL,
+    `salary` DOUBLE NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Employee_employeeId_key`(`employeeId`),
+    UNIQUE INDEX `Employee_userId_key`(`userId`),
+    UNIQUE INDEX `Employee_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `EmployeeDocument` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `documentType` VARCHAR(191) NOT NULL,
+    `documentName` VARCHAR(191) NOT NULL,
+    `filePath` VARCHAR(191) NOT NULL,
+    `fileSize` INTEGER NULL,
+    `mimeType` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'uploaded',
+    `reviewedBy` VARCHAR(191) NULL,
+    `reviewedAt` DATETIME(3) NULL,
+    `note` VARCHAR(191) NULL,
+    `uploadedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Attendance` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `date` DATETIME(3) NOT NULL,
+    `clockIn` DATETIME(3) NULL,
+    `clockOut` DATETIME(3) NULL,
+    `breakStart` DATETIME(3) NULL,
+    `breakEnd` DATETIME(3) NULL,
+    `breakDuration` INTEGER NOT NULL DEFAULT 0,
+    `totalHours` DOUBLE NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'present',
+    `location` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'self',
+    `approvedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Attendance_employeeId_date_key`(`employeeId`, `date`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AttendanceCorrection` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `attendanceId` VARCHAR(191) NULL,
+    `date` DATETIME(3) NOT NULL,
+    `requestedClockIn` DATETIME(3) NULL,
+    `requestedClockOut` DATETIME(3) NULL,
+    `reason` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `approvedBy` VARCHAR(191) NULL,
+    `approvedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeaveType` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `code` VARCHAR(191) NOT NULL,
+    `daysAllowed` INTEGER NOT NULL DEFAULT 0,
+    `isPaid` BOOLEAN NOT NULL DEFAULT true,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+
+    UNIQUE INDEX `LeaveType_code_key`(`code`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeaveRequest` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `leaveTypeId` VARCHAR(191) NOT NULL,
+    `startDate` DATETIME(3) NOT NULL,
+    `endDate` DATETIME(3) NOT NULL,
+    `totalDays` INTEGER NOT NULL,
+    `reason` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `approvedBy` VARCHAR(191) NULL,
+    `approvedAt` DATETIME(3) NULL,
+    `note` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SalaryStructure` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `basicSalary` DOUBLE NOT NULL DEFAULT 0,
+    `houseRent` DOUBLE NOT NULL DEFAULT 0,
+    `medical` DOUBLE NOT NULL DEFAULT 0,
+    `transport` DOUBLE NOT NULL DEFAULT 0,
+    `food` DOUBLE NOT NULL DEFAULT 0,
+    `otherAllowance` DOUBLE NOT NULL DEFAULT 0,
+    `taxDeduction` DOUBLE NOT NULL DEFAULT 0,
+    `providentFund` DOUBLE NOT NULL DEFAULT 0,
+    `effectiveFrom` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `SalaryStructure_employeeId_key`(`employeeId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Payslip` (
+    `id` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `month` INTEGER NOT NULL,
+    `year` INTEGER NOT NULL,
+    `basicSalary` DOUBLE NOT NULL DEFAULT 0,
+    `totalAllowance` DOUBLE NOT NULL DEFAULT 0,
+    `bonus` DOUBLE NOT NULL DEFAULT 0,
+    `totalDeduction` DOUBLE NOT NULL DEFAULT 0,
+    `advanceDeduction` DOUBLE NOT NULL DEFAULT 0,
+    `netSalary` DOUBLE NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `paidAt` DATETIME(3) NULL,
+    `paymentProof` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Payslip_employeeId_month_year_key`(`employeeId`, `month`, `year`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Student` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `firstName` VARCHAR(191) NOT NULL,
+    `lastName` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NULL,
+    `whatsappNumber` VARCHAR(191) NULL,
+    `profilePhoto` VARCHAR(191) NULL,
+    `gender` VARCHAR(191) NULL,
+    `dateOfBirth` DATETIME(3) NULL,
+    `nationality` VARCHAR(191) NULL,
+    `passportNumber` VARCHAR(191) NULL,
+    `passportExpiry` DATETIME(3) NULL,
+    `nidNumber` VARCHAR(191) NULL,
+    `address` VARCHAR(191) NULL,
+    `city` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NOT NULL DEFAULT 'Bangladesh',
+    `emergencyContact` VARCHAR(191) NULL,
+    `emergencyPhone` VARCHAR(191) NULL,
+    `emergencyRelation` VARCHAR(191) NULL,
+    `preferredCountry` VARCHAR(191) NULL,
+    `preferredCourse` VARCHAR(191) NULL,
+    `preferredIntake` VARCHAR(191) NULL,
+    `englishTestType` VARCHAR(191) NULL,
+    `englishTestScore` VARCHAR(191) NULL,
+    `englishTestDate` DATETIME(3) NULL,
+    `highestEducation` VARCHAR(191) NULL,
+    `gpa` VARCHAR(191) NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'DIRECT',
+    `partnerId` VARCHAR(191) NULL,
+    `communicationMode` VARCHAR(191) NOT NULL DEFAULT 'DIRECT',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `assignedCounselor` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Student_studentId_key`(`studentId`),
+    UNIQUE INDEX `Student_userId_key`(`userId`),
+    UNIQUE INDEX `Student_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Guardian` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `fatherName` VARCHAR(191) NULL,
+    `fatherPhone` VARCHAR(191) NULL,
+    `fatherEmail` VARCHAR(191) NULL,
+    `fatherOccupation` VARCHAR(191) NULL,
+    `motherName` VARCHAR(191) NULL,
+    `motherPhone` VARCHAR(191) NULL,
+    `motherEmail` VARCHAR(191) NULL,
+    `motherOccupation` VARCHAR(191) NULL,
+    `guardianName` VARCHAR(191) NULL,
+    `guardianPhone` VARCHAR(191) NULL,
+    `guardianEmail` VARCHAR(191) NULL,
+    `guardianRelation` VARCHAR(191) NULL,
+    `guardianAddress` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Guardian_studentId_key`(`studentId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Partner` (
+    `id` VARCHAR(191) NOT NULL,
+    `partnerId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `companyName` VARCHAR(191) NOT NULL,
+    `contactPerson` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NULL,
+    `whatsappNumber` VARCHAR(191) NULL,
+    `address` VARCHAR(191) NULL,
+    `city` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NOT NULL DEFAULT 'Bangladesh',
+    `website` VARCHAR(191) NULL,
+    `businessType` VARCHAR(191) NULL,
+    `panNumber` VARCHAR(191) NULL,
+    `gstNumber` VARCHAR(191) NULL,
+    `bankName` VARCHAR(191) NULL,
+    `bankAccount` VARCHAR(191) NULL,
+    `bankBranch` VARCHAR(191) NULL,
+    `ifscCode` VARCHAR(191) NULL,
+    `swiftCode` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `commissionRate` DOUBLE NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Partner_partnerId_key`(`partnerId`),
+    UNIQUE INDEX `Partner_userId_key`(`userId`),
+    UNIQUE INDEX `Partner_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PartnerStaff` (
+    `id` VARCHAR(191) NOT NULL,
+    `partnerId` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `role` VARCHAR(191) NOT NULL DEFAULT 'staff',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PartnerAgreement` (
+    `id` VARCHAR(191) NOT NULL,
+    `partnerId` VARCHAR(191) NOT NULL,
+    `agreementType` VARCHAR(191) NULL,
+    `startDate` DATETIME(3) NOT NULL,
+    `endDate` DATETIME(3) NULL,
+    `commissionRate` DOUBLE NULL,
+    `terms` VARCHAR(191) NULL,
+    `filePath` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeadSource` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'online',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+
+    UNIQUE INDEX `LeadSource_name_key`(`name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Lead` (
+    `id` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
+    `firstName` VARCHAR(191) NOT NULL,
+    `lastName` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `whatsappNumber` VARCHAR(191) NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'website',
+    `sourceId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `preferredCountry` VARCHAR(191) NULL,
+    `preferredCourse` VARCHAR(191) NULL,
+    `preferredIntake` VARCHAR(191) NULL,
+    `englishTestType` VARCHAR(191) NULL,
+    `englishTestScore` VARCHAR(191) NULL,
+    `highestEducation` VARCHAR(191) NULL,
+    `notes` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'new',
+    `temperature` VARCHAR(191) NOT NULL DEFAULT 'warm',
+    `assignedTo` VARCHAR(191) NULL,
+    `convertedToStudentId` VARCHAR(191) NULL,
+    `lastContactedAt` DATETIME(3) NULL,
+    `nextFollowUp` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Lead_leadId_key`(`leadId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeadNote` (
+    `id` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
+    `note` VARCHAR(191) NOT NULL,
+    `noteType` VARCHAR(191) NOT NULL DEFAULT 'general',
+    `addedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeadAssignment` (
+    `id` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NOT NULL,
+    `reason` VARCHAR(191) NULL,
+    `assignedBy` VARCHAR(191) NULL,
+    `assignedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Application` (
+    `id` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `universityId` VARCHAR(191) NOT NULL,
+    `courseId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `counselorId` VARCHAR(191) NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'DIRECT',
+    `communicationMode` VARCHAR(191) NOT NULL DEFAULT 'DIRECT',
+    `intake` VARCHAR(191) NULL,
+    `applicationDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `offerDate` DATETIME(3) NULL,
+    `depositDate` DATETIME(3) NULL,
+    `casDate` DATETIME(3) NULL,
+    `visaDate` DATETIME(3) NULL,
+    `enrollmentDate` DATETIME(3) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `notes` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Application_applicationId_key`(`applicationId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ApplicationStatusHistory` (
+    `id` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NOT NULL,
+    `fromStatus` VARCHAR(191) NULL,
+    `toStatus` VARCHAR(191) NOT NULL,
+    `changedBy` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `changedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ApplicationNote` (
+    `id` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NOT NULL,
+    `note` VARCHAR(191) NOT NULL,
+    `noteType` VARCHAR(191) NOT NULL DEFAULT 'general',
+    `addedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `University` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NOT NULL,
+    `country` VARCHAR(191) NOT NULL,
+    `city` VARCHAR(191) NULL,
+    `website` VARCHAR(191) NULL,
+    `logoUrl` VARCHAR(191) NULL,
+    `bannerUrl` VARCHAR(191) NULL,
+    `ranking` INTEGER NULL,
+    `type` VARCHAR(191) NULL,
+    `description` VARCHAR(191) NULL,
+    `facilities` VARCHAR(191) NULL,
+    `fees` VARCHAR(191) NULL,
+    `scholarshipAvailable` BOOLEAN NOT NULL DEFAULT false,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `University_slug_key`(`slug`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Course` (
+    `id` VARCHAR(191) NOT NULL,
+    `universityId` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NULL,
+    `level` VARCHAR(191) NULL,
+    `field` VARCHAR(191) NULL,
+    `duration` VARCHAR(191) NULL,
+    `tuitionFee` DOUBLE NULL,
+    `currency` VARCHAR(191) NOT NULL DEFAULT 'GBP',
+    `entryRequirements` VARCHAR(191) NULL,
+    `englishRequirement` VARCHAR(191) NULL,
+    `scholarshipAvailable` BOOLEAN NOT NULL DEFAULT false,
+    `description` VARCHAR(191) NULL,
+    `careerPaths` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Scholarship` (
+    `id` VARCHAR(191) NOT NULL,
+    `universityId` VARCHAR(191) NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `amount` VARCHAR(191) NULL,
+    `eligibility` VARCHAR(191) NULL,
+    `deadline` DATETIME(3) NULL,
+    `type` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Document` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NULL,
+    `employeeId` VARCHAR(191) NULL,
+    `documentType` VARCHAR(191) NOT NULL,
+    `documentName` VARCHAR(191) NOT NULL,
+    `filePath` VARCHAR(191) NOT NULL,
+    `fileSize` INTEGER NULL,
+    `mimeType` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'uploaded',
+    `reviewedBy` VARCHAR(191) NULL,
+    `reviewedAt` DATETIME(3) NULL,
+    `note` VARCHAR(191) NULL,
+    `uploadedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `DocumentType` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NOT NULL,
+    `required` BOOLEAN NOT NULL DEFAULT false,
+    `description` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+
+    UNIQUE INDEX `DocumentType_name_key`(`name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `VisaFile` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `assignedTo` VARCHAR(191) NULL,
+    `stage` VARCHAR(191) NOT NULL DEFAULT 'not_started',
+    `casNumber` VARCHAR(191) NULL,
+    `casDate` DATETIME(3) NULL,
+    `visaAppointmentDate` DATETIME(3) NULL,
+    `biometricsDate` DATETIME(3) NULL,
+    `visaDecisionDate` DATETIME(3) NULL,
+    `visaDecision` VARCHAR(191) NULL,
+    `refusalReason` VARCHAR(191) NULL,
+    `notes` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `VisaChecklist` (
+    `id` VARCHAR(191) NOT NULL,
+    `visaFileId` VARCHAR(191) NOT NULL,
+    `itemName` VARCHAR(191) NOT NULL,
+    `isRequired` BOOLEAN NOT NULL DEFAULT true,
+    `isCompleted` BOOLEAN NOT NULL DEFAULT false,
+    `documentId` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UkviInterview` (
+    `id` VARCHAR(191) NOT NULL,
+    `visaFileId` VARCHAR(191) NOT NULL,
+    `interviewDate` DATETIME(3) NULL,
+    `interviewType` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'scheduled',
+    `score` INTEGER NULL,
+    `feedback` VARCHAR(191) NULL,
+    `notes` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UkviQuestion` (
+    `id` VARCHAR(191) NOT NULL,
+    `interviewId` VARCHAR(191) NOT NULL,
+    `question` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `suggestedAnswer` VARCHAR(191) NULL,
+    `candidateAnswer` VARCHAR(191) NULL,
+    `score` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Task` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `assignedTo` VARCHAR(191) NOT NULL,
+    `assignedBy` VARCHAR(191) NULL,
+    `dueDate` DATETIME(3) NULL,
+    `priority` VARCHAR(191) NOT NULL DEFAULT 'medium',
+    `category` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `completedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Appointment` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NULL,
+    `employeeId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `date` DATETIME(3) NOT NULL,
+    `duration` INTEGER NOT NULL DEFAULT 30,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'consultation',
+    `location` VARCHAR(191) NULL,
+    `meetingLink` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'scheduled',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Message` (
+    `id` VARCHAR(191) NOT NULL,
+    `fromUserId` VARCHAR(191) NOT NULL,
+    `toUserId` VARCHAR(191) NOT NULL,
+    `subject` VARCHAR(191) NULL,
+    `body` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'internal',
+    `isRead` BOOLEAN NOT NULL DEFAULT false,
+    `readAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `EmailLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `recipientEmail` VARCHAR(191) NOT NULL,
+    `subject` VARCHAR(191) NOT NULL,
+    `body` VARCHAR(191) NULL,
+    `templateId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'sent',
+    `sentAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `error` VARCHAR(191) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WhatsappNumberPool` (
+    `id` VARCHAR(191) NOT NULL,
+    `phoneNumber` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NOT NULL DEFAULT 'general',
+    `assignedTo` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `lastSyncAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `WhatsappNumberPool_phoneNumber_key`(`phoneNumber`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WhatsappTemplate` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `templateId` VARCHAR(191) NULL,
+    `category` VARCHAR(191) NULL,
+    `language` VARCHAR(191) NOT NULL DEFAULT 'en',
+    `header` VARCHAR(191) NULL,
+    `body` VARCHAR(191) NOT NULL,
+    `footer` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'approved',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WhatsappConversation` (
+    `id` VARCHAR(191) NOT NULL,
+    `phoneNumber` VARCHAR(191) NOT NULL,
+    `contactNumber` VARCHAR(191) NOT NULL,
+    `contactName` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `employeeId` VARCHAR(191) NULL,
+    `lastMessage` VARCHAR(191) NULL,
+    `lastMessageAt` DATETIME(3) NULL,
+    `unreadCount` INTEGER NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'open',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WhatsappMessage` (
+    `id` VARCHAR(191) NOT NULL,
+    `conversationId` VARCHAR(191) NOT NULL,
+    `messageText` VARCHAR(191) NULL,
+    `mediaUrl` VARCHAR(191) NULL,
+    `mediaType` VARCHAR(191) NULL,
+    `direction` VARCHAR(191) NOT NULL DEFAULT 'inbound',
+    `templateId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'delivered',
+    `sentAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Invoice` (
+    `id` VARCHAR(191) NOT NULL,
+    `invoiceId` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'student',
+    `amount` DOUBLE NOT NULL,
+    `currency` VARCHAR(191) NOT NULL DEFAULT 'GBP',
+    `description` VARCHAR(191) NULL,
+    `dueDate` DATETIME(3) NULL,
+    `paidAmount` DOUBLE NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `paidAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Invoice_invoiceId_key`(`invoiceId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Payment` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NULL,
+    `invoiceId` VARCHAR(191) NULL,
+    `amount` DOUBLE NOT NULL,
+    `currency` VARCHAR(191) NOT NULL DEFAULT 'GBP',
+    `paymentMethod` VARCHAR(191) NULL,
+    `transactionRef` VARCHAR(191) NULL,
+    `receiptUrl` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'completed',
+    `paidAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Commission` (
+    `id` VARCHAR(191) NOT NULL,
+    `commissionId` VARCHAR(191) NOT NULL,
+    `partnerId` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `universityId` VARCHAR(191) NULL,
+    `amount` DOUBLE NOT NULL DEFAULT 0,
+    `currency` VARCHAR(191) NOT NULL DEFAULT 'GBP',
+    `triggerStage` VARCHAR(191) NOT NULL DEFAULT 'enrollment_confirmed',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'not_requested',
+    `requestedAt` DATETIME(3) NULL,
+    `reviewedAt` DATETIME(3) NULL,
+    `reviewedBy` VARCHAR(191) NULL,
+    `approvedAt` DATETIME(3) NULL,
+    `paidAt` DATETIME(3) NULL,
+    `paymentProof` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Commission_commissionId_key`(`commissionId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CommissionClaim` (
+    `id` VARCHAR(191) NOT NULL,
+    `commissionId` VARCHAR(191) NOT NULL,
+    `partnerId` VARCHAR(191) NOT NULL,
+    `claimAmount` DOUBLE NOT NULL,
+    `invoiceUrl` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `reviewedBy` VARCHAR(191) NULL,
+    `reviewedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `FinanceNote` (
+    `id` VARCHAR(191) NOT NULL,
+    `commissionId` VARCHAR(191) NULL,
+    `invoiceId` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NOT NULL,
+    `addedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Campaign` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `objective` VARCHAR(191) NULL,
+    `targetAudience` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
+    `serviceType` VARCHAR(191) NULL,
+    `platforms` VARCHAR(191) NULL,
+    `startDate` DATETIME(3) NULL,
+    `endDate` DATETIME(3) NULL,
+    `budget` DOUBLE NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CampaignRecipient` (
+    `id` VARCHAR(191) NOT NULL,
+    `campaignId` VARCHAR(191) NOT NULL,
+    `recipientType` VARCHAR(191) NULL,
+    `recipientId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `sentAt` DATETIME(3) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MarketingContent` (
+    `id` VARCHAR(191) NOT NULL,
+    `campaignId` VARCHAR(191) NULL,
+    `contentType` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NULL,
+    `title` VARCHAR(191) NULL,
+    `caption` VARCHAR(191) NULL,
+    `hashtags` VARCHAR(191) NULL,
+    `bodyContent` VARCHAR(191) NULL,
+    `imagePrompt` VARCHAR(191) NULL,
+    `videoScript` VARCHAR(191) NULL,
+    `ctaText` VARCHAR(191) NULL,
+    `ctaLink` VARCHAR(191) NULL,
+    `sizeTemplate` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `approvedBy` VARCHAR(191) NULL,
+    `approvedAt` DATETIME(3) NULL,
+    `scheduledAt` DATETIME(3) NULL,
+    `publishedAt` DATETIME(3) NULL,
+    `postUrl` VARCHAR(191) NULL,
+    `performanceMetrics` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ContentEditorLayer` (
+    `id` VARCHAR(191) NOT NULL,
+    `contentId` VARCHAR(191) NOT NULL,
+    `layerType` VARCHAR(191) NOT NULL DEFAULT 'text',
+    `text` VARCHAR(191) NULL,
+    `fontFamily` VARCHAR(191) NULL,
+    `fontSize` INTEGER NULL,
+    `fontWeight` VARCHAR(191) NULL,
+    `fontColor` VARCHAR(191) NULL,
+    `bgColor` VARCHAR(191) NULL,
+    `alignment` VARCHAR(191) NULL,
+    `x` DOUBLE NOT NULL DEFAULT 0,
+    `y` DOUBLE NOT NULL DEFAULT 0,
+    `width` DOUBLE NULL,
+    `height` DOUBLE NULL,
+    `rotation` DOUBLE NOT NULL DEFAULT 0,
+    `zIndex` INTEGER NOT NULL DEFAULT 0,
+    `borderRadius` INTEGER NULL,
+    `textShadow` VARCHAR(191) NULL,
+    `opacity` DOUBLE NOT NULL DEFAULT 1,
+    `layerOrder` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MarketingTemplate` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `platform` VARCHAR(191) NULL,
+    `width` INTEGER NOT NULL,
+    `height` INTEGER NOT NULL,
+    `thumbnail` VARCHAR(191) NULL,
+    `layers` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocialPostSize` (
+    `id` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `width` INTEGER NOT NULL,
+    `height` INTEGER NOT NULL,
+    `label` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocialAccount` (
+    `id` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NOT NULL,
+    `accountName` VARCHAR(191) NOT NULL,
+    `pageId` VARCHAR(191) NULL,
+    `accessToken` VARCHAR(191) NULL,
+    `refreshToken` VARCHAR(191) NULL,
+    `tokenExpiry` DATETIME(3) NULL,
+    `connectedBy` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `lastSyncAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocialPost` (
+    `id` VARCHAR(191) NOT NULL,
+    `accountId` VARCHAR(191) NOT NULL,
+    `contentId` VARCHAR(191) NULL,
+    `caption` VARCHAR(191) NULL,
+    `mediaUrls` VARCHAR(191) NULL,
+    `hashtags` VARCHAR(191) NULL,
+    `scheduledAt` DATETIME(3) NULL,
+    `publishedAt` DATETIME(3) NULL,
+    `postUrl` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `performanceMetrics` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `BlogPost` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NOT NULL,
+    `excerpt` VARCHAR(191) NULL,
+    `content` VARCHAR(191) NULL,
+    `featuredImage` VARCHAR(191) NULL,
+    `category` VARCHAR(191) NULL,
+    `tags` VARCHAR(191) NULL,
+    `authorId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `publishedAt` DATETIME(3) NULL,
+    `seoTitle` VARCHAR(191) NULL,
+    `seoDescription` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `BlogPost_slug_key`(`slug`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Page` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(191) NULL,
+    `metaTitle` VARCHAR(191) NULL,
+    `metaDescription` VARCHAR(191) NULL,
+    `template` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'published',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Page_slug_key`(`slug`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Faq` (
+    `id` VARCHAR(191) NOT NULL,
+    `question` VARCHAR(191) NOT NULL,
+    `answer` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `orderNum` INTEGER NOT NULL DEFAULT 0,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Testimonial` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentName` VARCHAR(191) NOT NULL,
+    `university` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
+    `quote` VARCHAR(191) NOT NULL,
+    `photoUrl` VARCHAR(191) NULL,
+    `rating` INTEGER NOT NULL DEFAULT 5,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SuccessStory` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentName` VARCHAR(191) NOT NULL,
+    `university` VARCHAR(191) NULL,
+    `course` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
+    `story` VARCHAR(191) NULL,
+    `photoUrl` VARCHAR(191) NULL,
+    `videoUrl` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AiAgent` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `agentType` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `prompt` VARCHAR(191) NULL,
+    `model` VARCHAR(191) NOT NULL DEFAULT 'gpt-4',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AiLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `agentId` VARCHAR(191) NULL,
+    `userId` VARCHAR(191) NULL,
+    `command` VARCHAR(191) NOT NULL,
+    `inputText` VARCHAR(191) NULL,
+    `outputText` VARCHAR(191) NULL,
+    `model` VARCHAR(191) NULL,
+    `tokensUsed` INTEGER NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'completed',
+    `error` VARCHAR(191) NULL,
+    `executionTime` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AutomationRule` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `triggerEvent` VARCHAR(191) NOT NULL,
+    `conditions` VARCHAR(191) NULL,
+    `actions` VARCHAR(191) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AutomationRun` (
+    `id` VARCHAR(191) NOT NULL,
+    `ruleId` VARCHAR(191) NOT NULL,
+    `triggerData` VARCHAR(191) NULL,
+    `executionResult` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'completed',
+    `executedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Setting` (
+    `id` VARCHAR(191) NOT NULL,
+    `key` VARCHAR(191) NOT NULL,
+    `value` VARCHAR(191) NULL,
+    `group` VARCHAR(191) NULL,
+
+    UNIQUE INDEX `Setting_key_key`(`key`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Notification` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `message` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'info',
+    `link` VARCHAR(191) NULL,
+    `isRead` BOOLEAN NOT NULL DEFAULT false,
+    `readAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AuditLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `action` VARCHAR(191) NOT NULL,
+    `module` VARCHAR(191) NOT NULL,
+    `recordId` VARCHAR(191) NULL,
+    `oldData` VARCHAR(191) NULL,
+    `newData` VARCHAR(191) NULL,
+    `ip` VARCHAR(191) NULL,
+    `userAgent` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LoginAttempt` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `ip` VARCHAR(191) NULL,
+    `success` BOOLEAN NOT NULL,
+    `userAgent` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UserSession` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `token` VARCHAR(191) NOT NULL,
+    `ip` VARCHAR(191) NULL,
+    `userAgent` VARCHAR(191) NULL,
+    `expiresAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `UserSession_token_key`(`token`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SupportTicket` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `subject` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `priority` VARCHAR(191) NOT NULL DEFAULT 'medium',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'open',
+    `assignedTo` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `TicketReply` (
+    `id` VARCHAR(191) NOT NULL,
+    `ticketId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `message` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MediaLibrary` (
+    `id` VARCHAR(191) NOT NULL,
+    `fileName` VARCHAR(191) NOT NULL,
+    `filePath` VARCHAR(191) NOT NULL,
+    `fileSize` INTEGER NULL,
+    `mimeType` VARCHAR(191) NULL,
+    `category` VARCHAR(191) NULL,
+    `uploadedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SystemHealthLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `component` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `message` VARCHAR(191) NULL,
+    `checkedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Backup` (
+    `id` VARCHAR(191) NOT NULL,
+    `fileName` VARCHAR(191) NOT NULL,
+    `fileSize` INTEGER NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'manual',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'completed',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ActivityLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `action` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `module` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Event` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `date` DATETIME(3) NOT NULL,
+    `endTime` DATETIME(3) NULL,
+    `location` VARCHAR(191) NULL,
+    `meetingLink` VARCHAR(191) NULL,
+    `type` VARCHAR(191) NOT NULL DEFAULT 'webinar',
+    `bannerUrl` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'upcoming',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Event_slug_key`(`slug`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AgentResearchJob` (
+    `id` VARCHAR(191) NOT NULL,
+    `agentKey` VARCHAR(191) NOT NULL DEFAULT 'research_agent',
+    `topic` VARCHAR(191) NOT NULL,
+    `targetAgents` VARCHAR(191) NULL,
+    `sourceType` VARCHAR(191) NOT NULL DEFAULT 'internal',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'queued',
+    `resultSummary` VARCHAR(191) NULL,
+    `sourcesJson` VARCHAR(191) NULL,
+    `blockedReason` VARCHAR(191) NULL,
+    `createdBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `completedAt` DATETIME(3) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AgentKnowledgeDistribution` (
+    `id` VARCHAR(191) NOT NULL,
+    `knowledgeId` VARCHAR(191) NOT NULL,
+    `agentKey` VARCHAR(191) NOT NULL,
+    `distributionStatus` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `reason` VARCHAR(191) NULL,
+    `approvedBy` VARCHAR(191) NULL,
+    `distributedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AgentUpdateRecommendation` (
+    `id` VARCHAR(191) NOT NULL,
+    `agentKey` VARCHAR(191) NOT NULL,
+    `recommendationType` VARCHAR(191) NOT NULL DEFAULT 'knowledge_update',
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `sourceJobId` VARCHAR(191) NULL,
+    `riskLevel` VARCHAR(191) NOT NULL DEFAULT 'low',
+    `approvalStatus` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `approvedBy` VARCHAR(191) NULL,
+    `appliedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AgentCreationProposal` (
+    `id` VARCHAR(191) NOT NULL,
+    `proposedAgentKey` VARCHAR(191) NOT NULL,
+    `proposedAgentName` VARCHAR(191) NOT NULL,
+    `department` VARCHAR(191) NOT NULL,
+    `purpose` VARCHAR(191) NOT NULL,
+    `reason` VARCHAR(191) NOT NULL,
+    `suggestedTools` VARCHAR(191) NULL,
+    `suggestedModel` VARCHAR(191) NULL DEFAULT 'gpt-4',
+    `approvalStatus` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `approvedBy` VARCHAR(191) NULL,
+    `selfTestResult` VARCHAR(191) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `activatedAt` DATETIME(3) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `KnowledgeBase` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NOT NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'manual',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `tags` VARCHAR(191) NULL,
+    `approvedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PromptVersion` (
+    `id` VARCHAR(191) NOT NULL,
+    `agentType` VARCHAR(191) NOT NULL,
+    `prompt` VARCHAR(191) NOT NULL,
+    `version` INTEGER NOT NULL DEFAULT 1,
+    `changeNote` VARCHAR(191) NULL,
+    `createdBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CommissionStage` (
+    `id` VARCHAR(191) NOT NULL,
+    `commissionId` VARCHAR(191) NOT NULL,
+    `stage` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `triggeredAt` DATETIME(3) NULL,
+    `triggeredBy` VARCHAR(191) NULL,
+    `notes` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MarketingIdea` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `category` VARCHAR(191) NULL,
+    `priority` VARCHAR(191) NOT NULL DEFAULT 'medium',
+    `status` VARCHAR(191) NOT NULL DEFAULT 'idea',
+    `sourceType` VARCHAR(191) NOT NULL DEFAULT 'manual',
+    `aiAgentId` VARCHAR(191) NULL,
+    `tags` VARCHAR(191) NULL,
+    `assignedTo` VARCHAR(191) NULL,
+    `createdBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ImagePrompt` (
+    `id` VARCHAR(191) NOT NULL,
+    `contentId` VARCHAR(191) NULL,
+    `prompt` VARCHAR(191) NOT NULL,
+    `negativePrompt` VARCHAR(191) NULL,
+    `style` VARCHAR(191) NULL,
+    `platform` VARCHAR(191) NULL,
+    `size` VARCHAR(191) NULL,
+    `generatedUrl` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `createdBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `VideoScript` (
+    `id` VARCHAR(191) NOT NULL,
+    `contentId` VARCHAR(191) NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `script` VARCHAR(191) NOT NULL,
+    `duration` VARCHAR(191) NULL,
+    `platform` VARCHAR(191) NULL,
+    `hookLine` VARCHAR(191) NULL,
+    `callToAction` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'draft',
+    `createdBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Country` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NOT NULL,
+    `flagEmoji` VARCHAR(191) NULL,
+    `description` VARCHAR(191) NULL,
+    `whyStudy` VARCHAR(191) NULL,
+    `costOfLiving` VARCHAR(191) NULL,
+    `visaInfo` VARCHAR(191) NULL,
+    `workRights` VARCHAR(191) NULL,
+    `postStudyWork` VARCHAR(191) NULL,
+    `popular` BOOLEAN NOT NULL DEFAULT false,
+    `universityCount` INTEGER NOT NULL DEFAULT 0,
+    `avgTuition` VARCHAR(191) NULL,
+    `language` VARCHAR(191) NULL,
+    `currency` VARCHAR(191) NULL,
+    `bannerUrl` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Country_slug_key`(`slug`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `OtpVerification` (
+    `id` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `otpHash` VARCHAR(191) NOT NULL,
+    `purpose` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NULL,
+    `verified` BOOLEAN NOT NULL DEFAULT false,
+    `attempts` INTEGER NOT NULL DEFAULT 0,
+    `maxAttempts` INTEGER NOT NULL DEFAULT 5,
+    `expiresAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `EmailTemplate` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `subject` VARCHAR(191) NOT NULL,
+    `body` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NOT NULL,
+    `variables` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `EmailTemplate_name_key`(`name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `EmailQueue` (
+    `id` VARCHAR(191) NOT NULL,
+    `to` VARCHAR(191) NOT NULL,
+    `cc` VARCHAR(191) NULL,
+    `bcc` VARCHAR(191) NULL,
+    `subject` VARCHAR(191) NOT NULL,
+    `body` VARCHAR(191) NOT NULL,
+    `templateId` VARCHAR(191) NULL,
+    `templateData` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'queued',
+    `priority` VARCHAR(191) NOT NULL DEFAULT 'normal',
+    `attempts` INTEGER NOT NULL DEFAULT 0,
+    `maxAttempts` INTEGER NOT NULL DEFAULT 3,
+    `lastAttemptAt` DATETIME(3) NULL,
+    `sentAt` DATETIME(3) NULL,
+    `failedReason` VARCHAR(191) NULL,
+    `scheduledAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `InterviewSession` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `counselorId` VARCHAR(191) NULL,
+    `interviewType` VARCHAR(191) NOT NULL,
+    `country` VARCHAR(191) NULL,
+    `scheduledAt` DATETIME(3) NULL,
+    `completedAt` DATETIME(3) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'scheduled',
+    `meetingLink` VARCHAR(191) NULL,
+    `meetingType` VARCHAR(191) NOT NULL DEFAULT 'manual',
+    `notes` VARCHAR(191) NULL,
+    `feedback` VARCHAR(191) NULL,
+    `score` INTEGER NULL,
+    `aiGenerated` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `InterviewQuestion` (
+    `id` VARCHAR(191) NOT NULL,
+    `sessionId` VARCHAR(191) NULL,
+    `interviewType` VARCHAR(191) NOT NULL,
+    `country` VARCHAR(191) NULL,
+    `question` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `suggestedAnswer` VARCHAR(191) NULL,
+    `difficulty` VARCHAR(191) NOT NULL DEFAULT 'medium',
+    `aiGenerated` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `InterviewFeedback` (
+    `id` VARCHAR(191) NOT NULL,
+    `sessionId` VARCHAR(191) NOT NULL,
+    `questionId` VARCHAR(191) NULL,
+    `answer` VARCHAR(191) NULL,
+    `rating` INTEGER NULL,
+    `feedback` VARCHAR(191) NULL,
+    `improvementTips` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WhatsappMedia` (
+    `id` VARCHAR(191) NOT NULL,
+    `messageId` VARCHAR(191) NULL,
+    `mediaType` VARCHAR(191) NOT NULL,
+    `mediaUrl` VARCHAR(191) NOT NULL,
+    `originalUrl` VARCHAR(191) NULL,
+    `fileName` VARCHAR(191) NULL,
+    `fileSize` INTEGER NULL,
+    `mimeType` VARCHAR(191) NULL,
+    `caption` VARCHAR(191) NULL,
+    `autoLinkedToDocument` BOOLEAN NOT NULL DEFAULT false,
+    `documentId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `downloadedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WebsiteChatSession` (
+    `id` VARCHAR(191) NOT NULL,
+    `visitorId` VARCHAR(191) NOT NULL,
+    `visitorName` VARCHAR(191) NULL,
+    `visitorPhone` VARCHAR(191) NULL,
+    `visitorEmail` VARCHAR(191) NULL,
+    `source` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `counselorId` VARCHAR(191) NULL,
+    `startedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `endedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WebsiteChatMessage` (
+    `id` VARCHAR(191) NOT NULL,
+    `sessionId` VARCHAR(191) NOT NULL,
+    `sender` VARCHAR(191) NOT NULL,
+    `message` VARCHAR(191) NOT NULL,
+    `messageType` VARCHAR(191) NOT NULL DEFAULT 'text',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SlaConfig` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `module` VARCHAR(191) NOT NULL,
+    `firstReminderMinutes` INTEGER NOT NULL DEFAULT 40,
+    `secondReminderMinutes` INTEGER NOT NULL DEFAULT 20,
+    `finalReminderMinutes` INTEGER NOT NULL DEFAULT 10,
+    `escalationLevel1` VARCHAR(191) NULL,
+    `escalationLevel2` VARCHAR(191) NULL,
+    `escalationLevel3` VARCHAR(191) NULL,
+    `businessHoursStart` VARCHAR(191) NOT NULL DEFAULT '10:00',
+    `businessHoursEnd` VARCHAR(191) NOT NULL DEFAULT '18:00',
+    `timezone` VARCHAR(191) NOT NULL DEFAULT 'Asia/Dhaka',
+    `active` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `StudentFavorite` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `itemType` VARCHAR(191) NOT NULL,
+    `itemId` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `StudentFavorite_studentId_itemType_itemId_key`(`studentId`, `itemType`, `itemId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `DocumentVersion` (
+    `id` VARCHAR(191) NOT NULL,
+    `documentId` VARCHAR(191) NOT NULL,
+    `version` INTEGER NOT NULL DEFAULT 1,
+    `fileUrl` VARCHAR(191) NOT NULL,
+    `fileName` VARCHAR(191) NOT NULL,
+    `fileSize` INTEGER NULL,
+    `mimeType` VARCHAR(191) NULL,
+    `uploadedBy` VARCHAR(191) NULL,
+    `changeNote` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Expense` (
+    `id` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NOT NULL,
+    `amount` DOUBLE NOT NULL,
+    `currency` VARCHAR(191) NOT NULL DEFAULT 'BDT',
+    `description` VARCHAR(191) NULL,
+    `receiptUrl` VARCHAR(191) NULL,
+    `paidBy` VARCHAR(191) NULL,
+    `approvedBy` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `date` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RateLimit` (
+    `id` VARCHAR(191) NOT NULL,
+    `identifier` VARCHAR(191) NOT NULL,
+    `action` VARCHAR(191) NOT NULL,
+    `attempts` INTEGER NOT NULL DEFAULT 1,
+    `blocked` BOOLEAN NOT NULL DEFAULT false,
+    `blockedUntil` DATETIME(3) NULL,
+    `lastAttemptAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `VisaStatusLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `visaFileId` VARCHAR(191) NOT NULL,
+    `fromStage` VARCHAR(191) NULL,
+    `toStage` VARCHAR(191) NOT NULL,
+    `changedBy` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `FinancialProofReview` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `visaFileId` VARCHAR(191) NULL,
+    `bankStatementStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `bankSolvencyStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `sponsorLetterStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `affidavitStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `taxDocumentStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `incomeSourceStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `depositReceiptStatus` VARCHAR(191) NOT NULL DEFAULT 'missing',
+    `fundsMaturityNote` VARCHAR(191) NULL,
+    `reviewerId` VARCHAR(191) NULL,
+    `reviewerNote` VARCHAR(191) NULL,
+    `riskFlag` VARCHAR(191) NOT NULL DEFAULT 'low',
+    `finalFinanceStatus` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `reviewedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SmsTemplate` (
+    `id` VARCHAR(191) NOT NULL,
+    `templateId` VARCHAR(191) NOT NULL,
+    `templateName` VARCHAR(191) NOT NULL,
+    `channel` VARCHAR(191) NOT NULL DEFAULT 'sms',
+    `roleVisibility` VARCHAR(191) NOT NULL DEFAULT 'all',
+    `triggerEvent` VARCHAR(191) NOT NULL,
+    `messageBody` VARCHAR(191) NOT NULL,
+    `variables` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdBy` VARCHAR(191) NULL,
+    `approvedBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `SmsTemplate_templateId_key`(`templateId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SmsLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `templateId` VARCHAR(191) NULL,
+    `channel` VARCHAR(191) NOT NULL DEFAULT 'sms',
+    `recipient` VARCHAR(191) NOT NULL,
+    `recipientName` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `leadId` VARCHAR(191) NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `visaFileId` VARCHAR(191) NULL,
+    `messageBody` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'queued',
+    `providerMessageId` VARCHAR(191) NULL,
+    `error` VARCHAR(191) NULL,
+    `sentBy` VARCHAR(191) NULL,
+    `sentAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `StudentTimeline` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `eventType` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `actorType` VARCHAR(191) NOT NULL DEFAULT 'system',
+    `actorId` VARCHAR(191) NULL,
+    `leadId` VARCHAR(191) NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `visaFileId` VARCHAR(191) NULL,
+    `documentId` VARCHAR(191) NULL,
+    `messageId` VARCHAR(191) NULL,
+    `metadata` VARCHAR(191) NULL,
+    `isPublic` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RiskFlag` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `visaFileId` VARCHAR(191) NULL,
+    `riskType` VARCHAR(191) NOT NULL,
+    `severity` VARCHAR(191) NOT NULL DEFAULT 'medium',
+    `description` VARCHAR(191) NOT NULL,
+    `raisedBy` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'open',
+    `mitigatedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PreDepartureChecklist` (
+    `id` VARCHAR(191) NOT NULL,
+    `studentId` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `itemName` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NOT NULL,
+    `isRequired` BOOLEAN NOT NULL DEFAULT true,
+    `isCompleted` BOOLEAN NOT NULL DEFAULT false,
+    `completedAt` DATETIME(3) NULL,
+    `note` TEXT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `InterviewAnswer` (
+    `id` VARCHAR(191) NOT NULL,
+    `sessionId` VARCHAR(191) NOT NULL,
+    `questionId` VARCHAR(191) NULL,
+    `questionText` VARCHAR(191) NOT NULL,
+    `category` VARCHAR(191) NULL,
+    `studentAnswer` VARCHAR(191) NULL,
+    `aiFeedback` VARCHAR(191) NULL,
+    `counselorFeedback` VARCHAR(191) NULL,
+    `visaOfficerFeedback` VARCHAR(191) NULL,
+    `score` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `BrandAsset` (
+    `id` VARCHAR(191) NOT NULL,
+    `assetType` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `fileUrl` VARCHAR(191) NULL,
+    `value` VARCHAR(191) NULL,
+    `isPrimary` BOOLEAN NOT NULL DEFAULT false,
+    `uploadedBy` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocialComment` (
+    `id` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NOT NULL,
+    `postId` VARCHAR(191) NULL,
+    `postUrl` VARCHAR(191) NULL,
+    `commenterId` VARCHAR(191) NULL,
+    `commenterName` VARCHAR(191) NULL,
+    `commenterAvatar` VARCHAR(191) NULL,
+    `commentText` VARCHAR(191) NOT NULL,
+    `matchedKeyword` VARCHAR(191) NULL,
+    `autoReplySent` BOOLEAN NOT NULL DEFAULT false,
+    `autoReplyText` VARCHAR(191) NULL,
+    `dmSent` BOOLEAN NOT NULL DEFAULT false,
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'new',
+    `receivedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocialDmMessage` (
+    `id` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NOT NULL,
+    `conversationId` VARCHAR(191) NULL,
+    `senderId` VARCHAR(191) NULL,
+    `senderName` VARCHAR(191) NULL,
+    `messageText` VARCHAR(191) NULL,
+    `mediaUrl` VARCHAR(191) NULL,
+    `direction` VARCHAR(191) NOT NULL DEFAULT 'inbound',
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `isAiHandled` BOOLEAN NOT NULL DEFAULT false,
+    `humanHandoff` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `KeywordTrigger` (
+    `id` VARCHAR(191) NOT NULL,
+    `keyword` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NOT NULL DEFAULT 'all',
+    `autoReplyText` VARCHAR(191) NOT NULL,
+    `autoDmText` VARCHAR(191) NULL,
+    `createLead` BOOLEAN NOT NULL DEFAULT true,
+    `assignCounselorId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `matchCount` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `KeywordTrigger_keyword_platform_key`(`keyword`, `platform`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CommentLead` (
+    `id` VARCHAR(191) NOT NULL,
+    `source` VARCHAR(191) NOT NULL,
+    `sourceId` VARCHAR(191) NULL,
+    `name` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `socialId` VARCHAR(191) NULL,
+    `message` VARCHAR(191) NULL,
+    `matchedKeyword` VARCHAR(191) NULL,
+    `dedupeKey` VARCHAR(191) NULL,
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `counselorId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'new',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `N8nWebhook` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `webhookUrl` VARCHAR(191) NULL,
+    `secretToken` VARCHAR(191) NULL,
+    `workflowType` VARCHAR(191) NOT NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `lastTriggeredAt` DATETIME(3) NULL,
+    `triggerCount` INTEGER NOT NULL DEFAULT 0,
+    `createdBy` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SlaEscalation` (
+    `id` VARCHAR(191) NOT NULL,
+    `conversationId` VARCHAR(191) NULL,
+    `channel` VARCHAR(191) NOT NULL DEFAULT 'whatsapp',
+    `contactIdentifier` VARCHAR(191) NOT NULL,
+    `assignedTo` VARCHAR(191) NULL,
+    `level1EscalatedAt` DATETIME(3) NULL,
+    `level2EscalatedAt` DATETIME(3) NULL,
+    `level3EscalatedAt` DATETIME(3) NULL,
+    `currentLevel` INTEGER NOT NULL DEFAULT 0,
+    `resolvedAt` DATETIME(3) NULL,
+    `resolutionNote` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MarketingUserAccess` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `employeeId` VARCHAR(191) NULL,
+    `accessLevel` VARCHAR(191) NOT NULL DEFAULT 'limited',
+    `approvedBy` VARCHAR(191) NULL,
+    `approvedAt` DATETIME(3) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `MarketingUserAccess_userId_key`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WhatsappAiConfig` (
+    `id` VARCHAR(191) NOT NULL,
+    `scope` VARCHAR(191) NOT NULL DEFAULT 'global',
+    `conversationId` VARCHAR(191) NULL,
+    `phoneNumber` VARCHAR(191) NULL,
+    `aiEnabled` BOOLEAN NOT NULL DEFAULT true,
+    `officeHoursOnly` BOOLEAN NOT NULL DEFAULT true,
+    `businessHoursStart` VARCHAR(191) NOT NULL DEFAULT '10:00',
+    `businessHoursEnd` VARCHAR(191) NOT NULL DEFAULT '18:00',
+    `timezone` VARCHAR(191) NOT NULL DEFAULT 'Asia/Dhaka',
+    `requireOtpForPrivate` BOOLEAN NOT NULL DEFAULT true,
+    `humanHandoffKeywords` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `PostApproval` (
+    `id` VARCHAR(191) NOT NULL,
+    `contentId` VARCHAR(191) NULL,
+    `requestedBy` VARCHAR(191) NULL,
+    `reviewedBy` VARCHAR(191) NULL,
+    `decision` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `reviewNote` VARCHAR(191) NULL,
+    `scheduledChannels` VARCHAR(191) NULL,
+    `reviewedAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AutomationRunLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `ruleName` VARCHAR(191) NOT NULL,
+    `triggerEvent` VARCHAR(191) NOT NULL,
+    `entityType` VARCHAR(191) NULL,
+    `entityId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'success',
+    `message` VARCHAR(191) NULL,
+    `executionMs` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `LeadOutreach` (
+    `id` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'opted_in_form',
+    `consentStatus` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `consentSource` VARCHAR(191) NULL,
+    `channel` VARCHAR(191) NULL,
+    `outreachHistory` VARCHAR(191) NULL,
+    `lastOutreachAt` DATETIME(3) NULL,
+    `optedOutAt` DATETIME(3) NULL,
+    `blockedReason` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CommunicationPreference` (
+    `id` VARCHAR(191) NOT NULL,
+    `ownerType` VARCHAR(191) NOT NULL,
+    `ownerId` VARCHAR(191) NOT NULL,
+    `whatsappAllowed` BOOLEAN NOT NULL DEFAULT true,
+    `smsAllowed` BOOLEAN NOT NULL DEFAULT true,
+    `emailAllowed` BOOLEAN NOT NULL DEFAULT true,
+    `phoneAllowed` BOOLEAN NOT NULL DEFAULT true,
+    `marketingAllowed` BOOLEAN NOT NULL DEFAULT true,
+    `transactionalAllowed` BOOLEAN NOT NULL DEFAULT true,
+    `optOutAt` DATETIME(3) NULL,
+    `consentSource` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `CommunicationPreference_ownerType_ownerId_key`(`ownerType`, `ownerId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SequenceCounter` (
+    `id` VARCHAR(191) NOT NULL,
+    `counterKey` VARCHAR(191) NOT NULL,
+    `year` INTEGER NOT NULL,
+    `lastValue` INTEGER NOT NULL DEFAULT 0,
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `SequenceCounter_counterKey_key`(`counterKey`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CommunicationThread` (
+    `id` VARCHAR(191) NOT NULL,
+    `threadCode` VARCHAR(191) NOT NULL,
+    `subject` VARCHAR(191) NULL,
+    `channel` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `assignedTo` VARCHAR(191) NULL,
+    `assignedCounselorId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'open',
+    `lastMessageAt` DATETIME(3) NULL,
+    `slaDueAt` DATETIME(3) NULL,
+    `escalationLevel` INTEGER NOT NULL DEFAULT 0,
+    `isAiHandled` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `CommunicationThread_threadCode_key`(`threadCode`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `AiReplyDraft` (
+    `id` VARCHAR(191) NOT NULL,
+    `communicationType` VARCHAR(191) NOT NULL,
+    `communicationId` VARCHAR(191) NOT NULL,
+    `promptContext` VARCHAR(191) NULL,
+    `draftBody` VARCHAR(191) NOT NULL,
+    `riskFlags` VARCHAR(191) NULL,
+    `approvalStatus` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `createdById` VARCHAR(191) NULL,
+    `approvedById` VARCHAR(191) NULL,
+    `approvedAt` DATETIME(3) NULL,
+    `sentAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SocialInbox` (
+    `id` VARCHAR(191) NOT NULL,
+    `platform` VARCHAR(191) NOT NULL,
+    `externalMessageId` VARCHAR(191) NULL,
+    `externalCommentId` VARCHAR(191) NULL,
+    `pageId` VARCHAR(191) NULL,
+    `postUrl` VARCHAR(191) NULL,
+    `senderName` VARCHAR(191) NULL,
+    `senderProfileUrl` VARCHAR(191) NULL,
+    `senderSocialId` VARCHAR(191) NULL,
+    `messageText` VARCHAR(191) NOT NULL,
+    `attachmentUrl` VARCHAR(191) NULL,
+    `intent` VARCHAR(191) NULL,
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `assignedTo` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'new',
+    `autoRepliedAt` DATETIME(3) NULL,
+    `autoRepliedWith` VARCHAR(191) NULL,
+    `dmSentAt` DATETIME(3) NULL,
+    `threadId` VARCHAR(191) NULL,
+    `auditLogId` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ApprovalRequest` (
+    `id` VARCHAR(191) NOT NULL,
+    `requestType` VARCHAR(191) NOT NULL,
+    `entityId` VARCHAR(191) NULL,
+    `entityType` VARCHAR(191) NULL,
+    `payload` VARCHAR(191) NULL,
+    `requestedById` VARCHAR(191) NULL,
+    `currentApproverId` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
+    `reviewerNote` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `decidedAt` DATETIME(3) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `WebhookEndpoint` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `source` VARCHAR(191) NOT NULL DEFAULT 'n8n',
+    `url` VARCHAR(191) NULL,
+    `secret` VARCHAR(191) NULL,
+    `events` VARCHAR(191) NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'active',
+    `lastTriggeredAt` DATETIME(3) NULL,
+    `failureCount` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `OtpLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `ownerType` VARCHAR(191) NULL,
+    `ownerId` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `email` VARCHAR(191) NULL,
+    `purpose` VARCHAR(191) NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `attemptCount` INTEGER NOT NULL DEFAULT 0,
+    `expiresAt` DATETIME(3) NULL,
+    `verifiedAt` DATETIME(3) NULL,
+    `auditLogId` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CallLog` (
+    `id` VARCHAR(191) NOT NULL,
+    `callCode` VARCHAR(191) NOT NULL,
+    `leadId` VARCHAR(191) NULL,
+    `studentId` VARCHAR(191) NULL,
+    `partnerId` VARCHAR(191) NULL,
+    `applicationId` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `callType` VARCHAR(191) NOT NULL DEFAULT 'outbound',
+    `callOutcome` VARCHAR(191) NULL,
+    `durationSeconds` INTEGER NOT NULL DEFAULT 0,
+    `recordingUrl` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `studentVisibleNote` VARCHAR(191) NULL,
+    `internalNote` VARCHAR(191) NULL,
+    `nextFollowUpAt` DATETIME(3) NULL,
+    `createdById` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `CallLog_callCode_key`(`callCode`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `UserRole` ADD CONSTRAINT `UserRole_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UserRole` ADD CONSTRAINT `UserRole_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Role`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RolePermission` ADD CONSTRAINT `RolePermission_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Role`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RolePermission` ADD CONSTRAINT `RolePermission_permissionId_fkey` FOREIGN KEY (`permissionId`) REFERENCES `Permission`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Employee` ADD CONSTRAINT `Employee_branchId_fkey` FOREIGN KEY (`branchId`) REFERENCES `Branch`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Employee` ADD CONSTRAINT `Employee_departmentId_fkey` FOREIGN KEY (`departmentId`) REFERENCES `Department`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Employee` ADD CONSTRAINT `Employee_designationId_fkey` FOREIGN KEY (`designationId`) REFERENCES `Designation`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `EmployeeDocument` ADD CONSTRAINT `EmployeeDocument_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Attendance` ADD CONSTRAINT `Attendance_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `AttendanceCorrection` ADD CONSTRAINT `AttendanceCorrection_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LeaveRequest` ADD CONSTRAINT `LeaveRequest_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LeaveRequest` ADD CONSTRAINT `LeaveRequest_leaveTypeId_fkey` FOREIGN KEY (`leaveTypeId`) REFERENCES `LeaveType`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Payslip` ADD CONSTRAINT `Payslip_employeeId_fkey` FOREIGN KEY (`employeeId`) REFERENCES `Employee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Student` ADD CONSTRAINT `Student_partnerId_fkey` FOREIGN KEY (`partnerId`) REFERENCES `Partner`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Guardian` ADD CONSTRAINT `Guardian_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PartnerStaff` ADD CONSTRAINT `PartnerStaff_partnerId_fkey` FOREIGN KEY (`partnerId`) REFERENCES `Partner`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PartnerAgreement` ADD CONSTRAINT `PartnerAgreement_partnerId_fkey` FOREIGN KEY (`partnerId`) REFERENCES `Partner`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Lead` ADD CONSTRAINT `Lead_assignedTo_fkey` FOREIGN KEY (`assignedTo`) REFERENCES `Employee`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LeadNote` ADD CONSTRAINT `LeadNote_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Lead`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LeadAssignment` ADD CONSTRAINT `LeadAssignment_leadId_fkey` FOREIGN KEY (`leadId`) REFERENCES `Lead`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Application` ADD CONSTRAINT `Application_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Application` ADD CONSTRAINT `Application_universityId_fkey` FOREIGN KEY (`universityId`) REFERENCES `University`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Application` ADD CONSTRAINT `Application_courseId_fkey` FOREIGN KEY (`courseId`) REFERENCES `Course`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Application` ADD CONSTRAINT `Application_partnerId_fkey` FOREIGN KEY (`partnerId`) REFERENCES `Partner`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Application` ADD CONSTRAINT `Application_counselorId_fkey` FOREIGN KEY (`counselorId`) REFERENCES `Employee`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ApplicationStatusHistory` ADD CONSTRAINT `ApplicationStatusHistory_applicationId_fkey` FOREIGN KEY (`applicationId`) REFERENCES `Application`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ApplicationNote` ADD CONSTRAINT `ApplicationNote_applicationId_fkey` FOREIGN KEY (`applicationId`) REFERENCES `Application`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Course` ADD CONSTRAINT `Course_universityId_fkey` FOREIGN KEY (`universityId`) REFERENCES `University`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Scholarship` ADD CONSTRAINT `Scholarship_universityId_fkey` FOREIGN KEY (`universityId`) REFERENCES `University`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Document` ADD CONSTRAINT `Document_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VisaFile` ADD CONSTRAINT `VisaFile_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VisaFile` ADD CONSTRAINT `VisaFile_assignedTo_fkey` FOREIGN KEY (`assignedTo`) REFERENCES `Employee`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VisaChecklist` ADD CONSTRAINT `VisaChecklist_visaFileId_fkey` FOREIGN KEY (`visaFileId`) REFERENCES `VisaFile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UkviInterview` ADD CONSTRAINT `UkviInterview_visaFileId_fkey` FOREIGN KEY (`visaFileId`) REFERENCES `VisaFile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UkviQuestion` ADD CONSTRAINT `UkviQuestion_interviewId_fkey` FOREIGN KEY (`interviewId`) REFERENCES `UkviInterview`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Task` ADD CONSTRAINT `Task_assignedTo_fkey` FOREIGN KEY (`assignedTo`) REFERENCES `Employee`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Appointment` ADD CONSTRAINT `Appointment_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `WhatsappMessage` ADD CONSTRAINT `WhatsappMessage_conversationId_fkey` FOREIGN KEY (`conversationId`) REFERENCES `WhatsappConversation`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Payment` ADD CONSTRAINT `Payment_studentId_fkey` FOREIGN KEY (`studentId`) REFERENCES `Student`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Commission` ADD CONSTRAINT `Commission_partnerId_fkey` FOREIGN KEY (`partnerId`) REFERENCES `Partner`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Commission` ADD CONSTRAINT `Commission_applicationId_fkey` FOREIGN KEY (`applicationId`) REFERENCES `Application`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CommissionClaim` ADD CONSTRAINT `CommissionClaim_commissionId_fkey` FOREIGN KEY (`commissionId`) REFERENCES `Commission`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CommissionClaim` ADD CONSTRAINT `CommissionClaim_partnerId_fkey` FOREIGN KEY (`partnerId`) REFERENCES `Partner`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `FinanceNote` ADD CONSTRAINT `FinanceNote_commissionId_fkey` FOREIGN KEY (`commissionId`) REFERENCES `Commission`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CampaignRecipient` ADD CONSTRAINT `CampaignRecipient_campaignId_fkey` FOREIGN KEY (`campaignId`) REFERENCES `Campaign`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MarketingContent` ADD CONSTRAINT `MarketingContent_campaignId_fkey` FOREIGN KEY (`campaignId`) REFERENCES `Campaign`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ContentEditorLayer` ADD CONSTRAINT `ContentEditorLayer_contentId_fkey` FOREIGN KEY (`contentId`) REFERENCES `MarketingContent`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Notification` ADD CONSTRAINT `Notification_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `AuditLog` ADD CONSTRAINT `AuditLog_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `LoginAttempt` ADD CONSTRAINT `LoginAttempt_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UserSession` ADD CONSTRAINT `UserSession_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SupportTicket` ADD CONSTRAINT `SupportTicket_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TicketReply` ADD CONSTRAINT `TicketReply_ticketId_fkey` FOREIGN KEY (`ticketId`) REFERENCES `SupportTicket`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `TicketReply` ADD CONSTRAINT `TicketReply_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `InterviewQuestion` ADD CONSTRAINT `InterviewQuestion_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `InterviewSession`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `InterviewFeedback` ADD CONSTRAINT `InterviewFeedback_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `InterviewSession`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DocumentVersion` ADD CONSTRAINT `DocumentVersion_documentId_fkey` FOREIGN KEY (`documentId`) REFERENCES `Document`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `InterviewAnswer` ADD CONSTRAINT `InterviewAnswer_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `InterviewSession`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MarketingUserAccess` ADD CONSTRAINT `MarketingUserAccess_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+

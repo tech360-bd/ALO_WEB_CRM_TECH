@@ -1,0 +1,222 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+
+export async function GET(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const studentId = searchParams.get('studentId') || '';
+    const stage = searchParams.get('stage') || '';
+    const status = searchParams.get('status') || '';
+    const assignedTo = searchParams.get('assignedTo') || '';
+
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+    if (studentId) where.studentId = studentId;
+    if (stage) where.stage = stage;
+    if (status) where.status = status;
+    if (assignedTo) where.assignedTo = assignedTo;
+
+    const [visaFiles, total] = await Promise.all([
+      db.visaFile.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          student: { select: { id: true, firstName: true, lastName: true, studentId: true, nationality: true } },
+          visaOfficer: { select: { id: true, firstName: true, lastName: true, employeeId: true } },
+          checklist: true,
+          ukviInterviews: { include: { questions: true } },
+        }
+      }),
+      db.visaFile.count({ where })
+    ]);
+
+    // Stage distribution
+    const stageDistribution = await db.visaFile.groupBy({
+      by: ['stage'],
+      _count: { stage: true }
+    });
+
+    return NextResponse.json({
+      visaFiles,
+      stageDistribution: stageDistribution.map(s => ({ stage: s.stage, count: s._count.stage })),
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      }
+    });
+  } catch (error) {
+    console.error('Visa GET error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+
+    if (!body.studentId) {
+      return NextResponse.json(
+        { error: 'Student ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const visaFile = await db.visaFile.create({
+      data: {
+        studentId: body.studentId,
+        applicationId: body.applicationId || null,
+        assignedTo: body.assignedTo || null,
+        stage: body.stage || 'not_started',
+        casNumber: body.casNumber || null,
+        casDate: body.casDate ? new Date(body.casDate) : null,
+        visaAppointmentDate: body.visaAppointmentDate ? new Date(body.visaAppointmentDate) : null,
+        biometricsDate: body.biometricsDate ? new Date(body.biometricsDate) : null,
+        notes: body.notes || null,
+        status: body.status || 'active',
+      },
+      include: {
+        student: true,
+        visaOfficer: true,
+      }
+    });
+
+    // Create default checklist items
+    const defaultChecklistItems = [
+      'Valid Passport',
+      'CAS Letter',
+      'TB Test Certificate',
+      'Financial Documents (Bank Statements)',
+      'Academic Certificates',
+      'English Language Test Result',
+      'Passport-sized Photographs',
+      'Visa Application Form',
+      'Police Clearance Certificate',
+      'Medical Insurance',
+    ];
+
+    for (const itemName of defaultChecklistItems) {
+      await db.visaChecklist.create({
+        data: {
+          visaFileId: visaFile.id,
+          itemName,
+          isRequired: true,
+          isCompleted: false,
+        }
+      });
+    }
+
+    return NextResponse.json(visaFile, { status: 201 });
+  } catch (error) {
+    console.error('Visa POST error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const { id, ...updateData } = body;
+    if (!id) {
+      return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    }
+
+    // Validate stage if provided
+    const validStages = [
+      'not_started', 'document_collection', 'document_review', 'cas_received',
+      'visa_file_preparing', 'visa_submitted', 'biometrics_done',
+      'waiting_decision', 'visa_approved', 'visa_refused',
+      'reapply_planning', 'closed',
+    ];
+    if (updateData.stage && !validStages.includes(updateData.stage)) {
+      return NextResponse.json({ error: 'Invalid stage' }, { status: 400 });
+    }
+
+    // Convert date strings to Date objects
+    if (updateData.casDate) updateData.casDate = new Date(updateData.casDate);
+    if (updateData.visaAppointmentDate) updateData.visaAppointmentDate = new Date(updateData.visaAppointmentDate);
+    if (updateData.biometricsDate) updateData.biometricsDate = new Date(updateData.biometricsDate);
+    if (updateData.visaDecisionDate) updateData.visaDecisionDate = new Date(updateData.visaDecisionDate);
+
+    // Track stage change in VisaStatusLog
+    const existing = await db.visaFile.findUnique({ where: { id } });
+    if (existing && updateData.stage && existing.stage !== updateData.stage) {
+      await db.visaStatusLog.create({
+        data: {
+          visaFileId: id,
+          fromStage: existing.stage,
+          toStage: updateData.stage,
+          changedBy: updateData.changedBy || null,
+          note: updateData.changeNote || null,
+        },
+      }).catch(() => {});
+    }
+
+    const { changedBy, changeNote, ...cleanUpdate } = updateData;
+    const visaFile = await db.visaFile.update({
+      where: { id },
+      data: cleanUpdate,
+      include: {
+        student: { select: { id: true, firstName: true, lastName: true, studentId: true, nationality: true } },
+        visaOfficer: { select: { id: true, firstName: true, lastName: true, employeeId: true } },
+        checklist: true,
+      },
+    });
+
+    // Append to student timeline if stage changed
+    if (existing && updateData.stage && existing.stage !== updateData.stage) {
+      await db.studentTimeline.create({
+        data: {
+          studentId: visaFile.studentId,
+          eventType: 'visa_status_change',
+          title: `Visa stage updated: ${existing.stage} → ${updateData.stage}`,
+          description: updateData.changeNote || null,
+          actorType: 'employee',
+          actorId: updateData.changedBy || null,
+          visaFileId: id,
+          isPublic: false, // internal status change
+        },
+      }).catch(() => {});
+    }
+
+    return NextResponse.json(visaFile);
+  } catch (error) {
+    console.error('Visa PUT error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+

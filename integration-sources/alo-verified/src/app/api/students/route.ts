@@ -1,0 +1,253 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+import { counselorScope } from '@/lib/auth-rbac';
+
+export async function GET(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
+    const source = searchParams.get('source') || '';
+    const partnerId = searchParams.get('partnerId') || '';
+
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search } },
+        { lastName: { contains: search } },
+        { email: { contains: search } },
+        { studentId: { contains: search } },
+        { phone: { contains: search } },
+      ];
+    }
+    if (status) where.status = status;
+    if (source) where.source = source;
+    if (partnerId) where.partnerId = partnerId;
+
+    // ── RBAC scoping ──────────────────────────────────────────────────
+    // counselorScope returns non-null for counselor/junior_counselor roles.
+    // Student.assignedCounselor stores Employee.id (= auth.user.referenceId).
+    // Partner users see only their own students. Student users see only their own profile.
+    const scope = counselorScope(auth);
+    if (scope?.assignedCounselor) {
+      where.assignedCounselor = auth.user.referenceId;
+    } else if (auth.user.userType === 'partner') {
+      where.partnerId = auth.user.referenceId;
+    } else if (auth.user.userType === 'student') {
+      // Students can only see their own profile.
+      where.id = auth.user.referenceId;
+    }
+
+    const [students, total] = await Promise.all([
+      db.student.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          partner: { select: { id: true, companyName: true, partnerId: true } },
+          applications: { select: { id: true, status: true, university: { select: { name: true } } } },
+          _count: { select: { applications: true, documents: true } }
+        }
+      }),
+      db.student.count({ where })
+    ]);
+
+    return NextResponse.json({
+      students,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      }
+    });
+  } catch (error) {
+    console.error('Students GET error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+
+    // Check if email already exists
+    if (body.email) {
+      const existing = await db.student.findUnique({ where: { email: body.email } });
+      if (existing) {
+        return NextResponse.json(
+          { error: 'A student with this email already exists' },
+          { status: 409 }
+        );
+      }
+    }
+
+    // Generate student ID
+    const currentYear = new Date().getFullYear();
+    const lastStudent = await db.student.findFirst({
+      orderBy: { createdAt: 'desc' },
+      select: { studentId: true }
+    });
+    let nextNum = 1;
+    if (lastStudent?.studentId) {
+      const parts = lastStudent.studentId.split('-');
+      if (parts.length >= 2) {
+        const numPart = parts[parts.length - 1];
+        nextNum = parseInt(numPart) + 1;
+      }
+    }
+    const studentId = `AE-${currentYear}${nextNum.toString().padStart(4, '0')}`;
+
+    const student = await db.student.create({
+      data: {
+        studentId,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        phone: body.phone || null,
+        whatsappNumber: body.whatsappNumber || null,
+        profilePhoto: body.profilePhoto || null,
+        gender: body.gender || null,
+        dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+        nationality: body.nationality || null,
+        passportNumber: body.passportNumber || null,
+        passportExpiry: body.passportExpiry ? new Date(body.passportExpiry) : null,
+        nidNumber: body.nidNumber || null,
+        address: body.address || null,
+        city: body.city || null,
+        country: body.country || 'Bangladesh',
+        emergencyContact: body.emergencyContact || null,
+        emergencyPhone: body.emergencyPhone || null,
+        emergencyRelation: body.emergencyRelation || null,
+        preferredCountry: body.preferredCountry || null,
+        preferredCourse: body.preferredCourse || null,
+        preferredIntake: body.preferredIntake || null,
+        englishTestType: body.englishTestType || null,
+        englishTestScore: body.englishTestScore || null,
+        englishTestDate: body.englishTestDate ? new Date(body.englishTestDate) : null,
+        highestEducation: body.highestEducation || null,
+        gpa: body.gpa || null,
+        source: body.source || 'DIRECT',
+        partnerId: body.partnerId || null,
+        communicationMode: body.communicationMode || 'DIRECT',
+        assignedCounselor: body.assignedCounselor || null,
+        status: body.status || 'active',
+      },
+      include: {
+        partner: true,
+      }
+    });
+
+    // Create user account if requested
+    if (body.createUserAccount) {
+      const user = await db.user.create({
+        data: {
+          email: body.email,
+          password: body.password || 'ChangeMe@12345',
+          name: `${body.firstName} ${body.lastName}`,
+          phone: body.phone || null,
+          whatsappNumber: body.whatsappNumber || null,
+          userType: 'student',
+          referenceId: student.id,
+          forcePasswordChange: true,
+        }
+      });
+
+      // Assign student role
+      const studentRole = await db.role.findFirst({ where: { name: 'student' } });
+      if (studentRole) {
+        await db.userRole.create({
+          data: { userId: user.id, roleId: studentRole.id }
+        });
+      }
+
+      await db.student.update({
+        where: { id: student.id },
+        data: { userId: user.id }
+      });
+    }
+
+    // Create guardian if provided
+    if (body.guardian) {
+      await db.guardian.create({
+        data: {
+          studentId: student.id,
+          ...body.guardian,
+        }
+      });
+    }
+
+    return NextResponse.json(student, { status: 201 });
+  } catch (error) {
+    console.error('Students POST error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const { id, ...updateData } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Student ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Remove fields that shouldn't be directly updated
+    delete updateData.studentId;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.guardian;
+
+    // Handle date fields
+    if (updateData.dateOfBirth) updateData.dateOfBirth = new Date(updateData.dateOfBirth);
+    if (updateData.englishTestDate) updateData.englishTestDate = new Date(updateData.englishTestDate);
+    if (updateData.passportExpiry) updateData.passportExpiry = new Date(updateData.passportExpiry);
+
+    const student = await db.student.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return NextResponse.json(student);
+  } catch (error) {
+    console.error('Students PUT error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

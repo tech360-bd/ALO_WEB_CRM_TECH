@@ -1,0 +1,263 @@
+'use client'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useAppStore } from '@/lib/store'
+import { MessageSquare, Mail, Phone, Smartphone, Shield, Users, BellOff, Handshake, Clock } from 'lucide-react'
+
+const channels = [
+  {
+    name: 'WhatsApp',
+    icon: Smartphone,
+    color: '#25D366',
+    policy: [
+      'WhatsApp is our primary communication channel for quick updates and queries.',
+      'Messages are typically responded to within 2 hours during business hours (9 AM - 6 PM BST).',
+      'Students should use their registered WhatsApp number for all communications.',
+      'Group chats may be created for batch-specific updates (e.g., visa processing groups).',
+      'Broadcast lists are used for important announcements; individual replies are not monitored in broadcasts.',
+      'Sensitive information (passwords, financial details) should NOT be shared via WhatsApp.',
+      'WhatsApp conversations may be logged in our CRM for quality assurance and record-keeping.',
+      'Students can opt out of non-essential WhatsApp communications at any time.',
+    ]
+  },
+  {
+    name: 'Email',
+    icon: Mail,
+    color: '#0066CC',
+    policy: [
+      'Email is the official channel for formal communications and document sharing.',
+      'All appointment confirmations, application updates, and official notices are sent via email.',
+      'Emails are responded to within 24 business hours.',
+      'Students should use their registered email address for all communications.',
+      'Important documents and agreements are shared exclusively via email for audit purposes.',
+      'Automated email notifications are sent for: application status changes, upcoming deadlines, payment confirmations, and appointment reminders.',
+      'Students can customize email notification preferences in their portal settings.',
+      'Marketing emails can be unsubscribed via the link in each email.',
+    ]
+  },
+  {
+    name: 'Phone / Video Call',
+    icon: Phone,
+    color: '#F37021',
+    policy: [
+      'Phone and video calls are scheduled for detailed consultations and complex discussions.',
+      'Appointments must be booked in advance through the student portal or by request.',
+      'Standard consultation calls are 30 minutes; extended sessions can be arranged.',
+      'Calls may be recorded for quality and training purposes (with consent).',
+      'Emergency calls outside business hours are handled through the emergency hotline.',
+      'Video calls are conducted via Zoom, Google Meet, or Microsoft Teams.',
+    ]
+  },
+  {
+    name: 'Student Portal',
+    icon: MessageSquare,
+    color: '#1A2332',
+    policy: [
+      'The student portal provides a secure messaging system for all student-related communications.',
+      'Portal messages are linked to specific applications, documents, or support tickets for context.',
+      'Response time for portal messages is within 24 business hours.',
+      'The portal maintains a complete communication history for reference.',
+      'Notifications for new portal messages are sent via email and WhatsApp (if opted in).',
+      'Document uploads and status checks should be done through the portal.',
+    ]
+  },
+]
+
+export default function CommunicationPolicyPage() {
+  const { setCurrentView } = useAppStore()
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F9FC' }}>
+      {/* Header */}
+      <section className="py-16" style={{ background: 'linear-gradient(135deg, #1A2332 0%, #0066CC 100%)' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'rgba(243,112,33,0.2)' }}>
+            <MessageSquare className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Communication Policy</h1>
+          <p className="text-blue-100 text-lg">Last updated: March 4, 2026</p>
+        </div>
+      </section>
+
+      {/* Overview */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <h2 className="text-xl font-bold mb-4" style={{ color: '#1A2332' }}>Our Communication Commitment</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                At ALO Education, we believe clear and timely communication is the foundation of a successful student journey. We use multiple channels to keep you informed and supported throughout your application process.
+              </p>
+              <div className="grid sm:grid-cols-3 gap-4 mt-6">
+                {[
+                  { icon: Clock, label: 'Response Time', value: '2-24 hrs' },
+                  { icon: Shield, label: 'Secure Channels', value: 'Encrypted' },
+                  { icon: Users, label: 'Dedicated Support', value: 'Personal' },
+                ].map((stat, i) => (
+                  <div key={i} className="text-center p-4 rounded-lg" style={{ backgroundColor: '#F7F9FC' }}>
+                    <stat.icon className="w-6 h-6 mx-auto mb-2" style={{ color: '#F37021' }} />
+                    <p className="text-sm text-gray-500">{stat.label}</p>
+                    <p className="font-bold" style={{ color: '#1A2332' }}>{stat.value}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Channel Policies */}
+      <section className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-8" style={{ color: '#1A2332' }}>Communication Channels & Policies</h2>
+          
+          <div className="space-y-6">
+            {channels.map((channel, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-3" style={{ backgroundColor: '#F7F9FC' }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: channel.color + '20' }}>
+                      <channel.icon className="w-5 h-5" style={{ color: channel.color }} />
+                    </div>
+                    <CardTitle className="text-lg" style={{ color: '#1A2332' }}>{channel.name}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <ul className="space-y-3">
+                    {channel.policy.map((item, j) => (
+                      <li key={j} className="flex items-start gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: channel.color }} />
+                        <p className="text-gray-600 text-sm">{item}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Data Usage in Communications */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <h2 className="text-xl font-bold mb-4" style={{ color: '#1A2332' }}>Data Usage in Communications</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                We handle your personal data with care and responsibility in all our communications:
+              </p>
+              <div className="space-y-3">
+                {[
+                  'Communication records are stored securely and accessed only by authorized personnel.',
+                  'Personal information shared in communications is used solely for the purpose of providing our services.',
+                  'We do not sell or share your communication data with third parties for marketing purposes.',
+                  'Conversation logs may be used for quality assurance, training, and dispute resolution.',
+                  'Data retention follows our Data Retention Policy - typically 5 years after service completion.',
+                  'You can request a copy of all your communication records at any time.',
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3">
+                    <Shield className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#0066CC' }} />
+                    <p className="text-gray-600 text-sm">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Opt-Out Options */}
+      <section className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <BellOff className="w-6 h-6 shrink-0" style={{ color: '#F37021' }} />
+                <h2 className="text-xl font-bold" style={{ color: '#1A2332' }}>Opt-Out Options</h2>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                You have the right to opt out of non-essential communications while still receiving critical updates:
+              </p>
+              <div className="space-y-3">
+                {[
+                  { type: 'Essential Communications', desc: 'Application updates, deadline reminders, document requests - Cannot be opted out', required: true },
+                  { type: 'Marketing Emails', desc: 'Promotions, events, newsletters - Can be unsubscribed via email link', required: false },
+                  { type: 'WhatsApp Broadcasts', desc: 'General announcements, tips - Can be opted out in portal settings', required: false },
+                  { type: 'SMS Notifications', desc: 'OTP, appointment reminders - Can be opted out (may affect security)', required: false },
+                  { type: 'Partner Communications', desc: 'Updates from partner institutions - Can be managed in preferences', required: false },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: '#F7F9FC' }}>
+                    <div>
+                      <p className="font-medium text-sm" style={{ color: '#1A2332' }}>{item.type}</p>
+                      <p className="text-xs text-gray-500">{item.desc}</p>
+                    </div>
+                    {item.required ? (
+                      <Badge className="text-xs" style={{ backgroundColor: '#0066CC', color: 'white' }}>Required</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs" style={{ borderColor: '#22C55E', color: '#22C55E' }}>Optional</Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Partner Communication Rules */}
+      <section className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <Handshake className="w-6 h-6 shrink-0" style={{ color: '#0066CC' }} />
+                <h2 className="text-xl font-bold" style={{ color: '#1A2332' }}>Partner Communication Rules</h2>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                When ALO Education communicates on behalf of students with partner institutions:
+              </p>
+              <div className="space-y-3">
+                {[
+                  'All partner communications are conducted through official ALO Education channels.',
+                  'Partner institutions receive only the information necessary for application processing.',
+                  'Students are informed before any information is shared with partner institutions.',
+                  'Communication between ALO Education and partner institutions follows agreed-upon protocols.',
+                  'Students can review and approve information before it is shared with universities.',
+                  'Partners must adhere to our data protection standards when handling student information.',
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: '#F37021' }} />
+                    <p className="text-gray-600 text-sm">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card style={{ backgroundColor: '#1A2332' }}>
+            <CardContent className="p-6 md:p-8 text-center">
+              <h2 className="text-xl font-bold text-white mb-4">Questions About Our Communication Policy?</h2>
+              <p className="text-gray-300 mb-6">We are committed to transparent and respectful communication with all our students.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button variant="outline" className="text-white border-white/30 hover:bg-white/10" onClick={() => setCurrentView('contact')}>
+                  <Mail className="w-4 h-4 mr-2" /> Contact Us
+                </Button>
+                <a href="mailto:support@aloeducation.com" className="text-sm" style={{ color: '#FFB347' }}>
+                  support@aloeducation.com
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    </div>
+  )
+}

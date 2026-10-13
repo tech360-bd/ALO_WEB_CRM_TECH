@@ -1,0 +1,257 @@
+'use client'
+
+import Link from 'next/link'
+import {
+  LifeBuoy, MessageSquare, Mail, Phone, FileText, FolderOpen, Send,
+  ChevronRight, Upload, BookOpen, HelpCircle, Sparkles, Bell,
+} from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { PageHeader } from '@/components/alo/portal/PortalPage'
+
+const SUPPORT_PHONE = '01805020100'
+const SUPPORT_PHONE_INTL = '8801805020100'
+const SUPPORT_EMAIL = 'support@alo-education.com'
+
+const FAQS = [
+  {
+    q: 'How do I upload documents?',
+    a: 'Go to "My Documents" from the navigation. Click "Upload", choose the document type (passport, transcript, IELTS, etc.), and select your file (PDF, JPG, PNG — max 10MB). Our team verifies it within 24 hours and the status badge updates automatically.',
+  },
+  {
+    q: 'What is the application process?',
+    a: '1) Complete your profile. 2) Shortlist courses via Course Finder. 3) Click "Apply" on a course. 4) Upload the required documents. 5) ALO submits to the university. 6) Track status in "My Applications". 7) Receive offer letter → pay deposit → get CAS / I-20 / COE → visa file → fly.',
+  },
+  {
+    q: 'How long does visa processing take?',
+    a: 'Typically 15 working days after submission, depending on the destination country. UK SVF: ~15 days. Canada SDS: ~20 days. Australia: ~30 days. Track live status in "Visa Center".',
+  },
+  {
+    q: 'Can I apply for scholarships?',
+    a: 'Yes! Visit "Scholarships" in the Discover menu. We auto-match you to eligible scholarships based on your academic profile, target country, and intake. Apply through the scholarship detail page.',
+  },
+  {
+    q: 'How do I book an appointment with my counselor?',
+    a: 'Open "Appointments" and click "Book Appointment". Choose a slot, pick video or in-person, and confirm. Your counselor gets notified instantly. You can reschedule up to 4 hours before the appointment.',
+  },
+  {
+    q: 'What should I do if I forgot my password?',
+    a: 'On the login page, click "Forgot password". Enter your registered email. A reset link (valid for 30 minutes) will be sent. If you don\'t receive it, contact us via WhatsApp.',
+  },
+  {
+    q: 'How do I track my application status?',
+    a: 'Visit "My Applications" from the navigation. Each application card shows the live status (draft, submitted, under review, conditional/unconditional offer, enrolled). Click any application to see the full timeline of status changes.',
+  },
+  {
+    q: 'What payment methods are accepted?',
+    a: 'We accept bank transfer, credit/debit cards (Visa, Mastercard), bKash, Nagad, and Rocket. Visit the "Payments" page to view invoices and download receipts. All payments are processed in GBP by default.',
+  },
+]
+
+const SUPPORT_CHANNELS = [
+  {
+    Icon: MessageSquare,
+    label: 'WhatsApp',
+    value: SUPPORT_PHONE,
+    href: `https://wa.me/${SUPPORT_PHONE_INTL}`,
+    color: '#25D366',
+    bg: 'bg-green-50',
+    description: 'Fastest response — Mon to Sat, 10am–8pm BST',
+  },
+  {
+    Icon: Mail,
+    label: 'Email',
+    value: SUPPORT_EMAIL,
+    href: `mailto:${SUPPORT_EMAIL}`,
+    color: '#0057B8',
+    bg: 'bg-[#EFF6FF]',
+    description: 'For detailed queries — reply within 24 hours',
+  },
+  {
+    Icon: Phone,
+    label: 'Phone',
+    value: `+88 ${SUPPORT_PHONE}`,
+    href: `tel:+${SUPPORT_PHONE_INTL}`,
+    color: '#E8501A',
+    bg: 'bg-[#FFF7ED]',
+    description: 'Office hours: 10am – 6pm BST',
+  },
+]
+
+const GUIDES = [
+  {
+    Icon: BookOpen,
+    title: 'Getting Started with ALO Portal',
+    steps: [
+      'Complete your profile in "My Profile" — this powers AI course matching.',
+      'Upload your passport and academic transcripts in "My Documents".',
+      'Visit "AI Course Match" to see programs tailored to you.',
+      'Shortlist 3–5 courses and compare them side by side.',
+    ],
+  },
+  {
+    Icon: Upload,
+    title: 'Document Upload Guide',
+    steps: [
+      'Scan or photograph documents clearly — no blur, no cutoffs.',
+      'PDF format is preferred for multi-page documents (transcripts, bank statements).',
+      'File size limit is 10MB per document. Compress larger files first.',
+      'Passport must be valid for at least 6 months beyond your planned intake.',
+      'Use the "Document Type" dropdown so we route it to the right team.',
+    ],
+  },
+  {
+    Icon: Send,
+    title: 'Application Process Overview',
+    steps: [
+      'Find a course → click "Apply Now".',
+      'Pay the application fee (if any) via "Payments".',
+      'Counselor reviews and submits your application within 2 working days.',
+      'University decision typically arrives in 2–6 weeks.',
+      'Accept the offer → pay tuition deposit → receive CAS / I-20 / COE.',
+      'Submit visa file → visa decision → pre-departure briefing → enrol.',
+    ],
+  },
+]
+
+export default function HelpPage() {
+  return (
+    <div className="min-h-screen flex flex-col space-y-6">
+      <PageHeader
+        title="Help & Support"
+        description="Find answers, learn how the portal works, and reach the ALO team."
+      />
+
+      {/* Support channels */}
+      <div className="grid md:grid-cols-3 gap-4">
+        {SUPPORT_CHANNELS.map((ch) => (
+          <Card key={ch.label} className="border-0 shadow-sm overflow-hidden">
+            <CardContent className="p-5">
+              <div className="flex items-start gap-3">
+                <div className={`h-11 w-11 rounded-xl ${ch.bg} flex items-center justify-center shrink-0`}>
+                  <ch.Icon className="h-5 w-5" style={{ color: ch.color }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">{ch.label}</p>
+                  <p className="text-sm font-bold text-slate-900 mt-0.5 truncate">{ch.value}</p>
+                  <p className="text-[11px] text-slate-500 mt-1">{ch.description}</p>
+                </div>
+              </div>
+              <Button asChild className="w-full mt-4 h-9 text-xs" variant="outline">
+                <a href={ch.href} target="_blank" rel="noopener noreferrer">
+                  Contact via {ch.label}
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Contact Support CTA */}
+      <Card className="border-0 shadow-sm bg-gradient-to-r from-[#0057B8] to-[#0073E6] text-white">
+        <CardContent className="p-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-bold flex items-center gap-2">
+              <LifeBuoy className="h-5 w-5" /> Need to talk to a human?
+            </h3>
+            <p className="text-sm text-blue-50 mt-1">
+              Our support team is available on WhatsApp — average response time under 5 minutes during office hours.
+            </p>
+          </div>
+          <Button asChild className="bg-[#E8501A] hover:bg-[#c8420f] text-white border-0 h-11">
+            <a href={`https://wa.me/${SUPPORT_PHONE_INTL}`} target="_blank" rel="noopener noreferrer">
+              <MessageSquare className="h-4 w-4 mr-2" /> Contact Support
+            </a>
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="grid lg:grid-cols-2 gap-6 flex-1">
+        {/* FAQs */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <HelpCircle className="h-4 w-4 text-[#0057B8]" /> Frequently Asked Questions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              {FAQS.map((f, i) => (
+                <AccordionItem key={i} value={`faq-${i}`}>
+                  <AccordionTrigger className="text-left text-sm font-semibold text-slate-900">
+                    {f.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-slate-600 leading-relaxed">{f.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+
+        {/* Quick Guides */}
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#E8501A]" /> Quick Guides
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {GUIDES.map((g) => (
+              <div key={g.title} className="border-l-2 border-[#0057B8]/30 pl-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <g.Icon className="h-4 w-4 text-[#0057B8]" />
+                  <h4 className="text-sm font-bold text-slate-900">{g.title}</h4>
+                </div>
+                <ol className="space-y-1.5">
+                  {g.steps.map((step, idx) => (
+                    <li key={idx} className="text-xs text-slate-600 flex items-start gap-2">
+                      <span className="h-4 w-4 rounded-full bg-[#EFF6FF] text-[#0057B8] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick links */}
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Quick Links</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {[
+              { href: '/student/documents', label: 'Upload Documents', Icon: FolderOpen },
+              { href: '/student/applications', label: 'My Applications', Icon: FileText },
+              { href: '/student/appointments', label: 'Book Appointment', Icon: MessageSquare },
+              { href: '/student/notifications', label: 'Notifications', Icon: Bell },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="flex items-center gap-2 p-3 rounded-lg border border-slate-100 hover:border-[#0057B8]/30 hover:bg-[#EFF6FF]/40 transition-colors text-sm font-medium text-slate-700"
+              >
+                <l.Icon className="h-4 w-4 text-[#0057B8]" />
+                <span className="flex-1">{l.label}</span>
+                <ChevronRight className="h-3 w-3 text-slate-400" />
+              </Link>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <footer className="mt-auto pt-4 border-t border-slate-100 text-center text-xs text-slate-400">
+        © {new Date().getFullYear()} ALO Education — Empowering students worldwide.
+      </footer>
+    </div>
+  )
+}

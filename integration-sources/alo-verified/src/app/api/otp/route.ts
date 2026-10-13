@@ -1,0 +1,145 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import crypto from 'crypto';
+
+// ============================================================
+// OTP API - Send & Manage OTPs
+// ============================================================
+
+const OTP_EXPIRY_MINUTES = 10;
+const MAX_OTP_PER_HOUR = 5;
+const MAX_VERIFY_ATTEMPTS = 5;
+
+// ----------------------------------------------------------
+// POST /api/otp - Send OTP
+// ----------------------------------------------------------
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { phone, email, purpose } = body;
+
+    // Validate input - need at least phone or email
+    if (!phone && !email) {
+      return NextResponse.json(
+        { error: 'Phone number or email is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate purpose
+    const validPurposes = ['login', 'password_reset', 'document_download', 'phone_verify', 'email_verify', 'portal_access'];
+    if (!purpose || !validPurposes.includes(purpose)) {
+      return NextResponse.json(
+        { error: `Invalid purpose. Must be one of: ${validPurposes.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
+    // Rate limit: max 5 OTP requests per phone/email per hour
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const identifier = phone || email;
+    const identifierField = phone ? 'phone' : 'email';
+
+    const recentOtps = await db.otpVerification.count({
+      where: {
+        [identifierField]: identifier,
+        createdAt: { gte: oneHourAgo },
+      },
+    });
+
+    if (recentOtps >= MAX_OTP_PER_HOUR) {
+      return NextResponse.json(
+        {
+          error: 'Too many OTP requests. Please try again later.',
+          retryAfter: '1 hour',
+        },
+        { status: 429 }
+      );
+    }
+
+    // Generate 6-digit OTP
+    const otp = generateOtp();
+
+    // Hash the OTP for storage
+    const otpHash = hashOtp(otp);
+
+    // Calculate expiry time
+    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+
+    // Invalidate any previous unused OTPs for this identifier and purpose
+    await db.otpVerification.updateMany({
+      where: {
+        [identifierField]: identifier,
+        purpose,
+        verified: false,
+        expiresAt: { gte: new Date() },
+      },
+      data: {
+        verified: true, // Mark as used to invalidate
+      },
+    });
+
+    // Create OTP record
+    const otpRecord = await db.otpVerification.create({
+      data: {
+        phone: phone || null,
+        email: email || null,
+        otpHash,
+        purpose,
+        attempts: 0,
+        maxAttempts: MAX_VERIFY_ATTEMPTS,
+        verified: false,
+        expiresAt,
+      },
+    });
+
+    // In production, send via WhatsApp Business API or email service.
+    // NEVER log the OTP code to stdout in production — it leaks PII + OTP to anyone with log access.
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log(`[OTP] Code sent to ${identifier} | Purpose: ${purpose} | Expires: ${expiresAt.toISOString()}`);
+    }
+    // TODO: Wire real delivery via WhatsApp Business API / email service when credentials are available.
+    // await sendOtpViaWhatsApp(phone, otp);
+    // await sendOtpViaEmail(email, otp, purpose);
+
+    return NextResponse.json({
+      success: true,
+      message: `OTP sent to ${identifier}`,
+      expiresAt: expiresAt.toISOString(),
+      // Never return the OTP in the response!
+    }, { status: 201 });
+  } catch (error) {
+    console.error('[OTP API] POST error:', error);
+    return NextResponse.json(
+      { error: 'Failed to send OTP' },
+      { status: 500 }
+    );
+  }
+}
+
+// ----------------------------------------------------------
+// Helper: Generate 6-digit OTP
+// ----------------------------------------------------------
+function generateOtp(): string {
+  return crypto.randomInt(100000, 999999).toString();
+}
+
+// ----------------------------------------------------------
+// Helper: Hash OTP using SHA-256
+// ----------------------------------------------------------
+function hashOtp(otp: string): string {
+  const secret = process.env.OTP_SECRET;
+  if (!secret) {
+    throw new Error('OTP_SECRET environment variable is not configured. Refusing to hash OTP with a weak fallback.');
+  }
+  return crypto.createHash('sha256').update(otp + secret).digest('hex');
+}
+
+// ----------------------------------------------------------
+// Helper: Verify OTP hash
+// ----------------------------------------------------------
+function verifyOtpHash(otp: string, hash: string): boolean {
+  const computedHash = hashOtp(otp);
+  return crypto.timingSafeEqual(Buffer.from(computedHash), Buffer.from(hash));
+}

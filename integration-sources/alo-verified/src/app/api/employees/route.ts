@@ -1,0 +1,270 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+import { logAudit } from '@/lib/audit';
+
+/**
+ * Employee field-level access policy.
+ * Sensitive fields (NID, passport, bank, emergency, DOB, gender) are only
+ * returned to super_admin, admin, and hr_manager roles.
+ * Other roles see only directory fields: firstName, lastName, email, phone,
+ * employeeId, designation, branch, department.
+ */
+function getEmployeeSelect(userRoles: string[]) {
+  const isPrivileged = userRoles.includes('super_admin') || userRoles.includes('admin') || userRoles.includes('hr_manager');
+  if (isPrivileged) {
+    // Privileged roles see ALL fields + relations
+    return {
+      id: true, employeeId: true, userId: true, firstName: true, lastName: true,
+      email: true, phone: true, whatsappNumber: true, profilePhoto: true,
+      gender: true, dateOfBirth: true, nidNumber: true, passportNumber: true,
+      address: true, city: true, country: true, emergencyContact: true, emergencyPhone: true,
+      bankName: true, bankAccount: true, bankBranch: true, routingNumber: true,
+      branchId: true, departmentId: true, designationId: true,
+      createdAt: true, updatedAt: true,
+      branch: { select: { id: true, name: true, code: true } },
+      department: { select: { id: true, name: true, code: true } },
+      designation: { select: { id: true, name: true, level: true } },
+      _count: { select: { assignedLeads: true, assignedTasks: true, attendance: true } },
+    };
+  }
+  // Non-privileged roles see ONLY directory fields — NO sensitive data
+  return {
+    id: true, employeeId: true, firstName: true, lastName: true,
+    email: true, phone: true, profilePhoto: true,
+    branchId: true, departmentId: true, designationId: true,
+    branch: { select: { id: true, name: true, code: true } },
+    department: { select: { id: true, name: true, code: true } },
+    designation: { select: { id: true, name: true, level: true } },
+    _count: { select: { assignedLeads: true, assignedTasks: true, attendance: true } },
+  };
+}
+
+export async function GET(request: NextRequest) {
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // RBAC: Only employee-type users can access employee directory
+  const userRoles = auth.user.roles?.map((r: { name: string }) => r.name) ?? [];
+  if (auth.user.userType === 'student' || auth.user.userType === 'partner') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 100);
+    const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
+    const departmentId = searchParams.get('departmentId') || '';
+    const branchId = searchParams.get('branchId') || '';
+
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search } },
+        { lastName: { contains: search } },
+        { email: { contains: search } },
+        { employeeId: { contains: search } },
+      ];
+    }
+    if (status) where.status = status;
+    if (departmentId) where.departmentId = departmentId;
+    if (branchId) where.branchId = branchId;
+
+    // Apply role-based field selection — sensitive fields filtered by getEmployeeSelect()
+    const select = getEmployeeSelect(userRoles);
+
+    const [employees, total] = await Promise.all([
+      db.employee.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        select,
+      }),
+      db.employee.count({ where })
+    ]);
+
+    // Audit: log sensitive field access for privileged roles
+    if (userRoles.includes('hr_manager') || userRoles.includes('super_admin') || userRoles.includes('admin')) {
+      await logAudit({
+        userId: auth.user.id,
+        action: 'employee.directory.viewed',
+        module: 'employees',
+        newData: { count: employees.length, privilegedAccess: true },
+      });
+    }
+
+    return NextResponse.json({
+      employees,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error('Employees GET error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  // SECURITY: require authenticated session
+  const auth = await verifyAuth(request);
+  if ('error' in auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+
+    // Check if email already exists
+    if (body.email) {
+      const existing = await db.employee.findUnique({ where: { email: body.email } });
+      if (existing) {
+        return NextResponse.json(
+          { error: 'An employee with this email already exists' },
+          { status: 409 }
+        );
+      }
+    }
+
+    // Generate employee ID
+    const lastEmployee = await db.employee.findFirst({
+      orderBy: { createdAt: 'desc' },
+      select: { employeeId: true }
+    });
+    let nextNum = 1;
+    if (lastEmployee?.employeeId) {
+      const parts = lastEmployee.employeeId.split('-');
+      if (parts.length >= 2) {
+        nextNum = parseInt(parts[parts.length - 1]) + 1;
+      }
+    }
+    const employeeId = `EMP-${new Date().getFullYear()}${nextNum.toString().padStart(4, '0')}`;
+
+    const employee = await db.employee.create({
+      data: {
+        employeeId,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        phone: body.phone || null,
+        whatsappNumber: body.whatsappNumber || null,
+        profilePhoto: body.profilePhoto || null,
+        gender: body.gender || null,
+        dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+        nidNumber: body.nidNumber || null,
+        passportNumber: body.passportNumber || null,
+        address: body.address || null,
+        city: body.city || null,
+        country: body.country || null,
+        emergencyContact: body.emergencyContact || null,
+        emergencyPhone: body.emergencyPhone || null,
+        bankName: body.bankName || null,
+        bankAccount: body.bankAccount || null,
+        bankBranch: body.bankBranch || null,
+        routingNumber: body.routingNumber || null,
+        branchId: body.branchId || null,
+        departmentId: body.departmentId || null,
+        designationId: body.designationId || null,
+        role: body.role || 'employee',
+        employmentType: body.employmentType || 'full-time',
+        joiningDate: body.joiningDate ? new Date(body.joiningDate) : null,
+        salary: body.salary || 0,
+        status: body.status || 'active',
+      },
+      include: {
+        branch: true,
+        department: true,
+        designation: true,
+      }
+    });
+
+    // Create user account if requested
+    if (body.createUserAccount) {
+      const user = await db.user.create({
+        data: {
+          email: body.email,
+          password: body.password || 'ChangeMe@12345',
+          name: `${body.firstName} ${body.lastName}`,
+          phone: body.phone || null,
+          whatsappNumber: body.whatsappNumber || null,
+          userType: 'employee',
+          referenceId: employee.id,
+          forcePasswordChange: true,
+        }
+      });
+
+      // Assign role based on employee role
+      const roleMapping: Record<string, string> = {
+        'super_admin': 'super_admin',
+        'admin': 'admin',
+        'branch_manager': 'branch_manager',
+        'country_manager': 'country_manager',
+        'office_manager': 'office_manager',
+        'counselor': 'counselor',
+        'junior_counselor': 'junior_counselor',
+        'application_team': 'application_team',
+        'visa_officer': 'visa_officer',
+        'finance': 'finance',
+        'marketing_manager': 'marketing_manager',
+        'marketing_executive': 'marketing_executive',
+        'hr_manager': 'hr_manager',
+        'employee': 'employee',
+      };
+      const roleName = roleMapping[body.role] || 'employee';
+      const role = await db.role.findFirst({ where: { name: roleName } });
+      if (role) {
+        await db.userRole.create({
+          data: { userId: user.id, roleId: role.id }
+        });
+      }
+
+      await db.employee.update({
+        where: { id: employee.id },
+        data: { userId: user.id }
+      });
+    }
+
+    // Create salary structure if salary provided
+    if (body.salary && body.salary > 0) {
+      const basicSalary = body.salary * 0.6;
+      const houseRent = body.salary * 0.2;
+      const medical = body.salary * 0.05;
+      const transport = body.salary * 0.05;
+      const food = body.salary * 0.05;
+      const otherAllowance = body.salary * 0.05;
+
+      await db.salaryStructure.create({
+        data: {
+          employeeId: employee.id,
+          basicSalary,
+          houseRent,
+          medical,
+          transport,
+          food,
+          otherAllowance,
+        }
+      });
+    }
+
+    return NextResponse.json(employee, { status: 201 });
+  } catch (error) {
+    console.error('Employees POST error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

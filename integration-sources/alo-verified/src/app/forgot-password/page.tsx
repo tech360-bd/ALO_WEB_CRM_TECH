@@ -1,0 +1,169 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { toast } from 'sonner'
+
+// ============================================================
+// Forgot Password page
+// Public — collects email, calls /api/auth/forgot-password,
+// then deep-links to /verify-otp?email=...
+// ============================================================
+
+export default function ForgotPasswordPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const trimmed = email.trim()
+    if (!trimmed) {
+      toast.error('Please enter your email address')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed.toLowerCase() }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to send OTP')
+      }
+      setSent(true)
+      toast.success('If the email exists, an OTP has been sent')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to send OTP')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Header */}
+      <header
+        className="text-white"
+        style={{ background: 'linear-gradient(135deg, #0057B8, #E8501A)' }}
+      >
+        <div className="max-w-md mx-auto px-6 py-8 flex items-center gap-3">
+          <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center font-bold">
+            ALO
+          </div>
+          <div>
+            <h1 className="text-lg font-bold leading-tight">ALO Education</h1>
+            <p className="text-white/80 text-xs">Forgot your password?</p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main */}
+      <main className="flex-1 flex items-start justify-center px-4 py-8">
+        <div className="w-full max-w-md">
+          <Card className="border-slate-200 shadow-md">
+            <CardHeader>
+              <CardTitle className="text-xl text-slate-900">Reset your password</CardTitle>
+              <CardDescription>
+                Enter your account email — we&apos;ll send a 6-digit OTP to verify it&apos;s you.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              {sent ? (
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-4 rounded-lg border border-emerald-200 bg-emerald-50">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                    <div className="text-sm text-emerald-900">
+                      <p className="font-semibold">OTP sent</p>
+                      <p className="text-emerald-800/90 mt-0.5">
+                        If <span className="font-medium">{email}</span> matches an account, you&apos;ll receive an OTP shortly.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    className="w-full bg-[#0057B8] hover:bg-[#00449a] text-white"
+                    onClick={() =>
+                      router.push(`/verify-otp?email=${encodeURIComponent(email.trim().toLowerCase())}`)
+                    }
+                  >
+                    Continue to verification
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email" className="text-sm font-medium">Email address</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        required
+                        className="pl-9"
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#0057B8] hover:bg-[#00449a] text-white"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Sending OTP…
+                      </>
+                    ) : (
+                      'Send OTP'
+                    )}
+                  </Button>
+                </form>
+              )}
+            </CardContent>
+
+            <CardFooter className="flex flex-col gap-3 border-t border-slate-100 pt-4">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-[#0057B8] transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to login
+              </Link>
+            </CardFooter>
+          </Card>
+        </div>
+      </main>
+
+      {/* Sticky footer */}
+      <footer
+        className="mt-auto text-white"
+        style={{ background: 'linear-gradient(135deg, #0057B8, #E8501A)' }}
+      >
+        <div className="max-w-md mx-auto px-6 py-4 text-center text-xs">
+          © {new Date().getFullYear()} ALO Education. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  )
+}

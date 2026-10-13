@@ -1,0 +1,124 @@
+import bcrypt from 'bcryptjs'
+import { db } from '@/lib/db'
+
+const SALT_ROUNDS = 12
+
+/**
+ * Hash a plain text password using bcryptjs
+ */
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, SALT_ROUNDS)
+}
+
+/**
+ * Compare a plain text password against a bcrypt hash
+ */
+export async function comparePassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
+  return bcrypt.compare(password, hash)
+}
+
+/**
+ * Verify the Authorization header against the UserSession table.
+ * Returns the user and session if valid, or an error response object.
+ */
+export async function verifyAuth(
+  request: Request
+): Promise<
+  | {
+      user: {
+        id: string
+        email: string
+        name: string
+        phone: string | null
+        profilePhoto: string | null
+        userType: string
+        referenceId: string | null
+        forcePasswordChange: boolean
+        status: string
+        roles: { name: string; displayName: string }[]
+      }
+      session: {
+        id: string
+        token: string
+        expiresAt: Date
+      }
+    }
+  | { error: string; status: number }
+> {
+  const authHeader = request.headers.get('Authorization')
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { error: 'Unauthorized', status: 401 }
+  }
+
+  const token = authHeader.substring(7)
+
+  if (!token) {
+    return { error: 'Unauthorized', status: 401 }
+  }
+
+  // Find session with matching token
+  const session = await db.userSession.findUnique({
+    where: { token },
+    include: {
+      user: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          phone: true,
+          profilePhoto: true,
+          userType: true,
+          referenceId: true,
+          forcePasswordChange: true,
+          status: true,
+          userRoles: {
+            include: {
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                  displayName: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!session) {
+    return { error: 'Unauthorized', status: 401 }
+  }
+
+  // Check if session has expired
+  if (session.expiresAt <= new Date()) {
+    // Clean up expired session
+    await db.userSession.delete({ where: { id: session.id } }).catch(() => {})
+    return { error: 'Session expired', status: 401 }
+  }
+
+  // Check if user is still active
+  if (session.user.status !== 'active') {
+    return { error: 'Account is ' + session.user.status, status: 403 }
+  }
+
+  return {
+    user: {
+      ...session.user,
+      roles: (session.user.userRoles ?? []).map((ur: { role: { name: string; displayName: string } }) => ({
+        name: ur.role.name,
+        displayName: ur.role.displayName,
+      })),
+    },
+    session: {
+      id: session.id,
+      token: session.token,
+      expiresAt: session.expiresAt,
+    },
+  }
+}
