@@ -3,15 +3,10 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { getSiteSeoDefaults } from "@/lib/cms-managed-content";
 
-const inter = {
-  variable: "--font-inter",
-  className: "font-sans",
-};
-
-const geistMono = {
-  variable: "--font-geist-mono",
-  className: "font-mono",
-};
+// Brand typography (Montserrat/Poppins headings, Open Sans/Roboto body) is
+// declared once in globals.css as self-hosted @font-face rules mapped onto the
+// --font-sans / --font-heading theme tokens. No third-party font CDN is
+// requested, so the production CSP (`font-src 'self' data:`) stays intact.
 
 export const viewport = {
   width: "device-width",
@@ -19,7 +14,7 @@ export const viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-  themeColor: "#2563EB",
+  themeColor: "#0066CC",
 };
 
 // Root metadata is generated at request/build time. Site-wide SEO
@@ -86,7 +81,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
       "apple-mobile-web-app-status-bar-style": "black-translucent",
-      "msapplication-TileColor": "#2563EB",
+      "msapplication-TileColor": "#0066CC",
       "msapplication-TileImage": "/icons/icon-144x144.png",
     },
   };
@@ -105,7 +100,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}
+        className="font-sans antialiased bg-background text-foreground"
       >
         {/* Centralized English + বাংলা i18n (no per-language route forks) */}
         <I18nProvider>

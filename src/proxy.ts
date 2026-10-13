@@ -478,7 +478,10 @@ const NON_STATIC_PREFIXES = Array.from(new Set(Object.values(ROLE_ROUTES).flat()
 
 // Top-level directories that contain only static files (Next internals and
 // the folders shipped in /public). No page routes live under these.
-const STATIC_ROOT_SEGMENTS = new Set(["_next", "static", "public", "docs", "icons", "images"]);
+// `fonts` holds the self-hosted brand webfonts (Montserrat, Poppins, Open Sans,
+// Roboto) referenced by the @font-face rules in globals.css. There is no page
+// route under /fonts, so the allow-list entry cannot expose gated content.
+const STATIC_ROOT_SEGMENTS = new Set(["_next", "static", "public", "docs", "icons", "images", "fonts"]);
 
 function decodePathForPolicy(pathname: string): string | null {
   let decoded = pathname;

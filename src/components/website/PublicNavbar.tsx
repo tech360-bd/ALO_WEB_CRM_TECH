@@ -1,16 +1,38 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+/**
+ * ALO Education — public header (every page BEFORE login).
+ *
+ * Brand specification implemented here:
+ *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
+ *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
+ *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
+ *   • CTA: "Book Free Counseling" (ALO Orange #F37021 button)
+ *   • Education Blue #0066CC for navigation/links, #FFB347 accent, #000/#555
+ *     neutral text — all values come from the design tokens in globals.css.
+ *
+ * The footer and this header are mounted once for the whole public site by
+ * src/components/website/PublicLayoutWrapper.tsx (root layout), so a single
+ * component covers every pre-login route. Authenticated portals and the auth
+ * entry screens render standalone — see public-chrome-policy.ts.
+ *
+ * Nothing here is invented: destinations, when unpublished in the CMS, come
+ * from the countries table (`/api/website/homepage`) and fall back to the
+ * curated static list below.
+ */
+
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
-  Menu,
   ChevronDown,
   GraduationCap,
-  Globe,
   LayoutGrid,
   LogIn,
-  Search,
+  MapPin,
+  Menu,
+  Phone,
   X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,7 +41,6 @@ import {
   SheetContent,
   SheetTrigger,
   SheetTitle,
-  SheetDescription,
 } from '@/components/ui/sheet';
 import {
   Accordion,
@@ -28,12 +49,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import LanguageToggle from '@/components/website/LanguageToggle';
-import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import { useI18n } from '@/i18n';
 
 /* ------------------------------------------------------------------ */
-/*  DATA (defaults – overridden by API when available)                 */
+/*  CONTENT (defaults — Destinations is overridden by live data)       */
 /* ------------------------------------------------------------------ */
+
+const TAGLINE = 'Your Dream – Our Commitment';
 
 const DEFAULT_DESTINATIONS = [
   { label: 'United Kingdom', href: '/destinations/uk' },
@@ -46,27 +68,7 @@ const DEFAULT_DESTINATIONS = [
   { label: 'More Countries', href: '/destinations' },
 ];
 
-const languagePrepItems = [
-  { label: 'IELTS', href: '/language-prep/ielts' },
-  { label: 'IELTS UKVI', href: '/language-prep/ielts-ukvi' },
-  { label: 'PTE Academic', href: '/language-prep/pte-academic' },
-  { label: 'TOEFL iBT', href: '/language-prep/toefl-ibt' },
-  { label: 'Duolingo English Test', href: '/language-prep/duolingo' },
-  { label: 'OIETC / ELLT', href: '/language-prep/oietc' },
-  { label: 'Oxford ELLT', href: '/language-prep/oxford-ellt' },
-  { label: 'LanguageCert', href: '/language-prep/languagecert' },
-  { label: 'Kaplan', href: '/language-prep/kaplan' },
-  { label: 'OET', href: '/language-prep/oet' },
-  { label: 'MOI Guidance', href: '/language-prep/moi' },
-  { label: 'GRE', href: '/language-prep/gre' },
-  { label: 'GMAT', href: '/language-prep/gmat' },
-  { label: 'SAT', href: '/language-prep/sat' },
-  { label: 'ACT', href: '/language-prep/act' },
-  { label: 'English Test Comparison', href: '/language-prep/comparison' },
-  { label: 'View All Test Prep →', href: '/language-prep' },
-];
-
-const resourceItems = [
+const RESOURCE_ITEMS = [
   { label: 'Blogs', href: '/blog' },
   { label: 'Articles', href: '/resources/articles' },
   { label: 'Scholarships by Country', href: '/scholarships' },
@@ -79,7 +81,7 @@ const resourceItems = [
   { label: 'FAQs', href: '/faqs' },
 ];
 
-const portalItems = [
+const PORTAL_ITEMS = [
   { label: 'Student Portal', href: '/student/login', icon: GraduationCap },
   { label: 'Partner Portal', href: '/partner/login', icon: LayoutGrid },
   { label: 'Employee Portal', href: '/employee/login', icon: LogIn },
@@ -88,73 +90,78 @@ const portalItems = [
 // Planning tools. Each runs on deterministic rules over verified data; none of
 // them promise an admission, award or visa outcome.
 const AI_TOOL_ITEMS = [
-  { label: 'Course Match', href: '/ai/course-match' },
-  { label: 'Scholarship Match', href: '/ai/scholarship-match' },
-  { label: 'Visa Coach', href: '/ai/visa-coach' },
-  { label: 'SOP Helper', href: '/ai/sop-helper' },
-  { label: 'CV Helper', href: '/ai/cv-helper' },
+  { label: 'AI Course Match', href: '/ai/course-match' },
+  { label: 'AI Scholarship Match', href: '/ai/scholarship-match' },
+  { label: 'AI Visa Coach', href: '/ai/visa-coach' },
+  { label: 'AI SOP Helper', href: '/ai/sop-helper' },
+  { label: 'AI CV Helper', href: '/ai/cv-helper' },
   { label: 'Eligibility Check', href: '/eligibility-check' },
 ];
 
 /* ------------------------------------------------------------------ */
-/*  DROPDOWN ANIMATION VARIANTS                                         */
+/*  SHARED STYLES                                                      */
 /* ------------------------------------------------------------------ */
+
+// Menu labels use the heading font (Montserrat bold) per the brand spec.
+const MENU_ITEM_BASE =
+  'flex items-center gap-1 whitespace-nowrap rounded-button px-2.5 py-2 font-heading text-[13px] font-bold tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-brand focus-visible:ring-offset-2';
 
 const dropdownVariants: Variants = {
   hidden: { opacity: 0, y: -8, scale: 0.98 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: 'easeOut' } },
-  exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15, ease: 'easeIn' } },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.18, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.12, ease: 'easeIn' } },
 };
 
-/* ------------------------------------------------------------------ */
-/*  MOBILE LINK                                                        */
-/* ------------------------------------------------------------------ */
-
-function MobileLink({ href, label, icon: Icon, onClick }: {
-  href: string;
-  label: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  onClick?: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 transition-colors"
-    >
-      {Icon && <Icon className="h-4 w-4 text-[#2563EB]" />}
-      {label}
-    </Link>
-  );
+function isActiveRoute(pathname: string | null, href: string) {
+  if (!pathname) return false;
+  if (pathname === href) return true;
+  return href !== '/' && pathname.startsWith(`${href}/`);
 }
 
 /* ------------------------------------------------------------------ */
-/*  DESKTOP DROPDOWN TRIGGER                                            */
+/*  DESKTOP DROPDOWN TRIGGER                                           */
 /* ------------------------------------------------------------------ */
 
 interface DropdownTriggerProps {
   label: string;
+  id: string;
   isOpen: boolean;
   onToggle: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  panelClassName?: string;
   children: React.ReactNode;
-  className?: string;
 }
 
-function DropdownTrigger({ label, isOpen, onToggle, onMouseEnter, onMouseLeave, children, className = '' }: DropdownTriggerProps) {
+function DropdownTrigger({
+  label,
+  id,
+  isOpen,
+  onToggle,
+  onMouseEnter,
+  onMouseLeave,
+  panelClassName = 'left-0',
+  children,
+}: DropdownTriggerProps) {
   return (
-    <div className={`relative ${className}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <button
         type="button"
         onClick={onToggle}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="flex items-center gap-1 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#000000] rounded-lg hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+        aria-controls={`${id}-panel`}
+        className={`${MENU_ITEM_BASE} ${
+          isOpen ? 'bg-alo-brand-light text-alo-brand' : 'text-alo-text hover:bg-alo-brand-light hover:text-alo-brand'
+        }`}
       >
         {label}
-        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="h-4 w-4" />
+        <motion.span
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className={isOpen ? 'text-alo-cta' : 'text-alo-text-muted'}
+        >
+          <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
         </motion.span>
       </button>
       <AnimatePresence>
@@ -164,28 +171,145 @@ function DropdownTrigger({ label, isOpen, onToggle, onMouseEnter, onMouseLeave, 
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute left-0 top-full pt-2"
+            className={`absolute top-full pt-2 ${panelClassName}`}
             style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
           >
-            <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-xl p-3 min-w-[220px]">
+            <div
+              id={`${id}-panel`}
+              role="menu"
+              aria-label={label}
+              className="overflow-hidden rounded-xl border border-alo-border bg-white p-2 shadow-xl"
+            >
+              {/* Accent hairline — brand accent #FFB347 */}
+              <span className="mb-2 block h-[3px] w-10 rounded-full bg-alo-cta-accent" aria-hidden="true" />
               {children}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      {!isOpen && <div className="absolute left-0 top-full h-2 w-full" />}
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  DESKTOP DROPDOWN LINK ROW                                           */
+/*  DESKTOP LINK / DROPDOWN ROW                                        */
 /* ------------------------------------------------------------------ */
 
-function DropdownLink({ href, label }: { href: string; label: string }) {
+function DesktopLink({ href, label }: { href: string; label: string }) {
+  const pathname = usePathname();
+  const active = isActiveRoute(pathname, href);
   return (
-    <Link href={href} className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 transition-colors">
+    <Link
+      href={href}
+      aria-current={active ? 'page' : undefined}
+      className={`${MENU_ITEM_BASE} ${
+        active ? 'bg-alo-brand-light text-alo-brand' : 'text-alo-text hover:bg-alo-brand-light hover:text-alo-brand'
+      }`}
+    >
       {label}
+    </Link>
+  );
+}
+
+function DropdownLink({
+  href,
+  label,
+  icon: Icon,
+}: {
+  href: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <Link
+      href={href}
+      role="menuitem"
+      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand focus-visible:bg-alo-brand-light focus-visible:text-alo-brand focus-visible:outline-none"
+    >
+      {Icon && <Icon className="h-4 w-4 text-alo-brand" aria-hidden="true" />}
+      {label}
+    </Link>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  MOBILE (Sheet + Accordion)                                         */
+/* ------------------------------------------------------------------ */
+
+function MobileLink({
+  href,
+  label,
+  icon: Icon,
+  onClick,
+}: {
+  href: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  onClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand"
+    >
+      {Icon && <Icon className="h-4 w-4 text-alo-brand" aria-hidden="true" />}
+      {label}
+    </Link>
+  );
+}
+
+function MobileAccordionSection({
+  value,
+  label,
+  children,
+}: {
+  value: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <AccordionItem value={value} className="border-b-0">
+      <AccordionTrigger className="min-h-[44px] rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text hover:bg-alo-brand-light hover:text-alo-brand hover:no-underline">
+        {label}
+      </AccordionTrigger>
+      <AccordionContent className="pb-1">
+        <div className="flex flex-col gap-0.5 pl-3">{children}</div>
+      </AccordionContent>
+    </AccordionItem>
+  );
+}
+
+/** Brand lock-up: logo + "ALO Education" wordmark + italic orange tagline. */
+function BrandLockUp({ compact = false, onClick }: { compact?: boolean; onClick?: () => void }) {
+  return (
+    <Link
+      href="/"
+      onClick={onClick}
+      aria-label={`ALO Education — ${TAGLINE}`}
+      className="group flex shrink-0 items-center gap-2.5"
+    >
+      <img
+        src="/images/landing/Copy of logo.webp"
+        alt=""
+        className={compact ? 'h-8 w-auto' : 'h-10 w-auto'}
+        width={compact ? 32 : 40}
+        height={compact ? 32 : 40}
+      />
+      <span className="flex flex-col leading-none">
+        <span
+          className={`font-heading font-extrabold tracking-tight text-alo-brand ${
+            compact ? 'text-base' : 'text-[19px]'
+          }`}
+        >
+          ALO Education
+        </span>
+        <span
+          className={`mt-0.5 font-semibold italic text-alo-cta ${compact ? 'text-[10px]' : 'text-[11px]'}`}
+        >
+          {TAGLINE}
+        </span>
+      </span>
     </Link>
   );
 }
@@ -195,339 +319,315 @@ function DropdownLink({ href, label }: { href: string; label: string }) {
 /* ------------------------------------------------------------------ */
 
 export default function PublicNavbar() {
+  const { t } = useI18n();
+  const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [destinations, setDestinations] = useState(DEFAULT_DESTINATIONS);
-  const [langItems, setLangItems] = useState(languagePrepItems);
-  const { t } = useI18n();
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
 
-  // Virtual Editor override: published 'navigation' items (section
-  // 'destinations') take precedence over the auto-generated list —
-  // Super Admins curate the destinations menu via /admin/website-cms.
-  const cmsNavApplied = useRef(false);
+  /* ── Destinations data ─────────────────────────────────────────── */
+  // Priority: Curated CMS navigation → countries table → static fallback.
   useEffect(() => {
+    let cancelled = false;
+    let curated = false;
+
     fetch('/api/website/cms-content?type=navigation')
-      .then(r => r.json())
-      .then(j => {
-        if (!j?.success || !Array.isArray(j.items)) return;
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (cancelled || !j?.success || !Array.isArray(j.items)) return;
         const cmsDests = j.items
-          .filter((i: any) => i.section === 'destinations' && i.label && i.data?.href)
-          .map((i: any) => ({ label: String(i.label), href: String(i.data.href) }));
+          .filter((i: { section?: string; label?: string; data?: { href?: string } }) =>
+            i.section === 'destinations' && i.label && i.data?.href
+          )
+          .map((i: { label: string; data: { href: string } }) => ({
+            label: String(i.label),
+            href: String(i.data.href),
+          }));
         if (cmsDests.length > 0) {
-          cmsNavApplied.current = true;
+          curated = true;
           setDestinations(cmsDests);
         }
       })
-      .catch(() => { /* keep existing list */ });
-  }, []);
+      .catch(() => {
+        /* keep the existing list */
+      });
 
-  // Load destinations from countries table (status=active) via /api/website/homepage — fallback to DEFAULT_DESTINATIONS
-  useEffect(() => {
-    if (cmsNavApplied.current) return; // curated CMS navigation wins
     fetch('/api/website/homepage')
-      .then(r => r.json())
-      .then(data => {
-        const countries = data.countries || data.data?.countries || [];
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || curated) return; // curated CMS navigation wins
+        const countries = data?.countries || data?.data?.countries || [];
         if (Array.isArray(countries) && countries.length > 0) {
-          const active = countries.filter((c: any) => !c.status || c.status === 'active');
+          const active = countries.filter((c: { status?: string }) => !c.status || c.status === 'active');
           if (active.length > 0) {
-            const first7 = active.slice(0, 7).map((c: any) => ({
-              label: c.name,
-              href: `/destinations/${c.slug}`,
-            }));
-            const hasMore = active.length > 7;
-            setDestinations(hasMore ? [...first7, { label: 'More Countries', href: '/destinations' }] : first7);
-            return;
+            const first7 = active
+              .slice(0, 7)
+              .map((c: { name: string; slug: string }) => ({ label: c.name, href: `/destinations/${c.slug}` }));
+            setDestinations(
+              active.length > 7 ? [...first7, { label: 'More Countries', href: '/destinations' }] : first7
+            );
           }
         }
-        // Fallback to universities endpoint if homepage empty
-        return fetch('/api/universities?limit=200').then(r=>r.json()).then(uData=>{
-          if (uData.universities?.length) {
-            const countryMap = new Map<string, number>();
-            uData.universities.forEach((u: { country: string }) => {
-              if (u.country) { const key = u.country.trim(); if (!countryMap.has(key)) countryMap.set(key, 1); }
-            });
-            if (countryMap.size > 0) {
-              const apiDests = Array.from(countryMap.keys()).sort().map(country => ({
-                label: country,
-                href: `/destinations/${country.toLowerCase().replace(/\s+/g, '-').replace(/\//g,'-')}`,
-              }));
-              setDestinations(apiDests);
-            }
-          }
-        });
       })
-      .catch(() => { /* keep DEFAULT_DESTINATIONS */ });
+      .catch(() => {
+        /* keep DEFAULT_DESTINATIONS — nothing is invented */
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Load language prep dynamically from english_tests if available
+  /* ── Dropdown behaviour: hover intent, click toggle, click-away, Esc ── */
+  const clearHoverTimer = useCallback(() => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  }, []);
+
+  const scheduleOpen = useCallback(
+    (key: string) => {
+      clearHoverTimer();
+      hoverTimer.current = setTimeout(() => setOpenDropdown(key), 90);
+    },
+    [clearHoverTimer]
+  );
+
+  const scheduleClose = useCallback(() => {
+    clearHoverTimer();
+    hoverTimer.current = setTimeout(() => setOpenDropdown(null), 150);
+  }, [clearHoverTimer]);
+
+  const toggleDropdown = useCallback((key: string) => {
+    setOpenDropdown((prev) => (prev === key ? null : key));
+  }, []);
+
   useEffect(() => {
-    fetch('/api/website/homepage')
-      .then(r=>r.json())
-      .then(data=>{
-        const tests = data.englishTests || data.data?.englishTests || [];
-        if (Array.isArray(tests) && tests.length > 0) {
-          const mapped = tests.map((t: any)=>({ label: t.name, href: `/language-prep/${t.slug}` }));
-          // append comparison + view all
-          setLangItems([...mapped, { label: 'English Test Comparison', href: '/language-prep/comparison' }, { label: 'View All Test Prep →', href: '/language-prep' }]);
-        }
-      }).catch(()=>{});
-  }, []);
+    const onPointerDown = (event: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) setOpenDropdown(null);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null);
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+      clearHoverTimer();
+    };
+  }, [clearHoverTimer]);
 
-  const closeMobile = () => setMobileOpen(false);
-  const handleDesktopEnter = (key: string) => setOpenDropdown(key);
-  const handleDesktopLeave = () => setOpenDropdown(null);
-  const handleToggle = (key: string) => setOpenDropdown((prev) => (prev === key ? null : key));
+  // Close every menu on navigation.
+  useEffect(() => {
+    setOpenDropdown(null);
+    setMobileOpen(false);
+  }, [pathname]);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
+
+  const triggerProps = (key: string) => ({
+    isOpen: openDropdown === key,
+    onToggle: () => toggleDropdown(key),
+    onMouseEnter: () => scheduleOpen(key),
+    onMouseLeave: scheduleClose,
+  });
 
   return (
     <motion.header
-      initial={{ y: -100 }}
+      ref={headerRef}
+      id="alo-public-header"
+      initial={{ y: -80 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-sm"
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="sticky top-0 z-50 w-full border-b border-alo-border bg-white/95 backdrop-blur-md shadow-sm"
     >
-      {/* Utility bar — contact details as plain links only. The AI / WhatsApp /
-          Facebook controls live in the single corner FloatingActionWidget. */}
-      <div className="hidden md:flex w-full bg-alo-page border-b border-alo-border px-4 sm:px-6 lg:px-8 py-2 items-center justify-between">
-        <div className="text-xs text-alo-text-secondary flex items-center gap-2">
-          <span className="hidden lg:inline">Office: Barek Mansion-02, Panthapath, Dhaka</span>
-          <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-alo-brand hover:text-alo-brand-hover underline underline-offset-2 font-medium">Maps</a>
-          <span className="text-alo-border-strong" aria-hidden="true">|</span>
-          <a href="tel:+8801805020101" className="font-medium text-alo-navy hover:text-alo-brand">Senior Counselor Al Aminn: 01805020101</a>
-        </div>
-        <div className="flex items-center gap-3">
-          <LanguageToggle compact />
+      {/* ── Utility strip — contact details + language switch ───────── */}
+      <div className="hidden w-full bg-alo-brand text-white md:block">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 text-[11px] font-medium">
+            <MapPin className="h-3.5 w-3.5 text-alo-cta-accent" aria-hidden="true" />
+            <span className="hidden lg:inline">Barek Mansion-02, Panthapath, Dhaka</span>
+            <a
+              href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold underline underline-offset-2 hover:text-alo-cta-accent"
+            >
+              Maps
+            </a>
+            <span className="opacity-40" aria-hidden="true">|</span>
+            <a
+              href="tel:+8801805020101"
+              className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent"
+            >
+              <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+              Senior Counselor Al Aminn: 01805020101
+            </a>
+          </div>
+          <LanguageToggle compact onDark />
         </div>
       </div>
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* LOGO */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <motion.div whileHover={{ scale: 1.08 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-            <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-9 w-auto" />
-          </motion.div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-[#2563EB] leading-tight">ALO Education</span>
-            <span className="text-[11px] italic text-[#F97316] font-medium -mt-0.5" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
-          </div>
-        </Link>
 
-        {/* DESKTOP NAV */}
-        <div className="hidden xl:flex items-center gap-1">
-          <DropdownTrigger
-            label={t('nav.destinations')}
-            isOpen={openDropdown === 'destinations'}
-            onToggle={() => handleToggle('destinations')}
-            onMouseEnter={() => handleDesktopEnter('destinations')}
-            onMouseLeave={handleDesktopLeave}
-          >
-            <div className="flex flex-col gap-1">
+      {/* ── Main bar — logo + tagline, menu, CTA ────────────────────── */}
+      <nav
+        aria-label="Main navigation"
+        className="mx-auto flex min-h-[68px] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8"
+      >
+        <BrandLockUp />
+
+        {/* DESKTOP MENU — spec order */}
+        <div className="hidden items-center gap-0.5 xl:flex">
+          <DropdownTrigger label={t('nav.destinations')} id="header-destinations" {...triggerProps('destinations')}>
+            <div className="flex max-h-[70vh] min-w-[230px] flex-col gap-0.5 overflow-y-auto">
               {destinations.map((d) => (
-                <DropdownLink key={d.href} href={d.href} label={d.label} />
+                <DropdownLink key={d.href + d.label} href={d.href} label={d.label} />
               ))}
             </div>
           </DropdownTrigger>
 
-          <DropdownTrigger
-            label={t('nav.languagePrep')}
-            isOpen={openDropdown === 'language-prep'}
-            onToggle={() => handleToggle('language-prep')}
-            onMouseEnter={() => handleDesktopEnter('language-prep')}
-            onMouseLeave={handleDesktopLeave}
-          >
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[460px]">
-              {langItems.map((item) => (
-                <DropdownLink key={item.href} href={item.href} label={item.label} />
-              ))}
-            </div>
-          </DropdownTrigger>
+          <DesktopLink href="/course-finder" label={t('nav.courseFinder')} />
+          <DesktopLink href="/services" label={t('nav.services')} />
+          <DesktopLink href="/language-prep" label={t('nav.languagePrep')} />
 
-          {/* Single English Test entry point. Same tab, tracked, never a duplicate. */}
-          <EnglishExamButton
-            location="navbar"
-            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-semibold text-[#C2410C] transition-colors hover:bg-orange-50"
-          >
-            <GraduationCap className="h-4 w-4" aria-hidden="true" />
-            {t('nav.englishTest')}
-          </EnglishExamButton>
-
-          <DropdownTrigger
-            label={t('nav.resources')}
-            isOpen={openDropdown === 'resources'}
-            onToggle={() => handleToggle('resources')}
-            onMouseEnter={() => handleDesktopEnter('resources')}
-            onMouseLeave={handleDesktopLeave}
-          >
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-[420px]">
-              {resourceItems.map((item) => (
+          <DropdownTrigger label={t('nav.resources')} id="header-resources" {...triggerProps('resources')}>
+            <div className="grid w-[440px] grid-cols-2 gap-x-4 gap-y-0.5">
+              {RESOURCE_ITEMS.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
           </DropdownTrigger>
 
           <DropdownTrigger
-            label="AI Tools"
-            isOpen={openDropdown === 'ai-tools'}
-            onToggle={() => handleToggle('ai-tools')}
-            onMouseEnter={() => handleDesktopEnter('ai-tools')}
-            onMouseLeave={handleDesktopLeave}
+            label={t('nav.portal')}
+            id="header-portal"
+            panelClassName="right-0"
+            {...triggerProps('portal')}
           >
-            <div className="flex flex-col gap-1 w-[260px]">
+            <div className="flex min-w-[220px] flex-col gap-0.5">
+              {PORTAL_ITEMS.map((p) => (
+                <DropdownLink key={p.href} href={p.href} label={p.label} icon={p.icon} />
+              ))}
+            </div>
+          </DropdownTrigger>
+
+          <DropdownTrigger
+            label={t('nav.aiSupportTools')}
+            id="header-ai-tools"
+            panelClassName="right-0"
+            {...triggerProps('ai-tools')}
+          >
+            <div className="flex w-[260px] flex-col gap-0.5">
               {AI_TOOL_ITEMS.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
           </DropdownTrigger>
-
-          <DropdownTrigger
-            label="Portals"
-            isOpen={openDropdown === 'portals'}
-            onToggle={() => handleToggle('portals')}
-            onMouseEnter={() => handleDesktopEnter('portals')}
-            onMouseLeave={handleDesktopLeave}
-          >
-            <div className="flex flex-col gap-1 min-w-[200px]">
-              {portalItems.map((p) => {
-                const Icon = p.icon;
-                return (
-                  <Link key={p.href} href={p.href} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition-colors">
-                    <Icon className="h-4 w-4 text-[#2563EB]" />
-                    {p.label}
-                  </Link>
-                );
-              })}
-            </div>
-          </DropdownTrigger>
-
-          <Link href="/course-finder" className="flex items-center gap-1.5 whitespace-nowrap px-2 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
-            <Search className="h-4 w-4" />
-            {t('nav.courseFinder')}
-          </Link>
-
-          <Link href="/services" className="whitespace-nowrap px-2 py-2 text-sm font-medium text-[#0F172A] rounded-lg hover:bg-slate-50 transition-colors">
-            {t('nav.services')}
-          </Link>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex items-center gap-3">
-          <Button asChild className="hidden xl:inline-flex whitespace-nowrap bg-[#F97316] text-white h-12 rounded-xl px-5 font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
+        {/* RIGHT — CTA + mobile trigger */}
+        <div className="flex items-center gap-2">
+          <Button
+            asChild
+            size="lg"
+            className="hidden shrink-0 bg-alo-cta px-5 font-heading text-[14px] font-bold text-white shadow-sm transition-all hover:bg-alo-cta-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex"
+          >
             <Link href="/book-consultation">{t('cta.bookConsultation')}</Link>
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="xl:hidden" aria-label="Open navigation menu">
-                <Menu className="h-6 w-6 text-[#0F172A]" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="xl:hidden"
+                aria-label="Open navigation menu"
+              >
+                <Menu className="h-6 w-6 text-alo-text" />
               </Button>
             </SheetTrigger>
 
             <AnimatePresence>
               {mobileOpen && (
-                <SheetContent side="right" className="w-full sm:max-w-md p-0 overflow-y-auto">
+                <SheetContent side="right" className="w-full overflow-y-auto p-0 sm:max-w-md">
                   <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
 
-                  <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E2E8F0] bg-white px-4 py-3">
-                    <Link href="/" onClick={closeMobile} className="flex items-center gap-2">
-                      <img src="/images/landing/Copy of logo.webp" alt="ALO Education" className="h-7 w-auto" />
-                      <div className="flex flex-col">
-                        <span className="text-base font-bold text-[#2563EB] leading-tight">ALO Education</span>
-                        <span className="text-[10px] italic text-[#F97316] font-medium" style={{ fontFamily: 'Open Sans, sans-serif' }}>Your Dream – Our Commitment</span>
-                      </div>
-                    </Link>
+                  <div className="sticky top-0 z-10 flex items-center justify-between border-b border-alo-border bg-white px-4 py-3">
+                    <BrandLockUp compact onClick={closeMobile} />
                     <Button variant="ghost" size="icon" onClick={closeMobile} aria-label="Close navigation menu">
-                      <X className="h-5 w-5 text-[#0F172A]" />
+                      <X className="h-5 w-5 text-alo-text" />
                     </Button>
                   </div>
 
-                  <div className="px-4 py-4 flex flex-col gap-2">
-                    <MobileLink href="/course-finder" label={t('nav.courseFinder')} icon={Search} onClick={closeMobile} />
-                    <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
-                    <EnglishExamButton
-                      location="mobile_navbar"
-                      onNavigate={closeMobile}
-                      className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[#C2410C] transition-colors hover:bg-orange-50"
-                    >
-                      <GraduationCap className="h-4 w-4" aria-hidden="true" />
-                      {t('nav.englishTest')}
-                    </EnglishExamButton>
-
+                  <div className="flex flex-col gap-1 px-4 py-4">
                     <Accordion type="single" collapsible className="w-full">
-                      <AccordionItem value="destinations" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          {t('nav.destinations')}
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="flex flex-col gap-0.5 pl-4">
-                            {destinations.map((d) => (
-                              <MobileLink key={d.href} href={d.href} label={d.label} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                      <MobileAccordionSection value="destinations" label={t('nav.destinations')}>
+                        {destinations.map((d) => (
+                          <MobileLink key={d.href + d.label} href={d.href} label={d.label} onClick={closeMobile} />
+                        ))}
+                      </MobileAccordionSection>
 
-                      <AccordionItem value="language-prep" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          {t('nav.languagePrep')}
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="grid grid-cols-1 gap-0.5 pl-4">
-                            {langItems.map((item) => (
-                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                      <MobileLink href="/course-finder" label={t('nav.courseFinder')} onClick={closeMobile} />
+                      <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
+                      <MobileLink href="/language-prep" label={t('nav.languagePrep')} onClick={closeMobile} />
 
-                      <AccordionItem value="ai-tools" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          AI Tools
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="flex flex-col gap-0.5 pl-4">
-                            {AI_TOOL_ITEMS.map((item) => (
-                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                      <MobileAccordionSection value="resources" label={t('nav.resources')}>
+                        {RESOURCE_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                      </MobileAccordionSection>
 
-                      <AccordionItem value="resources" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          {t('nav.resources')}
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="flex flex-col gap-0.5 pl-4">
-                            {resourceItems.map((item) => (
-                              <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                      <MobileAccordionSection value="portal" label={t('nav.portal')}>
+                        {PORTAL_ITEMS.map((p) => (
+                          <MobileLink
+                            key={p.href}
+                            href={p.href}
+                            label={p.label}
+                            icon={p.icon}
+                            onClick={closeMobile}
+                          />
+                        ))}
+                      </MobileAccordionSection>
 
-                      <AccordionItem value="portals" className="border-b-0">
-                        <AccordionTrigger className="min-h-[44px] px-3 py-2 text-sm font-medium text-[#000000] hover:bg-slate-50 rounded-lg hover:no-underline">
-                          Portals
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-1">
-                          <div className="flex flex-col gap-0.5 pl-4">
-                            {portalItems.map((p) => (
-                              <MobileLink key={p.href} href={p.href} label={p.label} icon={p.icon} onClick={closeMobile} />
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                      <MobileAccordionSection value="ai-tools" label={t('nav.aiSupportTools')}>
+                        {AI_TOOL_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                      </MobileAccordionSection>
                     </Accordion>
 
-                    <div className="mt-4 pt-4 border-t border-[#E2E8F0] space-y-3">
+                    <div className="mt-3 space-y-3 border-t border-alo-border pt-4">
                       <LanguageToggle />
-                      <Button asChild className="w-full bg-[#F97316] text-white h-12 rounded-xl font-semibold shadow-sm hover:shadow-md hover:brightness-110 transition-all">
-                        <Link href="/book-consultation" onClick={closeMobile}>{t('cta.bookConsultation')}</Link>
+                      <Button
+                        asChild
+                        size="lg"
+                        className="w-full bg-alo-cta font-heading text-[14px] font-bold text-white shadow-sm transition-all hover:bg-alo-cta-hover"
+                      >
+                        <Link href="/book-consultation" onClick={closeMobile}>
+                          {t('cta.bookConsultation')}
+                        </Link>
                       </Button>
                       {/* Contact details as text — chat / WhatsApp live in the corner widget. */}
-                      <p className="text-xs text-alo-text-muted leading-snug">
+                      <p className="text-xs leading-snug text-alo-text-muted">
                         Office: Barek Mansion-02, Panthapath •{' '}
-                        <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" target="_blank" rel="noopener noreferrer" className="text-alo-brand underline">Maps</a>
-                        {' '}• <a href="tel:+8801805020101" className="text-alo-brand underline">Al Aminn 01805020101</a>
+                        <a
+                          href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-alo-brand underline"
+                        >
+                          Maps
+                        </a>{' '}
+                        •{' '}
+                        <a href="tel:+8801805020101" className="text-alo-brand underline">
+                          Al Aminn 01805020101
+                        </a>
                       </p>
                     </div>
                   </div>
