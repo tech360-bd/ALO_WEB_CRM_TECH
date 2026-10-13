@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/higher-study/layout,_N_T_/higher-study/intakes/layout,_N_T_/higher-study/intakes/page,_N_T_/higher-study/intakes"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/higher-study/intakes/__PAGE__",
+    "/higher-study/intakes",
+    "/higher-study",
+    "/_index",
+    "/_head"
+  ]
+}

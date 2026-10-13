@@ -1,0 +1,3 @@
+{
+  "/api/cron/notification-queue/route": "app/api/cron/notification-queue/route.js"
+}

@@ -1,0 +1,3 @@
+module.exports=[98372,a=>{"use strict";var b=a.i(7997);function c(){return(0,b.jsx)("div",{className:"flex min-h-[60vh] items-center justify-center px-6 py-16",role:"status","aria-live":"polite","aria-label":"Loading English Learning section",children:(0,b.jsxs)("div",{className:"flex flex-col items-center gap-3",children:[(0,b.jsx)("div",{className:"h-8 w-8 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"}),(0,b.jsx)("p",{className:"text-xs font-medium text-ink-600",children:"Loading English Learning…"})]})})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=src_app_english-learning_loading_tsx_8076c300._.js.map

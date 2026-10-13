@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "functions": {
+    "/_middleware": {
+      "runtime": "nodejs",
+      "matchers": [
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!_next\\/static|_next\\/image|favicon\\.ico|favicon\\.svg|icon|apple-icon|manifest\\.webmanifest|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|css|js|woff|woff2|ttf|map)$).*))(\\.json)?[\\/#\\?]?$",
+          "originalSource": "/((?!_next/static|_next/image|favicon\\.ico|favicon\\.svg|icon|apple-icon|manifest\\.webmanifest|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|css|js|woff|woff2|ttf|map)$).*)"
+        }
+      ]
+    },
+    "/api/v1/analytics/track": {},
+    "/api/v1/whatsapp/admin/stats": {},
+    "/api/v1/whatsapp/chat": {},
+    "/api/v1/whatsapp/send": {},
+    "/api/v1/whatsapp/status": {},
+    "/api/v1/whatsapp/webhook": {}
+  }
+}

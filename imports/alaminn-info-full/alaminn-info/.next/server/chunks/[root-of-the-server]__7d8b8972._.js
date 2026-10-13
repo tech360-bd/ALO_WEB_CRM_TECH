@@ -1,0 +1,3 @@
+module.exports=[63021,(i,r,s)=>{r.exports=i.x("@prisma/client-2c3a283f134fdcb6",()=>require("@prisma/client-2c3a283f134fdcb6"))},10657,i=>{"use strict";var r=i.i(63021);let s=globalThis,a="v5-analytics-2026-07",e=s.__prismaVersion,c=s.prisma;e!==a&&c&&(c.$disconnect().catch(()=>{}),s.prisma=void 0);let t=s.__prismaVersion===a&&s.prisma?s.prisma:new r.PrismaClient({log:["error","warn"]});i.s(["db",0,t])}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__7d8b8972._.js.map

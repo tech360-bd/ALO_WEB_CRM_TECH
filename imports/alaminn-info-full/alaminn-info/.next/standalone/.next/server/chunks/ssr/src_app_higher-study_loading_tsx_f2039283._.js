@@ -1,0 +1,3 @@
+module.exports=[97492,a=>{"use strict";var b=a.i(7997);function c(){return(0,b.jsx)("div",{className:"flex min-h-[60vh] items-center justify-center px-6 py-16",role:"status","aria-live":"polite","aria-label":"Loading Higher Study section",children:(0,b.jsxs)("div",{className:"flex flex-col items-center gap-3",children:[(0,b.jsx)("div",{className:"h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"}),(0,b.jsx)("p",{className:"text-xs font-medium text-ink-600",children:"Loading Higher Study…"})]})})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=src_app_higher-study_loading_tsx_f2039283._.js.map
