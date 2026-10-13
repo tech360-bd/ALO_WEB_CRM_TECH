@@ -1,0 +1,6 @@
+
+ Test Files  4 failed | 171 passed (175)
+      Tests  14 failed | 1889 passed (1903)
+   Start at  20:42:25
+   Duration  45.22s (transform 4.33s, setup 1.08s, import 12.82s, tests 8.04s, environment 19ms)
+

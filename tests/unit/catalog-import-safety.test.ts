@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-const mocks = vi.hoisted(() => ({ auth: { userId: 'admin-1', actorUserId: 'admin-1', roles: ['ADMIN'], identityDomain: 'user', userType: 'ADMIN', authenticationMethod: 'cookie' as const }, universityFind: vi.fn(), courseFind: vi.fn(), universityCreate: vi.fn(), courseCreate: vi.fn(), feeCreate: vi.fn(), auditCreate: vi.fn(), transaction: vi.fn() }));
+const mocks = vi.hoisted(() => ({ auth: { userId: 'admin-1', identityDomain: 'user', authenticationMethod: 'bearer', userType: 'ADMIN', roles: ['ADMIN'] }, universityFind: vi.fn(), courseFind: vi.fn(), universityCreate: vi.fn(), courseCreate: vi.fn(), feeCreate: vi.fn(), auditCreate: vi.fn(), transaction: vi.fn() }));
 vi.mock('@/lib/auth-middleware', () => ({ withAuth: (fn: any) => (req: any) => fn(req, mocks.auth) }));
 vi.mock('@/lib/db', () => ({ db: { crmUniversity: { findFirst: mocks.universityFind }, crmCourse: { findFirst: mocks.courseFind }, $transaction: mocks.transaction } }));
 import { POST as importUniversities } from '@/app/api/admin/import/universities/route';
 import { POST as importCourses } from '@/app/api/admin/import/courses/route';
 const request = (rows: unknown[], dryRun = false) => new NextRequest('https://aloeducation.com/api/admin/import/universities', { method: 'POST', headers: { origin: 'https://aloeducation.com' }, body: JSON.stringify({ rows, dryRun }) });
 beforeEach(() => {
- vi.resetAllMocks(); vi.stubEnv('NEXTAUTH_URL', 'https://aloeducation.com'); mocks.auth.roles = ['ADMIN']; mocks.auth.userType = 'ADMIN'; mocks.universityFind.mockResolvedValue(null); mocks.courseFind.mockResolvedValue(null);
+ vi.resetAllMocks(); mocks.auth.roles = ['ADMIN']; mocks.auth.userType = 'ADMIN'; mocks.universityFind.mockResolvedValue(null); mocks.courseFind.mockResolvedValue(null);
  mocks.transaction.mockImplementation((fn: any) => fn({ crmUniversity: { create: mocks.universityCreate }, crmCourse: { create: mocks.courseCreate }, crmCourseIntakeFee: { create: mocks.feeCreate }, crmAuditLog: { create: mocks.auditCreate } }));
 });
 describe('catalog import safety', () => {

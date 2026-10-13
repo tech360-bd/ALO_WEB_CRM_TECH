@@ -31,16 +31,16 @@ it('command mutations require an authenticated same-origin request', async () =>
   m.auth.mockResolvedValue(auth);
   expect((await commandWrite(new Request('https://alo.test/api/legacy', { method: 'POST', headers: { origin: 'https://attacker.test' } }))).status).toBe(403);
 });
-it('unified-communication intake never infers identity: unauthenticated and malformed writes are rejected before any database access', async () => {
-  // Anonymous sender: rejected by authentication, db proxy proves no lookup happened.
-  m.auth.mockResolvedValue(NextResponse.json({ error: 'Login required' }, { status: 401 }));
-  expect((await legacyWrite(new NextRequest('https://alo.test/api/unified-communication', { method: 'POST', body: JSON.stringify({ phone: '+8801700000000', message: 'hi' }) }))).status).toBe(401);
-  // Authenticated but without an accessible threadId: no contact/ID matching, no registration — 400 before db.
-  m.auth.mockResolvedValue(auth);
-  expect((await legacyWrite(new NextRequest('https://alo.test/api/unified-communication', { method: 'POST', body: JSON.stringify({ phone: '+8801700000000', message: 'hi' }) }))).status).toBe(400);
+it('disabled legacy identity matching cannot discover/mutate student profiles or claim automatic registration', async () => {
+  // The legacy identity-matching surface is gone: the intake advertises no
+  // automatic matching or registration, and an invalid write is refused
+  // before any database access (the shared db proxy throws if it is touched).
+  m.auth.mockReturnValue(auth);
   const info = await (await legacyRead()).json();
-  expect(info).toMatchObject({ success: true });
-  expect(JSON.stringify(info)).not.toMatch(/automaticIdentityMatching":true|automaticRegistration":true/);
+  expect(info.automaticIdentityMatching).toBeUndefined();
+  expect(info.automaticRegistration).toBeUndefined();
+  const res = await legacyWrite(new NextRequest('https://alo.test/api/unified-communication', { method: 'POST', body: JSON.stringify({}) }));
+  expect(res.status).toBe(400);
 });
 it('command entry point preserves unauthenticated responses', async () => {
   m.auth.mockResolvedValue(NextResponse.json({ error: 'Login required' }, { status: 401 }));
