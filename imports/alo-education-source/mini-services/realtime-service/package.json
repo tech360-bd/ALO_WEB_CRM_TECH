@@ -1,0 +1,6 @@
+{
+  "name": "alo-realtime",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  }
+}
