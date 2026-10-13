@@ -12,17 +12,40 @@ export const GET = withAuth(async (req: Request, auth: AuthContext, context?: an
     const doc = await db.studentDocument.findUnique({ where: { id } });
     if (!doc) return NextResponse.json({ success: false, error: 'Document not found' }, { status: 404 });
 
+    // SECURITY FIX (identity domain): the student branch compared a document's
+    // `studentId` (a Student row id) against `auth.userId` (a user/portal account
+    // id). Those are different identifiers, so the comparison was meaningless —
+    // it denied the legitimate owner and would have permitted anyone whose user id
+    // happened to collide. The student's identity is now resolved properly, and an
+    // unresolvable student identity is refused rather than allowed.
     const isStudent = auth.roles.includes('student') || auth.roles.includes('STUDENT');
-    if (isStudent && doc.studentId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Cross-student blocked — IDOR blocked — student cannot download other student docs — direct private URL fails — every download audited' }, { status: 403 });
+    if (isStudent) {
+      const ownStudent = await db.student
+        .findFirst({ where: { userId: auth.userId }, select: { id: true } })
+        .catch(() => null);
+      const ownProfile = ownStudent
+        ? null
+        : await db.portalStudentProfile.findFirst({ where: { userId: auth.userId }, select: { studentId: true } }).catch(() => null);
+      const ownStudentIds = [ownStudent?.id, ownProfile?.studentId].filter(Boolean) as string[];
+      if (ownStudentIds.length === 0 || !ownStudentIds.includes(doc.studentId)) {
+        return NextResponse.json({ success: false, error: 'Cross-student access blocked.' }, { status: 403 });
+      }
     }
 
     const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
     const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
+    // SECURITY FIX: same missing-assignment gap as the review routes — an absent
+    // case or an unassigned officer skipped the check entirely.
     if (!isSuper && !isStudent && isVisa) {
       const visaCase = await db.visaCase.findFirst({ where: { studentId: doc.studentId } });
-      if (visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot download document for unassigned case — IDOR blocked — direct private URL fails' }, { status: 403 });
+      const assignedOfficer = visaCase?.visaOfficerId || '';
+      if (!assignedOfficer || assignedOfficer !== auth.userId) {
+        return NextResponse.json({
+          success: false,
+          error: visaCase
+            ? 'Cannot download a document for a visa case assigned to another officer.'
+            : 'Cannot download a document for a student with no visa case assigned to you.',
+        }, { status: 403 });
       }
     }
 

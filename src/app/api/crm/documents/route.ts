@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { requireDocumentReviewer } from '@/lib/documents/document-access-resolver';
 
 // ============================================================
 // CRM DOCUMENTS API — PortalStudentDocument with status filters
@@ -131,6 +132,21 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json(
           { success: false, error: 'Document ID is required' },
           { status: 400 }
+        );
+      }
+
+      // SECURITY FIX: this endpoint is the document REVIEW path, but it performed
+      // no role check — `withAuth` alone meant any authenticated account, including
+      // a partner user or a viewer, could approve or reject a student document.
+      // Review rights are now asserted here; a rejection also requires a reason.
+      const reviewer = requireDocumentReviewer(auth.roles);
+      if (!reviewer.ok) {
+        return NextResponse.json({ success: false, error: reviewer.error }, { status: reviewer.status });
+      }
+      if (String(status || '').toLowerCase() === 'rejected' && !String(rejectionReason || '').trim()) {
+        return NextResponse.json(
+          { success: false, error: 'A rejection reason is required.', rejectionReasonCodes: ['blurry', 'incomplete', 'wrong_document', 'expired', 'missing_page', 'inconsistent_information'] },
+          { status: 400 },
         );
       }
 

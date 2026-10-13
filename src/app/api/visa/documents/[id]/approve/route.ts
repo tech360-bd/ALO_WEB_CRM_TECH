@@ -15,12 +15,25 @@ export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: 
     const existing = await db.studentDocument.findUnique({ where: { id } });
     if (!existing) return NextResponse.json({ success: false, error: 'Document not found' }, { status: 404 });
 
-    // Ownership check via visa case
+    // Ownership check via the visa case.
+    //
+    // SECURITY FIX: the original test only ran when a case existed AND it had a
+    // visaOfficerId assigned. With no case, or an unassigned officer, the test was
+    // skipped and any visa officer could act on ANY student's document by id.
+    // Deny by default now: a non-administrator must be the assigned officer of an
+    // existing case for this student.
+    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
     const visaCase = await db.visaCase.findFirst({ where: { studentId: existing.studentId } });
-    if (visaCase) {
-      const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-      if (!isSuper && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot approve document for unassigned case — IDOR blocked' }, { status: 403 });
+    if (!isSuper) {
+      const assignedOfficer = visaCase?.visaOfficerId || '';
+      const ownsCase = !!assignedOfficer && assignedOfficer === auth.userId;
+      if (!ownsCase) {
+        return NextResponse.json({
+          success: false,
+          error: visaCase
+            ? 'Cannot approve a document for a visa case assigned to another officer.'
+            : 'Cannot approve a document for a student with no visa case assigned to you.',
+        }, { status: 403 });
       }
     }
 
