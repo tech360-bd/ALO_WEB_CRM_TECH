@@ -19,6 +19,7 @@ import { assessMessageRisk, decideDraftMode, findForbiddenClaims, authorizeConve
 import { resolveContactIdentity, phoneVariants, resolveInboundCaller, shouldAutoCreateLead, shouldAutoCreateStudent, isPlausiblePhone } from '../src/lib/communications/contact-identity';
 import { formatLeadReference, isLeadReference, leadReferenceCandidates, createLeadWithReference, isUniqueViolation } from '../src/lib/lead-reference';
 import { toSlaChannel, toSlaPriority, toSlaIntent, SLA_STATES } from '../src/lib/communications/sla-policy';
+import { classifyDocument, decideDocumentMatch, validateOutboundFileMetadata, OUTBOUND_FILE_METADATA_FIELDS } from '../src/lib/communications/document-match';
 
 let pass = 0, fail = 0;
 const check = (name: string, cond: boolean, detail = '') => {
@@ -181,6 +182,31 @@ check('legacy formats are rejected', !isLeadReference('ALO-L-10001') && !isLeadR
 check('candidate list is sequential first, collision-safe after',
   leadReferenceCandidates({ year: 2026, seedSequence: 7 })[0] === 'LEAD-2026-00007' &&
   new Set(leadReferenceCandidates({ year: 2026, seedSequence: 7 })).size === leadReferenceCandidates({ year: 2026, seedSequence: 7 }).length);
+console.log('\n── §131/§132/§133 received-document pipeline ──');
+check('a bank statement filename is classified', classifyDocument({ fileName: 'Bank Statement Oct.pdf' }).requirement === 'BANK_STATEMENT');
+check('an IELTS certificate is classified from the message text', classifyDocument({ fileName: 'doc_1.jpg', messageText: 'sir my IELTS result' }).requirement === 'ENGLISH_TEST');
+check('an unrecognised file is NOT guessed', classifyDocument({ fileName: 'IMG_2024.jpg' }).requirement === 'OTHER' && classifyDocument({ fileName: 'IMG_2024.jpg' }).confidence === 'low');
+check('two conflicting hints drop to low confidence', classifyDocument({ fileName: 'affidavit and bank statement.pdf' }).confidence === 'low');
+
+const oneApp = decideDocumentMatch({ studentId: 's1', identityConfidence: 'exact', requirement: 'BANK_STATEMENT', candidates: [{ applicationId: 'a1', active: true }] });
+check('exactly one active application is a confident match', oneApp.matched && oneApp.applicationId === 'a1' && oneApp.notice === null);
+const unnamed = decideDocumentMatch({ studentId: 's1', identityConfidence: 'exact', requirement: 'BANK_STATEMENT', candidates: [{ applicationId: 'a1', active: true }, { applicationId: 'a2', active: true }] });
+check('two active applications are NOT guessed', !unnamed.matched && unnamed.applicationId === null && unnamed.notice === 'DOCUMENT MATCH REVIEW REQUIRED');
+const byRequirement = decideDocumentMatch({ studentId: 's1', identityConfidence: 'exact', requirement: 'BANK_STATEMENT', candidates: [{ applicationId: 'a1', active: true, outstandingRequirements: ['BANK_STATEMENT'] }, { applicationId: 'a2', active: true, outstandingRequirements: ['PASSPORT'] }] });
+check('the application still missing this requirement wins the match', byRequirement.matched && byRequirement.applicationId === 'a1');
+const weakIdentity = decideDocumentMatch({ studentId: 's1', identityConfidence: 'possible', requirement: 'PASSPORT', candidates: [{ applicationId: 'a1', active: true }] });
+check('a weak identity match blocks attachment even with one application', !weakIdentity.matched && weakIdentity.notice === 'DOCUMENT MATCH REVIEW REQUIRED');
+const noStudent = decideDocumentMatch({ identityConfidence: 'none', requirement: 'PASSPORT', candidates: [{ applicationId: 'a1', active: true }] });
+check('an unmatched sender never attaches to an application', !noStudent.matched && noStudent.reasons[0].includes('not matched to a student'));
+const named = decideDocumentMatch({ studentId: 's1', identityConfidence: 'exact', requirement: 'PASSPORT', mentionedApplicationId: 'a2', candidates: [{ applicationId: 'a1', active: true }, { applicationId: 'a2', active: true }] });
+check('an application named by the student is honoured', named.matched && named.applicationId === 'a2');
+const withdrawn = decideDocumentMatch({ studentId: 's1', identityConfidence: 'exact', requirement: 'PASSPORT', candidates: [{ applicationId: 'a1', active: false }] });
+check('a withdrawn application cannot receive documents', !withdrawn.matched && withdrawn.requiresHumanReview === true);
+check('§131 outbound metadata must be complete', OUTBOUND_FILE_METADATA_FIELDS.length === 11 &&
+  validateOutboundFileMetadata({ messageId: 'm1', studentId: 's1', applicationId: 'a1', documentId: 'd1', sender: 'counselor', recipient: '8801805020101', fileId: 'f1', fileName: 'offer.pdf', fileType: 'application/pdf', timestamp: '2026-10-13T10:00:00Z', deliveryStatus: 'sent' }).valid === true);
+const incomplete = validateOutboundFileMetadata({ messageId: 'm1', fileName: 'offer.pdf' });
+check('§131 missing metadata is reported by name', !incomplete.valid && incomplete.missing.includes('fileId') && incomplete.missing.includes('deliveryStatus'));
+
 console.log('\n── §147/§148 stored-value adapters ──');
 check('db channel values map onto the policy vocabulary',
   toSlaChannel('facebook_messenger') === 'social' && toSlaChannel('portal_message') === 'portal' && toSlaChannel('phone_call_log') === 'phone');
