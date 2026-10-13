@@ -80,6 +80,8 @@ export function verifyWhatsAppSignature(
 // ─── Send message ───────────────────────────────────────────────
 
 export interface SendWhatsAppParams {
+  /** Template language code. Defaults to en_US, the only variant approved so far. */
+  templateLanguage?: string;
   to: string;                  // phone (any format — normalized internally)
   text?: string;
   templateName?: string;
@@ -135,7 +137,7 @@ export async function sendWhatsAppMessage(
       type: "template",
       template: {
         name: params.templateName,
-        language: { code: "en_US" },
+        language: { code: params.templateLanguage || "en_US" },
         components: params.templateParams && params.templateParams.length > 0
           ? [{
               type: "body",
