@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { createLeadWithReference } from '@/lib/lead-reference';
 
 export async function POST(request: NextRequest) {
   try {
@@ -95,10 +96,9 @@ export async function POST(request: NextRequest) {
           assignmentReason = assignment.reason;
         }
       } else {
-        const leadCount = await db.lead.count();
-        const crmLead = await db.lead.create({
-          data: {
-            leadId: `ALO-L-${(10001 + leadCount + 1).toString()}`,
+        // §125 — one canonical reference format (LEAD-2026-XXXXX) with a
+        // collision-safe allocator; the old count()+1 raced with concurrent forms.
+        const crmLead = await createLeadWithReference<{ id: string; source: string }>(db, {
             fullName: name,
             email,
             phone,
@@ -113,7 +113,6 @@ export async function POST(request: NextRequest) {
             notes: message || '',
             rawSubmission: JSON.stringify(body),
             status: 'NEW',
-          },
         });
         crmLeadId = crmLead.id;
 

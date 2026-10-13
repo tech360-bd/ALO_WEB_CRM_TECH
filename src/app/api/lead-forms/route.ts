@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { createLeadWithReference } from '@/lib/lead-reference';
 
 // POST — create lead from homepage form
 export async function POST(req: NextRequest) {
@@ -28,10 +29,8 @@ export async function POST(req: NextRequest) {
   if (existing) {
     await db.lead.update({ where: { id: existing.id }, data: { status: "CONTACTED" } });
   } else {
-    const count = await db.lead.count();
-    await db.lead.create({
-      data: {
-        leadId: `ALO-L-${(10001 + count + 1).toString()}`,
+    // §125 — canonical LEAD-2026-XXXXX reference, allocated collision-safely.
+    await createLeadWithReference(db, {
         fullName: name,
         email: email || null,
         phone,
@@ -42,7 +41,6 @@ export async function POST(req: NextRequest) {
         notes: `${message || ""}${preferredLevel ? ` | Level: ${preferredLevel}` : ""}${intake ? ` | Intake: ${intake}` : ""}${budget ? ` | Budget: ${budget}` : ""}${englishScore ? ` | English: ${englishTest || ""} ${englishScore}` : ""}`.trim(),
         status: "NEW",
         welcomeSent: false,
-      },
     });
   }
 

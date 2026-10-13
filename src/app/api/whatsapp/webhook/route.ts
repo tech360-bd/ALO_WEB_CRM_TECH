@@ -11,6 +11,8 @@ import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
 import { handleStopStartCommand, createFollowUpScheduleForStudent } from "@/lib/whatsapp-followup-engine";
 import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164, extractMessageContent as extractMessageContentHandler } from "@/lib/whatsapp-webhook-handler";
 import { deriveWebhookEventId, mapProviderStatus, shouldApplyStatus } from '@/lib/communications/webhook-idempotency';
+import { createLeadWithReference } from '@/lib/lead-reference';
+import { resolveContactIdentity, shouldAutoCreateLead } from '@/lib/communications/contact-identity';
 // Consolidated 2026-09-14: handler provides CRM intent/priority + E.164 + comprehensive extractMessageContent (additional, not replacing local)
 // Existing phone normalization, signature verification, routing and message processing stay in place; student IDs are generated only by the reviewed student-creation workflow.
 
@@ -408,19 +410,41 @@ export async function POST(req: NextRequest) {
         if (altCheck) {
           leadId = altCheck.leadId || null;
         } else {
-          const count = await db.lead.count().catch(() => 0);
-          const newLead = await db.lead.create({
-            data: {
-              leadId: `ALO-L-${(10001 + count + 1).toString()}`,
-              fullName: fromName || `WhatsApp ${from.slice(-4)}`,
-              phone: from,
-              source: "WHATSAPP",
-              sourceDetail: `WhatsApp inbound - ${type}`,
-              notes: `Contact identity not yet matched. First WhatsApp message: "${messageBody.slice(0, 200)}"`,
-              status: "NEW",
-              welcomeSent: false,
-            },
-          }).catch(() => null);
+          // ── §126 deduplication before creation ──────────────────────────────
+          // The candidate list is everything the lookup above already found; the
+          // identity policy decides whether a NEW record is justified. A contact
+          // that only matches on a weak field (alternate phone, WhatsApp identity)
+          // is flagged POSSIBLE EXISTING CONTACT and carries the review notice, so
+          // an operator sees the duplicate risk instead of finding two leads later.
+          const identity = resolveContactIdentity(
+            { phone: from, whatsappNumber: waContact?.normalizedPhone || undefined, altPhone: undefined },
+            [
+              ...(existingStudent ? [{ kind: 'student' as const, id: existingStudent.id, name: existingStudent.name ?? null, phone: existingStudent.phone ?? null }] : []),
+              ...(existingLead ? [{ kind: 'lead' as const, id: existingLead.id, reference: existingLead.leadId ?? null, name: existingLead.fullName ?? null, phone: existingLead.phone ?? null, altPhone: existingLead.altPhone ?? null }] : []),
+              ...(waContact ? [{ kind: (waContact.leadId ? 'lead' : 'partner_contact') as const, id: waContact.id, name: waContact.displayName ?? null, whatsappNumber: waContact.normalizedPhone ?? null, matchedOn: 'whatsapp_identity' as const }] : []),
+            ],
+          );
+
+          if (!shouldAutoCreateLead(identity)) {
+            // Impossible here (no candidate means nothing matched), but the guard
+            // makes the rule explicit rather than implied by control flow.
+            results.push({ messageId: providerMessageId, identity: identity.confidence, skippedLeadCreation: true });
+          } else {
+          const newLead = await createLeadWithReference(db, {
+            fullName: fromName || `WhatsApp ${from.slice(-4)}`,
+            phone: from,
+            source: "WHATSAPP",
+            sourceDetail: `WhatsApp inbound - ${type}`,
+            notes: [
+              `Contact identity not yet matched. First WhatsApp message: "${messageBody.slice(0, 200)}"`,
+              identity.notice ? `Identity review: ${identity.notice}` : '',
+            ].filter(Boolean).join('\n'),
+            status: "NEW",
+            welcomeSent: false,
+          }).catch((error) => {
+            console.error('[whatsapp.webhook] lead creation failed:', error instanceof Error ? error.message : 'unknown');
+            return null;
+          });
 
           if (newLead) {
             leadId = newLead.id;
@@ -443,10 +467,14 @@ export async function POST(req: NextRequest) {
                 leadId: newLead.id,
                 stage: "LEAD_CREATED",
                 type: "LEAD_CREATED",
-                title: "WhatsApp contact requires identity match",
-                description: `Lead recorded from WhatsApp inbound (${type}); no student profile was created.`,
+                title: identity.confidence === 'possible' ? "POSSIBLE EXISTING CONTACT — identity review required" : "WhatsApp contact requires identity match",
+                description: [
+                  `Lead recorded from WhatsApp inbound (${type}); no student profile was created.`,
+                  identity.notice || '',
+                ].filter(Boolean).join(' '),
               },
             }).catch(() => {});
+          }
           }
         }
       } catch (err) {

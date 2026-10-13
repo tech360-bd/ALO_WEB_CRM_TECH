@@ -17,6 +17,8 @@ import { evaluateChannels, channelsForRole, assertChannelSendable } from '../src
 import { evaluateDocumentTransition, buildDocumentSlot, rejectionNotice, legacyStatusToState, canDeleteDocument } from '../src/lib/communications/document-policy';
 import { assessMessageRisk, decideDraftMode, findForbiddenClaims, authorizeConversationAccess, proposeNextAction } from '../src/lib/communications/ai-safety';
 import { resolveContactIdentity, phoneVariants, resolveInboundCaller, shouldAutoCreateLead, shouldAutoCreateStudent, isPlausiblePhone } from '../src/lib/communications/contact-identity';
+import { formatLeadReference, isLeadReference, leadReferenceCandidates, createLeadWithReference, isUniqueViolation } from '../src/lib/lead-reference';
+import { toSlaChannel, toSlaPriority, toSlaIntent, SLA_STATES } from '../src/lib/communications/sla-policy';
 
 let pass = 0, fail = 0;
 const check = (name: string, cond: boolean, detail = '') => {
@@ -173,5 +175,68 @@ check('§123 partner blocked from another partner\'s student',
   authorizeConversationAccess({ actor: { userId: 'p1', role: 'partner', partnerId: 'PA' }, conversation: { studentId: 's9', partnerId: 'PB' } }).allowed === false);
 check('§158 critical cases are never auto-resolved', proposeNextAction(paymentRisk).needsHuman === true && proposeNextAction(legalRisk).owner === 'manager');
 
+console.log('\n── §125 canonical LEAD reference ──');
+check('reference matches the spec format', formatLeadReference(2026, 42) === 'LEAD-2026-00042');
+check('legacy formats are rejected', !isLeadReference('ALO-L-10001') && !isLeadReference('LEAD-2026-1'));
+check('candidate list is sequential first, collision-safe after',
+  leadReferenceCandidates({ year: 2026, seedSequence: 7 })[0] === 'LEAD-2026-00007' &&
+  new Set(leadReferenceCandidates({ year: 2026, seedSequence: 7 })).size === leadReferenceCandidates({ year: 2026, seedSequence: 7 }).length);
+console.log('\n── §147/§148 stored-value adapters ──');
+check('db channel values map onto the policy vocabulary',
+  toSlaChannel('facebook_messenger') === 'social' && toSlaChannel('portal_message') === 'portal' && toSlaChannel('phone_call_log') === 'phone');
+check('db priority values map onto the policy vocabulary', toSlaPriority('sla_overdue') === 'urgent' && toSlaPriority('') === 'normal');
+check('db intent values map onto the policy vocabulary', toSlaIntent('document_request') === 'document_requirement' && toSlaIntent('x') === 'general');
+check('the SLA state vocabulary is exactly the spec four', SLA_STATES.join(',') === 'normal,warning,overdue,critical');
+
+// ── The allocator is async (it talks to a writer), so its checks are awaited
+//    before the summary is printed. Printing the summary first would report a
+//    pass count that excludes them — a false pass.
+async function runAllocatorChecks() {
+  const taken = new Set<string>(['LEAD-2026-00012']);
+  let attempts = 0;
+  const stubClient = {
+    lead: {
+      count: async () => 11,
+      create: async ({ data }: { data: any }) => {
+        attempts += 1;
+        if (taken.has(String(data.leadId))) {
+          const error: any = new Error('Unique constraint failed on the fields: (`leadId`)');
+          error.code = 'P2002';
+          throw error;
+        }
+        taken.add(String(data.leadId));
+        return { id: 'lead-1', ...data };
+      },
+    },
+  };
+  const created: any = await createLeadWithReference(stubClient, { fullName: 'Rahim', phone: '8801805020101' }, { year: 2026 });
+  check('a colliding reference is retried instead of losing the lead', attempts === 2 && isLeadReference(created.leadId), `attempts=${attempts}`);
+
+  let realFailures = 0;
+  let threw = false;
+  try {
+    await createLeadWithReference(
+      { lead: { count: async () => 1, create: async () => { realFailures += 1; throw new Error('connection refused'); } } },
+      { fullName: 'x' },
+      { year: 2026 },
+    );
+  } catch {
+    threw = true;
+  }
+  check('a real database failure is not hidden by retrying', threw && realFailures === 1, `attempts=${realFailures}`);
+  check('only unique violations trigger a retry', isUniqueViolation({ code: 'P2002' }) && !isUniqueViolation(new Error('connection refused')));
+}
+
+runAllocatorChecks()
+  .catch((error) => {
+    fail += 1;
+    console.log(`FAIL  lead reference allocator checks threw: ${error instanceof Error ? error.message : String(error)}`);
+  })
+  .finally(() => {
+    report();
+  });
+
+function report() {
 console.log(`\n${fail === 0 ? 'ALL COMMUNICATION CHECKS PASS' : 'FAILURES PRESENT'} — ${pass} passed, ${fail} failed`);
-process.exit(fail === 0 ? 0 : 1);
+  process.exit(fail === 0 ? 0 : 1);
+}
