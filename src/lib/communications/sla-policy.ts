@@ -39,6 +39,46 @@ export const SLA_INTENTS = [
 export type SlaIntent = (typeof SLA_INTENTS)[number];
 
 /** Spec §148 — never signal urgency by colour alone. */
+/**
+ * Normalise the free-form channel/priority/intent strings that live in the
+ * database (the CRM stores values like `facebook_messenger`, `portal_message`,
+ * `phone_call_log`, `sla_overdue`) onto the canonical policy vocabulary.
+ *
+ * Unknown values fall back to the safest option rather than throwing: an
+ * unrecognised channel must still get a clock, not an exception in the inbox.
+ */
+export function toSlaChannel(value: string | null | undefined): SlaChannel {
+  const key = String(value || '').trim().toLowerCase();
+  if ((SLA_CHANNELS as readonly string[]).includes(key)) return key as SlaChannel;
+  if (key.includes('whatsapp')) return 'whatsapp';
+  if (key.includes('instagram') || key.includes('facebook') || key.includes('messenger') || key.includes('social') || key.includes('linkedin')) return 'social';
+  if (key.includes('sms')) return 'sms';
+  if (key.includes('mail')) return 'email';
+  if (key.includes('call') || key.includes('phone')) return 'phone';
+  if (key.includes('portal') || key.includes('chat') || key.includes('website')) return 'portal';
+  if (key.includes('internal') || key.includes('note') || key.includes('system')) return 'internal';
+  return 'email';
+}
+
+export function toSlaPriority(value: string | null | undefined): SlaPriority {
+  const key = String(value || '').trim().toLowerCase().replace(/^sla_/, '');
+  if (key === 'critical' || key === 'urgent' || key === 'overdue') return 'urgent';
+  if (key === 'high') return 'high';
+  if (key === 'low') return 'low';
+  return 'normal';
+}
+
+export function toSlaIntent(value: string | null | undefined): SlaIntent {
+  const key = String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if ((SLA_INTENTS as readonly string[]).includes(key)) return key as SlaIntent;
+  if (key.includes('document') || key.includes('doc_')) return 'document_requirement';
+  if (key.includes('pay') || key.includes('fee') || key.includes('invoice')) return 'payment';
+  if (key.includes('visa') || key.includes('cas') || key.includes('i20')) return 'visa';
+  if (key.includes('interview')) return 'interview';
+  if (key.includes('status') || key.includes('application')) return 'application_status';
+  return 'general';
+}
+
 export const SLA_STATES = ['normal', 'warning', 'overdue', 'critical'] as const;
 export type SlaState = (typeof SLA_STATES)[number];
 
@@ -241,6 +281,12 @@ export interface ResponseMetricsInput {
   dueAt: Date;
   /** When set, the message was excluded from SLA (spec §152/§156). */
   excluded?: boolean;
+  /**
+   * Reference instant for a still-unanswered message. Callers that already know
+   * "now" (a request handler, a dashboard render) should pass it so every row in
+   * one response is measured against the same instant.
+   */
+  now?: Date;
 }
 
 export interface ResponseMetrics {
@@ -262,7 +308,7 @@ export function computeResponseMetrics(input: ResponseMetricsInput): ResponseMet
   const resolutionTimeMs = input.resolvedAt ? input.resolvedAt.getTime() - input.receivedAt.getTime() : null;
   const respondedBy = input.firstResponseAt ? input.firstResponseAt.getTime() : null;
   const overdueMs = respondedBy === null
-    ? Math.max(0, Date.now() - input.dueAt.getTime()) // still unanswered: measured by the caller against `now`
+    ? Math.max(0, (input.now ?? new Date()).getTime() - input.dueAt.getTime()) // still unanswered
     : Math.max(0, respondedBy - input.dueAt.getTime());
   const breached = respondedBy === null ? false : respondedBy > input.dueAt.getTime();
   return {
