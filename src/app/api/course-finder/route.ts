@@ -58,12 +58,17 @@ export async function GET(req: Request) {
   try {
     const sp = new URL(req.url).searchParams;
     filters = parseCourseFinderParams(sp);
-    const intakeMonths = parseIntakeMonths(sp);
-    if (intakeMonths.length) {
-      filters.intakeMonths = intakeMonths;
-      // The repeated months are the selection; a single-month param would
-      // otherwise contradict them.
-      filters.intakeMonth = undefined;
+    // Year-qualified months (2027-01, "Jan 2028") were already parsed into
+    // filters.intakePeriods by parseCourseFinderParams; only fall back to the
+    // bare-month parser when no year-qualified token was supplied.
+    if (!filters.intakePeriods) {
+      const intakeMonths = parseIntakeMonths(sp);
+      if (intakeMonths.length) {
+        filters.intakeMonths = intakeMonths;
+        // The repeated months are the selection; a single-month param would
+        // otherwise contradict them.
+        filters.intakeMonth = undefined;
+      }
     }
   } catch (error) {
     if (error instanceof PublicQueryError) {
@@ -151,6 +156,10 @@ export async function GET(req: Request) {
         intakeYear: fee.intakeYear ?? null,
         intakeMonth: fee.intakeMonth || '',
         intakeName: fee.intakeName || '',
+        // true = month/deadline/fees came from an official source; false =
+        // ALO scheduled intake-window month still awaiting verification. A row
+        // that is not verified never carries a fee or deadline value.
+        verified: String(fee.verificationStatus || '').toUpperCase() === 'VERIFIED',
         applicationDeadline: fee.applicationDeadline || '',
         yearlyTuition: fee.yearlyTuition && fee.yearlyTuition > 0 ? fee.yearlyTuition : 0,
         tuitionCurrency: fee.tuitionCurrency || '',

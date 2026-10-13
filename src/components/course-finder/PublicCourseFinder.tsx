@@ -23,6 +23,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
+  DEFAULT_INTAKE_YEAR,
+  INTAKE_WINDOW_LABEL,
+  INTAKE_YEAR_OPTIONS,
+  intakeMonthsForYear,
+} from '@/lib/course-finder/intake-window';
+import {
   Building2,
   CalendarDays,
   CheckCircle2,
@@ -47,6 +53,18 @@ interface CourseIntake {
   applicationDeadline: string;
   yearlyTuition: number;
   tuitionCurrency: string;
+  /** true = month/deadline/fees came from an official source. */
+  verified?: boolean;
+}
+
+/** Intake cell text plus an honest marker for months still awaiting a source. */
+function intakeCellText(intakes: CourseIntake[]): { text: string; pendingVerification: boolean } {
+  const labelled = intakes.map(intakeLabel).filter(Boolean);
+  const verified = intakes.filter((intake) => intake.verified !== false).map(intakeLabel).filter(Boolean);
+  return {
+    text: labelled.slice(0, 3).join(' · '),
+    pendingVerification: labelled.length > 0 && verified.length < labelled.length,
+  };
 }
 
 interface CourseRow {
@@ -103,7 +121,6 @@ const STUDY_LEVELS = [
   { value: 'PhD', label: 'PhD / Doctorate' },
 ] as const;
 
-const DEFAULT_INTAKE_YEAR = 2027;
 const PAGE_SIZE = 24;
 
 const EMPTY_FACETS: Facets = {
@@ -218,7 +235,10 @@ export default function PublicCourseFinder() {
   const [intakeYear, setIntakeYear] = useState<number>(
     Number(searchParams.get('year')) || DEFAULT_INTAKE_YEAR
   );
-  const [intakeMonths, setIntakeMonths] = useState<number[]>([]);
+  // Window keys ("2027-01"), so Jan 2027 and Jan 2028 can never be confused.
+  const [intakeMonths, setIntakeMonths] = useState<string[]>([]);
+  const windowYearOptions = INTAKE_YEAR_OPTIONS;
+  const intakeOptions = intakeMonthsForYear(intakeYear);
 
   /* UNIVERSITIES form */
   const [lookingFor, setLookingFor] = useState('');
@@ -269,8 +289,8 @@ export default function PublicCourseFinder() {
         if (country) params.set('country', country);
         if (universityFilter) params.set('university', universityFilter);
         if (intakeMonths.length) {
-          for (const month of intakeMonths) params.append('intakeMonth', String(month));
-          params.set('year', String(intakeYear));
+          // Year-qualified ("2027-01") so the server matches the exact month.
+          for (const key of intakeMonths) params.append('intakeMonth', key);
         }
         params.set('limit', String(PAGE_SIZE));
         params.set('page', String(targetPage));
@@ -292,7 +312,7 @@ export default function PublicCourseFinder() {
         setSearched(true);
       }
     },
-    [subject, level, country, universityFilter, intakeMonths, intakeYear]
+    [subject, level, country, universityFilter, intakeMonths]
   );
 
   const runUniversitySearch = useCallback(async () => {
@@ -341,9 +361,10 @@ export default function PublicCourseFinder() {
     router.replace(query ? `/course-finder?${query}` : '/course-finder', { scroll: false });
   };
 
-  const toggleMonth = (month: number) => {
+  /** Toggle a window month by its "YYYY-MM" key. */
+  const toggleMonth = (key: string) => {
     setIntakeMonths((prev) =>
-      prev.includes(month) ? prev.filter((m) => m !== month) : [...prev, month].sort((a, b) => a - b)
+      prev.includes(key) ? prev.filter((entry) => entry !== key) : [...prev, key].sort()
     );
   };
 
@@ -356,10 +377,6 @@ export default function PublicCourseFinder() {
     setIntakeYear(DEFAULT_INTAKE_YEAR);
   };
 
-  const yearOptions = useMemo(
-    () => Array.from({ length: 6 }, (_, index) => DEFAULT_INTAKE_YEAR + index),
-    []
-  );
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -499,7 +516,7 @@ export default function PublicCourseFinder() {
                     value={intakeYear}
                     onChange={(event) => setIntakeYear(Number(event.target.value))}
                   >
-                    {yearOptions.map((year) => (
+                    {windowYearOptions.map((year) => (
                       <option key={year} value={year}>
                         {year}
                       </option>
@@ -507,7 +524,7 @@ export default function PublicCourseFinder() {
                   </select>
                   <button
                     type="button"
-                    onClick={() => setIntakeMonths([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])}
+                    onClick={() => setIntakeMonths(intakeOptions.map((entry) => entry.key))}
                     className="text-[12px] font-semibold text-alo-brand underline underline-offset-2 hover:text-alo-cta"
                   >
                     All months
@@ -524,28 +541,31 @@ export default function PublicCourseFinder() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                {MONTH_LABELS.map((label, index) => {
-                  const month = index + 1;
-                  const selected = intakeMonths.includes(month);
-                  const recorded = facets.recordedIntakeMonths.includes(month);
+                {intakeOptions.map((entry) => {
+                  const selected = intakeMonths.includes(entry.key);
+                  const recorded = facets.recordedIntakeMonths.includes(entry.month);
                   return (
                     <button
-                      key={label}
+                      key={entry.key}
                       type="button"
                       aria-pressed={selected}
-                      onClick={() => toggleMonth(month)}
+                      onClick={() => toggleMonth(entry.key)}
                       className={`rounded-full border px-3.5 py-2 font-heading text-[12px] font-bold transition-colors ${
                         selected
                           ? 'border-alo-cta bg-alo-cta text-white'
                           : 'border-alo-border bg-white text-alo-text hover:border-alo-brand hover:text-alo-brand'
                       }`}
-                      title={recorded ? `${label} ${intakeYear} intakes are recorded` : `${label} ${intakeYear}`}
+                      title={recorded ? `${entry.label} intakes are recorded` : `${entry.label} — no verified intake recorded yet`}
                     >
-                      {label} {intakeYear}
+                      {entry.label}
                     </button>
                   );
                 })}
               </div>
+              <p className="mt-2 text-[11px] text-alo-text-muted">
+                ALO intake window: <span className="font-semibold">{INTAKE_WINDOW_LABEL}</span>. Months marked as
+                recorded have catalogue data; other months are tracked and shown as pending verification.
+              </p>
             </div>
           </div>
         )}
@@ -670,11 +690,8 @@ export default function PublicCourseFinder() {
                   )}
                   {courses.map((course) => {
                     const interview = interviewCell(course);
-                    const intakeText = course.intakes
-                      .map(intakeLabel)
-                      .filter(Boolean)
-                      .slice(0, 3)
-                      .join(' · ');
+                    const intake = intakeCellText(course.intakes);
+                    const intakeText = intake.text;
                     return (
                       <tr key={course.id} className="border-t border-alo-border align-top hover:bg-alo-page/60">
                         <td className="px-4 py-3">
@@ -714,6 +731,11 @@ export default function PublicCourseFinder() {
                         </td>
                         <td className="px-4 py-3 text-[12px] text-alo-text-secondary">
                           {intakeText || 'Not recorded'}
+                          {intake.pendingVerification && (
+                            <span className="mt-0.5 block text-[11px] text-alo-text-muted">
+                              Deadline &amp; fees pending verification
+                            </span>
+                          )}
                           {course.applicationDeadline && (
                             <span className="mt-0.5 block text-[11px] text-alo-text-muted">
                               Deadline: {course.applicationDeadline}

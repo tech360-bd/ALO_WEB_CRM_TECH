@@ -15,6 +15,7 @@
  */
 
 import { NON_PUBLIC_INTERNATIONAL_VALUES } from './course-finder/eligibility-rules';
+import { parseIntakePeriodToken } from '@/lib/course-finder/intake-window';
 
 export const PUBLISHED_STATUSES = ['published', 'PUBLISHED'] as const;
 export const SOURCE_VERIFIED_STATUSES = ['VERIFIED', 'verified'] as const;
@@ -58,8 +59,26 @@ export function publicCourseWhere() {
   };
 }
 
-/** Intake and requirement rows shown publicly must also be verified. */
+/**
+ * Intake rows shown publicly.
+ *
+ * Two verification states are listed:
+ *   • VERIFIED  — the month, deadline and fees came from an official source and
+ *                 were checked (the only state that may carry fee/deadline data).
+ *   • SCHEDULED — the ALO intake window (Jan 2027 … Jan 2028) row created by the
+ *                 backfill. It asserts only that ALO tracks that month as an
+ *                 intake; tuition, deposit, application fee and deadline stay
+ *                 EMPTY until a source is verified, and the API flags each such
+ *                 row (`verified: false`) so no screen can present it as fact.
+ *
+ * EXPIRED / NEEDS_REVIEW / anything else stays out of public results.
+ */
 export function publicIntakeWhere() {
+  return { status: 'active', verificationStatus: { in: ['VERIFIED', 'SCHEDULED'] } };
+}
+
+/** Intake rows whose month, deadline and fees are all source-verified. */
+export function publicVerifiedIntakeWhere() {
   return { status: 'active', verificationStatus: 'VERIFIED' };
 }
 
@@ -181,6 +200,8 @@ export function intakeMonthVariants(month: number): string[] {
   return [...variants];
 }
 
+export { INTAKE_WINDOW_MONTHS, INTAKE_WINDOW_LABEL } from '@/lib/course-finder/intake-window';
+
 export const ENGLISH_TEST_KEYS = [
   'ielts', 'pte', 'toefl', 'duolingo', 'moi', 'oietc', 'oxford', 'languagecert', 'oet',
 ] as const;
@@ -203,6 +224,11 @@ const ENGLISH_TEST_DEFINITIONS: Record<EnglishTestKey, {
   oet: { testTypes: ['OET'], requirementLabel: 'OET' },
 };
 
+export interface IntakePeriodFilter {
+  year: number;
+  month: number;
+}
+
 export interface CourseFinderFilters {
   search: string;
   countries: string[];
@@ -219,6 +245,12 @@ export interface CourseFinderFilters {
    * over the single `intakeMonth` when present. Month numbers 1-12.
    */
   intakeMonths?: number[];
+  /**
+   * Year-qualified intake selection — the canonical form for the ALO intake
+   * window (Jan 2027 … Jan 2028), where a month number alone is ambiguous
+   * because the window spans two years.
+   */
+  intakePeriods?: IntakePeriodFilter[];
   tuitionMin?: number;
   tuitionMax?: number;
   scholarship: boolean;
@@ -323,6 +355,19 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
   const page = readInteger(sp, 'page', 1, 1_000_000) ?? 1;
   const limit = readInteger(sp, 'limit', 1, COURSE_FINDER_MAX_LIMIT) ?? COURSE_FINDER_DEFAULT_LIMIT;
 
+  // Year-qualified intake months ("2027-01", "Jan 2028" or repeated
+  // intakeMonth=… params). The ALO window spans Jan 2027 → Jan 2028, so the
+  // year travels with the month instead of relying on a separate `year`.
+  const rawIntakeMonths = sp.getAll('intakeMonth').flatMap((value) => value.split(',')).map((v) => v.trim()).filter(Boolean);
+  const intakePeriods: IntakePeriodFilter[] = [];
+  for (const token of rawIntakeMonths) {
+    const parsed = parseIntakePeriodToken(token, yearParam ?? undefined);
+    if (!parsed) throw new PublicQueryError('"intakeMonth" must be a month name, a number 1-12, "YYYY-MM" or "<Mon> YYYY".');
+    if (!intakePeriods.some((entry) => entry.year === parsed.year && entry.month === parsed.month)) {
+      intakePeriods.push({ year: parsed.year, month: parsed.month });
+    }
+  }
+
   return {
     search: readText(sp, 'search'),
     countries: readList(sp, 'country'),
@@ -334,6 +379,7 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
     university: readText(sp, 'university'),
     intakeMonth: intake.month,
     intakeYear: yearParam ?? intake.year,
+    intakePeriods: intakePeriods.length > 0 ? intakePeriods : undefined,
     tuitionMin,
     tuitionMax,
     scholarship: ['yes', 'true', '1'].includes(scholarshipRaw),
@@ -404,7 +450,21 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
   if (f.lowDeposit) and.push({ lowDeposit: true });
 
   const intakeFee: Record<string, unknown> = { ...publicIntakeWhere() };
-  if (f.intakeMonths?.length) {
+  if (f.intakePeriods?.length) {
+    // Year-qualified periods: one OR branch per (year, month) so Jan 2027 and
+    // Jan 2028 are never confused with each other.
+    and.push({
+      OR: f.intakePeriods.map((entry) => ({
+        intakeFees: {
+          some: {
+            ...publicIntakeWhere(),
+            intakeYear: entry.year,
+            intakeMonth: { in: intakeMonthVariants(entry.month) },
+          },
+        },
+      })),
+    });
+  } else if (f.intakeMonths?.length) {
     intakeFee.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
   } else if (f.intakeMonth) {
     intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
@@ -458,18 +518,25 @@ export function buildCourseFinderOrderBy(sort: CourseFinderFilters['sort']): Rec
 /** Include clause for public intakes; the intake filter is repeated so the shown intake matches the search. */
 export function buildPublicIntakeInclude(f: CourseFinderFilters) {
   const where: Record<string, unknown> = { ...publicIntakeWhere() };
-  if (f.intakeMonths?.length) {
+  if (f.intakePeriods?.length) {
+    // Year-qualified selection: keep each (year, month) pair intact.
+    where.OR = f.intakePeriods.map((entry) => ({
+      intakeYear: entry.year,
+      intakeMonth: { in: intakeMonthVariants(entry.month) },
+    }));
+  } else if (f.intakeMonths?.length) {
     where.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
   } else if (f.intakeMonth) {
     where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
   }
-  if (f.intakeYear) where.intakeYear = f.intakeYear;
+  if (f.intakeYear && !f.intakePeriods?.length) where.intakeYear = f.intakeYear;
   return {
     where,
-    // Ordered earliest-first so intakeFees[0] stays the primary intake, with
-    // room for the two further intakes the results table displays.
-    orderBy: [{ intakeYear: 'asc' as const }, { id: 'asc' as const }],
-    take: 3,
+    // Ordered earliest-first so intakeFees[0] stays the primary intake. The
+    // window can hold 13 months, so allow a longer slice than the two extra
+    // intakes the table prints — the API receives every month it must show.
+    orderBy: [{ intakeYear: 'asc' as const }, { intakeMonth: 'asc' as const }, { id: 'asc' as const }],
+    take: f.intakePeriods?.length ? Math.min(f.intakePeriods.length, 13) : 13,
   };
 }
 
