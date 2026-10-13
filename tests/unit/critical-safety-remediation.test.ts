@@ -300,7 +300,10 @@ describe('Fix 4: synthetic generators fail closed', () => {
     'alo-education-web-crm-final/scripts/generate-canonical-templates.mjs',
   ])('%s exits before any database or file work (static)', (f) => {
     const src = read(f);
-    const exitAt = src.search(/process\.exit\(1\)/);
+    // A disabled script may refuse with process.exit(1) or a top-level throw
+    // (scripts/run-real-data-audit.ts uses the same throw pattern).
+    const guards = [src.search(/process\.exit\(1\)/), src.search(/^throw new Error\(/m)].filter((n) => n >= 0);
+    const exitAt = guards.length ? Math.min(...guards) : -1;
     expect(exitAt).toBeGreaterThan(-1);
     for (const danger of [/new PrismaClient\(/, /updateMany\(/, /writeFileSync\(/, /execSync\(/, /mkdirSync\(/]) {
       const at = src.search(danger);

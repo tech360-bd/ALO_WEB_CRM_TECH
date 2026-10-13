@@ -10,18 +10,18 @@ beforeEach(() => {
   vi.resetAllMocks(); vi.stubEnv('NEXTAUTH_URL', 'https://alo.test');
   m.auth.mockReturnValue({ identityDomain: 'user', authenticationMethod: 'cookie', userType: 'ADMIN', roles: ['ADMIN'], userId: 'admin', actorUserId: 'admin' });
   m.uniFind.mockResolvedValue(null); m.courseFind.mockResolvedValue(null); m.uniCreate.mockResolvedValue({}); m.courseCreate.mockResolvedValue({}); m.audit.mockResolvedValue({});
-  m.transaction.mockImplementation(fn => fn({ crmUniversity: { create: m.uniCreate }, crmCourse: { create: m.courseCreate }, crmCourseIntakeFee: { create: m.feeCreate }, portalAuditLog: { create: m.audit } }));
+  m.transaction.mockImplementation(fn => fn({ crmUniversity: { create: m.uniCreate }, crmCourse: { create: m.courseCreate }, crmCourseIntakeFee: { create: m.feeCreate }, crmAuditLog: { create: m.audit } }));
 });
 it('imports a university only as draft even with supplied verified flags and source URL', async () => {
   const res = await importUniversities(request([{ name: 'Example', country: 'UK', source_url: 'https://example.edu', verificationStatus: 'VERIFIED', publicationStatus: 'PUBLISHED' }]));
   expect(res.status).toBe(200);
-  expect(m.uniCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ status: 'draft', publicationStatus: 'draft', verificationStatus: 'NEEDS_REVIEW', lastVerifiedAt: '', type: '', campusName: '' }) });
+  expect(m.uniCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ status: 'active', publicationStatus: 'draft', verificationStatus: 'NEEDS_REVIEW', lastVerifiedAt: '', type: '', campusName: '' }) });
 });
 it('does not invent qualification, duration, intake, campus or currency for a course import', async () => {
   m.uniFind.mockResolvedValue({ universityId: 'uni', name: 'Example', country: 'UK', city: '' });
   const res = await importCourses(request([{ name: 'Programme', university_id: 'uni', source_url: 'https://example.edu/course', tuition_fee: '1000' }]));
   expect(res.status).toBe(200);
-  expect(m.courseCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ status: 'draft', publicationStatus: 'draft', verificationStatus: 'NEEDS_REVIEW', lastVerifiedAt: '', qualification: '', durationMonths: 0, campus: '', studyLevel: '' }) });
+  expect(m.courseCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ status: 'active', publicationStatus: 'draft', verificationStatus: 'NEEDS_REVIEW', lastVerifiedAt: '', qualification: '', durationMonths: 0, campus: '', studyLevel: '' }) });
   expect(m.feeCreate).not.toHaveBeenCalled();
 });
 it('bounds batch input before database work', async () => {

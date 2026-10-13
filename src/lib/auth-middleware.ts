@@ -17,8 +17,6 @@ export interface AuthContext {
   permissions: string[];
   sessionId: string;
   branch?: string;
-  partnerId?: string;
-  partnerRole?: string;
 
   // B2B tenant scope. Resolved server-side from the user's PartnerProfile and
   // NEVER from a client-supplied value — every partner-scoped query must filter

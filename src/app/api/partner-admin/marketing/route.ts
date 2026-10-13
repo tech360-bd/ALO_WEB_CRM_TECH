@@ -26,6 +26,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 import { generateStructured } from '@/lib/ai-gateway';
 import { generateImage, generateVideo } from '@/lib/ai';
 
@@ -171,6 +172,26 @@ async function audit(
  * uses *Id suffixes and a single `caption`; the UI expects display names and
  * per-platform captions.
  */
+const APPROVAL_STATUS_DISPLAY: Record<string, string> = {
+  draft: 'DRAFT',
+  pending: 'PENDING_APPROVAL',
+  pending_approval: 'PENDING_APPROVAL',
+  pending_alo_review: 'PENDING_APPROVAL',
+  partner_approved: 'PENDING_APPROVAL',
+  approved: 'APPROVED',
+  rejected: 'REJECTED',
+  scheduled: 'SCHEDULED',
+  published: 'PUBLISHED',
+  archived: 'ARCHIVED',
+};
+
+/** UI comparisons and badges use the uppercase vocabulary (DRAFT, APPROVED, …). */
+function normalizeApprovalStatus(row: { approvalStatus?: string | null; status?: string | null }): string {
+  const key = String(row.approvalStatus || '').toLowerCase();
+  if (APPROVAL_STATUS_DISPLAY[key]) return APPROVAL_STATUS_DISPLAY[key];
+  const statusKey = String(row.status || '').toLowerCase();
+  return APPROVAL_STATUS_DISPLAY[statusKey] || String(row.approvalStatus || '').toUpperCase();
+}
 function toMarketingRequest(row: {
   id: string;
   partnerId: string;
@@ -233,7 +254,7 @@ function toMarketingRequest(row: {
     assetUrl: row.generatedImageUrl || row.generatedVideoUrl || null,
     publishedUrl: row.publishedUrl || null,
     status: row.status,
-    approvalStatus: row.approvalStatus,
+    approvalStatus: normalizeApprovalStatus(row),
     scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
   };
@@ -374,6 +395,8 @@ function sanitizeCopy(copy: GeneratedCopy): { clean: GeneratedCopy; violations: 
     'instagramCaption',
     'reelCaption',
     'hashtags',
+    'imagePrompt',
+    'videoPrompt',
     'videoScript',
     'ctaText',
   ];
@@ -403,10 +426,30 @@ export async function GET(req: NextRequest) {
   }
 
   const resolved = await resolvePartnerId(auth, req.nextUrl.searchParams.get('partnerId'));
-  if (resolved.error) return resolved.error;
-  const partnerId = resolved.partnerId as string;
+  const requestedPartner = req.nextUrl.searchParams.get('partnerId');
+  // ALO staff with no explicit partner id get the cross-partner review queue.
+  const reviewMode = Boolean(resolved.error) && isAloStaff(auth) && !auth.partnerId && !(requestedPartner && requestedPartner.trim());
 
   try {
+    if (reviewMode) {
+      const requests = await db.partnerMarketingRequest.findMany({
+        where: { approvalStatus: { in: ['pending', 'pending_approval'] }, requiresAloApproval: true },
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+      });
+      return NextResponse.json({
+        success: true,
+        scope: 'alo_review',
+        requests: requests.map(toMarketingRequest),
+        socialAccounts: [] as unknown[],
+        capabilities: { socialConnections: false, scheduling: false, publishing: false },
+        notices: [],
+      });
+    }
+
+    if (resolved.error) return resolved.error;
+    const partnerId = resolved.partnerId as string;
+
     const monthYear = currentMonthYear();
 
     const [quotaRow, usageRow, requests] = await Promise.all([
@@ -467,6 +510,7 @@ export async function GET(req: NextRequest) {
       // Returning [] is deliberate: the UI shows its real empty state instead of
       // being handed invented connections.
       socialAccounts: [] as unknown[],
+      capabilities: { socialConnections: false, scheduling: false, publishing: false },
       notices: quotaRow
         ? []
         : ['No partner marketing quota row is configured yet — platform defaults (15 images / 10 videos per month) are in effect.'],
@@ -494,6 +538,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Authentication failed.' }, { status: 401 });
   }
 
+  // Refuse cross-origin mutations before any parsing, provider or database work.
+  if (!mutationOriginAllowed(req, auth)) {
+    return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+  }
+
   const raw = await req.json().catch(() => ({}));
   const resolved = await resolvePartnerId(auth, (raw as Record<string, unknown>).partnerId);
   if (resolved.error) return resolved.error;
@@ -508,6 +557,23 @@ export async function POST(req: NextRequest) {
   }
   const input = parsed.data;
 
+  // Claim-heavy user input is refused before any provider call, quota
+  // mutation or persistence, so guarantees and money offers never enter the
+  // system in the first place.
+  const claimFields = (['idea', 'cta', 'targetAudience'] as const).filter((field) =>
+    hasProhibitedClaim(input[field] || ''),
+  );
+  if (claimFields.length) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Remove guaranteed admission/visa/scholarship promises and money or percentage offers. Describe verifiable facts only.',
+        fields: claimFields,
+      },
+      { status: 400 },
+    );
+  }
+
   const platform = normalizePlatform(input.platform);
   const intake = input.intake?.trim()
     ? input.intake.trim()
@@ -515,14 +581,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const monthYear = currentMonthYear();
-
-    // Upsert against @@unique([partnerId, monthYear]) so the quota genuinely
-    // resets each calendar month instead of accumulating forever.
-    const usage = await db.partnerMarketingUsage.upsert({
-      where: { partnerId_monthYear: { partnerId, monthYear } },
-      create: { partnerId, monthYear, imagesUsed: 0, videosUsed: 0, ideasSubmitted: 1 },
-      update: { ideasSubmitted: { increment: 1 } },
-    });
+    const quotaRow = await db.partnerMarketingQuota.findUnique({ where: { partnerId } });
+    const requiresAloApproval = quotaRow?.requiresAloApproval ?? true;
 
     // Generate copy. Prefer the real gateway; fall back to a grounded template
     // built only from partner-supplied facts, and disclose which one ran.
@@ -551,29 +611,40 @@ export async function POST(req: NextRequest) {
       copy = groundedTemplateCopy({ ...input, intake, platform });
     }
 
-    const created = await db.partnerMarketingRequest.create({
-      data: {
-        partnerId,
-        requestedBy: auth.actorEmail || auth.email || auth.userId,
-        idea: input.idea,
-        countryId: input.country || '',
-        universityId: input.university || '',
-        courseId: input.course || '',
-        intake,
-        platform,
-        language: input.language || 'English',
-        targetAudience: input.targetAudience || '',
-        ctaText: copy.ctaText,
-        preferredStyle: input.preferredStyle || 'Professional',
-        caption: platform === 'INSTAGRAM' ? copy.instagramCaption : copy.facebookCaption,
-        hashtags: copy.hashtags,
-        imagePrompt: copy.imagePrompt,
-        videoPrompt: copy.videoPrompt,
-        videoScript: copy.videoScript,
-        generatedContent: JSON.stringify({ ...copy, generationMode, aiError }),
-        status: 'ai_draft_generated',
-        approvalStatus: 'draft',
-      },
+    // The monthly idea counter and the draft row are written atomically so a
+    // failed insert cannot leave the counter inflated.
+    const { usage, created } = await db.$transaction(async (tx) => {
+      const usage = await tx.partnerMarketingUsage.upsert({
+        where: { partnerId_monthYear: { partnerId, monthYear } },
+        create: { partnerId, monthYear, imagesUsed: 0, videosUsed: 0, ideasSubmitted: 1 },
+        update: { ideasSubmitted: { increment: 1 } },
+      });
+      const created = await tx.partnerMarketingRequest.create({
+        data: {
+          partnerId,
+          requestedBy: auth.actorEmail || auth.email || auth.userId,
+          idea: input.idea,
+          countryId: input.country || '',
+          universityId: input.university || '',
+          courseId: input.course || '',
+          intake,
+          platform,
+          language: input.language || 'English',
+          targetAudience: input.targetAudience || '',
+          ctaText: copy.ctaText,
+          preferredStyle: input.preferredStyle || 'Professional',
+          caption: platform === 'INSTAGRAM' ? copy.instagramCaption : copy.facebookCaption,
+          hashtags: copy.hashtags,
+          imagePrompt: copy.imagePrompt,
+          videoPrompt: copy.videoPrompt,
+          videoScript: copy.videoScript,
+          requiresAloApproval,
+          generatedContent: JSON.stringify({ ...copy, generationMode, aiError }),
+          status: 'ai_draft_generated',
+          approvalStatus: 'draft',
+        },
+      });
+      return { usage, created };
     });
 
     await audit(auth, 'PARTNER_MARKETING_DRAFT_GENERATED', created.id, {
@@ -598,8 +669,13 @@ export async function POST(req: NextRequest) {
       message:
         generationMode === 'ai'
           ? 'AI marketing draft generated. Review every claim before submitting for approval.'
-          : 'Draft generated from your supplied facts only (AI gateway unavailable). No amounts or guarantees were invented.',
-      notice: aiError || undefined,
+          : 'Draft generated from your supplied facts only. No amounts or guarantees were invented.',
+      // Provider error details stay in the audit log and on the row; the
+      // client only sees the grounded-template disclosure.
+      notice:
+        generationMode === 'ai'
+          ? undefined
+          : 'AI gateway unavailable — this draft was generated from a grounded template using only your supplied facts.',
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -624,6 +700,11 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Authentication failed.' }, { status: 401 });
   }
 
+  // Refuse cross-origin mutations before any parsing, provider or database work.
+  if (!mutationOriginAllowed(req, auth)) {
+    return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+  }
+
   const raw = await req.json().catch(() => ({}));
   const parsed = patchBodySchema.safeParse(raw);
   if (!parsed.success) {
@@ -632,7 +713,7 @@ export async function PATCH(req: NextRequest) {
       { status: 400 },
     );
   }
-  const { id, action, scheduledAt, rejectionReason } = parsed.data;
+  const { id, action, rejectionReason } = parsed.data;
 
   try {
     const existing = await db.partnerMarketingRequest.findUnique({ where: { id } });
@@ -641,8 +722,10 @@ export async function PATCH(req: NextRequest) {
     }
 
     const resolved = await resolvePartnerId(auth, (raw as Record<string, unknown>).partnerId);
-    if (resolved.error) return resolved.error;
-    const partnerId = resolved.partnerId as string;
+    // ALO staff may act on any campaign; when no partner is named, the row's
+    // own tenant is authoritative (the review queue never sends one).
+    if (resolved.error && !isAloStaff(auth)) return resolved.error;
+    const partnerId = resolved.partnerId || existing.partnerId;
 
     // Ownership: partners may only touch their own campaigns.
     if (existing.partnerId !== partnerId && !isAloStaff(auth)) {
@@ -650,10 +733,19 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'You do not have access to this campaign.' }, { status: 403 });
     }
 
+    // Asset generation is only available while the draft is editable
+    // (the UI gates the same way). A submitted campaign cannot be regenerated.
+    if ((action === 'generate_image' || action === 'generate_video') &&
+        existing.approvalStatus !== 'draft' && existing.approvalStatus !== 'rejected') {
+      return NextResponse.json(
+        { success: false, error: 'Submitted campaigns cannot be regenerated. Wait for the review outcome first.' },
+        { status: 409 },
+      );
+    }
+
     const monthYear = currentMonthYear();
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: existing.partnerId } });
     const requiresAloApproval = quota?.requiresAloApproval ?? true;
-    const autoPublishAllowed = quota?.autoPublishAllowed ?? false;
 
     const usage = await db.partnerMarketingUsage.upsert({
       where: { partnerId_monthYear: { partnerId: existing.partnerId, monthYear } },
@@ -820,8 +912,17 @@ export async function PATCH(req: NextRequest) {
       if (existing.approvalStatus === 'approved') {
         return NextResponse.json({ success: false, error: 'Already approved.' }, { status: 409 });
       }
-      const updated = await db.partnerMarketingRequest.update({
-        where: { id },
+      // Optimistic concurrency: transition only the exact row that was
+      // reviewed. A concurrent edit rejects the transition instead of being
+      // silently overwritten.
+      const transition = await db.partnerMarketingRequest.updateMany({
+        where: {
+          id,
+          partnerId: existing.partnerId,
+          approvalStatus: existing.approvalStatus,
+          status: existing.status,
+          updatedAt: existing.updatedAt,
+        },
         data: {
           approvalStatus: 'approved',
           status: 'approved',
@@ -830,6 +931,13 @@ export async function PATCH(req: NextRequest) {
           rejectionReason: '',
         },
       });
+      if (transition.count === 0) {
+        return NextResponse.json(
+          { success: false, error: 'This campaign changed while it was being reviewed. Reload and review the latest state.' },
+          { status: 409 },
+        );
+      }
+      const updated = (await db.partnerMarketingRequest.findUnique({ where: { id } })) ?? existing;
       await audit(auth, 'PARTNER_MARKETING_APPROVED', id, { approvedBy: auth.actorEmail || auth.email });
       return NextResponse.json({ success: true, request: toMarketingRequest(updated), message: 'Campaign approved.' });
     }
@@ -859,56 +967,21 @@ export async function PATCH(req: NextRequest) {
 
     // ---------- schedule ----------
     if (action === 'schedule') {
-      if (existing.approvalStatus !== 'approved') {
-        return NextResponse.json(
-          { success: false, error: 'Only an approved campaign can be scheduled.' },
-          { status: 409 },
-        );
-      }
-      if (!scheduledAt) {
-        return NextResponse.json({ success: false, error: 'scheduledAt (ISO datetime) is required.' }, { status: 400 });
-      }
-      const when = new Date(scheduledAt);
-      if (Number.isNaN(when.getTime())) {
-        return NextResponse.json({ success: false, error: 'scheduledAt is not a valid datetime.' }, { status: 400 });
-      }
-      if (when.getTime() <= Date.now()) {
-        return NextResponse.json({ success: false, error: 'scheduledAt must be in the future.' }, { status: 400 });
-      }
-      const updated = await db.partnerMarketingRequest.update({
-        where: { id },
-        data: { scheduledAt: when, status: 'scheduled', approvalStatus: 'scheduled' },
-      });
-      await db.partnerMarketingUsage.update({
-        where: { id: usage.id },
-        data: { postsScheduled: { increment: 1 } },
-      });
-      await audit(auth, 'PARTNER_MARKETING_SCHEDULED', id, { scheduledAt: when.toISOString() });
-      return NextResponse.json({
-        success: true,
-        request: toMarketingRequest(updated),
-        message: `Scheduled for ${when.toISOString()} (Asia/Dhaka wall time is applied by the publisher).`,
-      });
+      // There is no scheduled publisher in this deployment (capabilities
+      // report scheduling: false) — refuse rather than record a date that
+      // nothing will act on or report a fabricated success.
+      return NextResponse.json(
+        { success: false, error: 'Scheduling is not available in this deployment — there is no scheduled publisher. Nothing was scheduled.' },
+        { status: 409 },
+      );
     }
 
     // ---------- publish ----------
     if (action === 'publish') {
-      if (existing.approvalStatus !== 'approved' && existing.approvalStatus !== 'scheduled') {
-        return NextResponse.json(
-          { success: false, error: 'Only an approved (or scheduled-and-approved) campaign can be published.' },
-          { status: 409 },
-        );
-      }
-      if (requiresAloApproval && !autoPublishAllowed && !isAloStaff(auth)) {
-        await audit(auth, 'PARTNER_MARKETING_PUBLISH_FORBIDDEN', id, { action }, 'failure', 'auto-publish disabled');
-        return NextResponse.json(
-          { success: false, error: 'Auto-publish is disabled for this partner. ALO Education must publish it.' },
-          { status: 403 },
-        );
-      }
       // Publishing needs a real connected social account. There is no
       // partner-scoped connection model, so we refuse rather than record a
-      // fabricated publishedUrl.
+      // fabricated publishedUrl. This check comes first: the capability is
+      // absent for everyone, so nothing was published regardless of role.
       return NextResponse.json(
         {
           success: false,

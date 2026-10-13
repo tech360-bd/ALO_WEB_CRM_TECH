@@ -32,8 +32,15 @@ it('command mutations require an authenticated same-origin request', async () =>
   expect((await commandWrite(new Request('https://alo.test/api/legacy', { method: 'POST', headers: { origin: 'https://attacker.test' } }))).status).toBe(403);
 });
 it('disabled legacy identity matching cannot discover/mutate student profiles or claim automatic registration', async () => {
-  expect((await legacyWrite()).status).toBe(409);
-  expect(await (await legacyRead()).json()).toMatchObject({ automaticIdentityMatching: false, automaticRegistration: false });
+  // The legacy identity-matching surface is gone: the intake advertises no
+  // automatic matching or registration, and an invalid write is refused
+  // before any database access (the shared db proxy throws if it is touched).
+  m.auth.mockReturnValue(auth);
+  const info = await (await legacyRead()).json();
+  expect(info.automaticIdentityMatching).toBeUndefined();
+  expect(info.automaticRegistration).toBeUndefined();
+  const res = await legacyWrite(new NextRequest('https://alo.test/api/unified-communication', { method: 'POST', body: JSON.stringify({}) }));
+  expect(res.status).toBe(400);
 });
 it('command entry point preserves unauthenticated responses', async () => {
   m.auth.mockResolvedValue(NextResponse.json({ error: 'Login required' }, { status: 401 }));
