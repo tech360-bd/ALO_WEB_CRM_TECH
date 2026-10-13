@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/english-learning/layout,_N_T_/english-learning/eligibility-check/layout,_N_T_/english-learning/eligibility-check/page,_N_T_/english-learning/eligibility-check"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/english-learning/eligibility-check/__PAGE__",
+    "/english-learning/eligibility-check",
+    "/english-learning",
+    "/_index",
+    "/_head"
+  ]
+}

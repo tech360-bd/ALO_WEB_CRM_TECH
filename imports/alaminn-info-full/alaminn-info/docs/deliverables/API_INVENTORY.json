@@ -1,0 +1,1317 @@
+{
+  "total": 150,
+  "routes": [
+    {
+      "path": "/api",
+      "file": "src/app/api/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/cron/backup",
+      "file": "src/app/api/cron/backup/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/data-verification",
+      "file": "src/app/api/cron/data-verification/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/email-queue",
+      "file": "src/app/api/cron/email-queue/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/health-monitor",
+      "file": "src/app/api/cron/health-monitor/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/notification-queue",
+      "file": "src/app/api/cron/notification-queue/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/phd-deadlines",
+      "file": "src/app/api/cron/phd-deadlines/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/referral-retry",
+      "file": "src/app/api/cron/referral-retry/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/scholarship-deadlines",
+      "file": "src/app/api/cron/scholarship-deadlines/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/session-cleanup",
+      "file": "src/app/api/cron/session-cleanup/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/sitemap-generate",
+      "file": "src/app/api/cron/sitemap-generate/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/cron/temp-cleanup",
+      "file": "src/app/api/cron/temp-cleanup/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "cron-secret"
+    },
+    {
+      "path": "/api/health",
+      "file": "src/app/api/health/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/health/deep",
+      "file": "src/app/api/health/deep/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "authenticated"
+    },
+    {
+      "path": "/api/readiness",
+      "file": "src/app/api/readiness/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/admin/ai-tasks",
+      "file": "src/app/api/v1/admin/ai-tasks/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/ai-tasks/[id]",
+      "file": "src/app/api/v1/admin/ai-tasks/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/analytics",
+      "file": "src/app/api/v1/admin/analytics/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/approvals",
+      "file": "src/app/api/v1/admin/approvals/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/approvals/[id]",
+      "file": "src/app/api/v1/admin/approvals/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/articles",
+      "file": "src/app/api/v1/admin/articles/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/articles/[id]",
+      "file": "src/app/api/v1/admin/articles/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/audit-logs",
+      "file": "src/app/api/v1/admin/audit-logs/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/case-studies",
+      "file": "src/app/api/v1/admin/case-studies/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/case-studies/[id]",
+      "file": "src/app/api/v1/admin/case-studies/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/companies",
+      "file": "src/app/api/v1/admin/companies/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/companies/[id]",
+      "file": "src/app/api/v1/admin/companies/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/contacts",
+      "file": "src/app/api/v1/admin/contacts/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/contacts/[id]",
+      "file": "src/app/api/v1/admin/contacts/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/dashboard",
+      "file": "src/app/api/v1/admin/dashboard/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/documents",
+      "file": "src/app/api/v1/admin/documents/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/documents/[id]",
+      "file": "src/app/api/v1/admin/documents/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/media",
+      "file": "src/app/api/v1/admin/media/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/media/[id]",
+      "file": "src/app/api/v1/admin/media/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/meetings",
+      "file": "src/app/api/v1/admin/meetings/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/meetings/[id]",
+      "file": "src/app/api/v1/admin/meetings/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/notes",
+      "file": "src/app/api/v1/admin/notes/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/notes/[id]",
+      "file": "src/app/api/v1/admin/notes/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/notifications",
+      "file": "src/app/api/v1/admin/notifications/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/notifications/[id]",
+      "file": "src/app/api/v1/admin/notifications/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/projects",
+      "file": "src/app/api/v1/admin/projects/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/projects/[id]",
+      "file": "src/app/api/v1/admin/projects/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/seo",
+      "file": "src/app/api/v1/admin/seo/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/settings",
+      "file": "src/app/api/v1/admin/settings/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/tasks",
+      "file": "src/app/api/v1/admin/tasks/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/tasks/[id]",
+      "file": "src/app/api/v1/admin/tasks/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/users",
+      "file": "src/app/api/v1/admin/users/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/admin/users/[id]",
+      "file": "src/app/api/v1/admin/users/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/ai/approvals",
+      "file": "src/app/api/v1/ai/approvals/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/ai/tasks",
+      "file": "src/app/api/v1/ai/tasks/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/analytics/track",
+      "file": "src/app/api/v1/analytics/track/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/auth/login",
+      "file": "src/app/api/v1/auth/login/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/auth/logout",
+      "file": "src/app/api/v1/auth/logout/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/auth/session",
+      "file": "src/app/api/v1/auth/session/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/audit-logs",
+      "file": "src/app/api/v1/english-learning/admin/audit-logs/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/courses",
+      "file": "src/app/api/v1/english-learning/admin/courses/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/courses/[id]",
+      "file": "src/app/api/v1/english-learning/admin/courses/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/dashboard",
+      "file": "src/app/api/v1/english-learning/admin/dashboard/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/lessons",
+      "file": "src/app/api/v1/english-learning/admin/lessons/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/lessons/[id]",
+      "file": "src/app/api/v1/english-learning/admin/lessons/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/practice-tests",
+      "file": "src/app/api/v1/english-learning/admin/practice-tests/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/practice-tests/[id]",
+      "file": "src/app/api/v1/english-learning/admin/practice-tests/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/questions",
+      "file": "src/app/api/v1/english-learning/admin/questions/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/questions/[id]",
+      "file": "src/app/api/v1/english-learning/admin/questions/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/referrals",
+      "file": "src/app/api/v1/english-learning/admin/referrals/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/resources",
+      "file": "src/app/api/v1/english-learning/admin/resources/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/resources/[id]",
+      "file": "src/app/api/v1/english-learning/admin/resources/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/tutors",
+      "file": "src/app/api/v1/english-learning/admin/tutors/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/admin/tutors/[id]",
+      "file": "src/app/api/v1/english-learning/admin/tutors/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/english-learning/courses",
+      "file": "src/app/api/v1/english-learning/courses/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/courses/[slug]",
+      "file": "src/app/api/v1/english-learning/courses/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/courses/[slug]/lessons",
+      "file": "src/app/api/v1/english-learning/courses/[slug]/lessons/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/enroll",
+      "file": "src/app/api/v1/english-learning/enroll/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/health",
+      "file": "src/app/api/v1/english-learning/health/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/lessons/[id]",
+      "file": "src/app/api/v1/english-learning/lessons/[id]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/practice-tests",
+      "file": "src/app/api/v1/english-learning/practice-tests/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/practice-tests/[slug]",
+      "file": "src/app/api/v1/english-learning/practice-tests/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/practice-tests/[slug]/submit",
+      "file": "src/app/api/v1/english-learning/practice-tests/[slug]/submit/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/progress",
+      "file": "src/app/api/v1/english-learning/progress/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/referral",
+      "file": "src/app/api/v1/english-learning/referral/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/resources",
+      "file": "src/app/api/v1/english-learning/resources/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/resources/[slug]",
+      "file": "src/app/api/v1/english-learning/resources/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/tutors",
+      "file": "src/app/api/v1/english-learning/tutors/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/english-learning/tutors/[slug]",
+      "file": "src/app/api/v1/english-learning/tutors/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/audit-logs",
+      "file": "src/app/api/v1/higher-study/admin/audit-logs/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/cities",
+      "file": "src/app/api/v1/higher-study/admin/cities/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/cities/[id]",
+      "file": "src/app/api/v1/higher-study/admin/cities/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/countries",
+      "file": "src/app/api/v1/higher-study/admin/countries/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/countries/[id]",
+      "file": "src/app/api/v1/higher-study/admin/countries/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/courses",
+      "file": "src/app/api/v1/higher-study/admin/courses/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/courses/[id]",
+      "file": "src/app/api/v1/higher-study/admin/courses/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/dashboard",
+      "file": "src/app/api/v1/higher-study/admin/dashboard/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/events",
+      "file": "src/app/api/v1/higher-study/admin/events/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/events/[id]",
+      "file": "src/app/api/v1/higher-study/admin/events/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/import",
+      "file": "src/app/api/v1/higher-study/admin/import/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/import/[id]",
+      "file": "src/app/api/v1/higher-study/admin/import/[id]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/intakes",
+      "file": "src/app/api/v1/higher-study/admin/intakes/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/intakes/[id]",
+      "file": "src/app/api/v1/higher-study/admin/intakes/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/referrals",
+      "file": "src/app/api/v1/higher-study/admin/referrals/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/research",
+      "file": "src/app/api/v1/higher-study/admin/research/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/research-areas",
+      "file": "src/app/api/v1/higher-study/admin/research-areas/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/research-areas/[id]",
+      "file": "src/app/api/v1/higher-study/admin/research-areas/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/research/[id]",
+      "file": "src/app/api/v1/higher-study/admin/research/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/resources",
+      "file": "src/app/api/v1/higher-study/admin/resources/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/resources/[id]",
+      "file": "src/app/api/v1/higher-study/admin/resources/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/scholarships",
+      "file": "src/app/api/v1/higher-study/admin/scholarships/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/scholarships/[id]",
+      "file": "src/app/api/v1/higher-study/admin/scholarships/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/student-stories",
+      "file": "src/app/api/v1/higher-study/admin/student-stories/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/student-stories/[id]",
+      "file": "src/app/api/v1/higher-study/admin/student-stories/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/subjects",
+      "file": "src/app/api/v1/higher-study/admin/subjects/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/subjects/[id]",
+      "file": "src/app/api/v1/higher-study/admin/subjects/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/supervisors",
+      "file": "src/app/api/v1/higher-study/admin/supervisors/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/supervisors/[id]",
+      "file": "src/app/api/v1/higher-study/admin/supervisors/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/universities",
+      "file": "src/app/api/v1/higher-study/admin/universities/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/admin/universities/[id]",
+      "file": "src/app/api/v1/higher-study/admin/universities/[id]/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/higher-study/alerts",
+      "file": "src/app/api/v1/higher-study/alerts/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/alerts/[id]",
+      "file": "src/app/api/v1/higher-study/alerts/[id]/route.ts",
+      "methods": [
+        "DELETE"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/compare",
+      "file": "src/app/api/v1/higher-study/compare/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/consultation",
+      "file": "src/app/api/v1/higher-study/consultation/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/courses",
+      "file": "src/app/api/v1/higher-study/courses/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/courses/[slug]",
+      "file": "src/app/api/v1/higher-study/courses/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/destinations",
+      "file": "src/app/api/v1/higher-study/destinations/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/destinations/[slug]",
+      "file": "src/app/api/v1/higher-study/destinations/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/eligibility-check",
+      "file": "src/app/api/v1/higher-study/eligibility-check/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/events",
+      "file": "src/app/api/v1/higher-study/events/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/health",
+      "file": "src/app/api/v1/higher-study/health/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/intakes",
+      "file": "src/app/api/v1/higher-study/intakes/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/referral",
+      "file": "src/app/api/v1/higher-study/referral/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/referral/[code]/confirm",
+      "file": "src/app/api/v1/higher-study/referral/[code]/confirm/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "hmac-signature"
+    },
+    {
+      "path": "/api/v1/higher-study/research",
+      "file": "src/app/api/v1/higher-study/research/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/research/[slug]",
+      "file": "src/app/api/v1/higher-study/research/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/resources",
+      "file": "src/app/api/v1/higher-study/resources/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/resources/[slug]",
+      "file": "src/app/api/v1/higher-study/resources/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/saved",
+      "file": "src/app/api/v1/higher-study/saved/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/saved/[id]",
+      "file": "src/app/api/v1/higher-study/saved/[id]/route.ts",
+      "methods": [
+        "DELETE"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/scholarships",
+      "file": "src/app/api/v1/higher-study/scholarships/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/scholarships/[slug]",
+      "file": "src/app/api/v1/higher-study/scholarships/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/student-stories",
+      "file": "src/app/api/v1/higher-study/student-stories/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/subjects",
+      "file": "src/app/api/v1/higher-study/subjects/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/supervisors",
+      "file": "src/app/api/v1/higher-study/supervisors/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/supervisors/[slug]",
+      "file": "src/app/api/v1/higher-study/supervisors/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/universities",
+      "file": "src/app/api/v1/higher-study/universities/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/higher-study/universities/[slug]",
+      "file": "src/app/api/v1/higher-study/universities/[slug]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/inquiries",
+      "file": "src/app/api/v1/inquiries/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/meetings",
+      "file": "src/app/api/v1/meetings/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/meetings/admin",
+      "file": "src/app/api/v1/meetings/admin/route.ts",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "auth": "admin-rbac"
+    },
+    {
+      "path": "/api/v1/newsletter",
+      "file": "src/app/api/v1/newsletter/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/newsletter/verify",
+      "file": "src/app/api/v1/newsletter/verify/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/public/articles",
+      "file": "src/app/api/v1/public/articles/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    },
+    {
+      "path": "/api/v1/public/projects",
+      "file": "src/app/api/v1/public/projects/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "auth": "public"
+    }
+  ]
+}

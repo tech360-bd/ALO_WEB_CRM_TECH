@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/higher-study/layout,_N_T_/higher-study/apply/layout,_N_T_/higher-study/apply/page,_N_T_/higher-study/apply"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/higher-study/apply/__PAGE__",
+    "/higher-study/apply",
+    "/higher-study",
+    "/_index",
+    "/_head"
+  ]
+}
