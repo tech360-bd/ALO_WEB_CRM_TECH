@@ -13,6 +13,13 @@ Hostinger only → Node.js **22.x** → root npm application → **aloeducation.
 - Disabled the old PHP install checker before any environment/database probe; commented out legacy public_html routing so it cannot overwrite Hostinger-generated routing as an active alternative.
 - Disabled VPS package builders before filesystem changes and the obsolete merge-policy generator before it can recreate VPS deployment instructions.
 - Replaced the generic cPanel guide with current Hostinger instructions; retained its former content in explicitly historical LEGACY-CPANEL-GUIDE.md.
+- **2026-10-13 (later):** every cPanel-named artifact was removed at the owner's
+  direction — `CPANEL-DEPLOYMENT-GUIDE.md` was renamed to
+  [HOSTINGER-DEPLOYMENT-GUIDE.md](../../HOSTINGER-DEPLOYMENT-GUIDE.md) (its content
+  was already Hostinger-only), and the obsolete/legacy/publicly-served cPanel
+  documents were deleted, including the previously retained
+  `LEGACY-CPANEL-GUIDE.md`. Hostinger remains the only authorized runtime; the
+  removal change is listed in full in the renamed guide.
 - Corrected live API/operator messages directing users to configure secrets on a VPS. Existing typing suppressions were not added or expanded; their obsolete hosting wording was corrected only.
 - Kept earlier payment, document authorization, dashboard, audit and other repairs intact.
 

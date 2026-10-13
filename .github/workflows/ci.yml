@@ -83,7 +83,8 @@ jobs:
           # SCAN SCOPE: every tracked file, INCLUDING markdown/docs.
           #   A previous version excluded ':!docs' and ':!*.md', which is exactly
           #   how a real production DB password survived in OPERATIONS-BOOK.md and
-          #   documentation/CPANEL-DEPLOYMENT-GUIDE.md undetected. Docs are the
+          #   in a deployment guide under documentation/ undetected (that file and
+          #   every other cPanel artifact were deleted on 2026-10-13). Docs are the
           #   most common place credentials get pasted, so they are now scanned.
           # Excluded: workflow files (documented dummy build-check values) and
           #   *.example templates (REPLACE_* placeholders).
