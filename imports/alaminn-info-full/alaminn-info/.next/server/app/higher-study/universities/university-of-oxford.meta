@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/higher-study/layout,_N_T_/higher-study/universities/layout,_N_T_/higher-study/universities/[universitySlug]/layout,_N_T_/higher-study/universities/[universitySlug]/page,_N_T_/higher-study/universities/university-of-oxford"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/higher-study/universities/$d$universitySlug/__PAGE__",
+    "/higher-study/universities/$d$universitySlug",
+    "/higher-study/universities",
+    "/higher-study",
+    "/_index",
+    "/_head"
+  ]
+}

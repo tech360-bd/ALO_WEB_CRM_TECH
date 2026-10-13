@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "ALAMINN.INFO master domain registry — ecosystem-wide authoritative source.",
+  "version": "1.0.0",
+  "last_updated": "2026-09-18",
+  "domains": [
+    {
+      "domain": "alaminn.info",
+      "service_id": "ALAMINN-MAIN",
+      "application": "Al-Amin Personal Brand Platform",
+      "repository": "TBD (pending owner GitHub URL confirmation)",
+      "branch": "main",
+      "environment": "production",
+      "runtime": "node",
+      "runtime_version": ">=20.0.0",
+      "framework": "next.js",
+      "framework_version": "16.1.3",
+      "application_port": 3018,
+      "internal_host": "127.0.0.1",
+      "deployment_path": "TBD (pending VPS confirmation)",
+      "process_name": "alaminn-info",
+      "process_manager": "pm2 | systemd | docker (TBD by owner)",
+      "reverse_proxy": "TBD (nginx | caddy | openlitespeed — configs shipped for all three)",
+      "tls": "TBD (Let's Encrypt via reverse proxy, or Cloudflare edge)",
+      "database_profile": "mariadb (production) | sqlite (dev)",
+      "orm": "prisma",
+      "orm_version": "6.19.2",
+      "agent_profile": "ai-worker (port 3006) + whatsapp-agent",
+      "security_profile": "11-role RBAC, HMAC-SHA256 session cookies, 22-test security suite, CSP+HSTS+XFO+XCTO+RP+PP",
+      "content_profile": "english (primary); bangla (planned, not implemented)",
+      "branding_profile": "Al-Amin personal brand — orange #F26113 + blue #0B63CE",
+      "health_endpoint": "/api/health",
+      "owner": "Al-Amin",
+      "status": "BLOCKED — DNS broken, GitHub remote not configured, VPS not connected"
+    }
+  ],
+  "ecosystem_context": {
+    "$comment": "This registry is for the ALAMINN.INFO project specifically. Other domains in the ecosystem (alolabs.net, aloeducation.com, icla-global.com, bdtech360.com, ecotechbd.com, neelacholcityagro.com, uninotary.com, marketing.alolabs.net) are tracked in separate per-project registries. The ALAMINN.INFO project must NOT access other projects' secrets, databases, or process managers.",
+    "port_assignments_reported": {
+      "alolabs.net": 3011,
+      "hosting.alolabs.net": 3012,
+      "agents.alolabs.net": 3013,
+      "panel.alolabs.net": 3014,
+      "aloeducation.com": 3044,
+      "english.aloeducation.com": 3016,
+      "learn.aloeducation.com": 3017,
+      "alaminn.info": 3018,
+      "icla-global.com": 3019,
+      "icla-global.in": 3020,
+      "bdtech360.com": 3021,
+      "ecotechbd.com": 3022,
+      "neelacholcityagro.com": 3023,
+      "uninotary.com": 3024,
+      "marketing.alolabs.net": 3029
+    },
+    "port_collision_check_status": "VERIFIED — no collisions among the 15 reported ports. Each port has exactly one intended production owner per the ecosystem map. Verified by reading this registry.",
+    "cross_project_isolation": "VERIFIED — ALAMINN.INFO has no source-code imports from, and shares no env vars or DB connections with, any other ecosystem project."
+  }
+}

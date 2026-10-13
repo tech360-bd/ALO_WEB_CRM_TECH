@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/english-learning/layout,_N_T_/admin/english-learning/lessons/layout,_N_T_/admin/english-learning/lessons/page,_N_T_/admin/english-learning/lessons"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/admin/english-learning/lessons/__PAGE__",
+    "/admin/english-learning/lessons",
+    "/admin/english-learning",
+    "/admin",
+    "/_index",
+    "/_head"
+  ]
+}

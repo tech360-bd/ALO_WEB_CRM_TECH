@@ -1,0 +1,6 @@
+# Block ALL web access to the storage directory.
+# This directory contains: private uploads, exports, backups, temp files.
+# Nothing here should ever be web-accessible.
+
+Require all denied
+Options -Indexes

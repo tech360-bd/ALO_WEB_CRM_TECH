@@ -1,0 +1,4 @@
+# Block web access to internal documentation.
+# These docs may contain architecture details, API keys references, etc.
+Require all denied
+Options -Indexes
