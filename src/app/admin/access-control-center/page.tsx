@@ -65,6 +65,7 @@ const TABS = [
   { id: 'designations', label: 'Designations', icon: Briefcase },
   { id: 'packages', label: 'Permission Packages', icon: Layers },
   { id: 'permissions', label: 'Granular Permissions', icon: Sliders },
+  { id: 'sections', label: 'Access Control Sections', icon: ShieldCheck },
   { id: 'requests', label: 'Permission Requests', icon: ClipboardList },
   { id: 'temporary', label: 'Temporary Access', icon: Clock },
   { id: 'breakglass', label: 'Break Glass', icon: ShieldAlert },
@@ -288,10 +289,91 @@ export default function SuperAdminAccessControlCenter() {
 
       {activeTab==='packages' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
-          <h2 className="text-sm font-bold flex items-center gap-2"><Layers className="w-4 h-4 text-[#2563EB]" /> Permission Packages — STARTER/GROWTH/PREMIUM editable, employee COUNSELOR_STANDARD/SENIOR/APPLICATION_MANAGER/FINANCE_RESTRICTED/VISA_OFFICER/MARKETING_STANDARD/HR_STANDARD</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-3 bg-slate-50 rounded-xl border space-y-2 text-xs"><div className="font-bold uppercase text-[10px]">Partner Packages (STARTER/GROWTH/PREMIUM)</div><div className="text-[11px] text-slate-600">Same engine — featureAccessRule helpers mandatory backend checks — canAccessFeature/getQuota/checkQuotaBeforeAction/recordUsage</div><div className="p-2 bg-white rounded border font-mono text-[10px]">PartnerPackage: name, seatLimit, aiCredits, whatsappLimit, documentLimit — editable by Super Admin</div></div>
-            <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 space-y-2 text-xs"><div className="font-bold uppercase text-[10px]">Employee Packages</div><div className="text-[11px]">Primary/Secondary + Permission Package + Custom + Temporary — module toggles ON/OFF — scope GLOBAL/COUNTRY/BRANCH/OFFICE/DEPARTMENT/TEAM/ASSIGNED/OWN</div><div className="p-2 bg-white rounded border font-mono text-[10px]">PermissionPackage: COUNSELOR_STANDARD [STUDENT VIEW/CREATE/EDIT, APPLICATION VIEW/CREATE, DOCUMENT VIEW/UPLOAD, WHATSAPP SEND]</div></div>
+          <h2 className="text-sm font-bold flex items-center gap-2"><Layers className="w-4 h-4 text-[#2563EB]" /> Permission Packages — STARTER / GROWTH / PREMIUM, editable by ALO Super Admin</h2>
+
+          {/* Honesty banner: an empty table is shown as empty, never filled with
+              rows that do not exist in the database. */}
+          {data && data.packagesSeeded === false && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900">
+              <span className="font-bold">No partner packages are saved yet.</span> {data.packagesNote}
+            </div>
+          )}
+
+          {data && (data.packages?.length > 0 || data.packageDefaults?.length > 0) ? (
+            <div className="grid md:grid-cols-3 gap-4">
+              {(data.packages?.length > 0 ? data.packages : data.packageDefaults).map((pkg: any) => (
+                <div key={pkg.id || pkg.slug} className="p-3 bg-slate-50 rounded-xl border space-y-2 text-xs">
+                  <div className="font-bold text-[12px]">{pkg.name}</div>
+                  {pkg.description && <div className="text-[10px] text-slate-600">{pkg.description}</div>}
+                  <table className="w-full text-[10px]">
+                    <tbody className="[&_td]:py-0.5">
+                      <tr><td className="text-slate-500">User seats</td><td className="text-right font-mono font-bold">{pkg.defaultUserLimit ?? pkg.maxUsers}</td></tr>
+                      <tr><td className="text-slate-500">Images / month</td><td className="text-right font-mono font-bold">{pkg.monthlyImageLimit ?? pkg.maxImages}</td></tr>
+                      <tr><td className="text-slate-500">Videos / month</td><td className="text-right font-mono font-bold">{pkg.monthlyVideoLimit ?? pkg.maxVideos}</td></tr>
+                      <tr><td className="text-slate-500">Video max length</td><td className="text-right font-mono font-bold">{pkg.videoDurationLimitSeconds ?? pkg.videoMaxLength}s</td></tr>
+                      <tr><td className="text-slate-500">English mock vouchers</td><td className="text-right font-mono font-bold">{pkg.englishMockVoucherLimit ?? '—'}</td></tr>
+                      <tr><td className="text-slate-500">Interview prep / application</td><td className="text-right font-mono font-bold">{pkg.interviewPrepLimit ?? '—'}</td></tr>
+                    </tbody>
+                  </table>
+                  <div className="flex flex-wrap gap-1">
+                    <Badge className={(pkg.autoPublishAllowed ?? false) ? 'bg-emerald-50 text-emerald-700 text-[9px]' : 'bg-slate-200 text-slate-700 text-[9px]'}>
+                      auto-publish {(pkg.autoPublishAllowed ?? false) ? 'ALLOWED' : 'OFF'}
+                    </Badge>
+                    <Badge className={(pkg.requiresAloApproval ?? true) ? 'bg-amber-50 text-amber-800 text-[9px]' : 'bg-slate-200 text-slate-700 text-[9px]'}>
+                      {(pkg.requiresAloApproval ?? true) ? 'ALO approval required' : 'no ALO review'}
+                    </Badge>
+                  </div>
+                  {data.packagesSeeded === false && (
+                    <div className="text-[10px] text-amber-800 font-semibold">DEFAULT — not saved yet</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 text-center text-[11px] text-slate-400 border border-dashed rounded-xl">
+              No package data available.
+            </div>
+          )}
+
+          <div className="p-2 bg-white rounded border font-mono text-[10px] text-slate-600">
+            Quotas are enforced by the access-check engine on every action: canAccessFeature / getQuota / checkQuotaBeforeAction / recordUsage — a frontend hide is never the control.
+          </div>
+        </Card>
+      )}
+
+      {activeTab==='sections' && (
+        <Card className="p-4 bg-white border rounded-2xl space-y-3">
+          <h2 className="text-sm font-bold flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#2563EB]" /> Access Control Sections — 12 areas owned by ALO Super Admin</h2>
+          <p className="text-[11px] text-slate-500">
+            Each section lists the rule it controls and the feature keys it governs. A section that is switched off changes a backend decision — it is never only a hidden button.
+          </p>
+          {data?.hardCeilings && (
+            <div className="p-2 bg-slate-50 rounded border font-mono text-[10px] text-slate-600">
+              Hard ceilings: video {data.hardCeilings.videoDurationLimitSeconds}s · partner seats {data.hardCeilings.defaultPartnerUserLimit} · images {data.hardCeilings.defaultMonthlyImageLimit}/mo · videos {data.hardCeilings.defaultMonthlyVideoLimit}/mo
+            </div>
+          )}
+          <div className="grid md:grid-cols-2 gap-3">
+            {(data?.sections || []).map((section: any) => (
+              <div key={section.key} className="p-3 bg-white border rounded-xl space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-[12px]">{section.label}</span>
+                  <Badge className={section.backendEnforced ? 'bg-emerald-50 text-emerald-700 text-[9px]' : 'bg-amber-50 text-amber-800 text-[9px]'}>
+                    {section.backendEnforced ? 'BACKEND ENFORCED' : 'NOT ENFORCED'}
+                  </Badge>
+                </div>
+                <div className="text-[11px] text-slate-600">{section.rule}</div>
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {(section.featureKeys || []).map((key: string) => (
+                    <span key={key} className="font-mono text-[9px] bg-slate-100 border rounded px-1 py-0.5">{key}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {!data?.sections && (
+              <div className="text-[11px] text-slate-400 p-6 text-center border border-dashed rounded-xl md:col-span-2">
+                Section list unavailable — the API did not return it.
+              </div>
+            )}
           </div>
         </Card>
       )}
