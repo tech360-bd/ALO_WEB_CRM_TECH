@@ -3,6 +3,111 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
+   ALO EDUCATION BRAND FONTS — self-hosted (CSP-safe)
+   ------------------------------------------------------------
+   Brand specification:
+     Headings → Montserrat (primary) / Poppins (alternate), Bold
+     Body     → Open Sans (primary) / Roboto (alternate)
+   The .woff2 files live in /public/fonts and are served from
+   'self', so the production Content-Security-Policy
+   (`font-src 'self' data:`) needs no relaxation and no request
+   ever leaves the visitor's browser to a third-party CDN.
+   Bengali text is NOT covered by these Latin subsets; it keeps
+   falling through to the OS/Noto Bengali chain at the end of
+   --alo-font-body (see the bilingual block at the end of file).
+   ============================================================ */
+
+/* latin subset — same unicode-range for every face below */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/montserrat-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/montserrat-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/montserrat-latin-800-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/poppins-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/poppins-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/open-sans-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/open-sans-latin-400-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/open-sans-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/roboto-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/roboto-latin-500-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/roboto-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ============================================================
    ALO EDUCATION DESIGN SYSTEM — single source of design tokens
    ------------------------------------------------------------
    Every colour, radius, shadow and control height used by the
@@ -19,10 +124,13 @@
    ============================================================ */
 
 @theme inline {
-  /* --- Font: one family across the product (Inter when loaded,
-         system UI fallback otherwise) --- */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-geist-mono);
+  /* --- Font: brand type scale (self-hosted, see @font-face above) ---
+         font-sans    → body copy (Open Sans, Roboto)
+         font-heading → headings  (Montserrat, Poppins) — use for every
+                        heading/menu label so type stays consistent */
+  --font-sans: var(--alo-font-body);
+  --font-heading: var(--alo-font-heading);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   /* --- Core semantic tokens --- */
   --color-background: var(--background);
@@ -78,6 +186,7 @@
   --color-alo-cta-accent: var(--alo-cta-accent);
   --color-alo-cta-light: var(--alo-cta-light);
   --color-alo-cta-soft: var(--alo-cta-soft);
+  --color-alo-accent: var(--alo-accent);
   --color-alo-success: var(--alo-success);
   --color-alo-success-dark: var(--alo-success-dark);
   --color-alo-success-soft: var(--alo-success-soft);
@@ -153,27 +262,33 @@
   /* 10px base radius → sm 6 · md/input 8 · lg/button 10 · xl 14 */
   --radius: 0.625rem;
 
+  /* ── Brand type stack (spec: Headings Montserrat/Poppins Bold,
+        Body Open Sans/Roboto). Latin webfonts are self-hosted; the
+        trailing system/Bengali families cover বাংলা and offline. ── */
+  --alo-font-heading: "Montserrat", "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans Bengali", "Hind Siliguri", sans-serif;
+  --alo-font-body: "Open Sans", "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans Bengali", "Hind Siliguri", sans-serif;
+
   /* Page & surface */
   --background: #F8FAFC;
-  --foreground: #111827;
+  --foreground: #000000;
   --card: #FFFFFF;
-  --card-foreground: #111827;
+  --card-foreground: #000000;
   --popover: #FFFFFF;
-  --popover-foreground: #111827;
+  --popover-foreground: #000000;
 
-  /* Primary (selected states, focus, links) — ALO Blue */
-  --primary: #2563EB;
+  /* Primary (selected states, focus, links) — Education Blue #0066CC */
+  --primary: #0066CC;
   --primary-foreground: #FFFFFF;
 
   /* Secondary / muted surfaces */
   --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
+  --secondary-foreground: #000000;
   --muted: #F1F5F9;
-  --muted-foreground: #64748B;
+  --muted-foreground: #555555;
 
   /* Accent (blue soft) */
-  --accent: #EFF6FF;
-  --accent-foreground: #1D4ED8;
+  --accent: #E6F2FF;
+  --accent-foreground: #0052A3;
 
   /* Destructive */
   --destructive: #DC2626;
@@ -181,25 +296,27 @@
   /* Border & input */
   --border: #E2E8F0;
   --input: #CBD5E1;
-  --ring: #2563EB;
+  --ring: #0066CC;
 
   /* ── Brand ─────────────────────────────────────────────── */
-  /* Navy — structure / headings */
-  --alo-navy: #0F172A;
-  --alo-navy-dark: #111827;
-  /* Blue — navigation / information / links */
-  --alo-brand: #2563EB;
-  --alo-brand-hover: #1D4ED8;
-  --alo-brand-deep: #1D4ED8;
-  --alo-brand-light: #EFF6FF;
-  --alo-brand-border: #BFDBFE;
-  /* Orange — ALO primary action */
-  --alo-cta: #F97316;
-  --alo-cta-hover: #EA580C;
-  --alo-cta-active: #C2410C;
-  --alo-cta-accent: #F97316;
-  --alo-cta-light: #FFEDD5;
-  --alo-cta-soft: #FFF7ED;
+  /* Neutral — text / structure */
+  --alo-navy: #000000;
+  --alo-navy-dark: #000000;
+  /* Blue — Education Blue #0066CC (navigation / information / links) */
+  --alo-brand: #0066CC;
+  --alo-brand-hover: #0052A3;
+  --alo-brand-deep: #003D7A;
+  --alo-brand-light: #E6F2FF;
+  --alo-brand-border: #B3D9FF;
+  /* Orange — ALO Orange #F37021 (primary action) */
+  --alo-cta: #F37021;
+  --alo-cta-hover: #D95D12;
+  --alo-cta-active: #B64A0B;
+  --alo-cta-accent: #FFB347;
+  --alo-cta-light: #FFE3CB;
+  --alo-cta-soft: #FFF4EC;
+  /* Accent — #FFB347 (highlights, badges, focus accents) */
+  --alo-accent: #FFB347;
   /* Green — success / WhatsApp */
   --alo-success: #16A34A;
   --alo-success-dark: #15803D;
@@ -226,32 +343,32 @@
   --crm-danger-bg: #FEF2F2;
   --crm-danger-text: #B91C1C;
 
-  /* Neutrals */
+  /* Neutrals — brand Neutral #000 / #555 */
   --alo-page: #F8FAFC;
   --alo-surface-muted: #F1F5F9;
-  --alo-text: #111827;
-  --alo-text-secondary: #475569;
-  --alo-text-muted: #64748B;
+  --alo-text: #000000;
+  --alo-text-secondary: #555555;
+  --alo-text-muted: #6B7280;
   --alo-border: #E2E8F0;
   --alo-border-strong: #CBD5E1;
   --alo-placeholder: #94A3B8;
 
   /* Charts — max five series, no rainbow */
-  --chart-1: #2563EB;
-  --chart-2: #F97316;
+  --chart-1: #0066CC;
+  --chart-2: #F37021;
   --chart-3: #16A34A;
   --chart-4: #7C3AED;
   --chart-5: #D97706;
 
   /* Sidebar (CRM / portals) */
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #111827;
-  --sidebar-primary: #2563EB;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #0066CC;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #EFF6FF;
-  --sidebar-accent-foreground: #1D4ED8;
+  --sidebar-accent: #E6F2FF;
+  --sidebar-accent-foreground: #0052A3;
   --sidebar-border: #E2E8F0;
-  --sidebar-ring: #2563EB;
+  --sidebar-ring: #0066CC;
 }
 
 /* ============================================================
@@ -286,17 +403,18 @@
   /* Brand (dark) */
   --alo-navy: #F1F5F9;
   --alo-navy-dark: #F8FAFC;
-  --alo-brand: #60A5FA;
-  --alo-brand-hover: #93C5FD;
-  --alo-brand-deep: #93C5FD;
-  --alo-brand-light: #1E3A5F;
-  --alo-brand-border: #1E40AF;
-  --alo-cta: #FB923C;
-  --alo-cta-hover: #F97316;
-  --alo-cta-active: #EA580C;
-  --alo-cta-accent: #FB923C;
+  --alo-brand: #4D9FFF;
+  --alo-brand-hover: #7DB8FF;
+  --alo-brand-deep: #7DB8FF;
+  --alo-brand-light: #10305A;
+  --alo-brand-border: #1B4E8C;
+  --alo-cta: #FF8A3D;
+  --alo-cta-hover: #F37021;
+  --alo-cta-active: #D95D12;
+  --alo-cta-accent: #FFB347;
   --alo-cta-light: #431407;
-  --alo-cta-soft: #431407;
+  --alo-cta-soft: #2A1408;
+  --alo-accent: #FFB347;
   --alo-success: #4ADE80;
   --alo-success-dark: #86EFAC;
   --alo-success-soft: #14532D;
@@ -356,7 +474,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* Body copy — Open Sans, Roboto (brand spec) */
+    font-family: var(--alo-font-body);
+  }
+  /* Headings — Montserrat, Poppins (brand spec). Components may still
+     override with the `font-heading` utility. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--alo-font-heading);
   }
 }
 
@@ -488,6 +612,12 @@
    ============================================================ */
 :lang(bn),
 html[lang="bn"] body {
-  font-family: var(--font-inter), "Noto Sans Bengali", "Hind Siliguri",
-    "SolaimanLipi", "Kalpurush", "Vrinda", "Bangla", sans-serif;
+  font-family: "Open Sans", "Roboto", "Noto Sans Bengali", "Hind Siliguri",
+    "SolaimanLipi", "Kalpurush", "Vrinda", "Bangla", ui-sans-serif, system-ui, sans-serif;
+}
+:lang(bn) h1, :lang(bn) h2, :lang(bn) h3, :lang(bn) h4, :lang(bn) h5, :lang(bn) h6,
+html[lang="bn"] h1, html[lang="bn"] h2, html[lang="bn"] h3,
+html[lang="bn"] h4, html[lang="bn"] h5, html[lang="bn"] h6 {
+  font-family: "Montserrat", "Poppins", "Noto Sans Bengali", "Hind Siliguri",
+    "SolaimanLipi", "Kalpurush", "Vrinda", "Bangla", ui-sans-serif, system-ui, sans-serif;
 }

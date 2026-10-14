@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere } from '@/lib/public-catalog';
+import {
+  publicCourseWhere,
+  publicIntakeWhere,
+  publicRequirementWhere,
+  publicScholarshipWhere,
+  ENGLISH_TEST_KEYS,
+  buildEnglishTestWhere,
+  intakeMonthVariants,
+  type EnglishTestKey,
+} from '@/lib/public-catalog';
+import { parseIntakePeriodToken } from '@/lib/course-finder/intake-window';
+
+/** Parses a bounded non-negative number; anything else is treated as absent. */
+function readNumber(value: string | null): number | undefined {
+  if (value === null || value.trim() === '') return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
+}
 import { getOptionalAuth } from '@/lib/auth-middleware';
 
 export async function GET(request: NextRequest) {
@@ -19,6 +36,19 @@ export async function GET(request: NextRequest) {
     const scholarship = searchParams.get('scholarship') === 'true';
     const tag = searchParams.get('tag') || '';
     const openProgram = searchParams.get('open_program') === 'true';
+    // Spec §33 — the remaining canonical search parameters.
+    const minTuition = readNumber(searchParams.get('min_tuition'));
+    const maxTuition = readNumber(searchParams.get('max_tuition'));
+    const applicationFee = searchParams.get('application_fee') || '';
+    const deposit = searchParams.get('deposit') || '';
+    const englishTestRaw = (searchParams.get('english_test') || '').toLowerCase();
+    const englishTest = (ENGLISH_TEST_KEYS as readonly string[]).includes(englishTestRaw)
+      ? (englishTestRaw as EnglishTestKey)
+      : undefined;
+    const englishScore = readNumber(searchParams.get('english_score'));
+    const duration = readNumber(searchParams.get('duration'));
+    const deadlineRaw = (searchParams.get('deadline') || '').toLowerCase();
+    const deadline = deadlineRaw === 'recorded' || deadlineRaw === 'rolling' ? deadlineRaw : undefined;
     const sort = searchParams.get('sort') || 'relevance';
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
@@ -32,72 +62,122 @@ export async function GET(request: NextRequest) {
     );
 
     // Public visibility: non-staff only see published, VERIFIED, source-linked courses.
-    const where: any = isPrivileged ? {} : { ...publicCourseWhere() };
+    const and: any[] = [];
+    if (!isPrivileged) and.push(publicCourseWhere());
 
+    // Every filter is its own AND clause. (The previous implementation assigned
+    // `where.OR` repeatedly, so a later filter such as `university` silently
+    // replaced the text-search OR instead of narrowing it.)
     if (q) {
-      where.OR = [
-        { courseTitle: { contains: q } },
-        { subjectArea: { contains: q } },
-        { disciplineArea: { contains: q } },
-        { universityId: { contains: q } },
-        { university: { name: { contains: q } } },
-      ];
+      and.push({
+        OR: [
+          { courseTitle: { contains: q } },
+          { subjectArea: { contains: q } },
+          { disciplineArea: { contains: q } },
+          { universityId: { contains: q } },
+          { university: { name: { contains: q } } },
+        ],
+      });
     }
 
     if (country && country !== 'all') {
-      where.OR = [
-        ...(where.OR || []),
-        { country: { contains: country } },
-        { university: { country: { contains: country } } },
-      ];
+      and.push({
+        OR: [
+          { country: { contains: country } },
+          { university: { country: { contains: country } } },
+        ],
+      });
     }
 
-    if (city) {
-      where.city = { contains: city };
-    }
+    if (city) and.push({ city: { contains: city } });
 
     if (university && university !== 'all') {
-      where.OR = [
-        { universityId: { contains: university } },
-        { university: { name: { contains: university } } },
-        { university: { slug: { contains: university } } },
-      ];
+      and.push({
+        OR: [
+          { universityId: { contains: university } },
+          { university: { name: { contains: university } } },
+          { university: { slug: { contains: university } } },
+        ],
+      });
     }
 
-    if (campus) {
-      where.campus = { contains: campus };
-    }
+    if (campus) and.push({ campus: { contains: campus } });
+    if (studyLevel && studyLevel !== 'all') and.push({ studyLevel: { contains: studyLevel } });
+    if (studyArea && studyArea !== 'all') and.push({ subjectArea: { contains: studyArea } });
+    if (discipline) and.push({ disciplineArea: { contains: discipline } });
+    if (openProgram) and.push({ internationalEligibility: { not: 'closed' } });
+    if (tag) and.push({ publicTags: { contains: tag } });
+    if (scholarship) and.push({ scholarshipRecords: { some: { status: 'active' } } });
 
-    if (studyLevel && studyLevel !== 'all') {
-      where.studyLevel = { contains: studyLevel };
-    }
-
-    if (studyArea && studyArea !== 'all') {
-      where.subjectArea = { contains: studyArea };
-    }
-
-    if (discipline) {
-      where.disciplineArea = { contains: discipline };
-    }
-
-    if (openProgram) {
-      where.internationalEligibility = { not: 'closed' };
-    }
-
-    if (tag) {
-      where.publicTags = { contains: tag };
-    }
-
-    if (scholarship) {
-      where.scholarshipRecords = { some: { status: 'active' } };
-    }
-
+    // Intake (single month/year or the year-qualified window tokens).
     if (intakeMonth || intakeYear) {
-      const intakeWhere: any = {};
-      if (intakeMonth) intakeWhere.intakeMonth = { contains: intakeMonth };
-      if (intakeYear) intakeWhere.intakeYear = parseInt(intakeYear, 10);
-      where.intakeFees = { some: intakeWhere };
+      const periods = intakeMonth
+        ? intakeMonth.split(',').map((token) => parseIntakePeriodToken(token.trim(), intakeYear ? Number(intakeYear) : undefined)).filter(Boolean)
+        : [];
+      if (periods.length > 0) {
+        and.push({
+          OR: periods.map((entry: any) => ({
+            intakeFees: {
+              some: {
+                ...publicIntakeWhere(),
+                intakeYear: entry.year,
+                intakeMonth: { in: intakeMonthVariants(entry.month) },
+              },
+            },
+          })),
+        });
+      } else {
+        const intakeWhere: any = {};
+        if (intakeMonth) intakeWhere.intakeMonth = { contains: intakeMonth };
+        if (intakeYear) intakeWhere.intakeYear = Number(intakeYear);
+        and.push({ intakeFees: { some: { ...publicIntakeWhere(), ...intakeWhere } } });
+      }
     }
+
+    // Tuition range — matched against verified/scheduled intake fee rows.
+    if (minTuition !== undefined || maxTuition !== undefined) {
+      const range: Record<string, number> = {};
+      if (minTuition !== undefined) range.gte = minTuition;
+      if (maxTuition !== undefined) range.lte = maxTuition;
+      and.push({ intakeFees: { some: { ...publicIntakeWhere(), yearlyTuition: range } } });
+    }
+
+    // Application fee: a number means "fee at most N"; the words none/free/waived
+    // mean the course carries a verified fee waiver.
+    if (applicationFee) {
+      const numericFee = readNumber(applicationFee);
+      if (numericFee !== undefined) {
+        and.push({ OR: [{ applicationFeeWaiver: true }, { applicationFee: { lte: numericFee, gt: 0 } }] });
+      } else if (['none', 'free', 'waived', 'no'].includes(applicationFee.toLowerCase())) {
+        and.push({ applicationFeeWaiver: true });
+      }
+    }
+
+    // Deposit: a number means "deposit at most N"; low/waived means the low-deposit flag.
+    if (deposit) {
+      const numericDeposit = readNumber(deposit);
+      if (numericDeposit !== undefined) {
+        and.push({ OR: [{ lowDeposit: true }, { depositAmount: { lte: numericDeposit, gt: 0 } }] });
+      } else if (['low', 'waived', 'none', 'no'].includes(deposit.toLowerCase())) {
+        and.push({ lowDeposit: true });
+      }
+    }
+
+    // English test / score — same rule as the public Course Finder.
+    const englishClause = buildEnglishTestWhere(englishTest, englishScore);
+    if (englishClause) and.push(englishClause);
+
+    // Duration: maximum course length in months.
+    if (duration !== undefined) and.push({ durationMonths: { gt: 0, lte: duration } });
+
+    // Deadline: recorded = at least one intake carries a deadline; rolling = none does.
+    if (deadline === 'recorded') {
+      and.push({ intakeFees: { some: { ...publicIntakeWhere(), applicationDeadline: { not: '' } } } });
+    } else if (deadline === 'rolling') {
+      and.push({ NOT: { intakeFees: { some: { ...publicIntakeWhere(), applicationDeadline: { not: '' } } } } });
+    }
+
+    const where: any = and.length > 0 ? { AND: and } : {};
 
     let orderBy: any = { courseTitle: 'asc' };
     if (sort === 'popular') {

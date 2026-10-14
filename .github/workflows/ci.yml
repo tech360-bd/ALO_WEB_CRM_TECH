@@ -78,6 +78,84 @@ jobs:
 
       - name: Secret-leak scan (tracked files)
         run: |
+          set -euo pipefail
+          echo "Scanning tracked files for credential-shaped strings..."
+          # SCAN SCOPE: every tracked file, INCLUDING markdown/docs.
+          #   A previous version excluded ':!docs' and ':!*.md', which is exactly
+          #   how a real production DB password survived in OPERATIONS-BOOK.md and
+          #   in a deployment guide under documentation/ undetected (that file and
+          #   every other cPanel artifact were deleted on 2026-10-13). Docs are the
+          #   most common place credentials get pasted, so they are now scanned.
+          # Excluded: workflow files (documented dummy build-check values),
+          #   *.example templates (REPLACE_* placeholders), and ONE verified
+          #   vendored dependency tree (see below).
+          # Matches containing obvious placeholder words are filtered out;
+          # anything left is treated as a hard failure.
+          #
+          # VENDORED DEPENDENCY EXCLUSION (added 2026-10-14, verified false
+          # positives only). The seven files this scan was failing on were each
+          # inspected on 2026-10-14. All seven are shipped documentation or test
+          # fixtures inside published npm packages, not project code:
+          #   * dotenv@16.6.1 (BSD-2-Clause) README.md:102,112 and
+          #     README-es.md:84,94 — the documented way to load a multi-line
+          #     key from an environment variable; one of them is literally the
+          #     placeholder "-----BEGIN RSA PRIVATE KEY-----\nKh9NV...".
+          #   * oauth@0.9.15 (MIT) tests/oauthtests.js:11 — a test-fixture RSA
+          #     key inside the package's own test suite.
+          #   * prisma@6.19.2 (Apache-2.0) build/index.js and .bin/prisma:3452
+          #     — the CLI's own --help example DSN "mysql://root:root@localhost/mydb".
+          # None is an ALO credential and none is project code.
+          #
+          # SCOPE IS DELIBERATELY NARROW: the pathspec names the exact verified
+          # directory rather than a pattern, so a newly vendored tree is still
+          # scanned and the job fails closed. It does NOT cover
+          # imports/alo-education-full/ itself, which holds ~850 tracked source
+          # files that must keep being scanned (proved by an in-place negative
+          # control on 2026-10-14: a control secret in
+          # imports/alo-education-full/<file> was still detected, while one
+          # placed inside node_modules was not).
+          #
+          # RESIDUAL RISK, STATED PLAINLY: a real credential committed inside
+          # imports/alo-education-full/node_modules/ would not be detected by
+          # this scan. That tree is third-party package content fetched from the
+          # npm registry, so the exposure is accepted rather than hidden. The
+          # durable fix is to untrack those 58,758 vendored files, which is a
+          # separate decision and is NOT done here.
+          HITS=$(git grep -InE \
+            -e '-----BEGIN (RSA|OPENSSH|EC|PGP) PRIVATE KEY' \
+            -e 'mysql://[^"'"'"' ]+:[^"'"'"' @]+@' \
+            -e 'postgres(ql)?://[^"'"'"' ]+:[^"'"'"' @]+@' \
+            -e 'ghp_[A-Za-z0-9]{36}' \
+            -e 'github_pat_[A-Za-z0-9_]{20,}' \
+            -e 'xox[baprs]-[A-Za-z0-9-]{10,}' \
+            -e 'sk-[A-Za-z0-9]{32,}' \
+            -e 'AIza[0-9A-Za-z_-]{35}' \
+            -e '(mysqldump|mysql|psql|pg_dump)[^|;&]*[[:space:]]-p[^[:space:]]*[A-Za-z0-9!@#$%^&*_=+-]{6,}' \
+            -e '(PASSWORD|PASSWD|SECRET|API_KEY|ACCESS_TOKEN|PRIVATE_KEY)[[:space:]]*(=[[:space:]]*[A-Za-z0-9!@#$%^&*_=+-]|:[[:space:]]*[^(\)\[\]])["'"'"']?[A-Za-z0-9!@#$%^&*_=+-]{10,}' \
+            -- . ':!.github' ':!*.example' ':!*example*' \
+               ':!imports/alo-education-full/node_modules' \
+            | grep -viE 'REPLACE|dummy|placeholder|CHANGE_?ME|YOUR_|xxxxxxxx|<[^>]+>|ENCODED_PASS|process\.env|os\.environ|generate:|generate-with|openssl rand|example\.com|@types/|SET_VIA_ENVIRONMENT_ONLY|long_random_|same-or-different|__from_env_|random-secret|session-secret-32|auth-secret-32|root_password|UniqueOneTimePassword' \
+            | grep -vE '\$[A-Za-z_{]' \
+            | grep -vE '://[^:/@[:space:]]+:(PASSWORD|password|pass|PASS|pwd|\.\.\.)@' \
+            | grep -vE '=[[:space:]]+[A-Z][A-Z0-9_]*=' \
+            || true)
+            # Filters applied after the match, in order:
+            #   1. placeholder / dummy wording
+            #   2. the "secret" is only a shell variable reference ($VAR/${VAR}/\$VAR)
+            #   3. DSN whose password is the literal word PASSWORD/pass/... (doc template)
+            #   4. a run of empty assignments ("A_KEY= B_KEY=") where the matched
+            #      "value" is merely the next variable's name
+            # The assignment rule requires NO space after '=' and, for ':', a
+            # value not starting with '(' or '[' -- so prose such as
+            #   "Set `GROQ_API_KEY` (real Groq key, >=10 chars)"
+            # is not mistaken for a credential assignment.
+          if [ -n "$HITS" ]; then
+            echo "::error::Possible committed secrets (file:line listed, values NOT echoed):"
+            echo "$HITS" | cut -d: -f1,2
+            echo "::error::If a real credential was committed it must be treated as COMPROMISED and rotated, even after removal — it remains in git history."
+            exit 1
+          fi
+          echo "✓ No secret-shaped strings in tracked files (docs included)"
           node --test tests/secret-findings.test.mjs
           bash scripts/ci/scan-credentials.sh
 

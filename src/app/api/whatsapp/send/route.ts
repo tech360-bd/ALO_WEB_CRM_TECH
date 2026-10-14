@@ -2,153 +2,172 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rate-limiter";
+import { sendWhatsAppMessage } from "@/lib/whatsapp-cloud-api";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST /api/whatsapp/send — auth required. Sends a WhatsApp message via Meta API.
-// Body: { to: string, templateName?: string, templateLanguage?: string, text?: string }
+/**
+ * POST /api/whatsapp/send — send one WhatsApp message from an official ALO number.
+ *
+ * Hardened 2026-10-13. What was wrong before:
+ *   • the only authorization test was `role !== "STUDENT"`, so ANY other
+ *     authenticated account (partner, marketing, finance, an external-facing
+ *     role) could send WhatsApp traffic from ALO's official number;
+ *   • there was no rate limit, so one client loop could burn the number's
+ *     messaging quality rating;
+ *   • the route hand-rolled its own Graph API call instead of using
+ *     `sendWhatsAppMessage`, so it skipped text-length validation, phone
+ *     normalization and provider status persistence, and it pinned v18.0;
+ *   • a failed send was dropped. `WhatsAppRetryQueue` existed, the retry job
+ *     existed, but nothing ever enqueued a row, so the retry engine could never
+ *     run against real data.
+ *
+ * Body: { to, templateName?, templateLanguage?, text? }
+ */
+
+/** Roles permitted to send WhatsApp from an official ALO number. */
+const ALLOWED_SENDER_ROLES = new Set([
+  'super_admin', 'admin', 'ceo', 'coo',
+  'branch_manager', 'department_manager', 'counselor', 'senior_counselor',
+  'application_manager', 'application_team', 'application_officer', 'document_officer',
+  'visa_officer', 'visa_interview_officer', 'front_desk', 'support', 'support_staff',
+  'marketing_manager', 'finance',
+]);
+
+function callerRoles(sessionUser: Record<string, unknown>): string[] {
+  const raw = [
+    ...(Array.isArray(sessionUser?.roles) ? (sessionUser.roles as unknown[]) : []),
+    sessionUser?.role,
+    sessionUser?.userType,
+  ];
+  return raw
+    .filter((value): value is string => typeof value === 'string' && value.length > 0)
+    .map((value) => value.toLowerCase());
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    // Allow all authenticated staff to send
-    const role = (session.user as any).role;
-    if (role === "STUDENT") {
-      return NextResponse.json({ error: "Students cannot send WhatsApp messages" }, { status: 403 });
+
+    // Deny by default: an unrecognised role is not a sender.
+    const roles = callerRoles(session.user as Record<string, unknown>);
+    const authorized = roles.some((role) => ALLOWED_SENDER_ROLES.has(role));
+    if (!authorized) {
+      return NextResponse.json(
+        { error: "Forbidden", detail: "This role is not authorized to send WhatsApp messages." },
+        { status: 403 }
+      );
     }
 
-    const body = await req.json();
-    const { to, templateName, templateLanguage, text } = body;
+    const userId = String((session.user as Record<string, unknown>).id ?? (session.user as Record<string, unknown>).email ?? 'unknown');
+    const limit = checkRateLimit(`whatsapp-send:${userId}`, 'whatsapp_send');
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "Too many messages", detail: "WhatsApp send rate limit reached. Try again shortly." },
+        { status: 429, headers: { "Retry-After": String(Math.max(1, Math.ceil((limit.resetAt - Date.now()) / 1000))) } }
+      );
+    }
 
-    if (!to) {
+    let body: { to?: string; templateName?: string; templateLanguage?: string; text?: string };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const { to, templateName, templateLanguage, text } = body;
+    if (!to || typeof to !== 'string') {
       return NextResponse.json({ error: "to (recipient phone) is required" }, { status: 400 });
     }
-
-    const token = process.env.WHATSAPP_TOKEN;
-    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-    if (!token || !phoneNumberId) {
-      return NextResponse.json(
-        { error: "WHATSAPP_TOKEN and WHATSAPP_PHONE_NUMBER_ID env vars must be set" },
-        { status: 500 }
-      );
+    if (!templateName && !text) {
+      return NextResponse.json({ error: "Either templateName or text is required" }, { status: 400 });
     }
 
-    // Normalize phone (Bangladesh)
-    let normalized = to.replace(/\D/g, "");
-    if (normalized.startsWith("01") && normalized.length === 11) {
-      normalized = "880" + normalized.slice(1);
-    } else if (normalized.startsWith("+880")) {
-      normalized = normalized.slice(1);
-    }
-
-    // Build payload — either templated message or text message
-    let messagePayload: any;
-    if (templateName) {
-      messagePayload = {
-        messaging_product: "whatsapp",
-        to: normalized,
-        type: "template",
-        template: {
-          name: templateName,
-          language: { code: templateLanguage || "en_US" },
-        },
-      };
-    } else if (text) {
-      messagePayload = {
-        messaging_product: "whatsapp",
-        to: normalized,
-        type: "text",
-        text: { body: text },
-      };
-    } else {
-      return NextResponse.json(
-        { error: "Either templateName or text is required" },
-        { status: 400 }
-      );
-    }
-
-    // Send via Meta WhatsApp Business API
-    const apiUrl = `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`;
-    const apiResponse = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(messagePayload),
+    // Single canonical sender: validates length, normalizes the number, calls the
+    // provider and records the accepted message plus its delivery status.
+    const sendResult = await sendWhatsAppMessage({
+      to,
+      text,
+      templateName,
+      templateLanguage,
     });
 
-    const apiResult = await apiResponse.json();
+    if (!sendResult.success || !sendResult.messageId) {
+      const sendError = sendResult.error || "WhatsApp provider did not confirm the message.";
 
-    if (!apiResponse.ok) {
-      // Persist error status
-      const messageId = apiResult?.messages?.[0]?.id || `failed-${Date.now()}`;
-      await db.whatsAppMessageStatus.create({
+      // Queue a text send for controlled retry (max 3 attempts). Template sends
+      // are not retried here: the queue stores only text, so retrying one would
+      // silently downgrade an approved template to plain text.
+      let retryQueued = false;
+      const retryPhone = (to || '').replace(/\D/g, '');
+      if (!templateName && text && retryPhone && !/not configured/i.test(sendError)) {
+        try {
+          await db.whatsAppRetryQueue.create({
+            data: {
+              messageId: '',
+              recipientPhone: retryPhone,
+              messageBody: text,
+              attemptCount: 0,
+              maxAttempts: 3,
+              lastError: sendError.slice(0, 400),
+              nextRetryAt: new Date(Date.now() + 15 * 60 * 1000),
+              status: 'pending',
+            },
+          });
+          retryQueued = true;
+        } catch {
+          /* queueing is best-effort; the failure is still reported below */
+        }
+      }
+
+      await db.auditLog.create({
         data: {
-          messageId,
-          recipientPhone: normalized,
-          status: "FAILED",
-          errorMessage: JSON.stringify(apiResult),
-          providerPayload: JSON.stringify(apiResult),
+          userId,
+          action: "WHATSAPP_SEND_FAILED",
+          resource: "WhatsApp",
+          resourceId: retryPhone || to,
+          details: JSON.stringify({
+            templateName: templateName ?? null,
+            retryQueued,
+            notConfigured: /not configured/i.test(sendError),
+          }),
         },
       }).catch(() => {});
 
       return NextResponse.json(
-        { error: "WhatsApp API error", apiError: apiResult },
-        { status: 502 }
+        {
+          success: false,
+          error: "WhatsApp send failed",
+          detail: sendError,
+          retryQueued,
+        },
+        { status: /not configured/i.test(sendError) ? 503 : 502 }
       );
     }
 
-    const messageId = apiResult?.messages?.[0]?.id || `sent-${Date.now()}`;
-
-    // Persist outbound message
-    const outbound = await db.socialInboxMessage.create({
-      data: {
-        platform: "WHATSAPP",
-        direction: "OUTBOUND",
-        senderName: "ALO Education",
-        recipientId: normalized,
-        messageText: text || `[Template: ${templateName}]`,
-        conversationId: `wa-${normalized}`,
-        externalId: messageId,
-        aiHandled: false,
-        humanApproved: true,
-        isRead: true,
-        sentAt: new Date(),
-      },
-    });
-
-    await db.whatsAppMessageStatus.create({
-      data: {
-        messageId,
-        socialMessageId: outbound.id,
-        recipientPhone: normalized,
-        status: "SENT",
-        providerPayload: JSON.stringify(apiResult),
-      },
-    }).catch(() => {});
-
     await db.auditLog.create({
       data: {
-        userId: (session.user as any).id,
+        userId,
         action: "WHATSAPP_SEND",
         resource: "SocialInboxMessage",
-        resourceId: outbound.id,
-        details: JSON.stringify({ to: normalized, templateName, messageId }),
+        resourceId: sendResult.socialMessageId ?? sendResult.messageId,
+        details: JSON.stringify({ templateName: templateName ?? null, messageId: sendResult.messageId }),
       },
     }).catch(() => {});
 
     return NextResponse.json({
       success: true,
-      messageId,
-      outbound,
-      apiResponse: apiResult,
+      messageId: sendResult.messageId,
+      socialMessageId: sendResult.socialMessageId ?? null,
+      statusRecorded: sendResult.statusRecorded ?? false,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[whatsapp.send] error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "WhatsApp send failed" }, { status: 500 });
   }
 }

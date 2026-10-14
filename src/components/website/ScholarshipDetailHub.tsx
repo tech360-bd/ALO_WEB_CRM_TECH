@@ -9,6 +9,7 @@ import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
 import FaqAccordion from './FaqAccordion';
 import RelatedQuestions from './RelatedQuestions';
+import EnquiryForm from './EnquiryForm';
 import { computeScholarshipStatus, SCHOLARSHIP_STATUS_BADGES } from '@/lib/scholarships/status-engine';
 
 interface Props {
@@ -156,6 +157,18 @@ export default function ScholarshipDetailHub({ slug }: Props) {
 
             <RelatedContentEngine sourceType="scholarship" sourceId={scholarship.id} sourceSlug={scholarship.slug} country={scholarship.country} universityId={scholarship.universityId} title="Related Scholarships, Universities, Courses, FAQs" />
             <FaqAccordion targetType="scholarship" targetSlug={scholarship.slug} title={`FAQs about ${scholarship.name}`} limit={10} />
+
+            {/* Enquiry form (spec 3.2) — same structure as the course and
+                university enquiry forms, pre-filled with this scholarship. */}
+            <EnquiryForm
+              context={{
+                type: 'scholarship',
+                subject: scholarship.name,
+                institution: scholarship.universityName || scholarship.provider || undefined,
+                country: scholarship.country,
+                reference: scholarship.slug || scholarship.id,
+              }}
+            />
 
             {/* Related Questions (spec §51: Still Have Questions?) */}
             <RelatedQuestions type="scholarship" context={scholarship.slug} title="Still Have Questions?" count={6} />

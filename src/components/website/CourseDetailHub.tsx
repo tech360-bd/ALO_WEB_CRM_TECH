@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Globe, GraduationCap, Award, Clock, FileText, Shield, BookOpen, DollarSign, Calendar, CheckCircle2, AlertTriangle, ArrowRight, Briefcase, Users } from 'lucide-react';
 import Link from 'next/link';
 import RelatedContentEngine from './RelatedContentEngine';
+import EnquiryForm from './EnquiryForm';
 import FaqAccordion from './FaqAccordion';
 import TestPreparationMiniCard from './TestPreparationMiniCard';
 
@@ -75,8 +76,8 @@ export default function CourseDetailHub({ slug }: Props) {
           <p className="text-lg text-gray-600 flex items-center gap-2 mb-2"><Building2 className="w-5 h-5 text-[#2563EB]" />{uni.name || course.universityName || 'University'} • {course.city || uni.city || ''}, {course.country || uni.country || ''}</p>
           <p className="text-sm text-gray-500 mb-6">{course.qualification || 'Qualification not recorded'} • {course.durationMonths ? `${Math.round(course.durationMonths/12*10)/10} years` : 'Duration not recorded'} • {course.deliveryMode || 'Study mode not recorded'} • Campus: {course.campus || uni.campusName || 'Not recorded'}</p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-6 font-bold">Apply Now</Button></Link>
-            <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Free Consultation</Button></Link>
+            <div className="flex flex-col items-start gap-1"><Link href={`/apply/${encodeURIComponent(course.slug || course.courseId || slug)}`}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-6 font-bold">Apply Now</Button></Link><span className="text-[10px] font-semibold text-gray-500">Login / Register required</span></div>
+            <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Free Counseling</Button></Link>
             <Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Save Course</Button>
             <Link href="/compare"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Compare</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Ask Counselor</Button></Link>
@@ -185,12 +186,24 @@ export default function CourseDetailHub({ slug }: Props) {
             <RelatedContentEngine sourceType="course" sourceId={course.courseId || course.id} sourceSlug={course.slug || slug} country={course.country} universityId={course.universityId} title="Related Scholarships, English Tests, Resources, FAQs, Services" />
             <FaqAccordion targetType="course" targetSlug={course.slug || slug} title={`FAQs about ${course.courseTitle}`} limit={12} />
 
+            {/* Course enquiry (spec 3.2) — the same fixed form structure used on
+                university and scholarship pages, pre-filled with this course. */}
+            <EnquiryForm
+              context={{
+                type: 'course',
+                subject: course.courseTitle,
+                institution: uni.name || course.universityName,
+                country: course.country || uni.country,
+                reference: course.slug || course.courseId,
+              }}
+            />
+
             <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Apply for {course.courseTitle}</h3>
               <p className="text-sm text-blue-100 mb-6 max-w-2xl mx-auto">Move from information → eligibility → course selection → consultation → application. Book consultation, save course, compare, ask counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/eligibility-check"><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Apply Now</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[#2563EB] hover:bg-blue-50 h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+                <Link href={`/apply/${encodeURIComponent(course.slug || course.courseId || slug)}`}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold">Apply Now</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[#2563EB] hover:bg-blue-50 h-12 px-8 font-bold">Book Free Counseling</Button></Link>
                 <Link href="/compare"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-8">Compare Courses</Button></Link>
               </div>
             </Card>
@@ -198,7 +211,7 @@ export default function CourseDetailHub({ slug }: Props) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/eligibility-check" className="block"><Button className="w-full bg-[#F97316] text-white h-11">Apply Now</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Book Free Consultation</Button></Link><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Save Course</Button><Link href="/compare" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Compare</Button></Link></div></Card>
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href={`/apply/${encodeURIComponent(course.slug || course.courseId || slug)}`} className="block"><Button className="w-full bg-[#F97316] text-white h-11">Apply Now</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Book Free Counseling</Button></Link><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Save Course</Button><Link href="/compare" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-11">Compare</Button></Link></div></Card>
             <TestPreparationMiniCard contextTitle={`English for ${course.courseTitle}`} recommendedTest={req.englishTest || (req.ieltsOverall > 0 ? `IELTS ${req.ieltsOverall}` : 'Test requirement not recorded')} targetScore={req.ieltsMinBand > 0 ? `Minimum band ${req.ieltsMinBand}` : 'Verify the official requirement'} />
             <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {course.officialUrl ? <a href={course.officialUrl} target="_blank" className="text-[#2563EB] underline break-all">{course.officialUrl}</a> : 'Information not currently verified.'}</p><p><strong>Application URL:</strong> {course.officialApplicationUrl ? <a href={course.officialApplicationUrl} target="_blank" className="text-[#2563EB] underline break-all">{course.officialApplicationUrl}</a> : 'Not verified'}</p><p><strong>Source URL:</strong> {course.sourceUrl ? <a href={course.sourceUrl} target="_blank" className="text-[#2563EB] underline break-all">{course.sourceUrl}</a> : 'Not verified'}</p><p><strong>Verification:</strong> <Badge className={`${course.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{course.verificationStatus || 'NEEDS_REVIEW'}</Badge></p><p><strong>Last Verified:</strong> {course.lastVerifiedAt ? new Date(course.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
           </div>

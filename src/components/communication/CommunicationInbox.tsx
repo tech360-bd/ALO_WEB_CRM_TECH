@@ -10,6 +10,7 @@ import {
   AlertTriangle, CheckCircle2, Reply, UserPlus, FileText, Flag, Eye, Archive, Ban, ArrowUpCircle, Calendar, Smartphone, Globe, Building2, BookOpen, Shield
 } from 'lucide-react';
 import SlaCountdownBadge from './SlaCountdownBadge';
+import { SLA_STATES } from '@/lib/communications/sla-policy';
 
 // Reuse visibility badges
 const VISIBILITY_META: Record<string, { label: string; color: string }> = {
@@ -114,10 +115,13 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
               <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="SLA" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="">All SLA</SelectItem>
-                <SelectItem value="overdue">Overdue</SelectItem>
-                <SelectItem value="urgent">Urgent</SelectItem>
-                <SelectItem value="warning">Warning</SelectItem>
-                <SelectItem value="normal">Normal</SelectItem>
+                {/* Spec §148 states — the filter offers exactly the states the
+                    countdown can display, no more and no fewer. */}
+                {SLA_STATES.map((state) => (
+                  <SelectItem key={state} value={state}>
+                    {state === 'critical' ? 'Critical (escalate)' : state.charAt(0).toUpperCase() + state.slice(1)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Select value={filters.status} onValueChange={v => setFilters(s => ({ ...s, status: v }))}>
@@ -152,66 +156,131 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
           <div className="overflow-x-auto border border-gray-200 rounded-lg">
             <table className="w-full text-xs">
               <thead className="bg-gray-50 border-b text-[11px] text-gray-600">
+                {/* Spec §145 column set: Priority • SLA • Channel • Student •
+                    Application • Sender • Message • Assigned Counselor • Intent •
+                    Status • Last Response • Deadline */}
                 <tr>
-                  <th className="px-2 py-2 text-left">Message ID</th>
-                  <th className="px-2 py-2 text-left">Channel/Source</th>
-                  <th className="px-2 py-2 text-left">Sender → Recipient</th>
-                  <th className="px-2 py-2 text-left">Linked</th>
-                  <th className="px-2 py-2 text-left">Assigned</th>
-                  <th className="px-2 py-2 text-left">Priority/Intent/Visibility</th>
-                  <th className="px-2 py-2 text-left">Status/SLA</th>
-                  <th className="px-2 py-2 text-left">Dates</th>
+                  <th className="px-2 py-2 text-left">Priority</th>
+                  <th className="px-2 py-2 text-left">SLA</th>
+                  <th className="px-2 py-2 text-left">Channel</th>
+                  <th className="px-2 py-2 text-left">Student</th>
+                  <th className="px-2 py-2 text-left">Application</th>
+                  <th className="px-2 py-2 text-left">Sender / Message</th>
+                  <th className="px-2 py-2 text-left">Assigned Counselor</th>
+                  <th className="px-2 py-2 text-left">Intent</th>
+                  <th className="px-2 py-2 text-left">Status</th>
+                  <th className="px-2 py-2 text-left">Last Response</th>
+                  <th className="px-2 py-2 text-left">Deadline</th>
                   <th className="px-2 py-2 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={9} className="px-4 py-8 text-center text-gray-400">Loading inbox…</td></tr>
+                  <tr><td colSpan={12} className="px-4 py-8 text-center text-gray-400">Loading inbox…</td></tr>
                 ) : threads.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-8 text-center text-gray-400">No messages. Connect WhatsApp/Facebook or create a test thread.</td></tr>
+                  <tr><td colSpan={12} className="px-4 py-8 text-center text-gray-400">No messages. Connect WhatsApp/Facebook or create a test thread.</td></tr>
                 ) : threads.map((t) => {
                   const Vis = VISIBILITY_META[t.visibility || 'public_safe'] || VISIBILITY_META.public_safe;
                   const ChanIcon = CHANNEL_ICON[t.channel] || MessageSquare;
                   const isB2B = t.visibility === 'b2b_confidential';
                   if (isB2B && !canViewB2B) return null;
                   return (
-                    <tr key={t.id} className="border-b hover:bg-blue-50/30">
-                      <td className="px-2 py-2 font-mono text-[11px]">{t.id?.substring(0, 8)}…<div className="text-[10px] text-gray-400">{t.threadCode?.substring(0, 10)}</div></td>
+                    <tr key={t.id} className="border-b hover:bg-blue-50/30 align-top">
+                      {/* Priority (§145) */}
+                      <td className="px-2 py-2">
+                        <Badge variant="outline" className={`text-[10px] ${t.priority === 'urgent' || t.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' : t.priority === 'low' ? 'bg-gray-50 text-gray-600' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                          {(t.priority || 'normal').toUpperCase()}
+                        </Badge>
+                        <div className="mt-1"><Badge variant="outline" className={`text-[10px] ${Vis.color} border`}>{Vis.label}</Badge></div>
+                      </td>
+                      {/* SLA (§148) — icon + word + countdown, never colour alone */}
+                      <td className="px-2 py-2">
+                        <SlaCountdownBadge
+                          slaDueAt={t.slaDueAt ? new Date(t.slaDueAt) : null}
+                          slaTriggeredAt={t.lastMessageAt ? new Date(t.lastMessageAt) : null}
+                          channel={t.channel}
+                          priority={t.priority}
+                          intent={t.intent}
+                          slaState={t.slaState}
+                          slaDisplay={t.slaDisplay}
+                          responded={t.slaResponded}
+                          size="sm"
+                        />
+                        {t.slaPolicyLabel && <div className="text-[10px] text-gray-400 mt-1">policy: {t.slaPolicyLabel} ({t.slaMinutes}m)</div>}
+                      </td>
+                      {/* Channel */}
                       <td className="px-2 py-2">
                         <Badge variant="outline" className="text-[10px] flex w-fit items-center gap-1"><ChanIcon className="w-3 h-3" /> {t.channel}</Badge>
-                        <div className="text-[10px] text-gray-500">{t.intent || 'general'}</div>
+                        <div className="text-[10px] text-gray-400 font-mono mt-1">{t.threadCode?.substring(0, 10) || t.id?.substring(0, 8)}</div>
                       </td>
+                      {/* Student / lead */}
                       <td className="px-2 py-2">
                         <div className="font-medium truncate max-w-[140px]">{t.contactName || t.lastSenderName || 'Unknown'}</div>
-                        <div className="text-[10px] text-gray-500">{t.lastMessageDir === 'outbound' ? '→ Student' : 'Student → Staff'}</div>
+                        <div className="text-[10px] text-gray-500">
+                          {t.studentId ? `Student ${t.studentId.slice(0, 6)}` : t.leadId ? `Lead ${t.leadId.slice(0, 6)}` : 'Unlinked — POSSIBLE NEW CONTACT'}
+                        </div>
+                        {t.contactPhone && <div className="text-[10px] text-gray-400">{t.contactPhone}</div>}
                       </td>
-                      <td className="px-2 py-2 space-y-0.5 text-[11px]">
-                        {t.leadId && <div className="flex items-center gap-1"><Flag className="w-3 h-3 text-gray-400" /> Lead {t.leadId.slice(0, 6)}</div>}
-                        {t.studentId && <div className="flex items-center gap-1"><Building2 className="w-3 h-3 text-gray-400" /> Student {t.studentId.slice(0, 6)}</div>}
-                        {t.applicationId && <div className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-gray-400" /> App {t.applicationId.slice(0, 6)}</div>}
+                      {/* Application */}
+                      <td className="px-2 py-2 text-[11px]">
+                        {t.applicationId ? (
+                          <>
+                            <div className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-gray-400" /> {t.applicationId.slice(0, 6)}</div>
+                            {t.applicationLabel && <div className="text-[10px] text-gray-500 truncate max-w-[150px]">{t.applicationLabel}</div>}
+                            {t.applicationStage && <div className="text-[10px] text-gray-400">Stage: {t.applicationStage}</div>}
+                          </>
+                        ) : <span className="text-gray-400">—</span>}
                         {t.partnerId && <div className="text-[10px] text-gray-500">Partner {t.partnerId.slice(0, 6)}</div>}
-                        {!t.leadId && !t.studentId && !t.applicationId && <span className="text-gray-400">—</span>}
                       </td>
-                      <td className="px-2 py-2 text-[11px]">{t.assignedToName || t.assignedToId?.slice(0, 6) || <span className="text-gray-400">Unassigned</span>}</td>
-                      <td className="px-2 py-2 space-y-1">
-                        <Badge variant="outline" className={`text-[10px] ${t.priority === 'urgent' || t.priority === 'sla_overdue' ? 'bg-red-100 text-red-700 border-red-200' : t.priority === 'high' ? 'bg-amber-100 text-amber-700' : 'bg-gray-50'}`}>{t.priority || 'normal'}</Badge>
-                        <div><Badge variant="outline" className={`text-[10px] ${Vis.color} border`}>{Vis.label}</Badge></div>
+                      {/* Sender + message (§146 keeps the original channel visible) */}
+                      <td className="px-2 py-2 max-w-[260px]">
+                        <div className="text-[10px] text-gray-500">
+                          {t.lastMessageDir === 'outbound' ? 'Staff → Student' : 'Student → Staff'} · {t.lastSenderName || t.contactName || 'unknown sender'}
+                        </div>
+                        <div className="text-[11px] text-gray-700 line-clamp-2" title={t.lastMessage}>{t.lastMessage || t.lastMessagePreview || '—'}</div>
+                        {t.unreadCount > 0 && <Badge className="mt-1 text-[9px] bg-blue-600">{t.unreadCount} unread</Badge>}
                       </td>
+                      {/* Assigned counselor */}
+                      <td className="px-2 py-2 text-[11px]">{t.assignedToName || (t.assignedToId ? t.assignedToId.slice(0, 6) : <span className="text-amber-600">Unassigned</span>)}</td>
+                      {/* Intent */}
+                      <td className="px-2 py-2">
+                        <Badge variant="outline" className="text-[10px] bg-gray-50">{(t.intent || 'general').replace(/_/g, ' ')}</Badge>
+                      </td>
+                      {/* Status */}
                       <td className="px-2 py-2">
                         <Badge className={`text-[10px] ${t.status === 'resolved' ? 'bg-emerald-100 text-emerald-700' : t.status === 'escalated' ? 'bg-rose-100 text-rose-700' : 'bg-blue-50 text-blue-700'}`}>{t.status}</Badge>
-                        <div className="mt-1"><SlaCountdownBadge slaDueAt={t.slaDueAt ? new Date(t.slaDueAt) : null} size="sm" /></div>
                       </td>
+                      {/* Last response (§150) */}
+                      <td className="px-2 py-2 text-[11px] text-gray-600">
+                        {t.firstResponseAt ? (
+                          <>
+                            <div>{new Date(t.firstResponseAt).toLocaleString('en-GB')}</div>
+                            <div className="text-[10px] text-gray-400">
+                              FRT {t.firstResponseMinutes != null ? `${t.firstResponseMinutes} min` : '—'}
+                              {t.countsAsBreach ? ' · counted breach' : t.slaBreached ? ' · late (excluded)' : ' · within SLA'}
+                            </div>
+                          </>
+                        ) : <span className="text-amber-600">No response yet</span>}
+                      </td>
+                      {/* Deadline */}
                       <td className="px-2 py-2 text-[11px] text-gray-600">
                         <div>{t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleString('en-GB') : '—'}</div>
-                        <div className="text-[10px] text-gray-400">Last reply: {t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleTimeString() : '—'}</div>
+                        <div className="text-[10px] text-gray-400">
+                          due: {t.slaDueAt ? new Date(t.slaDueAt).toLocaleString('en-GB') : 'none'}
+                        </div>
+                        <div className="text-[10px] text-gray-400">
+                          {t.slaCalendarTime ? 'calendar-time clock' : 'office-hours clock'}
+                        </div>
                       </td>
+                      {/* Actions */}
                       <td className="px-2 py-2">
                         <div className="flex flex-wrap gap-1">
                           <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('reply', t.id)}><Reply className="w-3 h-3 mr-1" />Reply</Button>
                           <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('assign', t.id)}><UserPlus className="w-3 h-3" />Assign</Button>
                           <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('create_task', t.id)}><Calendar className="w-3 h-3" /></Button>
-                          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('mark_read', t.id)}><Eye className="w-3 h-3" /></Button>
-                          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('escalate', t.id)}><AlertTriangle className="w-3 h-3" /></Button>
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('view', t.id)}><Eye className="w-3 h-3" /></Button>
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('escalate', t.id)}><ArrowUpCircle className="w-3 h-3" /></Button>
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-[11px]" onClick={() => onAction('mark_resolved', t.id)}><CheckCircle2 className="w-3 h-3" /></Button>
                         </div>
                       </td>
                     </tr>

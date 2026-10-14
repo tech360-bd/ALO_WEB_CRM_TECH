@@ -15,6 +15,7 @@
  */
 
 import { NON_PUBLIC_INTERNATIONAL_VALUES } from './course-finder/eligibility-rules';
+import { parseIntakePeriodToken } from '@/lib/course-finder/intake-window';
 
 export const PUBLISHED_STATUSES = ['published', 'PUBLISHED'] as const;
 export const SOURCE_VERIFIED_STATUSES = ['VERIFIED', 'verified'] as const;
@@ -58,8 +59,26 @@ export function publicCourseWhere() {
   };
 }
 
-/** Intake and requirement rows shown publicly must also be verified. */
+/**
+ * Intake rows shown publicly.
+ *
+ * Two verification states are listed:
+ *   • VERIFIED  — the month, deadline and fees came from an official source and
+ *                 were checked (the only state that may carry fee/deadline data).
+ *   • SCHEDULED — the ALO intake window (Jan 2027 … Jan 2028) row created by the
+ *                 backfill. It asserts only that ALO tracks that month as an
+ *                 intake; tuition, deposit, application fee and deadline stay
+ *                 EMPTY until a source is verified, and the API flags each such
+ *                 row (`verified: false`) so no screen can present it as fact.
+ *
+ * EXPIRED / NEEDS_REVIEW / anything else stays out of public results.
+ */
 export function publicIntakeWhere() {
+  return { status: 'active', verificationStatus: { in: ['VERIFIED', 'SCHEDULED'] } };
+}
+
+/** Intake rows whose month, deadline and fees are all source-verified. */
+export function publicVerifiedIntakeWhere() {
   return { status: 'active', verificationStatus: 'VERIFIED' };
 }
 
@@ -181,8 +200,13 @@ export function intakeMonthVariants(month: number): string[] {
   return [...variants];
 }
 
+export { INTAKE_WINDOW_MONTHS, INTAKE_WINDOW_LABEL } from '@/lib/course-finder/intake-window';
+
 export const ENGLISH_TEST_KEYS = [
   'ielts', 'pte', 'toefl', 'duolingo', 'moi', 'oietc', 'oxford', 'languagecert', 'oet',
+  // Spec-supported tests that had no filter entry: the university's own English
+  // test (a real course flag) and the catch-all for anything else recorded.
+  'university_test', 'other',
 ] as const;
 export type EnglishTestKey = (typeof ENGLISH_TEST_KEYS)[number];
 
@@ -190,7 +214,7 @@ const ENGLISH_TEST_DEFINITIONS: Record<EnglishTestKey, {
   testTypes: string[];
   requirementLabel: string;
   overallField?: 'ieltsOverall' | 'pteOverall' | 'toeflOverall' | 'detOverall';
-  courseFlag?: 'moiAccepted';
+  courseFlag?: 'moiAccepted' | 'universityOwnEnglishTest';
 }> = {
   ielts: { testTypes: ['IELTS', 'IELTS UKVI'], requirementLabel: 'IELTS', overallField: 'ieltsOverall' },
   pte: { testTypes: ['PTE'], requirementLabel: 'PTE', overallField: 'pteOverall' },
@@ -201,7 +225,18 @@ const ENGLISH_TEST_DEFINITIONS: Record<EnglishTestKey, {
   oxford: { testTypes: ['Oxford ELLT'], requirementLabel: 'Oxford ELLT' },
   languagecert: { testTypes: ['LanguageCert'], requirementLabel: 'LanguageCert' },
   oet: { testTypes: ['OET'], requirementLabel: 'OET' },
+  university_test: {
+    testTypes: ['University English Test', 'University Own English Test', 'University Test'],
+    requirementLabel: 'University English Test',
+    courseFlag: 'universityOwnEnglishTest',
+  },
+  other: { testTypes: ['Other'], requirementLabel: 'Other' },
 };
+
+export interface IntakePeriodFilter {
+  year: number;
+  month: number;
+}
 
 export interface CourseFinderFilters {
   search: string;
@@ -214,6 +249,17 @@ export interface CourseFinderFilters {
   university: string;
   intakeMonth?: number;
   intakeYear?: number;
+  /**
+   * Multi-month intake selection, e.g. every month of 2027. Takes precedence
+   * over the single `intakeMonth` when present. Month numbers 1-12.
+   */
+  intakeMonths?: number[];
+  /**
+   * Year-qualified intake selection — the canonical form for the ALO intake
+   * window (Jan 2027 … Jan 2028), where a month number alone is ambiguous
+   * because the window spans two years.
+   */
+  intakePeriods?: IntakePeriodFilter[];
   tuitionMin?: number;
   tuitionMax?: number;
   scholarship: boolean;
@@ -318,6 +364,19 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
   const page = readInteger(sp, 'page', 1, 1_000_000) ?? 1;
   const limit = readInteger(sp, 'limit', 1, COURSE_FINDER_MAX_LIMIT) ?? COURSE_FINDER_DEFAULT_LIMIT;
 
+  // Year-qualified intake months ("2027-01", "Jan 2028" or repeated
+  // intakeMonth=… params). The ALO window spans Jan 2027 → Jan 2028, so the
+  // year travels with the month instead of relying on a separate `year`.
+  const rawIntakeMonths = sp.getAll('intakeMonth').flatMap((value) => value.split(',')).map((v) => v.trim()).filter(Boolean);
+  const intakePeriods: IntakePeriodFilter[] = [];
+  for (const token of rawIntakeMonths) {
+    const parsed = parseIntakePeriodToken(token, yearParam ?? undefined);
+    if (!parsed) throw new PublicQueryError('"intakeMonth" must be a month name, a number 1-12, "YYYY-MM" or "<Mon> YYYY".');
+    if (!intakePeriods.some((entry) => entry.year === parsed.year && entry.month === parsed.month)) {
+      intakePeriods.push({ year: parsed.year, month: parsed.month });
+    }
+  }
+
   return {
     search: readText(sp, 'search'),
     countries: readList(sp, 'country'),
@@ -329,6 +388,7 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
     university: readText(sp, 'university'),
     intakeMonth: intake.month,
     intakeYear: yearParam ?? intake.year,
+    intakePeriods: intakePeriods.length > 0 ? intakePeriods : undefined,
     tuitionMin,
     tuitionMax,
     scholarship: ['yes', 'true', '1'].includes(scholarshipRaw),
@@ -342,6 +402,59 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
     page,
     limit,
   };
+}
+
+/**
+ * English-test clause for public course search.
+ *
+ * A course matches when ANY of these is verified evidence:
+ *   • a verified requirement row naming the test, or one of its aliases;
+ *   • a verified per-test requirement record with a source URL;
+ *   • a verified requirement carrying that test's overall score;
+ *   • the course flag (e.g. MOI accepted / university's own English test).
+ *
+ * `minScore` (the student's own IELTS score) keeps only courses whose verified
+ * IELTS overall requirement is at or below it — never a guessed band.
+ *
+ * Exported because the canonical /api/courses/search endpoint must apply exactly
+ * the same rule; two implementations would drift.
+ */
+export function buildEnglishTestWhere(
+  englishTest: EnglishTestKey | undefined,
+  minScore?: number
+): Record<string, unknown> | null {
+  const options: Record<string, unknown>[] = [];
+
+  if (englishTest) {
+    const def = ENGLISH_TEST_DEFINITIONS[englishTest];
+    options.push({
+      requirements: {
+        some: {
+          ...publicRequirementWhere(),
+          OR: [
+            { englishTest: { contains: def.requirementLabel } },
+            ...def.testTypes.map((testType) => ({ englishTest: { contains: testType } })),
+          ],
+        },
+      },
+    });
+    options.push({ englishRequirements: { some: { testType: { in: def.testTypes }, sourceUrl: { not: '' } } } });
+    if (def.overallField) {
+      options.push({ requirements: { some: { ...publicRequirementWhere(), [def.overallField]: { gt: 0 } } } });
+    }
+    if (def.courseFlag) {
+      options.push({ [def.courseFlag]: true });
+      options.push({ requirements: { some: { ...publicRequirementWhere(), moiAccepted: true } } });
+    }
+  }
+
+  if (minScore !== undefined) {
+    const scoreClause = { requirements: { some: { ...publicRequirementWhere(), ieltsOverall: { gt: 0, lte: minScore } } } };
+    if (options.length === 0) return scoreClause;
+    options.push(scoreClause);
+  }
+
+  return options.length > 0 ? { OR: options } : null;
 }
 
 /** Builds the Prisma `where` for public course search. Every filter is applied server-side. */
@@ -399,9 +512,27 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
   if (f.lowDeposit) and.push({ lowDeposit: true });
 
   const intakeFee: Record<string, unknown> = { ...publicIntakeWhere() };
-  if (f.intakeMonth) intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  if (f.intakePeriods?.length) {
+    // Year-qualified periods: one OR branch per (year, month) so Jan 2027 and
+    // Jan 2028 are never confused with each other.
+    and.push({
+      OR: f.intakePeriods.map((entry) => ({
+        intakeFees: {
+          some: {
+            ...publicIntakeWhere(),
+            intakeYear: entry.year,
+            intakeMonth: { in: intakeMonthVariants(entry.month) },
+          },
+        },
+      })),
+    });
+  } else if (f.intakeMonths?.length) {
+    intakeFee.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
+  } else if (f.intakeMonth) {
+    intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  }
   if (f.intakeYear) intakeFee.intakeYear = f.intakeYear;
-  if (f.intakeMonth || f.intakeYear) and.push({ intakeFees: { some: intakeFee } });
+  if (f.intakeMonths?.length || f.intakeMonth || f.intakeYear) and.push({ intakeFees: { some: intakeFee } });
 
   if (f.tuitionMin !== undefined || f.tuitionMax !== undefined) {
     const range: Record<string, number> = { gt: 0 };
@@ -416,26 +547,8 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
     and.push({ intakeFees: { some: { ...publicIntakeWhere(), applicationDeadline: { contains: 'olling' } } } });
   }
 
-  if (f.englishTest) {
-    const def = ENGLISH_TEST_DEFINITIONS[f.englishTest];
-    const options: Record<string, unknown>[] = [
-      { requirements: { some: { ...publicRequirementWhere(), OR: [{ englishTest: { contains: def.requirementLabel } }, ...def.testTypes.map((t) => ({ englishTest: { contains: t } }))] } } },
-      { englishRequirements: { some: { testType: { in: def.testTypes }, sourceUrl: { not: '' } } } },
-    ];
-    if (def.overallField) {
-      options.push({ requirements: { some: { ...publicRequirementWhere(), [def.overallField]: { gt: 0 } } } });
-    }
-    if (def.courseFlag) {
-      options.push({ [def.courseFlag]: true });
-      options.push({ requirements: { some: { ...publicRequirementWhere(), moiAccepted: true } } });
-    }
-    and.push({ OR: options });
-  }
-
-  if (f.ieltsScore !== undefined) {
-    // "My IELTS score": show courses whose verified IELTS overall requirement is at or below it.
-    and.push({ requirements: { some: { ...publicRequirementWhere(), ieltsOverall: { gt: 0, lte: f.ieltsScore } } } });
-  }
+  const englishClause = buildEnglishTestWhere(f.englishTest, f.ieltsScore);
+  if (englishClause) and.push(englishClause);
 
   return { AND: and };
 }
@@ -449,12 +562,25 @@ export function buildCourseFinderOrderBy(sort: CourseFinderFilters['sort']): Rec
 /** Include clause for public intakes; the intake filter is repeated so the shown intake matches the search. */
 export function buildPublicIntakeInclude(f: CourseFinderFilters) {
   const where: Record<string, unknown> = { ...publicIntakeWhere() };
-  if (f.intakeMonth) where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
-  if (f.intakeYear) where.intakeYear = f.intakeYear;
+  if (f.intakePeriods?.length) {
+    // Year-qualified selection: keep each (year, month) pair intact.
+    where.OR = f.intakePeriods.map((entry) => ({
+      intakeYear: entry.year,
+      intakeMonth: { in: intakeMonthVariants(entry.month) },
+    }));
+  } else if (f.intakeMonths?.length) {
+    where.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
+  } else if (f.intakeMonth) {
+    where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+  }
+  if (f.intakeYear && !f.intakePeriods?.length) where.intakeYear = f.intakeYear;
   return {
     where,
-    orderBy: [{ intakeYear: 'asc' as const }, { id: 'asc' as const }],
-    take: 1,
+    // Ordered earliest-first so intakeFees[0] stays the primary intake. The
+    // window can hold 13 months, so allow a longer slice than the two extra
+    // intakes the table prints — the API receives every month it must show.
+    orderBy: [{ intakeYear: 'asc' as const }, { intakeMonth: 'asc' as const }, { id: 'asc' as const }],
+    take: f.intakePeriods?.length ? Math.min(f.intakePeriods.length, 13) : 13,
   };
 }
 

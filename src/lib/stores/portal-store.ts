@@ -271,7 +271,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
       const res = await fetch(canonicalStudent ? '/api/auth/register' : '/api/portal-auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT' } : regData),
+        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT', termsAccepted: (regData as { agreeTerms?: boolean }).agreeTerms === true } : regData),
       });
       const data = await res.json();
       if (data.success) {

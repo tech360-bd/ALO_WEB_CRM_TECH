@@ -15,6 +15,7 @@ import { sendWhatsAppMessage, sendWhatsAppPrivateMedia } from '@/lib/whatsapp-cl
 import { readPrivateFile } from '@/lib/storage/private-file-store';
 import { canAccessUccConversation, canAccessUccDocumentConversation, canUseUccCommunication, canUseUccDocuments, canViewUccB2B } from '@/lib/ucc/document-access';
 import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
+import { createSecurityIncident, resolveAuthorizedDocumentRecipient } from '@/lib/document-security';
 
 const ALLOWED_ROLES = [
   'SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'APPLICATION_TEAM', 'APPLICATION_MANAGER',
@@ -167,6 +168,51 @@ export async function POST(
         return NextResponse.json({ success: false, error: 'WhatsApp document captions must be 1024 characters or fewer.' }, { status: 400 });
       }
 
+      // ── Document recipient authorization (spec §34) ──
+      // A student document may only be sent to a destination that is already
+      // linked to that student, to their partner, or to an official ALO number.
+      // Enforced BEFORE the message row is created, so a refused send leaves no
+      // half-written state and never reaches the provider.
+      // UccAttachment.studentId is nullable; an attachment that is not linked to a
+      // student cannot be authorised for sending at all.
+      const attachmentStudentId = (privateAttachment.studentId || '').trim();
+      if (!attachmentStudentId) {
+        return NextResponse.json({ success: false, error: 'This attachment is not linked to a student and cannot be sent.' }, { status: 410 });
+      }
+      const recipientDecision = await resolveAuthorizedDocumentRecipient({
+        studentId: attachmentStudentId,
+        recipientPhone: conversation.participantPhone,
+      });
+      if (!recipientDecision.allowed) {
+        await createSecurityIncident({
+          documentId: privateAttachment.id,
+          studentId: attachmentStudentId,
+          attemptedById: auth.userId,
+          attemptedByName: auth.name || auth.email || '',
+          attemptedByRole: auth.roles?.[0] || 'employee',
+          recipient: conversation.participantPhone,
+          recipientType: recipientDecision.recipientType,
+          action: 'send',
+          severity: recipientDecision.severity,
+          reason: recipientDecision.reason,
+          blocked: true,
+        });
+        await logAuditAction(auth, 'DOCUMENT_SEND_BLOCKED', 'UccAttachment', privateAttachment.id, {
+          conversationId: id,
+          recipientType: recipientDecision.recipientType,
+          severity: recipientDecision.severity,
+          verified: recipientDecision.verified,
+        });
+        return NextResponse.json(
+          {
+            success: false,
+            code: 'DOCUMENT_RECIPIENT_NOT_AUTHORIZED',
+            error: 'This recipient is not authorized to receive a document belonging to this student.',
+          },
+          { status: 403 },
+        );
+      }
+
       let pendingMessage: any;
       try {
         pendingMessage = await db.$transaction(async (tx) => {
@@ -225,6 +271,13 @@ export async function POST(
           { status: /not configured/i.test(sendError) ? 503 : 502 },
         );
       }
+
+      await logAuditAction(auth, 'DOCUMENT_SENT', 'UccAttachment', privateAttachment.id, {
+        conversationId: id,
+        messageId: pendingMessage.id,
+        recipientType: recipientDecision.recipientType,
+        recipientVerified: recipientDecision.verified,
+      });
 
       const providerStatus = await latestProviderStatus(mediaSend.messageId);
       let message: any;

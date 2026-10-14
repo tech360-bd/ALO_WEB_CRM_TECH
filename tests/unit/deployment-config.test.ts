@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Managed cPanel production deployment contract.
+// Hostinger production deployment contract (Node 22 + npm + standalone server.js).
 const ROOT = join(import.meta.dirname, "../..");
 
-describe("Deployment configuration — managed cPanel", () => {
+describe("Deployment configuration — Hostinger runtime", () => {
   it("selects npm as sole package manager (no bun.lock)", () => {
     expect(existsSync(join(ROOT, "package-lock.json"))).toBe(true);
     expect(existsSync(join(ROOT, "bun.lock"))).toBe(false);

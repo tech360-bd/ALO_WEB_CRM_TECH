@@ -7,6 +7,7 @@
 import { db } from '@/lib/db';
 import { MAIN_NUMBER, normalizeBdPhone } from './whatsapp-number-pool';
 import { sendWhatsAppMessage } from './whatsapp-cloud-api';
+import { hasActiveAloApplication } from './partner/entitlement-policy';
 
 export const DEFAULT_FOLLOWUP_DAYS = [3, 7, 14, 21, 25, 30];
 
@@ -110,12 +111,22 @@ export async function createFollowUpScheduleForStudent(params: {
   });
   if (contact?.isOptedOut) return [];
 
-  // Check if application active — if active, pause generic follow-up
-  const activeApp = await db.aloApplication.findFirst({
-    where: { studentId: params.studentId, status: { notIn: ['cancelled','closed','rejected'] } },
+  // Pause generic follow-up while a real application is in flight.
+  //
+  // This used to be an exclusion list (`status notIn cancelled/closed/rejected`),
+  // which treats any status the codebase adds later — withdrawn, on-hold, draft —
+  // as an active application and silently stops follow-up for that student. It now
+  // reuses the reviewed allow-list from the partner entitlement policy, which is
+  // deny-by-default: a stage only counts once it is named in
+  // BENEFIT_ELIGIBLE_STAGES.
+  const applications = await db.aloApplication.findMany({
+    where: { studentId: params.studentId },
+    // AloApplication records its submission stamp in `appliedAt`; there is no
+    // boolean `submitted` column on this model.
+    select: { stage: true, appliedAt: true },
+    take: 25,
   });
-  if (activeApp) {
-    // Pause generic follow-up when application active
+  if (hasActiveAloApplication(applications.map((a) => ({ stage: a.stage, submittedAt: a.appliedAt })))) {
     return [];
   }
 

@@ -11,6 +11,7 @@ import FaqAccordion from './FaqAccordion';
 import TestPreparationMiniCard from './TestPreparationMiniCard';
 import Image from 'next/image';
 import { getCountryDestination } from '@/lib/country-destinations-data';
+import EnquiryForm from './EnquiryForm';
 
 interface Props {
   slug: string;
@@ -286,6 +287,18 @@ export default function UniversityHub({ slug }: Props) {
             <RelatedContentEngine sourceType="university" sourceId={uni.universityId || uni.id} sourceSlug={uni.slug || slug} country={country} universityId={uni.universityId || uni.id} title={`Related Courses at ${name}`} />
             <RelatedContentEngine sourceType="university" sourceId={uni.universityId || uni.id} sourceSlug={uni.slug || slug} country={country} universityId={uni.universityId || uni.id} title={`Related Scholarships for ${name}`} />
             <FaqAccordion targetType="university" targetSlug={uni.slug || slug} title={`FAQs about ${name}`} limit={12} />
+
+            {/* Enquiry form (spec 3.2) — identical structure to the course and
+                scholarship enquiry forms, pre-filled with this university. */}
+            <EnquiryForm
+              context={{
+                type: 'university',
+                subject: name,
+                institution: [uni.city, country].filter(Boolean).join(', '),
+                country,
+                reference: uni.universityId || uni.slug || slug,
+              }}
+            />
 
             <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Apply to {name} Through ALO</h3>

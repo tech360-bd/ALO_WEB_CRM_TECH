@@ -38,10 +38,24 @@ export interface GenerateImageResult {
 
 export interface VideoGenerationOptions {
   prompt: string;
+  /**
+   * Maximum length the caller has approved for this asset, in seconds.
+   *
+   * It is forwarded to the provider when the provider supports length control and
+   * echoed back in the result so the caller can verify the asset it received
+   * really is short enough. The provider integration does not report a rendered
+   * duration, so the result also carries `durationUnknown` — the caller must treat
+   * that as unverified rather than assume compliance.
+   */
+  maxSeconds?: number;
 }
 
 export interface VideoGenerationResult {
   url: string;
+  /** Length the provider was asked for, if known. */
+  durationSeconds?: number;
+  /** True when the provider returned no duration metadata for the asset. */
+  durationUnknown?: boolean;
 }
 
 let zaiInstance: ZAI | null = null;
@@ -208,11 +222,33 @@ export async function generateImage(options: GenerateImageOptions): Promise<Gene
 export async function generateVideo(options: VideoGenerationOptions): Promise<VideoGenerationResult> {
   const zai = await getZai();
   if (zai) {
-    const result = await (zai as unknown as { video: { generations: { create: (args: { prompt: string }) => Promise<{ url?: string; data?: Array<{ url?: string }> }> } } }).video.generations.create({
-      prompt: options.prompt,
-    });
+    const args: { prompt: string; duration?: number } = { prompt: options.prompt };
+    // Some providers accept a target duration. We only ever ask for a value the
+    // caller has already approved, never a default of our own.
+    if (options.maxSeconds && options.maxSeconds > 0) args.duration = options.maxSeconds;
+
+    const result = await (zai as unknown as {
+      video: {
+        generations: {
+          create: (input: { prompt: string; duration?: number }) => Promise<{
+            url?: string;
+            data?: Array<{ url?: string }>;
+            duration?: number;
+            durationSeconds?: number;
+          }>;
+        };
+      };
+    }).video.generations.create(args);
+
     const url = result.url || result.data?.[0]?.url || '';
-    return { url };
+    const reportedDuration = result.durationSeconds ?? result.duration;
+    return {
+      url,
+      durationSeconds: typeof reportedDuration === 'number' ? reportedDuration : options.maxSeconds,
+      // No duration came back from the provider: the caller must know the length
+      // was never verified rather than assume it is within the approved limit.
+      durationUnknown: typeof reportedDuration !== 'number',
+    };
   }
   throw new Error('Video generation is not configured. Set ZAI_API_KEY.');
 }

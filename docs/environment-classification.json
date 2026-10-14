@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2350,
+  "filesScanned": 2396,
   "summary": {
     "UNUSED": 80,
-    "REFERENCED_WITH_FALLBACK": 134,
+    "REFERENCED_WITH_FALLBACK": 139,
+    "REFERENCED": 99,
     "REFERENCED_FAIL_CLOSED": 14,
-    "REFERENCED": 98,
     "PUBLIC": 8
   },
   "productionRequired": [
@@ -261,6 +261,20 @@
       ]
     },
     {
+      "name": "ALO_CRON_WORKER",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/cron/worker.ts"
+      ]
+    },
+    {
       "name": "ALO_DATA_AUDIT_DIR",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -478,6 +492,20 @@
       "sampleReferences": []
     },
     {
+      "name": "ALO_NOTIFICATION_RETENTION_DAYS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/cron/job-handlers.ts"
+      ]
+    },
+    {
       "name": "ALO_SEED_UNIVERSITY_CATALOGUE",
       "classification": "REFERENCED",
       "referenced": true,
@@ -568,6 +596,20 @@
       ],
       "sampleReferences": [
         "src/lib/research/market-intel-radar.ts"
+      ]
+    },
+    {
+      "name": "APPLICATIONS_INBOX",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/applications/route.ts"
       ]
     },
     {
@@ -1003,6 +1045,21 @@
       ]
     },
     {
+      "name": "COUNSELING_INBOX",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/applications/route.ts",
+        "src/app/api/website/lead/route.ts"
+      ]
+    },
+    {
       "name": "CRM_DEV_SEED_PASSWORD",
       "classification": "REFERENCED",
       "referenced": true,
@@ -1020,7 +1077,7 @@
       "name": "CRON_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 2,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1030,7 +1087,6 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/cron/sla-monitor/route.ts",
         "src/lib/cron-auth.ts"
       ]
     },
@@ -2528,6 +2584,21 @@
       ]
     },
     {
+      "name": "LEADS_INBOX",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/applications/route.ts",
+        "src/app/api/website/lead/route.ts"
+      ]
+    },
+    {
       "name": "LINKEDIN_CLIENT_ID",
       "classification": "UNUSED",
       "referenced": false,
@@ -3752,6 +3823,20 @@
       ]
     },
     {
+      "name": "REGISTRATION_REQUIRE_TERMS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/app/api/auth/register/route.ts"
+      ]
+    },
+    {
       "name": "REMOTION_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
@@ -4171,7 +4256,7 @@
       "name": "SMTP_USER",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 1,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -4181,6 +4266,8 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/applications/route.ts",
+        "src/app/api/website/lead/route.ts",
         "src/lib/email-service.ts"
       ]
     },
@@ -4882,7 +4969,7 @@
       "name": "WHATSAPP_PHONE_NUMBER_ID",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 5,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -4892,16 +4979,16 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/send/route.ts",
         "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts"
+        "src/lib/whatsapp-cloud-api.ts",
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 7,
+      "referenceCount": 6,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -4911,9 +4998,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/send/route.ts",
         "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts"
+        "src/lib/whatsapp-cloud-api.ts",
+        "src/lib/whatsapp-inbound-media.ts"
       ]
     },
     {

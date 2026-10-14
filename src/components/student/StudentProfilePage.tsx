@@ -40,9 +40,12 @@ import {
   AlertCircle,
   Clock,
   Bell,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import FormBDocumentsSection from '@/components/student/FormBDocumentsSection';
 
 // ============================================================
 // TYPES
@@ -84,6 +87,9 @@ interface VisaRefusalEntry {
   visaType: string;
   rejectionDate: string;
   reason: string;
+  /** Document id returned by the upload API once evidence is attached. */
+  evidenceDocumentId?: string;
+  evidenceFileName?: string;
 }
 
 interface ReferralEntry {
@@ -121,7 +127,8 @@ type SectionKey =
   | 'work'
   | 'reference'
   | 'background'
-  | 'admission';
+  | 'admission'
+  | 'documents';
 
 const SECTION_KEYS: SectionKey[] = [
   'lead',
@@ -135,6 +142,7 @@ const SECTION_KEYS: SectionKey[] = [
   'reference',
   'background',
   'admission',
+  'documents',
 ];
 
 const SECTION_LABELS: Record<SectionKey, string> = {
@@ -149,6 +157,7 @@ const SECTION_LABELS: Record<SectionKey, string> = {
   reference: 'Reference',
   background: 'Background & Visa',
   admission: 'Admission Preference',
+  documents: 'Documents & Verification',
 };
 
 const SECTION_ICONS: Record<SectionKey, React.ReactNode> = {
@@ -163,6 +172,7 @@ const SECTION_ICONS: Record<SectionKey, React.ReactNode> = {
   reference: <UserCheck className="size-4" />,
   background: <ShieldAlert className="size-4" />,
   admission: <Target className="size-4" />,
+  documents: <FileText className="size-4" />,
 };
 
 const DESTINATIONS = [
@@ -862,32 +872,61 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
 // SECTION E: EDUCATION HISTORY
 // ============================================================
 
+/** One blank education row — shared by "Add Education" and the highest-qualification seeder. */
+function emptyEducationEntry(): EducationEntry {
+  return {
+    id: uid(),
+    academicLevel: '',
+    institution: '',
+    groupSubject: '',
+    resultType: 'GPA',
+    resultScore: '',
+    duration: '',
+    startYear: '',
+    startMonth: '',
+    endYear: '',
+    endMonth: '',
+    countryOfStudy: 'Bangladesh',
+    cityOfStudy: '',
+    boardName: '',
+    primaryLanguage: 'English',
+    studyGap: 'no',
+  };
+}
+
 function EducationSection({ form, setForm }: { form: Record<string, unknown>; setForm: (fn: (prev: Record<string, unknown>) => Record<string, unknown>) => void }) {
   const set = (key: string, val: unknown) =>
     setForm((prev) => ({ ...prev, [key]: val }));
 
   const educations: EducationEntry[] = (form.educations as EducationEntry[]) || MOCK_EDUCATIONS;
 
+  // Spec B) "Highest Qualification dropdown selects default visible sections".
+  // Choosing a level opens every level up to it (SSC → HSC → Bachelor …) as an
+  // empty row, so a student never has to remember the ladder. Existing rows are
+  // never overwritten, and "Add Education" still adds rows without limit.
+  const HIGHEST_QUALIFICATION_LADDER = [
+    'SSC/O Level',
+    'HSC/A Level',
+    'Diploma',
+    'Bachelor',
+    'Master',
+  ];
+  const seedForQualification = (highest: string) => {
+    const targetIndex = HIGHEST_QUALIFICATION_LADDER.indexOf(highest);
+    if (targetIndex < 0) return;
+    const levelsToOpen = HIGHEST_QUALIFICATION_LADDER.slice(0, targetIndex + 1);
+    const missing = levelsToOpen
+      .filter((level) => !educations.some((edu) => (edu.academicLevel || '').trim() === level))
+      .map((level) => ({
+        ...emptyEducationEntry(),
+        academicLevel: level,
+      }));
+    if (missing.length === 0) return;
+    set('educations', [...educations, ...missing]);
+  };
+
   const addEducation = () => {
-    const newEntry: EducationEntry = {
-      id: uid(),
-      academicLevel: '',
-      institution: '',
-      groupSubject: '',
-      resultType: 'GPA',
-      resultScore: '',
-      duration: '',
-      startYear: '',
-      startMonth: '',
-      endYear: '',
-      endMonth: '',
-      countryOfStudy: 'Bangladesh',
-      cityOfStudy: '',
-      boardName: '',
-      primaryLanguage: 'English',
-      studyGap: 'no',
-    };
-    set('educations', [...educations, newEntry]);
+    set('educations', [...educations, emptyEducationEntry()]);
   };
 
   const updateEducation = (id: string, field: keyof EducationEntry, val: string) => {
@@ -917,6 +956,31 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
           Add Education
         </Button>
       </div>
+
+      <Card className="border border-slate-200 rounded-xl p-4 bg-slate-50">
+        <FormField label="Highest Qualification">
+          <Select
+            value={(form.highestQualification as string) || ''}
+            onValueChange={(value) => {
+              set('highestQualification', value);
+              seedForQualification(value);
+            }}
+          >
+            <SelectTrigger className="w-full border-slate-200 bg-white">
+              <SelectValue placeholder="Select your highest completed (or expected) qualification" />
+            </SelectTrigger>
+            <SelectContent>
+              {HIGHEST_QUALIFICATION_LADDER.map((level) => (
+                <SelectItem key={level} value={level}>{level}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormField>
+        <p className="mt-2 text-xs text-slate-500">
+          Selecting a level opens the matching sections below automatically. You can still add another qualification
+          (unlimited) or remove any row.
+        </p>
+      </Card>
 
       {educations.length === 0 && (
         <div className="border border-dashed border-slate-300 rounded-xl p-8 text-center">
@@ -1766,9 +1830,42 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
 // SECTION J: BACKGROUND & VISA HISTORY
 // ============================================================
 
-function BackgroundSection({ form, setForm }: { form: Record<string, unknown>; setForm: (fn: (prev: Record<string, unknown>) => Record<string, unknown>) => void }) {
+function BackgroundSection({ form, setForm, token }: { form: Record<string, unknown>; setForm: (fn: (prev: Record<string, unknown>) => Record<string, unknown>) => void; token?: string | null }) {
   const set = (key: string, val: unknown) =>
     setForm((prev) => ({ ...prev, [key]: val }));
+
+  // Spec 8.1: a visa refusal must capture Country, Date, Reason AND evidence.
+  // The evidence goes to the same private document store as section E, so the
+  // counselor reviews it in one place and the student never loses the link.
+  const [evidenceState, setEvidenceState] = useState<Record<string, 'idle' | 'uploading' | 'done' | 'error'>>({});
+  const [evidenceError, setEvidenceError] = useState<Record<string, string>>({});
+  const uploadRefusalEvidence = async (refusalId: string, file: File | undefined) => {
+    if (!file) {
+      setEvidenceError((prev) => ({ ...prev, [refusalId]: 'Choose a PDF or image file first.' }));
+      return;
+    }
+    setEvidenceState((prev) => ({ ...prev, [refusalId]: 'uploading' }));
+    setEvidenceError((prev) => ({ ...prev, [refusalId]: '' }));
+    try {
+      const body = new FormData();
+      body.append('documentType', 'REFUSAL_LETTER');
+      body.append('file', file);
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await fetch('/api/student/documents', { method: 'POST', headers, credentials: 'include', body });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.success) throw new Error(json.error || 'Upload failed.');
+      set('visaRefusals', visaRefusals.map((entry) => (entry.id === refusalId
+        ? { ...entry, evidenceDocumentId: json.data?.id || '', evidenceFileName: file.name }
+        : entry)));
+      setEvidenceState((prev) => ({ ...prev, [refusalId]: 'done' }));
+      if (typeof window !== 'undefined') {
+        toast({ title: 'Refusal evidence uploaded', description: 'Your counselor can review it in the Documents section.' });
+      }
+    } catch (uploadFailure) {
+      setEvidenceState((prev) => ({ ...prev, [refusalId]: 'error' }));
+      setEvidenceError((prev) => ({ ...prev, [refusalId]: uploadFailure instanceof Error ? uploadFailure.message : 'Upload failed.' }));
+    }
+  };
 
   const hasVisa = (form.hasVisa as string) || 'no';
   const hasVisaRefusal = (form.hasVisaRefusal as string) || 'no';
@@ -1912,11 +2009,42 @@ function BackgroundSection({ form, setForm }: { form: Record<string, unknown>; s
                 <FormField label="Reason">
                   <Input value={r.reason} onChange={(e) => updateRefusal(r.id, 'reason', e.target.value)} placeholder="Reason for refusal" className="border-slate-200" />
                 </FormField>
+                <FormField label="Evidence (refusal letter / decision notice)">
+                  <div className="space-y-1">
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp,.gif"
+                      onChange={(e) => void uploadRefusalEvidence(r.id, e.target.files?.[0])}
+                      className="block w-full text-xs text-slate-600"
+                    />
+                    {evidenceState[r.id] === 'uploading' && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500"><Loader2 className="size-3 animate-spin" /> Uploading…</span>
+                    )}
+                    {r.evidenceFileName && evidenceState[r.id] !== 'error' && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700"><CheckCircle2 className="size-3" /> {r.evidenceFileName}</span>
+                    )}
+                    {evidenceError[r.id] && <span className="block text-[11px] text-red-600">{evidenceError[r.id]}</span>}
+                  </div>
+                </FormField>
               </div>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Immigration history — optional free text, always visible (spec A) */}
+      <div className="border-t border-slate-200 pt-4">
+        <FormField label="Immigration history (optional)">
+          <Textarea
+            value={(form.immigrationHistory as string) || ''}
+            onChange={(e) => set('immigrationHistory', e.target.value)}
+            placeholder="Any travel, study or immigration history you want your counselor to know — including earlier applications, refusals, overstays or cancelled visas."
+            rows={3}
+            className="border-slate-200"
+          />
+        </FormField>
+        <p className="mt-1 text-[11px] text-slate-500">Always visible. Leave it empty if nothing applies.</p>
+      </div>
 
       {/* Immigration */}
       <div className="border-t border-slate-200 pt-4">
@@ -2164,6 +2292,8 @@ export default function StudentProfilePage() {
   const [profileLoading, setProfileLoading] = useState(true);
 
   const [profileCompletion, setProfileCompletion] = useState(45);
+  // Reported by FormBDocumentsSection: { loaded, complete, pending, missing, rejected }
+  const [documentsState, setDocumentsState] = useState({ loaded: false, complete: false, pending: 0, missing: 0, rejected: 0 });
   const [form, setForm] = useState<Record<string, unknown>>({
     // Lead
     givenName: 'Rahim',
@@ -2381,9 +2511,13 @@ export default function StudentProfilePage() {
       reference: (form.hasReferral as string) === 'no' || !!(form.refName && form.refEmail),
       background: (form.hasVisa as string) === 'no' && (form.hasVisaRefusal as string) === 'no' && (form.hasImmigration as string) === 'no' && (form.hasMedical as string) === 'no' && (form.hasCriminal as string) === 'no',
       admission: !!(form.studyDestination && form.studyLevel && form.instituteName),
+      // Form B section E) — required documents uploaded AND no rejected file
+      // waiting on the student. The list itself is loaded by
+      // FormBDocumentsSection; until it has loaded we do not claim completion.
+      documents: documentsState.loaded && documentsState.complete,
     };
     return checks;
-  }, [form]);
+  }, [form, documentsState]);
 
   const completedCount = Object.values(sectionComplete).filter(Boolean).length;
 
@@ -2589,8 +2723,9 @@ export default function StudentProfilePage() {
                 {activeTab === 'english' && <EnglishSection form={form} setForm={setForm} />}
                 {activeTab === 'work' && <WorkSection form={form} setForm={setForm} />}
                 {activeTab === 'reference' && <ReferenceSection form={form} setForm={setForm} />}
-                {activeTab === 'background' && <BackgroundSection form={form} setForm={setForm} />}
+                {activeTab === 'background' && <BackgroundSection form={form} setForm={setForm} token={token} />}
                 {activeTab === 'admission' && <AdmissionSection form={form} setForm={setForm} />}
+                {activeTab === 'documents' && <FormBDocumentsSection token={token} onSummaryChange={setDocumentsState} />}
               </TabsContent>
             </Card>
           </div>

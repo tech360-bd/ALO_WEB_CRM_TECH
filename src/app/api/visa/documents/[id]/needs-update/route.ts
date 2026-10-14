@@ -16,11 +16,23 @@ export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: 
     const existing = await db.studentDocument.findUnique({ where: { id } });
     if (!existing) return NextResponse.json({ success: false, error: 'Document not found' }, { status: 404 });
 
+    // Ownership check via the visa case.
+    //
+    // SECURITY FIX: the original test ran only when a case existed AND it had an
+    // assigned visaOfficerId, so a missing case or an unassigned officer let any
+    // visa officer act on ANY student's document by id. Deny by default now.
+    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
     const visaCase = await db.visaCase.findFirst({ where: { studentId: existing.studentId } });
-    if (visaCase) {
-      const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-      if (!isSuper && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot request update for unassigned case — IDOR blocked' }, { status: 403 });
+    if (!isSuper) {
+      const assignedOfficer = visaCase?.visaOfficerId || '';
+      const ownsCase = !!assignedOfficer && assignedOfficer === auth.userId;
+      if (!ownsCase) {
+        return NextResponse.json({
+          success: false,
+          error: visaCase
+            ? 'Cannot request update for a document for a visa case assigned to another officer.'
+            : 'Cannot request update for a document for a student with no visa case assigned to you.',
+        }, { status: 403 });
       }
     }
 

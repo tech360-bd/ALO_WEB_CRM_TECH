@@ -8,7 +8,7 @@ test.describe('public website and anonymous auth gates', () => {
       page
         .locator("a:visible, button:visible")
         .filter({
-          hasText: /Book Free Consultation|Course Finder|Student Portal/i,
+          hasText: /Book Free Counseling|Course Finder|Student Portal/i,
         })
         .first()
     ).toBeVisible();
@@ -37,15 +37,15 @@ test.describe('public website and anonymous auth gates', () => {
     const toggle = page.getByRole('button', { name: 'বাংলা' }).first();
     await expect(toggle).toBeVisible();
     // Default is English.
-    await expect(page.getByRole('link', { name: 'Book Free Consultation' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Book Free Counseling' }).first()).toBeVisible();
     // Switch to Bangla — the CTA and nav labels must switch language.
     await toggle.click();
-    await expect(page.getByRole('button', { name: 'ফ্রি পরামর্শ নিন' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'ফ্রি পরামর্শ নিন' }).first()).toBeVisible();
     // Preference persists across a reload.
     await page.reload();
-    await expect(page.getByRole('button', { name: 'ফ্রি পরামর্শ নিন' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'ফ্রি পরামর্শ নিন' }).first()).toBeVisible();
     // Switch back to English.
     await page.getByRole('button', { name: 'English' }).first().click();
-    await expect(page.getByRole('link', { name: 'Book Free Consultation' }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Book Free Counseling' }).first()).toBeVisible();
   });
 });

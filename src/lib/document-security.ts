@@ -177,3 +177,157 @@ export function sanitizeFilePathForResponse(filePath: string): string {
   const parts = filePath.split('/');
   return parts[parts.length - 1] || 'document';
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Recipient authorization for sending a student document
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface RecipientDecision {
+  allowed: boolean;
+  /** One of ALLOWED_RECIPIENT_TYPES, or 'external' when the send is refused. */
+  recipientType: string;
+  reason: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  /** True only when the destination is a channel the platform already links to this student. */
+  verified: boolean;
+}
+
+/**
+ * Decide whether a document belonging to `studentId` may be sent to
+ * `recipientPhone`.
+ *
+ * Deny by default. The previous implementation only consulted
+ * `checkDocumentSharingAllowed`, which validates the *recipient type* the caller
+ * claims but never the actual destination number, and which skipped its own
+ * counselor check whenever the student had no assigned counselor. A document
+ * could therefore be sent to any number at all.
+ *
+ * Allowed destinations, in order:
+ *   1. an official ALO number (the number pool)
+ *   2. a WhatsApp contact already linked to this student  → verified
+ *   3. a WhatsApp contact linked to the student's partner → partner_official
+ *   4. the phone recorded on the student's own profile     → unverified, allowed
+ *
+ * Anything else is refused and reported as a security incident by the caller.
+ */
+export async function resolveAuthorizedDocumentRecipient(params: {
+  studentId: string;
+  recipientPhone: string;
+}): Promise<RecipientDecision> {
+  const studentId = (params.studentId || '').trim();
+  const recipientPhone = (params.recipientPhone || '').trim();
+
+  if (!studentId || !recipientPhone) {
+    return {
+      allowed: false,
+      recipientType: 'external',
+      reason: 'A student and a destination number are both required before a document can be sent.',
+      severity: 'medium',
+      verified: false,
+    };
+  }
+
+  const { OFFICIAL_NUMBERS, normalizeBdPhone } = await import('@/lib/whatsapp-number-pool');
+  const normalized = normalizeBdPhone(recipientPhone);
+  if (!normalized) {
+    return {
+      allowed: false,
+      recipientType: 'external',
+      reason: 'The destination number could not be parsed.',
+      severity: 'medium',
+      verified: false,
+    };
+  }
+
+  // 1. Official ALO numbers always accept a student document.
+  if (OFFICIAL_NUMBERS.some((number) => normalizeBdPhone(number) === normalized)) {
+    return {
+      allowed: true,
+      recipientType: 'alo_official',
+      reason: 'Destination is an official ALO WhatsApp number.',
+      severity: 'low',
+      verified: true,
+    };
+  }
+
+  // 2 & 3. Contacts the platform already links to this student or their partner.
+  const contact = await db.whatsAppContact
+    .findFirst({ where: { normalizedPhone: normalized } })
+    .catch(() => null);
+  if (contact) {
+    if (contact.studentId && contact.studentId === studentId) {
+      return {
+        allowed: true,
+        recipientType: 'student_verified',
+        reason: 'Destination is a WhatsApp contact already linked to this student.',
+        severity: 'low',
+        verified: true,
+      };
+    }
+    if (contact.studentId && contact.studentId !== studentId) {
+      return {
+        allowed: false,
+        recipientType: 'external',
+        reason: 'Destination belongs to a different student.',
+        severity: 'critical',
+        verified: false,
+      };
+    }
+    if (contact.partnerId) {
+      const profile = await db.portalStudentProfile
+        .findFirst({ where: { studentId }, select: { partnerId: true } })
+        .catch(() => null);
+      if (profile?.partnerId && profile.partnerId === contact.partnerId) {
+        return {
+          allowed: true,
+          recipientType: 'partner_official',
+          reason: 'Destination is a contact of the partner that owns this student.',
+          severity: 'low',
+          verified: true,
+        };
+      }
+      return {
+        allowed: false,
+        recipientType: 'external',
+        reason: 'Destination belongs to a partner that does not own this student.',
+        severity: 'high',
+        verified: false,
+      };
+    }
+  }
+
+  // 4. The number recorded on the student's own record.
+  const student = await db.student
+    .findUnique({ where: { id: studentId }, select: { phone: true } })
+    .catch(() => null);
+  if (student?.phone && normalizeBdPhone(student.phone) === normalized) {
+    return {
+      allowed: true,
+      recipientType: 'student_verified',
+      reason: "Destination matches the phone on the student's own record.",
+      severity: 'low',
+      verified: false,
+    };
+  }
+
+  const profile = await db.portalStudentProfile
+    .findFirst({ where: { studentId }, select: { altPhone: true } })
+    .catch(() => null);
+  if (profile?.altPhone && normalizeBdPhone(profile.altPhone) === normalized) {
+    return {
+      allowed: true,
+      recipientType: 'student_verified',
+      reason: "Destination matches an alternate phone on the student's profile.",
+      severity: 'low',
+      verified: false,
+    };
+  }
+
+  return {
+    allowed: false,
+    recipientType: 'external',
+    reason: 'Destination is not linked to this student, this student’s partner, or ALO.',
+    severity: 'high',
+    verified: false,
+  };
+}

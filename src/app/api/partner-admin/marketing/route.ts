@@ -31,6 +31,7 @@ import { mutationOriginAllowed } from '@/lib/request-origin';
 import { generateStructured } from '@/lib/ai-gateway';
 import { generateImage, generateVideo } from '@/lib/ai';
 import { releaseQuota, reserveQuota } from '@/lib/access-check-engine';
+import { checkVideoDuration, resolveEffectiveLimits } from '@/lib/partner/entitlement-policy';
 
 // ------------------------------------------------------------
 // Constants
@@ -892,15 +893,57 @@ export async function PATCH(req: NextRequest) {
       if (!prompt) {
         return NextResponse.json({ success: false, error: 'Generate a draft first — there is no video prompt yet.' }, { status: 409 });
       }
+
+      // ── Video length rule (max 30 seconds) ───────────────────────────────
+      // The partner's approved ceiling is clamped to the ALO hard ceiling inside
+      // resolveEffectiveLimits, and the requested length is validated BEFORE any
+      // quota is reserved — an over-long request must not cost the partner a
+      // credit. The prompt restricts the script to the same ceiling.
+      const effectiveLimits = resolveEffectiveLimits({
+        // The partner's own stored ceiling is authoritative for this tenant; the
+        // package default only applies when no row exists.
+        overrides: quota?.videoDurationLimitSeconds
+          ? { videoDurationLimitSeconds: quota.videoDurationLimitSeconds }
+          : undefined,
+      });
+      const requestedSeconds = effectiveLimits.videoDurationLimitSeconds;
+      const durationDecision = checkVideoDuration({ requestedSeconds, limits: effectiveLimits });
+      if (!durationDecision.allowed) {
+        await audit(auth, 'PARTNER_MARKETING_VIDEO_DURATION_REJECTED', id, {
+          requestedSeconds,
+          maxSeconds: durationDecision.maxSeconds,
+        }, 'failure', durationDecision.message || 'Video too long');
+        return NextResponse.json(
+          { success: false, error: durationDecision.message, maxSeconds: durationDecision.maxSeconds },
+          { status: 400 },
+        );
+      }
+
       const reservation = await reserveQuota('partner', existing.partnerId, 'monthly_videos');
       if (!reservation.allowed) {
         return NextResponse.json({ success: false, error: reservation.message }, { status: 403 });
       }
 
       let url = '';
+      // Length the provider reported for the asset, if it reported one at all.
+      let returnedDurationSeconds: number | null = null;
       try {
-        const result = await generateVideo({ prompt });
+        const result = await generateVideo({ prompt, maxSeconds: durationDecision.maxSeconds });
         url = result.url || '';
+        returnedDurationSeconds = typeof result.durationSeconds === 'number' ? result.durationSeconds : null;
+        // The provider may report a rendered length; if it came back longer than
+        // the approved ceiling the asset is refused and the quota refunded.
+        if (returnedDurationSeconds !== null && returnedDurationSeconds > durationDecision.maxSeconds) {
+          await releaseQuota('partner', existing.partnerId, 'monthly_videos');
+          await audit(auth, 'PARTNER_MARKETING_VIDEO_DURATION_REJECTED', id, {
+            returnedSeconds: returnedDurationSeconds,
+            maxSeconds: durationDecision.maxSeconds,
+          }, 'failure', 'Provider returned a longer video than approved');
+          return NextResponse.json({
+            success: false,
+            error: `The generated video is ${returnedDurationSeconds} seconds, longer than the approved ${durationDecision.maxSeconds} seconds. No quota was consumed.`,
+          }, { status: 502 });
+        }
       } catch (error) {
         await releaseQuota('partner', existing.partnerId, 'monthly_videos');
         const message = error instanceof Error ? error.message : 'Video provider error';
@@ -922,7 +965,9 @@ export async function PATCH(req: NextRequest) {
       try {
         updated = await updateMarketingRequestIfUnchanged(existing, {
           generatedVideoUrl: url,
-          videoDuration: quota?.videoDurationLimitSeconds ?? DEFAULT_VIDEO_SECONDS,
+          // Record the length the asset was generated under so a later review can
+          // tell a 30-second reel from an unverified one.
+          videoDuration: returnedDurationSeconds ?? durationDecision.maxSeconds,
           status: 'video_generated',
         });
         if (!updated) {

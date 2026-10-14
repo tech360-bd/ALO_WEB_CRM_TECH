@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import crypto from "crypto";
+import { createLeadWithReference } from '@/lib/lead-reference';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -162,10 +163,9 @@ export async function POST(req: NextRequest) {
 
         // If no match, create a new lead
         if (!matchedLeadId && (normalized.fullName || normalized.phone)) {
-          const count = await db.lead.count();
-          const newLead = await db.lead.create({
-            data: {
-              leadId: `ALO-L-${(10001 + count + 1).toString()}`,
+          // §125 — same canonical reference generator as WhatsApp and the web
+          // forms, so a Facebook lead cannot collide with a simultaneous one.
+          const newLead = await createLeadWithReference(db, {
               fullName: normalized.fullName || "Facebook Lead",
               email: normalized.email || null,
               phone: normalized.phone || "N/A",
@@ -174,7 +174,6 @@ export async function POST(req: NextRequest) {
               notes: `Auto-created from Facebook lead ${leadgenId}`,
               status: "NEW",
               welcomeSent: false,
-            },
           });
           matchedLeadId = newLead.id;
 

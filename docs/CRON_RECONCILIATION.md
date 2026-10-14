@@ -47,3 +47,67 @@ Re-enable only after authentication, real implementation, durable claiming/idemp
 `POST /api/cron/weekly-ai-agent` is now **DISABLED in the local working tree**. Inspection and regression reproduction confirmed it wrote fixed tuition-price changes without fetching evidence, then claimed an official scan. It now preserves requireCron and returns 503 DISABLED without reading/writing course/update records. No historical data removed. The prior table's BROKEN assessment remains historical; quarantine is not completed functionality and the unidentified live ZIP may still have the old handler.
 
 All 15 worker declarations remain disabled. Other HTTP cron routes and external hPanel schedules are independent and have not been invoked. Expanded implementation classification and required activation tests: [SCHEDULER_RECONCILIATION.md](SCHEDULER_RECONCILIATION.md).
+
+---
+
+## 2026-10-13 — scheduler certified; quarantine lifted for jobs that now exist
+
+The table above is the historical record of the quarantine. It is superseded by
+the certification pass below; the previous state was correct at the time and is
+not deleted.
+
+**What was fixed**
+
+1. **Missing routes.** 14 of the 15 declared paths had no route file. A dynamic
+   dispatcher (`src/app/api/cron/[job]/route.ts`) plus a job registry
+   (`src/lib/cron/job-registry.ts`) now serve every declared path, so
+   `vercel.json` no longer schedules 404s.
+2. **Invalid lock.** `DeploymentSequence` has no `ownerId` and no `expiresAt`, so
+   the worker's `withCronLock` could never exclude a second runner and never
+   recovered a crashed one. Replaced by a real lease table, `CronLock`
+   (migration `20261013000000_cron_lock` — additive: one new table, nothing
+   else touched). The claim is a single conditional `UPDATE … WHERE expiresAt <= now`.
+3. **Swallowed failures.** The worker's `catch {}` around lock acquisition is
+   gone; lock, log and handler failures are all recorded, and the run status is
+   part of the response body.
+4. **Placeholder handlers.** The twelve logging-only bodies were deleted. Job
+   bodies now live in `src/lib/cron/job-handlers.ts` and perform real work.
+   Declarations that genuinely cannot run here (`database-backup`,
+   `ranking-update`, `sitemap-regeneration`, `scheduled-reports`,
+   `university-verification`, `email-queue`) return `blocked` with the exact
+   reason instead of pretending to run.
+5. **Unlocked route handlers.** `sla-monitor`, `followup`, `retry` and
+   `analytics` now delegate to the certified runner, so a scheduler trigger and
+   the worker can no longer process the same queue concurrently.
+6. **Stale declarations.** The platform required seven jobs that had no
+   declaration at all (retry, health check, analytics summary, AI document
+   queue, notification retention, invitation cleanup, audit maintenance).
+   Declarations grew from 15 to 21: 15 enabled, 6 blocked with reasons.
+   `analytics-aggregation` is now `daily-analytics-summary`; the old path still
+   resolves through a registry alias.
+
+**What is still not done — and is not claimed**
+
+* No schedule has been installed in cPanel/hPanel or anywhere else; this
+  repository cannot inspect the operator's crontab. The routes and the worker are
+  ready, and the deployment steps are in `CRON_JOBS.md`.
+* The migration has **not been applied** to any database: there is no MySQL
+  server reachable from the build environment. `prisma validate` passes and the
+  SQL is additive and re-runnable, but `CronLock` must exist before a scheduler
+  is switched on, otherwise every job correctly answers `blocked` with
+  "cron lock store is unavailable".
+* `cron/CPANEL_CRON_COMMANDS.txt` still references `cron/*.php` wrappers that do
+  not exist in this repository. That file must be corrected by the operator
+  before those lines are pasted into a crontab (`CRON_JOBS.md` gives the curl
+  form).
+* Cross-process behaviour is proven at the *statement* level and with a
+  deterministic store double. Two real processes against real MySQL are not
+  exercised here.
+
+**Evidence**
+
+```bash
+npx tsx scripts/cron-scheduler-policy-check.ts    # 221 assertions, 221 passed
+npx vitest run tests/unit/cron-quarantine.test.ts  # 6 passed
+npx tsx scripts/verify-15-cron.ts                  # 21 declarations, 15 enabled
+```

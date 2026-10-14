@@ -10,6 +10,9 @@ import { handleIntakeMessage as handleStudentIntake } from "@/lib/ai-agents/stud
 import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
 import { handleStopStartCommand, createFollowUpScheduleForStudent } from "@/lib/whatsapp-followup-engine";
 import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164, extractMessageContent as extractMessageContentHandler } from "@/lib/whatsapp-webhook-handler";
+import { deriveWebhookEventId, mapProviderStatus, shouldApplyStatus } from '@/lib/communications/webhook-idempotency';
+import { createLeadWithReference } from '@/lib/lead-reference';
+import { resolveContactIdentity, shouldAutoCreateLead } from '@/lib/communications/contact-identity';
 // Consolidated 2026-09-14: handler provides CRM intent/priority + E.164 + comprehensive extractMessageContent (additional, not replacing local)
 // Existing phone normalization, signature verification, routing and message processing stay in place; student IDs are generated only by the reviewed student-creation workflow.
 
@@ -152,12 +155,40 @@ export async function POST(req: NextRequest) {
   const statuses: any[] = body?.entry?.[0]?.changes?.[0]?.value?.statuses || [];
   if (statuses.length > 0) {
     const updated: any[] = [];
+    const skipped: any[] = [];
     for (const s of statuses) {
       const messageId = s.id;
-      const status = s.status?.toUpperCase() || "UNKNOWN";
       const recipientPhone = s.recipient_id || "";
       const errorMessage = s.errors?.[0]?.message || null;
+      // Spec §173: 'accepted' is not 'delivered', and values Meta uses that are
+      // not delivery states at all (e.g. 'warning') must not be recorded as one.
+      const deliveryStatus = mapProviderStatus(s.status);
+      if (!messageId || !deliveryStatus) {
+        skipped.push({ messageId, providerStatus: s.status ?? null, reason: deliveryStatus ? 'missing_message_id' : 'not_a_delivery_status' });
+        continue;
+      }
+      const status = deliveryStatus.toUpperCase();
+      // Spec §171: a retried callback must not create a second row, and a stale
+      // 'sent' arriving after 'read' must not walk the status backwards.
+      const eventId = deriveWebhookEventId({ provider: 'whatsapp', messageId, status: deliveryStatus, eventType: 'status' }).eventId;
       try {
+        const alreadyStored = await db.whatsAppMessageStatus.findFirst({
+          where: { messageId, status },
+          select: { id: true },
+        });
+        if (alreadyStored) {
+          skipped.push({ messageId, status, reason: 'duplicate' });
+          continue;
+        }
+        const latest = await db.whatsAppMessageStatus.findFirst({
+          where: { messageId },
+          orderBy: { createdAt: 'desc' },
+          select: { status: true },
+        });
+        if (latest && !shouldApplyStatus(mapProviderStatus(latest.status), deliveryStatus)) {
+          skipped.push({ messageId, status, reason: 'out_of_order' });
+          continue;
+        }
         const record = await db.whatsAppMessageStatus.create({
           data: { messageId, recipientPhone, status, errorMessage, providerPayload: JSON.stringify(s) },
         });
@@ -166,27 +197,37 @@ export async function POST(req: NextRequest) {
           where: { whatsappMessageId: messageId },
           data: { deliveryStatus: status, readStatus: status === 'read' ? 'read' : status === 'delivered' ? 'delivered' : 'sent' },
         }).catch(() => {});
-        updated.push({ messageId, status, recordId: record.id });
+        updated.push({ messageId, status, eventId, recordId: record.id });
       } catch (err: any) {
         updated.push({ messageId, status, error: err.message });
       }
     }
-    await db.webhookEvent.create({
-      data: {
-        provider: "WHATSAPP",
-        eventId: body?.entry?.[0]?.id || `wa-status-${Date.now()}`,
-        eventType: "STATUS_UPDATE",
-        payload: rawBody,
-        signature,
-        verified: signatureValid,
-        processed: true,
-        processedAt: new Date(),
-      },
-    }).catch(() => {});
-    await db.uccWebhookEvent.create({
-      data: { provider: "WHATSAPP", eventId: `status-${Date.now()}`, eventType: "STATUS_UPDATE", payload: rawBody, status: "processed" },
-    }).catch(() => {});
-    return NextResponse.json({ success: true, routed: "status", processed: updated.length, statuses: updated });
+    const batchEventId = deriveWebhookEventId({
+      provider: 'whatsapp',
+      eventId: body?.entry?.[0]?.id,
+      eventType: 'status_batch',
+      // Deterministic fallback: the same batch hashes to the same id on retry.
+      payload: statuses.map((s: any) => `${s?.id || ''}:${s?.status || ''}`).join('|') + rawBody.length,
+    });
+    const existingBatch = await db.webhookEvent.findFirst({ where: { eventId: batchEventId.eventId }, select: { id: true } }).catch(() => null);
+    if (!existingBatch) {
+      await db.webhookEvent.create({
+        data: {
+          provider: "WHATSAPP",
+          eventId: batchEventId.eventId,
+          eventType: "STATUS_UPDATE",
+          payload: rawBody,
+          signature,
+          verified: signatureValid,
+          processed: true,
+          processedAt: new Date(),
+        },
+      }).catch(() => {});
+      await db.uccWebhookEvent.create({
+        data: { provider: "WHATSAPP", eventId: batchEventId.eventId, eventType: "STATUS_UPDATE", payload: rawBody, status: "processed" },
+      }).catch(() => {});
+    }
+    return NextResponse.json({ success: true, routed: "status", processed: updated.length, skipped, statuses: updated });
   }
 
   // 3. Parse inbound messages — support multiple entries
@@ -218,7 +259,12 @@ export async function POST(req: NextRequest) {
     await db.webhookEvent.create({
       data: {
         provider: "WHATSAPP",
-        eventId: `wa-empty-${Date.now()}`,
+        eventId: deriveWebhookEventId({
+          provider: 'whatsapp',
+          eventId: body?.entry?.[0]?.id,
+          eventType: `empty-${body.object || 'unknown'}`,
+          payload: rawBody,
+        }).eventId,
         eventType: body.object || "UNKNOWN",
         payload: rawBody,
         signature,
@@ -364,19 +410,41 @@ export async function POST(req: NextRequest) {
         if (altCheck) {
           leadId = altCheck.leadId || null;
         } else {
-          const count = await db.lead.count().catch(() => 0);
-          const newLead = await db.lead.create({
-            data: {
-              leadId: `ALO-L-${(10001 + count + 1).toString()}`,
-              fullName: fromName || `WhatsApp ${from.slice(-4)}`,
-              phone: from,
-              source: "WHATSAPP",
-              sourceDetail: `WhatsApp inbound - ${type}`,
-              notes: `Contact identity not yet matched. First WhatsApp message: "${messageBody.slice(0, 200)}"`,
-              status: "NEW",
-              welcomeSent: false,
-            },
-          }).catch(() => null);
+          // ── §126 deduplication before creation ──────────────────────────────
+          // The candidate list is everything the lookup above already found; the
+          // identity policy decides whether a NEW record is justified. A contact
+          // that only matches on a weak field (alternate phone, WhatsApp identity)
+          // is flagged POSSIBLE EXISTING CONTACT and carries the review notice, so
+          // an operator sees the duplicate risk instead of finding two leads later.
+          const identity = resolveContactIdentity(
+            { phone: from, whatsappNumber: waContact?.normalizedPhone || undefined, altPhone: undefined },
+            [
+              ...(existingStudent ? [{ kind: 'student' as const, id: existingStudent.id, name: existingStudent.name ?? null, phone: existingStudent.phone ?? null }] : []),
+              ...(existingLead ? [{ kind: 'lead' as const, id: existingLead.id, reference: existingLead.leadId ?? null, name: existingLead.fullName ?? null, phone: existingLead.phone ?? null, altPhone: existingLead.altPhone ?? null }] : []),
+              ...(waContact ? [{ kind: (waContact.leadId ? 'lead' : 'partner_contact') as const, id: waContact.id, name: waContact.displayName ?? null, whatsappNumber: waContact.normalizedPhone ?? null, matchedOn: 'whatsapp_identity' as const }] : []),
+            ],
+          );
+
+          if (!shouldAutoCreateLead(identity)) {
+            // Impossible here (no candidate means nothing matched), but the guard
+            // makes the rule explicit rather than implied by control flow.
+            results.push({ messageId: providerMessageId, identity: identity.confidence, skippedLeadCreation: true });
+          } else {
+          const newLead = await createLeadWithReference(db, {
+            fullName: fromName || `WhatsApp ${from.slice(-4)}`,
+            phone: from,
+            source: "WHATSAPP",
+            sourceDetail: `WhatsApp inbound - ${type}`,
+            notes: [
+              `Contact identity not yet matched. First WhatsApp message: "${messageBody.slice(0, 200)}"`,
+              identity.notice ? `Identity review: ${identity.notice}` : '',
+            ].filter(Boolean).join('\n'),
+            status: "NEW",
+            welcomeSent: false,
+          }).catch((error) => {
+            console.error('[whatsapp.webhook] lead creation failed:', error instanceof Error ? error.message : 'unknown');
+            return null;
+          });
 
           if (newLead) {
             leadId = newLead.id;
@@ -399,10 +467,14 @@ export async function POST(req: NextRequest) {
                 leadId: newLead.id,
                 stage: "LEAD_CREATED",
                 type: "LEAD_CREATED",
-                title: "WhatsApp contact requires identity match",
-                description: `Lead recorded from WhatsApp inbound (${type}); no student profile was created.`,
+                title: identity.confidence === 'possible' ? "POSSIBLE EXISTING CONTACT — identity review required" : "WhatsApp contact requires identity match",
+                description: [
+                  `Lead recorded from WhatsApp inbound (${type}); no student profile was created.`,
+                  identity.notice || '',
+                ].filter(Boolean).join(' '),
               },
             }).catch(() => {});
+          }
           }
         }
       } catch (err) {

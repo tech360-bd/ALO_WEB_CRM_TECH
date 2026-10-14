@@ -1,4 +1,12 @@
 import { communicationScope } from '@/lib/communication/access-scope';
+import {
+  resolveSlaPolicy,
+  evaluateSlaClock,
+  computeResponseMetrics,
+  toSlaChannel,
+  toSlaPriority,
+  toSlaIntent,
+} from '@/lib/communications/sla-policy';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
@@ -26,7 +34,15 @@ export async function GET(request: NextRequest) {
       const where: any = { AND: [scope.threads], status: { not: 'closed' } };
       if (channel && channel !== 'all') where.channel = channel;
       if (priority) where.priority = priority;
-      if (slaStatus) where.slaStatus = slaStatus;
+      if (slaStatus) {
+        // §148 vocabulary is normal | warning | overdue | critical. Stored rows use
+        // a wider legacy set, so map the requested state onto every spelling that
+        // can legitimately display as it.
+        if (slaStatus === 'critical') where.slaStatus = { in: ['critical', 'overdue', 'urgent', 'sla_overdue'] };
+        else if (slaStatus === 'overdue') where.slaStatus = { in: ['overdue', 'urgent', 'sla_overdue', 'critical'] };
+        else if (slaStatus === 'warning') where.slaStatus = { in: ['warning', 'urgent'] };
+        else where.slaStatus = slaStatus;
+      }
       if (assigneeId) where.assignedToId = assigneeId;
       if (intent) where.intent = intent;
       if (search) {
@@ -61,57 +77,111 @@ export async function GET(request: NextRequest) {
         db.communicationThread.count({ where }),
       ]);
 
-      // Enrich threads with student/lead context and live SLA
-      const enriched = await Promise.all(threads.map(async (t) => {
+      // ── Contact context (batched — spec §122 asks for one workspace, not a
+      //     query per row; the previous per-thread lookups were N+1) ───────────
+      const studentIds = [...new Set(threads.map((t) => t.studentId).filter(Boolean))];
+      const leadIds = [...new Set(threads.map((t) => t.leadId).filter(Boolean))];
+      const applicationIds = [...new Set(threads.map((t) => t.applicationId).filter(Boolean))];
+      const threadIds = threads.map((t) => t.id);
+
+      const [students, leads, applications, responses] = await Promise.all([
+        studentIds.length
+          ? db.student.findMany({ where: { id: { in: studentIds } }, select: { id: true, name: true, studentId: true, counselorName: true, phone: true } }).catch(() => [])
+          : Promise.resolve([] as any[]),
+        leadIds.length
+          ? db.leadForm.findMany({ where: { id: { in: leadIds } }, select: { id: true, name: true, phone: true } }).catch(() => [])
+          : Promise.resolve([] as any[]),
+        applicationIds.length
+          ? db.application.findMany({ where: { id: { in: applicationIds } }, select: { id: true, status: true, universityName: true, courseName: true } }).catch(() => [] as any[])
+          : Promise.resolve([] as any[]),
+        // §150 first-response tracking: the earliest staff reply per thread, in one query.
+        threadIds.length
+          ? db.communicationMessage.groupBy({
+              by: ['threadId'],
+              where: { threadId: { in: threadIds }, direction: 'outbound', isInternal: false },
+              _min: { createdAt: true },
+            }).catch(() => [] as any[])
+          : Promise.resolve([] as any[]),
+      ]);
+
+      const studentMap = new Map(students.map((row: any) => [row.id, row]));
+      const leadMap = new Map(leads.map((row: any) => [row.id, row]));
+      const applicationMap = new Map(applications.map((row: any) => [row.id, row]));
+      const responseMap = new Map(responses.map((row: any) => [row.threadId, row._min?.createdAt ?? null]));
+
+      // Enrich threads with contact context and a live, policy-driven SLA clock
+      const enriched = threads.map((t) => {
         let contactName = '';
         let contactId = '';
         let contactType = '';
+        let contactPhone = '';
         let applicationStage = '';
+        let applicationLabel = '';
 
         if (t.studentId) {
-          const s = await db.student.findUnique({
-            where: { id: t.studentId },
-            select: { name: true, studentId: true, counselorName: true },
-          }).catch(() => null);
-          if (s) {
-            contactName = s.name || '';
+          const student: any = studentMap.get(t.studentId);
+          if (student) {
+            contactName = student.name || '';
             contactId = t.studentId;
             contactType = 'student';
+            contactPhone = student.phone || '';
             applicationStage = 'active';
           }
         } else if (t.leadId) {
-          const l = await db.leadForm.findUnique({
-            where: { id: t.leadId },
-            select: { name: true, id: true },
-          }).catch(() => null);
-          if (l) {
-            contactName = l.name || '';
+          const lead: any = leadMap.get(t.leadId);
+          if (lead) {
+            contactName = lead.name || '';
             contactId = t.leadId;
             contactType = 'lead';
+            contactPhone = lead.phone || '';
           }
         }
 
-        // Live SLA calculation
-        let slaRemainingMs: number | null = null;
-        let slaOverdueMins: number | null = null;
-        let liveSlaStatus = t.slaStatus || 'normal';
-
-        if (t.slaDueAt) {
-          const diff = t.slaDueAt.getTime() - now.getTime();
-          if (diff <= 0) {
-            slaOverdueMins = Math.floor(Math.abs(diff) / 60000);
-            liveSlaStatus = 'overdue';
-          } else {
-            slaRemainingMs = diff;
-            const slaTotal = t.slaTriggeredAt ? t.slaDueAt.getTime() - t.slaTriggeredAt.getTime() : 30 * 60000;
-            const pctConsumed = 1 - (diff / slaTotal);
-            if (pctConsumed >= 0.93) liveSlaStatus = 'urgent';
-            else if (pctConsumed >= 0.67) liveSlaStatus = 'warning';
-            else liveSlaStatus = 'normal';
+        if (t.applicationId) {
+          const application: any = applicationMap.get(t.applicationId);
+          if (application) {
+            applicationStage = application.status || applicationStage;
+            applicationLabel = [application.universityName, application.courseName].filter(Boolean).join(' — ');
           }
         }
 
         const lastMsg = t.messages[0] || null;
+        const lastResponseAt: Date | null = responseMap.get(t.id) ?? null;
+
+        // §147-§149: one policy source of truth for the clock. The stored deadline
+        // stays authoritative — we never rewrite history — but the STATE now comes
+        // from the configurable policy ladder instead of the hard-coded 0.67/0.93
+        // fractions this route used to carry.
+        const policy = resolveSlaPolicy({
+          // Stored channel/priority/intent are free-form; the policy layer owns
+          // the canonical vocabulary (spec §147: configurable by channel,
+          // priority, student type, application stage and intent).
+          channel: toSlaChannel(t.channel),
+          priority: toSlaPriority(t.priority),
+          intent: toSlaIntent(t.intent),
+          studentType: t.studentId ? 'applicant' : t.leadId ? 'lead' : undefined,
+          applicationStage: applicationStage || undefined,
+        });
+
+        // The clock stops at the first staff reply: an answered conversation must
+        // not keep counting down in the operator's face (§150 first response).
+        const responded = !!lastResponseAt && lastResponseAt.getTime() <= now.getTime();
+        const clock = t.slaDueAt
+          ? evaluateSlaClock(
+              t.slaDueAt,
+              responded ? (lastResponseAt as Date) : now,
+              policy,
+            )
+          : null;
+
+        const metrics = t.slaDueAt
+          ? computeResponseMetrics({
+              receivedAt: t.slaTriggeredAt ?? t.createdAt,
+              firstResponseAt: lastResponseAt,
+              dueAt: t.slaDueAt,
+              now,
+            })
+          : null;
 
         return {
           id: t.id,
@@ -120,31 +190,49 @@ export async function GET(request: NextRequest) {
           priority: t.priority,
           intent: t.intent,
           status: t.status,
+          visibility: t.visibility,
           assignedToId: t.assignedToId,
           assignedToName: t.assignedToName,
           contactName,
           contactId,
           contactType,
+          contactPhone,
           applicationStage,
-          lastMessage: lastMsg?.messageBody?.substring(0, 100) || '',
+          applicationLabel,
+          lastMessage: lastMsg?.messageBody?.substring(0, 120) || t.lastMessagePreview || '',
           lastMessageAt: t.lastMessageAt,
           lastMessageDir: lastMsg?.direction,
           lastSenderName: lastMsg?.senderName,
+          lastResponseAt,
           unreadCount: t.unreadCount,
-          slaStatus: liveSlaStatus,
+          // §148 state vocabulary: normal | warning | overdue | critical
+          slaState: clock?.state ?? 'none',
+          slaDisplay: clock?.display ?? 'NO SLA SET',
+          slaIconName: clock?.icon ?? null,
+          slaAriaLabel: clock?.ariaLabel ?? 'No SLA deadline recorded for this conversation',
           slaDueAt: t.slaDueAt,
-          slaRemainingMs,
-          slaOverdueMins,
-          studentId: t.studentId,
-          leadId: t.leadId,
-          applicationId: t.applicationId,
+          slaSecondsRemaining: clock?.secondsRemaining ?? null,
+          slaMinutes: policy.minutes,
+          slaPolicyLabel: policy.label,
+          slaCalendarTime: policy.calendarTime,
+          slaMissing: !t.slaDueAt,
+          // §150 response tracking, per conversation.
+          slaResponded: responded,
+          firstResponseAt: lastResponseAt,
+          firstResponseMinutes: metrics?.responseTimeMs != null ? Math.round(metrics.responseTimeMs / 60000) : null,
+          slaBreached: metrics?.slaBreached ?? false,
+          countsAsBreach: metrics?.countsAsBreach ?? false,
         };
-      }));
+      });
 
-      // Sort enriched: overdue first
+      // Sort for the operator: worst SLA state first, then the nearest deadline.
+      const STATE_RANK: Record<string, number> = { critical: 0, overdue: 1, warning: 2, normal: 3, none: 4 };
       enriched.sort((a, b) => {
-        const order: any = { overdue: 0, urgent: 1, warning: 2, normal: 3 };
-        return (order[a.slaStatus] ?? 4) - (order[b.slaStatus] ?? 4);
+        const rank = (STATE_RANK[a.slaState] ?? 5) - (STATE_RANK[b.slaState] ?? 5);
+        if (rank !== 0) return rank;
+        const aDue = a.slaDueAt ? new Date(a.slaDueAt).getTime() : Number.MAX_SAFE_INTEGER;
+        const bDue = b.slaDueAt ? new Date(b.slaDueAt).getTime() : Number.MAX_SAFE_INTEGER;
+        return aDue - bDue;
       });
 
       // Channel summaries for sidebar
@@ -199,10 +287,43 @@ export async function POST(request: NextRequest) {
       }
       return await db.$transaction(async tx => {
         await tx.portalAuditLog.create({ data: { actorUserId: auth.actorUserId, action: `COMMUNICATION_${action.toUpperCase()}`, entityType: 'CommunicationThread', entityId: threadId } });
+        if (action === 'mark_resolved' && typeof body.resolutionNote === 'string' && body.resolutionNote.trim()) {
+          await tx.communicationTask.create({
+            data: {
+              title: `Resolution record — ${thread.threadCode || threadId}`,
+              description: body.resolutionNote.trim(),
+              studentId: thread.studentId || null,
+              applicationId: thread.applicationId || null,
+              assignedTo: auth.actorUserId || null,
+              status: 'RESOLVED',
+              source: 'ESCALATION',
+              resolution: body.resolutionNote.trim(),
+              resolvedAt: new Date(),
+              createdBy: auth.actorUserId || null,
+            },
+          }).catch(() => {});
+        }
       if (action === 'mark_resolved') {
+        // §158: an AI must never silently resolve a critical case — and neither
+        // should a human by accident. A conversation that breached or is about to
+        // breach its SLA needs an explicit, recorded resolution note.
+        const resolutionNote = typeof body.resolutionNote === 'string' ? body.resolutionNote.trim() : '';
+        const breached = !!thread.slaDueAt && thread.slaDueAt.getTime() < Date.now();
+        const criticalStates = ['critical', 'overdue', 'urgent', 'sla_overdue'];
+        if ((breached || criticalStates.includes(String(thread.slaStatus))) && resolutionNote.length < 10) {
+          return NextResponse.json({
+            success: false,
+            code: 'RESOLUTION_NOTE_REQUIRED',
+            error: 'This conversation breached its SLA. Record what resolved it (at least 10 characters) before closing it.',
+          }, { status: 409 });
+        }
         await tx.communicationThread.update({
           where: { id: threadId },
-          data: { status: 'resolved', unreadCount: 0 },
+          data: {
+            status: 'resolved',
+            unreadCount: 0,
+            ...(resolutionNote ? { lastMessagePreview: thread.lastMessagePreview } : {}),
+          },
         });
         await tx.communicationSlaEvent.updateMany({
           where: { threadId, slaStatus: { not: 'resolved' } },

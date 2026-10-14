@@ -19,6 +19,12 @@ const PUBLIC_ROUTES = [
   "/lead-data-usage-policy",
   "/user-guide",
   "/accessibility",
+  // Footer company column. Published policy/conduct pages — static content,
+  // no database reads, no personal data: they must render for anonymous
+  // visitors (and crawlers) without hitting the auth gate.
+  "/code-of-conduct",
+  "/student-complaint-policy",
+  "/aqf-compliance",
   "/destinations",
   "/universities",
   "/courses",
@@ -34,9 +40,19 @@ const PUBLIC_ROUTES = [
   // boundary-aware, so neither prefix subsumes the other.
   "/course",
   "/course-finder",
+  // Form A — public Apply Now (/apply/[course-slug]). Anonymous visitors must
+  // reach it so they can register/login and continue; the page renders course
+  // facts only and the API still refuses to create anything until the student
+  // is signed in AND their Form B profile is complete.
+  "/apply",
   "/services",
   "/scholarships",
   "/resources",
+  // Published editorial guides (/guides index + /guides/[slug]). Both read
+  // only ContentAsset rows with status=PUBLISHED and the short-form-builder
+  // tag, and sitemap.ts already advertises them, so anonymous visitors and
+  // crawlers must reach them instead of the login gate.
+  "/guides",
   "/blog",
   "/success-stories",
   "/team",
@@ -478,7 +494,10 @@ const NON_STATIC_PREFIXES = Array.from(new Set(Object.values(ROLE_ROUTES).flat()
 
 // Top-level directories that contain only static files (Next internals and
 // the folders shipped in /public). No page routes live under these.
-const STATIC_ROOT_SEGMENTS = new Set(["_next", "static", "public", "docs", "icons", "images"]);
+// `fonts` holds the self-hosted brand webfonts (Montserrat, Poppins, Open Sans,
+// Roboto) referenced by the @font-face rules in globals.css. There is no page
+// route under /fonts, so the allow-list entry cannot expose gated content.
+const STATIC_ROOT_SEGMENTS = new Set(["_next", "static", "public", "docs", "icons", "images", "fonts"]);
 
 function decodePathForPolicy(pathname: string): string | null {
   let decoded = pathname;

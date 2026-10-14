@@ -45,6 +45,6 @@ test('legacy installers and packagers cannot be mistaken for Hostinger paths',()
   const source=text(path);
   assert.match(source,/^#![^\n]+\n# LEGACY \/ NOT USED FOR CURRENT PRODUCTION\necho .*\nexit 1\n/);
  }
- assert.match(text('CPANEL-DEPLOYMENT-GUIDE.md'),/Hostinger \+ Node.js 22.x \+ npm/);
- assert.doesNotMatch(text('CPANEL-DEPLOYMENT-GUIDE.md'),/Node >=22|CPANEL_USERNAME|\/root\//);
+ assert.match(text('HOSTINGER-DEPLOYMENT-GUIDE.md'),/Hostinger \+ Node.js 22.x \+ npm/);
+ assert.doesNotMatch(text('HOSTINGER-DEPLOYMENT-GUIDE.md'),/Node >=22|CPANEL_USERNAME|\/root\//);
 });

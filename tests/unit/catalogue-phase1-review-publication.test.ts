@@ -260,7 +260,7 @@ describe('K4 review: static bypass is an allow-list', () => {
     }
   });
   it('real static locations still bypass', () => {
-    for (const p of ['/_next/static/chunks/a.js', '/_next/image', '/images/hero.png', '/icons/i.svg', '/docs/guide.pdf', '/robots.txt', '/sitemap.xml', '/sw.js', '/manifest.json', '/logo.svg', '/favicon.ico', '/public/x.png']) {
+    for (const p of ['/_next/static/chunks/a.js', '/_next/image', '/images/hero.png', '/icons/i.svg', '/docs/guide.pdf', '/fonts/montserrat-latin-700-normal.woff2', '/fonts/open-sans-latin-400-italic.woff2', '/robots.txt', '/sitemap.xml', '/sw.js', '/manifest.json', '/logo.svg', '/favicon.ico', '/public/x.png']) {
       expect(isStaticAssetBypass(p), p).toBe(true);
     }
   });

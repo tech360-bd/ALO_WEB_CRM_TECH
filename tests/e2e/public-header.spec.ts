@@ -1,0 +1,123 @@
+import { expect, test } from '@playwright/test';
+
+/**
+ * Header contract for EVERY page BEFORE login (brand specification).
+ *
+ * The public header is mounted once for the whole marketing site by
+ * PublicLayoutWrapper (root layout), so these checks guard the single source:
+ *   • logo (ALO Education) + italic orange tagline
+ *   • menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
+ *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
+ *   • CTA "Book Free Counseling" (ALO Orange) → /book-consultation
+ */
+
+const PUBLIC_ROUTES = ['/', '/destinations', '/course-finder', '/services', '/faqs', '/visa'];
+
+const MENU_ORDER = [
+  'Destinations',
+  'Course Finder',
+  'Services',
+  'Language Prep',
+  'Resources',
+  'Portal',
+  'AI SUPPORT TOOLS',
+];
+
+/** Resolve a menu entry whichever role it has (links and dropdown triggers differ). */
+function menuEntry(page: import('@playwright/test').Page, label: string) {
+  const header = page.locator('#alo-public-header');
+  return header
+    .getByRole('link', { name: label, exact: true })
+    .or(header.getByRole('button', { name: label, exact: true }))
+    .first();
+}
+
+test.describe('desktop header (before login)', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('renders the specified menu on every public page', async ({ page }) => {
+    for (const route of PUBLIC_ROUTES) {
+      await page.goto(route);
+      const header = page.locator('#alo-public-header');
+      await expect(header, `header missing on ${route}`).toBeVisible();
+      await expect(header.getByText('ALO Education', { exact: true })).toBeVisible();
+      await expect(header.getByText('Your Dream – Our Commitment')).toBeVisible();
+      for (const label of MENU_ORDER) {
+        await expect(menuEntry(page, label), `${label} missing on ${route}`).toBeVisible();
+      }
+      await expect(header.getByRole('link', { name: 'Book Free Counseling' })).toBeVisible();
+    }
+  });
+
+  test('keeps the specified left-to-right menu order', async ({ page }) => {
+    await page.goto('/');
+    const positions: Array<{ label: string; x: number }> = [];
+    for (const label of MENU_ORDER) {
+      const box = await menuEntry(page, label).boundingBox();
+      expect(box, `${label} has no box`).not.toBeNull();
+      positions.push({ label, x: box?.x ?? Number.NaN });
+    }
+    const xs = positions.map((p) => p.x);
+    expect(xs, `menu order was ${JSON.stringify(positions)}`).toEqual([...xs].sort((a, b) => a - b));
+
+    const ctaBox = await page.locator('#alo-public-header').getByRole('link', { name: 'Book Free Counseling' }).boundingBox();
+    expect(ctaBox?.x ?? -1).toBeGreaterThan(xs[xs.length - 1]);
+  });
+
+  test('CTA opens the consultation page and the dropdowns expose their links', async ({ page }) => {
+    await page.goto('/');
+    const header = page.locator('#alo-public-header');
+
+    await expect(header.getByRole('link', { name: 'Book Free Counseling' })).toHaveAttribute(
+      'href',
+      '/book-consultation'
+    );
+
+    // Destinations ▾
+    await header.getByRole('button', { name: 'Destinations', exact: true }).click();
+    await expect(header.getByRole('menu', { name: 'Destinations' })).toBeVisible();
+
+    // Resources ▾
+    await header.getByRole('button', { name: 'Resources', exact: true }).click();
+    await expect(header.getByRole('link', { name: 'Visa Guides' })).toBeVisible();
+
+    // Portal ▾
+    await header.getByRole('button', { name: 'Portal', exact: true }).click();
+    await expect(header.getByRole('link', { name: 'Student Portal' })).toBeVisible();
+
+    // AI SUPPORT TOOLS ▾
+    await header.getByRole('button', { name: 'AI SUPPORT TOOLS', exact: true }).click();
+    await expect(header.getByRole('link', { name: 'AI Course Match' })).toBeVisible();
+
+    // Escape closes the open dropdown.
+    await page.keyboard.press('Escape');
+    await expect(header.getByRole('link', { name: 'AI Course Match' })).toBeHidden();
+  });
+});
+
+test.describe('mobile header (before login)', () => {
+  test.use({ viewport: { width: 393, height: 851 } });
+
+  test('hamburger opens the same menu with a full-width CTA', async ({ page }) => {
+    await page.goto('/');
+    const header = page.locator('#alo-public-header');
+    await expect(header.getByText('Your Dream – Our Commitment')).toBeVisible();
+
+    await header.getByRole('button', { name: 'Open navigation menu' }).click();
+    for (const label of MENU_ORDER) {
+      await expect(menuEntry(page, label), `${label} missing on mobile`).toBeVisible();
+    }
+    await expect(page.getByRole('link', { name: 'Book Free Counseling' })).toBeVisible();
+  });
+});
+
+test.describe('header scope', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('is hidden on authenticated shells and auth entry screens', async ({ page }) => {
+    for (const route of ['/student/login', '/partner/login', '/employee/login', '/login']) {
+      await page.goto(route);
+      await expect(page.locator('#alo-public-header'), `public header leaked into ${route}`).toHaveCount(0);
+    }
+  });
+});

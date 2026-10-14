@@ -1,5 +1,11 @@
 # ALO_WEBSITE_HOMEPAGE_20X_READY — 2026-09-15
 
+> **Header note (2026-10-13):** the public header was re-specified by the brand brief
+> (menu order Destinations · Course Finder · Services · Language Prep · Resources · Portal ·
+> AI SUPPORT TOOLS + CTA "Book Free Counseling", Education Blue #0066CC / ALO Orange #F37021).
+> Checks 2, 6, 8 and 9 below describe the *previous* header and its older colours
+> (#0057B8 / #E8501A). See `docs/HEADER-PRELOGIN-SPEC.md` for the current contract.
+
 ## Verification: 37 Checks — PASS
 
 ### Navbar (10)

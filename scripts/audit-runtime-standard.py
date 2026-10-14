@@ -22,7 +22,9 @@ records = []
 scanned = binary = 0
 for file in files:
     # This index/results are derived outputs, not recursively scanned application files.
-    if file.startswith('docs/runtime-standard/') and not file.endswith('LEGACY-CPANEL-GUIDE.md'):
+    # docs/runtime-standard/LEGACY-CPANEL-GUIDE.md was retired on 2026-10-13, so the
+    # whole directory is derived scan output again.
+    if file.startswith('docs/runtime-standard/'):
         continue
     path = ROOT / file
     if not path.is_file():

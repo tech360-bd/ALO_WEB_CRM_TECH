@@ -1,4 +1,20 @@
 import { db } from '@/lib/db';
+import {
+  PARTNER_PACKAGES,
+  ALO_HARD_VIDEO_CEILING_SECONDS,
+  resolveEffectiveLimits,
+  checkVideoDuration,
+  checkMarketingQuota,
+  quotaMessage,
+  hasActiveAloApplication,
+  canUseStudentBenefit as canUseStudentBenefitPolicy,
+  canUseVoucher as canUseVoucherPolicy,
+  canViewEmployeePrivateProfile as canViewEmployeePrivateProfilePolicy,
+  canViewB2BDetails as canViewB2BDetailsPolicy,
+  type BenefitType,
+} from '@/lib/partner/entitlement-policy';
+
+const STARTER = PARTNER_PACKAGES.starter;
 
 // 1. Check feature access for user or role
 export async function canAccessFeature(userId: string, featureKey: string, userRoles: string[] = []): Promise<boolean> {
@@ -85,12 +101,13 @@ function quotaLabel(canonicalKey: string): string {
   return canonicalKey;
 }
 
-// Starter package defaults (§9, §7). Used when a partner has no explicit quota
-// row or package assignment yet.
-export const STARTER_IMAGE_LIMIT = 15;
-export const STARTER_VIDEO_LIMIT = 10;
-export const STARTER_SEAT_LIMIT = 3; // 1 Partner Super Admin + 2 Employees
-export const STARTER_VIDEO_DURATION_SECONDS = 30;
+// Starter package defaults. The numbers now live in the pure entitlement policy so
+// quotas can be decided (and tested) without a database; these names are kept as
+// re-exports because ten routes import them.
+export const STARTER_IMAGE_LIMIT = STARTER.monthlyImageLimit;
+export const STARTER_VIDEO_LIMIT = STARTER.monthlyVideoLimit;
+export const STARTER_SEAT_LIMIT = STARTER.defaultUserLimit; // 1 Partner Super Admin + 2 Employees
+export const STARTER_VIDEO_DURATION_SECONDS = STARTER.videoDurationLimitSeconds;
 
 // 2. Get approved quota limit for partner/feature
 export async function getQuota(ownerType: string, ownerId: string, rawFeatureKey: string): Promise<number> {

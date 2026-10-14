@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { PARTNER_PACKAGES, ALO_HARD_VIDEO_CEILING_SECONDS, ACCESS_CONTROL_SECTIONS } from '@/lib/partner/entitlement-policy';
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,15 +33,43 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       masterRole: 'ALO_SUPER_ADMIN',
-      packages: packages.length ? packages : [
-        { id: 'PKG-STARTER', name: 'Starter Partner', maxUsers: 3, maxImages: 15, maxVideos: 10, videoMaxLength: 30, isActive: true },
-        { id: 'PKG-GROWTH', name: 'Growth Partner', maxUsers: 5, maxImages: 30, maxVideos: 20, videoMaxLength: 30, isActive: true },
-        { id: 'PKG-PREMIUM', name: 'Premium Partner', maxUsers: 10, maxImages: 100, maxVideos: 50, videoMaxLength: 60, isActive: true },
-      ],
+      // When the table is empty we return the catalogue ALO is *entitled to publish*
+      // (the same numbers the access checks use) instead of inventing rows with ids
+      // that do not exist. `isSeeded: false` tells the UI these cannot be assigned
+      // yet, so a Super Admin is never shown a package that would fail to save.
+      packages: packages.length ? packages : [],
+      packageDefaults: packages.length
+        ? []
+        : Object.values(PARTNER_PACKAGES).map((pkg) => ({
+            slug: pkg.slug,
+            name: pkg.name,
+            description: pkg.description,
+            defaultUserLimit: pkg.defaultUserLimit,
+            monthlyImageLimit: pkg.monthlyImageLimit,
+            monthlyVideoLimit: pkg.monthlyVideoLimit,
+            videoDurationLimitSeconds: pkg.videoDurationLimitSeconds,
+            englishMockVoucherLimit: pkg.englishMockVoucherLimit,
+            interviewPrepLimit: pkg.interviewPrepLimit,
+            autoPublishAllowed: pkg.autoPublishAllowed,
+            requiresAloApproval: pkg.requiresAloApproval,
+          })),
+      packagesSeeded: packages.length > 0,
+      packagesNote: packages.length
+        ? null
+        : 'No partner packages exist in the database yet. The catalogue below is the ALO-approved default, not saved data — create the packages before assigning them to a partner.',
       seatRequests,
       extraQuotaRequests,
       featureAccessRules,
       employeesCount,
+      // The twelve sections ALO master control owns, each with the feature keys it
+      // governs, so the panel can show a rule next to the switch that enforces it.
+      sections: ACCESS_CONTROL_SECTIONS,
+      hardCeilings: {
+        videoDurationLimitSeconds: ALO_HARD_VIDEO_CEILING_SECONDS,
+        defaultPartnerUserLimit: PARTNER_PACKAGES.starter.defaultUserLimit,
+        defaultMonthlyImageLimit: PARTNER_PACKAGES.starter.monthlyImageLimit,
+        defaultMonthlyVideoLimit: PARTNER_PACKAGES.starter.monthlyVideoLimit,
+      },
     });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to load Access Control Center data', details: error.message }, { status: 500 });

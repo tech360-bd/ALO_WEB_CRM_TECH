@@ -1,31 +1,50 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { authorizeStaffDocumentRead, listStudentDocumentsUnified } from '@/lib/documents/document-access-resolver';
 
+/**
+ * Staff document list for one student.
+ *
+ * SECURITY FIX: this route previously skipped its ownership test whenever the
+ * student had no assigned counselor:
+ *
+ *     if (counselorId && counselorId !== auth.userId && !roles.includes(...)) → 403
+ *
+ * With `counselorId` empty — an unassigned student, or an id that matched no
+ * student at all — the condition was falsy, no refusal was returned, and the
+ * documents query ran for ANY authenticated account. Missing assignment granted
+ * access instead of denying it.
+ *
+ * Authorization now goes through the shared policy, which denies by default and
+ * additionally requires an application relationship for partner-originated
+ * students. The list is also merged across both document tables so a partner or
+ * portal upload is visible here (it previously was not).
+ */
 export const GET = withAuth(async (req, auth) => {
   try {
     const { searchParams } = new URL(req.url);
-    const studentId = searchParams.get('studentId');
-    if (!studentId) return NextResponse.json({ success: false, error: 'studentId required' }, { status: 400 });
+    const studentId = searchParams.get('studentId') || '';
 
-    // RBAC: counselor can see assigned only
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('admin');
-    if (!isSuper) {
-      const student = await db.student.findFirst({ where: { id: studentId } }).catch(() => null) ||
-                      await db.portalStudentProfile.findFirst({ where: { studentId } }).catch(() => null);
-      const counselorId = (student as any)?.counselorId;
-      if (counselorId && counselorId !== auth.userId && !auth.roles.includes('application_team') && !auth.roles.includes('visa_officer')) {
-        return NextResponse.json({ success: false, error: 'Not assigned to this student' }, { status: 403 });
-      }
+    const guard = await authorizeStaffDocumentRead({ userId: auth.userId, roles: auth.roles }, studentId);
+    if (!guard.ok) {
+      return NextResponse.json({ success: false, error: guard.error }, { status: guard.status });
     }
 
-    const documents = await db.studentDocument.findMany({
-      where: { studentId },
-      orderBy: { createdAt: 'desc' },
+    const documents = await listStudentDocumentsUnified({
+      studentId: guard.resolved.studentId || studentId,
+      studentProfileId: guard.resolved.studentProfileId,
     });
 
-    return NextResponse.json({ success: true, documents, count: documents.length });
+    return NextResponse.json({
+      success: true,
+      documents,
+      count: documents.length,
+      accessVia: guard.decision.via,
+      canReview: guard.decision.canReview,
+      canDelete: guard.decision.canDelete,
+    });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error('[counselor.documents] list failed:', error instanceof Error ? error.message : 'unknown');
+    return NextResponse.json({ success: false, error: 'Could not load documents for this student.' }, { status: 500 });
   }
 });

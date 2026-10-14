@@ -1,19 +1,27 @@
 #!/usr/bin/env tsx
 /**
- * Verify 15 cron Asia/Dhaka with distributed locking
+ * Legacy declaration viewer (Asia/Dhaka schedules).
+ *
+ * The authoritative certification is now
+ * `npx tsx scripts/cron-scheduler-policy-check.ts`, which proves lease
+ * exclusivity, run statuses, durable logging, bounded timeouts and that every
+ * declared path resolves to real work or an explicit refusal. This file is kept
+ * because it prints the declaration table, and it no longer asserts the old
+ * count of 15: the platform requires 21 declarations now, 15 of them enabled.
+ *
  * Usage: npx tsx scripts/verify-15-cron.ts
  */
 import { CRON_JOBS, verifyCronDefinitions } from '../src/cron/cron-definitions';
 import * as fs from 'fs';
 import * as path from 'path';
 
-console.log('=== ALO Education 15-Cron Verification (Asia/Dhaka, locking) ===');
-console.log(`Date: 2026-09-15 (lastVerifiedAt for 560 universities)`);
-console.log(`Total jobs defined: ${CRON_JOBS.length}`);
+console.log('=== ALO Education Cron Declarations (Asia/Dhaka, leases) ===');
+console.log(`Total declarations: ${CRON_JOBS.length} (${CRON_JOBS.filter(j => j.enabled).length} enabled)`);
+console.log('Certification: npx tsx scripts/cron-scheduler-policy-check.ts');
 
 const { ok, errors } = verifyCronDefinitions();
 if (ok) {
-  console.log('✔ All 15 jobs pass: timezone Asia/Dhaka, locking enabled, valid cron expressions');
+  console.log('✔ Declarations pass: Asia/Dhaka, locking enabled, valid cron, resolvable route, stated reason when disabled');
 } else {
   console.log('✘ Errors:');
   errors.forEach(e=> console.log('  - '+e));
@@ -33,7 +41,7 @@ const vercelPath = path.join(__dirname, '..', 'vercel.json');
 if (fs.existsSync(vercelPath)) {
   const vercel = JSON.parse(fs.readFileSync(vercelPath,'utf-8'));
   const count = vercel.crons?.length || 0;
-  console.log(`vercel.json crons: ${count} ${count===15?'✔':'✘ expected 15'}`);
+  console.log(`vercel.json crons: ${count} (each must resolve to a route or a registry job)`);
   // Check CRON_JOBS.md exists and mentions 15
   const cronMdPath = path.join(__dirname, '..', 'CRON_JOBS.md');
   if (fs.existsSync(cronMdPath)) {

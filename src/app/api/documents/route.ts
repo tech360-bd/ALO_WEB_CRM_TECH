@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  evaluateDocumentTransition,
+  legacyStatusToState,
+  REJECTION_REASON_CODES,
+} from '@/lib/communications/document-policy';
 import { db } from '@/lib/db';
 import { authenticateUnified, type UnifiedAuthContext } from '@/lib/unified-auth';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
@@ -199,15 +204,53 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'A rejection reason of at most 1000 characters is required.' }, { status: 400 });
   }
   try {
-    const doc = await db.document.findUnique({ where: { id }, select: { id: true, studentId: true, name: true } });
+    const doc = await db.document.findUnique({
+      where: { id },
+      // `status` is read so the lifecycle policy can be enforced against the
+      // CURRENT state (spec §137): a verified document must not be rejectable.
+      select: { id: true, studentId: true, name: true, status: true },
+    });
     if (!doc) return NextResponse.json({ error: 'Document not found.' }, { status: 404 });
     const student = await studentOwnedBy(auth, doc.studentId);
     if (!student) return NextResponse.json({ error: 'Document review is not permitted for this student.' }, { status: 403 });
+
+    // ── IMMUTABLE DOCUMENT POLICY (spec §134-§139) ────────────────────────────
+    // The rules live in src/lib/communications/document-policy.ts so they cannot
+    // be forgotten by this or any future route: deletion is never allowed,
+    // rejection only from a reviewable state and always with a reason code, and a
+    // verified document may only be replaced through the supersede workflow.
+    const targetState = legacyStatusToState(
+      status === 'APPROVED' ? 'verified' : status === 'REJECTED' ? 'rejected' : status === 'UNDER_REVIEW' ? 'under_review' : 'student_submitted'
+    );
+    const decision = evaluateDocumentTransition({
+      actor: 'counselor',
+      from: legacyStatusToState(doc.status),
+      to: targetState,
+      reasonCode: typeof body?.reasonCode === 'string' ? body.reasonCode : undefined,
+      comment: rejectionReason,
+      supersedeReason: typeof body?.supersedeReason === 'string' ? body.supersedeReason : undefined,
+    });
+    if (!decision.allowed) {
+      return NextResponse.json(
+        { error: decision.message, code: decision.code, requirements: decision.requirements, rejectionReasonCodes: REJECTION_REASON_CODES },
+        { status: 409 },
+      );
+    }
+
     const reviewer = actorId(auth) || '';
     const updated = await db.$transaction(async (tx) => {
       const result = await tx.document.update({
         where: { id },
-        data: { status, rejectionReason: status === 'REJECTED' ? rejectionReason : '', reviewedById: reviewer, reviewedAt: new Date() },
+        data: {
+          status,
+          // §138: the structured reason code is stored with the optional comment so
+          // the student notification and the audit trail both carry a reason.
+          rejectionReason: status === 'REJECTED'
+            ? [typeof body?.reasonCode === 'string' ? `[${body.reasonCode}]` : '', rejectionReason].filter(Boolean).join(' ').trim()
+            : '',
+          reviewedById: reviewer,
+          reviewedAt: new Date(),
+        },
       });
       const approved = status === 'APPROVED';
       const stage = approved ? 'document_approved' : status === 'REJECTED' ? 'document_rejected' : 'document_status_updated';
