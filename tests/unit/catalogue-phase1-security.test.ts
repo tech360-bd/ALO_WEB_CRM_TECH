@@ -179,36 +179,25 @@ describe('K1 /api/import-center PATCH never verifies through approval, rejection
   });
 });
 
-describe('K1 university-monitoring approval does not mark the whole record VERIFIED', () => {
-  it('APPROVE applies the field and history but leaves verificationStatus untouched', async () => {
+describe('K1 university-monitoring approval requires a current verified source snapshot', () => {
+  it('refuses a legacy/invalid monitoring candidate and never writes production data', async () => {
     const txCalls: Array<{ op: string; args: any }> = [];
     const tx = new Proxy({}, {
       get: (_t, model: string) => new Proxy({}, {
         get: (_m, op: string) => async (args: any) => {
           txCalls.push({ op: `${model}.${op}`, args });
           if (op === 'create') return { id: `${model}-1`, ...args?.data };
-          if (op === 'update') return { id: 'chg1', entityType: 'COURSE', courseSlug: 'msc-data', universitySlug: 'uni-a', fieldName: 'tuition', newValue: 'GBP 21000', oldValue: 'GBP 20000', sourceUrl: 'https://www.uni-a.ac.uk/fees', changeType: 'FEE', detectedAt: new Date(), ...args?.data };
           if (op === 'findUnique' || op === 'findFirst') return { ...VERIFIED_PAGE };
           return { count: 1 };
         },
       }),
     });
-    m.db.dataChange = { findUnique: m.rec('dataChange.findUnique', () => ({ id: 'chg1', status: 'PENDING', entityType: 'COURSE', courseSlug: 'msc-data' })) };
     m.db.$transaction = vi.fn(async (fn: any) => fn(tx));
-    m.db.user = { findUnique: vi.fn(async () => ({ id: 'u-super', userType: 'SUPER_ADMIN', email: 's@alo.test', status: 'ACTIVE' })) };
     m.auth.mockResolvedValue(superAdmin);
     const res = await monitoringPATCH(req('/api/university-monitoring/changes/chg1', 'PATCH', { action: 'APPROVE' }), { params: Promise.resolve({ id: 'chg1' }) });
-    if (res.status !== 200) {
-      // The monitoring guard has its own identity checks; report rather than mask.
-      throw new Error(`monitoring PATCH returned ${res.status}: ${await res.text()}`);
-    }
-    const pageUpdate = txCalls.find((c) => c.op === 'coursePage.update');
-    expect(pageUpdate?.args.data.tuition).toBe('GBP 21000');
-    expect(pageUpdate?.args.data).not.toHaveProperty('verificationStatus');
-    // Phase 1 review (P1-D): a single-field approval no longer refreshes the
-    // record-level verification date either.
-    expect(pageUpdate?.args.data).not.toHaveProperty('lastVerifiedAt');
-    expect(txCalls.some((c) => c.op === 'courseHistory.create')).toBe(true);
+    expect(res.status).toBe(409);
+    expect(txCalls.some((c) => c.op === 'coursePage.update')).toBe(false);
+    expect(txCalls.some((c) => c.op === 'courseHistory.create')).toBe(false);
   });
 });
 
@@ -387,5 +376,11 @@ describe('content-page guards', () => {
   it('drops unknown keys and never passes control fields through', () => {
     const r = sanitizeCoursePageFields({ overview: 'x', verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED', lastVerifiedAt: 'now', id: 'z', extra: 1 });
     expect(r).toEqual({ ok: true, data: { overview: 'x' } });
+  });
+
+  it('allows explicit eligibility statuses but rejects unsupported free text', () => {
+    expect(sanitizeCoursePageFields({ internationalEligibility: 'Eligible' })).toEqual({ ok: true, data: { internationalEligibility: 'eligible' } });
+    expect(sanitizeCoursePageFields({ internationalEligibility: 'not_verified' })).toEqual({ ok: true, data: { internationalEligibility: 'not_verified' } });
+    expect(sanitizeCoursePageFields({ internationalEligibility: 'probably' })).toMatchObject({ ok: false });
   });
 });

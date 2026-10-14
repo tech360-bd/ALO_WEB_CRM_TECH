@@ -138,7 +138,7 @@ export function ImportDashboard() {
       <Card className="p-6 bg-white border border-slate-200 rounded-2xl space-y-3">
         <h2 className="text-base font-bold text-slate-900 flex items-center gap-2"><FileSpreadsheet className="w-5 h-5 text-[#0057B8]" aria-hidden="true" /> Template</h2>
         <p className="text-sm text-slate-600">
-          The combined course template has one row per university / course / intake. Required columns: university_id, university_name, course_id, course_title, intake_year, intake_month. Add source_url for every fact you record.
+          The catalogue template supports university-only rows (leave course_id/course_title blank), course-only discoveries, and optional intake details. Required headers: university_id, university_name, course_id, course_title. Intake year/month must be supplied together or left blank. Use course_official_url and course_source_url for course evidence; set international_eligibility only when the source supports it.
         </p>
         <a className="inline-flex text-sm font-semibold text-[#0057B8] underline" href="/api/crm/course-import/template/course">Download combined course template (CSV)</a>
         <ul className="text-sm text-slate-600 list-disc pl-5 space-y-1">

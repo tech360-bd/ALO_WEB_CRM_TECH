@@ -28,6 +28,7 @@
  */
 import { db } from '@/lib/db';
 import { isAcceptableSourceUrl } from './content-page-guards';
+import { VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES } from '@/lib/university-intake-window';
 
 export const OPEN_CONFLICT_STATUSES = ['PENDING', 'ESCALATED'] as const;
 
@@ -74,11 +75,27 @@ export function publicCoursePageWhere(conflicts: OpenConflicts = NO_CONFLICTS, e
   };
 }
 
+/** A legacy course page is internationally listable only with an explicit positive status. */
+export function publicInternationalCoursePageWhere(
+  conflicts: OpenConflicts = NO_CONFLICTS,
+  extra: Record<string, unknown>[] = [],
+) {
+  return publicCoursePageWhere(conflicts, [
+    { internationalEligibility: { in: [...VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES] } },
+    ...extra,
+  ]);
+}
+
 type PageLike = {
   slug?: string | null;
   approvalStatus?: string | null;
   verificationStatus?: string | null;
   sourceUrl?: string | null;
+};
+
+type CoursePageLike = PageLike & {
+  internationalEligibility?: string | null;
+  university?: PageLike | null;
 };
 
 /**
@@ -106,4 +123,13 @@ export function passesPublicCoursePagePolicy(
     return passesPublicPagePolicy(record.university, conflicts.universitySlugs);
   }
   return true;
+}
+
+export function passesPublicInternationalCoursePagePolicy(
+  record: CoursePageLike | null | undefined,
+  conflicts: OpenConflicts = NO_CONFLICTS,
+): boolean {
+  if (!passesPublicCoursePagePolicy(record, conflicts)) return false;
+  const status = record?.internationalEligibility?.trim().toLowerCase();
+  return !!status && (VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES as readonly string[]).includes(status);
 }

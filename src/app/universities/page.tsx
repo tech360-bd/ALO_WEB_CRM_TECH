@@ -6,14 +6,14 @@ import UniversitiesListing from '@/components/website/UniversitiesListing';
 // from the database at request time (see UniversitiesListing), so static
 // numeric claims here would inevitably drift out of sync with reality.
 export const metadata: Metadata = {
-  title: 'Partner Universities Worldwide | ALO Education Directory',
-  description: 'Browse our complete directory of partner universities across the UK, USA, Canada, Australia, Germany, New Zealand, Ireland, and Dubai. Find entry requirements, tuition fees, and scholarship guidance — DB-driven, verified, with related content engine.',
+  title: 'University Directory Worldwide | ALO Education',
+  description: 'Browse published, source-linked university records from available study destinations. Search by university, city, or country and review recorded course and admission information.',
   alternates: {
     canonical: 'https://aloeducation.com/universities',
   },
   openGraph: {
-    title: 'Partner Universities Worldwide | ALO Education',
-    description: 'Explore verified international partner universities. Check admission criteria, IELTS waivers, and scholarship availability — DB-driven.',
+    title: 'Published University Directory | ALO Education',
+    description: 'Explore available source-linked university records and the course, admission, ranking, and scholarship facts currently recorded for each institution.',
     url: 'https://aloeducation.com/universities',
     type: 'website',
   },

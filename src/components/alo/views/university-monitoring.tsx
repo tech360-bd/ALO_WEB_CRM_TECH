@@ -110,6 +110,14 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
   const [selectedChange, setSelectedChange] = React.useState<any | null>(null);
   const [actionNotes, setActionNotes] = React.useState("");
   const [acting, setActing] = React.useState(false);
+  const [canManageSources, setCanManageSources] = React.useState(false);
+  const [sourceDialogOpen, setSourceDialogOpen] = React.useState(false);
+  const [sourceSaving, setSourceSaving] = React.useState(false);
+  const [sourceActionId, setSourceActionId] = React.useState<string | null>(null);
+  const [sourceForm, setSourceForm] = React.useState({
+    sourceName: '', sourceUrl: '', sourceType: 'official_university', entityType: 'UNIVERSITY',
+    universitySlug: '', courseSlug: '', countrySlug: '', category: 'CATALOGUE',
+  });
 
   const fetchDashboard = React.useCallback(async () => {
     try {
@@ -161,10 +169,64 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
       if (!res.ok) throw new Error("Failed to load sources");
       const json = await res.json();
       setSources(json.sources);
+      setCanManageSources(Boolean(json.canManage));
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
     }
   }, [toast]);
+
+  const submitSourceCandidate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSourceSaving(true);
+    try {
+      const res = await fetch('/api/university-monitoring/sources', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...sourceForm,
+          universitySlug: sourceForm.universitySlug || undefined,
+          courseSlug: sourceForm.courseSlug || undefined,
+          countrySlug: sourceForm.countrySlug || undefined,
+          category: sourceForm.category || undefined,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Unable to register source');
+      toast({ title: 'Source candidate registered', description: 'It is paused until source ownership and connectivity are verified.' });
+      setSourceDialogOpen(false);
+      setSourceForm({ sourceName: '', sourceUrl: '', sourceType: 'official_university', entityType: 'UNIVERSITY', universitySlug: '', courseSlug: '', countrySlug: '', category: 'CATALOGUE' });
+      await fetchSources();
+      fetchDashboard();
+    } catch (error: any) {
+      toast({ title: 'Source registration failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setSourceSaving(false);
+    }
+  };
+
+  const updateSource = async (source: any, action: 'VERIFY_SOURCE' | 'PAUSE' | 'RETIRE') => {
+    if (action === 'VERIFY_SOURCE' && !window.confirm(`Confirm that ${source.sourceUrl} is an official source for the selected target? The server will make a bounded HTTPS probe; factual content is not automatically verified.`)) return;
+    if (action === 'RETIRE' && !window.confirm(`Retire ${source.sourceName}? This cannot be undone; register a new source to monitor it again.`)) return;
+    setSourceActionId(source.id);
+    try {
+      const res = await fetch('/api/university-monitoring/sources', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id: source.id, action, confirmedOfficialOwnership: action === 'VERIFY_SOURCE' }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Source action failed');
+      toast({ title: action === 'VERIFY_SOURCE' ? 'Source verified' : `Source ${action.toLowerCase()}`, description: json.message });
+      await fetchSources();
+      fetchDashboard();
+    } catch (error: any) {
+      toast({ title: 'Source action failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setSourceActionId(null);
+    }
+  };
 
   const fetchRuns = React.useCallback(async () => {
     try {
@@ -645,6 +707,13 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
         {/* SOURCES TAB */}
         <TabsContent value="sources" className="mt-6 space-y-4">
+          <div className="flex flex-col gap-3 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-sm font-semibold text-slate-900">Official source registry</div>
+              <div className="mt-1 text-xs text-slate-600">New entries remain paused until a Super Admin confirms official ownership and a safe HTTPS probe succeeds. Page facts still require separate review.</div>
+            </div>
+            {canManageSources && <Button onClick={() => setSourceDialogOpen(true)} className="shrink-0 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">Register Source Candidate</Button>}
+          </div>
           <Card className="rounded-2xl border-2 border-[#E2E8F0] overflow-hidden">
             <div className="max-h-[640px] overflow-auto alo-scroll">
               <Table>
@@ -655,8 +724,10 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                     <TableHead className="text-xs">Entity</TableHead>
                     <TableHead className="text-xs">Priority</TableHead>
                     <TableHead className="text-xs">Last Checked</TableHead>
-                    <TableHead className="text-xs">Status</TableHead>
+                    <TableHead className="text-xs">Source Verification</TableHead>
+                    <TableHead className="text-xs">Monitoring</TableHead>
                     <TableHead className="text-xs">Failures</TableHead>
+                    {canManageSources && <TableHead className="text-xs">Admin Actions</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -678,17 +749,53 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                       </TableCell>
                       <TableCell className="align-top text-xs text-slate-500">{s.lastCheckedAt ? timeAgo(s.lastCheckedAt) : "never"}</TableCell>
                       <TableCell className="align-top">
-                        <Badge className={s.status === "ACTIVE" ? "bg-emerald-100 text-emerald-700" : s.status === "BROKEN" ? "bg-rose-100 text-rose-700" : "bg-slate-100 text-slate-700"}>{s.status}</Badge>
+                        <Badge className={['verified', 'VERIFIED'].includes(s.verificationStatus) ? "bg-emerald-100 text-emerald-700" : s.verificationStatus === 'failed' ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}>{String(s.verificationStatus || 'pending').replace(/_/g, ' ')}</Badge>
+                        <div className="mt-1 text-[10px] text-slate-500">{s.lastVerifiedAt ? `source confirmed ${timeAgo(s.lastVerifiedAt)}` : 'ownership not confirmed'}</div>
+                      </TableCell>
+                      <TableCell className="align-top">
+                        <Badge className={s.status === "ACTIVE" && s.monitoringEnabled ? "bg-emerald-100 text-emerald-700" : s.status === "BROKEN" ? "bg-rose-100 text-rose-700" : "bg-slate-100 text-slate-700"}>{s.status}{s.monitoringEnabled ? ' · ON' : ' · OFF'}</Badge>
                       </TableCell>
                       <TableCell className="align-top text-xs">
                         {s.consecutiveFailures > 0 ? <span className="text-rose-600 font-semibold">{s.consecutiveFailures}</span> : <span className="text-slate-400">0</span>}
                       </TableCell>
+                      {canManageSources && <TableCell className="align-top">
+                        <div className="flex min-w-32 flex-col gap-1.5">
+                          {s.status !== 'RETIRED' && (s.status === 'ACTIVE' && s.monitoringEnabled
+                            ? <Button size="sm" variant="outline" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'PAUSE')}>Pause</Button>
+                            : <Button size="sm" variant="outline" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'VERIFY_SOURCE')}>Verify / Recheck</Button>)}
+                          {s.status !== 'RETIRED' && <Button size="sm" variant="ghost" className="text-rose-700" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'RETIRE')}>Retire</Button>}
+                        </div>
+                      </TableCell>}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
           </Card>
+          <Dialog open={sourceDialogOpen} onOpenChange={setSourceDialogOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Register official source candidate</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={submitSourceCandidate} className="space-y-4">
+                <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">Registering does not mark a source or its facts as verified. The new record stays paused until a Super Admin verifies the official ownership and connectivity.</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="monitor-source-name">Source label</Label><Input id="monitor-source-name" required maxLength={180} value={sourceForm.sourceName} onChange={(e) => setSourceForm((current) => ({ ...current, sourceName: e.target.value }))} placeholder="Official source page label" /></div>
+                  <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="monitor-source-url">Official HTTPS URL</Label><Input id="monitor-source-url" required type="url" value={sourceForm.sourceUrl} onChange={(e) => setSourceForm((current) => ({ ...current, sourceUrl: e.target.value }))} placeholder="https://..." /></div>
+                  <div className="space-y-1.5"><Label>Entity type</Label><Select value={sourceForm.entityType} onValueChange={(value) => setSourceForm((current) => ({ ...current, entityType: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{['UNIVERSITY', 'COURSE', 'COUNTRY', 'GOVERNMENT', 'AUTHORITY'].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+                  <div className="space-y-1.5"><Label>Source type</Label><Select value={sourceForm.sourceType} onValueChange={(value) => setSourceForm((current) => ({ ...current, sourceType: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{['official_university', 'official_government', 'official_authority', 'official_admissions_portal', 'official_test_provider', 'official_scholarship'].map((value) => <SelectItem key={value} value={value}>{value.replaceAll('_', ' ')}</SelectItem>)}</SelectContent></Select></div>
+                  <div className="space-y-1.5"><Label>Category</Label><Select value={sourceForm.category} onValueChange={(value) => setSourceForm((current) => ({ ...current, category: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{['CATALOGUE', 'ADMISSIONS', 'SCHOLARSHIPS', 'VISAS', 'FEES', 'INTAKES', 'REQUIREMENTS', 'POLICY'].map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></div>
+                  <div className="space-y-1.5"><Label htmlFor="monitor-source-university">University slug {sourceForm.entityType === 'UNIVERSITY' || sourceForm.entityType === 'COURSE' ? '(required)' : '(optional)'}</Label><Input id="monitor-source-university" value={sourceForm.universitySlug} onChange={(e) => setSourceForm((current) => ({ ...current, universitySlug: e.target.value }))} placeholder="existing-catalogue-slug" /></div>
+                  {sourceForm.entityType === 'COURSE' && <div className="space-y-1.5"><Label htmlFor="monitor-source-course">Course slug (required)</Label><Input id="monitor-source-course" required value={sourceForm.courseSlug} onChange={(e) => setSourceForm((current) => ({ ...current, courseSlug: e.target.value }))} placeholder="existing-course-slug" /></div>}
+                  {['COUNTRY', 'GOVERNMENT', 'AUTHORITY'].includes(sourceForm.entityType) && <div className="space-y-1.5"><Label htmlFor="monitor-source-country">Country slug (required)</Label><Input id="monitor-source-country" required value={sourceForm.countrySlug} onChange={(e) => setSourceForm((current) => ({ ...current, countrySlug: e.target.value }))} placeholder="country-slug" /></div>}
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setSourceDialogOpen(false)} disabled={sourceSaving}>Cancel</Button>
+                  <Button type="submit" disabled={sourceSaving} className="bg-[#2563EB] text-white hover:bg-[#1D4ED8]">{sourceSaving ? 'Registering…' : 'Register paused candidate'}</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
 
         {/* RUNS TAB */}
@@ -803,7 +910,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2 rounded-lg bg-amber-50 p-3 text-xs text-slate-600">
                   <Icon name="Info" className="h-4 w-4 text-amber-600" />
-                  <span>Approving will apply this change to the production database and create a <code className="bg-white px-1 rounded">UNIVERSITY_DATA_APPROVED</code> or <code className="bg-white px-1 rounded">COURSE_DATA_APPROVED</code> audit event. The old value is preserved forever in the change history.</span>
+                  <span>Approval applies only allowlisted fields after the current official snapshot, quoted evidence, and production version are checked. Rejected values never write; the actual pre-change value is preserved in history.</span>
                 </div>
               </div>
               <DialogFooter className="gap-2">
@@ -812,9 +919,6 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 </Button>
                 <Button variant="outline" className="border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(selectedChange.id, "REJECT")} disabled={acting}>
                   <Icon name="X" className="mr-2 h-4 w-4" /> Reject
-                </Button>
-                <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-50" onClick={() => performAction(selectedChange.id, "MARK_VERIFIED")} disabled={acting}>
-                  <Icon name="CheckCheck" className="mr-2 h-4 w-4" /> Mark Verified
                 </Button>
                 <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => performAction(selectedChange.id, "APPROVE")} disabled={acting}>
                   <Icon name="Check" className="mr-2 h-4 w-4" /> Approve & Apply to Production

@@ -12,6 +12,7 @@
  */
 
 import { parse } from 'csv-parse/sync';
+import { INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES } from '@/lib/university-intake-window';
 import {
   classifyImportRow,
   combineRowActions,
@@ -27,7 +28,8 @@ import {
 
 export const MAX_IMPORT_ROWS = 500;
 export const MAX_CELL_LENGTH = 191;
-export const REQUIRED_IMPORT_COLUMNS = ['university_id', 'university_name', 'course_id', 'course_title', 'intake_year', 'intake_month'] as const;
+export const MAX_COURSE_TITLE_LENGTH = 512;
+export const REQUIRED_IMPORT_COLUMNS = ['university_id', 'university_name', 'course_id', 'course_title'] as const;
 
 export type CsvRow = Record<string, string>;
 
@@ -69,10 +71,27 @@ export interface RowIssue { column: string; message: string }
 
 export function validateCatalogueRow(row: CsvRow): RowIssue[] {
   const issues: RowIssue[] = [];
-  for (const c of REQUIRED_IMPORT_COLUMNS) if (!row[c]) issues.push({ column: c, message: `${c} is required` });
-  if (row.intake_year && !/^\d{4}$/.test(row.intake_year)) issues.push({ column: 'intake_year', message: 'intake_year must be a four-digit year' });
-  for (const [k, v] of Object.entries(row)) if (v.length > MAX_CELL_LENGTH) issues.push({ column: k, message: `${k} exceeds ${MAX_CELL_LENGTH} characters` });
-  for (const k of ['source_url', 'official_url', 'website']) {
+  for (const c of ['university_id', 'university_name']) if (!row[c]) issues.push({ column: c, message: `${c} is required` });
+  const hasCourseId = !!row.course_id;
+  const hasCourseTitle = !!row.course_title;
+  if (hasCourseId !== hasCourseTitle) issues.push({ column: hasCourseId ? 'course_title' : 'course_id', message: 'course_id and course_title must either both be provided or both be blank for a university-only row' });
+  const hasIntakeYear = !!row.intake_year;
+  const hasIntakeMonth = !!row.intake_month;
+  if (hasIntakeYear !== hasIntakeMonth) issues.push({ column: hasIntakeYear ? 'intake_month' : 'intake_year', message: 'intake_year and intake_month must either both be provided or both be blank' });
+  if (!hasCourseId && (hasIntakeYear || hasIntakeMonth)) issues.push({ column: 'course_id', message: 'Intake facts require a course_id and course_title' });
+  if (hasIntakeYear && !/^\d{4}$/.test(row.intake_year)) issues.push({ column: 'intake_year', message: 'intake_year must be a four-digit year' });
+  if (hasIntakeMonth && !/^(0[1-9]|1[0-2])$/.test(monthKey(row.intake_month))) issues.push({ column: 'intake_month', message: 'intake_month must be a month name or a number from 1 to 12' });
+  for (const [k, v] of Object.entries(row)) {
+    const maxLength = k === 'course_title' ? MAX_COURSE_TITLE_LENGTH : MAX_CELL_LENGTH;
+    if (v.length > maxLength) issues.push({ column: k, message: `${k} exceeds ${maxLength} characters` });
+  }
+  if (row.international_eligibility) {
+    const eligibility = row.international_eligibility.trim().toLowerCase();
+    if (!(INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES as readonly string[]).includes(eligibility)) {
+      issues.push({ column: 'international_eligibility', message: 'international_eligibility must use a supported status value' });
+    }
+  }
+  for (const k of ['source_url', 'official_url', 'website', 'university_website', 'university_official_url', 'university_source_url', 'course_official_url', 'course_source_url']) {
     const v = row[k];
     if (v && !/^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(v)) issues.push({ column: k, message: `${k} must be an http(s) URL` });
     else if (v && isSyntheticHost(v)) issues.push({ column: k, message: `${k} points to a reserved example domain; template/sample rows cannot be imported` });
@@ -150,7 +169,11 @@ export async function classifyCatalogueRows(rows: CsvRow[], lookup: CatalogueLoo
     const issues = validateCatalogueRow(row);
     if (issues.length) return { ...base, action: 'INVALID' as const, issues, entities: [], materialChanges: [] };
 
-    const fileKey = `${row.university_id}|${row.course_id}|${row.intake_year}|${monthKey(row.intake_month)}`;
+    const hasCourse = !!row.course_id && !!row.course_title;
+    const hasIntake = hasCourse && !!row.intake_year && !!row.intake_month;
+    const fileKey = hasCourse
+      ? `${row.university_id}|${row.course_id}|${hasIntake ? `${row.intake_year}|${monthKey(row.intake_month)}` : 'COURSE_ONLY'}`
+      : `${row.university_id}|UNIVERSITY_ONLY`;
     if (seenInFile.has(fileKey)) {
       return { ...base, action: 'INVALID' as const, issues: [{ column: 'course_id', message: 'Repeated university/course/intake row within this file' }], entities: [], materialChanges: [] };
     }
@@ -163,32 +186,36 @@ export async function classifyCatalogueRows(rows: CsvRow[], lookup: CatalogueLoo
       existing: existingUni,
       specs: UNIVERSITY_IMPORT_FIELDS,
       duplicateCheck: {
-        candidate: { id: row.university_id, name: row.university_name, country: row.country, website: row.website || row.official_url },
+        candidate: { id: row.university_id, name: row.university_name, country: row.country, website: row.university_website || row.website || row.university_official_url || row.official_url },
         pool: [...pool, ...newUniversitiesInFile],
       },
     });
     entities.push({ entity: 'university', result: uniResult });
     if (!existingUni && uniResult.action === 'NEW_PENDING_REVIEW' && !newUniversitiesInFile.some((u) => u.id === row.university_id)) {
-      newUniversitiesInFile.push({ id: row.university_id, name: row.university_name, country: row.country, website: row.website || row.official_url });
+      newUniversitiesInFile.push({ id: row.university_id, name: row.university_name, country: row.country, website: row.university_website || row.website || row.university_official_url || row.official_url });
     }
 
-    const existingCourse = courseById.get(row.course_id) ?? null;
-    if (existingCourse && existingCourse.universityId !== row.university_id) {
-      return { ...base, action: 'INVALID' as const, issues: [{ column: 'course_id', message: `course_id already belongs to university ${String(existingCourse.universityId)}` }], entities, materialChanges: [] };
+    let existingCourse: Record<string, unknown> | null = null;
+    let fee: Record<string, unknown> | null = null;
+    if (hasCourse) {
+      existingCourse = courseById.get(row.course_id) ?? null;
+      if (existingCourse && existingCourse.universityId !== row.university_id) {
+        return { ...base, action: 'INVALID' as const, issues: [{ column: 'course_id', message: `course_id already belongs to university ${String(existingCourse.universityId)}` }], entities, materialChanges: [] };
+      }
+      entities.push({ entity: 'course', result: classifyImportRow({ incoming: row, existing: existingCourse, specs: COURSE_IMPORT_FIELDS }) });
+
+      fee = hasIntake ? (feeByKey.get(`${row.course_id}|${row.intake_year}|${monthKey(row.intake_month)}`) ?? null) : null;
+      if (hasIntake) entities.push({ entity: 'intake_fee', result: classifyImportRow({ incoming: row, existing: fee, specs: INTAKE_FEE_IMPORT_FIELDS }) });
+
+      const req = reqByCourse.get(row.course_id) ?? null;
+      const hasReqColumns = REQUIREMENT_IMPORT_FIELDS.some((f) => row[f.column]);
+      if (hasReqColumns) entities.push({ entity: 'requirement', result: classifyImportRow({ incoming: row, existing: req, specs: REQUIREMENT_IMPORT_FIELDS }) });
     }
-    entities.push({ entity: 'course', result: classifyImportRow({ incoming: row, existing: existingCourse, specs: COURSE_IMPORT_FIELDS }) });
-
-    const fee = feeByKey.get(`${row.course_id}|${row.intake_year}|${monthKey(row.intake_month)}`) ?? null;
-    entities.push({ entity: 'intake_fee', result: classifyImportRow({ incoming: row, existing: fee, specs: INTAKE_FEE_IMPORT_FIELDS }) });
-
-    const req = reqByCourse.get(row.course_id) ?? null;
-    const hasReqColumns = REQUIREMENT_IMPORT_FIELDS.some((f) => row[f.column]);
-    if (hasReqColumns) entities.push({ entity: 'requirement', result: classifyImportRow({ incoming: row, existing: req, specs: REQUIREMENT_IMPORT_FIELDS }) });
 
     // A new child (course / intake / requirement) under an existing parent is
     // new data for review, not a change to a public value.
     const action = combineRowActions(entities.map((e) => e.result));
-    const newIntake = existingUni && existingCourse && !fee && action !== 'BLOCK_DUPLICATE'
+    const newIntake = hasIntake && existingUni && existingCourse && !fee && action !== 'BLOCK_DUPLICATE'
       ? {
           intakeKey: `${row.intake_year}-${monthKey(row.intake_month)}`,
           fields: INTAKE_FEE_IMPORT_FIELDS
@@ -212,6 +239,11 @@ export async function classifyCatalogueRows(rows: CsvRow[], lookup: CatalogueLoo
  */
 export function rowsForDraftStaging(rows: ClassifiedRow[]): ClassifiedRow[] {
   return rows.filter((r) => {
+    if (r.action === 'INVALID' || r.action === 'BLOCK_DUPLICATE') return false;
+    if (!r.courseId) return r.entities.some((e) => e.entity === 'university' && e.result.action === 'NEW_PENDING_REVIEW');
+    // A new course is safe to stage as an unverified draft even if the same
+    // row also proposes a university-field update for human review.
+    if (r.entities.some((e) => e.entity === 'course' && e.result.action === 'NEW_PENDING_REVIEW')) return true;
     if (r.action !== 'NEW_PENDING_REVIEW') return false;
     if (!r.newIntake) return true;
     return r.entities.some((e) => e.entity !== 'intake_fee' && e.result.action === 'NEW_PENDING_REVIEW');
@@ -239,7 +271,7 @@ export function toUpdateRequests(rows: ClassifiedRow[]) {
         fieldName: (c.entity === 'intake_fee' ? `intake:${r.row.intake_year}-${monthKey(r.row.intake_month)}:${c.field}` : c.entity === 'requirement' ? `requirement:${c.field}` : c.field).slice(0, 191),
         oldValue: c.oldValue.slice(0, 191),
         newValue: c.newValue.slice(0, 191),
-        evidenceUrl: (r.row.source_url || r.row.official_url || '').slice(0, 191),
+        evidenceUrl: (r.row.course_source_url || r.row.source_url || r.row.course_official_url || r.row.official_url || '').slice(0, 191),
         // Human CSV import, not an AI detection.
         aiConfidence: 0,
         status: 'pending_approval',
@@ -259,7 +291,7 @@ export function toUpdateRequests(rows: ClassifiedRow[]) {
         oldValue: '',
         // Values longer than the queue column are cut here and refused at apply time.
         newValue: f.newValue.slice(0, 191),
-        evidenceUrl: (r.row.source_url || r.row.official_url || '').slice(0, 191),
+        evidenceUrl: (r.row.course_source_url || r.row.source_url || r.row.course_official_url || r.row.official_url || '').slice(0, 191),
         aiConfidence: 0,
         status: 'pending_approval',
       });

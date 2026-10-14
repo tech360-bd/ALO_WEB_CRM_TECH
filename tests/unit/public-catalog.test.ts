@@ -98,7 +98,11 @@ describe('public visibility predicates', () => {
 
   it('never treats needs_review / draft records as public', () => {
     expect(JSON.stringify(publicCourseWhere())).not.toContain('NEEDS_REVIEW');
-    expect(JSON.stringify(publicIntakeWhere())).toEqual('{"status":"active","verificationStatus":"VERIFIED"}');
+    expect(publicIntakeWhere()).toEqual({
+      status: 'active',
+      verificationStatus: 'VERIFIED',
+      AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
+    });
   });
 
   it('looks up a single course by exact identifier only (no fuzzy title match)', () => {

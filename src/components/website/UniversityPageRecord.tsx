@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { BookOpen, Building2, ExternalLink, FileSearch, MapPin, ShieldCheck } from 'lucide-react';
+import { BookOpen, Building2, ChevronLeft, ChevronRight, ExternalLink, FileSearch, MapPin, ShieldCheck } from 'lucide-react';
 import { getCountryDestination } from '@/lib/country-destinations-data';
+import { VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES } from '@/lib/university-intake-window';
 
 type UniversityRecord = {
   id: string;
@@ -27,6 +28,7 @@ type UniversityRecord = {
     slug: string;
     name: string;
     level: string;
+    internationalEligibility: string;
     subject: string;
     duration: string;
     intake: string;
@@ -40,6 +42,13 @@ type UniversityRecord = {
     verificationStatus: string;
     approvalStatus: string;
   }>;
+};
+
+type CoursePagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
 };
 
 function display(value: unknown) {
@@ -60,11 +69,22 @@ function statusStyle(value: string) {
   return normalized === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700' : normalized.includes('CONFLICT') ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700';
 }
 
-export default function UniversityPageRecord({ university }: { university: UniversityRecord }) {
+export default function UniversityPageRecord({
+  university,
+  coursePagination,
+}: {
+  university: UniversityRecord;
+  coursePagination: CoursePagination;
+}) {
   const country = getCountryDestination(university.countrySlug) || getCountryDestination(university.country.slug);
   const sourceUrl = safeHttpUrl(university.sourceUrl);
   const countrySource = safeHttpUrl(university.country.sourceUrl);
-  const listedCourses = university.courses.filter((course) => course.approvalStatus === 'PUBLISHED' && course.verificationStatus.toUpperCase() === 'VERIFIED' && safeHttpUrl(course.sourceUrl));
+  const listedCourses = university.courses.filter((course) =>
+    course.approvalStatus === 'PUBLISHED'
+      && course.verificationStatus.toUpperCase() === 'VERIFIED'
+      && (VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES as readonly string[]).includes(course.internationalEligibility.trim().toLowerCase())
+      && safeHttpUrl(course.sourceUrl),
+  );
   const status = String(university.verificationStatus || 'RESEARCH_REQUIRED').toUpperCase();
   const jsonLd = {
     '@context': 'https://schema.org', '@type': 'CollegeOrUniversity', name: university.name,
@@ -85,7 +105,54 @@ export default function UniversityPageRecord({ university }: { university: Unive
 
         <section className="mt-5 grid gap-4 sm:grid-cols-2"><FactCard icon={<FileSearch className="h-4 w-4 text-blue-700" />} title="Recorded strengths" value={university.strengths} /><FactCard icon={<BookOpen className="h-4 w-4 text-purple-700" />} title="Recorded quick facts" value={university.quickFacts} /><FactCard icon={<FileSearch className="h-4 w-4 text-amber-700" />} title="Entry requirements" value={university.entryRequirements} /><FactCard icon={<FileSearch className="h-4 w-4 text-emerald-700" />} title="Tuition record" value={university.tuition} /></section>
 
-        <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"><div className="flex items-center justify-between gap-3"><div><div className="text-[10px] font-bold uppercase tracking-[0.14em] text-blue-700">Dedicated course records</div><h2 className="mt-1 text-lg font-black text-slate-900">Courses linked to {university.name}</h2><p className="mt-1 text-[10px] text-slate-500">Only published, source-linked and verified CoursePage rows appear below. This list is not a claim of full catalogue coverage.</p></div><BookOpen className="h-5 w-5 text-slate-400" /></div>{listedCourses.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{listedCourses.map((course) => <article key={course.id} className="rounded-xl border border-slate-200 p-4"><div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-blue-50 px-2 py-1 text-[8px] font-bold text-blue-700">{display(course.level)}</span><span className={`rounded-full px-2 py-1 text-[8px] font-bold ${statusStyle(course.verificationStatus)}`}>{course.verificationStatus}</span></div><h3 className="mt-2 text-sm font-bold text-slate-900">{course.name}</h3><p className="mt-1 text-[10px] text-slate-600">{display(course.subject)} · Intake: {display(course.intake)} · Duration: {display(course.duration)}</p><p className="mt-1 text-[10px] text-slate-600">Tuition: {display(course.tuition)}</p><a href={safeHttpUrl(course.sourceUrl) || '#'} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-[9px] font-bold text-blue-700 hover:underline">Official course source <ExternalLink className="h-3 w-3" /></a><Link href={`/courses/${course.slug}`} className="ml-3 mt-3 inline-flex text-[9px] font-bold text-slate-700 hover:underline">Course details →</Link></article>)}</div> : <div className="mt-4 rounded-xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500">No published, verified course page is currently linked in this university profile. This does not establish that no courses exist.</div>}</section>
+        <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-blue-700">International-eligible course records</div>
+              <h2 className="mt-1 text-lg font-black text-slate-900">Courses linked to {university.name}</h2>
+              <p className="mt-1 text-[10px] text-slate-500">Only published, source-linked and verified course records with an explicit positive international-eligibility status appear here. This is not a claim of complete university-catalogue coverage.</p>
+            </div>
+            <BookOpen className="h-5 w-5 text-slate-400" />
+          </div>
+          {listedCourses.length ? (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {listedCourses.map((course) => {
+                const courseSource = safeHttpUrl(course.sourceUrl);
+                return (
+                  <article key={course.id} className="rounded-xl border border-slate-200 p-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-blue-50 px-2 py-1 text-[8px] font-bold text-blue-700">{display(course.level)}</span>
+                      <span className="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-bold text-emerald-700">International eligible</span>
+                      <span className={`rounded-full px-2 py-1 text-[8px] font-bold ${statusStyle(course.verificationStatus)}`}>{course.verificationStatus}</span>
+                    </div>
+                    <h3 className="mt-2 text-sm font-bold text-slate-900">{course.name}</h3>
+                    <p className="mt-1 text-[10px] text-slate-600">{display(course.subject)} · Intake: {display(course.intake)} · Duration: {display(course.duration)}</p>
+                    <p className="mt-1 text-[10px] text-slate-600">Tuition: {display(course.tuition)} · Eligibility: {course.internationalEligibility}</p>
+                    {courseSource && <a href={courseSource} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-[9px] font-bold text-blue-700 hover:underline">Official course source <ExternalLink className="h-3 w-3" /></a>}
+                    <Link href={`/courses/${course.slug}`} className="ml-3 mt-3 inline-flex text-[9px] font-bold text-slate-700 hover:underline">Course details →</Link>
+                    <p className="mt-2 text-[9px] text-slate-500">Last checked: {course.lastVerifiedAt ? new Date(course.lastVerifiedAt).toLocaleDateString() : 'Not recorded'}</p>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-4 rounded-xl border border-dashed border-slate-200 p-8 text-center text-xs text-slate-500">No published course page with a verified, explicit international-eligibility decision is currently linked here. This does not establish that the university offers no internationally eligible courses.</div>
+          )}
+          {coursePagination.totalPages > 1 && (
+            <nav aria-label="International-eligible course pages" className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+              <span className="text-[10px] text-slate-500">Showing {(coursePagination.page - 1) * coursePagination.pageSize + 1}–{Math.min(coursePagination.page * coursePagination.pageSize, coursePagination.total)} of {coursePagination.total} verified eligible course records</span>
+              <div className="flex items-center gap-2">
+                {coursePagination.page > 1 ? (
+                  <Link href={`/universities/${encodeURIComponent(university.slug)}?coursesPage=${coursePagination.page - 1}`} className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-[10px] font-bold text-slate-700 hover:bg-slate-50"><ChevronLeft className="h-3.5 w-3.5" />Previous</Link>
+                ) : <span className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-100 px-3 text-[10px] text-slate-300"><ChevronLeft className="h-3.5 w-3.5" />Previous</span>}
+                <span className="text-[10px] font-semibold text-slate-600">Page {coursePagination.page} of {coursePagination.totalPages}</span>
+                {coursePagination.page < coursePagination.totalPages ? (
+                  <Link href={`/universities/${encodeURIComponent(university.slug)}?coursesPage=${coursePagination.page + 1}`} className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-[10px] font-bold text-slate-700 hover:bg-slate-50">Next<ChevronRight className="h-3.5 w-3.5" /></Link>
+                ) : <span className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-100 px-3 text-[10px] text-slate-300">Next<ChevronRight className="h-3.5 w-3.5" /></span>}
+              </div>
+            </nav>
+          )}
+        </section>
 
         <section className="mt-5 grid gap-4 lg:grid-cols-2"><FactCard icon={<FileSearch className="h-4 w-4 text-slate-600" />} title="Application steps" value={university.applicationSteps} /><FactCard icon={<FileSearch className="h-4 w-4 text-slate-600" />} title="Required documents" value={university.documents} /><FactCard icon={<FileSearch className="h-4 w-4 text-slate-600" />} title="Published FAQs" value={university.faqs} /><div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="text-sm font-bold text-slate-900">Media coverage</h2><p className="mt-2 text-xs leading-5 text-slate-600">No university-specific hero image or descriptive image-alt record is attached to this page model. Image coverage is marked for review rather than substituted with a generic campus photo.</p></div></section>
 

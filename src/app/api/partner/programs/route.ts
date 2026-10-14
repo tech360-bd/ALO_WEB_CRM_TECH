@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere } from '@/lib/public-catalog';
 
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
@@ -11,6 +12,7 @@ export async function GET(request: NextRequest) {
       if (!isAuthorized) {
         return NextResponse.json({ success: false, error: 'UNAUTHORIZED: Partner authority required' }, { status: 403 });
       }
+      const isInternalAdmin = auth.roles.some((r) => ['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin'].includes(r));
 
       const { searchParams } = new URL(req.url);
       const studentId = searchParams.get('studentId') || '';
@@ -35,7 +37,8 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      const where: any = {};
+      // External partners see only the same approved public course catalogue as students.
+      const where: any = isInternalAdmin ? {} : publicCourseWhere();
       if (search) {
         where.OR = [
           { courseTitle: { contains: search } },
@@ -64,9 +67,19 @@ export async function GET(request: NextRequest) {
                 slug: true,
               },
             },
-            intakeFees: { take: 2, orderBy: { intakeYear: 'asc' } },
-            requirements: { take: 1 },
-            scholarshipRecords: { take: 2, where: { status: 'active' } },
+            intakeFees: {
+              ...(!isInternalAdmin ? { where: publicIntakeWhere() } : {}),
+              take: 2,
+              orderBy: { intakeYear: 'asc' },
+            },
+            requirements: {
+              ...(!isInternalAdmin ? { where: publicRequirementWhere() } : {}),
+              take: 1,
+            },
+            scholarshipRecords: {
+              ...(!isInternalAdmin ? { where: publicScholarshipWhere() } : { where: { status: 'active' } }),
+              take: 2,
+            },
             commissions: {
               take: 1,
               select: {

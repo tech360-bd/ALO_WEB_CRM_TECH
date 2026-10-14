@@ -34,14 +34,15 @@ A blank cell never clears a stored value.
 
 ## Columns
 
-These columns are required: `university_id`, `university_name`, `course_id`, `course_title`, `intake_year` (4 digits) and `intake_month` (for example `September` or `09`).
+The CSV header must include `university_id`, `university_name`, `course_id`, and `course_title`. For a university-only candidate, leave both course cells blank; otherwise provide both course fields. `intake_year` (four digits) and `intake_month` (for example `September` or `09`) are optional, but they must either both be provided or both be blank. A university/course discovery can therefore be staged without inventing a course, intake, or fee.
 
 All other columns are optional:
 
 - **University:** `country`, `city`, `campus_name`, `university_type`, `founded`
-- **University URLs:** `website`, `official_url`, `source_url`
+- **University URLs:** `website`, `official_url`, `source_url`, or the unambiguous `university_website`, `university_official_url`, `university_source_url`
 - **Course:** `study_level`, `program_level`, `subject_area`, `discipline_area`, `duration_months`
-- **Intake:** `application_deadline`
+- **Course URLs and eligibility:** `course_official_url`, `course_source_url`, `international_eligibility`
+- **Intake:** `intake_name`, `application_deadline`
 - **Fees:** `tuition_currency`, `yearly_tuition`, `total_tuition`, `deposit_currency`, `deposit_amount`, `app_fee_currency`, `app_fee_amount`
 - **Academic requirements:** `academic_req`, `grading_system`, `min_score`
 - **English scores:** `ielts_overall`, `ielts_min_band`, `pte_overall`, `pte_min_band`, `toefl_overall`, `det_overall`
@@ -50,7 +51,7 @@ All other columns are optional:
 Validation rules:
 
 - At most 500 rows per file.
-- At most 191 characters per cell.
+- At most 191 characters per cell, except `course_title` (up to 512 characters to preserve official research-project titles).
 - URLs must be `http(s)`.
 - `SAMPLE-` IDs and reserved example domains (`example.com/org/net`, `.example`, `.invalid`, `.test`, `localhost`) are rejected.
 - Formula-like cells are neutralised.

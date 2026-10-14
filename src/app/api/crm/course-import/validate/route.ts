@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
+import { INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES, normalizeIntakeMonth } from '@/lib/university-intake-window';
+import { MAX_CELL_LENGTH, MAX_COURSE_TITLE_LENGTH } from '@/lib/course-finder/catalogue-import-service';
 import {
   COURSE_COLUMNS,
   VALID_CURRENCIES,
@@ -28,11 +30,43 @@ function validateRow(
 ): ValidationError[] {
   const errors: ValidationError[] = [];
 
-  // Required fields
+  // Required fields and storage-width limits
   for (const field of REQUIRED_FIELDS) {
     if (!row[field] || row[field].trim() === '') {
       errors.push({ row: rowIndex, field, message: `${field} is required`, severity: 'error' });
     }
+  }
+  for (const [field, value] of Object.entries(row)) {
+    const limit = field === 'course_title' ? MAX_COURSE_TITLE_LENGTH : MAX_CELL_LENGTH;
+    if (value.length > limit) errors.push({ row: rowIndex, field, message: `${field} exceeds ${limit} characters`, severity: 'error' });
+  }
+
+  const uid = (row['university_id'] || '').trim();
+  const cid = (row['course_id'] || '').trim();
+  const courseTitle = (row['course_title'] || '').trim();
+  const hasCourse = !!cid && !!courseTitle;
+  if (!!cid !== !!courseTitle) {
+    errors.push({ row: rowIndex, field: cid ? 'course_title' : 'course_id', message: 'course_id and course_title must both be provided, or both be blank for a university-only row', severity: 'error' });
+  }
+
+  const iyear = (row['intake_year'] || '').trim();
+  const imonth = (row['intake_month'] || '').trim();
+  if (!!iyear !== !!imonth) {
+    errors.push({ row: rowIndex, field: iyear ? 'intake_month' : 'intake_year', message: 'intake_year and intake_month must be provided together or both left blank', severity: 'error' });
+  }
+  if (!hasCourse && (iyear || imonth)) {
+    errors.push({ row: rowIndex, field: 'course_id', message: 'Intake facts require both course_id and course_title', severity: 'error' });
+  }
+  if (iyear && !/^\d{4}$/.test(iyear)) {
+    errors.push({ row: rowIndex, field: 'intake_year', message: 'intake_year must be a four-digit year', severity: 'error' });
+  }
+  if (imonth && !normalizeIntakeMonth(imonth)) {
+    errors.push({ row: rowIndex, field: 'intake_month', message: 'intake_month must be a month name or a number from 1 to 12', severity: 'error' });
+  }
+
+  const eligibility = (row['international_eligibility'] || '').trim().toLowerCase();
+  if (eligibility && !(INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES as readonly string[]).includes(eligibility)) {
+    errors.push({ row: rowIndex, field: 'international_eligibility', message: 'international_eligibility must use a supported status value', severity: 'error' });
   }
 
   // Currency validation
@@ -114,18 +148,26 @@ function validateRow(
     }
   }
 
-  // Duplicate key check (only if required fields are present)
-  const uid = (row['university_id'] || '').trim();
-  const cid = (row['course_id'] || '').trim();
-  const iyear = (row['intake_year'] || '').trim();
-  const imonth = (row['intake_month'] || '').trim();
-  if (uid && cid && iyear && imonth) {
-    const key = buildDuplicateKey(uid, cid, iyear, imonth);
+  // Duplicate keys distinguish university-only, course-only, and intake candidates.
+  if (uid && !cid && !courseTitle) {
+    const key = `${uid}|UNIVERSITY_ONLY`;
+    if (existingKeys.has(key)) {
+      errors.push({ row: rowIndex, field: 'duplicate_key', message: `Duplicate university candidate: ${uid}`, severity: 'error' });
+    }
+    existingKeys.add(key);
+  } else if (uid && hasCourse) {
+    const monthNumber = normalizeIntakeMonth(imonth);
+    const normalizedMonth = monthNumber ? String(monthNumber).padStart(2, '0') : imonth.trim().toLowerCase();
+    const key = iyear && imonth
+      ? buildDuplicateKey(uid, cid, iyear, normalizedMonth)
+      : `${uid}|${cid}|COURSE_ONLY`;
     if (existingKeys.has(key)) {
       errors.push({
         row: rowIndex,
         field: 'duplicate_key',
-        message: `Duplicate row: university_id=${uid}, course_id=${cid}, intake_year=${iyear}, intake_month=${imonth}`,
+        message: iyear && imonth
+          ? `Duplicate row: university_id=${uid}, course_id=${cid}, intake_year=${iyear}, intake_month=${imonth}`
+          : `Duplicate course-only row: university_id=${uid}, course_id=${cid}`,
         severity: 'error',
       });
     }
@@ -142,13 +184,13 @@ function validateRow(
     });
   }
 
-  // Missing source_url warning
-  const sourceUrl = (row['source_url'] || '').trim();
-  if (!sourceUrl) {
+  // Only course discoveries require course-source review; university-only rows have separate URL fields.
+  const sourceUrl = (row['course_source_url'] || row['source_url'] || row['course_official_url'] || row['official_url'] || '').trim();
+  if (hasCourse && !sourceUrl) {
     errors.push({
       row: rowIndex,
-      field: 'source_url',
-      message: 'source_url is empty. Course status will be auto-set to "needs_official_source".',
+      field: 'course_source_url',
+      message: 'No course source URL is provided; course facts still require official-source review before publication.',
       severity: 'warning',
     });
   }
@@ -178,12 +220,13 @@ export async function POST(request: Request) {
     });
     const existingKeys = new Set<string>();
     for (const intake of existingIntakes) {
+      const monthNumber = normalizeIntakeMonth(intake.intakeMonth);
       existingKeys.add(
         buildDuplicateKey(
           intake.universityId,
           intake.courseId,
           String(intake.intakeYear),
-          intake.intakeMonth
+          monthNumber ? String(monthNumber).padStart(2, '0') : intake.intakeMonth.trim().toLowerCase()
         )
       );
     }

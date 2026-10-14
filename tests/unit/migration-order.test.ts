@@ -41,13 +41,15 @@ function applySql(state: SqlState, sql: string, dir: string, violations: string[
     }
     state.set(table, cols);
   }
-  // One pass handles both single-column and multi-column ADD COLUMN statements.
-  // Keeping a separate single-column pass here would visit each column from a
-  // multi-column ALTER twice and report false duplicate-column violations.
-  for (const m of sql.matchAll(/ALTER TABLE `(\w+)`(?:\s*\n|\s+)((?:\s*ADD COLUMN [^\n]+\n?)+)/g)) {
+  // Scan each complete ALTER TABLE statement, not just a leading run of ADD
+  // clauses: MySQL allows MODIFY/INDEX/other clauses before ADD COLUMN, and the
+  // schema simulator must still account for every added scalar column.
+  for (const m of sql.matchAll(/ALTER TABLE `(\w+)`([\s\S]*?);/g)) {
     const table = m[1];
+    const additions = [...m[2].matchAll(/\bADD\s+COLUMN\s+`(\w+)`/g)];
+    if (!additions.length) continue;
     if (!state.has(table)) { violations.push(`${dir}: ALTER TABLE ${table} before it exists`); continue; }
-    for (const cm of m[2].matchAll(/ADD COLUMN `(\w+)`/g)) {
+    for (const cm of additions) {
       const col = cm[1];
       if (state.get(table)!.has(col)) violations.push(`${dir}: ADD COLUMN ${table}.${col} duplicates an existing column`);
       else state.get(table)!.add(col);
@@ -110,6 +112,11 @@ describe('prisma migration chain (re-baselined 2026-10-01)', () => {
     expect(violations).toEqual([]);
     expect(state.get('User')?.has('emailVerified')).toBe(true);
     expect(state.get('Document')).toEqual(new Set(['id', 'mimeType', 'fileHash']));
+
+    const mixedAlterViolations: string[] = [];
+    applySql(state, 'ALTER TABLE `User`\n  MODIFY COLUMN `id` VARCHAR(191) NOT NULL,\n  ADD COLUMN `role` VARCHAR(191) NULL;', 'parser-mixed-fixture', mixedAlterViolations);
+    expect(mixedAlterViolations).toEqual([]);
+    expect(state.get('User')?.has('role')).toBe(true);
 
     const duplicateViolations: string[] = [];
     applySql(state, 'ALTER TABLE `User`\n  ADD COLUMN `emailVerified` BOOLEAN NOT NULL DEFAULT false;', 'parser-duplicate-fixture', duplicateViolations);

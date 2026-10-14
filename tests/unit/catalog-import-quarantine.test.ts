@@ -34,7 +34,7 @@ it('legacy exporter is disabled before client construction; bulk update cannot p
   expect(exporter.indexOf('throw new Error')).toBeLessThan(exporter.indexOf('new PrismaClient'));
   const confirm = readFileSync('src/app/api/crm/course-import/confirm/route.ts', 'utf8');
   expect(confirm).toContain('Reviewed or published catalogue records require a reviewed update request');
-  expect(confirm.match(/publicationStatus: 'draft'/g)).toHaveLength(5);
+  expect(confirm.match(/publicationStatus: 'draft'/g)).toHaveLength(6);
   expect(confirm).not.toContain('lastVerifiedAt: new Date');
 });
 

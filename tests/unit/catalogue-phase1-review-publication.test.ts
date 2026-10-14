@@ -96,7 +96,9 @@ import LegacyCourseRoute from '@/app/course/[slug]/page';
 import sitemap from '@/app/sitemap';
 import {
   passesPublicCoursePagePolicy,
+  passesPublicInternationalCoursePagePolicy,
   publicCoursePageWhere,
+  publicInternationalCoursePageWhere,
   publicUniversityPageWhere,
 } from '@/lib/course-finder/public-content-page-policy';
 import { publicCourseWhere } from '@/lib/public-catalog';
@@ -104,7 +106,7 @@ import { isStaticAssetBypass } from '@/proxy';
 
 const OK_SRC = 'https://www.auckland.ac.nz/en/study/x.html';
 const uni = (slug: string, over: Rec = {}) => ({ id: slug, slug, name: slug, city: 'Auckland', countrySlug: 'new-zealand', overview: `${slug} overview`, quickFacts: '{}', strengths: '[]', entryRequirements: '{}', tuition: '{}', applicationSteps: '[]', documents: '[]', faqs: '[]', approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: OK_SRC, lastVerifiedAt: null, updatedAt: new Date(), ...over });
-const course = (slug: string, over: Rec = {}) => ({ id: slug, slug, name: `Course ${slug}`, universitySlug: 'uni-ok', countrySlug: 'new-zealand', city: 'Auckland', level: 'Masters', subject: 'Data', duration: '', intake: '', tuition: '', scholarship: null, englishRequirement: '', academicRequirement: '', overview: `${slug} overview`, modules: '[]', careerOutcomes: '[]', documents: '[]', faqs: '[]', deadline: null, approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: OK_SRC, lastVerifiedAt: null, updatedAt: new Date(), ...over });
+const course = (slug: string, over: Rec = {}) => ({ id: slug, slug, name: `Course ${slug}`, universitySlug: 'uni-ok', countrySlug: 'new-zealand', city: 'Auckland', level: 'Masters', subject: 'Data', duration: '', intake: '', tuition: '', scholarship: null, englishRequirement: '', academicRequirement: '', overview: `${slug} overview`, modules: '[]', careerOutcomes: '[]', documents: '[]', faqs: '[]', deadline: null, internationalEligibility: 'eligible', approvalStatus: 'PUBLISHED', verificationStatus: 'VERIFIED', sourceUrl: OK_SRC, lastVerifiedAt: null, updatedAt: new Date(), ...over });
 
 const PUBLIC_COURSE = 'c-ok';
 const HIDDEN_COURSES: Record<string, Rec> = {
@@ -153,6 +155,20 @@ describe('P0-C shared policy for UniversityPage / CoursePage', () => {
     expect(passesPublicCoursePagePolicy(course('x', { sourceUrl: 'https://catalogue.example.com/x' }))).toBe(false);
     expect(passesPublicCoursePagePolicy(course('x'))).toBe(true);
   });
+
+  it('international course pages require an explicit positive eligibility status', async () => {
+    const conflicts = { courseSlugs: [], universitySlugs: [] };
+    const eligible = course('eligible', { internationalEligibility: 'eligible for international students' });
+    const unknown = course('unknown-eligibility', { internationalEligibility: 'not_verified' });
+    const closed = course('closed-to-international', { internationalEligibility: 'domestic_only' });
+    h.data.coursePage = [eligible, unknown, closed];
+    const where = publicInternationalCoursePageWhere(conflicts);
+    const visible = (await h.db.coursePage.findMany({ where })).filter((row: Rec) => passesPublicInternationalCoursePagePolicy(row, conflicts));
+    expect(slugs(visible)).toEqual(['eligible']);
+    expect(JSON.stringify(where)).toContain('internationalEligibility');
+    expect(passesPublicInternationalCoursePagePolicy(unknown, conflicts)).toBe(false);
+    expect(passesPublicInternationalCoursePagePolicy(closed, conflicts)).toBe(false);
+  });
 });
 
 describe('P0-C public surfaces apply the policy', () => {
@@ -197,7 +213,8 @@ describe('P0-C public surfaces apply the policy', () => {
     }
   });
 
-  it('direct /universities/[slug] URLs 404 unless public, and embed only public courses', async () => {
+  it('direct /universities/[slug] URLs 404 unless public, and embed only verified internationally eligible courses', async () => {
+    h.data.coursePage.push(course('c-not-internationally-eligible', { internationalEligibility: 'not_verified' }));
     const el: any = await UniversityPageRoute({ params: Promise.resolve({ slug: 'uni-ok' }) });
     const embedded = slugs(el.props.university.courses);
     expect(embedded).toEqual([PUBLIC_COURSE]);

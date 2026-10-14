@@ -61,12 +61,9 @@ export type StartRunResult =
   | { status: 'NOT_DUE'; nextRunAt: Date | null }
   | { status: 'DISABLED' };
 
-/** Compute the next 7-day boundary, normalised to 03:00 local server time. */
+/** Exactly seven elapsed days later; independent of the host/server timezone. */
 export function computeNextRunAt(from: Date = new Date()): Date {
-  const next = new Date(from);
-  next.setDate(next.getDate() + MONITORING_INTERVAL_DAYS);
-  next.setHours(3, 0, 0, 0);
-  return next;
+  return new Date(from.getTime() + MONITORING_INTERVAL_DAYS * 86_400_000);
 }
 
 /**
@@ -75,20 +72,21 @@ export function computeNextRunAt(from: Date = new Date()): Date {
  * database that has not been seeded yet.
  */
 export async function ensureMonitoringJob() {
-  const existing = await db.monitoringJob.findUnique({ where: { jobId: MONITORING_JOB_ID } });
-  if (existing) return existing;
-
-  return db.monitoringJob.create({
-    data: {
+  return db.monitoringJob.upsert({
+    where: { jobId: MONITORING_JOB_ID },
+    update: {},
+    create: {
       jobId: MONITORING_JOB_ID,
       name: MONITORING_JOB_NAME,
       description:
-        'Monitors official university, government, education-authority and ' +
-        'immigration sources every 7 days, detects changes, and routes them to ' +
-        'the Super Admin approval queue. Never mutates production data directly.',
-      schedule: '0 3 * * 1', // every Monday 03:00 — a 7-day cadence
+        'Polls the persistent seven-day schedule, checks only verified official sources, ' +
+        'records snapshots and routes candidate changes to Super Admin review. ' +
+        'No extracted information is published automatically.',
+      schedule: '*/5 * * * *', // scheduler poll; persisted nextRunAt enforces the seven-day data cycle
       enabled: true,
-      nextRunAt: computeNextRunAt(),
+      nextRunAt: new Date(), // baseline scan is due on first install
+      maxRetries: 3,
+      retryDelayMs: 60_000,
     },
   });
 }
@@ -104,11 +102,18 @@ export async function reclaimExpiredLock(): Promise<boolean> {
   if (!job || !job.lockedBy) return false;
   if (job.lockExpiresAt && job.lockExpiresAt > now) return false; // still valid
 
-  // Lock is stale — the holder died. Reclaim it.
-  await db.monitoringJob.update({
-    where: { id: job.id },
+  // Compare-and-set reclaim: a concurrent runner may have renewed the lease
+  // since our read. Never clear a lock unless the row still has this exact
+  // expired owner/lease state.
+  const reclaimed = await db.monitoringJob.updateMany({
+    where: {
+      id: job.id,
+      lockedBy: job.lockedBy,
+      OR: [{ lockExpiresAt: null }, { lockExpiresAt: { lte: now } }],
+    },
     data: { lockedBy: null, lockedAt: null, lockExpiresAt: null, lastRunStatus: 'FAILED', failedRuns: { increment: 1 } },
   });
+  if (reclaimed.count !== 1) return false;
 
   if (job.lastRunId) {
     await db.verificationRun
@@ -168,6 +173,16 @@ async function releaseLock(jobRowId: string, instanceId: string, data: Record<st
   });
 }
 
+/** Extend only a still-live lease we own; never revive a lease another runner reclaimed. */
+async function renewLock(jobRowId: string, instanceId: string): Promise<boolean> {
+  const now = new Date();
+  const renewed = await db.monitoringJob.updateMany({
+    where: { id: jobRowId, lockedBy: instanceId, lockExpiresAt: { gt: now } },
+    data: { lockedAt: now, lockExpiresAt: new Date(now.getTime() + LOCK_TTL_MS) },
+  });
+  return renewed.count === 1;
+}
+
 /** Is the job due to run according to its persisted nextRunAt? */
 export async function isDue(): Promise<{ due: boolean; nextRunAt: Date | null; enabled: boolean }> {
   const job = await ensureMonitoringJob();
@@ -214,33 +229,69 @@ export async function startMonitoringRun(
     };
   }
 
-  // Human-readable, collision-resistant run key.
+  // The run row, job pointer, and audit event are committed atomically after
+  // acquiring the lease. A crash cannot leave an untracked RUNNING row.
   const runKey = `VR-${new Date().toISOString().slice(0, 10)}-${Date.now().toString(36).toUpperCase()}`;
-  const run = await db.verificationRun.create({
-    data: { jobId: job.id, runId: runKey, status: 'RUNNING', startedAt: new Date() },
-  });
+  let run: any;
+  try {
+    run = await db.$transaction(async (tx) => {
+      const lease = await tx.monitoringJob.updateMany({
+        where: { id: job.id, lockedBy: instanceId, lockExpiresAt: { gt: new Date() } },
+        data: { lockedAt: new Date(), lockExpiresAt: new Date(Date.now() + LOCK_TTL_MS) },
+      });
+      if (lease.count !== 1) throw new Error('Monitoring lease expired before the run could be initialized.');
+      const previousRun = job.lastRunId && job.lastRunStatus === 'FAILED'
+        ? await tx.verificationRun.findUnique({ where: { id: job.lastRunId }, select: { retryCount: true } })
+        : null;
+      const retryCount = previousRun?.retryCount ?? 0;
+      const createdRun = await tx.verificationRun.create({
+        data: { jobId: job.id, runId: runKey, status: 'RUNNING', startedAt: new Date(), retryCount },
+      });
+      await tx.monitoringJob.update({
+        where: { id: job.id },
+        data: {
+          lastRunId: createdRun.id,
+          lastRunStartedAt: new Date(),
+          lastRunStatus: 'RUNNING',
+          totalRuns: { increment: 1 },
+        },
+      });
+      await tx.monitoringLog.create({
+        data: {
+          runId: createdRun.id,
+          jobId: job.id,
+          level: 'AUDIT',
+          message: `${trigger === 'SCHEDULER' ? 'Scheduled' : 'Manual'} monitoring run ${runKey} started by ${actorLabel} (scope: ${scope})`,
+          metadata: JSON.stringify({ trigger, actorId, actorLabel, scope, instanceId, limit: limit ?? 50 }),
+        },
+      });
+      return createdRun;
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await releaseLock(job.id, instanceId, {
+      lastRunCompletedAt: new Date(),
+      lastRunStatus: 'FAILED',
+      failedRuns: { increment: 1 },
+      nextRunAt: computeNextRunAt(),
+    }).catch(() => undefined);
+    await db.monitoringLog.create({
+      data: { jobId: job.id, level: 'ERROR', message: `Monitoring run ${runKey} could not be initialized: ${message}` },
+    }).catch(() => undefined);
+    return { status: 'FAILED', runId: '', runKey, error: message };
+  }
 
-  await db.monitoringJob.update({
-    where: { id: job.id },
-    data: {
-      lastRunId: run.id,
-      lastRunStartedAt: new Date(),
-      lastRunStatus: 'RUNNING',
-      totalRuns: { increment: 1 },
-    },
-  });
-
-  await db.monitoringLog
-    .create({
-      data: {
-        runId: run.id,
-        jobId: job.id,
-        level: 'AUDIT',
-        message: `${trigger === 'SCHEDULER' ? 'Scheduled' : 'Manual'} monitoring run ${runKey} started by ${actorLabel} (scope: ${scope})`,
-        metadata: JSON.stringify({ trigger, actorId, actorLabel, scope, instanceId, limit: limit ?? 50 }),
-      },
-    })
-    .catch(() => undefined);
+  let leaseLost = false;
+  let renewalInFlight = false;
+  const heartbeat = setInterval(() => {
+    if (renewalInFlight || leaseLost) return;
+    renewalInFlight = true;
+    void renewLock(job.id, instanceId)
+      .then((renewed) => { if (!renewed) leaseLost = true; })
+      .catch((error) => { console.error('[university-monitoring] lock renewal failed', error); })
+      .finally(() => { renewalInFlight = false; });
+  }, Math.floor(LOCK_TTL_MS / 3));
+  heartbeat.unref?.();
 
   try {
     const result = await runMonitoringCycle(run.id, {
@@ -248,18 +299,26 @@ export async function startMonitoringRun(
       limit: limit ?? 50,
     });
 
-    const status = result.counts.failedSources > 0 && result.counts.sourcesChecked > 0 ? 'PARTIAL' : 'COMPLETED';
+    const stillOwnsLease = await renewLock(job.id, instanceId);
+    clearInterval(heartbeat);
+    if (leaseLost || !stillOwnsLease) throw new Error('Monitoring lease was lost; another runner may own the job.');
+
+    const needsRetry = result.counts.failedSources > 0 || result.counts.sourcesDeferred > 0;
+    // A run with no configured/due sources is explicitly PARTIAL so dashboards
+    // do not mistake an empty queue for verified coverage.
+    const status = needsRetry || result.counts.sourcesChecked === 0 ? 'PARTIAL' : 'COMPLETED';
 
     await db.verificationRun.update({
       where: { id: run.id },
       data: { status, completedAt: new Date(), ...result.counts, aiReportSummary: result.aiReportSummary },
     });
 
-    const nextRunAt = computeNextRunAt();
+    const retryDelayMs = Math.max(60_000, job.retryDelayMs || 60_000);
+    const nextRunAt = needsRetry ? new Date(Date.now() + retryDelayMs) : computeNextRunAt();
     await releaseLock(job.id, instanceId, {
       lastRunCompletedAt: new Date(),
       lastRunStatus: status,
-      successfulRuns: { increment: 1 },
+      ...(status === 'COMPLETED' ? { successfulRuns: { increment: 1 } } : {}),
       nextRunAt,
     });
 
@@ -280,20 +339,24 @@ export async function startMonitoringRun(
 
     return { status, runId: run.id, runKey, counts: result.counts, aiReportSummary: result.aiReportSummary };
   } catch (err) {
+    clearInterval(heartbeat);
     const message = err instanceof Error ? err.message : String(err);
 
+    const failedRetryCount = run.retryCount + 1;
+    const retryDelayMs = Math.max(60_000, job.retryDelayMs || 60_000);
+    const retryAllowed = failedRetryCount <= Math.max(0, job.maxRetries || 0);
     await db.verificationRun.update({
       where: { id: run.id },
-      data: { status: 'FAILED', completedAt: new Date(), errorMessage: message, retryCount: { increment: 1 } },
+      data: { status: 'FAILED', completedAt: new Date(), errorMessage: message, retryCount: failedRetryCount },
     });
 
-    // A failed run must not block the schedule forever: release the lock and
-    // still advance nextRunAt so the next cycle is attempted on cadence.
+    // Failed work is retried after the configured delay for a bounded number of
+    // attempts; the seven-day cadence resumes after retries are exhausted.
     await releaseLock(job.id, instanceId, {
       lastRunCompletedAt: new Date(),
       lastRunStatus: 'FAILED',
       failedRuns: { increment: 1 },
-      nextRunAt: computeNextRunAt(),
+      nextRunAt: retryAllowed ? new Date(Date.now() + retryDelayMs) : computeNextRunAt(),
     });
 
     await db.monitoringLog
@@ -346,7 +409,7 @@ export async function deliverRunReport(
   await db.auditLog
     .create({
       data: {
-        userId: actorId || '',
+        userId: actorId || null,
         action: 'UNIVERSITY_MONITORING_REPORT_GENERATED',
         resource: 'VerificationRun',
         resourceId: runRowId,

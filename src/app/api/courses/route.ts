@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getOptionalAuth } from '@/lib/auth-middleware';
-import { publicCourseWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
 
 // Public GET /api/courses — Course Finder database engine (Part 9 & 46)
 // Filters: country, universityId, level, subject, intake, tuition, scholarship, englishRequirement, status
@@ -37,8 +37,15 @@ export async function GET(req: NextRequest) {
       orderBy: { courseTitle: 'asc' },
       include: {
         university: { select: { name: true, slug: true } },
-        intakeFees: { take: 1 },
-        englishRequirements: { take: 1 },
+        intakeFees: {
+          ...(!privileged ? { where: publicIntakeWhere() } : {}),
+          take: 1,
+          orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
+        },
+        englishRequirements: {
+          ...(!privileged ? { where: { sourceUrl: { not: '' }, lastVerifiedAt: { not: null } } } : {}),
+          take: 1,
+        },
       },
     });
 
