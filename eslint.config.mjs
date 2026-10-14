@@ -54,6 +54,9 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
 }, {
   ignores: [
     "node_modules/**",
+    // Historical imported snapshots are not part of the root Next.js application.
+    // Keep credential scanning over them; lint the active source and tests here.
+    "imports/**",
     "_reference_repos/**",
     ".next/**",
     "out/**",

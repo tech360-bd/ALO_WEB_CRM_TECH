@@ -23,6 +23,7 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
+import type { PartnerMarketingRequest, Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
@@ -218,6 +219,32 @@ function normalizeApprovalStatus(row: { approvalStatus?: string | null; status?:
   const statusKey = String(row.status || '').toLowerCase();
   return APPROVAL_STATUS_DISPLAY[statusKey] || String(row.approvalStatus || '').toUpperCase();
 }
+/** Compare-and-set every workflow/asset mutation against the reviewed snapshot.
+ * Read back under the same transaction so a concurrent edit cannot supply a
+ * different row to the success response after the conditional write.
+ */
+async function updateMarketingRequestIfUnchanged(
+  existing: PartnerMarketingRequest,
+  data: Prisma.PartnerMarketingRequestUpdateManyMutationInput,
+): Promise<PartnerMarketingRequest | null> {
+  return db.$transaction(async (tx) => {
+    const transition = await tx.partnerMarketingRequest.updateMany({
+      where: {
+        id: existing.id,
+        partnerId: existing.partnerId,
+        approvalStatus: existing.approvalStatus,
+        status: existing.status,
+        updatedAt: existing.updatedAt,
+      },
+      data,
+    });
+    if (transition.count !== 1) return null;
+    const updated = await tx.partnerMarketingRequest.findUnique({ where: { id: existing.id } });
+    if (!updated) throw new Error('Campaign disappeared during its conditional update');
+    return updated;
+  });
+}
+
 function toMarketingRequest(row: {
   id: string;
   partnerId: string;
@@ -753,6 +780,13 @@ export async function PATCH(req: NextRequest) {
   }
   const { id, action, rejectionReason } = parsed.data;
 
+  if (!canCreateMarketing(auth)) {
+    return NextResponse.json({ success: false, error: 'Partner Super Admin or Marketing Assistant access is required.' }, { status: 403 });
+  }
+  if ((action === 'approve' || action === 'reject') && !canReviewMarketing(auth)) {
+    return NextResponse.json({ success: false, error: 'Partner Super Admin or ALO staff review access is required.' }, { status: 403 });
+  }
+
   try {
     const existing = await db.partnerMarketingRequest.findUnique({ where: { id } });
     if (!existing) {
@@ -774,7 +808,7 @@ export async function PATCH(req: NextRequest) {
     // Asset generation is only available while the draft is editable
     // (the UI gates the same way). A submitted campaign cannot be regenerated.
     if ((action === 'generate_image' || action === 'generate_video') &&
-        existing.approvalStatus !== 'draft' && existing.approvalStatus !== 'rejected') {
+        !['DRAFT', 'REJECTED'].includes(normalizeApprovalStatus(existing))) {
       return NextResponse.json(
         { success: false, error: 'Submitted campaigns cannot be regenerated. Wait for the review outcome first.' },
         { status: 409 },
@@ -783,11 +817,11 @@ export async function PATCH(req: NextRequest) {
 
     const monthYear = currentMonthYear();
     const quota = await db.partnerMarketingQuota.findUnique({ where: { partnerId: existing.partnerId } });
-    const requiresAloApproval = quota?.requiresAloApproval ?? true;
+    const requiresAloApproval = existing.requiresAloApproval || (quota?.requiresAloApproval ?? true);
 
     // ---------- generate_image ----------
     if (action === 'generate_image') {
-      const approvalStatus = normalizeApprovalStatus(existing.approvalStatus);
+      const approvalStatus = normalizeApprovalStatus(existing);
       if (!['DRAFT', 'REJECTED'].includes(approvalStatus)) {
         return NextResponse.json({ success: false, error: 'Assets can only be generated or replaced while a campaign is a draft or has been rejected.' }, { status: 409 });
       }
@@ -850,7 +884,7 @@ export async function PATCH(req: NextRequest) {
 
     // ---------- generate_video ----------
     if (action === 'generate_video') {
-      const approvalStatus = normalizeApprovalStatus(existing.approvalStatus);
+      const approvalStatus = normalizeApprovalStatus(existing);
       if (!['DRAFT', 'REJECTED'].includes(approvalStatus)) {
         return NextResponse.json({ success: false, error: 'Assets can only be generated or replaced while a campaign is a draft or has been rejected.' }, { status: 409 });
       }
@@ -931,7 +965,7 @@ export async function PATCH(req: NextRequest) {
       if (currentApprovalStatus === 'pending' || currentApprovalStatus === 'pending_approval') {
         return NextResponse.json({ success: false, error: 'This campaign is already awaiting review.' }, { status: 409 });
       }
-      if (!['DRAFT', 'REJECTED'].includes(normalizeApprovalStatus(existing.approvalStatus))) {
+      if (!['DRAFT', 'REJECTED'].includes(normalizeApprovalStatus(existing))) {
         return NextResponse.json({ success: false, error: 'Only a draft or rejected campaign can be submitted for review.' }, { status: 409 });
       }
       const updated = await updateMarketingRequestIfUnchanged(existing, { approvalStatus: 'pending', status: 'pending_approval' });
@@ -961,29 +995,19 @@ export async function PATCH(req: NextRequest) {
       // Optimistic concurrency: transition only the exact row that was
       // reviewed. A concurrent edit rejects the transition instead of being
       // silently overwritten.
-      const transition = await db.partnerMarketingRequest.updateMany({
-        where: {
-          id,
-          partnerId: existing.partnerId,
-          approvalStatus: existing.approvalStatus,
-          status: existing.status,
-          updatedAt: existing.updatedAt,
-        },
-        data: {
-          approvalStatus: 'approved',
-          status: 'approved',
-          approvedById: auth.actorUserId || auth.userId,
-          approvedAt: new Date(),
-          rejectionReason: '',
-        },
+      const updated = await updateMarketingRequestIfUnchanged(existing, {
+        approvalStatus: 'approved',
+        status: 'approved',
+        approvedById: auth.actorUserId || auth.userId,
+        approvedAt: new Date(),
+        rejectionReason: '',
       });
-      if (transition.count === 0) {
+      if (!updated) {
         return NextResponse.json(
           { success: false, error: 'This campaign changed while it was being reviewed. Reload and review the latest state.' },
           { status: 409 },
         );
       }
-      const updated = (await db.partnerMarketingRequest.findUnique({ where: { id } })) ?? existing;
       await audit(auth, 'PARTNER_MARKETING_APPROVED', id, { approvedBy: auth.actorEmail || auth.email });
       return NextResponse.json({ success: true, request: toMarketingRequest(updated), message: 'Campaign approved.' });
     }
@@ -1037,9 +1061,7 @@ export async function PATCH(req: NextRequest) {
         {
           success: false,
           error: 'No connected partner social account or publishing integration is configured. Nothing was published.',
-          details: autoPublishAllowed
-            ? 'The package flag allows auto-publishing, but no account connection or publisher is active.'
-            : 'No publish URL or success status was recorded.',
+          details: 'No publish URL or success status was recorded.',
         },
         { status: 409 },
       );

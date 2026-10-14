@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
     $transaction: vi.fn(),
   },
   tx: {
-    partnerMarketingRequest: { create: vi.fn() },
+    partnerMarketingRequest: { create: vi.fn(), updateMany: vi.fn(), findUnique: vi.fn() },
     partnerMarketingUsage: { upsert: vi.fn() },
   },
   generateStructured: vi.fn(),
@@ -83,6 +83,8 @@ beforeEach(() => {
   mocks.db.partnerMarketingRequest.update.mockResolvedValue(marketingRow());
   mocks.db.partnerMarketingRequest.updateMany.mockResolvedValue({ count: 1 });
   mocks.db.integrationAuditLog.create.mockResolvedValue({ id: 'audit-1' });
+  mocks.tx.partnerMarketingRequest.updateMany.mockImplementation((args) => mocks.db.partnerMarketingRequest.updateMany(args));
+  mocks.tx.partnerMarketingRequest.findUnique.mockImplementation((args) => mocks.db.partnerMarketingRequest.findUnique(args));
   mocks.tx.partnerMarketingRequest.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) => marketingRow(data));
   mocks.tx.partnerMarketingUsage.upsert.mockResolvedValue({ imagesUsed: 0, videosUsed: 0, ideasSubmitted: 1 });
   mocks.db.$transaction.mockImplementation(async (callback: (tx: typeof mocks.tx) => Promise<unknown>) => callback(mocks.tx));
@@ -226,4 +228,111 @@ describe('partner marketing API capability and workflow boundaries', () => {
     expect(mocks.db.partnerMarketingRequest.findUnique).not.toHaveBeenCalled();
     expect(mocks.db.partnerMarketingRequest.updateMany).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['generate_image', 'monthly_images', 'generatedImageUrl', 'https://assets.example.test/campaign.png'],
+    ['generate_video', 'monthly_videos', 'generatedVideoUrl', 'https://assets.example.test/campaign.mp4'],
+  ])('persists %s using the exact editable snapshot in one transaction', async (action, quotaKey, assetField, url) => {
+    const editable = marketingRow();
+    const updated = marketingRow({ [assetField]: url, status: action === 'generate_image' ? 'image_generated' : 'video_generated' });
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(editable).mockResolvedValueOnce(updated);
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action }));
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ success: true, request: { assetUrl: url, approvalStatus: 'DRAFT' } });
+    expect(mocks.reserveQuota).toHaveBeenCalledWith('partner', 'partner-1', quotaKey);
+    expect(mocks.tx.partnerMarketingRequest.updateMany).toHaveBeenCalledWith({
+      where: { id: 'campaign-1', partnerId: 'partner-1', approvalStatus: 'draft', status: 'ai_draft_generated', updatedAt: timestamp },
+      data: expect.objectContaining({ [assetField]: url }),
+    });
+    expect(mocks.tx.partnerMarketingRequest.findUnique).toHaveBeenCalledOnce();
+    expect(mocks.db.$transaction).toHaveBeenCalledOnce();
+    expect(mocks.releaseQuota).not.toHaveBeenCalled();
+    expect(mocks.db.integrationAuditLog.create).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    ['generate_image', 'monthly_images'], ['generate_video', 'monthly_videos'],
+  ])('releases the reservation when %s loses a concurrent edit', async (action, quotaKey) => {
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(marketingRow());
+    mocks.db.partnerMarketingRequest.updateMany.mockResolvedValue({ count: 0 });
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action }));
+    expect(response.status).toBe(409);
+    expect(mocks.releaseQuota).toHaveBeenCalledWith('partner', 'partner-1', quotaKey);
+    expect(mocks.tx.partnerMarketingRequest.findUnique).not.toHaveBeenCalled();
+    expect(mocks.db.integrationAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['generate_image', 'monthly_images'], ['generate_video', 'monthly_videos'],
+  ])('releases the reservation when %s persistence fails', async (action, quotaKey) => {
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(marketingRow());
+    mocks.db.partnerMarketingRequest.updateMany.mockRejectedValue(new Error('private database diagnostic'));
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action }));
+    expect(response.status).toBe(500);
+    expect(JSON.stringify(await response.json())).not.toContain('private database diagnostic');
+    expect(mocks.releaseQuota).toHaveBeenCalledWith('partner', 'partner-1', quotaKey);
+    expect(mocks.db.integrationAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['submit', 'draft', 'pending'], ['reject', 'pending', 'rejected'], ['archive', 'draft', 'archived'],
+  ])('persists %s with a conditional transition and audit', async (action, before, after) => {
+    Object.assign(mocks.auth, { userType: 'ADMIN', roles: ['ADMIN'] });
+    const existing = marketingRow({ approvalStatus: before, generatedImageUrl: 'https://assets.example.test/campaign.png' });
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(existing).mockResolvedValueOnce(marketingRow({ approvalStatus: after }));
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action, rejectionReason: 'Please revise the caption.' }));
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ success: true, request: { approvalStatus: after.toUpperCase() === 'PENDING' ? 'PENDING_APPROVAL' : after.toUpperCase() } });
+    expect(mocks.tx.partnerMarketingRequest.updateMany).toHaveBeenCalledWith({
+      where: { id: 'campaign-1', partnerId: 'partner-1', approvalStatus: before, status: existing.status, updatedAt: timestamp },
+      data: expect.objectContaining({ approvalStatus: after }),
+    });
+    expect(mocks.db.integrationAuditLog.create).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    ['submit', 'draft'], ['reject', 'pending'], ['archive', 'draft'],
+  ])('returns 409 and writes no audit when %s is stale', async (action, before) => {
+    Object.assign(mocks.auth, { userType: 'ADMIN', roles: ['ADMIN'] });
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(marketingRow({ approvalStatus: before, generatedImageUrl: 'https://assets.example.test/campaign.png' }));
+    mocks.db.partnerMarketingRequest.updateMany.mockResolvedValue({ count: 0 });
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action, rejectionReason: 'Please revise the caption.' }));
+    expect(response.status).toBe(409);
+    expect(mocks.db.integrationAuditLog.create).not.toHaveBeenCalled();
+  });
+
+  it.each(['approve', 'reject'])('does not let a marketing assistant %s even when ALO review is not required', async (action) => {
+    Object.assign(mocks.auth, { partnerRole: 'PARTNER_MARKETING_ASSISTANT' });
+    mocks.db.partnerMarketingQuota.findUnique.mockResolvedValue({ requiresAloApproval: false });
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValue(marketingRow({ approvalStatus: 'pending', requiresAloApproval: false }));
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action, rejectionReason: 'Revise caption.' }));
+    expect(response.status).toBe(403);
+    expect(mocks.db.partnerMarketingRequest.findUnique).not.toHaveBeenCalled();
+    expect(mocks.db.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('preserves the persisted ALO-review requirement when the current quota flag changes', async () => {
+    mocks.db.partnerMarketingQuota.findUnique.mockResolvedValue({ requiresAloApproval: false });
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(marketingRow({ approvalStatus: 'pending', requiresAloApproval: true }));
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action: 'approve' }));
+    expect(response.status).toBe(403);
+    expect(mocks.db.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('denies non-marketing partner roles before reading a campaign', async () => {
+    Object.assign(mocks.auth, { partnerRole: 'PARTNER_COUNSELOR' });
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action: 'generate_image' }));
+    expect(response.status).toBe(403);
+    expect(mocks.db.partnerMarketingRequest.findUnique).not.toHaveBeenCalled();
+    expect(mocks.reserveQuota).not.toHaveBeenCalled();
+  });
+
+  it('denies cross-tenant asset mutation without consuming quota', async () => {
+    mocks.db.partnerMarketingRequest.findUnique.mockResolvedValueOnce(marketingRow({ partnerId: 'other-partner' }));
+    const response = await PATCH(request('PATCH', '/api/partner-admin/marketing', { id: 'campaign-1', action: 'generate_image', partnerId: 'other-partner' }));
+    expect(response.status).toBe(403);
+    expect(mocks.reserveQuota).not.toHaveBeenCalled();
+    expect(mocks.db.$transaction).not.toHaveBeenCalled();
+  });
+
 });

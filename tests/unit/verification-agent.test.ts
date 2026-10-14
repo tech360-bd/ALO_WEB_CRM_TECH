@@ -47,11 +47,15 @@ describe('Weekly AI University Verification Agent Suite', () => {
       status: 'PENDING',
     };
 
-    const approved = processApprovalDecision(change, 'APPROVE', 'SUPER_ADMIN_1');
+    expect(() => processApprovalDecision(change, 'APPROVE', 'SUPER_ADMIN_1')).toThrow('Authorization required');
+    expect(() => processApprovalDecision(change, 'REJECT', 'SUPER_ADMIN_1', undefined, 'Incorrect fee.', false)).toThrow('Authorization required');
+    expect(change.status).toBe('PENDING');
+
+    const approved = processApprovalDecision(change, 'APPROVE', 'SUPER_ADMIN_1', undefined, undefined, true);
     expect(approved.status).toBe('APPROVED');
     expect(approved.reviewedBy).toBe('SUPER_ADMIN_1');
 
-    const rejected = processApprovalDecision(change, 'REJECT', 'SUPER_ADMIN_1', undefined, 'Incorrect fee.');
+    const rejected = processApprovalDecision(change, 'REJECT', 'SUPER_ADMIN_1', undefined, 'Incorrect fee.', true);
     expect(rejected.status).toBe('REJECTED');
     expect(rejected.rejectionReason).toBe('Incorrect fee.');
   });

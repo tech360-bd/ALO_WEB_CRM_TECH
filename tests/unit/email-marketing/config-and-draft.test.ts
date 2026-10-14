@@ -72,14 +72,14 @@ describe('readEmailMarketingConfig', () => {
       EMAIL_UNSUBSCRIBE_SECRET: SECRET,
       SMTP_HOST: 'smtp.example',
       SMTP_USER: 'u',
-      SMTP_PASSWORD: 'super-secret-pass',
+      SMTP_PASSWORD: 'dummy-smtp-password',
       SMTP_FROM: 'noreply@example.com',
       APP_URL: 'https://aloeducation.com',
     };
     const summary = publicEmailConfigSummary(readEmailMarketingConfig(env), env);
     const serialized = JSON.stringify(summary);
     expect(serialized).not.toContain(SECRET);
-    expect(serialized).not.toContain('super-secret-pass');
+    expect(serialized).not.toContain('dummy-smtp-password');
     expect(summary).toMatchObject({ unsubscribeConfigured: true, publicLinksConfigured: true, smtpConfigured: true });
   });
 });
