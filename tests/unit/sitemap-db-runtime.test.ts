@@ -20,6 +20,8 @@ vi.mock('@/lib/db', () => ({
     crmUniversity: { findMany: mocks.crmUniversities },
     contentAsset: { findMany: mocks.guides },
     service: { findMany: mocks.services }, resource: { findMany: mocks.resources },
+    // Phase 1 review: the sitemap now applies the shared public catalogue
+    // policy, which excludes slugs named by open DataConflict rows.
     dataConflict: { findMany: mocks.conflicts },
   },
 }));
@@ -62,7 +64,7 @@ describe('database-backed sitemap generation', () => {
     // Phase 1 review: catalogue pages need an https source URL to be listed.
     mocks.courses.mockResolvedValue([{ slug: 'data-science', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en/study.html' }]);
     mocks.scholarships.mockResolvedValue([{ slug: 'merit-award', updatedAt }]);
-    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt, sourceUrl: 'https://www.example-university.ac.uk/' }]);
+    mocks.universities.mockResolvedValue([{ slug: 'example-university', updatedAt, sourceUrl: 'https://www.auckland.ac.nz/en.html' }]);
     mocks.services.mockResolvedValue([{ slug: 'visa-guidance', updatedAt }]);
     mocks.resources.mockResolvedValue([{ slug: 'build-a-budget', updatedAt, category: { slug: 'financial-planning' } }]);
 

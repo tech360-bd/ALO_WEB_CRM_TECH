@@ -1,0 +1,18 @@
+ FAIL  tests/integration/communication-ownership.test.ts [ tests/integration/communication-ownership.test.ts ]
+ FAIL  tests/integration/content-publication-security.test.ts [ tests/integration/content-publication-security.test.ts ]
+ FAIL  tests/integration/partner-b2b-security.test.ts [ tests/integration/partner-b2b-security.test.ts ]
+ FAIL  tests/unit/accounting-ledger.test.ts > posting invariants > propagates failed writes (no silent success)
+ FAIL  tests/unit/accounting-ledger.test.ts > posting invariants > rejects replayed identifiers with an explicit reconciliation error
+ FAIL  tests/unit/accounting-ledger.test.ts > reporting > A/R aging never reports zero on outage
+ FAIL  tests/unit/accounting-ledger.test.ts > reporting > A/R aging reads account 1100 only from POSTED entries
+ FAIL  tests/unit/accounting-ledger.test.ts > reporting > trial balance aggregates POSTED entries with normal-balance signs
+ FAIL  tests/unit/accounting-ledger.test.ts > reporting > trial balance fails closed on corrupt aggregates
+ FAIL  tests/unit/cms-revisions.test.ts > DMMF field safety > coerces ISO strings to Date for DateTime fields
+ FAIL  tests/unit/cms-revisions.test.ts > DMMF field safety > drops invalid date strings for DateTime fields
+ FAIL  tests/unit/cms-revisions.test.ts > DMMF field safety > filterWritable drops unknown fields and keeps known ones
+ FAIL  tests/unit/cms-revisions.test.ts > DMMF field safety > filterWritable never emits id or createdAt for any entity
+ FAIL  tests/unit/cms-revisions.test.ts > DMMF field safety > maps every CMS entity type to a known prisma model
+ FAIL  tests/unit/cms-revisions.test.ts > DMMF field safety > never exposes id as writable
+ FAIL  tests/unit/journal-integrity.test.ts > legacy facade delegates to the real ledger > computeARAging delegates to the real ledger tables
+ FAIL  tests/unit/journal-integrity.test.ts > legacy facade delegates to the real ledger > postJournal propagates database failures
+ FAIL  tests/unit/partner-marketing-compatibility.test.ts [ tests/unit/partner-marketing-compatibility.test.ts ]

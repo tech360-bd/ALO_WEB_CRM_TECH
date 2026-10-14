@@ -24,7 +24,8 @@ type DatabaseEntries = {
 async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
   const { db } = await import('@/lib/db');
   try {
-    // Phase 1 review (P0-C): catalogue pages follow the shared public policy.
+    // Phase 1 review (P0-C): catalogue pages follow the shared public policy
+    // (published + VERIFIED + https source + no open data conflict).
     const { loadOpenConflicts, passesPublicPagePolicy, publicCoursePageWhere, publicUniversityPageWhere } = await import('@/lib/course-finder/public-content-page-policy');
     const conflicts = await loadOpenConflicts();
     const [blogs, coursesRaw, crmCourseRows, scholarships, universitiesRaw, crmUniversityRows, guideRows, services, resourceRows] = await Promise.all([

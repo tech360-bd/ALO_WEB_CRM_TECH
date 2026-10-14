@@ -156,6 +156,8 @@ jobs:
             exit 1
           fi
           echo "✓ No secret-shaped strings in tracked files (docs included)"
+          node --test tests/secret-findings.test.mjs
+          bash scripts/ci/scan-credentials.sh
 
       - name: Deployment ownership safety tests (no production calls)
         run: node --test tests/deployment-ownership.test.mjs tests/runtime-standard.test.mjs
