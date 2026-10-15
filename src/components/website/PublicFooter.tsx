@@ -66,6 +66,7 @@ const quickLinks = [
 const companyLinks = [
   { label: 'About Us', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
+  { label: 'Global Offices', href: '/global-offices' },
   { label: 'Code of Conduct', href: ALO_POLICY_LINKS.codeOfConduct },
   { label: 'Student Complaint Policy', href: ALO_POLICY_LINKS.studentComplaintPolicy },
   { label: 'AQF Compliance', href: ALO_POLICY_LINKS.aqfCompliance },

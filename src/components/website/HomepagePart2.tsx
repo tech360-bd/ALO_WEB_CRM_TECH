@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import TopUniversitiesSection from './TopUniversitiesSection';
 import {
   Users, Eye, Brain, GraduationCap, FileText, PenTool,
   ClipboardCheck, MessageSquare, CheckCircle, MonitorSmartphone,
@@ -69,15 +70,6 @@ interface CourseItem {
   intakeMonth: string;
 }
 
-interface UniItem {
-  universityId: string;
-  name: string;
-  country: string;
-  city: string;
-  ranking: number;
-  website: string;
-  courseCount: number;
-}
 
 const iconMap: Record<string, LucideIcon> = {
   Users, Eye, Brain, GraduationCap, FileText, PenTool,
@@ -574,69 +566,10 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
   );
 }
 
-function TrustedUniversitiesSection({ universities }: { universities: UniItem[] }) {
-  return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader
-          label="Trusted Partners"
-          labelBg="rgba(0,87,184,0.08)" labelColor={C.blue}
-          title="Our"
-          titleHighlight="University Network"
-          subtitle="Partnered with top-ranked universities across the globe."
-        />
-        {universities.length === 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="h-24 rounded-xl bg-slate-100 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={viewportOnce}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {universities.slice(0, 24).map((uni) => {
-              const initials = uni.name
-                .split(/\s+(?:of|the|and|for|at|in)\s+/i)
-                .join(' ')
-                .split(/\s+/)
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((w) => w[0])
-                .join('')
-                .toUpperCase();
-              return (
-                <motion.div key={uni.universityId} variants={staggerItemScale}>
-                  <Link href={`/universities/${uni.universityId || uni.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                    <Card className="h-24 flex items-center justify-center border hover:shadow-md hover:border-[#2563EB] transition-all duration-300 cursor-pointer" style={{ borderColor: C.border }}>
-                      <CardContent className="p-3 flex flex-col items-center justify-center gap-1.5 w-full h-full">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: C.blue }}>
-                          {initials}
-                        </div>
-                        <span className="text-[11px] font-medium text-center leading-tight line-clamp-2" style={{ color: C.text }}>{uni.name}</span>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-        <div className="text-center mt-10">
-          <Button asChild variant="outline" className="h-12 px-8 rounded-full font-medium" style={{ borderColor: C.blue, color: C.blue }}><Link href="/course-finder">
-            View University Directory
-            <ArrowRight size={16} className="ml-2" />
-          </Link></Button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function HomepagePart2() {
   const [services, setServices] = useState<HomeService[]>([]);
   const [countries, setCountries] = useState<ParsedCountry[]>([]);
   const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [universities, setUniversities] = useState<UniItem[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -674,26 +607,6 @@ export default function HomepagePart2() {
           }
         }
       } catch (_) { console.error('Homepage courses fetch failed'); }
-
-      try {
-        const res = await fetch('/api/universities?limit=24&status=active');
-        if (res.ok) {
-          const json = await res.json();
-          if (json.universities) {
-            setUniversities(
-              json.universities.map((u: Record<string, unknown>) => ({
-                universityId: String(u.universityId || ''),
-                name: String(u.name || ''),
-                country: String(u.country || ''),
-                city: String(u.city || ''),
-                ranking: typeof u.ranking === 'number' ? u.ranking : 0,
-                website: String(u.website || ''),
-                courseCount: typeof u.courseCount === 'number' ? u.courseCount : 0,
-              }))
-            );
-          }
-        }
-      } catch (_) { console.error('Homepage universities fetch failed'); }
     }
     fetchData();
   }, []);
@@ -705,7 +618,7 @@ export default function HomepagePart2() {
       <StudentJourneyTimeline />
       <CountryIntelligenceSection countries={countries} />
       <PopularCoursesSection courses={courses} />
-      <TrustedUniversitiesSection universities={universities} />
+      <TopUniversitiesSection />
     </>
   );
 }

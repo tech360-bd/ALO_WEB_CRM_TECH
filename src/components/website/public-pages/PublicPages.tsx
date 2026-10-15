@@ -14,6 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import {
   ArrowLeft, Search, MapPin, GraduationCap, Award, Users, Building2,
   Phone, Mail, Clock, FileText, Shield, Globe, BookOpen, Star,
+  CheckCircle2, Target, Eye, Heart,
 } from 'lucide-react';
 
 import { usePortalStore } from '@/lib/stores/portal-store';
@@ -624,60 +625,127 @@ export function PublicServicesPage() {
 
 // ============================================================
 // ABOUT PAGE
+// Brand brief copy, verbatim: Who We Are (founded February 2023 by
+// Taslima Akter), the five study-abroad strengths, Our Purpose / Mission /
+// Vision. Layout: 2-column (text + visual motif). No invented statistics —
+// the previous "360+ partners / 8,800+ courses" tiles were removed because
+// no verified source backs those numbers.
 // ============================================================
 export function PublicAboutPage() {
+  const strengths = [
+    'World-class universities and research excellence',
+    'Industry-aligned programmes and employability',
+    'International student-friendly policies',
+    'Scholarships and funding opportunities',
+    'Safe cities and vibrant student life',
+  ];
   return (
     <PublicShell
       title="About ALO Education"
       badge="ESTABLISHED 2023"
-      subtitle="In February 2023, ALO Education was founded by Taslima Akter, who envisioned creating a platform that would connect ambitious students with world-class education opportunities abroad."
+      subtitle="Your Dream – Our Commitment. ALO Education connects ambitious Bangladeshi students with world-class education opportunities abroad."
     >
-      <div className="prose prose-slate max-w-none mb-12">
-        <p className="text-base text-slate-700 leading-relaxed mb-6">
-          That same year, our first office opened in Dhaka, Bangladesh, with an initial focus on
-          assisting students in Bangladesh to secure admissions into leading universities and colleges
-          in the UK, USA, Australia, Canada, New Zealand, Ireland and Europe. Guided by the founder's
-          vision of trust, transparency, and professionalism, we set a clear strategy to expand our
-          services beyond Bangladesh. Today, ALO Education continues to grow with the mission of offering
-          global opportunities and becoming a trusted partner in international education consultancy.
-        </p>
+      {/* Who We Are — 2-column: text + visual motif */}
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14 mb-14">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-5">Who We Are</h2>
+          <div className="space-y-4 text-base text-slate-700 leading-relaxed">
+            <p>
+              In February 2023, Taslima Akter founded ALO Education with a vision to connect ambitious
+              Bangladeshi students with world-class education opportunities abroad. Her personal
+              experience navigating the complexities of international admissions inspired her to create
+              a platform built on trust, transparency, and genuine care for every student&apos;s future.
+            </p>
+            <p>
+              That same year, our first office opened in Dhaka, Bangladesh, with a dedicated focus on
+              helping students secure admissions to leading universities and colleges across the United
+              Kingdom, United States, Australia, Canada, New Zealand, Ireland, and Europe. From the very
+              first day, our approach has been centered on providing personalized, honest, and
+              comprehensive guidance.
+            </p>
+            <p>
+              Guided by the founder&apos;s vision of trust, transparency, and professionalism, ALO
+              Education continues to grow with the mission of offering global opportunities and becoming
+              a trusted partner in international education consultancy. We are not just consultants — we
+              are mentors, guides, and partners in your journey toward a brighter future.
+            </p>
+          </div>
+          <ul className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {strengths.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-sm font-medium text-[#0F172A]">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#F37021]" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="relative">
+          <div className="overflow-hidden rounded-3xl shadow-2xl">
+            <img
+              src="/images/landing/Copy of pexels-rdne-7092364.webp"
+              alt="ALO Education counsellors guiding students in Dhaka"
+              className="h-auto w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="absolute -bottom-4 left-4 flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xl">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F37021]">
+              <Heart className="h-5 w-5 text-white" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block text-sm font-bold text-[#0F172A]">Student-First</span>
+              <span className="block text-xs text-slate-500">Since February 2023 · Dhaka, Bangladesh</span>
+            </span>
+          </div>
+        </div>
       </div>
 
+      {/* Our Purpose */}
+      <div className="mb-6 text-center">
+        <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.18em] bg-[#FFF4EC] text-[#F37021] mb-4">
+          Our Purpose
+        </span>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">
+          Our Commitment to Your Study-Abroad Dream
+        </h2>
+      </div>
       <div className="grid md:grid-cols-2 gap-6 mb-12">
         <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-blue-100">
-          <h3 className="text-xl font-bold text-[#2563EB] mb-3">Our Mission</h3>
-          <p className="text-slate-700 leading-relaxed">
-            At ALO Education, our mission is simple yet powerful: turning student dreams into global
-            opportunities. We strive to be a trusted pathway to world-class education, guiding every
-            student with honesty, professionalism, and care. By offering transparent counseling and
-            authentic guidance, we help students choose the right programs that match their ambitions
-            and potential.
-          </p>
+          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0066CC]">
+            <Target className="h-6 w-6 text-white" aria-hidden="true" />
+          </span>
+          <h3 className="text-xl font-bold text-[#0066CC] mb-3">Our Mission</h3>
+          <div className="space-y-3 text-slate-700 leading-relaxed">
+            <p>
+              At ALO Education, our mission is simple yet powerful — turning student dreams into global
+              opportunities. We strive to be a trusted pathway to world-class education, guiding every
+              student with honesty, professionalism, and genuine care.
+            </p>
+            <p>
+              Our commitment goes beyond admissions. We are dedicated to guiding ambitions, shaping
+              brighter futures, and ensuring that students from Bangladesh to the world can access
+              education without boundaries.
+            </p>
+          </div>
         </Card>
         <Card className="p-8 bg-gradient-to-br from-orange-50 to-white border-orange-100">
-          <h3 className="text-xl font-bold text-[#F97316] mb-3">Our Vision</h3>
-          <p className="text-slate-700 leading-relaxed">
-            The vision of ALO Education is to become a globally recognized education consultancy that
-            inspires trust, integrity, and excellence. We aspire to guide students toward courses and
-            institutions that best suit their academic interests, career goals, and personal growth.
-            Our focus is on nurturing the holistic development of students by enhancing their knowledge,
-            skills, and confidence so they can thrive in a competitive world.
-          </p>
+          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F37021]">
+            <Eye className="h-6 w-6 text-white" aria-hidden="true" />
+          </span>
+          <h3 className="text-xl font-bold text-[#F37021] mb-3">Our Vision</h3>
+          <div className="space-y-3 text-slate-700 leading-relaxed">
+            <p>
+              The vision of ALO Education is to become a globally recognized education consultancy that
+              inspires trust, integrity, and excellence in everything we do. We aspire to guide students
+              toward courses and institutions that best suit their academic interests and career goals.
+            </p>
+            <p>
+              Our focus is on nurturing holistic development by enhancing knowledge, skills, and
+              confidence so students can thrive in a competitive world. With continuous innovation, we
+              provide seamless, high-quality services.
+            </p>
+          </div>
         </Card>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        {[
-          { num: '2023', label: 'Established' },
-          { num: '7', label: 'Study destinations' },
-          { num: '360+', label: 'University partners' },
-          { num: '8,800+', label: 'Courses listed' },
-        ].map((stat) => (
-          <Card key={stat.label} className="p-6 text-center">
-            <p className="text-3xl font-bold text-[#2563EB] mb-1">{stat.num}</p>
-            <p className="text-xs text-slate-600">{stat.label}</p>
-          </Card>
-        ))}
       </div>
     </PublicShell>
   );

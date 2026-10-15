@@ -105,11 +105,23 @@ export default function CourseDetailHub({ slug }: Props) {
             {/* University Overview */}
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Building2 className="w-5 h-5 text-[#2563EB]" />University Overview</h3><p className="text-sm text-gray-700">{[uni.name, uni.city, uni.country].filter(Boolean).join(' · ') || 'University details are not recorded on this course page.'}</p><p className="mt-2 text-sm text-gray-600">{uni.description ? uni.description.substring(0, 300) : 'University overview not recorded.'}</p>{(uni.slug || uni.universityId) && <Link href={`/universities/${encodeURIComponent(uni.slug || uni.universityId)}`} className="text-xs text-[#2563EB] underline mt-2 inline-block">View University Hub →</Link>}</Card>
 
-            {/* Academic Requirements */}
+            {/* Entry Requirements — Bachelor / Master (brand brief). The
+                recorded requirement belongs to this course's own level; the
+                other level is labelled honestly instead of being invented. */}
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-              <h3 className="font-bold text-[#0F172A] mb-4 flex items-center gap-2"><FileText className="w-5 h-5 text-[#2563EB]" />Recorded academic requirements</h3>
+              <h3 className="font-bold text-[#0F172A] mb-4 flex items-center gap-2"><FileText className="w-5 h-5 text-[#2563EB]" />Entry Requirements (Bachelor / Master)</h3>
+              <div className="grid sm:grid-cols-2 gap-4 text-xs mb-4">
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3">
+                  <p className="text-gray-500 font-semibold">Bachelor (Undergraduate) entry requirement</p>
+                  <p className="font-semibold mt-1">{/postgrad|master|mres|phd|doctor/i.test(course.studyLevel || '') ? 'Not applicable — this is a postgraduate course. See undergraduate courses at this university in the Course Finder.' : (req.academicReq || 'Not recorded')}</p>
+                </div>
+                <div className="bg-orange-50 border border-orange-100 rounded-xl p-3">
+                  <p className="text-gray-500 font-semibold">Master (Postgraduate) entry requirement</p>
+                  <p className="font-semibold mt-1">{/undergrad|bachelor|foundation/i.test(course.studyLevel || '') ? 'Not applicable — this is an undergraduate course. See postgraduate courses at this university in the Course Finder.' : (req.academicReq || 'Not recorded')}</p>
+                </div>
+              </div>
               <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Academic requirement</p><p className="font-semibold mt-1">{req.academicReq || 'Not recorded'}</p></div>
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Academic requirement (this course)</p><p className="font-semibold mt-1">{req.academicReq || 'Not recorded'}</p></div>
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Minimum score / grading system</p><p className="font-semibold mt-1">{req.minScore || req.gradingSystem || 'Not recorded'}</p></div>
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Work experience</p><p className="font-semibold mt-1">{req.workExperience || 'Not recorded'}</p></div>
                 <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500">Portfolio / interview</p><p className="font-semibold mt-1">{req.verificationStatus?.toUpperCase() === 'VERIFIED' ? `Portfolio: ${req.portfolioRequired ? 'Required' : 'Not required in the verified record'} · Interview: ${req.interviewRequired ? 'Required' : 'Not required in the verified record'}` : 'Research required — no verified requirement record'}</p></div>

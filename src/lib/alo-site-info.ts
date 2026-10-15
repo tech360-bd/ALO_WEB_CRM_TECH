@@ -21,8 +21,8 @@ export const ALO_CONTACT = {
   addressShort: 'Barek Mansion-02 (5th Floor), Panthapath, Dhaka-1205',
   /** Google location share link supplied by ALO Education. */
   mapsUrl: 'https://share.google/aarau5V2GfBrICZTj',
-  /** Human-readable mobile range: +8801805020101 through ...10. */
-  mobileDisplay: '+88 01805 020101-10',
+  /** Human-readable mobile range, exactly as specified: +8801805020101-10. */
+  mobileDisplay: '+8801805020101-10',
   /** Dialable primary number. */
   mobileHref: 'tel:+8801805020101',
   /** WhatsApp deep link on the primary number. */

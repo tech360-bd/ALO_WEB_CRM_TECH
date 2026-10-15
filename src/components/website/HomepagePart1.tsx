@@ -6,8 +6,9 @@ import { fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight, staggerContaine
 import {
   Globe, GraduationCap, Users, Award, BookOpen, Target, Eye, Heart,
   Search, ArrowRight, MapPin, Calendar, DollarSign, MessageCircle, Phone,
-  CheckCircle, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck,
+  CheckCircle, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck, Download,
 } from 'lucide-react';
+import { buildStudyGuideText, destinationGuidePath, studyGuideFileName } from '@/lib/alo-study-steps';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/i18n';
 import { Card, CardContent } from '@/components/ui/card';
@@ -96,111 +97,115 @@ function HeroSection() {
   const slide = slides[current];
   const go = (i: number) => setCurrent(i);
 
-  // Hero = eyebrow, H1, supporting text, primary + secondary CTA, ONE image.
-  // No stats cards, process strips, country pills or AI/WhatsApp/Facebook
-  // controls over the image (the corner FloatingActionWidget owns those).
+  // Country-specific hero (brand brief): the selected country's landmark
+  // image is the background, the H1 and body copy name that country, and the
+  // primary CTA is the ALO Orange "Book Free Counselling" button. Country
+  // pills switch the featured country; the auto-advance timer pauses on hover.
+  const countryInPhrase =
+    slide.name === 'United Kingdom'
+      ? 'the United Kingdom'
+      : slide.name === 'United States'
+        ? 'the United States'
+        : slide.name;
+  const countrySentence =
+    countryInPhrase.charAt(0).toUpperCase() + countryInPhrase.slice(1);
+
   return (
     <section
-      aria-label="Featured study destinations"
-      className="relative w-full bg-white"
+      aria-label={`Study in ${slide.name}`}
+      className="relative w-full overflow-hidden bg-[#003D7A] text-white"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-12 sm:px-6 md:py-16 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-20 lg:min-h-[600px]">
-        <div className="space-y-6 lg:col-span-6">
+      {/* Background: country landmark image */}
+      <div className="absolute inset-0" aria-hidden="true">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.name}
+            initial={reduceMotion ? false as const : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduceMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.6 }}
+            className="absolute inset-0"
+          >
+            {slide.heroImage && !imgErrors.has(slide.name) ? (
+              <Image
+                src={slide.heroImage}
+                alt=""
+                fill
+                priority={current === 0}
+                sizes="100vw"
+                className="object-cover object-center"
+                onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
+              />
+            ) : (
+              <div className="h-full w-full" style={{ backgroundColor: slide.accentColor }} />
+            )}
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#003D7A]/95 via-[#0066CC]/80 to-[#0066CC]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      </div>
+
+      <div className="relative mx-auto flex min-h-[540px] max-w-7xl flex-col justify-center px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="max-w-3xl space-y-6">
           <AnimatePresence mode="wait">
             <motion.div key={`eyebrow-${slide.name}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: reduceMotion ? 0 : 0.3 }}>
-              <Badge variant="brand" className="gap-2 px-3 py-1 text-xs">
+              <Badge className="gap-2 border-white/30 bg-white/15 px-3 py-1 text-xs text-white backdrop-blur">
                 <span aria-hidden="true">{slide.flag}</span>
                 {slide.name}
+                {slide.heroCity ? ` · ${slide.heroCity}` : ''}
               </Badge>
             </motion.div>
           </AnimatePresence>
 
-          <h1 className="text-[2rem] font-bold leading-[1.15] tracking-tight text-alo-navy-dark md:text-h1">
-            {t('hero.title')}
+          <h1 className="font-heading text-[2rem] font-extrabold leading-[1.15] tracking-tight text-white md:text-5xl" aria-live="polite">
+            Unlock a world-class education in {countryInPhrase} with expert guidance
           </h1>
 
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={`sub-${slide.name}`}
-              initial={reduceMotion ? false as const : { opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reduceMotion ? undefined : { opacity: 0, x: 12 }}
-              transition={{ duration: reduceMotion ? 0 : 0.3 }}
-              className="text-lg font-semibold text-alo-brand"
-              aria-live="polite"
-            >
-              Study Abroad in {slide.name}
-            </motion.p>
-          </AnimatePresence>
-
-          <p className="max-w-xl text-lg leading-relaxed text-alo-text-secondary">
-            {t('hero.subtitle')}
+          <p className="max-w-2xl text-lg leading-relaxed text-white/90">
+            {countrySentence} offers globally recognized education, strong career prospects, and a
+            welcoming environment for international students. At ALO Education, we guide you every
+            step of the way—from choosing the right course to submitting a strong application.
           </p>
 
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-            <Button asChild size="lg" variant="default" className="h-12 px-6">
+            <Button asChild size="lg" className="h-12 bg-[#F37021] px-6 font-heading font-bold text-white shadow-lg hover:bg-[#D95D12]">
               <Link href="/book-consultation">
-                {t('cta.bookConsultation')}
+                Book Free Counselling
                 <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="h-12 px-6">
-              <Link href={`/course-finder?country=${encodeURIComponent(slide.slug)}`}>
-                {t('cta.findCourse')}
+            <Button asChild size="lg" variant="outline" className="h-12 border-white/60 bg-white/10 px-6 font-heading font-bold text-white backdrop-blur hover:bg-white/20 hover:text-white">
+              <Link href={`/course-finder?country=${encodeURIComponent(slide.name)}`}>
+                {t('cta.findCourse')} in {slide.name}
               </Link>
             </Button>
           </div>
         </div>
 
-        <div className="lg:col-span-6">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-feature border border-alo-border bg-alo-page">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={slide.name}
-                initial={reduceMotion ? false as const : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={reduceMotion ? undefined : { opacity: 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.6 }}
-                className="absolute inset-0"
+        {slides.length > 1 && (
+          <div className="mt-10 flex flex-wrap items-center gap-2" role="tablist" aria-label="Choose a destination to feature">
+            {slides.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                role="tab"
+                aria-selected={i === current}
+                aria-label={`Show ${s.name}`}
+                onClick={() => go(i)}
+                className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB347] focus-visible:ring-offset-2 ${
+                  i === current
+                    ? 'bg-[#F37021] text-white shadow-md'
+                    : 'bg-white/15 text-white backdrop-blur hover:bg-white/25'
+                }`}
               >
-                {slide.heroImage && !imgErrors.has(slide.name) ? (
-                  <Image
-                    src={slide.heroImage}
-                    alt={`${slide.name} study destination`}
-                    fill
-                    priority={current === 0}
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-cover object-center"
-                    onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3" style={{ backgroundColor: `${slide.accentColor}14` }}>
-                    <span className="text-7xl" aria-hidden="true">{slide.flag}</span>
-                    <span className="text-2xl font-bold" style={{ color: slide.accentColor }}>{slide.name}</span>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+                <span aria-hidden="true">{s.flag}</span>
+                {s.name}
+              </button>
+            ))}
           </div>
-
-          {slides.length > 1 && (
-            <div className="mt-4 flex items-center justify-center gap-2" role="tablist" aria-label="Choose a destination to feature">
-              {slides.map((s, i) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === current}
-                  aria-label={`Show ${s.name}`}
-                  onClick={() => go(i)}
-                  className={`h-2.5 rounded-pill transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-brand focus-visible:ring-offset-2 ${i === current ? 'w-8 bg-alo-brand' : 'w-2.5 bg-alo-border-strong hover:bg-alo-text-muted'}`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </section>
   );
@@ -212,58 +217,191 @@ function FileTextIcon(props: React.ComponentType<React.SVGProps<SVGSVGElement>> 
 }
 
 /* ═══════════════════════════════════════════════════════════════ COURSE FINDER ═══ */
+/**
+ * SMART COURSE FINDER (homepage, brand brief):
+ *   Tabs: COURSES | UNIVERSITIES
+ *   COURSES       I'm looking for (subject/course) · I'm planning to study
+ *                 (course type) · I want to study in (country)
+ *   UNIVERSITIES  I'm looking for (subject) · I want to study in (university)
+ *   Action: Search — ALO Orange icon button → /course-finder (results page)
+ * Below the box, the selected country's 7-step study guide can be downloaded.
+ */
 function CourseFinderSection() {
   const { data } = useHomepageData();
-  const tests = data?.englishTests?.length ? data.englishTests : [{ id: '1', name: 'IELTS', slug: 'ielts' }, { id: '2', name: 'PTE', slug: 'pte-academic' }, { id: '3', name: 'TOEFL', slug: 'toefl' }, { id: '4', name: 'Duolingo', slug: 'duolingo' }];
   const countries = data?.countries?.length ? data.countries : FALLBACK_DESTINATIONS;
   const router = useRouter();
-  const [form, setForm] = useState({ country: '', level: '', subject: '', intake: '', budget: '', test: '', query: '' });
-  const update = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
+  const [tab, setTab] = useState<'courses' | 'universities'>('courses');
+  const [subject, setSubject] = useState('');
+  const [courseType, setCourseType] = useState('');
+  const [countryName, setCountryName] = useState('');
+  const [universityName, setUniversityName] = useState('');
+  const [facets, setFacets] = useState<{ subjects: string[]; universities: { name: string }[] }>({
+    subjects: [],
+    universities: [],
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/course-finder/facets')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (cancelled || !json?.success) return;
+        setFacets({
+          subjects: Array.isArray(json.subjects) ? json.subjects : [],
+          universities: Array.isArray(json.universities) ? json.universities : [],
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const selectedCountry = countries.find((c) => c.name === countryName) ?? countries[0];
 
   const handleSearch = useCallback(() => {
     const params = new URLSearchParams();
-    Object.entries(form).forEach(([k, v]) => { if (v) params.set(k, v); });
-    router.push(`/course-finder${params.toString() ? `?${params}` : ''}`);
-    fetch('/api/website/search-log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ countryId: form.country, studyLevel: form.level, subject: form.subject, intake: form.intake, budget: form.budget, source: 'homepage_finder' }) }).catch(() => {});
-  }, [form, router]);
+    if (tab === 'courses') {
+      if (subject) params.set('subject', subject);
+      if (courseType) params.set('studyLevel', courseType);
+      if (countryName) params.set('country', countryName);
+    } else {
+      params.set('tab', 'universities');
+      if (subject) params.set('subject', subject);
+      if (universityName) params.set('university', universityName);
+    }
+    const query = params.toString();
+    router.push(`/course-finder${query ? `?${query}` : ''}`);
+    fetch('/api/website/search-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ countryId: countryName, studyLevel: courseType, subject, source: 'homepage_finder' }),
+    }).catch(() => {});
+  }, [tab, subject, courseType, countryName, universityName, router]);
+
+  /** Download the selected country's 7-step study guide (plain text). */
+  const downloadGuide = useCallback(() => {
+    if (!selectedCountry) return;
+    const text = buildStudyGuideText(selectedCountry.name, selectedCountry.slug);
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = studyGuideFileName(selectedCountry.name);
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }, [selectedCountry]);
+
+  const inputClass = 'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20';
 
   return (
-    <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white">
+    <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white" aria-labelledby="smart-course-finder-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20 mb-4">Smart Course Finder</Badge></motion.div>
-          <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
-          <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Explore published courses and compare your study options</motion.p>
+          <motion.div variants={staggerItem}><Badge className="bg-[#FFF4EC] text-[#F37021] border border-[#F37021]/25 mb-4">Smart Course Finder</Badge></motion.div>
+          <motion.h2 id="smart-course-finder-heading" variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
+          <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search verified courses and universities — tuition fees, intakes, interview requirements and world rankings in one place.</motion.p>
         </motion.div>
-        <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] p-4 sm:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <Select value={form.country} onValueChange={v => update('country', v)}>
-              <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Country" /></SelectTrigger>
-              <SelectContent>{countries.map(c => <SelectItem key={c.id} value={c.slug}>{c.flag} {c.name}</SelectItem>)}</SelectContent>
-            </Select>
-            <Select value={form.level} onValueChange={v => update('level', v)}>
-              <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Study Level" /></SelectTrigger>
-              <SelectContent><SelectItem value="foundation">Foundation</SelectItem><SelectItem value="undergraduate">Undergraduate</SelectItem><SelectItem value="postgraduate">Postgraduate</SelectItem><SelectItem value="phd">PhD</SelectItem><SelectItem value="diploma">Diploma</SelectItem></SelectContent>
-            </Select>
-            <Input placeholder="Subject area" value={form.subject} onChange={e => update('subject', e.target.value)} className="h-12 rounded-xl" />
-            <Input placeholder="Intake (e.g. Sep 2027)" value={form.intake} onChange={e => update('intake', e.target.value)} className="h-12 rounded-xl" />
-            <Select value={form.budget} onValueChange={v => update('budget', v)}>
-              <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="Budget Range" /></SelectTrigger>
-              <SelectContent><SelectItem value="0-10000">Under £10,000</SelectItem><SelectItem value="10000-20000">£10,000-£20,000</SelectItem><SelectItem value="20000-35000">£20,000-£35,000</SelectItem><SelectItem value="35000+">£35,000+</SelectItem></SelectContent>
-            </Select>
-            <Select value={form.test} onValueChange={v => update('test', v)}>
-              <SelectTrigger className="h-12 rounded-xl"><SelectValue placeholder="English Test" /></SelectTrigger>
-              <SelectContent>{tests.map(t => <SelectItem key={t.id} value={t.slug}>{t.name}</SelectItem>)}</SelectContent>
-            </Select>
-            <Input placeholder="Search courses..." value={form.query} onChange={e => update('query', e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className="h-12 rounded-xl" />
-            <Button onClick={handleSearch} className="h-12 rounded-xl font-semibold text-white" style={{ backgroundColor: C.orange }}><Search className="mr-2 h-4 w-4" /> Find Courses</Button>
+
+        <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] overflow-hidden">
+          {/* Tabs: COURSES | UNIVERSITIES */}
+          <div role="tablist" aria-label="Smart Course Finder mode" className="flex gap-1 border-b border-[#E2E8F0] bg-[#F8FAFC] p-1.5">
+            {([
+              { id: 'courses' as const, label: 'COURSES', Icon: BookOpen },
+              { id: 'universities' as const, label: 'UNIVERSITIES', Icon: GraduationCap },
+            ]).map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={tab === id}
+                onClick={() => setTab(id)}
+                className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 font-heading text-[13px] font-extrabold tracking-[0.08em] transition-colors sm:flex-none sm:px-8 ${
+                  tab === id ? 'bg-[#F37021] text-white shadow-sm' : 'bg-white text-[#0F172A] hover:bg-[#FFF4EC] hover:text-[#F37021]'
+                }`}
+              >
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                {label}
+              </button>
+            ))}
           </div>
-          <div className="mt-4 flex justify-center">
-            <Button asChild variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
-              <a href="/eligibility-check">
-                <Sparkles className="mr-2 h-4 w-4" /> AI Course Match
-              </a>
-            </Button>
+
+          <div className="p-4 sm:p-6">
+            {tab === 'courses' ? (
+              <div role="tabpanel" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <label htmlFor="home-cf-subject" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I&apos;m looking for</label>
+                  <Input id="home-cf-subject" list="home-cf-subjects" placeholder="Select subject or course" value={subject} onChange={e => setSubject(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className="h-12 rounded-xl" />
+                  <datalist id="home-cf-subjects">{facets.subjects.map(s => <option key={s} value={s} />)}</datalist>
+                </div>
+                <div>
+                  <label htmlFor="home-cf-type" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I&apos;m planning to study</label>
+                  <Select value={courseType} onValueChange={setCourseType}>
+                    <SelectTrigger id="home-cf-type" className="h-12 rounded-xl"><SelectValue placeholder="Select course type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Foundation">Foundation</SelectItem>
+                      <SelectItem value="Undergraduate">UG — Undergraduate</SelectItem>
+                      <SelectItem value="Postgraduate">PG — Postgraduate</SelectItem>
+                      <SelectItem value="MRes">MRes — Master of Research</SelectItem>
+                      <SelectItem value="PhD">PhD / Doctorate</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label htmlFor="home-cf-country" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I want to study in</label>
+                  <Select value={countryName} onValueChange={setCountryName}>
+                    <SelectTrigger id="home-cf-country" className="h-12 rounded-xl"><SelectValue placeholder="Select country" /></SelectTrigger>
+                    <SelectContent>{countries.map(c => <SelectItem key={c.id} value={c.name}>{c.flag} {c.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end">
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#F37021] hover:bg-[#D95D12]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                </div>
+              </div>
+            ) : (
+              <div role="tabpanel" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <label htmlFor="home-uf-subject" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I&apos;m looking for</label>
+                  <Input id="home-uf-subject" list="home-uf-subjects" placeholder="Select subject or course" value={subject} onChange={e => setSubject(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className="h-12 rounded-xl" />
+                  <datalist id="home-uf-subjects">{facets.subjects.map(s => <option key={s} value={s} />)}</datalist>
+                </div>
+                <div>
+                  <label htmlFor="home-uf-university" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I want to study in</label>
+                  <input id="home-uf-university" list="home-uf-universities" placeholder="University name" value={universityName} onChange={e => setUniversityName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className={inputClass} />
+                  <datalist id="home-uf-universities">{facets.universities.map(u => <option key={u.name} value={u.name} />)}</datalist>
+                </div>
+                <div className="flex items-end">
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#F37021] hover:bg-[#D95D12]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Selected country's 7-step study guide — downloadable */}
+            {selectedCountry && (
+              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[#FFB347]/50 bg-[#FFF4EC] p-4 sm:flex-row sm:items-center">
+                <p className="text-sm text-[#0F172A]">
+                  <span className="font-heading font-bold">Planning to study in {selectedCountry.name}?</span>{' '}
+                  <span className="text-[#555555]">Download the {selectedCountry.name} 7-step study guide — from free counseling to pre-departure.</span>
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" onClick={downloadGuide} className="h-11 rounded-xl bg-[#F37021] px-5 font-heading text-[13px] font-bold text-white hover:bg-[#D95D12]">
+                    <Download className="mr-2 h-4 w-4" /> Download 7-Step Guide
+                  </Button>
+                  <Button asChild variant="outline" className="h-11 rounded-xl border-[#0066CC] px-5 font-heading text-[13px] font-bold text-[#0066CC] hover:bg-[#E6F2FF]">
+                    <Link href={destinationGuidePath(selectedCountry.slug)}>View {selectedCountry.name} Guide</Link>
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4 flex justify-center">
+              <Button asChild variant="outline" className="min-h-[48px] h-12 rounded-xl font-semibold border-2 px-8" style={{ borderColor: C.blue, color: C.blue }}>
+                <a href="/eligibility-check">
+                  <Sparkles className="mr-2 h-4 w-4" /> AI Course Match
+                </a>
+              </Button>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -387,6 +525,20 @@ function AboutSection() {
               <p>That same year, our first office opened in <strong style={{ color: C.text }}>Dhaka, Bangladesh</strong>, with a dedicated focus on helping students secure admissions to leading universities and colleges across the United Kingdom, United States, Australia, Canada, New Zealand, Ireland, and Europe. From the very first day, our approach has been centered on providing personalized, honest, and comprehensive guidance.</p>
               <p>Guided by the founder&apos;s vision of <strong style={{ color: C.text }}>trust, transparency, and professionalism</strong>, ALO Education continues to grow with the mission of offering global opportunities and becoming a trusted partner in international education consultancy. We are not just consultants — we are mentors, guides, and partners in your journey toward a brighter future.</p>
             </div>
+            <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {[
+                'World-class universities and research excellence',
+                'Industry-aligned programmes and employability',
+                'International student-friendly policies',
+                'Scholarships and funding opportunities',
+                'Safe cities and vibrant student life',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm font-medium" style={{ color: C.text }}>
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: '#F37021' }} aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
             <div className="flex flex-wrap gap-3">
               {badges.map((badge) => (
                 <div key={badge.label} className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: `${badge.color}10`, color: badge.color }}>
