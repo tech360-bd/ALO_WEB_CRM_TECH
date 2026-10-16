@@ -59,7 +59,7 @@ interface SuccessStory {
   name: string;
   photo: string;
   course: string;
-  stars: number;
+  stars?: number;
   testimonial: string;
   university: string;
 }
@@ -85,47 +85,29 @@ interface FaqItem {
 const RESOURCES: ResourceItem[] = [
   { icon: BookOpen, title: 'Study Abroad Guide', href: '/resources/study-abroad-guide', color: C.blue },
   { icon: Search, title: 'University Search', href: '/resources/university-search', color: C.orange },
-  { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#8B5CF6' },
-  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#10B981' },
-  { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#F59E0B' },
-  { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#EF4444' },
-  { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#EC4899' },
-  { icon: Clock, title: 'Intake Calendar', href: '/resources/intake-calendar', color: '#06B6D4' },
+  { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#0284C7' },
+  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#003F87' },
+  { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#003F87' },
+  { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#003F87' },
+  { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#003F87' },
+  { icon: Clock, title: 'Intake Calendar', href: '/resources/intake-calendar', color: '#0284C7' },
   { icon: Globe, title: 'Country Comparison', href: '/resources/country-compare', color: C.blue },
   { icon: GraduationCap, title: 'Course Finder', href: '/resources/course-finder', color: C.orange },
-  { icon: FileText, title: 'CV Templates', href: '/resources/cv-templates', color: '#8B5CF6' },
-  { icon: Target, title: 'Cost Calculator', href: '/resources/cost-calculator', color: '#10B981' },
-  { icon: Users, title: 'Student Community', href: '/resources/community', color: '#F59E0B' },
-  { icon: Zap, title: 'Pre-Departure Guide', href: '/resources/pre-departure', color: '#EF4444' },
-  { icon: BookMarked, title: 'Education Blog', href: '/resources/blog', color: '#EC4899' },
-  { icon: Compass, title: 'Career Path Finder', href: '/resources/career-paths', color: '#06B6D4' },
+  { icon: FileText, title: 'CV Templates', href: '/resources/cv-templates', color: '#0284C7' },
+  { icon: Target, title: 'Cost Calculator', href: '/resources/cost-calculator', color: '#003F87' },
+  { icon: Users, title: 'Student Community', href: '/resources/community', color: '#003F87' },
+  { icon: Zap, title: 'Pre-Departure Guide', href: '/resources/pre-departure', color: '#003F87' },
+  { icon: BookMarked, title: 'Education Blog', href: '/resources/blog', color: '#003F87' },
+  { icon: Compass, title: 'Career Path Finder', href: '/resources/career-paths', color: '#0284C7' },
   { icon: CalendarCheck, title: 'Deadline Tracker', href: '/resources/deadlines', color: C.blue },
   { icon: Lightbulb, title: 'FAQ Library', href: '/resources/faqs', color: C.orange },
-  { icon: HeadphonesIcon, title: 'Support Center', href: '/resources/support', color: '#8B5CF6' },
-  { icon: Heart, title: 'Mental Wellness Guide', href: '/resources/wellness', color: '#10B981' },
+  { icon: HeadphonesIcon, title: 'Support Center', href: '/resources/support', color: '#0284C7' },
+  { icon: Heart, title: 'Mental Wellness Guide', href: '/resources/wellness', color: '#003F87' },
   { icon: DollarSign, title: 'Financial Planning', href: '/resources/financial-planning', color: C.blue },
   { icon: Globe, title: 'Accommodation Guide', href: '/resources/accommodation', color: C.orange },
-  { icon: ShieldCheck, title: 'Insurance Guide', href: '/resources/insurance', color: '#8B5CF6' },
+  { icon: ShieldCheck, title: 'Insurance Guide', href: '/resources/insurance', color: '#0284C7' },
 ];
 
-const DEFAULT_STORIES: SuccessStory[] = [
-  {
-    name: 'Tushar Imran Nahid',
-    photo: '/images/testimonials/Tushar Imran Nahid.png',
-    course: 'MSc Data Science',
-    stars: 5,
-    testimonial: 'ALO Education made my dream of studying in the UK a reality. Their expert counselors guided me through every step — from choosing the right university to acing my visa interview. I couldn\'t have done it without them!',
-    university: 'University of Leeds, UK',
-  },
-  {
-    name: 'Ummaye Mayesha Manna',
-    photo: '/images/testimonials/Ummaye Mayesha Manna.PNG',
-    course: 'MBA International Business',
-    stars: 5,
-    testimonial: 'I was overwhelmed by the application process, but ALO Education simplified everything. They helped me secure a scholarship and even prepared me for life abroad. Their support was truly exceptional.',
-    university: 'University of Birmingham, UK',
-  },
-];
 
 const TEAM_MEMBERS: TeamMember[] = [
   {
@@ -346,7 +328,7 @@ function ResourcesSection() {
    SECTION 20 — SUCCESS STORIES
    ═══════════════════════════════════════════════════════════════ */
 function SuccessStoriesSection() {
-  const [stories, setStories] = useState<SuccessStory[]>(DEFAULT_STORIES);
+  const [stories, setStories] = useState<SuccessStory[]>([]);
 
   useEffect(() => {
     fetch('/api/website/homepage')
@@ -359,15 +341,19 @@ function SuccessStoriesSection() {
               name: (s.studentName as string) || '',
               photo: (s.photo as string) || '/images/testimonials/default.png',
               course: (s.course as string) || '',
-              stars: 5,
+              stars: typeof s.rating === 'number' ? Math.max(0, Math.min(5, Math.round(s.rating))) : undefined,
               testimonial: (s.testimonial as string) || '',
               university: (s.university as string) || '',
             }));
           if (mapped.length > 0) setStories(mapped);
         }
       })
-      .catch(() => { /* use defaults */ });
+      .catch(() => { /* no verified stories yet — section stays hidden */ });
   }, []);
+
+  // Only approved, consent-verified stories from the API are shown. With none
+  // available the section is omitted entirely — testimonials are never invented.
+  if (stories.length === 0) return null;
 
   return (
     <section className="py-16 md:py-20" style={{ background: '#FFFFFF' }}>
@@ -440,14 +426,16 @@ function SuccessStoriesSection() {
                   </div>
 
                   {/* Stars */}
-                  <div className="flex gap-1 mb-4">
+                  {typeof story.stars === 'number' && (
+                  <div className="flex gap-1 mb-4" aria-label={`Rated ${story.stars} out of 5`}>
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star
                         key={si}
-                        className={`h-4.5 w-4.5 ${si < story.stars ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
+                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
+                  )}
 
                   {/* Testimonial */}
                   <p className="text-sm leading-relaxed flex-grow mb-4" style={{ color: C.textSoft }}>
@@ -588,7 +576,7 @@ function FaqSection() {
           if (mapped.length > 0) setFaqs(mapped.slice(0, 20));
         }
       })
-      .catch(() => { /* use defaults */ });
+      .catch(() => { /* no verified stories yet — section stays hidden */ });
   }, []);
 
   return (

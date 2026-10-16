@@ -61,7 +61,7 @@ export default function StudentVisaReadinessPage() {
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
             <Shield className="w-6 h-6 text-[#0057B8]" />
-            <span>Visa Readiness & Preparation — Real DB — No Internal Risk Exposed</span>
+            <span>Visa Readiness & Preparation</span>
           </h1>
           <p className="text-gray-400 text-xs mt-1">Track your visa milestones, checklist verification, and practice embassy mock interviews — Student portal view checklist/requested/schedule/approved feedback/safe readiness/next actions/messages/appointments/AI practice NOT internal/risk/sensitive/medical/criminal/refusal analysis/staff comments — student never sees internal</p>
         </div>
@@ -100,7 +100,7 @@ export default function StudentVisaReadinessPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-4">
           <Card className="bg-[#0d1526] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold flex items-center justify-between"><span>Visa Document Checklist — 25+ Docs — Real DB — No Fake</span><span className="text-xs text-gray-400">{checklist.filter((i: any) => i.status === 'APPROVED' || i.status === 'approved').length} of {checklist.length} Verified — API: /api/student-portal/visa</span></CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold flex items-center justify-between"><span>Visa Document Checklist</span><span className="text-xs text-gray-400">{checklist.filter((i: any) => i.status === 'APPROVED' || i.status === 'approved').length} of {checklist.length} Verified</span></CardTitle></CardHeader>
             <CardContent className="p-4 space-y-3">
               {checklist.length === 0 ? (
                 <div className="p-8 text-center text-xs text-gray-400 border border-dashed border-white/10 rounded-xl">
@@ -119,7 +119,7 @@ export default function StudentVisaReadinessPage() {
           </Card>
 
           <Card className="bg-[#0d1526] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Tasks — Document Request/Interview/Bank Review/Sponsor Review/Refusal Review/Study Gap Review/Counselor Action/Application Action/Student Action/Senior Review — Real DB</CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Your Tasks</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2">
               {tasks.length === 0 ? <div className="text-xs text-gray-400 p-4 text-center border-dashed border rounded-lg">No tasks assigned — proper empty state</div> : tasks.map((t: any, i: number) => (
                 <div key={i} className="p-2 bg-white/5 rounded-lg border border-white/5 flex items-center justify-between text-xs"><span>{t.title}</span><Badge className="text-[10px]">{t.status}</Badge></div>
@@ -131,15 +131,15 @@ export default function StudentVisaReadinessPage() {
         <div className="space-y-4">
           <Card className="bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/10 border border-[#0057B8]/30 text-white">
             <CardContent className="p-5 space-y-4">
-              <div className="flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#E8501A]" /><h3 className="font-bold text-sm">AI Mock Interview Simulator — 9 Types — Real DB</h3></div>
-              <p className="text-xs text-gray-300 leading-relaxed">Practice embassy credibility questions in question-by-question mode — AI understands Bangladeshi English accents broken English Banglish pauses incomplete pronunciation non-native patterns — do NOT penalize Bangladeshi accent — evaluate meaning/clarity/consistency/relevance/confidence — Practice 3 days after package store attempts improvement — video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording — AI safety never guarantee approval/success/pretend embassy/confidential/invent requirements/refusal/university/policy/speculation as fact/automatically final decision must show uncertainty/cite source/flag manual verification/recommend human review</p>
-              <Link href="/student/visa-interview-practice" className="block"><Button className="w-full bg-[#0057B8] hover:bg-[#0046a0] text-white text-xs py-2.5 flex items-center justify-center gap-2"><span>Start Practice Session — Real API: /api/visa/ai-interview/start</span><ArrowRight className="w-3.5 h-3.5" /></Button></Link>
+              <div className="flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#E8501A]" /><h3 className="font-bold text-sm">AI Mock Interview Simulator</h3></div>
+              <p className="text-xs text-gray-300 leading-relaxed">Practise embassy credibility questions one at a time. The AI understands Bangladeshi English and Banglish patterns and scores meaning and clarity — never accent. Practice only: no AI tool can guarantee a visa outcome.</p>
+              <Link href="/student/visa-interview-practice" className="block"><Button className="w-full bg-[#0057B8] hover:bg-[#0046a0] text-white text-xs py-2.5 flex items-center justify-center gap-2"><span>Start Practice Session</span><ArrowRight className="w-3.5 h-3.5" /></Button></Link>
               {aiSessions.length > 0 && <div className="text-[11px] text-gray-400">Recent AI sessions: {aiSessions.length} — last score {aiSessions[0]?.readinessScore || 0}% — {aiSessions[0]?.interviewType}</div>}
             </CardContent>
           </Card>
 
           <Card className="bg-[#0d1526] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Officer Feedback — Student-Safe Only — Approved — Real DB</CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Officer Feedback</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2">
               {latestFeedback ? <p className="text-xs text-gray-300 leading-relaxed">{latestFeedback}</p> : <div className="text-xs text-gray-400 p-4 text-center border-dashed border border-white/10 rounded-lg">No officer feedback yet — proper empty state — student-safe feedback supportive/clear/professional/actionable never include internal risk labels/confidential comments/staff criticism/unsupported claims/visa guarantees — officer must approve before sending — save to Student Portal/Timeline/Notifications/Messages — real DB</div>}
               <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-500"><span>Visa Team Officer — Approved</span><span>Student-Safe — Timeline</span></div>
@@ -147,7 +147,7 @@ export default function StudentVisaReadinessPage() {
           </Card>
 
           <Card className="bg-[#0d1526] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Documents — Real DB</CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Documents</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2">
               {documents.length === 0 ? <div className="text-xs text-gray-400 p-4 text-center border-dashed border rounded-lg">No documents uploaded — proper empty state — real DB</div> : documents.slice(0,5).map((d: any, i: number) => (
                 <div key={i} className="p-2 bg-white/5 rounded border border-white/5 text-xs flex justify-between"><span>{d.fileName || d.category}</span><Badge className="text-[10px]">{d.status}</Badge></div>

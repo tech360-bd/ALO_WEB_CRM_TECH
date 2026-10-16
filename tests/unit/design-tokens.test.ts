@@ -75,3 +75,31 @@ describe('image asset integrity (redesign §6)', () => {
     expect(css).toContain('--color-indigo-600: #0057B8');
   });
 });
+
+describe('rendered-copy hygiene (feedback round)', () => {
+  it('routed pages contain no dev-speak or leaked spec text', async () => {
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const offenders: string[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const p = join(dir, name);
+        if (statSync(p).isDirectory()) { if (!p.includes('alo/views')) walk(p); continue; }
+        if (!p.endsWith('.tsx')) continue;
+        const text = readFileSync(p, 'utf8');
+        if (/Real DB|Real API|No Fake|DO NOT GUESS|per spec section/.test(text)) offenders.push(p);
+      }
+    };
+    walk(join(process.cwd(), 'src/app'));
+    walk(join(process.cwd(), 'src/components'));
+    expect(offenders).toEqual([]);
+  });
+
+  it('country pages use only local approved imagery (no hotlinked stock)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const text = readFileSync(join(process.cwd(), 'src/components/website/PremiumCountryPage.tsx'), 'utf8');
+    expect(text).not.toContain('images.unsplash.com');
+    expect(text).toContain('destinationCardImage');
+  });
+});

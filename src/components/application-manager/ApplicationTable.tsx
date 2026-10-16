@@ -201,7 +201,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
                 </thead>
                 <tbody>
                   {apps.length === 0 ? (
-                    <tr><td colSpan={19} className="p-8 text-center text-gray-500">No applications found. Real DB empty — create first application.</td></tr>
+                    <tr><td colSpan={19} className="p-8 text-center text-gray-500">No applications found. Nothing here yet — create the first application to get started.</td></tr>
                   ) : (
                     apps.map(app => (
                       <tr key={app.id} className="border-b border-[#E2E8F0]/60 hover:bg-[#F8FAFC]">

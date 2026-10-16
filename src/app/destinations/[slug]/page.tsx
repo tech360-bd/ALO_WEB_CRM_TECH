@@ -50,7 +50,7 @@ export default async function CountryDestinationPage({ params }: { params: Promi
     notFound();
   }
 
-  // Load dynamically from existing courses table filter country_id — per spec section 8,9,18
+  // Load dynamically from the existing courses table, filtered by country.
   // Only published + verified + source-linked records reach a public page
   // (see src/lib/public-catalog.ts). Internal fields are stripped before render.
   const [linkedCourses, linkedUniversities, linkedScholarships] = await Promise.all([

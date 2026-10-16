@@ -11,6 +11,7 @@ import {
   GraduationCap, Clock, Briefcase, Coins, ShieldCheck, CheckCircle2, AlertTriangle, Globe, MapPin, Building2, BookOpen, FileText, HelpCircle, Phone, MessageSquare, Sparkles, Calculator, Award, ArrowRight, Users, Compass, Star, ExternalLink, DollarSign, Calendar, CheckSquare, FileCheck, Send, UploadCloud
 } from 'lucide-react';
 import { CountryDestinationData } from '@/lib/country-destinations-data';
+import { destinationCardImage } from './ImageMapping';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
@@ -24,71 +25,19 @@ interface Props {
   linkedScholarships?: any[];
 }
 
+/**
+ * Country imagery — approved local assets only (no hotlinked stock).
+ * The seven main destinations use verified local landmark photography via
+ * DESTINATION_CARD_IMAGES; other countries fall back to the Europe banner.
+ * City cards intentionally use a designed icon header rather than a photo:
+ * no approved city-specific photography exists locally, and reusing one
+ * generic photo for every city would misrepresent them.
+ */
 const COUNTRY_IMAGE_MAP: Record<string, string> = {
-  uk: '/images/hero-banners/UK slide Banner.webp',
-  'united-kingdom': '/images/hero-banners/UK slide Banner.webp',
-  usa: '/images/hero-banners/USA slide Banner.webp',
-  'united-states': '/images/hero-banners/USA slide Banner.webp',
-  canada: '/images/hero-banners/Canada slide Banner.webp',
-  australia: '/images/hero-banners/Australia slide Banner.webp',
-  'new-zealand': '/images/hero-banners/New Zealand slide Banner.webp',
-  ireland: '/images/hero-banners/Europe slide Banner.webp',
-  dubai: '/images/hero-banners/Europe slide Banner.webp',
-  'dubai-uae': '/images/hero-banners/Europe slide Banner.webp',
   germany: '/images/hero-banners/Europe slide Banner.webp',
 };
 
-const COUNTRY_HERO_FALLBACK: Record<string, string> = {
-  uk: 'https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&w=1600&q=80',
-  canada: 'https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=1600&q=80',
-  australia: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=1600&q=80',
-  usa: 'https://images.unsplash.com/photo-1485738422979-b5c8d0f8f7a6?auto=format&fit=crop&w=1600&q=80',
-  ireland: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=1600&q=80',
-  'new-zealand': 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1600&q=80',
-  dubai: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80',
-};
 
-// City-specific lifestyle images — do NOT reuse same hero for every city (spec 19, 24)
-const CITY_IMAGES: Record<string, Record<string, string>> = {
-  uk: {
-    London: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80',
-    Manchester: 'https://images.unsplash.com/photo-1515586838455-8f8f940d6853?auto=format&fit=crop&w=800&q=80',
-    Birmingham: 'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&w=800&q=80',
-  },
-  canada: {
-    Toronto: 'https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=800&q=80',
-    Vancouver: 'https://images.unsplash.com/photo-1582560475093-ba66acccb361?auto=format&fit=crop&w=800&q=80',
-    Calgary: 'https://images.unsplash.com/photo-1609866975749-5893a2d50671?auto=format&fit=crop&w=800&q=80',
-  },
-  australia: {
-    Sydney: 'https://images.unsplash.com/photo-1523424080369-e2a6d2ef3249?auto=format&fit=crop&w=800&q=80',
-    Melbourne: 'https://images.unsplash.com/photo-1514395462725-fb4566210144?auto=format&fit=crop&w=800&q=80',
-    Adelaide: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&w=800&q=80',
-    Brisbane: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?auto=format&fit=crop&w=800&q=80',
-    Perth: 'https://images.unsplash.com/photo-1546268060-2592ff93ee24?auto=format&fit=crop&w=800&q=80',
-  },
-  usa: {
-    'New York': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=800&q=80',
-    Boston: 'https://images.unsplash.com/photo-1590089415225-02879a6c7933?auto=format&fit=crop&w=800&q=80',
-    Chicago: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80',
-    'San Francisco': 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=800&q=80',
-  },
-  ireland: {
-    Dublin: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=800&q=80',
-    Cork: 'https://images.unsplash.com/photo-1590736969955-71cc949da6f2?auto=format&fit=crop&w=800&q=80',
-    Galway: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80',
-  },
-  'new-zealand': {
-    Auckland: 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=800&q=80',
-    Wellington: 'https://images.unsplash.com/photo-1570504140306-4f03c0a8a3c5?auto=format&fit=crop&w=800&q=80',
-    Christchurch: 'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?auto=format&fit=crop&w=800&q=80',
-  },
-  dubai: {
-    Dubai: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
-    'Abu Dhabi': 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80',
-    Sharjah: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=800&q=80',
-  },
-};
 
 export default function PremiumCountryPage({ countryData, linkedCourses = [], linkedUniversities = [], linkedScholarships = [] }: Props) {
   const isAuthenticated = usePortalStore((s: any) => s.isAuthenticated) || false;
@@ -113,8 +62,8 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
   const totalCostForeign = netTuition + estimatedLiving;
   const totalCostBdt = Math.round(totalCostForeign * calcExchangeRate);
 
-  const heroImage = COUNTRY_IMAGE_MAP[countryData.slug] || COUNTRY_HERO_FALLBACK[countryData.slug] || '/images/hero-banners/UK slide Banner.webp';
-  const heroFallback = COUNTRY_HERO_FALLBACK[countryData.slug] || heroImage;
+  const heroImage = destinationCardImage(countryData.slug, COUNTRY_IMAGE_MAP[countryData.slug]);
+  const heroFallback = heroImage;
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,14 +162,14 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-5">
               <div className="rounded-[2rem] overflow-hidden border border-[#E2E8F0] shadow-sm bg-white aspect-[4/3]">
-                <img src={COUNTRY_HERO_FALLBACK[countryData.slug] || heroFallback} alt={`${countryData.name} city and campus lifestyle`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
+                <img src={heroImage} alt={`Landmark in ${countryData.name}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
               </div>
             </div>
             <div className="lg:col-span-7 space-y-5">
               <Badge className="bg-white border-[#E2E8F0] text-[#0057B8] text-xs">Why Bangladeshi Students Consider {countryData.name}</Badge>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#0F172A]">Why {countryData.name} for Higher Education</h2>
               <p className="text-sm text-gray-700 leading-relaxed">{countryData.overview} {countryData.whyStudySummary}</p>
-              <p className="text-sm text-gray-600 leading-relaxed">Education environment in {countryData.name} — international student context, major study strengths, ALO-specific guidance. Original ALO content, not copied from external websites. Final eligibility depends on university, course, academic profile, English score, study gap and other admission requirements.</p>
+              <p className="text-sm text-gray-600 leading-relaxed">Final eligibility always depends on the university, course, academic profile, English score and any study gap.</p>
               <div className="flex gap-3 pt-2">
                 <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#0057B8] text-white h-12 px-6 font-bold rounded-xl">Explore Courses in {countryData.name}</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6 rounded-xl">Talk to Counselor</Button></Link>
@@ -302,7 +251,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               </Card>
             ))}
           </div>
-          <p className="text-xs text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">Final eligibility depends on university, course, academic profile, English score, study gap and other admission requirements — per spec section 7.</p>
+          <p className="text-xs text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">Final eligibility depends on university, course, academic profile, English score, study gap and other admission requirements.</p>
         </div>
       </section>
 
@@ -441,7 +390,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Entry Requirements — {countryData.name} — Country-Specific Rules</h2>
-              <p className="text-sm text-gray-600 mt-2 max-w-3xl">Create tabs/cards: Foundation / Bachelor / Top-up / Masters / MBA / PhD — each must show Academic / English / Documents / Remarks / Source / Last verified — every country must have country-specific rules — only show levels that actually exist.</p>
+              <p className="text-sm text-gray-600 mt-2 max-w-3xl">Entry requirements vary by study level and by university. The table below shows the typical academic and English requirements for {countryData.name}; your counsellor will confirm the exact requirements for your chosen course.</p>
             </div>
             <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">✓ {countryData.entryRequirements.length} Levels • Verified {countryData.lastVerifiedAt}</Badge>
           </div>
@@ -517,7 +466,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[11px]">For logged-in students: actual status in portal • Public: general checklist</Badge>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
-            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]"/>Academic</h4><ul className="space-y-1.5 text-gray-700">{['SSC/O-Level','HSC/A-Level','Bachelor','Masters where applicable'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul><p className="text-[10px] text-gray-400 mt-3">Do NOT expose student documents publicly — logged-in view pulls from /api/student/documents with RBAC.</p></Card>
+            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]"/>Academic</h4><ul className="space-y-1.5 text-gray-700">{['SSC/O-Level','HSC/A-Level','Bachelor','Masters where applicable'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul><p className="text-[10px] text-gray-400 mt-3">Your documents stay private — they are only visible to you and your assigned counsellor when you are logged in.</p></Card>
             <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><UploadCloud className="w-4 h-4 text-[#0057B8]"/>Identity</h4><ul className="space-y-1.5 text-gray-700">{['Passport','Photo','NID/Birth Certificate where required'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul></Card>
             <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#0057B8]"/>English & Application</h4><ul className="space-y-1.5 text-gray-700">{['IELTS/PTE/TOEFL/DET/etc.','CV','SOP','Recommendation letters','Work experience'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul></Card>
             <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0057B8] to-[#E8501A]"/><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#E8501A]"/>Financial & Visa</h4><ul className="space-y-1.5 text-gray-700">{['Bank statement','Sponsor documents','Source of funds','Relationship proof', `${countryData.name}-specific documents`].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-[#0057B8] shrink-0"/><span>{it}</span></li>))}</ul><div className="mt-4 p-3 bg-white border border-[#E2E8F0] rounded-xl"><p className="text-[11px] font-semibold text-[#0057B8]">Logged-in student view</p><p className="text-[11px] text-gray-600 mt-1">Your actual document status appears in <Link href="/student/documents" className="text-[#0057B8] underline font-semibold">Student Portal → Documents</Link> (RBAC protected, prepared statements, no public exposure).</p><Link href="/student/documents"><Button size="sm" className="mt-2 w-full bg-[#0057B8] text-white h-12 text-[11px]">View My Document Status</Button></Link></div></Card>
@@ -634,21 +583,24 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       {/* 19. CITY & LIFESTYLE — Visually rich city section */}
       <section className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Cities & Lifestyle in {countryData.name} — Visually Rich City Section</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Cities &amp; Lifestyle in {countryData.name}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {countryData.cities.map((city, i) => (
               <Card key={i} className="overflow-hidden bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
-                <div className="h-48 bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/20 relative">
-                  <img src={CITY_IMAGES[countryData.slug]?.[city.name] || COUNTRY_HERO_FALLBACK[countryData.slug] || heroFallback} alt={`${city.name} — ${city.vibe} — student lifestyle in ${countryData.name} — large city image 800w lazy loaded`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
-                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md border border-[#E2E8F0] rounded-full px-3 py-1 text-[11px] font-bold">{city.costLevel} Cost</div>
-                  <div className="absolute top-3 right-3 bg-[#0057B8] text-white rounded-full px-3 py-1 text-[11px] font-bold">{city.name}</div>
+                <div className="flex h-32 items-center justify-between bg-[#EAF3FF] px-5 relative">
+                  <div>
+                    <p className="font-heading text-xl font-extrabold text-[#0057B8]">{city.name}</p>
+                    <p className="text-[11px] font-semibold text-[#64748B]">{countryData.name}</p>
+                  </div>
+                  <MapPin className="h-9 w-9 text-[#0057B8]" aria-hidden="true" />
+                  <div className="absolute bottom-3 left-5 bg-white border border-[#E2E8F0] rounded-full px-3 py-1 text-[11px] font-bold text-[#0F172A]">{city.costLevel} Cost</div>
                 </div>
                 <div className="p-5 flex-1">
                   <h4 className="font-bold text-[#0F172A]">{city.name}</h4>
                   <p className="text-xs text-gray-600 mt-1">Student vibe: {city.vibe}</p>
-                  <p className="text-xs text-gray-500 mt-2">Popular universities: {city.universities?.join(', ') || 'Check DB — universities where city = ' + city.name}</p>
+                  <p className="text-xs text-gray-500 mt-2">Popular universities: {city.universities?.join(', ') || 'Ask your counsellor for the current list'}</p>
                   <p className="text-xs text-gray-500">Transport: Check city guide • Living cost: {city.livingCost || 'Check with counselor — verified only'} • Job: { (city as any).jobOpportunitySummary || 'Check with counselor — verified only'}</p>
-                  <p className="text-[10px] text-gray-400 mt-2">Last verified: {countryData.lastVerifiedAt} • Do not use same image for every city — country-specific city images</p>
+                  <p className="text-[10px] text-gray-400 mt-2">Last verified: {countryData.lastVerifiedAt}</p>
                 </div>
                 <div className="p-5 pt-0">
                   <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8] hover:text-white h-12 text-xs font-bold">Explore {city.name} courses</Button></Link>
@@ -759,8 +711,8 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       {/* 23. SOURCES & VERIFICATION — Clean Data & Verification section */}
       <section className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Data & Verification — {countryData.name} — Sources & Verification</h2>
-          <p className="text-sm text-gray-600">For each important dynamic claim show Data section, Source name, Official/source URL, Last verified, Verified by, Status — especially for Visa, Work rights, Post-study route, Tuition, Living costs, English requirements, Scholarships, Entry requirements — if not verified DO NOT GUESS Display Data pending verification or Check with counselor.</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Sources &amp; Verification — {countryData.name}</h2>
+          <p className="text-sm text-gray-600">Key figures on this page — visa rules, work rights, tuition, living costs and entry requirements — are checked against the official sources below. Where a figure is still being verified, we say so rather than guess.</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {countryData.sources.map((source, i) => (
               <Card key={i} className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm h-full">
@@ -770,23 +722,11 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <p className="text-[11px] text-gray-500 mt-2">Last verified: {source.lastVerifiedAt}</p>
               </Card>
             ))}
-            {countryData.sources.length === 0 && <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl col-span-3 text-center"><p className="text-sm text-gray-600">Data pending verification — Check with counselor — Do NOT guess — every financial figure must have source + last verified date.</p></Card>}
+            {countryData.sources.length === 0 && <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl col-span-3 text-center"><p className="text-sm text-gray-600">Some figures for this destination are still being verified. Please check with your counsellor for the latest confirmed details.</p></Card>}
           </div>
         </div>
       </section>
 
-      {/* 24. COUNTRY PAGE IMAGE SYSTEM — High-quality visuals */}
-      <section className="py-8 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] text-gray-500 text-center">Country Page Image System — Every country page must have high-quality visuals — country-specific hero image, city images, student/campus images, lifestyle images, university/campus imagery where legally usable — never use stolen university logos, copyrighted images without permission, random unrelated stock images, repeated image everywhere — every image alt text, lazy loading below fold, responsive sizing, fallback, subtle image effects hover zoom/rounded corners/soft shadow/image cropping/editorial composition, do NOT over-animate — all implemented with COUNTRY_IMAGE_MAP country-specific high resolution relevant to country students/campus/city/landmark where appropriate no copyrighted/stolen image no misleading image proper alt text lazy loaded where appropriate fallback illustration if no approved image exists subtle entrance animation no excessive animation premium landing page not generic CRM page.</p>
-        </div>
-      </section>
-
-      {/* 25. LINK INTEGRITY — Critical */}
-      <section className="py-8 bg-[#FFFFFF] border-b border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        </div>
-      </section>
     </div>
   );
 }

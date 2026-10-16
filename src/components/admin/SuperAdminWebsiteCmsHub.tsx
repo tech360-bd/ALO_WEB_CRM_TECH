@@ -397,7 +397,7 @@ export function SuperAdminWebsiteCmsHub() {
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b flex items-center justify-between">
           <h3 className="font-semibold text-sm">{activeType} — {items.length} items {loading && "(loading...)"}</h3>
-          <span className="text-xs text-slate-500">Real DB • Audit Logged • PWA Mobile Ready</span>
+          <span className="text-xs text-slate-500">Live data • Audit logged</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -447,7 +447,7 @@ export function SuperAdminWebsiteCmsHub() {
             <div className="p-4 border-t bg-slate-50 flex justify-end gap-2">
               <button onClick={()=>setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
               <button onClick={handleSaveDraft} disabled={revisionBusy} className="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save as Draft</button>
-              <button onClick={handleSave} className="px-5 py-2 bg-[#0057B8] hover:bg-[#003F87] text-white rounded-xl text-sm font-semibold">Save — Real DB</button>
+              <button onClick={handleSave} className="px-5 py-2 bg-[#0057B8] hover:bg-[#003F87] text-white rounded-xl text-sm font-semibold">Save</button>
             </div>
           </div>
         </div>

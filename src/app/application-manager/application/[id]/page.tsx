@@ -172,7 +172,7 @@ export default function ApplicationDetailPage() {
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12 lg:col-span-8">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Overview — Real DB Data</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Overview Data</CardTitle></CardHeader>
               <CardContent className="p-4 grid grid-cols-2 gap-4 text-sm">
                 <div><p className="text-xs text-gray-500">University</p><p className="font-semibold text-[#0F172A]">{app.universityName}</p></div>
                 <div><p className="text-xs text-gray-500">Course</p><p className="font-semibold text-[#0F172A]">{app.courseName}</p></div>
@@ -188,7 +188,7 @@ export default function ApplicationDetailPage() {
           </div>
           <div className="col-span-12 lg:col-span-4 space-y-4">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-xs uppercase tracking-wider text-gray-500">Quick Actions — Real API</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-xs uppercase tracking-wider text-gray-500">Quick Actions</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-2">
                 <select onChange={e=> e.target.value && handleStatusChange(e.target.value)} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs"><option value="">Change Stage (30+)</option><option value="DOCUMENT_REVIEW">DOCUMENT_REVIEW</option><option value="READY_TO_SUBMIT">READY_TO_SUBMIT</option><option value="SUBMITTED_TO_UNIVERSITY">SUBMITTED_TO_UNIVERSITY</option><option value="DECISION_PENDING">DECISION_PENDING</option><option value="CONDITIONAL_OFFER">CONDITIONAL_OFFER</option><option value="UNCONDITIONAL_OFFER">UNCONDITIONAL_OFFER</option><option value="CAS_PENDING">CAS_PENDING</option><option value="VISA_HANDOVER_READY">VISA_HANDOVER_READY</option></select>
                 <Button onClick={handleVisaHandover} className="w-full bg-[#0057B8] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Visa Handover</Button>
@@ -285,7 +285,7 @@ export default function ApplicationDetailPage() {
           <CardContent className="p-4 space-y-3 text-sm">
             {offerData ? (
               <div className="grid grid-cols-2 gap-3"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Offer Status</p><p className="font-semibold">{offerData.offerStatus}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Scholarship</p><p className="font-semibold">{offerData.scholarship || 'None'} {offerData.scholarshipAmount ? `(${offerData.scholarshipAmount})` : ''}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Deposit</p><p className="font-semibold">{offerData.depositAmount || 0} — Due: {offerData.depositDeadline ? new Date(offerData.depositDeadline).toLocaleDateString() : 'N/A'}</p></div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Letter</p><p className="text-xs">{offerData.offerLetterUrl ? <a href={offerData.offerLetterUrl} target="_blank" className="text-[#0057B8] underline">View Letter</a> : 'No letter'}</p></div><div className="col-span-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Conditions</p><p className="text-xs">{offerData.offerConditions || 'No conditions'}</p></div></div>
-            ) : <p className="text-sm text-gray-500 py-4 text-center">No offer yet — {app.offerStatus}. Real DB will show offer letter/conditions/scholarship/deposit/deadlines.</p>}
+            ) : <p className="text-sm text-gray-500 py-4 text-center">No offer yet — {app.offerStatus}. Details will appear here: offer letter/conditions/scholarship/deposit/deadlines.</p>}
           </CardContent>
         </Card>
       )}
@@ -317,7 +317,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Visa Handover — When VISA_HANDOVER_READY Create Visa File/Send Docs/Checklist/Notify/Handover Complete Reuse Existing Visa Engine No Duplicate VisaCase</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-3">
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4"><p className="text-sm"><strong>Current Stage:</strong> {app.stage}</p><p className="text-sm"><strong>Handover Status:</strong> {app.visaHandoverStatus}</p><p className="text-xs text-gray-500 mt-2">When stage is VISA_HANDOVER_READY, create Visa File, send docs, checklist, notify, handover complete — reuses existing VisaCase model, no duplicate.</p></div>
-            <Button onClick={handleVisaHandover} className="bg-[#0057B8] text-white w-full md:w-auto"><Shield className="w-4 h-4 mr-2" />Handover to Visa Team — Real API</Button>
+            <Button onClick={handleVisaHandover} className="bg-[#0057B8] text-white w-full md:w-auto"><Shield className="w-4 h-4 mr-2" />Handover to Visa Team</Button>
           </CardContent>
         </Card>
       )}

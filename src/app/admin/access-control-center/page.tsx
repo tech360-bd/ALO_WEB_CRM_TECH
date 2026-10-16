@@ -563,9 +563,8 @@ export default function SuperAdminAccessControlCenter() {
       )}
 
       {/* FOOTER */}
-      <Card className="p-3 bg-slate-900 text-slate-300 rounded-2xl text-[10px] font-mono space-y-1">
-        <div>ALO_EMPLOYEE_ACCESS_SYSTEM — Build complete enterprise-grade Employee Access Control and HR Management System integrated into EXISTING CRM — Do NOT create demo/mock-only/frontend-only checks — Centralized ROLE+DESIGNATION+PERMISSION+SCOPE+OBJECT+FIELD+WORKFLOW+APPROVAL+QUOTA+TEMPORARY+AUDIT least privilege — Security RBAC+ABAC+CSRF+prepared statements+validation+rate limiting+secure sessions+MFA+encrypted sensitive+protected file storage signed URLs+expiry+audit+soft delete+versioning — File storage protected download endpoint checks — APIs secure with auth+authz+validation+error+audit — Notification in-app/email/WhatsApp/SMS no sensitive leak — Reporting — Self-audit 40 tests</div>
-        <div>Database: employees/education/emergency/salary/documents/activation_tokens/roles/permissions/packages/assignments/requests/temporary/departments/branches/offices/attendance/leave/payroll/items/devices/sessions/login_logs/agreements/acceptances/document_versions/audit_logs/security_events/reassignments + EmployeeDepartment/Branch/Office/Leave/LeaveBalance/Payroll/PayrollItem/Device/LoginLog/Agreement/AgreementAcceptance/DocumentVersion/PermissionRequest/TemporaryPermission/SecurityEvent/Reassignment/AuditLog/PermissionPackageAssignment/BreakGlassAccess</div>
+      <Card className="p-4 bg-[#F4F8FF] border-[#E2E8F0] rounded-2xl text-xs text-[#64748B]">
+        Employee access is managed centrally by role, designation and permission scope. Every change is audit-logged; temporary and break-glass access expires automatically.
       </Card>
     </div>
   );

@@ -119,3 +119,31 @@ Verified before editing: branch `arena/8e2beff7-alo-web-crm-tech`, HEAD `847c588
 ## Remaining / unverified
 - Same as Phase 1: browser visual QA per route family (spacing at wide/narrow widths) and route/integration tests requiring a database.
 - 51 remote Unsplash URLs exist only in unrouted legacy views (`src/components/alo/views/*`); replace with local assets if those views are ever re-mounted.
+
+---
+
+# Phase 3 — Feedback round: image audit completion, copy hygiene, honesty fixes
+
+Verified before editing: branch `arena/8e2beff7-alo-web-crm-tech`, HEAD `92175c60`, clean tree. Master palette `#0057B8 / #003F87 / #EAF3FF / #F4F8FF / #E8501A / #C93D13 / #FFF1EA` retained unchanged (per §1 of the brief — the old `#0066CC/#F37021` decision was not reopened).
+
+## Pages/sections updated this round
+- **`/destinations/[slug]` (PremiumCountryPage)** — the last routed page still hotlinking stock photography:
+  - Hero + intro imagery now use the verified local landmark photography (`destinationCardImage()` → `public/images/cards/*.png`); all 31 `images.unsplash.com` URLs removed. Europe banner retained only for countries without local photography (e.g. Germany).
+  - City cards: no approved city-specific photography exists locally, and reusing one generic photo per city would misrepresent them — cards now use a designed Light-Blue icon header (MapPin + city typography + cost badge) instead of hotlinked photos.
+  - Removed two rendered internal-spec paragraphs (an "image system" instruction block and an empty "link integrity" section), rewrote the Sources & Verification copy, city-card footnotes, entry-requirements intro and document-privacy note into user-facing language; cleaned junk alt text ("large city image 800w lazy loaded").
+- **Homepage Success Stories (HomepagePart4)** — removed two hard-coded default testimonials with invented quotes and forced 5-star ratings. The section now renders only API stories that are `approved` + `consentStatus: verified`, shows a star row only when the record carries a real numeric rating, and omits the section entirely when no verified story exists. Resource-hub icon colours normalised from rainbow (`#8B5CF6/#EC4899/#06B6D4/#EF4444/#F59E0B/#10B981`) to the master blue family (`#0057B8/#0284C7/#003F87` + CTA orange).
+- **Admin** — `access-control-center` dark spec-dump footer (incl. a rendered database table list) replaced with a light master-styled audit note; `courses`, `courses/create`, `universities`, `AdminCountryBuilderView` spec-worded subtitles rewritten as professional guidance (same factual content).
+- **Student portal** — `ai-interview` and `visa` pages: all "Real DB / Real API / No Fake" dev-speak labels and five long instruction-dump paragraphs rewritten as concise student-facing copy (accent-tolerance, no-guarantee and human-review disclaimers preserved in plain language; the AI `finalFeedback` template string rewritten likewise). One regex over-match during this edit broke JSX; the file was restored from git and the cleanup redone with exact-match replacements only, then type-checked.
+- **28 CRM/application-manager files** — mechanical removal of "— Real DB / Real API / No Fake" suffixes and enum dumps (`DUE_TODAY/3_DAYS/...`, source-type enums) from headings and empty states; empty states now read as professional copy ("Nothing here yet — create the first application to get started"). No logic, props, API calls or RBAC touched anywhere in this round.
+
+## Shared header/footer (§5 re-verified)
+`PublicNavbar`/`PublicFooter` remain the single implementations mounted once by `PublicLayoutWrapper` from the root layout; no page imports them directly (grep-verified). Menu order, footer columns (Destinations UK→Dubai, Quick Links, Company incl. Global Offices/Code of Conduct/Student Complaint Policy/AQF Compliance), Google share link, WhatsApp/Mobile/Email/Address block, FB→IG→LinkedIn→YouTube order and the moving 3-colour cap strip (`#0057B8/#E8501A/#FFB347`) are unchanged and remain guarded by `tests/e2e/public-header.spec.ts` + `public-footer.spec.ts`. The only other `<footer>` elements on routed pages are in-article record footers (course/guide metadata), not site chrome.
+
+## Tests (actual results)
+- New guards in `tests/unit/design-tokens.test.ts`: rendered-copy hygiene (zero `Real DB|Real API|No Fake|DO NOT GUESS|per spec section` in any routed `.tsx`) + country-page local-imagery guard. Guard suite: **12/12 pass**.
+- TypeScript: no errors in any changed file (repo-wide errors are confined to 31 untouched files and stem from the sandbox's missing Prisma client — verified by file-overlap check).
+- ESLint: clean on all 37 changed files.
+- Full unit suite: **1889 passed / 11 failed / 28 skipped**; the failing-file set is byte-identical to the clean-tree baseline (verified via `git stash` A/B run) — zero regressions, +2 net new passing tests.
+
+## Still unverified (blocker unchanged)
+Browser screenshots / Playwright visual QA cannot run in this sandbox: Prisma engines cannot be downloaded (`binaries.prisma.sh` TLS-blocked) and the stale dev-SQLite schema generator refuses the current schema, so the app cannot boot. Route/integration tests requiring a database fail identically on the clean tree. Run `npx playwright test` and screenshot review (homepage, destinations, course/university cards, CRM tables, portals, mobile nav at 360/768/1440px) in a database-capable environment.

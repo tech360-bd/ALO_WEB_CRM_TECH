@@ -103,7 +103,7 @@ export default function PremiumStudentDashboard() {
         const documents = docsRes?.data || dashboardRes?.data?.documents || [];
         const timeline = timelineRes?.data || dashboardRes?.data?.timeline || [];
 
-        // Calculate next best action from real DB — never hardcoded per spec section 8
+        // Calculate the next best action from live data — never hardcoded.
         const nextAction = calculateNextBestAction(profile, applications, documents, timeline);
 
         setData({
@@ -216,7 +216,7 @@ export default function PremiumStudentDashboard() {
         <Card className="p-6 md:p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white shadow-xl border-0">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3"><Sparkles className="w-5 h-5 text-[#FFB347]" /><Badge className="bg-white/20 text-white border-white/30 text-[11px] font-bold">YOUR NEXT BEST ACTION — AI Calculated from Real DB</Badge></div>
+              <div className="flex items-center gap-2 mb-3"><Sparkles className="w-5 h-5 text-[#FFB347]" /><Badge className="bg-white/20 text-white border-white/30 text-[11px] font-bold">YOUR NEXT BEST ACTION — Calculated from your live data</Badge></div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{nextAction?.text || 'Complete Your Profile'}</h2>
               <p className="text-sm text-blue-100 mt-2 max-w-2xl leading-relaxed">{nextAction?.reason || 'AI determines this from real database information: application stage, missing documents, deadlines, payments, English score, interview readiness, visa checklist, counselor tasks — never hardcoded.'}</p>
               <p className="text-[11px] text-blue-200 mt-3">Examples: Complete profile, Upload passport/transcript/English certificate, Review university options, Compare courses, Apply to selected course, Sign application form, Upload bank statement, Pay application fee, Review offer, Pay deposit, Complete CAS questionnaire, Practice credibility interview, Upload visa documents, Book biometric appointment, Complete final visa review — AI calculates from real DB.</p>

@@ -44,13 +44,13 @@ export default function B2bApplicationsPage() {
       <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex gap-3"><Shield className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" /><div className="text-xs text-rose-700"><p className="font-semibold">Strict Security Enforcement Active</p><p>B2B provider credentials, portal URLs, commission margins stripped from Student, Partner, Counselor API responses. Unauthorized B2B API returns 403.</p></div></div>
 
       <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-        <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Active B2B Submissions ({apps.length}) — Real DB</CardTitle></CardHeader>
+        <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Active B2B Submissions ({apps.length})</CardTitle></CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[1000px]">
               <thead><tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-xs text-gray-500"><th className="p-3">App Code</th><th className="p-3">Student</th><th className="p-3">B2B Type</th><th className="p-3">Provider</th><th className="p-3">Reference</th><th className="p-3">University & Course</th><th className="p-3">Status</th><th className="p-3 text-right">Actions</th></tr></thead>
               <tbody>
-                {apps.length === 0 ? <tr><td colSpan={8} className="p-8 text-center text-gray-500">No active B2B applications. Real DB empty — create B2B application to populate.</td></tr> : apps.map((app: any) => (
+                {apps.length === 0 ? <tr><td colSpan={8} className="p-8 text-center text-gray-500">No active B2B applications. Nothing here yet — create a B2B application to get started.</td></tr> : apps.map((app: any) => (
                   <tr key={app.id} className="border-b border-[#E2E8F0]/60 hover:bg-[#F8FAFC]">
                     <td className="p-3 font-mono text-xs text-[#0057B8]">{app.application?.applicationCode || app.applicationId?.substring(0, 8)}</td>
                     <td className="p-3 font-medium">{app.application?.studentId?.substring(0, 8) || app.applicationId?.substring(0, 8)}</td>

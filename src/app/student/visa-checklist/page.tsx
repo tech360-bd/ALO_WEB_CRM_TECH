@@ -47,7 +47,7 @@ export default function StudentVisaChecklistPage() {
               <FileCheck className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Visa Documents & Compliance Checklist — Real DB — 25+ Types — No Fake</h1>
+              <h1 className="text-2xl font-bold text-white">Visa Documents & Compliance Checklist — 25+ Types</h1>
               <p className="text-gray-400 text-xs">Official checklist verified by your ALO Visa Interview Officer — Passport/Photo/Offer Letter/CAS/Academic Certificates/Transcripts/English Test/Bank Statement/Solvency Certificate/Sponsor Letter/Sponsor ID/Sponsor Occupation Proof/Source of Funds/Birth Certificate/Marriage Certificate/Work Experience/Study Gap Evidence/Refusal Letter/TB/Medical/Accommodation/Consent Documents/Visa Application/Biometric Appointment/Payment Receipt/Other Country-specific — statuses NOT_UPLOADED/UPLOADED/PENDING_REVIEW/APPROVED/REJECTED/NEEDS_UPDATE/EXPIRED/NOT_APPLICABLE — Do not permanently delete submitted visa documents — Use replacement/version history — API: /api/student-portal/visa — real DB</p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function StudentVisaChecklistPage() {
       </div>
 
       <Card className="bg-[#0d1526] border-white/10 text-white">
-        <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold">Required Compliance Documents — Real DB — No Permanent Delete — Version History</CardTitle></CardHeader>
+        <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold">Required Compliance Documents — No Permanent Delete — Version History</CardTitle></CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

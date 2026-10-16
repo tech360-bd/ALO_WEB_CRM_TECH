@@ -24,9 +24,9 @@ export default function AdminCreateCoursePage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-5xl px-4 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">Manual Course Management — 12 Tabs — No Orphan Courses</Badge>
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">Manual Course Management</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A]">Create Course — Manual Form</h1>
-          <p className="text-sm text-gray-600 mt-2">Tabs per spec: Basic Information, University & Campus, Tuition & Fees, Intakes, Academic Requirements, English Requirements, Scholarships, Tags, Source Verification, SEO, Visibility, Publish. Every course must have country_id, university_id, campus_id when applicable, study_level_id, study_area_id, discipline_id — never allow orphan course.</p>
+          <p className="text-sm text-gray-600 mt-2">Complete each tab — Basic Information, University &amp; Campus, Tuition &amp; Fees, Intakes, Academic and English Requirements, Scholarships, Tags, Source Verification, SEO, Visibility — then publish. A course must always be linked to its country, university, study level and subject area.</p>
           <div className="flex flex-wrap gap-2 mt-4">{tabs.map((t,i)=><Button key={t} size="sm" variant={activeTab===i ? 'default' : 'outline'} className={`h-9 text-[11px] ${activeTab===i ? 'bg-[#0057B8] text-white' : 'border-[#E2E8F0]'}`} onClick={()=>setActiveTab(i)}>{t}</Button>)}</div>
         </div>
         <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">

@@ -92,7 +92,7 @@ export function SuperAdminCrmCommandCenter() {
             <div key={k.label} className={`rounded-xl border p-4 ${k.color}`}>
               <div className="flex items-center justify-between"><span className="text-lg">{k.icon}</span><span className="text-2xl font-bold">{k.value ?? 0}</span></div>
               <div className="text-xs font-medium mt-1">{k.label}</div>
-              <div className="text-[10px] opacity-70 mt-1">Real DB</div>
+              <div className="text-[10px] opacity-70 mt-1">Live data</div>
             </div>
           ))}
         </div>
@@ -200,7 +200,7 @@ export function SuperAdminCrmCommandCenter() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Super Admin — CRM Command Center</h2>
-          <p className="text-sm text-slate-600 mt-1">Real DB operations for every CRM module. Perform any agent task as Super Admin — lead assignment, application pipeline, doc verification, visa case, finance, marketing, HR, partners, data, comms, reports. Audit logged, RBAC protected, mobile PWA ready.</p>
+          <p className="text-sm text-slate-600 mt-1">Full operations for every CRM module. Perform any agent task as Super Admin — lead assignment, application pipeline, doc verification, visa case, finance, marketing, HR, partners, data, comms, reports. Audit logged, RBAC protected, mobile PWA ready.</p>
         </div>
         <div className="flex gap-2">
           <input placeholder="Search real DB..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchData()} className="border rounded-lg px-3 py-2 text-sm w-48" />

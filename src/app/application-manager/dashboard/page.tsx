@@ -300,7 +300,7 @@ export default function ApplicationManagerDashboard() {
                     <Badge className={`${dl.status === 'OVERDUE' ? 'bg-red-50 text-red-700 border-red-200' : dl.status === 'DUE_TODAY' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-[#F8FAFC] text-gray-600 border-[#E2E8F0]'} text-[10px]`}>{dl.status}</Badge>
                   </div>
                 ))}
-                {(dashboard?.deadlines || []).length === 0 && <p className="text-xs text-gray-500 py-4 text-center">No pending deadlines. Real DB will populate alerts DUE_TODAY/3_DAYS/7_DAYS/OVERDUE.</p>}
+                {(dashboard?.deadlines || []).length === 0 && <p className="text-xs text-gray-500 py-4 text-center">No pending deadlines. Alerts will appear here as deadlines approach.</p>}
               </CardContent>
             </Card>
           </div>
@@ -353,7 +353,7 @@ export default function ApplicationManagerDashboard() {
                     </div>
                   ))}
                   {(!dashboard?.breakdowns?.sources || Object.keys(dashboard.breakdowns.sources).length === 0) && (
-                    <div className="col-span-2 py-6 text-center text-xs text-gray-500">No source data yet. Real DB will show DIRECT_ALO_APPLICATION, STUDENT_SELF_APPLICATION, PARTNER_APPLICATION, B2B_INBOUND, B2B_OUTBOUND, UNIVERSITY_DIRECT_PORTAL, MANUAL_IMPORT, REFERRAL, EVENT_SEMINAR_LEAD, WEBSITE_COURSE_FINDER_LEAD.</div>
+                    <div className="col-span-2 py-6 text-center text-xs text-gray-500">No source data yet. Application sources will appear here once applications are submitted.</div>
                   )}
                 </div>
               </CardContent>
@@ -386,7 +386,7 @@ export default function ApplicationManagerDashboard() {
           <div className="col-span-12">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
               <CardHeader className="p-4 border-b border-[#E2E8F0] flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]" />Live Application Stream — Real DB Records</CardTitle>
+                <CardTitle className="text-sm font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]" />Live Application Stream</CardTitle>
                 <Link href="/application-manager/applications" className="text-xs text-[#0057B8] hover:underline">View full table →</Link>
               </CardHeader>
               <CardContent className="p-0">

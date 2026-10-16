@@ -46,7 +46,7 @@ export default function CreateApplicationPage() {
                 <div className="col-span-6 md:col-span-3"><label className="text-xs font-medium">Level</label><Input value={form.level} onChange={e=>setForm({...form, level:e.target.value})} className="bg-white border-[#E2E8F0]" placeholder="Bachelor/Master" /></div>
                 <div className="col-span-12"><label className="text-xs font-medium">Notes</label><textarea value={form.notes} onChange={e=>setForm({...form, notes:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[80px]" /></div>
               </div>
-              <Button type="submit" disabled={loading} className="bg-[#0057B8] text-white w-full md:w-auto min-h-[48px]">{loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : 'Create Application — Real DB'}</Button>
+              <Button type="submit" disabled={loading} className="bg-[#0057B8] text-white w-full md:w-auto min-h-[48px]">{loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : 'Create Application'}</Button>
             </form>
           </CardContent>
         </Card>
