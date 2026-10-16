@@ -95,6 +95,22 @@ describe('rendered-copy hygiene (feedback round)', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('no hotlinked stock photography anywhere in src (local approved assets only)', async () => {
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const offenders: string[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const p = join(dir, name);
+        if (statSync(p).isDirectory()) { walk(p); continue; }
+        if (!/\.tsx?$/.test(p)) continue;
+        if (readFileSync(p, 'utf8').includes('images.unsplash.com')) offenders.push(p);
+      }
+    };
+    walk(join(process.cwd(), 'src'));
+    expect(offenders).toEqual([]);
+  });
+
   it('country pages use only local approved imagery (no hotlinked stock)', async () => {
     const { readFileSync } = await import('node:fs');
     const { join } = await import('node:path');

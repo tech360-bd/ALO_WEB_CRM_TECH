@@ -147,3 +147,22 @@ Verified before editing: branch `arena/8e2beff7-alo-web-crm-tech`, HEAD `92175c6
 
 ## Still unverified (blocker unchanged)
 Browser screenshots / Playwright visual QA cannot run in this sandbox: Prisma engines cannot be downloaded (`binaries.prisma.sh` TLS-blocked) and the stale dev-SQLite schema generator refuses the current schema, so the app cannot boot. Route/integration tests requiring a database fail identically on the clean tree. Run `npx playwright test` and screenshot review (homepage, destinations, course/university cards, CRM tables, portals, mobile nav at 360/768/1440px) in a database-capable environment.
+
+---
+
+# Phase 4 — Remaining-work completion round
+
+## Boot/browser verification — re-attempted, blocker re-confirmed with exact evidence
+The dev server was started in this sandbox: Next.js boots (`✓ Ready`), but every route returns HTTP 500 with `Error: Failed to load external module @prisma/client … Cannot find module '.prisma/client/default'` (import chain `src/app/layout.tsx → src/lib/cms-managed-content.ts → src/lib/db.ts`). `npx prisma generate` was retried once and fails at `https://binaries.prisma.sh/…/schema-engine.gz.sha256` — "Client network socket disconnected before secure TLS connection was established" (host is outside this sandbox's network allowlist). No `.prisma/client` exists and no Playwright browsers are installed. **Conclusion: browser screenshots, Playwright execution and DB-backed route/integration tests are environmentally impossible from this workspace** — they must run in a database-capable environment (`npx prisma generate && npx playwright test`). What could be verified here was: all 32 Playwright specs enumerate cleanly via `npx playwright test --list` (3 files, specs valid).
+
+## Missing work completed this round
+- **Blog & Services hero images (routed, public)** — `src/lib/blogs-data.ts` (10 posts, `/blog`, `/blog/[slug]`) and `src/lib/services-data.ts` (10 services, rendered via PublicPages) hotlinked Unsplash. Each `heroImage` now points to a relevant verified local asset (country landmark cards for country topics, `/images/services/*.png` for service topics, local student-lifestyle photography otherwise). Every replacement path was script-verified to exist in `public/`.
+- **`/student-journey` hero** — dark gray-900 gradient section with a hotlinked photo overlay replaced with the master Pale Background `#F4F8FF`, primary text `#0F172A`, local `/images/hero/study-abroad-hero.png` at 10% opacity, and white stat cards (was white-on-dark glass chips).
+- **Legacy views (`src/components/alo/views/`)** — the final 11 Unsplash URLs (public-home journey/university images, nexabroad-dashboard university/document/avatar images) replaced with local destination cards, service images and the default avatar. These views remain unrouted; repo-wide `images.unsplash.com` count is now **zero** (guarded by a new test scanning all of `src/`; local files whose filenames merely contain "unsplash" are unaffected).
+
+## Tests
+- Guard file now 10 tests (new: repo-wide no-hotlink scan) — all pass. Full suite **1890 passed / 11 failed / 28 skipped** — the same 11 pre-existing baseline failures, zero regressions. tsc clean on changed files; ESLint clean.
+
+## What remains genuinely blocked (environment, not code)
+1. `npx prisma generate` (engine download TLS-blocked) → generated client → app boot → Playwright + screenshot QA + DB integration tests. Run in staging/local dev with normal network access.
+2. Manual responsive screenshot review per page family at 360/768/1440px once the app boots.

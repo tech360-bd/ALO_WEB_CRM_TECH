@@ -72,7 +72,7 @@ const MATCHED_UNIVERSITIES: MatchedUniversity[] = [
     tuition: "£24,000/year",
     scholarship: "£5,000 Global Excellence",
     deadline: "Jan 15, 2027",
-    image: "https://images.unsplash.com/photo-1562774053-701939366bbc?w=800&q=80",
+    image: "/images/cards/uk.png",
   },
   {
     name: "University of Toronto",
@@ -82,7 +82,7 @@ const MATCHED_UNIVERSITIES: MatchedUniversity[] = [
     tuition: "CAD $32,000/year",
     scholarship: "CAD $10,000 Lester B. Pearson",
     deadline: "Jan 10, 2027",
-    image: "https://images.unsplash.com/photo-1592280771190-3e2e4d571329?w=800&q=80",
+    image: "/images/cards/canada.png",
   },
   {
     name: "University of Melbourne",
@@ -92,7 +92,7 @@ const MATCHED_UNIVERSITIES: MatchedUniversity[] = [
     tuition: "AUD $38,000/year",
     scholarship: "AUD $8,000 Merit",
     deadline: "Feb 28, 2027",
-    image: "https://images.unsplash.com/photo-1571987499613-4afc3f452d62?w=800&q=80",
+    image: "/images/cards/australia.png",
   },
 ];
 
@@ -109,7 +109,7 @@ const OCR_DOCUMENTS: OCRDocument[] = [
       { label: "Nationality", value: "Bangladeshi" },
       { label: "DOB", value: "15 Mar 2002" },
     ],
-    thumbnail: "https://images.unsplash.com/photo-1633675104092-ede08f5a5c29?w=400&q=80",
+    thumbnail: "/images/services/english-test.png",
   },
   {
     id: "doc-2",
@@ -123,7 +123,7 @@ const OCR_DOCUMENTS: OCRDocument[] = [
       { label: "Writing", value: "7.0" },
       { label: "Speaking", value: "7.5" },
     ],
-    thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80",
+    thumbnail: "/images/services/counseling.png",
   },
   {
     id: "doc-3",
@@ -137,7 +137,7 @@ const OCR_DOCUMENTS: OCRDocument[] = [
       { label: "University", value: "BUET" },
       { label: "Year", value: "2024" },
     ],
-    thumbnail: "https://images.unsplash.com/photo-1524174354095-251a4f6561c5?w=400&q=80",
+    thumbnail: "/images/services/visa.png",
   },
 ];
 
@@ -145,7 +145,7 @@ const PENDING_APPROVALS: PendingApproval[] = [
   {
     id: "app-1",
     studentName: "Tanvir Ahmed",
-    studentAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    studentAvatar: "/images/testimonials/default.png",
     university: "University of Birmingham",
     course: "MSc Data Science",
     sopConfidence: 94,
@@ -157,7 +157,7 @@ const PENDING_APPROVALS: PendingApproval[] = [
   {
     id: "app-2",
     studentName: "Fatima Khan",
-    studentAvatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80",
+    studentAvatar: "/images/testimonials/default.png",
     university: "University of Toronto",
     course: "MASc Computer Engineering",
     sopConfidence: 91,
@@ -311,7 +311,7 @@ function NexAbroadNav() {
             <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#E8501A]" />
           </Button>
           <Avatar className="size-9 border border-white/10">
-            <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658c42c2b1f?w=100&q=80" />
+            <AvatarImage src="/images/testimonials/default.png" />
             <AvatarFallback className="bg-[#1E40AF] text-xs font-bold text-white">RA</AvatarFallback>
           </Avatar>
         </div>

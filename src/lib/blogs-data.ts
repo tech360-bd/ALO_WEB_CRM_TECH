@@ -27,7 +27,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Senior Visa Compliance Team, ALO Education",
     publishedAt: "2026-07-28",
     readTime: "8 min read",
-    heroImage: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/cards/uk.png",
     excerpt: "Navigating the UK Student Visa (formerly Tier 4) application from Bangladesh requires strict adherence to UKVI financial evidence rules, CAS issuance timelines, TB medical certificates, and VFS Global biometric submissions.",
     tags: ["UK Student Visa", "CAS", "Bank Solvency", "UKVI", "VFS Dhaka", "IHS Surcharge"],
     tableOfContents: [
@@ -68,7 +68,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Scholarship Advisory Board, ALO Education",
     publishedAt: "2026-07-25",
     readTime: "10 min read",
-    heroImage: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/services/success.png",
     excerpt: "Securing a fully funded government scholarship for Master's or PhD study abroad requires strategic essay writing, clear development impact narratives, and structured interview responses.",
     tags: ["Chevening", "Commonwealth Scholarship", "Australia Awards", "DAAD Germany", "Scholarship Essays"],
     tableOfContents: [
@@ -99,7 +99,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Certified English Test Head Coach, ALO Education",
     publishedAt: "2026-07-20",
     readTime: "7 min read",
-    heroImage: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/services/english-test.png",
     excerpt: "Selecting between IELTS, PTE Academic, and Duolingo depends on your target study destination, timeline constraints, test fee budget, and comfort level with computer-adaptive AI scoring.",
     tags: ["IELTS", "PTE Academic", "Duolingo DET", "English Test Comparison", "Study Abroad"],
     tableOfContents: [
@@ -126,7 +126,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "US Admissions Lead, ALO Education",
     publishedAt: "2026-07-15",
     readTime: "6 min read",
-    heroImage: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/cards/usa.png",
     excerpt: "Hundreds of accredited US universities now offer GRE waivers for international Master's applicants with strong undergraduate GPAs (3.0+) or relevant professional work experience.",
     tags: ["Study in USA", "GRE Waiver", "US Universities", "F1 Visa", "Master in USA"],
     tableOfContents: [
@@ -152,7 +152,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Canada Visa Specialist, ALO Education",
     publishedAt: "2026-07-10",
     readTime: "9 min read",
-    heroImage: "https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/cards/canada.png",
     excerpt: "Applying for a Canadian Study Permit from Bangladesh requires careful preparation of financial documents, Guaranteed Investment Certificates (GIC), Provincial Attestation Letters (PAL), and SOPs.",
     tags: ["Canada Visa", "SDS Stream", "GIC Account", "IRCC", "Study Permit"],
     tableOfContents: [
@@ -178,7 +178,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Global Career & Visa Strategist, ALO Education",
     publishedAt: "2026-07-05",
     readTime: "8 min read",
-    heroImage: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/landing/Copy of 20250902_1604_Team Celebrating Success_remix_01k44y1phqff4adx4kcap3cdyw.webp",
     excerpt: "Post-study work rights are a primary consideration for Bangladeshi international students seeking global career experience and return on investment after graduation.",
     tags: ["Post Study Work Visa", "UK Graduate Route", "Australia 485", "Canada PGWP", "STEM OPT"],
     tableOfContents: [
@@ -205,7 +205,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Germany Admissions Lead, ALO Education",
     publishedAt: "2026-07-01",
     readTime: "7 min read",
-    heroImage: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/hero-banners/Europe slide Banner.webp",
     excerpt: "Public universities in Germany charge ZERO tuition fees for both domestic and international students across hundreds of English-taught Bachelor's and Master's programs.",
     tags: ["Study in Germany", "Tuition Free", "Blocked Account", "German Public Universities", "APS Certificate"],
     tableOfContents: [
@@ -231,7 +231,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Chief Academic Editor, ALO Education",
     publishedAt: "2026-06-25",
     readTime: "9 min read",
-    heroImage: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/landing/Copy of pexels-yankrukov-8199166.webp",
     excerpt: "Your Statement of Purpose (SOP) is the single most critical personal document evaluated by university admissions committees and visa clearance officers.",
     tags: ["SOP Writing", "Statement of Purpose", "University Application", "Admission Essay", "ALO Review"],
     tableOfContents: [
@@ -257,7 +257,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Student Welfare Advisor, ALO Education",
     publishedAt: "2026-06-20",
     readTime: "8 min read",
-    heroImage: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/cards/uk.png",
     excerpt: "Accurate financial planning ensures Bangladeshi students manage housing, food, transport, and personal expenses comfortably while making full use of part-time work rights.",
     tags: ["Living Cost", "Student Budget", "London Rent", "Sydney Cost of Living", "Part Time Jobs"],
     tableOfContents: [
@@ -283,7 +283,7 @@ export const MASTER_BLOGS_DATA: BlogPost[] = [
     author: "Senior Visa Compliance Team, ALO Education",
     publishedAt: "2026-06-15",
     readTime: "7 min read",
-    heroImage: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "/images/landing/Copy of 20250902_1607_Joyful Park Conversation_remix_01k44y8qqzf1fak3kphqyhmj6w.webp",
     excerpt: "Understanding updated dependent visa rules allows married Bangladeshi students to plan family relocation alongside their international study programs.",
     tags: ["Spouse Visa", "Dependent Visa", "UK Visa Rules", "Australia Subclass 500 Dependent", "Canada Open Work Permit"],
     tableOfContents: [

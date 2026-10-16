@@ -27,6 +27,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
+import { destinationCardImage } from "@/components/website/ImageMapping";
 import {
   Icon,
   StatCard,
@@ -1094,8 +1095,8 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           {/* Journey hero image */}
           <div className="mt-8 mb-2 overflow-hidden rounded-2xl">
             <img
-              src="https://images.unsplash.com/photo-1523050854058-8df90fd10d9d?w=1280&q=80"
-              alt="International students walking on university campus — study abroad journey"
+              src="/images/landing/Copy of 20250902_1557_Smiling Study Partners_remix_01k44xnmncf91b70zs3ewff8kg.webp"
+              alt="Students planning their study abroad journey with ALO Education"
               className="h-48 w-full object-cover sm:h-64"
               loading="lazy"
             />
@@ -1340,14 +1341,14 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 const englishTests = Array.isArray(facts.englishTests) ? facts.englishTests : [];
                 const scholarship = facts.scholarship;
                 const ranking = facts.worldRanking || facts.ranking;
-                const uniImage = `https://images.unsplash.com/photo-${u.countrySlug === 'uk' ? '1562774053-701939366bbc' : u.countrySlug === 'usa' ? '1541339907198-eef733ef68ce' : u.countrySlug === 'canada' ? '1592280771190-3e2e4d57fb22' : u.countrySlug === 'australia' ? '1571987499613-6e1c8f3a8a8f' : '1562774053-701939366bbc'}?w=800&q=80`;
+                const uniImage = destinationCardImage(u.countrySlug || '');
                 return (
                   <Card key={u.slug} className="alo-card-anim group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-[#E2E8F0] bg-white transition-all hover:shadow-lg">
                     {/* University image header */}
                     <div className="relative h-32 overflow-hidden bg-[#F8FAFC]">
                                 <img
                         src={uniImage}
-                        alt={`${u.name} campus — study abroad`}
+                        alt={`${u.name} — study destination`}
                         className="alo-card-img size-full object-cover"
                         loading="lazy"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}

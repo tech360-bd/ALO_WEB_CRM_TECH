@@ -72,11 +72,11 @@ export default function StudentJourneyPage() {
     <div className="pt-20 bg-white min-h-screen">
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gray-900 to-[#0057B8] text-white py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-20"></div>
+      <section className="bg-[#F4F8FF] text-[#0F172A] py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/images/hero/study-abroad-hero.png')] bg-cover bg-center opacity-10" aria-hidden="true"></div>
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center max-w-4xl">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Your Journey Starts Here</h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-10">
+          <p className="text-xl md:text-2xl text-[#334155] mb-10">
             From dreaming in Bangladesh to graduating on an international campus. We are with you at every step.
           </p>
           
@@ -84,17 +84,17 @@ export default function StudentJourneyPage() {
               counts are prohibited (content governance). Qualitative,
               truthful value propositions only. */}
           <div className="flex flex-wrap justify-center gap-6 mt-12">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-40">
+            <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm w-40">
               <div className="text-3xl font-bold text-[#E8501A] mb-2">End-to-End</div>
-              <div className="text-sm text-gray-300">Application Support</div>
+              <div className="text-sm text-[#64748B]">Application Support</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-40">
+            <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm w-40">
               <div className="text-3xl font-bold text-[#E8501A] mb-2">8+</div>
-              <div className="text-sm text-gray-300">Study Destinations</div>
+              <div className="text-sm text-[#64748B]">Study Destinations</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 w-40">
+            <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm w-40">
               <div className="text-3xl font-bold text-[#E8501A] mb-2">Verified</div>
-              <div className="text-sm text-gray-300">University Data</div>
+              <div className="text-sm text-[#64748B]">University Data</div>
             </div>
           </div>
         </div>
