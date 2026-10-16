@@ -46,16 +46,16 @@ interface MasterCountryDestinationViewProps {
 }
 
 const COUNTRY_IMAGE_MAP: Record<string, string> = {
-  uk: '/images/hero-banners/UK slide Banner.webp',
-  'united-kingdom': '/images/hero-banners/UK slide Banner.webp',
-  usa: '/images/hero-banners/USA slide Banner.webp',
-  'united-states': '/images/hero-banners/USA slide Banner.webp',
-  canada: '/images/hero-banners/Canada slide Banner.webp',
-  australia: '/images/hero-banners/Australia slide Banner.webp',
-  'new-zealand': '/images/hero-banners/New Zealand slide Banner.webp',
-  ireland: '/images/hero-banners/Europe slide Banner.webp',
-  dubai: '/images/hero-banners/Europe slide Banner.webp',
-  'dubai-uae': '/images/hero-banners/Europe slide Banner.webp',
+  uk: '/images/cards/uk.png',
+  'united-kingdom': '/images/cards/uk.png',
+  usa: '/images/cards/usa.png',
+  'united-states': '/images/cards/usa.png',
+  canada: '/images/cards/canada.png',
+  australia: '/images/cards/australia.png',
+  'new-zealand': '/images/cards/new-zealand.png',
+  ireland: '/images/cards/ireland.png',
+  dubai: '/images/cards/dubai.png',
+  'dubai-uae': '/images/cards/dubai.png',
   germany: '/images/hero-banners/Europe slide Banner.webp',
   malaysia: '/images/hero-banners/Europe slide Banner.webp',
   netherlands: '/images/hero-banners/Europe slide Banner.webp',
@@ -105,7 +105,7 @@ export default function MasterCountryDestinationView({
   const totalCostBdt = Math.round(totalCostForeign * calcExchangeRate);
   const bankStatementBdt = Math.round((netTuition - calcDeposit + estimatedLiving) * calcExchangeRate);
 
-  const heroImage = COUNTRY_IMAGE_MAP[countryData.slug] || '/images/hero-banners/UK slide Banner.webp';
+  const heroImage = COUNTRY_IMAGE_MAP[countryData.slug] || '/images/cards/uk.png';
 
   const handleRunEligibilityCheck = () => {
     setEligibilityResult({

@@ -81,3 +81,41 @@ legacy brand hexes remain. Brand-kit defaults and its safety test updated.
   action icons); all actions use the Lucide icon system.
 - Dark-mode token roles were aligned to the new palette; the public site
   renders in light mode by default per §02 (no black sections).
+
+---
+
+# Phase 2 — Complete-site premium rollout, image correction & CRM polish (this brief)
+
+Verified before editing: branch `arena/8e2beff7-alo-web-crm-tech`, HEAD `847c5884`, clean tree; baseline guard tests 8/8 green.
+
+## Inventory performed
+- 413 `page.tsx` routes enumerated (public site, destinations, courses, tools, blog, admin/CRM, student/counsellor/partner portals, auth).
+- CRM shells audited (`StudentPortalShell`, `EmployeePortalShell`, `src/components/crm/*`): white sidebar/topbar, `#F8FAFC` canvas, Light Blue active nav, shared `ui/*` primitives already inherit the master system from Phase 1 (buttons/inputs ≥48px, master badges, tables, dialogs, dropdowns, tabs). No logic, RBAC or workflow code touched.
+- Image audit: all 36 static `/images/*` references resolve to files in `public/`; the only remote image URLs (51) live in `src/components/alo/views/*` (legacy SPA shell views), which are **not imported by `src/app`** and therefore not served — recorded, not modified. `next.config` remote hosts remain as configured.
+
+## Image corrections (Brief §6)
+- Verified visually that `public/images/cards/*.png` are relevant landmark photography (e.g. London, Sydney Opera House) while `hero-banners/*.webp` are graphic promotional banners. Destination cards now use the photographic assets:
+  - `ImageMapping.ts`: new `DESTINATION_CARD_IMAGES` + `destinationCardImage()` for UK, USA, Canada, Australia, Ireland, New Zealand, Dubai.
+  - `HomepagePart1.tsx`: hero fallback slides use photographic landmarks; destination cards gained 16/10 photographic headers (`object-cover`, lazy, alt text, `shadow-card`, hover zoom, hover border `#BFDBFE`, 24px radius).
+  - `TopUniversitiesSection.tsx` and `MasterCountryDestinationView.tsx`: country images switched from banner graphics to the same photographic set.
+  - `HomepagePart2.tsx` course cards: subject-matched image headers via `IMAGES.courses` map; the unverified claim "chosen by thousands of students worldwide" was removed from the section subtitle.
+  - Asset-existence + remap regression tests added (`design-tokens.test.ts`, image-integrity describe).
+
+## CRM KPI upgrade (Brief §7–8)
+- `CrmAdminDashboard.tsx`: KPI cards now use 16px radius, `shadow-card → hover:shadow-hover`, `#EAF3FF` icon tiles, and `CountUp` on real numeric API fields only.
+- New `src/components/ui/count-up.tsx`: animates only caller-supplied real values (700ms ease-out cubic), renders non-numeric API strings unchanged, respects `prefers-reduced-motion`, and exposes the final value via `aria-label`. Trend badges render only when the API marks the comparison `changeMeasured` — no invented growth data, charts or metrics anywhere.
+
+## Token cleanup across all CRM/AI surfaces
+- `globals.css` `@theme`: legacy purple/violet/indigo utilities now resolve to the master Information-blue family (`#0284C7`/`#0057B8`/`#003F87`), removing off-palette accents from AI-studio/analytics/notification views without touching any logic.
+- `AloShortFormBuilder.tsx`: slate-900 buttons and blue→indigo gradient replaced with Brand/Deep Blue. (Its slate-950 image-preview overlay is an intentional image-card text treatment, retained.)
+- Popular Courses tabs raised to ≥48px touch targets.
+
+## Verification (Phase 2)
+- `npx tsc --noEmit --skipLibCheck`: no errors in any changed file (repository-wide `@prisma/client` errors are the known sandbox Prisma-engine limitation, identical on the clean tree).
+- ESLint: clean on all changed files.
+- Unit suite: 1887 passed / 11 failed / 28 skipped — same 11 pre-existing failures as the clean-tree baseline (1877 passed), zero new failures; +2 new passing guards this phase (image integrity, purple remap).
+- NOT RUN (blocked): live browser/screenshot + Playwright checks — Prisma engines cannot download in this sandbox (`binaries.prisma.sh` TLS-blocked) and the stale dev-SQLite schema generator refuses the current schema, so the app cannot boot here. This remains unverified; run `npx playwright test` + manual screenshot review in a database-capable environment.
+
+## Remaining / unverified
+- Same as Phase 1: browser visual QA per route family (spacing at wide/narrow widths) and route/integration tests requiring a database.
+- 51 remote Unsplash URLs exist only in unrouted legacy views (`src/components/alo/views/*`); replace with local assets if those views are ever re-mounted.

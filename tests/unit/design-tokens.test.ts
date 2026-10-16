@@ -59,3 +59,19 @@ describe('ALO master design tokens', () => {
     expect(heroBlock).toContain('text-[#0057B8]');
   });
 });
+
+describe('image asset integrity (redesign §6)', () => {
+  it('every photographic destination card image exists locally', async () => {
+    const { DESTINATION_CARD_IMAGES } = await import('@/components/website/ImageMapping');
+    const { existsSync } = await import('node:fs');
+    for (const src of new Set(Object.values(DESTINATION_CARD_IMAGES))) {
+      expect(existsSync(join(process.cwd(), 'public', src)), src).toBe(true);
+    }
+  });
+
+  it('legacy purple/violet/indigo utilities resolve to the master info-blue family', () => {
+    expect(css).toContain('--color-purple-600: #0057B8');
+    expect(css).toContain('--color-violet-500: #0284C7');
+    expect(css).toContain('--color-indigo-600: #0057B8');
+  });
+});

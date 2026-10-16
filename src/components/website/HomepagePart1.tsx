@@ -9,6 +9,7 @@ import {
   CheckCircle, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck, Download,
 } from 'lucide-react';
 import { buildStudyGuideText, destinationGuidePath, studyGuideFileName } from '@/lib/alo-study-steps';
+import { destinationCardImage } from './ImageMapping';
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/i18n';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,13 +32,13 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 // These entries are visual destination choices only. Live availability,
 // current intakes and inventory counts come from the database API below.
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
-  { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#0284C7', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
-  { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
-  { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/hero-banners/New Zealand slide Banner.webp', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
-  { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
-  { id: '7', name: 'Dubai / UAE', slug: 'dubai-uae', flag: '🇦🇪', accentColor: '#F59E0B', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dubai', heroSubtitle: 'Career Growth in the Gulf' },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
+  { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#0284C7', heroImage: '/images/cards/usa.png', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
+  { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/cards/australia.png', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
+  { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/cards/new-zealand.png', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
+  { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/cards/ireland.png', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
+  { id: '7', name: 'Dubai / UAE', slug: 'dubai-uae', flag: '🇦🇪', accentColor: '#F59E0B', heroImage: '/images/cards/dubai.png', heroCity: 'Dubai', heroSubtitle: 'Career Growth in the Gulf' },
 ];
 
 const FALLBACK_DESTINATIONS: CountryData[] = FALLBACK_COUNTRIES.map(c => ({
@@ -454,8 +455,17 @@ function DestinationsSection() {
         <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {main7.map(d => (
             <motion.div key={d.id} variants={staggerItemScale} whileHover={{ y: -4 }} className="h-full">
-              <Card className="h-full rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-lg transition-all overflow-hidden">
-                <div className="h-1.5" style={{ backgroundColor: d.accentColor }} />
+              <Card className="group h-full rounded-2xl border border-[#E2E8F0] shadow-card hover:shadow-hover hover:border-[#BFDBFE] transition-all overflow-hidden">
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F4F8FF]">
+                  <Image
+                    src={destinationCardImage(d.slug, d.heroImage)}
+                    alt={`${d.name} — study destination`}
+                    fill
+                    loading="lazy"
+                    sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
                 <CardContent className="p-5 space-y-3">
                   <div className="flex items-center gap-3"><span className="text-2xl">{d.flag}</span><h3 className="text-lg font-bold" style={{ color: C.text }}>{d.name}</h3></div>
                   <div className="space-y-1.5 text-sm text-[#64748B]">

@@ -35,14 +35,14 @@ const TABS: { id: CountryTab; label: string; heading: string; image: string; mat
     id: 'uk',
     label: 'United Kingdom',
     heading: 'Top Universities in UK',
-    image: '/images/hero-banners/UK slide Banner.webp',
+    image: '/images/cards/uk.png',
     match: /united kingdom|\buk\b/i,
   },
   {
     id: 'australia',
     label: 'Australia',
     heading: 'Top Universities in Australia',
-    image: '/images/hero-banners/Australia slide Banner.webp',
+    image: '/images/cards/australia.png',
     match: /australia/i,
   },
 ];
@@ -211,6 +211,7 @@ export default function TopUniversitiesSection() {
                     alt={`${active.label} study destination`}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    loading="lazy"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#003F87]/70 via-transparent to-transparent" aria-hidden="true" />

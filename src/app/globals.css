@@ -275,6 +275,28 @@
   --color-red-500: #EF4444;
   --color-red-600: #EF4444;
   --color-amber-600: #92400E;
+  /* AI accents: legacy purple/violet/indigo classes resolve to the master
+     Info blue family (#0284C7 / brand blue) — no unrelated purple palette. */
+  --color-purple-50: #EFF6FF;
+  --color-purple-100: #EAF3FF;
+  --color-purple-200: #BFDBFE;
+  --color-purple-300: #93C5FD;
+  --color-purple-400: #0284C7;
+  --color-purple-500: #0284C7;
+  --color-purple-600: #0057B8;
+  --color-purple-700: #003F87;
+  --color-purple-800: #003F87;
+  --color-violet-50: #EFF6FF;
+  --color-violet-100: #EAF3FF;
+  --color-violet-200: #BFDBFE;
+  --color-violet-300: #93C5FD;
+  --color-violet-400: #0284C7;
+  --color-violet-500: #0284C7;
+  --color-violet-600: #0057B8;
+  --color-violet-700: #003F87;
+  --color-indigo-500: #0284C7;
+  --color-indigo-600: #0057B8;
+  --color-indigo-700: #003F87;
 
   /* --- Typography scale (desktop) --- */
   --text-display: 3rem;

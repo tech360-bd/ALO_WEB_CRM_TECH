@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { CountUp } from '@/components/ui/count-up';
 import {
   Users,
   FileText,
@@ -210,13 +211,22 @@ export default function CrmAdminDashboard() {
             {data.kpis.map((kpi) => {
               const Icon = KPI_ICONS[kpi.icon] || Activity;
               return (
-                <Card key={kpi.label} className="rounded-xl border border-alo-border bg-white">
-                  <CardContent className="p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <Icon className="text-alo-brand h-5 w-5" />
+                <Card key={kpi.label} className="rounded-2xl border border-alo-border bg-white shadow-card transition-shadow duration-200 hover:shadow-hover">
+                  <CardContent className="p-5">
+                    <div className="mb-3 flex items-center justify-between">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-alo-brand-light">
+                        <Icon className="text-alo-brand h-5 w-5" aria-hidden="true" />
+                      </span>
+                      {kpi.changeMeasured && kpi.change && (
+                        <Badge variant={kpi.change.trim().startsWith('-') ? 'warning' : 'success'} className="text-[11px]">
+                          {kpi.change}
+                        </Badge>
+                      )}
                     </div>
-                    <p className="text-alo-text text-2xl font-bold">{kpi.value}</p>
-                    <p className="text-alo-text-muted mt-0.5 text-xs">{kpi.label}</p>
+                    <p className="text-alo-text font-heading text-[28px] font-bold leading-none">
+                      <CountUp value={kpi.value} />
+                    </p>
+                    <p className="text-alo-text-muted mt-1.5 text-xs font-medium">{kpi.label}</p>
                   </CardContent>
                 </Card>
               );

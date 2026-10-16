@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import TopUniversitiesSection from './TopUniversitiesSection';
+import { IMAGES } from './ImageMapping';
+import Image from 'next/image';
 import {
   Users, Eye, Brain, GraduationCap, FileText, PenTool,
   ClipboardCheck, MessageSquare, CheckCircle, MonitorSmartphone,
@@ -438,7 +440,7 @@ function CountryIntelligenceSection({ countries }: { countries: ParsedCountry[] 
               <button
                 key={tab}
                 onClick={() => setActive(tab)}
-                className="rounded-full px-5 h-10 text-sm font-medium transition-colors cursor-pointer"
+                className="rounded-full px-5 h-12 min-h-[48px] text-sm font-medium transition-colors cursor-pointer"
                 style={{
                   background: active === tab ? C.blue : C.bg,
                   color: active === tab ? 'white' : C.textSoft,
@@ -467,6 +469,21 @@ function CountryIntelligenceSection({ countries }: { countries: ParsedCountry[] 
   );
 }
 
+function subjectImage(subjectArea: string): string {
+  const area = (subjectArea || '').toLowerCase();
+  if (/business|management|finance|account|marketing|mba|commerce|economics/.test(area)) return IMAGES.courses.business;
+  if (/data|analytics|statistics|machine learning/.test(area)) return IMAGES.courses.dataScience;
+  if (/cyber|security/.test(area)) return IMAGES.courses.cybersecurity;
+  if (/computer|software|information technology|artificial intelligence/.test(area)) return IMAGES.courses.computerScience;
+  if (/engineer/.test(area)) return IMAGES.courses.engineering;
+  if (/health|medic|nursing|pharma|clinical/.test(area)) return IMAGES.courses.healthcare;
+  if (/law|legal/.test(area)) return IMAGES.courses.law;
+  if (/art|design|media|humanities|communication/.test(area)) return IMAGES.courses.humanities;
+  if (/psycholog|sociolog|politic|education|social/.test(area)) return IMAGES.courses.socialScience;
+  if (/biolog|chemist|physics|math|environment|science/.test(area)) return IMAGES.courses.naturalScience;
+  return IMAGES.courses.default;
+}
+
 function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
   const [activeTab, setActiveTab] = useState('All');
 
@@ -486,7 +503,7 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
           labelBg="rgba(232,80,26,0.08)" labelColor={C.orange}
           title="Trending"
           titleHighlight="Programs"
-          subtitle="Discover popular courses chosen by thousands of students worldwide."
+          subtitle="Explore published courses from the ALO catalogue — compare universities, cities and tuition before you apply."
         />
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={viewportOnce}>
           <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -494,7 +511,7 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="rounded-full px-5 h-10 text-sm font-medium transition-colors cursor-pointer"
+                className="rounded-full px-5 h-12 min-h-[48px] text-sm font-medium transition-colors cursor-pointer"
                 style={{
                   background: activeTab === tab ? C.blue : 'white',
                   color: activeTab === tab ? 'white' : C.textSoft,
@@ -515,7 +532,17 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.slice(0, 12).map((course) => (
                 <motion.div key={course.id} variants={staggerItemScale} className="h-full">
-                  <Card className="h-full flex flex-col border hover:shadow-lg transition-shadow duration-300" style={{ borderColor: C.border }}>
+                  <Card className="group h-full flex flex-col border hover:shadow-hover hover:border-[#BFDBFE] transition-all duration-300 overflow-hidden" style={{ borderColor: C.border }}>
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#F4F8FF]">
+                      <Image
+                        src={subjectImage(course.subjectArea)}
+                        alt={`${course.subjectArea || 'Course'} — ${course.courseTitle}`}
+                        fill
+                        loading="lazy"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
                     <CardContent className="flex flex-col p-5 gap-3 flex-1">
                       <Badge variant="secondary" className={`text-xs font-medium rounded-full px-3 py-0.5 border-0 w-fit ${levelColor(course.studyLevel)}`}>
                         {course.studyLevel || 'N/A'}
