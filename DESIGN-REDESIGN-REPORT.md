@@ -166,3 +166,55 @@ The dev server was started in this sandbox: Next.js boots (`✓ Ready`), but eve
 ## What remains genuinely blocked (environment, not code)
 1. `npx prisma generate` (engine download TLS-blocked) → generated client → app boot → Playwright + screenshot QA + DB integration tests. Run in staging/local dev with normal network access.
 2. Manual responsive screenshot review per page family at 360/768/1440px once the app boots.
+
+---
+
+# Phase 5 — Final environment verification & browser QA attempt (evidence-based)
+
+State preserved: branch `arena/8e2beff7-alo-web-crm-tech`, HEAD `ea74a4eb`, working tree clean before this phase; no reset/clean/deploy performed. **No commit or push was made in this phase** (not authorized in the brief). This report section is the only file modified.
+
+## Environment inspected (verified)
+- Node v22.22.3, npm 10.9.8; lockfile present. Installed `prisma` and `@prisma/client` both **6.19.3**, matching the lockfile declaration (`@prisma/client ^6.19.3`). `schema.prisma`: generator `prisma-client-js` (binaryTargets native + debian/rhel/musl openssl), datasource provider **MySQL** via `env("DATABASE_URL")`. Only `.env.example` / `.env.production.example` exist — **no `.env` and no database are configured in this sandbox**, so even a generated client would have no DB to connect to here.
+- No system Chromium and no Playwright browsers installed (`~/.cache/ms-playwright` absent).
+
+## Commands actually executed (with exit codes)
+| Command | Exit | Result |
+|---|---|---|
+| `npx prisma generate` | **1** | `request to https://binaries.prisma.sh/all_commits/c2990dca…/debian-openssl-3.0.x/schema-engine.gz.sha256 failed — Client network socket disconnected before secure TLS connection was established`. `node_modules/.prisma/client/default.js` still absent. TLS was not disabled and no bypass was attempted. |
+| `npx playwright install chromium` | **1** | `Failed to download Chrome for Testing 151.0.7922.34 (playwright chromium v1234) — Download failure, code=1`. Browser CDN is likewise unreachable from this sandbox. |
+| `npx next dev -H 0.0.0.0 -p 3000` then `curl` | server up | `/`, `/blog`, `/student-journey`, `/services`, `/destinations/uk` all **HTTP 500** with `Cannot find module '.prisma/client/default'` (chain: `src/app/layout.tsx → src/lib/cms-managed-content.ts → src/lib/db.ts → @prisma/client`). The `.prisma/client/default` runtime error is therefore **NOT resolved in this sandbox** — it is a direct consequence of the blocked engine download, not of application code. Server stopped after capture. |
+| `npx playwright test --list` | 0 | 32 tests in 3 files enumerate cleanly (specs valid; execution impossible without browser + server). |
+| `npx vitest run tests/unit/design-tokens.test.ts tests/unit/alo-study-steps.test.ts` | 0 | **13/13 passed** (palette, header/footer tokens, image integrity, copy hygiene, no-hotlink scan). |
+| `npx vitest run` (full) | 1 | **1890 passed / 11 failed / 28 skipped** — the 11 failures are the documented pre-existing baseline set (DB-mock/auth/i18n items), byte-identical to the clean-tree A/B comparison in Phase 3. Zero regressions. |
+| Repo-wide image integrity script (`src/app`, `src/components`, `src/lib`) | 0 | **68 local `/images/...` references, 0 missing files** on disk. Zero `images.unsplash.com` URLs remain anywhere in `src/` (Phase 4 guard). |
+
+## Verified / partially verified / not verified
+- **Verified:** design-token & image-integrity guards; full unit suite stability vs baseline; Prisma/Playwright versions and configuration consistency; all local image references resolve to files; Playwright spec files parse (32 tests).
+- **Partially verified:** none claimed — no page was rendered.
+- **Not verified (blocked, with evidence above):** app boot without the Prisma runtime error; any browser-tested route at 360/768/1440px; screenshots (none captured — none are claimed); Playwright execution; console-error, overflow, contrast and responsive checks; authenticated CRM/portal routes and DB-backed APIs (no test database or test accounts exist in this sandbox); reduced-motion in-browser behaviour (CSS guards only).
+
+## Exact remaining steps for an authorized development environment
+Run where `binaries.prisma.sh` and the Playwright CDN are reachable, with a test MySQL `DATABASE_URL` (never production):
+```bash
+npm ci
+npx prisma generate            # must produce node_modules/.prisma/client/default.js
+npx playwright install chromium
+npm run dev                    # confirm /, /blog, /student-journey, /services, /destinations/uk return 200
+npx playwright test            # 32 header/footer/image-guard tests
+# then screenshot-review representative public + CRM pages at 360 / 768 / 1440 px
+```
+No destructive migrations, resets, seeds, DNS/email or deployment changes were performed or are required for this verification.
+
+---
+
+# Phase 6 — All Courses catalogue page (user request: "all university info page with all courses info page")
+
+State note: this checkout's HEAD is the base commit `42afc7d5`; the entire redesign programme is present as uncommitted working-tree changes (protected — not committed in this phase; per brief §2.2 no commit/push without explicit approval).
+
+Audit before building: `/universities` (all-universities directory, DB-driven via `/api/course-finder/universities`), `/universities/[slug]` and `/course/[slug]` + `/courses/[slug]` detail pages already existed — no duplicates created. The only gap was `/courses`, which merely redirected to `/course-finder`.
+
+Built:
+- `src/components/website/AllCoursesListing.tsx` — complete browsable catalogue: search + country/study-level/subject filters (options from the existing `/api/course-finder/facets`), 12-per-page pagination, skeleton loading, error state with retry, honest empty state. Cards show subject, title, university (linked), city/country, level/qualification, duration/delivery, recorded IELTS, intake chips, and tuition **only when an intake fee is verified** — otherwise "Fees pending verification". No data was invented and no new API was created; the page consumes the same public, source-linked `/api/course-finder` catalogue as the Course Finder. Cards link to the existing detail routes (`/course/[slug]`, `/universities/[slug]`).
+- `src/app/courses/page.tsx` — replaced the redirect with the catalogue page + SEO metadata (canonical `https://aloeducation.com/courses`). The advanced multi-criteria search remains at `/course-finder`.
+
+Verification: `tsc` clean on both files; ESLint clean (after `npm ci --ignore-scripts` restored the partial node_modules in this sandbox — exit 0); guard tests pass; full suite 1890 passed / 11 failed — identical pre-existing baseline, zero regressions. Browser rendering remains BLOCKED in this sandbox (Prisma engine download TLS-blocked, no database) — the page's data comes from the live catalogue API at runtime, so it must be smoke-tested where the app boots (`npm run dev` → `/courses`, `/universities`).
