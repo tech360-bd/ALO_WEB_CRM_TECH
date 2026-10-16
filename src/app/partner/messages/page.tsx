@@ -19,7 +19,7 @@ export default function PartnerMessagesRoute() {
               Secure inbox with ALO staff — {user?.name || user?.email || 'partner account'}
             </p>
           </div>
-          <a href="/partner/dashboard" className="text-sm text-[#2563EB] hover:underline font-medium">
+          <a href="/partner/dashboard" className="text-sm text-[#0057B8] hover:underline font-medium">
             ← Back to Dashboard
           </a>
         </div>

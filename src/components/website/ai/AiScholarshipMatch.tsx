@@ -117,7 +117,7 @@ export default function AiScholarshipMatch({
           description:
             'Our verified scholarship database has no open award matching these filters yet. Widen your destination or study level, or ask an advisor about institution-specific funding we can request on your behalf.',
           action: (
-            <Button asChild variant="outline" className="mt-2 h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="mt-2 h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/scholarships">Browse all scholarships</Link>
             </Button>
           ),
@@ -161,7 +161,7 @@ export default function AiScholarshipMatch({
             Results are ordered so awards with an open application window appear above closed or
             undated ones, then by how closely your profile matches the published criteria.
           </p>
-          <Button asChild variant="outline" className="mt-4 h-10 w-full rounded-button border-alo-border text-[13px] font-semibold">
+          <Button asChild variant="outline" className="mt-4 h-12 w-full rounded-button border-alo-border text-[13px] font-semibold">
             <Link href="/scholarships">Browse the full scholarship database</Link>
           </Button>
         </Panel>
@@ -359,13 +359,13 @@ function ScholarshipCard({ match }: { match: MatchedScholarship }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-alo-border bg-alo-surface-muted/40 px-5 py-4 sm:px-6">
-        <Button asChild className="h-10 rounded-button bg-alo-brand px-4 text-[14px] font-semibold text-white hover:bg-alo-brand-hover">
+        <Button asChild className="h-12 rounded-button bg-alo-brand px-4 text-[14px] font-semibold text-white hover:bg-alo-brand-hover">
           <Link href={`/scholarships/${scholarship.slug}`}>
             View Scholarship <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </Link>
         </Button>
         {scholarship.officialSourceUrl && (
-          <Button asChild variant="outline" className="h-10 rounded-button border-alo-border px-4 text-[14px] font-semibold">
+          <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-4 text-[14px] font-semibold">
             <a href={scholarship.officialSourceUrl} target="_blank" rel="noopener noreferrer nofollow">
               {scholarship.officialSourceName || 'Official source'}
             </a>

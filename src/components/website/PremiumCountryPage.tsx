@@ -170,13 +170,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-6">
-              <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs font-bold tracking-wider">STUDY IN {countryData.name.toUpperCase()}</Badge>
+              <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs font-bold tracking-wider">STUDY IN {countryData.name.toUpperCase()}</Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[0.95] text-[#0F172A]">Study in {countryData.name} from Bangladesh</h1>
               <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-2xl">{countryData.heroSubtitle} {countryData.overview}</p>
               <div className="flex flex-wrap gap-3 pt-2">
-                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
+                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] h-12 px-8 font-semibold rounded-xl">Check Eligibility</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#2563EB] hover:bg-blue-50 h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#0057B8] hover:bg-blue-50 h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
               </div>
               <p className="text-[11px] text-gray-500">Last Verified: {countryData.lastVerifiedAt}</p>
             </div>
@@ -190,13 +190,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 </div>
                 <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md border border-[#E2E8F0] rounded-2xl p-3 shadow-lg">
                   <p className="text-[10px] font-bold text-gray-500 uppercase">Study Levels</p>
-                  <p className="text-xs font-bold text-[#2563EB]">{countryData.studyLevels.slice(0,3).join(', ')}</p>
+                  <p className="text-xs font-bold text-[#0057B8]">{countryData.studyLevels.slice(0,3).join(', ')}</p>
                 </div>
                 <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md border border-[#E2E8F0] rounded-2xl p-3 shadow-lg">
                   <p className="text-[10px] font-bold text-gray-500 uppercase">Universities</p>
                   <p className="text-sm font-black text-[#0F172A]">{linkedUniversities.length || countryData.quickFacts.find(f=>f.label.includes('University'))?.value || '100+'} • {countryData.name}</p>
                 </div>
-                <div className="absolute bottom-4 right-4 bg-[#2563EB] text-white rounded-2xl p-3 shadow-lg">
+                <div className="absolute bottom-4 right-4 bg-[#0057B8] text-white rounded-2xl p-3 shadow-lg">
                   <p className="text-[10px] font-bold text-blue-200 uppercase">Courses</p>
                   <p className="text-sm font-black">{linkedCourses.length > 0 ? `${linkedCourses.length} Courses` : 'Explore Courses'}</p>
                   <p className="text-[10px] text-blue-200 mt-1">Last Verified: {countryData.lastVerifiedAt}</p>
@@ -217,12 +217,12 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               </div>
             </div>
             <div className="lg:col-span-7 space-y-5">
-              <Badge className="bg-white border-[#E2E8F0] text-[#2563EB] text-xs">Why Bangladeshi Students Consider {countryData.name}</Badge>
+              <Badge className="bg-white border-[#E2E8F0] text-[#0057B8] text-xs">Why Bangladeshi Students Consider {countryData.name}</Badge>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#0F172A]">Why {countryData.name} for Higher Education</h2>
               <p className="text-sm text-gray-700 leading-relaxed">{countryData.overview} {countryData.whyStudySummary}</p>
               <p className="text-sm text-gray-600 leading-relaxed">Education environment in {countryData.name} — international student context, major study strengths, ALO-specific guidance. Original ALO content, not copied from external websites. Final eligibility depends on university, course, academic profile, English score, study gap and other admission requirements.</p>
               <div className="flex gap-3 pt-2">
-                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#2563EB] text-white h-12 px-6 font-bold rounded-xl">Explore Courses in {countryData.name}</Button></Link>
+                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#0057B8] text-white h-12 px-6 font-bold rounded-xl">Explore Courses in {countryData.name}</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6 rounded-xl">Talk to Counselor</Button></Link>
               </div>
             </div>
@@ -242,13 +242,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <Card key={i} className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-shadow h-full">
                 <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{fact.label}</p>
                 <p className="text-sm font-bold text-[#0F172A] mt-2 leading-snug">{fact.value || 'Check with counselor'}</p>
-                {fact.sourceUrl && <p className="text-[10px] text-gray-400 mt-2">Source: <a href={fact.sourceUrl} target="_blank" className="text-[#2563EB] underline">Official</a></p>}
+                {fact.sourceUrl && <p className="text-[10px] text-gray-400 mt-2">Source: <a href={fact.sourceUrl} target="_blank" className="text-[#0057B8] underline">Official</a></p>}
               </Card>
             ))}
             {/* Additional dynamic facts from DB */}
             <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm h-full">
               <p className="text-[11px] font-bold text-gray-500 uppercase">Universities — DB</p>
-              <p className="text-sm font-bold text-[#2563EB] mt-2">{linkedUniversities.length ? `${linkedUniversities.length} Universities in ${countryData.name}` : 'Check with counselor — DB count'}</p>
+              <p className="text-sm font-bold text-[#0057B8] mt-2">{linkedUniversities.length ? `${linkedUniversities.length} Universities in ${countryData.name}` : 'Check with counselor — DB count'}</p>
               <p className="text-[10px] text-gray-400 mt-1">Count from database — not hardcoded</p>
             </Card>
             <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm h-full">
@@ -273,13 +273,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <div className="grid md:grid-cols-2 gap-6">
             {countryData.reasons.map((reason, i) => (
               <Card key={i} className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#2563EB]/10 border border-[#2563EB]/20 flex items-center justify-center shrink-0">
-                  {reason.icon === 'award' ? <Award className="w-6 h-6 text-[#2563EB]" /> : reason.icon === 'briefcase' ? <Briefcase className="w-6 h-6 text-[#2563EB]" /> : reason.icon === 'coins' ? <Coins className="w-6 h-6 text-[#2563EB]" /> : reason.icon === 'globe' ? <Globe className="w-6 h-6 text-[#2563EB]" /> : <Star className="w-6 h-6 text-[#2563EB]" />}
+                <div className="w-12 h-12 rounded-2xl bg-[#0057B8]/10 border border-[#0057B8]/20 flex items-center justify-center shrink-0">
+                  {reason.icon === 'award' ? <Award className="w-6 h-6 text-[#0057B8]" /> : reason.icon === 'briefcase' ? <Briefcase className="w-6 h-6 text-[#0057B8]" /> : reason.icon === 'coins' ? <Coins className="w-6 h-6 text-[#0057B8]" /> : reason.icon === 'globe' ? <Globe className="w-6 h-6 text-[#0057B8]" /> : <Star className="w-6 h-6 text-[#0057B8]" />}
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-[#0F172A]">{reason.heading}</h4>
                   <p className="text-sm text-gray-600 mt-1 leading-relaxed">{reason.description}</p>
-                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`} className="text-xs font-bold text-[#2563EB] hover:underline mt-2 inline-flex items-center gap-1">Explore {countryData.name} Courses <ArrowRight className="w-3 h-3" /></Link>
+                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`} className="text-xs font-bold text-[#0057B8] hover:underline mt-2 inline-flex items-center gap-1">Explore {countryData.name} Courses <ArrowRight className="w-3 h-3" /></Link>
                 </div>
               </Card>
             ))}
@@ -294,8 +294,8 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {countryData.pathways.map((path, i) => (
               <Card key={i} className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm h-full relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2563EB] to-[#F97316]" />
-                <p className="text-xs font-bold text-[#2563EB] uppercase">{path.fromLevel}</p>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0057B8] to-[#E8501A]" />
+                <p className="text-xs font-bold text-[#0057B8] uppercase">{path.fromLevel}</p>
                 <p className="text-sm font-bold text-[#0F172A] mt-2">↓</p>
                 <p className="text-sm font-semibold text-[#0F172A] mt-2">{path.toPathway}</p>
                 <p className="text-xs text-gray-600 mt-3 leading-relaxed">{path.description}</p>
@@ -311,16 +311,16 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Popular Courses in {countryData.name} — Dynamic from DB</h2>
-            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-11 text-xs">Find more courses</Button></Link>
+            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-12 text-xs">Find more courses</Button></Link>
           </div>
           {linkedCourses.length === 0 ? (
             <Card className="p-12 bg-white border-[#E2E8F0] rounded-2xl text-center"><GraduationCap className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No courses found for {countryData.name} — real DB, no fake static course cards. Load courses dynamically from existing courses table filter country_id.</p><p className="text-xs text-gray-500 mt-2">Information not currently verified. Please check with an ALO Education counselor.</p></Card>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {linkedCourses.slice(0, 9).map((c: any) => (
-                <Card key={c.courseId || c.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                <Card key={c.courseId || c.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                   <div>
-                    <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px] mb-2">{c.studyLevel || 'Course'}</Badge>
+                    <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px] mb-2">{c.studyLevel || 'Course'}</Badge>
                     <h4 className="font-bold text-sm text-[#0F172A] line-clamp-2">{c.courseTitle}</h4>
                     <p className="text-xs text-gray-500 mt-1">{c.university?.name || c.universityName || 'University'} • {c.city || ''}, {c.country || countryData.name}</p>
                     <div className="grid grid-cols-2 gap-2 mt-3 text-[11px] text-gray-600">
@@ -333,10 +333,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     <p className="text-[10px] text-gray-400 mt-2">Last Verified: {c.lastVerifiedAt || countryData.lastVerifiedAt}</p>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-11 text-xs font-bold">View course</Button></Link>
+                    <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] h-12 text-xs font-bold">View course</Button></Link>
                     <div className="grid grid-cols-2 gap-2">
-                      <Link href={`/compare?course=${c.courseId}`}><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-9 text-[11px]">Compare</Button></Link>
-                      <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-9 text-[11px]">Apply</Button></Link>
+                      <Link href={`/compare?course=${c.courseId}`}><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-12 text-[11px]">Compare</Button></Link>
+                      <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-12 text-[11px]">Apply</Button></Link>
                     </div>
                   </div>
                 </Card>
@@ -351,17 +351,17 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Popular Universities in {countryData.name} — Dynamic from DB</h2>
-            <Link href={`/universities?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-11 text-xs">View All Universities in {countryData.name}</Button></Link>
+            <Link href={`/universities?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-12 text-xs">View All Universities in {countryData.name}</Button></Link>
           </div>
           {linkedUniversities.length === 0 ? (
             <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No universities found for {countryData.name} — real DB, no fake data. Load from universities table filter by country.</p></Card>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {linkedUniversities.slice(0, 9).map((u: any) => (
-                <Card key={u.universityId || u.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                <Card key={u.universityId || u.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                   <div>
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#003d80] text-white flex items-center justify-center font-black text-lg">{u.name?.[0] || 'U'}</div>
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0057B8] to-[#003F87] text-white flex items-center justify-center font-black text-lg">{u.name?.[0] || 'U'}</div>
                       <div className="flex-1"><h4 className="font-bold text-sm text-[#0F172A] line-clamp-1">{u.name}</h4><p className="text-xs text-gray-500">{u.city}, {u.country}</p></div>
                     </div>
                     <div className="space-y-1.5 text-xs text-gray-600">
@@ -372,10 +372,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     </div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/universities/${u.slug || u.universityId}`} className="block"><Button className="w-full bg-[#2563EB] text-white h-11 text-xs font-bold">View university</Button></Link>
+                    <Link href={`/universities/${u.slug || u.universityId}`} className="block"><Button className="w-full bg-[#0057B8] text-white h-12 text-xs font-bold">View university</Button></Link>
                     <div className="grid grid-cols-2 gap-2">
-                      <Link href={`/course-finder?university=${u.universityId}`}><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-9 text-[11px]">View Courses</Button></Link>
-                      <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full bg-[#F97316]/10 border-[#F97316]/20 text-[#F97316] h-9 text-[11px]">Apply Through ALO</Button></Link>
+                      <Link href={`/course-finder?university=${u.universityId}`}><Button variant="outline" size="sm" className="w-full border-[#E2E8F0] h-12 text-[11px]">View Courses</Button></Link>
+                      <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full bg-[#E8501A]/10 border-[#E8501A]/20 text-[#E8501A] h-12 text-[11px]">Apply Through ALO</Button></Link>
                     </div>
                   </div>
                 </Card>
@@ -397,7 +397,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><p className="text-[11px] font-bold text-gray-500 uppercase">Living Cost</p><p className="text-lg font-bold text-[#0F172A] mt-1">{countryData.livingCost}</p><p className="text-[10px] text-gray-400 mt-1">If conversion available show Indicative BDT estimate and exchange rate/date</p></Card>
               </div>
               <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h4 className="font-bold text-sm mb-4 flex items-center gap-2"><Calculator className="w-5 h-5 text-[#2563EB]" />Interactive Budget Estimator — ESTIMATE ONLY</h4>
+                <h4 className="font-bold text-sm mb-4 flex items-center gap-2"><Calculator className="w-5 h-5 text-[#0057B8]" />Interactive Budget Estimator — ESTIMATE ONLY</h4>
                 <div className="grid sm:grid-cols-2 gap-4 text-xs">
                   <div><label className="text-gray-600">Study Level</label><select value={calcLevel} onChange={e=>setCalcLevel(e.target.value)} className="w-full mt-1 p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl"><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>MBA</option><option>PhD</option></select></div>
                   <div><label className="text-gray-600">City</label><input placeholder="London, Toronto..." className="w-full mt-1 p-2.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl" /></div>
@@ -411,7 +411,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <div className="grid grid-cols-2 gap-3">
                     <div><span className="text-gray-500">Net Tuition:</span><p className="font-bold text-[#0F172A]">{calcTuition - calcScholarship} foreign currency</p></div>
                     <div><span className="text-gray-500">Living Cost:</span><p className="font-bold">{estimatedLiving} foreign currency ({calcLivingMonths} months × {monthlyLiving})</p></div>
-                    <div><span className="text-gray-500">First-Year Cost:</span><p className="font-black text-[#2563EB] text-sm">{totalCostForeign} foreign • ৳ {totalCostBdt.toLocaleString()} BDT</p></div>
+                    <div><span className="text-gray-500">First-Year Cost:</span><p className="font-black text-[#0057B8] text-sm">{totalCostForeign} foreign • ৳ {totalCostBdt.toLocaleString()} BDT</p></div>
                     <div><span className="text-gray-500">Initial Budget:</span><p className="font-bold">Tuition - Deposit + Living = Estimate</p></div>
                   </div>
                   <p className="text-[11px] text-gray-500">Figures show their source and last verified date. Where a figure is unavailable, check with a counsellor.</p>
@@ -449,7 +449,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <div className="overflow-x-auto pb-2">
               <TabsList className="h-auto w-max bg-[#F8FAFC] p-1 border border-[#E2E8F0] rounded-2xl">
                 {countryData.entryRequirements.map((req, i) => (
-                  <TabsTrigger key={i} value={String(i)} className="h-10 px-4 text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white rounded-xl">{req.level}</TabsTrigger>
+                  <TabsTrigger key={i} value={String(i)} className="h-10 px-4 text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white rounded-xl">{req.level}</TabsTrigger>
                 ))}
               </TabsList>
             </div>
@@ -458,7 +458,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <Card className="p-6 md:p-8 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
                   <div className="grid md:grid-cols-3 gap-6">
                     <div className="space-y-3">
-                      <h4 className="font-bold text-sm flex items-center gap-2 text-[#2563EB]"><GraduationCap className="w-4 h-4"/>{req.level}</h4>
+                      <h4 className="font-bold text-sm flex items-center gap-2 text-[#0057B8]"><GraduationCap className="w-4 h-4"/>{req.level}</h4>
                       <div><p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Academic Requirement</p><p className="text-sm font-semibold text-[#0F172A] mt-1">{req.academic || 'Requirement information is currently being verified. Please check with an ALO Education counselor.'}</p></div>
                       <div><p className="text-[11px] font-bold text-gray-500 uppercase">Remarks</p><p className="text-xs text-gray-600 mt-1">Requirements shown are the ones recorded for {countryData.name}. Check the official source for the latest rules.</p></div>
                     </div>
@@ -470,7 +470,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     <div className="space-y-3">
                       <p className="text-[11px] font-bold text-gray-500 uppercase">Documents</p>
                       <ul className="space-y-1.5">
-                        {(req.documents || []).map((doc: string, di: number) => (<li key={di} className="flex items-center gap-2 text-xs text-gray-700"><CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] shrink-0"/><span>{doc}</span></li>))}
+                        {(req.documents || []).map((doc: string, di: number) => (<li key={di} className="flex items-center gap-2 text-xs text-gray-700"><CheckCircle2 className="w-3.5 h-3.5 text-[#0057B8] shrink-0"/><span>{doc}</span></li>))}
                       </ul>
                       <div className="pt-3 border-t border-[#E2E8F0] space-y-1">
                         <p className="text-[11px] text-gray-400">Source: Official • Last verified: {countryData.lastVerifiedAt} • Verified by ALO Compliance</p>
@@ -494,13 +494,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             {countryData.englishTests.map((test, i) => (
               <Card key={i} className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
                 <div>
-                  <Badge className="bg-blue-50 text-[#2563EB] border-blue-100 text-[10px] mb-2">{test.name}</Badge>
+                  <Badge className="bg-blue-50 text-[#0057B8] border-blue-100 text-[10px] mb-2">{test.name}</Badge>
                   <p className="text-xs font-semibold text-[#0F172A]">Accepted for: {test.accepted}</p>
                   <p className="text-xs text-gray-600 mt-1">{test.note}</p>
-                  <p className="text-[10px] text-gray-400 mt-2">Source: <a href={test.sourceUrl} target="_blank" className="text-[#2563EB] underline">{test.sourceUrl}</a></p>
+                  <p className="text-[10px] text-gray-400 mt-2">Source: <a href={test.sourceUrl} target="_blank" className="text-[#0057B8] underline">{test.sourceUrl}</a></p>
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <Link href={`/language-prep/${test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-[11px]">Learn more</Button></Link>
+                  <Link href={`/language-prep/${test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex-1"><Button size="sm" className="w-full bg-[#0057B8] text-white h-12 text-[11px]">Learn more</Button></Link>
                   {isEnglishProficiencyTestSlug(test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')) && (<EnglishExamButton location="country_page" className="flex h-9 flex-1 items-center justify-center rounded-md border border-emerald-300 bg-emerald-50 text-[11px] font-semibold text-emerald-800 hover:bg-emerald-100">Take the English Test</EnglishExamButton>)}
                 </div>
               </Card>
@@ -517,10 +517,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[11px]">For logged-in students: actual status in portal • Public: general checklist</Badge>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
-            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-[#2563EB]"/>Academic</h4><ul className="space-y-1.5 text-gray-700">{['SSC/O-Level','HSC/A-Level','Bachelor','Masters where applicable'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul><p className="text-[10px] text-gray-400 mt-3">Do NOT expose student documents publicly — logged-in view pulls from /api/student/documents with RBAC.</p></Card>
-            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><UploadCloud className="w-4 h-4 text-[#2563EB]"/>Identity</h4><ul className="space-y-1.5 text-gray-700">{['Passport','Photo','NID/Birth Certificate where required'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul></Card>
-            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#2563EB]"/>English & Application</h4><ul className="space-y-1.5 text-gray-700">{['IELTS/PTE/TOEFL/DET/etc.','CV','SOP','Recommendation letters','Work experience'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul></Card>
-            <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2563EB] to-[#F97316]"/><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#F97316]"/>Financial & Visa</h4><ul className="space-y-1.5 text-gray-700">{['Bank statement','Sponsor documents','Source of funds','Relationship proof', `${countryData.name}-specific documents`].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB] shrink-0"/><span>{it}</span></li>))}</ul><div className="mt-4 p-3 bg-white border border-[#E2E8F0] rounded-xl"><p className="text-[11px] font-semibold text-[#2563EB]">Logged-in student view</p><p className="text-[11px] text-gray-600 mt-1">Your actual document status appears in <Link href="/student/documents" className="text-[#2563EB] underline font-semibold">Student Portal → Documents</Link> (RBAC protected, prepared statements, no public exposure).</p><Link href="/student/documents"><Button size="sm" className="mt-2 w-full bg-[#2563EB] text-white h-9 text-[11px]">View My Document Status</Button></Link></div></Card>
+            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]"/>Academic</h4><ul className="space-y-1.5 text-gray-700">{['SSC/O-Level','HSC/A-Level','Bachelor','Masters where applicable'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul><p className="text-[10px] text-gray-400 mt-3">Do NOT expose student documents publicly — logged-in view pulls from /api/student/documents with RBAC.</p></Card>
+            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><UploadCloud className="w-4 h-4 text-[#0057B8]"/>Identity</h4><ul className="space-y-1.5 text-gray-700">{['Passport','Photo','NID/Birth Certificate where required'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul></Card>
+            <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#0057B8]"/>English & Application</h4><ul className="space-y-1.5 text-gray-700">{['IELTS/PTE/TOEFL/DET/etc.','CV','SOP','Recommendation letters','Work experience'].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0"/><span>{it}</span></li>))}</ul></Card>
+            <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0057B8] to-[#E8501A]"/><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#E8501A]"/>Financial & Visa</h4><ul className="space-y-1.5 text-gray-700">{['Bank statement','Sponsor documents','Source of funds','Relationship proof', `${countryData.name}-specific documents`].map((it,ii)=>(<li key={ii} className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-[#0057B8] shrink-0"/><span>{it}</span></li>))}</ul><div className="mt-4 p-3 bg-white border border-[#E2E8F0] rounded-xl"><p className="text-[11px] font-semibold text-[#0057B8]">Logged-in student view</p><p className="text-[11px] text-gray-600 mt-1">Your actual document status appears in <Link href="/student/documents" className="text-[#0057B8] underline font-semibold">Student Portal → Documents</Link> (RBAC protected, prepared statements, no public exposure).</p><Link href="/student/documents"><Button size="sm" className="mt-2 w-full bg-[#0057B8] text-white h-12 text-[11px]">View My Document Status</Button></Link></div></Card>
           </div>
           <p className="text-xs text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">For public users: general checklist only • For logged-in students: actual document status via API — do NOT expose student documents publicly — CSRF + RBAC protected.</p>
         </div>
@@ -532,13 +532,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">{countryData.name} Student Visa Process — Country-Specific Timeline</h2>
           <p className="text-sm text-gray-600">The process MUST be country-specific — UK uses CAS only where applicable, Canada DLI & LOA, Australia COE, USA I-20, Ireland, New Zealand, Dubai/UAE UAE-specific — NEVER copy UK process to other countries. Every step title/description/official/current source/last verified.</p>
           <div className="relative">
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#2563EB] to-[#F97316] hidden md:block" />
+            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#0057B8] to-[#E8501A] hidden md:block" />
             <div className="space-y-6">
               {countryData.visaSteps.map((step) => (
                 <div key={step.step} className="relative flex gap-6">
-                  <div className="hidden md:flex w-8 h-8 bg-[#2563EB] text-white font-black rounded-full items-center justify-center text-xs shrink-0 shadow-md">{step.step}</div>
+                  <div className="hidden md:flex w-8 h-8 bg-[#0057B8] text-white font-black rounded-full items-center justify-center text-xs shrink-0 shadow-md">{step.step}</div>
                   <Card className="flex-1 p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                    <h4 className="font-bold text-[#0F172A] flex items-center gap-2"><span className="md:hidden w-6 h-6 bg-[#2563EB] text-white rounded-full flex items-center justify-center text-[10px]">{step.step}</span>{step.title}</h4>
+                    <h4 className="font-bold text-[#0F172A] flex items-center gap-2"><span className="md:hidden w-6 h-6 bg-[#0057B8] text-white rounded-full flex items-center justify-center text-[10px]">{step.step}</span>{step.title}</h4>
                     <p className="text-sm text-gray-600 mt-2 leading-relaxed">{step.description}</p>
                     <p className="text-[11px] text-gray-400 mt-3">Official/current source: Check official government source for {countryData.name} • Last verified: {countryData.lastVerifiedAt} • {countryData.name}-specific terminology</p>
                   </Card>
@@ -565,7 +565,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <input placeholder="Sponsor — relation/income" className="p-2.5 bg-white border border-[#E2E8F0] rounded-xl" />
                   <input placeholder="Previous refusal — country/type" className="p-2.5 bg-white border border-[#E2E8F0] rounded-xl" />
                 </div>
-                <Button onClick={handleEligibilityCheck} className="w-full mt-4 bg-[#2563EB] text-white h-12 font-bold rounded-xl">Check Visa Readiness — AI Guidance Only</Button>
+                <Button onClick={handleEligibilityCheck} className="w-full mt-4 bg-[#0057B8] text-white h-12 font-bold rounded-xl">Check Visa Readiness — AI Guidance Only</Button>
                 {eligibilityResult && <div className={`mt-4 p-4 rounded-xl border text-xs ${eligibilityResult.badgeColor}`}><p className="font-bold flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" />{eligibilityResult.label}</p><ul className="list-disc pl-4 mt-2 space-y-1">{eligibilityResult.recommendations.map((r:string,i:number)=><li key={i}>{r}</li>)}</ul><p className="text-[11px] text-gray-500 mt-3">AI provides preparation guidance only. Final review must be completed by ALO staff. AI cannot guarantee visa approval. {isAuthenticated ? '✓ Saved to your student timeline (RBAC protected).' : 'Login to save this assessment to your student timeline.'}</p></div>}
               </Card>
             </div>
@@ -592,7 +592,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               </Card>
             ))}
           </div>
-          <Link href="/student/visa-interview-practice"><Button className="bg-[#2563EB] text-white h-12 px-6 font-bold rounded-xl">Start {countryData.name} Interview Practice — Save Result</Button></Link>
+          <Link href="/student/visa-interview-practice"><Button className="bg-[#0057B8] text-white h-12 px-6 font-bold rounded-xl">Start {countryData.name} Interview Practice — Save Result</Button></Link>
         </div>
       </section>
 
@@ -606,7 +606,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <div><p className="text-gray-500 font-semibold">Term-time Rule</p><p className="text-sm font-bold text-[#0F172A] mt-1">{rule.termTime}</p></div>
                 <div><p className="text-gray-500 font-semibold">Vacation Rule</p><p className="text-sm font-bold text-[#0F172A] mt-1">{rule.vacation}</p></div>
                 <div><p className="text-gray-500 font-semibold">Course-level Conditions</p><p className="text-sm font-semibold mt-1">{rule.condition}</p></div>
-                <div><p className="text-gray-500 font-semibold">Post-study Route</p><p className="text-sm font-bold text-emerald-700 mt-1">{rule.postStudyRoute}</p><p className="text-[10px] text-gray-400 mt-1">Source: <a href={rule.sourceUrl} target="_blank" className="text-[#2563EB] underline">Official Government</a> • Last verified: {countryData.lastVerifiedAt}</p></div>
+                <div><p className="text-gray-500 font-semibold">Post-study Route</p><p className="text-sm font-bold text-emerald-700 mt-1">{rule.postStudyRoute}</p><p className="text-[10px] text-gray-400 mt-1">Source: <a href={rule.sourceUrl} target="_blank" className="text-[#0057B8] underline">Official Government</a> • Last verified: {countryData.lastVerifiedAt}</p></div>
               </div>
               <p className="text-[11px] text-gray-500 mt-4 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Work-hour rules can change. Check the official source for the current limits. Always verify final conditions with official government sources and ALO staff before making decisions.</p>
             </Card>
@@ -617,13 +617,13 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       {/* 18. SCHOLARSHIPS — Load from scholarships table filter country */}
       <section className="py-16 bg-[#F8FAFC] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex items-center justify-between"><h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Scholarships in {countryData.name} — Load from DB Filter Country</h2><Link href={`/scholarships?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-11 text-xs">View All Scholarships in {countryData.name}</Button></Link></div>
+          <div className="flex items-center justify-between"><h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Scholarships in {countryData.name} — Load from DB Filter Country</h2><Link href={`/scholarships?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[#E2E8F0] h-12 text-xs">View All Scholarships in {countryData.name}</Button></Link></div>
           {linkedScholarships.length === 0 ? <Card className="p-8 bg-white border-[#E2E8F0] rounded-2xl text-center"><Award className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No verified scholarships yet for {countryData.name} — load from scholarships table filter country — real DB, no fake data.</p></Card> : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {linkedScholarships.slice(0,6).map((s:any)=>(
-                <Card key={s.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] rounded-2xl h-full flex flex-col justify-between">
-                  <div><Badge className="bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20 text-[10px] mb-2">Scholarship</Badge><h4 className="font-bold text-sm">{s.scholarshipName || s.name}</h4><p className="text-xs text-gray-500 mt-1">{s.university?.name || s.university || ''} • Amount: {s.scholarshipAmount ? `${s.scholarshipCurrency} ${s.scholarshipAmount}` : s.amount ? `${s.currency} ${s.amount}` : 'Check eligibility'} • Type: {s.coverageType || s.fundingType || 'Tuition waiver'} • Eligibility: {s.eligibility?.substring(0,60) || 'Check'} • Deadline: {s.deadline || 'Check official'} • Last verified: {s.lastVerifiedAt || s.lastCheckedAt || countryData.lastVerifiedAt} • Source: {s.officialScholarshipUrl ? <a href={s.officialScholarshipUrl} target="_blank" className="text-[#2563EB] underline">Official</a> : 'Check'}</p></div>
-                  <div className="flex gap-2 mt-4"><Link href={`/scholarships/${s.slug || s.id}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-[11px]">View scholarship</Button></Link><Link href="/eligibility-check" className="flex-1"><Button size="sm" variant="outline" className="w-full border-[#E2E8F0] h-9 text-[11px]">Check Eligibility</Button></Link></div>
+                <Card key={s.id} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0057B8] rounded-2xl h-full flex flex-col justify-between">
+                  <div><Badge className="bg-[#E8501A]/10 text-[#E8501A] border-[#E8501A]/20 text-[10px] mb-2">Scholarship</Badge><h4 className="font-bold text-sm">{s.scholarshipName || s.name}</h4><p className="text-xs text-gray-500 mt-1">{s.university?.name || s.university || ''} • Amount: {s.scholarshipAmount ? `${s.scholarshipCurrency} ${s.scholarshipAmount}` : s.amount ? `${s.currency} ${s.amount}` : 'Check eligibility'} • Type: {s.coverageType || s.fundingType || 'Tuition waiver'} • Eligibility: {s.eligibility?.substring(0,60) || 'Check'} • Deadline: {s.deadline || 'Check official'} • Last verified: {s.lastVerifiedAt || s.lastCheckedAt || countryData.lastVerifiedAt} • Source: {s.officialScholarshipUrl ? <a href={s.officialScholarshipUrl} target="_blank" className="text-[#0057B8] underline">Official</a> : 'Check'}</p></div>
+                  <div className="flex gap-2 mt-4"><Link href={`/scholarships/${s.slug || s.id}`} className="flex-1"><Button size="sm" className="w-full bg-[#0057B8] text-white h-12 text-[11px]">View scholarship</Button></Link><Link href="/eligibility-check" className="flex-1"><Button size="sm" variant="outline" className="w-full border-[#E2E8F0] h-12 text-[11px]">Check Eligibility</Button></Link></div>
                 </Card>
               ))}
             </div>
@@ -638,10 +638,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {countryData.cities.map((city, i) => (
               <Card key={i} className="overflow-hidden bg-white border-[#E2E8F0] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
-                <div className="h-48 bg-gradient-to-br from-[#2563EB]/20 to-[#F97316]/20 relative">
+                <div className="h-48 bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/20 relative">
                   <img src={CITY_IMAGES[countryData.slug]?.[city.name] || COUNTRY_HERO_FALLBACK[countryData.slug] || heroFallback} alt={`${city.name} — ${city.vibe} — student lifestyle in ${countryData.name} — large city image 800w lazy loaded`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md border border-[#E2E8F0] rounded-full px-3 py-1 text-[11px] font-bold">{city.costLevel} Cost</div>
-                  <div className="absolute top-3 right-3 bg-[#2563EB] text-white rounded-full px-3 py-1 text-[11px] font-bold">{city.name}</div>
+                  <div className="absolute top-3 right-3 bg-[#0057B8] text-white rounded-full px-3 py-1 text-[11px] font-bold">{city.name}</div>
                 </div>
                 <div className="p-5 flex-1">
                   <h4 className="font-bold text-[#0F172A]">{city.name}</h4>
@@ -651,7 +651,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <p className="text-[10px] text-gray-400 mt-2">Last verified: {countryData.lastVerifiedAt} • Do not use same image for every city — country-specific city images</p>
                 </div>
                 <div className="p-5 pt-0">
-                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white h-11 text-xs font-bold">Explore {city.name} courses</Button></Link>
+                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8] hover:text-white h-12 text-xs font-bold">Explore {city.name} courses</Button></Link>
                 </div>
               </Card>
             ))}
@@ -679,10 +679,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               { title: 'Post-Arrival Support', desc: 'Accommodation, student support', href: '/services/post-arrival-support' },
             ].map((service, i) => (
               <Link key={i} href={service.href}>
-                <Card className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-sm transition-all rounded-2xl h-full">
+                <Card className="p-5 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-sm transition-all rounded-2xl h-full">
                   <h4 className="font-bold text-sm text-[#0F172A]">{service.title}</h4>
                   <p className="text-xs text-gray-600 mt-1">{service.desc}</p>
-                  <p className="text-xs font-bold text-[#2563EB] mt-3 flex items-center gap-1">View Service <ArrowRight className="w-3 h-3" /></p>
+                  <p className="text-xs font-bold text-[#0057B8] mt-3 flex items-center gap-1">View Service <ArrowRight className="w-3 h-3" /></p>
                 </Card>
               </Link>
             ))}
@@ -701,7 +701,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <Accordion type="single" collapsible className="w-full">
               {countryData.faqs.map((faq, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`} className="border-b border-[#E2E8F0]/60">
-                  <AccordionTrigger className="text-left font-semibold text-[#0F172A] text-sm hover:text-[#2563EB] py-4">{faq.question}</AccordionTrigger>
+                  <AccordionTrigger className="text-left font-semibold text-[#0F172A] text-sm hover:text-[#0057B8] py-4">{faq.question}</AccordionTrigger>
                   <AccordionContent className="text-sm text-gray-700 leading-relaxed pb-4">
                     <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4">
                       {faq.answer}
@@ -722,8 +722,8 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <h2 className="text-3xl md:text-4xl font-bold text-[#0F172A] tracking-tight">Ready to start your {countryData.name} study journey?</h2>
             <p className="text-sm text-gray-600">Check eligibility, find courses, book free consultation, WhatsApp 01805020101 — lead form creates CRM lead, sets source_country_page, saves country interest, assigns counselor if routing rules exist, creates timeline event, triggers configured communication workflow, never expose internal CRM information.</p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
-              <Link href="/eligibility-check"><Button className="bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
-              <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#F97316] text-white hover:bg-[#EA580C] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
+              <Link href="/eligibility-check"><Button className="bg-[#0057B8] text-white hover:bg-[#003F87] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
+              <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
               <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
               <Button asChild variant="outline" className="bg-[#25D366]/10 border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white h-12 px-8 font-bold rounded-xl"><a href="https://wa.me/8801805020101" target="_blank">WhatsApp 01805020101</a></Button>
             </div>
@@ -749,7 +749,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <div className="sm:col-span-2"><label className="font-semibold">English Score</label><input value={leadForm.englishScore} onChange={e=>setLeadForm({...leadForm, englishScore:e.target.value})} className="w-full mt-1 p-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-sm h-11" placeholder="6.5" /></div>
                 <div className="sm:col-span-2"><label className="font-semibold">Message</label><textarea value={leadForm.message} onChange={e=>setLeadForm({...leadForm, message:e.target.value})} className="w-full mt-1 p-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-sm min-h-[80px]" placeholder="Tell us about your study plans for Study in COUNTRY..." /></div>
               </div>
-              <Button type="submit" disabled={submittingLead} className="w-full bg-[#F97316] text-white hover:bg-[#EA580C] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting — Creating CRM Lead...' : 'Submit — Create CRM Lead + Timeline + Workflow'}</Button>
+              <Button type="submit" disabled={submittingLead} className="w-full bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting — Creating CRM Lead...' : 'Submit — Create CRM Lead + Timeline + Workflow'}</Button>
               <p className="text-[11px] text-gray-500 text-center">On submit: Create CRM lead, Set source_country_page = {countryData.slug}, Save country interest = {countryData.name}, Assign counselor if routing rules exist, Create timeline event, Trigger configured communication workflow, Never expose internal CRM information.</p>
             </form>
           )}
@@ -766,7 +766,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <Card key={i} className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl shadow-sm h-full">
                 <Badge className="bg-white border-[#E2E8F0] text-[10px] mb-2">{source.section}</Badge>
                 <p className="text-sm font-bold text-[#0F172A]">{source.sourceName}</p>
-                <p className="text-xs mt-1"><a href={source.sourceUrl} target="_blank" className="text-[#2563EB] underline break-all">{source.sourceUrl}</a></p>
+                <p className="text-xs mt-1"><a href={source.sourceUrl} target="_blank" className="text-[#0057B8] underline break-all">{source.sourceUrl}</a></p>
                 <p className="text-[11px] text-gray-500 mt-2">Last verified: {source.lastVerifiedAt}</p>
               </Card>
             ))}

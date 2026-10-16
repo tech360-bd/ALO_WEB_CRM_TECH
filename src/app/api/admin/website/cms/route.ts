@@ -384,7 +384,7 @@ export async function POST(request: Request) {
             subtitle: body.subtitle || '',
             imageUrl: body.imageUrl || body.heroImage || '',
             imageAlt: body.imageAlt || '',
-            accentColor: body.accentColor || '#2563EB',
+            accentColor: body.accentColor || '#0057B8',
             popularCity: body.popularCity || body.heroCity || '',
             popularIntake: body.popularIntake || body.heroIntake || '',
             universityCountLabel: body.universityCountLabel || '',
@@ -525,7 +525,7 @@ export async function POST(request: Request) {
             seoDescription: body.seoDescription || '',
             status: body.status || 'active',
             sortOrder: body.sortOrder ?? 0,
-            accentColor: body.accentColor || '#2563EB',
+            accentColor: body.accentColor || '#0057B8',
             // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
             // the public country page shows it as "Last verified".
           },
@@ -555,7 +555,7 @@ export async function POST(request: Request) {
             seoDescription: body.seoDescription || '',
             status: body.status || 'active',
             sortOrder: body.sortOrder ?? 0,
-            accentColor: body.accentColor || '#2563EB',
+            accentColor: body.accentColor || '#0057B8',
             // Phase 1 review (P1-D): an ordinary save no longer stamps lastVerifiedAt;
             // the public country page shows it as "Last verified".
           }

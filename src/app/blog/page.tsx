@@ -17,7 +17,7 @@ export default function BlogPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-[#2563EB] text-white py-16 md:py-24">
+      <section className="bg-[#0057B8] text-white py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Blog & Insights</h1>
           <p className="text-lg md:text-xl text-blue-100">
@@ -37,7 +37,7 @@ export default function BlogPage() {
                 key={category} 
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   category === 'All' 
-                    ? 'bg-[#F97316] text-white' 
+                    ? 'bg-[#E8501A] text-white' 
                     : 'bg-white text-gray-700 hover:bg-gray-200 border border-gray-200'
                 }`}
               >
@@ -57,14 +57,14 @@ export default function BlogPage() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="inline-block bg-[#2563EB] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    <span className="inline-block bg-[#0057B8] text-white text-xs font-semibold px-3 py-1 rounded-full">
                       {blog.category}
                     </span>
                   </div>
                 </div>
                 
                 <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#F97316] transition-colors line-clamp-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#E8501A] transition-colors line-clamp-2">
                     {blog.title}
                   </h3>
                   <p className="text-gray-600 mb-6 line-clamp-3 text-sm">
@@ -73,7 +73,7 @@ export default function BlogPage() {
                   
                   <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[#2563EB] font-bold">
+                      <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[#0057B8] font-bold">
                         {blog.author.charAt(0)}
                       </div>
                       <span>{blog.author}</span>

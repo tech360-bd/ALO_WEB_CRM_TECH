@@ -130,7 +130,7 @@ export default function ManualLeadPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <header className="mb-6">
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-[#2563EB]">
+        <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-[#0057B8]">
           <UserPlus className="size-3.5" /> FORM C — MANUAL LEAD ADD
         </span>
         <h1 className="mt-3 text-2xl font-bold text-[#0F172A]">Add a lead and complete counseling</h1>
@@ -153,7 +153,7 @@ export default function ManualLeadPage() {
                   type="button"
                   onClick={() => setActiveSection(entry.key)}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
-                    isActive ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+                    isActive ? 'bg-[#0057B8] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   <span className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
@@ -172,7 +172,7 @@ export default function ManualLeadPage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-lg font-bold text-[#0F172A]">
-                <ClipboardList className="size-4 text-[#2563EB]" /> {section.label}
+                <ClipboardList className="size-4 text-[#0057B8]" /> {section.label}
               </h2>
               <p className="mt-1 text-sm text-slate-600">{section.description}</p>
               {section.requiredForApplication && (
@@ -183,7 +183,7 @@ export default function ManualLeadPage() {
               <button
                 type="button"
                 onClick={() => addRow(section.key)}
-                className="shrink-0 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-[#2563EB] hover:bg-slate-50"
+                className="shrink-0 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-[#0057B8] hover:bg-slate-50"
               >
                 + Save row &amp; add another
               </button>
@@ -300,7 +300,7 @@ export default function ManualLeadPage() {
               type="button"
               onClick={save}
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-5 py-3 text-sm font-bold text-white disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#0057B8] px-5 py-3 text-sm font-bold text-white disabled:opacity-60"
             >
               {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
               Save lead &amp; sections
@@ -325,8 +325,8 @@ export default function ManualLeadPage() {
                   {result.studentId && <p>Student profile: <span className="font-mono">{result.studentId}</span></p>}
                   {result.sections && <p>Sections marked complete: {result.sections.join(', ')}</p>}
                   <div className="mt-2 flex flex-wrap gap-2">
-                    <Link href="/crm/students" className="rounded-lg bg-[#2563EB] px-3 py-1.5 font-bold text-white">Open student</Link>
-                    <Link href="/crm/leads" className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-bold text-[#2563EB]">Lead queue</Link>
+                    <Link href="/crm/students" className="rounded-lg bg-[#0057B8] px-3 py-1.5 font-bold text-white">Open student</Link>
+                    <Link href="/crm/leads" className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-bold text-[#0057B8]">Lead queue</Link>
                   </div>
                 </div>
               )}

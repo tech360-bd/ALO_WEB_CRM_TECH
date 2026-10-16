@@ -16,8 +16,8 @@ interface PublicShellProps {
 }
 
 /* ─── Brand Colors (per spec) ─── */
-const BLUE = "#2563EB";
-const ORANGE = "#F97316";
+const BLUE = "#0057B8";
+const ORANGE = "#E8501A";
 const BORDER = "#E2E8F0";
 const TEXT = "#0F172A";
 const SOFT_BG = "#F8FAFC";
@@ -144,7 +144,7 @@ function Logo({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
       className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
       aria-label="ALO Education — Home"
     >
-      <div className="flex size-10 items-center justify-center rounded-xl text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${BLUE} 0%, #3B82F6 100%)` }}>
+      <div className="flex size-10 items-center justify-center rounded-xl text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${BLUE} 0%, #0284C7 100%)` }}>
         <span className="text-lg font-black tracking-tight">A</span>
       </div>
       <div className="leading-tight text-left">
@@ -166,7 +166,7 @@ function DropdownLink({ label, icon, flag, onClick }: { label: string; icon?: st
       className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50"
       style={{ color: TEXT }}
     >
-      {flag ? <span className="text-base">{flag}</span> : icon ? <Icon name={icon} className="size-4 text-[#2563EB]" /> : null}
+      {flag ? <span className="text-base">{flag}</span> : icon ? <Icon name={icon} className="size-4 text-[#0057B8]" /> : null}
       <span>{label}</span>
     </button>
   );
@@ -322,7 +322,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     {/* Destinations */}
                     <AccordionItem value="destinations" className="border-b" style={{ borderColor: BORDER }}>
                       <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Globe" className="size-4 text-[#2563EB]" /> Destinations</span>
+                        <span className="flex items-center gap-2"><Icon name="Globe" className="size-4 text-[#0057B8]" /> Destinations</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {[...mainCountries, ...moreCountries].map((c) => (
@@ -335,7 +335,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     {/* Course Finder */}
                     <AccordionItem value="cf" className="border-b" style={{ borderColor: BORDER }}>
                       <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Search" className="size-4 text-[#2563EB]" /> Course Finder</span>
+                        <span className="flex items-center gap-2"><Icon name="Search" className="size-4 text-[#0057B8]" /> Course Finder</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         <button onClick={() => { goCourseFinder(); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
@@ -346,7 +346,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     {/* Services */}
                     <AccordionItem value="svc" className="border-b" style={{ borderColor: BORDER }}>
                       <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Briefcase" className="size-4 text-[#2563EB]" /> Services</span>
+                        <span className="flex items-center gap-2"><Icon name="Briefcase" className="size-4 text-[#0057B8]" /> Services</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         <button onClick={() => { goServices(); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
@@ -357,7 +357,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     {/* Language Prep */}
                     <AccordionItem value="lang" className="border-b" style={{ borderColor: BORDER }}>
                       <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Languages" className="size-4 text-[#2563EB]" /> Language Prep</span>
+                        <span className="flex items-center gap-2"><Icon name="Languages" className="size-4 text-[#0057B8]" /> Language Prep</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {LANGUAGE_PREP.map((t) => (
@@ -370,7 +370,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     {/* Resources */}
                     <AccordionItem value="res" className="border-b" style={{ borderColor: BORDER }}>
                       <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="BookOpen" className="size-4 text-[#2563EB]" /> Resources</span>
+                        <span className="flex items-center gap-2"><Icon name="BookOpen" className="size-4 text-[#0057B8]" /> Resources</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {RESOURCES.map((r) => (
@@ -383,7 +383,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     {/* Portals */}
                     <AccordionItem value="portals" className="border-b" style={{ borderColor: BORDER }}>
                       <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Users" className="size-4 text-[#2563EB]" /> Portals</span>
+                        <span className="flex items-center gap-2"><Icon name="Users" className="size-4 text-[#0057B8]" /> Portals</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {PORTALS.map((p) => (
@@ -423,7 +423,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             {/* Col 1: ALO Education */}
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2.5">
-                <div className="flex size-9 items-center justify-center rounded-xl text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${BLUE} 0%, #3B82F6 100%)` }}>
+                <div className="flex size-9 items-center justify-center rounded-xl text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${BLUE} 0%, #0284C7 100%)` }}>
                   <span className="text-base font-black">A</span>
                 </div>
                 <p className="font-black" style={{ color: BLUE }}>ALO Education</p>
@@ -451,7 +451,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Destinations</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-500">
                 {FOOTER_DESTINATIONS.map((d) => (
-                  <li key={d.slug}><button onClick={() => onNavigate("public-country", d.slug)} className="hover:text-[#2563EB]">{d.label}</button></li>
+                  <li key={d.slug}><button onClick={() => onNavigate("public-country", d.slug)} className="hover:text-[#0057B8]">{d.label}</button></li>
                 ))}
               </ul>
             </div>
@@ -461,7 +461,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Quick Links</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-500">
                 {FOOTER_QUICK_LINKS.map((q) => (
-                  <li key={q.label}><button onClick={() => onNavigate(q.view)} className="hover:text-[#2563EB]">{q.label}</button></li>
+                  <li key={q.label}><button onClick={() => onNavigate(q.view)} className="hover:text-[#0057B8]">{q.label}</button></li>
                 ))}
               </ul>
             </div>
@@ -471,7 +471,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Company</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-500">
                 {FOOTER_COMPANY.map((c) => (
-                  <li key={c.label}><button onClick={() => onNavigate(c.view)} className="hover:text-[#2563EB]">{c.label}</button></li>
+                  <li key={c.label}><button onClick={() => onNavigate(c.view)} className="hover:text-[#0057B8]">{c.label}</button></li>
                 ))}
               </ul>
             </div>
@@ -481,15 +481,15 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Legal</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-500">
                 {FOOTER_LEGAL.map((l) => (
-                  <li key={l.label}><button onClick={() => onNavigate(l.view)} className="hover:text-[#2563EB]">{l.label}</button></li>
+                  <li key={l.label}><button onClick={() => onNavigate(l.view)} className="hover:text-[#0057B8]">{l.label}</button></li>
                 ))}
               </ul>
               <p className="mt-5 text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Contact</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-500">
-                <li><a href="tel:01805020101" className="hover:text-[#2563EB]">📞 01805020101</a></li>
-                <li><a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer" className="hover:text-[#2563EB]">💬 WhatsApp</a></li>
-                <li><a href="mailto:info@aloeducation.com" className="hover:text-[#2563EB]">✉️ Email</a></li>
-                <li><button onClick={() => onNavigate("public-contact")} className="hover:text-[#2563EB]">📍 Office</button></li>
+                <li><a href="tel:01805020101" className="hover:text-[#0057B8]">📞 01805020101</a></li>
+                <li><a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer" className="hover:text-[#0057B8]">💬 WhatsApp</a></li>
+                <li><a href="mailto:info@aloeducation.com" className="hover:text-[#0057B8]">✉️ Email</a></li>
+                <li><button onClick={() => onNavigate("public-contact")} className="hover:text-[#0057B8]">📍 Office</button></li>
               </ul>
             </div>
           </div>
@@ -527,7 +527,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
         <div className="bg-[#f5f5f5]">
           <div className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-3 text-xs text-slate-500 sm:flex-row lg:px-6">
             <p>© Copyright 2025 ALO Education. All Rights Reserved.</p>
-            <button onClick={() => onNavigate("public-cookie")} className="hover:text-[#2563EB]">Cookie Policy</button>
+            <button onClick={() => onNavigate("public-cookie")} className="hover:text-[#0057B8]">Cookie Policy</button>
           </div>
         </div>
       </footer>

@@ -138,7 +138,7 @@ export default function ResourcesHubPage() {
                         </div>
                         <p className="text-[10px] text-gray-500 mb-3">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • {b.authorId ? 'ALO Editorial Team' : 'ALO Editorial Team'}</p>
                       </div>
-                      <Link href={`/resources/${catSlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#1D4ED8] text-xs font-bold h-12 rounded-xl">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href={`/resources/${catSlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
                     </Card>
                   );
                 })}
@@ -147,7 +147,7 @@ export default function ResourcesHubPage() {
           )}
 
           {/* Final CTA */}
-          <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl text-white text-center">
+          <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
             <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
             <p className="text-sm text-blue-100 mb-6">Research first, act with confidence — ALO is your execution and support layer.</p>
             <div className="flex flex-wrap justify-center gap-3">

@@ -141,7 +141,7 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -150,12 +150,12 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
               <Icon name="BookOpen" className="mr-1 size-3" />
               Knowledge Hub
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Study Abroad <span className="text-[#2563EB]">Resources</span>
+              Study Abroad <span className="text-[#0057B8]">Resources</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Everything you need to plan your study abroad journey — in one place. Visa guides, scholarship finders,
@@ -163,11 +163,11 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
               official sources.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-search")} className="h-12 bg-[#2563EB] px-6 text-white hover:bg-[#2563EB]/90">
+              <Button onClick={() => onNavigate("public-search")} className="h-12 bg-[#0057B8] px-6 text-white hover:bg-[#0057B8]/90">
                 <Icon name="Search" className="size-4" />
                 Search All Resources
               </Button>
-              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[#F97316]/30 bg-white px-6 text-[#F97316] hover:bg-[#FFF3EA]">
+              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[#E8501A]/30 bg-white px-6 text-[#E8501A] hover:bg-[#FFF3EA]">
                 <Icon name="Phone" className="size-4" />
                 Ask a Question
               </Button>
@@ -179,7 +179,7 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
       <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
         {/* Resource grid */}
         <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Browse by category</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Browse by category</p>
           <h2 className="mt-2 text-3xl font-black text-[#0B2447]">All ALO Resources</h2>
           <p className="mt-2 text-sm text-[#5A7299]">{RESOURCE_CATEGORIES.length} resource categories — all free for students.</p>
         </div>
@@ -195,7 +195,7 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
                 <div className="flex items-start justify-between gap-2">
                   <div className={cn(
                     "flex size-12 items-center justify-center rounded-2xl",
-                    r.accent === "blue" ? "bg-[#EAF3FF] text-[#2563EB]" : "bg-[#FFF3EA] text-[#F97316]"
+                    r.accent === "blue" ? "bg-[#EAF3FF] text-[#0057B8]" : "bg-[#FFF3EA] text-[#E8501A]"
                   )}>
                     <Icon name={r.icon} className="size-6" />
                   </div>
@@ -203,9 +203,9 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
                     <Badge variant="outline" className="bg-[#F7FAFE] text-[#5A7299]">{r.count}</Badge>
                   )}
                 </div>
-                <h3 className="mt-4 text-base font-bold text-[#0B2447] group-hover:text-[#2563EB]">{r.title}</h3>
+                <h3 className="mt-4 text-base font-bold text-[#0B2447] group-hover:text-[#0057B8]">{r.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-[#5A7299]">{r.description}</p>
-                <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#2563EB]">
+                <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#0057B8]">
                   Explore
                   <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
@@ -218,10 +218,10 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
         <div className="mt-16">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Featured Articles</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#0057B8]">Featured Articles</p>
               <h2 className="mt-2 text-2xl font-black text-[#0B2447]">Top reads this month</h2>
             </div>
-            <Button onClick={() => onNavigate("public-blog")} variant="outline" className="h-11 border-[#2563EB]/30 bg-white text-[#2563EB] hover:bg-[#EAF3FF]">
+            <Button onClick={() => onNavigate("public-blog")} variant="outline" className="h-11 border-[#0057B8]/30 bg-white text-[#0057B8] hover:bg-[#EAF3FF]">
               View All
               <Icon name="ArrowRight" className="size-4" />
             </Button>
@@ -234,11 +234,11 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
                 onClick={() => onNavigate(r.viewKey, r.slug)}
               >
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#2563EB]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0057B8]">
                     <Icon name={r.icon} className="size-5" />
                   </div>
                   <Badge variant="outline" className="mt-3 bg-[#F7FAFE] text-[#5A7299] text-[10px]">{r.category}</Badge>
-                  <h3 className="mt-2 line-clamp-3 text-sm font-bold text-[#0B2447] group-hover:text-[#2563EB]">{r.title}</h3>
+                  <h3 className="mt-2 line-clamp-3 text-sm font-bold text-[#0B2447] group-hover:text-[#0057B8]">{r.title}</h3>
                 </CardContent>
               </Card>
             ))}
@@ -259,8 +259,8 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
                 { label: "Courses tracked", value: "794", icon: "BookOpen" },
                 { label: "Countries covered", value: "13", icon: "MapPin" },
               ].map((s) => (
-                <div key={s.label} className="rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/40 p-4">
-                  <Icon name={s.icon} className="size-5 text-[#2563EB]" />
+                <div key={s.label} className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40 p-4">
+                  <Icon name={s.icon} className="size-5 text-[#0057B8]" />
                   <p className="mt-2 text-2xl font-black text-[#0B2447]">{s.value}</p>
                   <p className="text-xs text-[#5A7299]">{s.label}</p>
                 </div>

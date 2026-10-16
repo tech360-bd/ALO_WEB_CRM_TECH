@@ -147,7 +147,7 @@ export default function UniversitiesListing() {
                   <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
-                        <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">{university.country}</Badge>
+                        <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">{university.country}</Badge>
                         {ranking > 0 ? <span className="text-[11px] text-gray-500">{university.rankingProvider || 'Ranking'} {university.rankingYear || ''} #{ranking}</span> : <span className="text-[11px] text-gray-500">Ranking not recorded</span>}
                       </div>
                       <h2 className="font-bold text-[#0F172A] mb-1 line-clamp-2">{university.name}</h2>
@@ -157,7 +157,7 @@ export default function UniversitiesListing() {
                         <div className="flex justify-between gap-2"><span className="text-gray-500">Last verified</span><span className="font-medium">{university.lastVerifiedAt ? new Date(university.lastVerifiedAt).toLocaleDateString() : 'Not recorded'}</span></div>
                       </div>
                     </div>
-                    <span className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-[#2563EB] text-white h-11 text-xs font-bold">
+                    <span className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-[#0057B8] text-white h-11 text-xs font-bold">
                       View University Information <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </span>
                   </Card>

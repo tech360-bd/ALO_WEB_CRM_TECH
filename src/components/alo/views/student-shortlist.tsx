@@ -126,7 +126,7 @@ export function StudentShortlist() {
                     <h3 className="font-bold text-[#0B2447]">{c.name || c.title || "Course"}</h3>
                     <p className="text-sm text-[#5A7299]">{c.university || "—"}</p>
                   </div>
-                  <Badge className={cn("bg-[#EAF3FF] text-[#2563EB]")}>{c.country || "—"}</Badge>
+                  <Badge className={cn("bg-[#EAF3FF] text-[#0057B8]")}>{c.country || "—"}</Badge>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
@@ -156,7 +156,7 @@ export function StudentShortlist() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-[#F97316] text-[#F97316] hover:bg-[#FFF3EA]"
+                    className="border-[#E8501A] text-[#E8501A] hover:bg-[#FFF3EA]"
                     onClick={() => handleRemove(c.slug)}
                   >
                     <Icon name="Trash2" className="mr-1 size-3.5" /> Remove

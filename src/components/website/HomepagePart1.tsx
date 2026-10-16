@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { EnglishExamBanner } from '@/components/website/EnglishExamCta';
 
-const C = { blue: '#2563EB', orange: '#F97316', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
+const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
 /* ═══════════════════════════════════════════════════════════════ TYPES ═══ */
 interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity?: string; heroIntake?: string; heroSubtitle?: string; }
@@ -31,9 +31,9 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 // These entries are visual destination choices only. Live availability,
 // current intakes and inventory counts come from the database API below.
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#2563EB', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
-  { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#3B82F6', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F97316', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/hero-banners/UK slide Banner.webp', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
+  { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#0284C7', heroImage: '/images/hero-banners/USA slide Banner.webp', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/hero-banners/Canada slide Banner.webp', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/hero-banners/Australia slide Banner.webp', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
   { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/hero-banners/New Zealand slide Banner.webp', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
   { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/hero-banners/Europe slide Banner.webp', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
@@ -97,10 +97,12 @@ function HeroSection() {
   const slide = slides[current];
   const go = (i: number) => setCurrent(i);
 
-  // Country-specific hero (brand brief): the selected country's landmark
-  // image is the background, the H1 and body copy name that country, and the
-  // primary CTA is the ALO Orange "Book Free Counselling" button. Country
-  // pills switch the featured country; the auto-advance timer pauses on hover.
+  // Country-specific hero — Master §08 Variant A (editorial split):
+  // white background, H1 in main text with the country highlighted in brand
+  // blue, supporting copy in body text, ALO Orange primary CTA, and the
+  // country landmark photograph in a rounded frame on a pale-blue panel.
+  // NO dark overlay on the photograph. Country pills switch the featured
+  // country; the auto-advance timer pauses on hover.
   const countryInPhrase =
     slide.name === 'United Kingdom'
       ? 'the United Kingdom'
@@ -113,45 +115,16 @@ function HeroSection() {
   return (
     <section
       aria-label={`Study in ${slide.name}`}
-      className="relative w-full overflow-hidden bg-[#003D7A] text-white"
+      className="relative w-full bg-white"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Background: country landmark image */}
-      <div className="absolute inset-0" aria-hidden="true">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={slide.name}
-            initial={reduceMotion ? false as const : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduceMotion ? undefined : { opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.6 }}
-            className="absolute inset-0"
-          >
-            {slide.heroImage && !imgErrors.has(slide.name) ? (
-              <Image
-                src={slide.heroImage}
-                alt=""
-                fill
-                priority={current === 0}
-                sizes="100vw"
-                className="object-cover object-center"
-                onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
-              />
-            ) : (
-              <div className="h-full w-full" style={{ backgroundColor: slide.accentColor }} />
-            )}
-          </motion.div>
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#003D7A]/95 via-[#0066CC]/80 to-[#0066CC]/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-      </div>
-
-      <div className="relative mx-auto flex min-h-[540px] max-w-7xl flex-col justify-center px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <div className="max-w-3xl space-y-6">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-20">
+        {/* Left: eyebrow, H1, description, CTAs, country selector */}
+        <div className="space-y-6 lg:col-span-6">
           <AnimatePresence mode="wait">
             <motion.div key={`eyebrow-${slide.name}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: reduceMotion ? 0 : 0.3 }}>
-              <Badge className="gap-2 border-white/30 bg-white/15 px-3 py-1 text-xs text-white backdrop-blur">
+              <Badge variant="brand" className="gap-2 px-3 py-1 text-xs">
                 <span aria-hidden="true">{slide.flag}</span>
                 {slide.name}
                 {slide.heroCity ? ` · ${slide.heroCity}` : ''}
@@ -159,53 +132,104 @@ function HeroSection() {
             </motion.div>
           </AnimatePresence>
 
-          <h1 className="font-heading text-[2rem] font-extrabold leading-[1.15] tracking-tight text-white md:text-5xl" aria-live="polite">
-            Unlock a world-class education in {countryInPhrase} with expert guidance
+          <h1 className="font-heading text-[34px] font-extrabold leading-[1.12] tracking-tight text-[#0F172A] md:text-[52px]" aria-live="polite">
+            Unlock a world-class education in{' '}
+            <span className="text-[#0057B8]">{countryInPhrase}</span> with expert guidance
           </h1>
 
-          <p className="max-w-2xl text-lg leading-relaxed text-white/90">
+          <p className="max-w-xl text-lg leading-relaxed text-[#334155]">
             {countrySentence} offers globally recognized education, strong career prospects, and a
             welcoming environment for international students. At ALO Education, we guide you every
             step of the way—from choosing the right course to submitting a strong application.
           </p>
 
-          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-            <Button asChild size="lg" className="h-12 bg-[#F37021] px-6 font-heading font-bold text-white shadow-lg hover:bg-[#D95D12]">
+          <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+            <Button asChild size="lg" className="h-12 bg-[#E8501A] px-6 font-heading text-[15px] font-semibold text-white shadow-card hover:bg-[#C93D13]">
               <Link href="/book-consultation">
                 Book Free Counselling
                 <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="h-12 border-white/60 bg-white/10 px-6 font-heading font-bold text-white backdrop-blur hover:bg-white/20 hover:text-white">
+            <Button asChild size="lg" variant="outline" className="h-12 px-6 font-heading text-[15px] font-semibold">
               <Link href={`/course-finder?country=${encodeURIComponent(slide.name)}`}>
                 {t('cta.findCourse')} in {slide.name}
               </Link>
             </Button>
           </div>
+
+          {slides.length > 1 && (
+            <div className="flex flex-wrap items-center gap-2 pt-2" role="tablist" aria-label="Choose a destination to feature">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === current}
+                  aria-label={`Show ${s.name}`}
+                  onClick={() => go(i)}
+                  className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
+                    i === current
+                      ? 'border-[#0057B8] bg-[#EAF3FF] text-[#0057B8]'
+                      : 'border-[#E2E8F0] bg-white text-[#334155] hover:border-[#BFDBFE] hover:bg-[#F4F8FF] hover:text-[#0057B8]'
+                  }`}
+                >
+                  <span aria-hidden="true">{s.flag}</span>
+                  {s.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {slides.length > 1 && (
-          <div className="mt-10 flex flex-wrap items-center gap-2" role="tablist" aria-label="Choose a destination to feature">
-            {slides.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                role="tab"
-                aria-selected={i === current}
-                aria-label={`Show ${s.name}`}
-                onClick={() => go(i)}
-                className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB347] focus-visible:ring-offset-2 ${
-                  i === current
-                    ? 'bg-[#F37021] text-white shadow-md'
-                    : 'bg-white/15 text-white backdrop-blur hover:bg-white/25'
-                }`}
+        {/* Right: landmark photograph — rounded frame, pale-blue panel, no overlay */}
+        <div className="relative lg:col-span-6">
+          <div className="absolute -inset-3 rounded-[24px] bg-[#F4F8FF]" aria-hidden="true" />
+          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[20px] border border-[#E2E8F0] bg-[#F4F8FF] shadow-card">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={slide.name}
+                initial={reduceMotion ? false as const : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.5 }}
+                className="absolute inset-0"
               >
-                <span aria-hidden="true">{s.flag}</span>
-                {s.name}
-              </button>
-            ))}
+                {slide.heroImage && !imgErrors.has(slide.name) ? (
+                  <Image
+                    src={slide.heroImage}
+                    alt={`${slide.name} landmark — study destination`}
+                    fill
+                    priority={current === 0}
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover object-center"
+                    onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#EAF3FF]">
+                    <span className="text-7xl" aria-hidden="true">{slide.flag}</span>
+                    <span className="font-heading text-2xl font-bold text-[#0057B8]">{slide.name}</span>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        )}
+
+          {/* Floating information card — real destination info only */}
+          {slide.heroCity && (
+            <div className="relative z-10 mx-4 -mt-6 flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-floating sm:mx-6">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EAF3FF]">
+                <MapPin className="h-5 w-5 text-[#0057B8]" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-heading text-sm font-bold text-[#0F172A]">{slide.heroCity}, {slide.name}</p>
+                <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[#0057B8] hover:underline">
+                  Explore the {slide.name} destination guide
+                </Link>
+              </div>
+              <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-[#64748B]" aria-hidden="true" />
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -294,13 +318,13 @@ function CourseFinderSection() {
     URL.revokeObjectURL(url);
   }, [selectedCountry]);
 
-  const inputClass = 'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20';
+  const inputClass = 'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#0057B8] focus:ring-2 focus:ring-[#0057B8]/20';
 
   return (
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white" aria-labelledby="smart-course-finder-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-[#FFF4EC] text-[#F37021] border border-[#F37021]/25 mb-4">Smart Course Finder</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-[#FFF1EA] text-[#E8501A] border border-[#E8501A]/25 mb-4">Smart Course Finder</Badge></motion.div>
           <motion.h2 id="smart-course-finder-heading" variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search verified courses and universities — tuition fees, intakes, interview requirements and world rankings in one place.</motion.p>
         </motion.div>
@@ -318,7 +342,7 @@ function CourseFinderSection() {
                 aria-selected={tab === id}
                 onClick={() => setTab(id)}
                 className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 font-heading text-[13px] font-extrabold tracking-[0.08em] transition-colors sm:flex-none sm:px-8 ${
-                  tab === id ? 'bg-[#F37021] text-white shadow-sm' : 'bg-white text-[#0F172A] hover:bg-[#FFF4EC] hover:text-[#F37021]'
+                  tab === id ? 'bg-[#E8501A] text-white shadow-sm' : 'bg-white text-[#0F172A] hover:bg-[#FFF1EA] hover:text-[#E8501A]'
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
@@ -356,7 +380,7 @@ function CourseFinderSection() {
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#F37021] hover:bg-[#D95D12]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#E8501A] hover:bg-[#C93D13]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             ) : (
@@ -372,23 +396,23 @@ function CourseFinderSection() {
                   <datalist id="home-uf-universities">{facets.universities.map(u => <option key={u.name} value={u.name} />)}</datalist>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#F37021] hover:bg-[#D95D12]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#E8501A] hover:bg-[#C93D13]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             )}
 
             {/* Selected country's 7-step study guide — downloadable */}
             {selectedCountry && (
-              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[#FFB347]/50 bg-[#FFF4EC] p-4 sm:flex-row sm:items-center">
+              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[#FFB347]/50 bg-[#FFF1EA] p-4 sm:flex-row sm:items-center">
                 <p className="text-sm text-[#0F172A]">
                   <span className="font-heading font-bold">Planning to study in {selectedCountry.name}?</span>{' '}
                   <span className="text-[#555555]">Download the {selectedCountry.name} 7-step study guide — from free counseling to pre-departure.</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" onClick={downloadGuide} className="h-11 rounded-xl bg-[#F37021] px-5 font-heading text-[13px] font-bold text-white hover:bg-[#D95D12]">
+                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[#E8501A] px-5 font-heading text-[13px] font-bold text-white hover:bg-[#C93D13]">
                     <Download className="mr-2 h-4 w-4" /> Download 7-Step Guide
                   </Button>
-                  <Button asChild variant="outline" className="h-11 rounded-xl border-[#0066CC] px-5 font-heading text-[13px] font-bold text-[#0066CC] hover:bg-[#E6F2FF]">
+                  <Button asChild variant="outline" className="h-12 rounded-xl border-[#0057B8] px-5 font-heading text-[13px] font-bold text-[#0057B8] hover:bg-[#EAF3FF]">
                     <Link href={destinationGuidePath(selectedCountry.slug)}>View {selectedCountry.name} Guide</Link>
                   </Button>
                 </div>
@@ -423,7 +447,7 @@ function DestinationsSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20 mb-4">Explore the World</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20 mb-4">Explore the World</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Popular Study Destinations</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
         </motion.div>
@@ -455,10 +479,10 @@ function DestinationsSection() {
                   )}
                   {d.visaType && <Badge variant="outline" className="text-xs w-fit" style={{ borderColor: d.accentColor, color: d.accentColor }}>{d.visaType}</Badge>}
                   <div className="flex gap-2 pt-1">
-                    <Button asChild variant="outline" size="sm" className="flex-1 h-10 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
+                    <Button asChild variant="outline" size="sm" className="flex-1 h-12 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
                       <a href={`/destinations/${d.slug}`}>View Guide</a>
                     </Button>
-                    <Button asChild size="sm" className="flex-1 h-10 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>
+                    <Button asChild size="sm" className="flex-1 h-12 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>
                       <a href={`/course-finder?country=${d.slug}`}>{t('cta.findCourse')}</a>
                     </Button>
                   </div>
@@ -469,7 +493,7 @@ function DestinationsSection() {
         </motion.div>
         {extra.length > 0 && (
           <div className="text-center mt-6">
-            <Button variant="outline" onClick={() => setShowMore(!showMore)} className="h-10 rounded-xl text-sm font-medium">
+            <Button variant="outline" onClick={() => setShowMore(!showMore)} className="h-12 rounded-xl text-sm font-medium">
               {showMore ? 'Show Less' : `+${extra.length} More Countries`} <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`} />
             </Button>
             {showMore && (
@@ -518,7 +542,7 @@ function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div variants={slideFromLeft} className="space-y-6">
-            <Badge className="bg-blue-50 text-[#2563EB] border border-[#2563EB]/20">About ALO Education</Badge>
+            <Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20">About ALO Education</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Who We Are</h2>
             <div className="space-y-4 text-[#64748B] leading-relaxed">
               <p>In February 2023, <strong style={{ color: C.text }}>Taslima Akter</strong> founded ALO Education with a vision to connect ambitious Bangladeshi students with world-class education opportunities abroad. Her personal experience navigating the complexities of international admissions inspired her to create a platform built on trust, transparency, and genuine care for every student&apos;s future.</p>
@@ -534,7 +558,7 @@ function AboutSection() {
                 'Safe cities and vibrant student life',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm font-medium" style={{ color: C.text }}>
-                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: '#F37021' }} aria-hidden="true" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: '#E8501A' }} aria-hidden="true" />
                   {item}
                 </li>
               ))}
@@ -576,7 +600,7 @@ function MissionVisionValues() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#F97316] border border-[#F97316]/20 mb-4">Our Purpose</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#E8501A] border border-[#E8501A]/20 mb-4">Our Purpose</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Our Commitment to Your Study-Abroad Dream</motion.h2>
         </motion.div>
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-8">

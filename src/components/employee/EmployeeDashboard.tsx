@@ -218,7 +218,7 @@ export default function EmployeeDashboard() {
                 ) : taskData.map((task, i) => (
                   <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: task.priority === 'high' ? '#dc2626' : task.priority === 'medium' ? '#d97706' : '#059669' }} />
+                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: task.priority === 'high' ? '#EF4444' : task.priority === 'medium' ? '#92400E' : '#059669' }} />
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-alo-text truncate">{task.title}</p>
                         <div className="flex items-center gap-2 mt-0.5">

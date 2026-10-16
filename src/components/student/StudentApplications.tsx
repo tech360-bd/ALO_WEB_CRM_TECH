@@ -763,7 +763,7 @@ function ApplicationTableRow({
         <CountdownBadge deadline={application.deadline} />
       </TableCell>
       <TableCell>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[#C2410C] hover:text-[#C2410C] hover:bg-orange-50">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[#C93D13] hover:text-[#C93D13] hover:bg-orange-50">
           <Eye className="size-3.5" />
           <span className="sr-only sm:not-sr-only">View</span>
         </Button>
@@ -826,7 +826,7 @@ function ApplicationDetailDialog({
             <TabsTrigger value="messages">
               Messages
               {application.messages.some((m) => m.unread) && (
-                <span className="ml-1.5 size-2 rounded-full bg-[#C2410C]" />
+                <span className="ml-1.5 size-2 rounded-full bg-[#C93D13]" />
               )}
             </TabsTrigger>
           </TabsList>
@@ -901,7 +901,7 @@ function ApplicationDetailDialog({
                       className={cn(
                         'absolute -left-[31px] top-1 flex items-center justify-center size-7 rounded-full border-2 bg-white',
                         isLast
-                          ? 'border-[#C2410C] text-[#C2410C]'
+                          ? 'border-[#C93D13] text-[#C93D13]'
                           : 'border-emerald-400 text-emerald-500'
                       )}
                     >
@@ -976,14 +976,14 @@ function ApplicationDetailDialog({
                     msg.role === 'student' && 'bg-blue-50/40 border-blue-100 ml-8',
                     msg.role === 'counselor' && 'bg-white border-border/60 mr-8',
                     msg.role === 'system' && 'bg-gray-50 border-gray-100 mx-4',
-                    msg.unread && 'ring-1 ring-[#C2410C]/20'
+                    msg.unread && 'ring-1 ring-[#C93D13]/20'
                   )}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-[#0F172A]">{msg.sender}</span>
                       {msg.unread && (
-                        <span className="size-2 rounded-full bg-[#C2410C]" />
+                        <span className="size-2 rounded-full bg-[#C93D13]" />
                       )}
                     </div>
                     <span className="text-xs text-[#0F172A]/40">{msg.date}</span>
@@ -1010,7 +1010,7 @@ function EmptyState() {
     <Card className="border-dashed border-2 border-[#0F172A]/10 bg-[#0F172A]/[0.01]">
       <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
         <div className="flex items-center justify-center size-20 rounded-full bg-orange-50 mb-6">
-          <GraduationCap className="size-10 text-[#C2410C]/70" />
+          <GraduationCap className="size-10 text-[#C93D13]/70" />
         </div>
         <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
           Start your first application

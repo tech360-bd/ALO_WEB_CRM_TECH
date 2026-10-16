@@ -533,7 +533,7 @@ export default function PublicCourseFinder() {
                   </label>
                   <select
                     id="cf-intake-year"
-                    className="h-9 rounded-input border border-alo-border bg-white px-2 text-sm"
+                    className="h-12 rounded-input border border-input bg-white px-2 text-sm"
                     value={intakeYear}
                     onChange={(event) => setIntakeYear(Number(event.target.value))}
                   >
@@ -571,7 +571,7 @@ export default function PublicCourseFinder() {
                       type="button"
                       aria-pressed={selected}
                       onClick={() => toggleMonth(entry.key)}
-                      className={`rounded-full border px-3.5 py-2 font-heading text-[12px] font-bold transition-colors ${
+                      className={`rounded-full border min-h-[48px] px-3.5 py-2 font-heading text-[12px] font-bold transition-colors ${
                         selected
                           ? 'border-alo-cta bg-alo-cta text-white'
                           : 'border-alo-border bg-white text-alo-text hover:border-alo-brand hover:text-alo-brand'
@@ -776,7 +776,7 @@ export default function PublicCourseFinder() {
                         <td className="whitespace-nowrap px-4 py-3">
                           <Link
                             href={`/apply/${encodeURIComponent(course.slug || course.courseId)}`}
-                            className="inline-flex h-10 items-center gap-1.5 rounded-button bg-alo-cta px-4 font-heading text-[12px] font-bold text-white transition-colors hover:bg-alo-cta-hover"
+                            className="inline-flex h-12 items-center gap-1.5 rounded-button bg-alo-cta px-4 font-heading text-[12px] font-bold text-white transition-colors hover:bg-alo-cta-hover"
                           >
                             Apply Now
                           </Link>
@@ -871,7 +871,7 @@ export default function PublicCourseFinder() {
                     <td className="whitespace-nowrap px-4 py-3">
                       <Link
                         href={`/course-finder?university=${encodeURIComponent(university.slug)}`}
-                        className="inline-flex h-10 items-center rounded-button border border-alo-brand px-4 font-heading text-[12px] font-bold text-alo-brand transition-colors hover:bg-alo-brand-light"
+                        className="inline-flex h-12 items-center rounded-button border border-alo-brand px-4 font-heading text-[12px] font-bold text-alo-brand transition-colors hover:bg-alo-brand-light"
                       >
                         View courses
                       </Link>

@@ -174,7 +174,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
             <RelatedQuestions type="scholarship" context={scholarship.slug} title="Still Have Questions?" count={6} />
 
             {/* Final CTA — spec §24 exact button set */}
-            <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl text-white text-center">
+            <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
               <p className="text-sm text-blue-100 mb-6">Check eligibility, find matching courses, or talk through your scholarship strategy with a counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">

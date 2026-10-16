@@ -7,8 +7,8 @@ import { Variants, Transition } from 'framer-motion';
 
 /* ── Brand Colors ──────────────────────────────────────────── */
 export const BRAND = {
-  blue: '#2563EB',      // Education Blue
-  orange: '#F97316',     // ALO Orange (primary CTA)
+  blue: '#0057B8',      // Education Blue
+  orange: '#E8501A',     // ALO Orange (primary CTA)
   sunshine: '#FFB347',   // Sunshine Accent
   text: '#0F172A',       // Neutral Dark
   textSoft: '#555555',  // Neutral Gray
@@ -19,7 +19,7 @@ export const BRAND = {
   warning: '#F59E0B',
   danger: '#EF4444',
   white: '#FFFFFF',
-  tagline: '#F97316',   // Italic orange for tagline
+  tagline: '#E8501A',   // Italic orange for tagline
 };
 
 /* ── Shared Transitions ─────────────────────────────────────── */
@@ -193,13 +193,13 @@ export const viewportRepeat = {
 
 /* ── Gradient helpers ───────────────────────────────────────── */
 export const gradients = {
-  blue: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
-  orange: 'linear-gradient(135deg, #F97316 0%, #FFB347 100%)',
+  blue: 'linear-gradient(135deg, #0057B8 0%, #003F87 100%)',
+  orange: 'linear-gradient(135deg, #E8501A 0%, #C93D13 100%)',
   blueLight: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
   softBlue: 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',
-  heroGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,102,204,0.08) 0%, transparent 70%)',
-  ctaGlow: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(243,112,33,0.1) 0%, transparent 70%)',
-  warmGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(243,112,33,0.06) 0%, transparent 70%)',
+  heroGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,87,184,0.08) 0%, transparent 70%)',
+  ctaGlow: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(232,80,26,0.1) 0%, transparent 70%)',
+  warmGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,80,26,0.06) 0%, transparent 70%)',
 };
 
 /* ── Hero slide transition ─────────────────────────────────── */

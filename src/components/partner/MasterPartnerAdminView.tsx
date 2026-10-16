@@ -153,7 +153,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
               <Link key={r.path} href={r.path}>
                 <div
                   className={`px-4 py-2 rounded-xl flex items-center gap-2 shrink-0 transition cursor-pointer ${
-                    isActive ? 'bg-[#2563EB] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                    isActive ? 'bg-[#0057B8] text-white font-bold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                   }`}
                 >
                   <Icon className="w-4 h-4" /> {r.label}
@@ -188,7 +188,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-slate-900">B2B Partner Super Admin Portal</h1>
-            <Badge className="bg-[#2563EB] text-white text-[10px] font-extrabold">VERIFIED B2B PARTNER</Badge>
+            <Badge className="bg-[#0057B8] text-white text-[10px] font-extrabold">VERIFIED B2B PARTNER</Badge>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             Manage your company users, assigned student applications, marketing studio quotas, and student test vouchers.
@@ -312,7 +312,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <Button
               onClick={handleSeatRequest}
               disabled={requestingSeats}
-              className="w-full bg-[#2563EB] hover:bg-blue-700 text-white text-xs rounded-xl py-2 flex items-center justify-center gap-1.5"
+              className="w-full bg-[#0057B8] hover:bg-blue-700 text-white text-xs rounded-xl py-2 flex items-center justify-center gap-1.5"
             >
               {requestingSeats ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               {requestingSeats ? 'Submitting Request...' : 'Submit Request to ALO Super Admin'}
@@ -389,7 +389,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <Button
               onClick={handleGenerateMarketing}
               disabled={mGenerating}
-              className="w-full bg-[#F97316] hover:bg-orange-600 text-white text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
+              className="w-full bg-[#E8501A] hover:bg-orange-600 text-white text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
             >
               {mGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               {mGenerating ? 'Generating AI Draft...' : 'Generate AI Marketing Package'}

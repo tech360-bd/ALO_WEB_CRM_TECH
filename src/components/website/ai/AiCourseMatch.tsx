@@ -178,7 +178,7 @@ export default function AiCourseMatch({ countries }: { countries: CountryOption[
           description:
             'Our verified course catalogue has no published course matching this profile and these filters yet. Widen your country or subject selection, or talk to an advisor about destinations we can source for you.',
           action: (
-            <Button asChild variant="outline" className="mt-2 h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="mt-2 h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/book-consultation">Book Free Consultation</Link>
             </Button>
           ),
@@ -225,7 +225,7 @@ export default function AiCourseMatch({ countries }: { countries: CountryOption[
             <li>A gap plan for anything not yet met</li>
             <li>Alternative routes where a course is out of reach</li>
           </ul>
-          <Button asChild variant="outline" className="mt-4 h-10 w-full rounded-button border-alo-border text-[13px] font-semibold">
+          <Button asChild variant="outline" className="mt-4 h-12 w-full rounded-button border-alo-border text-[13px] font-semibold">
             <Link href="/course-finder">Browse all courses instead</Link>
           </Button>
         </Panel>
@@ -587,12 +587,12 @@ function MatchCard({ result }: { result: MatchResult }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 border-t border-alo-border bg-alo-surface-muted/40 px-5 py-4 sm:px-6">
-        <Button asChild className="h-10 rounded-button bg-alo-brand px-4 text-[14px] font-semibold text-white hover:bg-alo-brand-hover">
+        <Button asChild className="h-12 rounded-button bg-alo-brand px-4 text-[14px] font-semibold text-white hover:bg-alo-brand-hover">
           <Link href={result.slug ? `/courses/${result.slug}` : '/course-finder'}>
             View Course <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </Link>
         </Button>
-        <Button asChild variant="outline" className="h-10 rounded-button border-alo-border px-4 text-[14px] font-semibold">
+        <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-4 text-[14px] font-semibold">
           <Link href="/eligibility-check">Full Eligibility Check</Link>
         </Button>
         {latestVerified && (

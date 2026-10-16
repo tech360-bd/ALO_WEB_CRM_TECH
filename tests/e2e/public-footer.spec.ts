@@ -114,7 +114,7 @@ test.describe('site-wide footer', () => {
     await expect(strip).toHaveCount(1);
     await expect(strip.locator('svg.lucide-graduation-cap').first()).toBeAttached();
 
-    for (const colour of ['#0066CC', '#F37021', '#FFB347']) {
+    for (const colour of ['#0057B8', '#E8501A', '#FFB347']) {
       await expect(strip.locator(`div[style*="${colour}"]`), `${colour} row missing`).toHaveCount(1);
     }
 

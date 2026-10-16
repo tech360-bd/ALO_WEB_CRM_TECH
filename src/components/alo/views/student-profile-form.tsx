@@ -282,14 +282,14 @@ const STEPS = [
 // =================================================================
 
 function Required() {
-  return <span className="text-[#F97316]" aria-hidden>*</span>;
+  return <span className="text-[#E8501A]" aria-hidden>*</span>;
 }
 
 function AIHint({ text }: { text: string }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" type="button" className="ml-1 inline-flex size-4 items-center justify-center rounded-full bg-[#e8f0fb] text-[#2563EB] align-middle hover:bg-[#2563EB] hover:text-white">
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" type="button" className="ml-1 inline-flex size-4 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0057B8] align-middle hover:bg-[#0057B8] hover:text-white">
           <Icon name="Sparkles" className="size-2.5" />
         </button>
       </TooltipTrigger>
@@ -342,11 +342,11 @@ function FormGrid({ children, cols = 2 }: { children: React.ReactNode; cols?: 1 
 function MiniHeader({ code, title, desc }: { code: string; title: string; desc?: string }) {
   return (
     <div className="mb-3 flex items-start gap-2.5 rounded-lg bg-[#e8f0fb]/60 p-3">
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#2563EB] text-xs font-black text-white">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#0057B8] text-xs font-black text-white">
         {code}
       </span>
       <div className="min-w-0">
-        <p className="text-sm font-bold text-[#2563EB]">Section {code} — {title}</p>
+        <p className="text-sm font-bold text-[#0057B8]">Section {code} — {title}</p>
         {desc && <p className="text-xs text-muted-foreground">{desc}</p>}
       </div>
     </div>
@@ -367,10 +367,10 @@ function RepeatableCard({
   title: string;
 }) {
   return (
-    <div className="rounded-xl border border-[#2563EB]/15 bg-white p-4">
+    <div className="rounded-xl border border-[#0057B8]/15 bg-white p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex size-6 items-center justify-center rounded-md bg-[#F97316]/10 text-[10px] font-bold text-[#F97316]">
+          <span className="flex size-6 items-center justify-center rounded-md bg-[#E8501A]/10 text-[10px] font-bold text-[#E8501A]">
             {index + 1}
           </span>
           <p className="text-xs font-bold text-foreground">{title}</p>
@@ -783,13 +783,13 @@ export function StudentProfileForm() {
           icon="UserSquare"
           action={
             <div className="flex items-center gap-3">
-              <div className="hidden items-center gap-2 rounded-xl border border-[#2563EB]/15 bg-white px-3 py-1.5 sm:flex">
-                <Icon name="Gauge" className="size-4 text-[#2563EB]" />
+              <div className="hidden items-center gap-2 rounded-xl border border-[#0057B8]/15 bg-white px-3 py-1.5 sm:flex">
+                <Icon name="Gauge" className="size-4 text-[#0057B8]" />
                 <span className="text-xs font-semibold text-muted-foreground">Overall</span>
-                <span className="text-sm font-bold text-[#2563EB] tabular-nums">{overallPct}%</span>
+                <span className="text-sm font-bold text-[#0057B8] tabular-nums">{overallPct}%</span>
               </div>
               {student && (
-                <Badge variant="outline" className="border-[#2563EB]/30 bg-[#e8f0fb] font-mono text-xs text-[#2563EB]">
+                <Badge variant="outline" className="border-[#0057B8]/30 bg-[#e8f0fb] font-mono text-xs text-[#0057B8]">
                   <Icon name="Hash" className="size-3" />
                   {student.studentId}
                 </Badge>
@@ -799,7 +799,7 @@ export function StudentProfileForm() {
         />
 
         {/* Step indicator */}
-        <div className="rounded-2xl border-2 border-[#2563EB]/15 bg-white p-4 sm:p-5">
+        <div className="rounded-2xl border-2 border-[#0057B8]/15 bg-white p-4 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Stepper */}
             <div className="flex items-stretch gap-1 overflow-x-auto alo-scroll sm:gap-2">
@@ -818,16 +818,16 @@ export function StudentProfileForm() {
                     className={cn(
                       "group flex min-w-[8.5rem] flex-1 items-center gap-3 rounded-xl border-2 p-3 text-left transition-all lg:min-w-[12rem]",
                       isCurrent
-                        ? "border-[#2563EB] bg-gradient-to-br from-[#2563EB] to-[#0077E0] text-white shadow-md"
+                        ? "border-[#0057B8] bg-gradient-to-br from-[#0057B8] to-[#0077E0] text-white shadow-md"
                         : isPast
-                        ? "border-[#2563EB]/30 bg-[#e8f0fb]/60 hover:border-[#2563EB]/60"
+                        ? "border-[#0057B8]/30 bg-[#e8f0fb]/60 hover:border-[#0057B8]/60"
                         : "border-muted bg-muted/30 opacity-70"
                     )}
                   >
                     <div
                       className={cn(
                         "flex size-9 shrink-0 items-center justify-center rounded-lg font-bold",
-                        isCurrent ? "bg-white/20 text-white" : isComplete ? "bg-emerald-500 text-white" : isPast ? "bg-[#2563EB] text-white" : "bg-muted text-muted-foreground"
+                        isCurrent ? "bg-white/20 text-white" : isComplete ? "bg-emerald-500 text-white" : isPast ? "bg-[#0057B8] text-white" : "bg-muted text-muted-foreground"
                       )}
                     >
                       {isComplete ? <Icon name="Check" className="size-4" /> : <Icon name={s.icon as any} className="size-4" />}
@@ -837,7 +837,7 @@ export function StudentProfileForm() {
                         <p className={cn("text-[10px] font-bold uppercase tracking-wider", isCurrent ? "text-white/80" : "text-muted-foreground")}>
                           Step {s.id}
                         </p>
-                        <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-bold tabular-nums", isCurrent ? "bg-white/20 text-white" : "bg-[#2563EB]/10 text-[#2563EB]")}>
+                        <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-bold tabular-nums", isCurrent ? "bg-white/20 text-white" : "bg-[#0057B8]/10 text-[#0057B8]")}>
                           {pct}%
                         </span>
                       </div>
@@ -855,31 +855,31 @@ export function StudentProfileForm() {
             {/* Current step progress */}
             <div className="flex shrink-0 items-center gap-3 rounded-xl bg-[#e8f0fb]/70 p-3 lg:min-w-[260px]">
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">Current Step Progress</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#0057B8]">Current Step Progress</p>
                 <p className="text-xs font-semibold text-foreground">Step {step} · {STEPS[step - 1].title}</p>
                 <Progress value={currentStepPct} className="mt-2 h-2 bg-white" />
               </div>
-              <span className="text-2xl font-bold tabular-nums text-[#2563EB]">{currentStepPct}%</span>
+              <span className="text-2xl font-bold tabular-nums text-[#0057B8]">{currentStepPct}%</span>
             </div>
           </div>
         </div>
 
         {/* AI help banner */}
-        <div className="flex flex-col items-start gap-3 rounded-xl border border-[#F97316]/20 bg-[#fef5f0] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-start gap-3 rounded-xl border border-[#E8501A]/20 bg-[#fef5f0] p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-2.5">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#F97316] text-white">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#E8501A] text-white">
               <Icon name="Sparkles" className="size-4" />
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">AI Assistant is helping you fill this form</p>
               <p className="text-xs text-muted-foreground">
-                Look for the <span className="inline-flex size-3.5 items-center justify-center rounded-full bg-[#2563EB] text-white align-middle"><Icon name="Sparkles" className="size-2" /></span> icon next to fields for smart suggestions.
+                Look for the <span className="inline-flex size-3.5 items-center justify-center rounded-full bg-[#0057B8] text-white align-middle"><Icon name="Sparkles" className="size-2" /></span> icon next to fields for smart suggestions.
               </p>
             </div>
           </div>
           <Button
             variant="outline"
-            className="border-[#F97316]/40 text-[#F97316] hover:bg-[#F97316]/10 h-9"
+            className="border-[#E8501A]/40 text-[#E8501A] hover:bg-[#E8501A]/10 h-9"
             onClick={() => toast({ title: "AI autofill started", description: "Suggesting values based on your profile history." })}
           >
             <Icon name="Wand2" className="size-4" />
@@ -898,7 +898,7 @@ export function StudentProfileForm() {
               <FormGrid>
                 <Field label="Lead Source" required hint="AI suggests the source based on UTM parameters and contact history.">
                   <Select value={form.leadSource} onValueChange={(v) => set("leadSource", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
                       <SelectValue placeholder="Select source" />
                     </SelectTrigger>
                     <SelectContent>
@@ -909,14 +909,14 @@ export function StudentProfileForm() {
                   </Select>
                 </Field>
                 <Field label="Counselor" required helper="The counselor assigned to manage this student.">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.counselor} onChange={(e) => set("counselor", e.target.value)} placeholder="e.g. Farhana Yesmin" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.counselor} onChange={(e) => set("counselor", e.target.value)} placeholder="e.g. Farhana Yesmin" />
                 </Field>
                 <Field label="Lead Reference" helper="Auto-generated lead ID linked to this student.">
-                  <Input className="h-10 border-[#2563EB]/20 font-mono text-xs" value={form.leadReference} onChange={(e) => set("leadReference", e.target.value)} placeholder="ALO-L-XXXXX" />
+                  <Input className="h-10 border-[#0057B8]/20 font-mono text-xs" value={form.leadReference} onChange={(e) => set("leadReference", e.target.value)} placeholder="ALO-L-XXXXX" />
                 </Field>
                 <Field label="Preferred Destination Country" required>
                   <Select value={form.preferredCountry} onValueChange={(v) => set("preferredCountry", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
@@ -930,7 +930,7 @@ export function StudentProfileForm() {
               <div className="mt-4">
                 <Field label="Notes" helper="Internal counselor notes about the lead (not shown to student).">
                   <Textarea
-                    className="border-[#2563EB]/20"
+                    className="border-[#0057B8]/20"
                     rows={3}
                     value={form.notes}
                     onChange={(e) => set("notes", e.target.value)}
@@ -952,23 +952,23 @@ export function StudentProfileForm() {
               <MiniHeader code="B" title="Personal Information" desc="Used for passport, visa & university applications" />
               <FormGrid>
                 <Field label="First Name" required>
-                  <Input className="h-10 border-[#2563EB]/20" value={form.firstName} onChange={(e) => set("firstName", e.target.value)} placeholder="e.g. Md. Rahim" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.firstName} onChange={(e) => set("firstName", e.target.value)} placeholder="e.g. Md. Rahim" />
                 </Field>
                 <Field label="Last Name" required>
-                  <Input className="h-10 border-[#2563EB]/20" value={form.lastName} onChange={(e) => set("lastName", e.target.value)} placeholder="e.g. Hossain" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.lastName} onChange={(e) => set("lastName", e.target.value)} placeholder="e.g. Hossain" />
                 </Field>
                 <Field label="Full Name" helper="Auto-computed from first & last name">
-                  <Input className="h-10 border-[#2563EB]/20 bg-muted/30 font-medium" value={`${form.firstName} ${form.lastName}`.trim()} readOnly placeholder="—" />
+                  <Input className="h-10 border-[#0057B8]/20 bg-muted/30 font-medium" value={`${form.firstName} ${form.lastName}`.trim()} readOnly placeholder="—" />
                 </Field>
                 <Field label="Nationality" required>
-                  <Input className="h-10 border-[#2563EB]/20" value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="e.g. Bangladeshi" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="e.g. Bangladeshi" />
                 </Field>
                 <Field label="Date of Birth" required hint="Must match passport exactly.">
-                  <Input type="date" className="h-10 border-[#2563EB]/20" value={form.dateOfBirth} onChange={(e) => set("dateOfBirth", e.target.value)} />
+                  <Input type="date" className="h-10 border-[#0057B8]/20" value={form.dateOfBirth} onChange={(e) => set("dateOfBirth", e.target.value)} />
                 </Field>
                 <Field label="Gender" required>
                   <Select value={form.gender} onValueChange={(v) => set("gender", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
@@ -980,7 +980,7 @@ export function StudentProfileForm() {
                 </Field>
                 <Field label="Marital Status">
                   <Select value={form.maritalStatus} onValueChange={(v) => set("maritalStatus", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -991,18 +991,18 @@ export function StudentProfileForm() {
                   </Select>
                 </Field>
                 <Field label="City of Birth" hint="Required for some visa applications.">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.cityOfBirth} onChange={(e) => set("cityOfBirth", e.target.value)} placeholder="e.g. Dhaka" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.cityOfBirth} onChange={(e) => set("cityOfBirth", e.target.value)} placeholder="e.g. Dhaka" />
                 </Field>
                 <Field label="Country of Birth">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.countryOfBirth} onChange={(e) => set("countryOfBirth", e.target.value)} placeholder="e.g. Bangladesh" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.countryOfBirth} onChange={(e) => set("countryOfBirth", e.target.value)} placeholder="e.g. Bangladesh" />
                 </Field>
               </FormGrid>
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Field label="Present Address" required>
-                  <Textarea className="border-[#2563EB]/20" rows={2} value={form.presentAddress} onChange={(e) => set("presentAddress", e.target.value)} placeholder="House, road, area, city, country" />
+                  <Textarea className="border-[#0057B8]/20" rows={2} value={form.presentAddress} onChange={(e) => set("presentAddress", e.target.value)} placeholder="House, road, area, city, country" />
                 </Field>
                 <Field label="Permanent Address" helper="Required if different from present address.">
-                  <Textarea className="border-[#2563EB]/20" rows={2} value={form.permanentAddress} onChange={(e) => set("permanentAddress", e.target.value)} placeholder="Village, post office, district, country" />
+                  <Textarea className="border-[#0057B8]/20" rows={2} value={form.permanentAddress} onChange={(e) => set("permanentAddress", e.target.value)} placeholder="Village, post office, district, country" />
                 </Field>
               </div>
             </SectionCard>
@@ -1012,23 +1012,23 @@ export function StudentProfileForm() {
               <MiniHeader code="C" title="Contact Information" desc="At least one verified phone & email required" />
               <FormGrid>
                 <Field label="Primary Email" required hint="Used for login & all official communication.">
-                  <Input type="email" className="h-10 border-[#2563EB]/20" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="student@example.com" />
+                  <Input type="email" className="h-10 border-[#0057B8]/20" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="student@example.com" />
                 </Field>
                 <Field label="Alternative Email">
-                  <Input type="email" className="h-10 border-[#2563EB]/20" value={form.altEmail} onChange={(e) => set("altEmail", e.target.value)} placeholder="backup@example.com" />
+                  <Input type="email" className="h-10 border-[#0057B8]/20" value={form.altEmail} onChange={(e) => set("altEmail", e.target.value)} placeholder="backup@example.com" />
                 </Field>
                 <Field label="Mobile Number" required helper="Format: +8801805020100">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.mobile} onChange={(e) => set("mobile", e.target.value)} placeholder="+8801805020100" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.mobile} onChange={(e) => set("mobile", e.target.value)} placeholder="+8801805020100" />
                 </Field>
                 <Field label="Alternative Mobile">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.altMobile} onChange={(e) => set("altMobile", e.target.value)} placeholder="+8801805020100" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.altMobile} onChange={(e) => set("altMobile", e.target.value)} placeholder="+8801805020100" />
                 </Field>
                 <Field label="Emergency Contact Name" required>
-                  <Input className="h-10 border-[#2563EB]/20" value={form.emergencyName} onChange={(e) => set("emergencyName", e.target.value)} placeholder="e.g. Mohammed Father" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.emergencyName} onChange={(e) => set("emergencyName", e.target.value)} placeholder="e.g. Mohammed Father" />
                 </Field>
                 <Field label="Relation" required>
                   <Select value={form.emergencyRelation} onValueChange={(v) => set("emergencyRelation", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20">
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
                       <SelectValue placeholder="Select relation" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1041,7 +1041,7 @@ export function StudentProfileForm() {
               </FormGrid>
               <div className="mt-4">
                 <Field label="Emergency Contact Number" required className="max-w-md">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value)} placeholder="+8801805020100" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value)} placeholder="+8801805020100" />
                 </Field>
               </div>
             </SectionCard>
@@ -1063,7 +1063,7 @@ export function StudentProfileForm() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9"
+                  className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9"
                   onClick={() => addList("education", emptyEdu)}
                 >
                   <Icon name="Plus" className="size-4" />
@@ -1084,46 +1084,46 @@ export function StudentProfileForm() {
                     <FormGrid cols={3}>
                       <Field label="Academic Level" required>
                         <Select value={e.level} onValueChange={(v) => updateList("education", e.id, { level: v })}>
-                          <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue placeholder="Select level" /></SelectTrigger>
+                          <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue placeholder="Select level" /></SelectTrigger>
                           <SelectContent>
                             {ACADEMIC_LEVELS.map((l) => (<SelectItem key={l} value={l}>{l}</SelectItem>))}
                           </SelectContent>
                         </Select>
                       </Field>
                       <Field label="Institute Name" required className="md:col-span-2">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.institute} onChange={(ev) => updateList("education", e.id, { institute: ev.target.value })} placeholder="e.g. Dhaka College" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.institute} onChange={(ev) => updateList("education", e.id, { institute: ev.target.value })} placeholder="e.g. Dhaka College" />
                       </Field>
                       <Field label="Group / Department">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.group} onChange={(ev) => updateList("education", e.id, { group: ev.target.value })} placeholder="e.g. Science / CSE" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.group} onChange={(ev) => updateList("education", e.id, { group: ev.target.value })} placeholder="e.g. Science / CSE" />
                       </Field>
                       <Field label="Country of Study">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.country} onChange={(ev) => updateList("education", e.id, { country: ev.target.value })} placeholder="e.g. Bangladesh" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.country} onChange={(ev) => updateList("education", e.id, { country: ev.target.value })} placeholder="e.g. Bangladesh" />
                       </Field>
                       <Field label="City">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.city} onChange={(ev) => updateList("education", e.id, { city: ev.target.value })} placeholder="e.g. Dhaka" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.city} onChange={(ev) => updateList("education", e.id, { city: ev.target.value })} placeholder="e.g. Dhaka" />
                       </Field>
                       <Field label="Board / University">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.board} onChange={(ev) => updateList("education", e.id, { board: ev.target.value })} placeholder="e.g. Dhaka Education Board" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.board} onChange={(ev) => updateList("education", e.id, { board: ev.target.value })} placeholder="e.g. Dhaka Education Board" />
                       </Field>
                       <Field label="Result Type" required>
                         <Select value={e.resultType} onValueChange={(v) => updateList("education", e.id, { resultType: v })}>
-                          <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue placeholder="Select" /></SelectTrigger>
+                          <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue placeholder="Select" /></SelectTrigger>
                           <SelectContent>
                             {RESULT_TYPES.map((r) => (<SelectItem key={r} value={r}>{r}</SelectItem>))}
                           </SelectContent>
                         </Select>
                       </Field>
                       <Field label="Grade / Result" required hint="Out of 5 for GPA, 4 for CGPA, 100 for percentage.">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.grade} onChange={(ev) => updateList("education", e.id, { grade: ev.target.value })} placeholder="e.g. 4.85 / 3.72 / 87%" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.grade} onChange={(ev) => updateList("education", e.id, { grade: ev.target.value })} placeholder="e.g. 4.85 / 3.72 / 87%" />
                       </Field>
                       <Field label="Start Year/Month">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.startYear} onChange={(ev) => updateList("education", e.id, { startYear: ev.target.value })} placeholder="e.g. 2018-01" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.startYear} onChange={(ev) => updateList("education", e.id, { startYear: ev.target.value })} placeholder="e.g. 2018-01" />
                       </Field>
                       <Field label="End Year/Month">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.endYear} onChange={(ev) => updateList("education", e.id, { endYear: ev.target.value })} placeholder="e.g. 2022-06" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.endYear} onChange={(ev) => updateList("education", e.id, { endYear: ev.target.value })} placeholder="e.g. 2022-06" />
                       </Field>
                       <Field label="Study Gap Info" className="md:col-span-3" hint="If there's a gap > 6 months between academic levels, explain. Visa officers check this.">
-                        <Input className="h-10 border-[#2563EB]/20" value={e.studyGap} onChange={(ev) => updateList("education", e.id, { studyGap: ev.target.value })} placeholder="e.g. 1 year gap — prepared for IELTS" />
+                        <Input className="h-10 border-[#0057B8]/20" value={e.studyGap} onChange={(ev) => updateList("education", e.id, { studyGap: ev.target.value })} placeholder="e.g. 1 year gap — prepared for IELTS" />
                       </Field>
                     </FormGrid>
                   </RepeatableCard>
@@ -1154,20 +1154,20 @@ export function StudentProfileForm() {
                     key={opt.value}
                     className={cn(
                       "flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all",
-                      form.englishTestStatus === opt.value ? "border-[#2563EB] bg-[#e8f0fb]/60" : "border-[#2563EB]/15 hover:border-[#2563EB]/40"
+                      form.englishTestStatus === opt.value ? "border-[#0057B8] bg-[#e8f0fb]/60" : "border-[#0057B8]/15 hover:border-[#0057B8]/40"
                     )}
                   >
                     <RadioGroupItem value={opt.value} id={`eng-${opt.value}`} />
-                    <Icon name={opt.icon as any} className="size-4 text-[#2563EB]" />
+                    <Icon name={opt.icon as any} className="size-4 text-[#0057B8]" />
                     <span className="text-xs font-semibold">{opt.label}</span>
                   </label>
                 ))}
               </RadioGroup>
 
               {/* Free mock eligibility banner */}
-              <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-[#F97316]/20 bg-[#fef5f0] p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-[#E8501A]/20 bg-[#fef5f0] p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#F97316] text-white">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#E8501A] text-white">
                     <Icon name="Gift" className="size-4" />
                   </div>
                   <div>
@@ -1178,7 +1178,7 @@ export function StudentProfileForm() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="border-[#F97316]/40 text-[#F97316] hover:bg-[#F97316]/10 h-9"
+                  className="border-[#E8501A]/40 text-[#E8501A] hover:bg-[#E8501A]/10 h-9"
                   onClick={() => toast({ title: "Mock test reserved", description: "Your free slot is reserved — check the English Test page." })}
                 >
                   <Icon name="Sparkles" className="size-4" />
@@ -1190,11 +1190,11 @@ export function StudentProfileForm() {
               {form.englishTestStatus === "PLANNING" && (
                 <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field label="Planned Test Date" required>
-                    <Input type="date" className="h-10 border-[#2563EB]/20" value={form.englishPlannedDate} onChange={(e) => set("englishPlannedDate", e.target.value)} />
+                    <Input type="date" className="h-10 border-[#0057B8]/20" value={form.englishPlannedDate} onChange={(e) => set("englishPlannedDate", e.target.value)} />
                   </Field>
                   <Field label="AI Mock Test Recommendation" hint="AI suggests the best test type based on your destination & program.">
                     <Select defaultValue="IELTS">
-                      <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {ENGLISH_TESTS.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}
                       </SelectContent>
@@ -1208,7 +1208,7 @@ export function StudentProfileForm() {
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Test Scores</p>
-                    <Button type="button" variant="outline" size="sm" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9" onClick={() => addList("englishTests", emptyEnglish)}>
+                    <Button type="button" variant="outline" size="sm" className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9" onClick={() => addList("englishTests", emptyEnglish)}>
                       <Icon name="Plus" className="size-4" />
                       Add Test Score
                     </Button>
@@ -1224,39 +1224,39 @@ export function StudentProfileForm() {
                       <FormGrid cols={3}>
                         <Field label="Test Name" required>
                           <Select value={t.testName} onValueChange={(v) => updateList("englishTests", t.id, { testName: v })}>
-                            <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue placeholder="Select test" /></SelectTrigger>
+                            <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue placeholder="Select test" /></SelectTrigger>
                             <SelectContent>
                               {ENGLISH_TESTS.map((tt) => (<SelectItem key={tt} value={tt}>{tt}</SelectItem>))}
                             </SelectContent>
                           </Select>
                         </Field>
                         <Field label="Test Date" required>
-                          <Input type="date" className="h-10 border-[#2563EB]/20" value={t.testDate} onChange={(ev) => updateList("englishTests", t.id, { testDate: ev.target.value })} />
+                          <Input type="date" className="h-10 border-[#0057B8]/20" value={t.testDate} onChange={(ev) => updateList("englishTests", t.id, { testDate: ev.target.value })} />
                         </Field>
                         <Field label="Expiration Date" helper="Most tests are valid for 2 years.">
-                          <Input type="date" className="h-10 border-[#2563EB]/20" value={t.expirationDate} onChange={(ev) => updateList("englishTests", t.id, { expirationDate: ev.target.value })} />
+                          <Input type="date" className="h-10 border-[#0057B8]/20" value={t.expirationDate} onChange={(ev) => updateList("englishTests", t.id, { expirationDate: ev.target.value })} />
                         </Field>
                         <Field label="Certificate / TRT Number" required>
-                          <Input className="h-10 border-[#2563EB]/20" value={t.certificateNo} onChange={(ev) => updateList("englishTests", t.id, { certificateNo: ev.target.value })} placeholder="e.g. IELTS-XXXXXXXX" />
+                          <Input className="h-10 border-[#0057B8]/20" value={t.certificateNo} onChange={(ev) => updateList("englishTests", t.id, { certificateNo: ev.target.value })} placeholder="e.g. IELTS-XXXXXXXX" />
                         </Field>
                         <Field label="Overall Score" required hint="Enter band/score as shown on certificate.">
-                          <Input className="h-10 border-[#2563EB]/20" value={t.overallScore} onChange={(ev) => updateList("englishTests", t.id, { overallScore: ev.target.value })} placeholder="e.g. 6.5" />
+                          <Input className="h-10 border-[#0057B8]/20" value={t.overallScore} onChange={(ev) => updateList("englishTests", t.id, { overallScore: ev.target.value })} placeholder="e.g. 6.5" />
                         </Field>
                       </FormGrid>
                       <div className="mt-3 rounded-lg bg-[#e8f0fb]/50 p-3">
-                        <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">Sectional Scores</p>
+                        <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#0057B8]">Sectional Scores</p>
                         <FormGrid cols={4}>
                           <Field label="Listening">
-                            <Input className="h-10 border-[#2563EB]/20" value={t.listening} onChange={(ev) => updateList("englishTests", t.id, { listening: ev.target.value })} placeholder="6.5" />
+                            <Input className="h-10 border-[#0057B8]/20" value={t.listening} onChange={(ev) => updateList("englishTests", t.id, { listening: ev.target.value })} placeholder="6.5" />
                           </Field>
                           <Field label="Reading">
-                            <Input className="h-10 border-[#2563EB]/20" value={t.reading} onChange={(ev) => updateList("englishTests", t.id, { reading: ev.target.value })} placeholder="7.0" />
+                            <Input className="h-10 border-[#0057B8]/20" value={t.reading} onChange={(ev) => updateList("englishTests", t.id, { reading: ev.target.value })} placeholder="7.0" />
                           </Field>
                           <Field label="Writing">
-                            <Input className="h-10 border-[#2563EB]/20" value={t.writing} onChange={(ev) => updateList("englishTests", t.id, { writing: ev.target.value })} placeholder="6.0" />
+                            <Input className="h-10 border-[#0057B8]/20" value={t.writing} onChange={(ev) => updateList("englishTests", t.id, { writing: ev.target.value })} placeholder="6.0" />
                           </Field>
                           <Field label="Speaking">
-                            <Input className="h-10 border-[#2563EB]/20" value={t.speaking} onChange={(ev) => updateList("englishTests", t.id, { speaking: ev.target.value })} placeholder="6.5" />
+                            <Input className="h-10 border-[#0057B8]/20" value={t.speaking} onChange={(ev) => updateList("englishTests", t.id, { speaking: ev.target.value })} placeholder="6.5" />
                           </Field>
                         </FormGrid>
                       </div>
@@ -1286,11 +1286,11 @@ export function StudentProfileForm() {
                     key={opt.value}
                     className={cn(
                       "flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all",
-                      (form.hasPassport ? "yes" : "no") === opt.value ? "border-[#2563EB] bg-[#e8f0fb]/60" : "border-[#2563EB]/15 hover:border-[#2563EB]/40"
+                      (form.hasPassport ? "yes" : "no") === opt.value ? "border-[#0057B8] bg-[#e8f0fb]/60" : "border-[#0057B8]/15 hover:border-[#0057B8]/40"
                     )}
                   >
                     <RadioGroupItem value={opt.value} id={`pass-${opt.value}`} />
-                    <Icon name={opt.icon as any} className="size-4 text-[#2563EB]" />
+                    <Icon name={opt.icon as any} className="size-4 text-[#0057B8]" />
                     <span className="text-xs font-semibold">{opt.label}</span>
                   </label>
                 ))}
@@ -1300,19 +1300,19 @@ export function StudentProfileForm() {
                 <div className="mt-4">
                   <FormGrid>
                     <Field label="Passport Number" required hint="Enter exactly as printed — no spaces.">
-                      <Input className="h-10 border-[#2563EB]/20 font-mono uppercase" value={form.passportNumber} onChange={(e) => set("passportNumber", e.target.value)} placeholder="e.g. BR0123456" />
+                      <Input className="h-10 border-[#0057B8]/20 font-mono uppercase" value={form.passportNumber} onChange={(e) => set("passportNumber", e.target.value)} placeholder="e.g. BR0123456" />
                     </Field>
                     <Field label="Place of Issue" required>
-                      <Input className="h-10 border-[#2563EB]/20" value={form.passportIssuePlace} onChange={(e) => set("passportIssuePlace", e.target.value)} placeholder="e.g. Dhaka" />
+                      <Input className="h-10 border-[#0057B8]/20" value={form.passportIssuePlace} onChange={(e) => set("passportIssuePlace", e.target.value)} placeholder="e.g. Dhaka" />
                     </Field>
                     <Field label="Issue Country" required>
-                      <Input className="h-10 border-[#2563EB]/20" value={form.passportIssueCountry} onChange={(e) => set("passportIssueCountry", e.target.value)} placeholder="e.g. Bangladesh" />
+                      <Input className="h-10 border-[#0057B8]/20" value={form.passportIssueCountry} onChange={(e) => set("passportIssueCountry", e.target.value)} placeholder="e.g. Bangladesh" />
                     </Field>
                     <Field label="Issue Date" required>
-                      <Input type="date" className="h-10 border-[#2563EB]/20" value={form.passportIssueDate} onChange={(e) => set("passportIssueDate", e.target.value)} />
+                      <Input type="date" className="h-10 border-[#0057B8]/20" value={form.passportIssueDate} onChange={(e) => set("passportIssueDate", e.target.value)} />
                     </Field>
                     <Field label="Expiry Date" required hint="AI warns you if expiry is too close to your travel date.">
-                      <Input type="date" className="h-10 border-[#2563EB]/20" value={form.passportExpiryDate} onChange={(e) => set("passportExpiryDate", e.target.value)} />
+                      <Input type="date" className="h-10 border-[#0057B8]/20" value={form.passportExpiryDate} onChange={(e) => set("passportExpiryDate", e.target.value)} />
                     </Field>
                   </FormGrid>
                 </div>
@@ -1331,7 +1331,7 @@ export function StudentProfileForm() {
               description="Relevant work experience strengthens your application"
               action={
                 form.hasWorkExperience ? (
-                  <Button type="button" variant="outline" size="sm" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9" onClick={() => addList("workExperience", emptyWork)}>
+                  <Button type="button" variant="outline" size="sm" className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9" onClick={() => addList("workExperience", emptyWork)}>
                     <Icon name="Plus" className="size-4" />
                     Add Experience
                   </Button>
@@ -1349,11 +1349,11 @@ export function StudentProfileForm() {
                     key={opt.value}
                     className={cn(
                       "flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all",
-                      (form.hasWorkExperience ? "yes" : "no") === opt.value ? "border-[#2563EB] bg-[#e8f0fb]/60" : "border-[#2563EB]/15 hover:border-[#2563EB]/40"
+                      (form.hasWorkExperience ? "yes" : "no") === opt.value ? "border-[#0057B8] bg-[#e8f0fb]/60" : "border-[#0057B8]/15 hover:border-[#0057B8]/40"
                     )}
                   >
                     <RadioGroupItem value={opt.value} id={`work-${opt.value}`} />
-                    <Icon name={opt.icon as any} className="size-4 text-[#2563EB]" />
+                    <Icon name={opt.icon as any} className="size-4 text-[#0057B8]" />
                     <span className="text-xs font-semibold">{opt.label}</span>
                   </label>
                 ))}
@@ -1371,39 +1371,39 @@ export function StudentProfileForm() {
                     >
                       <FormGrid cols={3}>
                         <Field label="Company Name" required>
-                          <Input className="h-10 border-[#2563EB]/20" value={w.company} onChange={(ev) => updateList("workExperience", w.id, { company: ev.target.value })} placeholder="e.g. Brain Station 23" />
+                          <Input className="h-10 border-[#0057B8]/20" value={w.company} onChange={(ev) => updateList("workExperience", w.id, { company: ev.target.value })} placeholder="e.g. Brain Station 23" />
                         </Field>
                         <Field label="Designation" required>
-                          <Input className="h-10 border-[#2563EB]/20" value={w.designation} onChange={(ev) => updateList("workExperience", w.id, { designation: ev.target.value })} placeholder="e.g. Software Engineer" />
+                          <Input className="h-10 border-[#0057B8]/20" value={w.designation} onChange={(ev) => updateList("workExperience", w.id, { designation: ev.target.value })} placeholder="e.g. Software Engineer" />
                         </Field>
                         <Field label="Department">
-                          <Input className="h-10 border-[#2563EB]/20" value={w.department} onChange={(ev) => updateList("workExperience", w.id, { department: ev.target.value })} placeholder="e.g. Engineering" />
+                          <Input className="h-10 border-[#0057B8]/20" value={w.department} onChange={(ev) => updateList("workExperience", w.id, { department: ev.target.value })} placeholder="e.g. Engineering" />
                         </Field>
                         <Field label="Start Date" required>
-                          <Input type="month" className="h-10 border-[#2563EB]/20" value={w.startDate} onChange={(ev) => updateList("workExperience", w.id, { startDate: ev.target.value })} />
+                          <Input type="month" className="h-10 border-[#0057B8]/20" value={w.startDate} onChange={(ev) => updateList("workExperience", w.id, { startDate: ev.target.value })} />
                         </Field>
                         <Field label="End Date" helper="Leave empty if currently working here.">
-                          <Input type="month" className="h-10 border-[#2563EB]/20" value={w.endDate} onChange={(ev) => updateList("workExperience", w.id, { endDate: ev.target.value })} disabled={w.currentlyWorking} />
+                          <Input type="month" className="h-10 border-[#0057B8]/20" value={w.endDate} onChange={(ev) => updateList("workExperience", w.id, { endDate: ev.target.value })} disabled={w.currentlyWorking} />
                         </Field>
                         <Field label="Job Role">
-                          <Input className="h-10 border-[#2563EB]/20" value={w.jobRole} onChange={(ev) => updateList("workExperience", w.id, { jobRole: ev.target.value })} placeholder="e.g. Backend development" />
+                          <Input className="h-10 border-[#0057B8]/20" value={w.jobRole} onChange={(ev) => updateList("workExperience", w.id, { jobRole: ev.target.value })} placeholder="e.g. Backend development" />
                         </Field>
                       </FormGrid>
                       <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
                         <Field label="Office Address">
-                          <Textarea className="border-[#2563EB]/20" rows={2} value={w.officeAddress} onChange={(ev) => updateList("workExperience", w.id, { officeAddress: ev.target.value })} placeholder="Full office address" />
+                          <Textarea className="border-[#0057B8]/20" rows={2} value={w.officeAddress} onChange={(ev) => updateList("workExperience", w.id, { officeAddress: ev.target.value })} placeholder="Full office address" />
                         </Field>
                         <div className="grid grid-cols-1 gap-3">
                           <Field label="Mode of Salary" hint="Bank transfer strengthens financial credibility for visa.">
                             <Select value={w.salaryMode} onValueChange={(v) => updateList("workExperience", w.id, { salaryMode: v })}>
-                              <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                              <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 {SALARY_MODES.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
                               </SelectContent>
                             </Select>
                           </Field>
                           <Field label="Source of Fund" helper="If salary is the primary funding source for studies.">
-                            <Input className="h-10 border-[#2563EB]/20" value={w.sourceOfFund} onChange={(ev) => updateList("workExperience", w.id, { sourceOfFund: ev.target.value })} placeholder="e.g. Monthly salary" />
+                            <Input className="h-10 border-[#0057B8]/20" value={w.sourceOfFund} onChange={(ev) => updateList("workExperience", w.id, { sourceOfFund: ev.target.value })} placeholder="e.g. Monthly salary" />
                           </Field>
                         </div>
                       </div>
@@ -1423,7 +1423,7 @@ export function StudentProfileForm() {
               <FormGrid>
                 <Field label="Funding Status" required hint="AI suggests based on bank statement & sponsor documents.">
                   <Select value={form.fundingStatus} onValueChange={(v) => set("fundingStatus", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {FUNDING_STATUSES.map((f) => (<SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>))}
                     </SelectContent>
@@ -1431,18 +1431,18 @@ export function StudentProfileForm() {
                 </Field>
                 <Field label="Sponsor Relation" required>
                   <Select value={form.sponsorRelation} onValueChange={(v) => set("sponsorRelation", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {SPONSOR_RELATIONS.map((r) => (<SelectItem key={r} value={r}>{r}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </Field>
                 <Field label="Source of Fund" className="md:col-span-2" hint="e.g. Father's business, fixed deposit, education loan.">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.sourceOfFund} onChange={(e) => set("sourceOfFund", e.target.value)} placeholder="e.g. Father's business income" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.sourceOfFund} onChange={(e) => set("sourceOfFund", e.target.value)} placeholder="e.g. Father's business income" />
                 </Field>
                 <Field label="Bank Statement Status" required>
                   <Select value={form.bankStatementStatus} onValueChange={(v) => set("bankStatementStatus", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {DOC_STATUSES.map((d) => (<SelectItem key={d} value={d}>{d.replace(/_/g, " ")}</SelectItem>))}
                     </SelectContent>
@@ -1450,7 +1450,7 @@ export function StudentProfileForm() {
                 </Field>
                 <Field label="Sponsor Document Status" required>
                   <Select value={form.sponsorDocStatus} onValueChange={(v) => set("sponsorDocStatus", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {DOC_STATUSES.map((d) => (<SelectItem key={d} value={d}>{d.replace(/_/g, " ")}</SelectItem>))}
                     </SelectContent>
@@ -1472,7 +1472,7 @@ export function StudentProfileForm() {
               icon="Users"
               description="Academic or professional referees for your application"
               action={
-                <Button type="button" variant="outline" size="sm" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9" onClick={() => addList("recommendations", emptyRef)}>
+                <Button type="button" variant="outline" size="sm" className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9" onClick={() => addList("recommendations", emptyRef)}>
                   <Icon name="Plus" className="size-4" />
                   Add Referee
                 </Button>
@@ -1490,25 +1490,25 @@ export function StudentProfileForm() {
                   >
                     <FormGrid cols={3}>
                       <Field label="Reference Name" required>
-                        <Input className="h-10 border-[#2563EB]/20" value={r.name} onChange={(ev) => updateList("recommendations", r.id, { name: ev.target.value })} placeholder="e.g. Prof. Dr. Karim" />
+                        <Input className="h-10 border-[#0057B8]/20" value={r.name} onChange={(ev) => updateList("recommendations", r.id, { name: ev.target.value })} placeholder="e.g. Prof. Dr. Karim" />
                       </Field>
                       <Field label="Designation" required>
-                        <Input className="h-10 border-[#2563EB]/20" value={r.designation} onChange={(ev) => updateList("recommendations", r.id, { designation: ev.target.value })} placeholder="e.g. Professor & Head" />
+                        <Input className="h-10 border-[#0057B8]/20" value={r.designation} onChange={(ev) => updateList("recommendations", r.id, { designation: ev.target.value })} placeholder="e.g. Professor & Head" />
                       </Field>
                       <Field label="Organization" required>
-                        <Input className="h-10 border-[#2563EB]/20" value={r.organization} onChange={(ev) => updateList("recommendations", r.id, { organization: ev.target.value })} placeholder="e.g. BUET" />
+                        <Input className="h-10 border-[#0057B8]/20" value={r.organization} onChange={(ev) => updateList("recommendations", r.id, { organization: ev.target.value })} placeholder="e.g. BUET" />
                       </Field>
                       <Field label="Email" required>
-                        <Input type="email" className="h-10 border-[#2563EB]/20" value={r.email} onChange={(ev) => updateList("recommendations", r.id, { email: ev.target.value })} placeholder="referee@example.edu" />
+                        <Input type="email" className="h-10 border-[#0057B8]/20" value={r.email} onChange={(ev) => updateList("recommendations", r.id, { email: ev.target.value })} placeholder="referee@example.edu" />
                       </Field>
                       <Field label="Mobile">
-                        <Input className="h-10 border-[#2563EB]/20" value={r.mobile} onChange={(ev) => updateList("recommendations", r.id, { mobile: ev.target.value })} placeholder="+8801805020100" />
+                        <Input className="h-10 border-[#0057B8]/20" value={r.mobile} onChange={(ev) => updateList("recommendations", r.id, { mobile: ev.target.value })} placeholder="+8801805020100" />
                       </Field>
                       <Field label="Country">
-                        <Input className="h-10 border-[#2563EB]/20" value={r.country} onChange={(ev) => updateList("recommendations", r.id, { country: ev.target.value })} placeholder="Bangladesh" />
+                        <Input className="h-10 border-[#0057B8]/20" value={r.country} onChange={(ev) => updateList("recommendations", r.id, { country: ev.target.value })} placeholder="Bangladesh" />
                       </Field>
                       <Field label="Relation with Student" className="md:col-span-3" hint="Academic, professional, or personal.">
-                        <Input className="h-10 border-[#2563EB]/20" value={r.relation} onChange={(ev) => updateList("recommendations", r.id, { relation: ev.target.value })} placeholder="e.g. Thesis supervisor" />
+                        <Input className="h-10 border-[#0057B8]/20" value={r.relation} onChange={(ev) => updateList("recommendations", r.id, { relation: ev.target.value })} placeholder="e.g. Thesis supervisor" />
                       </Field>
                     </FormGrid>
                   </RepeatableCard>
@@ -1523,7 +1523,7 @@ export function StudentProfileForm() {
               description="Previous visa applications, refusals, and background checks"
               action={
                 form.hasPreviousVisa ? (
-                  <Button type="button" variant="outline" size="sm" className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-9" onClick={() => addList("visaHistory", emptyVisa)}>
+                  <Button type="button" variant="outline" size="sm" className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-9" onClick={() => addList("visaHistory", emptyVisa)}>
                     <Icon name="Plus" className="size-4" />
                     Add Visa Record
                   </Button>
@@ -1538,9 +1538,9 @@ export function StudentProfileForm() {
                   { value: "yes", label: "Yes, applied before", icon: "Plane" },
                   { value: "no", label: "No, first time", icon: "PlaneTakeoff" },
                 ].map((opt) => (
-                  <label key={opt.value} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all", (form.hasPreviousVisa ? "yes" : "no") === opt.value ? "border-[#2563EB] bg-[#e8f0fb]/60" : "border-[#2563EB]/15 hover:border-[#2563EB]/40")}>
+                  <label key={opt.value} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all", (form.hasPreviousVisa ? "yes" : "no") === opt.value ? "border-[#0057B8] bg-[#e8f0fb]/60" : "border-[#0057B8]/15 hover:border-[#0057B8]/40")}>
                     <RadioGroupItem value={opt.value} id={`vis-${opt.value}`} />
-                    <Icon name={opt.icon as any} className="size-4 text-[#2563EB]" />
+                    <Icon name={opt.icon as any} className="size-4 text-[#0057B8]" />
                     <span className="text-xs font-semibold">{opt.label}</span>
                   </label>
                 ))}
@@ -1549,22 +1549,22 @@ export function StudentProfileForm() {
               {form.hasPreviousVisa && (
                 <div className="mt-4 space-y-3">
                   {form.visaHistory.length === 0 ? (
-                    <EmptyState icon="Plane" title="No visa records added" description="Add each previous visa application, including refusals." action={<Button type="button" size="sm" className="bg-[#F97316] hover:bg-[#F97316]/90 text-white h-9" onClick={() => addList("visaHistory", emptyVisa)}><Icon name="Plus" className="size-4" />Add Visa Record</Button>} />
+                    <EmptyState icon="Plane" title="No visa records added" description="Add each previous visa application, including refusals." action={<Button type="button" size="sm" className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-9" onClick={() => addList("visaHistory", emptyVisa)}><Icon name="Plus" className="size-4" />Add Visa Record</Button>} />
                   ) : (
                     form.visaHistory.map((v, idx) => (
                       <RepeatableCard key={v.id} index={idx} title={`Visa Record #${idx + 1}`} canRemove={form.visaHistory.length > 0} onRemove={() => removeList("visaHistory", v.id)}>
                         <FormGrid>
                           <Field label="Visa Type">
-                            <Input className="h-10 border-[#2563EB]/20" value={v.visaType} onChange={(ev) => updateList("visaHistory", v.id, { visaType: ev.target.value })} placeholder="e.g. Student Visa, Tourist" />
+                            <Input className="h-10 border-[#0057B8]/20" value={v.visaType} onChange={(ev) => updateList("visaHistory", v.id, { visaType: ev.target.value })} placeholder="e.g. Student Visa, Tourist" />
                           </Field>
                           <Field label="Applied Country">
-                            <Input className="h-10 border-[#2563EB]/20" value={v.country} onChange={(ev) => updateList("visaHistory", v.id, { country: ev.target.value })} placeholder="e.g. UK" />
+                            <Input className="h-10 border-[#0057B8]/20" value={v.country} onChange={(ev) => updateList("visaHistory", v.id, { country: ev.target.value })} placeholder="e.g. UK" />
                           </Field>
                           <Field label="Refusal Date" helper="Leave empty if approved.">
-                            <Input type="date" className="h-10 border-[#2563EB]/20" value={v.refusalDate} onChange={(ev) => updateList("visaHistory", v.id, { refusalDate: ev.target.value })} />
+                            <Input type="date" className="h-10 border-[#0057B8]/20" value={v.refusalDate} onChange={(ev) => updateList("visaHistory", v.id, { refusalDate: ev.target.value })} />
                           </Field>
                           <Field label="Refusal Reason" className="md:col-span-2">
-                            <Textarea className="border-[#2563EB]/20" rows={2} value={v.refusalReason} onChange={(ev) => updateList("visaHistory", v.id, { refusalReason: ev.target.value })} placeholder="e.g. Insufficient funds evidence" />
+                            <Textarea className="border-[#0057B8]/20" rows={2} value={v.refusalReason} onChange={(ev) => updateList("visaHistory", v.id, { refusalReason: ev.target.value })} placeholder="e.g. Insufficient funds evidence" />
                           </Field>
                         </FormGrid>
                       </RepeatableCard>
@@ -1580,7 +1580,7 @@ export function StudentProfileForm() {
                     { value: "yes", label: "Yes, refused before", icon: "XCircle" },
                     { value: "no", label: "No refusals", icon: "CheckCircle2" },
                   ].map((opt) => (
-                    <label key={opt.value} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all", (form.previousRefusal ? "yes" : "no") === opt.value ? (opt.value === "yes" ? "border-red-400 bg-red-50" : "border-emerald-400 bg-emerald-50") : "border-[#2563EB]/15 hover:border-[#2563EB]/40")}>
+                    <label key={opt.value} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all", (form.previousRefusal ? "yes" : "no") === opt.value ? (opt.value === "yes" ? "border-red-400 bg-red-50" : "border-emerald-400 bg-emerald-50") : "border-[#0057B8]/15 hover:border-[#0057B8]/40")}>
                       <RadioGroupItem value={opt.value} id={`ref-${opt.value}`} />
                       <Icon name={opt.icon as any} className={cn("size-4", opt.value === "yes" ? "text-red-500" : "text-emerald-500")} />
                       <span className="text-xs font-semibold">{opt.label}</span>
@@ -1591,10 +1591,10 @@ export function StudentProfileForm() {
                 {form.previousRefusal && (
                   <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
                     <Field label="Refusal Date" required>
-                      <Input type="date" className="h-10 border-[#2563EB]/20" value={form.refusalDate} onChange={(e) => set("refusalDate", e.target.value)} />
+                      <Input type="date" className="h-10 border-[#0057B8]/20" value={form.refusalDate} onChange={(e) => set("refusalDate", e.target.value)} />
                     </Field>
                     <Field label="Refusal Reason" required className="md:col-span-2">
-                      <Textarea className="border-[#2563EB]/20" rows={2} value={form.refusalReason} onChange={(e) => set("refusalReason", e.target.value)} placeholder="Explain in detail — visa officer will review." />
+                      <Textarea className="border-[#0057B8]/20" rows={2} value={form.refusalReason} onChange={(e) => set("refusalReason", e.target.value)} placeholder="Explain in detail — visa officer will review." />
                     </Field>
                   </div>
                 )}
@@ -1603,18 +1603,18 @@ export function StudentProfileForm() {
               <div className="mt-4">
                 <FormGrid cols={3}>
                   <Field label="Previous Immigration Application" hint="Any prior application to immigration, even if withdrawn.">
-                    <Input className="h-10 border-[#2563EB]/20" value={form.previousImmigrationApp} onChange={(e) => set("previousImmigrationApp", e.target.value)} placeholder="e.g. None / Express Entry 2022" />
+                    <Input className="h-10 border-[#0057B8]/20" value={form.previousImmigrationApp} onChange={(e) => set("previousImmigrationApp", e.target.value)} placeholder="e.g. None / Express Entry 2022" />
                   </Field>
                   <Field label="Dependent Status">
                     <Select value={form.dependentStatus} onValueChange={(v) => set("dependentStatus", v)}>
-                      <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {DEPENDENT_STATUSES.map((d) => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
                       </SelectContent>
                     </Select>
                   </Field>
                   <Field label="Number of Dependents">
-                    <Input type="number" min={0} className="h-10 border-[#2563EB]/20" value={form.dependentsCount} onChange={(e) => set("dependentsCount", e.target.value)} placeholder="0" />
+                    <Input type="number" min={0} className="h-10 border-[#0057B8]/20" value={form.dependentsCount} onChange={(e) => set("dependentsCount", e.target.value)} placeholder="0" />
                   </Field>
                 </FormGrid>
               </div>
@@ -1623,7 +1623,7 @@ export function StudentProfileForm() {
                 <FormGrid cols={3}>
                   <Field label="Medical Condition" hint="Any condition requiring ongoing treatment abroad.">
                     <Select value={form.medicalCondition} onValueChange={(v) => set("medicalCondition", v)}>
-                      <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {MEDICAL_OPTIONS.map((m) => (<SelectItem key={m} value={m}>{m}</SelectItem>))}
                       </SelectContent>
@@ -1631,14 +1631,14 @@ export function StudentProfileForm() {
                   </Field>
                   <Field label="Criminal Offense" hint="Honest disclosure is mandatory.">
                     <Select value={form.criminalOffense} onValueChange={(v) => set("criminalOffense", v)}>
-                      <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {CRIMINAL_OPTIONS.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
                       </SelectContent>
                     </Select>
                   </Field>
                   <Field label="Any Risk Note" hint="Internal note for visa officer review.">
-                    <Input className="h-10 border-[#2563EB]/20" value={form.riskNote} onChange={(e) => set("riskNote", e.target.value)} placeholder="e.g. None" />
+                    <Input className="h-10 border-[#0057B8]/20" value={form.riskNote} onChange={(e) => set("riskNote", e.target.value)} placeholder="e.g. None" />
                   </Field>
                 </FormGrid>
               </div>
@@ -1650,34 +1650,34 @@ export function StudentProfileForm() {
               <FormGrid cols={3}>
                 <Field label="Study Destination" required hint="AI suggests best-fit countries based on your profile & budget.">
                   <Select value={form.studyDestination} onValueChange={(v) => set("studyDestination", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue placeholder="Select destination" /></SelectTrigger>
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue placeholder="Select destination" /></SelectTrigger>
                     <SelectContent>
                       {COUNTRIES.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </Field>
                 <Field label="Program / Course Title" required className="md:col-span-2">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.programTitle} onChange={(e) => set("programTitle", e.target.value)} placeholder="e.g. MSc Computer Science" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.programTitle} onChange={(e) => set("programTitle", e.target.value)} placeholder="e.g. MSc Computer Science" />
                 </Field>
                 <Field label="Study Level" required>
                   <Select value={form.studyLevel} onValueChange={(v) => set("studyLevel", v)}>
-                    <SelectTrigger className="h-10 w-full border-[#2563EB]/20"><SelectValue placeholder="Select level" /></SelectTrigger>
+                    <SelectTrigger className="h-10 w-full border-[#0057B8]/20"><SelectValue placeholder="Select level" /></SelectTrigger>
                     <SelectContent>
                       {STUDY_LEVELS.map((l) => (<SelectItem key={l} value={l}>{l}</SelectItem>))}
                     </SelectContent>
                   </Select>
                 </Field>
                 <Field label="Study Area" required>
-                  <Input className="h-10 border-[#2563EB]/20" value={form.studyArea} onChange={(e) => set("studyArea", e.target.value)} placeholder="e.g. Computer Science" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.studyArea} onChange={(e) => set("studyArea", e.target.value)} placeholder="e.g. Computer Science" />
                 </Field>
                 <Field label="Intake" required hint="Sep / Jan / May — main intakes for most destinations.">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.intake} onChange={(e) => set("intake", e.target.value)} placeholder="e.g. September 2025" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.intake} onChange={(e) => set("intake", e.target.value)} placeholder="e.g. September 2025" />
                 </Field>
                 <Field label="University Preference" className="md:col-span-2" hint="List preferred universities separated by commas.">
-                  <Input className="h-10 border-[#2563EB]/20" value={form.universityPreference} onChange={(e) => set("universityPreference", e.target.value)} placeholder="e.g. University of Manchester, University of Edinburgh" />
+                  <Input className="h-10 border-[#0057B8]/20" value={form.universityPreference} onChange={(e) => set("universityPreference", e.target.value)} placeholder="e.g. University of Manchester, University of Edinburgh" />
                 </Field>
                 <Field label="Course Preference" className="md:col-span-3">
-                  <Textarea className="border-[#2563EB]/20" rows={2} value={form.coursePreference} onChange={(e) => set("coursePreference", e.target.value)} placeholder="Specific course modules, specializations, or career outcomes you're targeting." />
+                  <Textarea className="border-[#0057B8]/20" rows={2} value={form.coursePreference} onChange={(e) => set("coursePreference", e.target.value)} placeholder="Specific course modules, specializations, or career outcomes you're targeting." />
                 </Field>
               </FormGrid>
             </SectionCard>
@@ -1686,11 +1686,11 @@ export function StudentProfileForm() {
 
         {/* Navigation */}
         <div className="sticky bottom-4 z-20">
-          <div className="flex flex-col gap-3 rounded-2xl border-2 border-[#2563EB]/15 bg-white/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-white/80 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-2xl border-2 border-[#0057B8]/15 bg-white/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-white/80 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
-                className="border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb] h-11"
+                className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-11"
                 onClick={handleSaveDraft}
               >
                 <Icon name="Save" className="size-4" />
@@ -1712,7 +1712,7 @@ export function StudentProfileForm() {
                 Back
               </Button>
               <Button
-                className="bg-[#F97316] hover:bg-[#F97316]/90 text-white h-11 px-6"
+                className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-11 px-6"
                 onClick={handleNext}
               >
                 {step === 4 ? (
@@ -1732,14 +1732,14 @@ export function StudentProfileForm() {
         </div>
 
         {/* Completion summary footer */}
-        <div className="rounded-2xl border border-[#2563EB]/15 bg-[#e8f0fb]/40 p-4">
+        <div className="rounded-2xl border border-[#0057B8]/15 bg-[#e8f0fb]/40 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-[#2563EB] text-white">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-[#0057B8] text-white">
                 <Icon name="Gauge" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#2563EB]">Profile Completion: {overallPct}%</p>
+                <p className="text-sm font-bold text-[#0057B8]">Profile Completion: {overallPct}%</p>
                 <p className="text-xs text-muted-foreground">
                   {overallPct === 100
                     ? "All sections complete — your profile is ready for submission."
@@ -1753,7 +1753,7 @@ export function StudentProfileForm() {
                   key={s.id}
                   className={cn(
                     "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold",
-                    stepPct(s.id) === 100 ? "bg-emerald-100 text-emerald-700" : stepPct(s.id) > 0 ? "bg-[#2563EB]/10 text-[#2563EB]" : "bg-muted text-muted-foreground"
+                    stepPct(s.id) === 100 ? "bg-emerald-100 text-emerald-700" : stepPct(s.id) > 0 ? "bg-[#0057B8]/10 text-[#0057B8]" : "bg-muted text-muted-foreground"
                   )}
                 >
                   <span className="size-1.5 rounded-full bg-current" />

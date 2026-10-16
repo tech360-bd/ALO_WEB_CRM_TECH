@@ -15,7 +15,7 @@ export default function DestinationsIndexPage() {
     <div className="bg-slate-50 min-h-screen py-16 text-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-[#2563EB] font-bold text-xs rounded-full border border-blue-100">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-[#0057B8] font-bold text-xs rounded-full border border-blue-100">
             <Globe className="w-4 h-4" /> Global Study Destinations
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
@@ -30,7 +30,7 @@ export default function DestinationsIndexPage() {
           {destinations.map((dest) => (
             <div
               key={dest.slug}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#2563EB] hover:shadow-md transition"
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#0057B8] hover:shadow-md transition"
             >
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
@@ -64,7 +64,7 @@ export default function DestinationsIndexPage() {
               <div className="p-4 bg-slate-50 border-t border-slate-100">
                 <Link
                   href={`/destinations/${dest.slug}`}
-                  className="w-full h-11 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition"
+                  className="w-full h-11 bg-[#0057B8] hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition"
                 >
                   Explore {dest.name} Guide <ArrowRight className="w-4 h-4" />
                 </Link>

@@ -430,7 +430,7 @@ function groundedTemplateCopy(input: z.infer<typeof generateBodySchema>): Genera
     instagramCaption: `${body}\n\n${cta}.`,
     reelCaption: `${cta}.`,
     hashtags,
-    imagePrompt: `Clean, professional study-abroad poster for ${visualSubject}. Real campus architecture, one international student, ALO Education logo in a top corner, brand orange #F37021 and education blue #0066CC, white-first layout, no text claims about money or guarantees.`,
+    imagePrompt: `Clean, professional study-abroad poster for ${visualSubject}. Real campus architecture, one international student, ALO Education logo in a top corner, brand orange #E8501A and education blue #0057B8, white-first layout, no text claims about money or guarantees.`,
     videoPrompt: `30-second vertical reel for ${visualSubject}. Document checklist, counselor conversation, campus exterior. ALO Education branding, no on-screen scholarship amounts.`,
     videoScript: [
       `[0-5s]: Thinking about ${subject}${intakePart}?`,

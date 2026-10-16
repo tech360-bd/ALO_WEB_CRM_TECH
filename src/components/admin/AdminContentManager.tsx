@@ -219,7 +219,7 @@ export default function AdminContentManager() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header + system switcher */}
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-8 shadow-sm">
-          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-3">SUPER ADMIN — Content Management (RBAC + audit logged)</Badge>
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">SUPER ADMIN — Content Management (RBAC + audit logged)</Badge>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-[#0F172A]">Services · Scholarships · Resources</h1>
@@ -227,12 +227,12 @@ export default function AdminContentManager() {
             </div>
             <div className="flex gap-2" role="tablist" aria-label="Content system">
               {(Object.keys(KIND_META) as Kind[]).map((k) => (
-                <button key={k} role="tab" aria-selected={kind === k} onClick={() => setKind(k)} className={`px-4 h-11 rounded-xl text-sm font-bold transition-colors ${kind === k ? 'bg-[#2563EB] text-white' : 'bg-white border border-[#E2E8F0] text-gray-700'}`}>{KIND_META[k].title}</button>
+                <button key={k} role="tab" aria-selected={kind === k} onClick={() => setKind(k)} className={`px-4 h-11 rounded-xl text-sm font-bold transition-colors ${kind === k ? 'bg-[#0057B8] text-white' : 'bg-white border border-[#E2E8F0] text-gray-700'}`}>{KIND_META[k].title}</button>
               ))}
             </div>
           </div>
           <div className="flex flex-wrap gap-2 mt-5">
-            <Button onClick={() => { setPanel('create'); setForm({}); }} className="bg-[#F97316] text-white hover:bg-[#EA580C] h-11 font-bold"><Plus className="w-4 h-4 mr-1" />{meta.addLabel}</Button>
+            <Button onClick={() => { setPanel('create'); setForm({}); }} className="bg-[#E8501A] text-white hover:bg-[#C93D13] h-11 font-bold"><Plus className="w-4 h-4 mr-1" />{meta.addLabel}</Button>
             <Button variant="outline" onClick={() => { setPanel('faq'); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11"><FileQuestion className="w-4 h-4 mr-1" />+ Add FAQ</Button>
             <Button variant="outline" onClick={() => { setPanel('related'); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11"><Link2 className="w-4 h-4 mr-1" />+ Add Related Content</Button>
             <Button variant="outline" onClick={() => { setPanel('source'); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11"><Shield className="w-4 h-4 mr-1" />+ Add Official Source</Button>
@@ -262,7 +262,7 @@ export default function AdminContentManager() {
               ))}
             </div>
             <div className="flex gap-2 mt-4">
-              <Button onClick={save} disabled={busy} className="bg-[#2563EB] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : panel === 'create' ? 'Create (DRAFT, unpublished by default)' : 'Save changes'}</Button>
+              <Button onClick={save} disabled={busy} className="bg-[#0057B8] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : panel === 'create' ? 'Create (DRAFT, unpublished by default)' : 'Save changes'}</Button>
               <Button variant="outline" onClick={() => { setPanel(null); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11">Cancel</Button>
             </div>
           </Card>
@@ -281,7 +281,7 @@ export default function AdminContentManager() {
               </div>
             </div>
             <div className="flex gap-2 mt-4">
-              <Button onClick={saveFaq} disabled={busy || !form.question || !form.answer} className="bg-[#2563EB] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : 'Save FAQ'}</Button>
+              <Button onClick={saveFaq} disabled={busy || !form.question || !form.answer} className="bg-[#0057B8] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : 'Save FAQ'}</Button>
               <Button variant="outline" onClick={() => { setPanel(null); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11">Cancel</Button>
             </div>
           </Card>
@@ -300,7 +300,7 @@ export default function AdminContentManager() {
               <div><label className="text-xs font-semibold text-gray-600" htmlFor="rel_so">Sort order</label><Input id="rel_so" value={form.sortOrder || 0} onChange={(e) => setForm({ ...form, sortOrder: e.target.value })} className="bg-white border-[#E2E8F0] h-11" /></div>
             </div>
             <div className="flex gap-2 mt-4">
-              <Button onClick={saveRelated} disabled={busy || !form.targetType || (!form.targetId && false)} className="bg-[#2563EB] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : 'Link content'}</Button>
+              <Button onClick={saveRelated} disabled={busy || !form.targetType || (!form.targetId && false)} className="bg-[#0057B8] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : 'Link content'}</Button>
               <Button variant="outline" onClick={() => { setPanel(null); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11">Cancel</Button>
             </div>
           </Card>
@@ -331,7 +331,7 @@ export default function AdminContentManager() {
               <div><label className="text-xs font-semibold text-gray-600" htmlFor="src_ts">Target slug (optional)</label><Input id="src_ts" value={form.targetSlug || active?.slug || ''} onChange={(e) => setForm({ ...form, targetSlug: e.target.value })} className="bg-white border-[#E2E8F0] h-11" /></div>
             </div>
             <div className="flex gap-2 mt-4">
-              <Button onClick={saveSource} disabled={busy || !form.sourceUrl} className="bg-[#2563EB] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : 'Add source'}</Button>
+              <Button onClick={saveSource} disabled={busy || !form.sourceUrl} className="bg-[#0057B8] text-white h-11 px-8 font-bold">{busy ? 'Saving…' : 'Add source'}</Button>
               <Button variant="outline" onClick={() => { setPanel(null); setActive(null); setForm({}); }} className="border-[#E2E8F0] h-11">Cancel</Button>
             </div>
           </Card>

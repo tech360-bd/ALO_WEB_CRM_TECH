@@ -48,19 +48,19 @@ export default function PartnerSearchProgramsPage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-3">Partner Course Finder — Select ONLY Own Student, Own Commission Where Permitted</Badge>
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">Partner Course Finder — Select ONLY Own Student, Own Commission Where Permitted</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A]">Partner Search Programs</h1>
           <p className="text-sm text-gray-600 mt-2">Partner selects ONLY their own student — other partner students blocked at backend. Search by Country, University, City, Study level, Subject, Intake, Tuition, Scholarship, English, Academic profile. Shows Eligible/Need Review/Not Eligible. Partner can Save/Compare/Apply/Upload documents/Track application. Commission: Partner can see ONLY their own permitted commission — backend enforced, not frontend hiding.</p>
         </div>
 
         <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-          <h3 className="font-bold text-sm mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-[#2563EB]" />Select Your Own Student — Other Partner Students Blocked</h3>
+          <h3 className="font-bold text-sm mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-[#0057B8]" />Select Your Own Student — Other Partner Students Blocked</h3>
           <div className="grid sm:grid-cols-3 gap-3">
             {students.map((s: any) => (
-              <Card key={s.id} onClick={() => setSelectedStudent(s)} className={`p-3 cursor-pointer border rounded-xl ${selectedStudent?.id === s.id ? 'bg-[#2563EB]/5 border-[#2563EB]' : 'bg-[#F8FAFC] border-[#E2E8F0] hover:border-[#2563EB]/50'}`}>
+              <Card key={s.id} onClick={() => setSelectedStudent(s)} className={`p-3 cursor-pointer border rounded-xl ${selectedStudent?.id === s.id ? 'bg-[#0057B8]/5 border-[#0057B8]' : 'bg-[#F8FAFC] border-[#E2E8F0] hover:border-[#0057B8]/50'}`}>
                 <p className="font-semibold text-sm">{s.name}</p>
                 <p className="text-xs text-gray-500">{s.email}</p>
-                {selectedStudent?.id === s.id && <Badge className="bg-[#2563EB] text-white text-[10px] mt-2">Selected — Own Student Only</Badge>}
+                {selectedStudent?.id === s.id && <Badge className="bg-[#0057B8] text-white text-[10px] mt-2">Selected — Own Student Only</Badge>}
               </Card>
             ))}
             {students.length === 0 && <p className="text-xs text-gray-500 col-span-3">No own students yet — partner sees only own students, other partner students blocked via partnerId filter at DB/API.</p>}
@@ -69,7 +69,7 @@ export default function PartnerSearchProgramsPage() {
         </Card>
 
         <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-          <div className="flex gap-3"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search programs — country, university, city, level, subject..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div><Button onClick={() => fetchCourses()} className="bg-[#2563EB] text-white h-11">Search — Own Student Eligibility</Button></div>
+          <div className="flex gap-3"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search programs — country, university, city, level, subject..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" /></div><Button onClick={() => fetchCourses()} className="bg-[#0057B8] text-white h-11">Search — Own Student Eligibility</Button></div>
         </Card>
 
         {loading ? <div className="grid sm:grid-cols-2 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-white border border-[#E2E8F0] rounded-2xl animate-pulse" />)}</div> : courses.length === 0 ? (
@@ -77,13 +77,13 @@ export default function PartnerSearchProgramsPage() {
         ) : (
           <div className="grid sm:grid-cols-2 gap-4">
             {courses.map((c: any) => (
-              <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] rounded-2xl">
+              <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0057B8] rounded-2xl">
                 <div className="flex justify-between mb-2"><Badge className={`${c.eligibility.label === 'Eligible' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{c.eligibility.label}</Badge><Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px]">Own Commission: {c.commissions?.[0]?.partnerCommission ? `${c.commissions[0].partnerCommission}` : 'Check permitted'}</Badge></div>
                 <h3 className="font-bold text-sm line-clamp-2">{c.courseTitle}</h3>
                 <p className="text-xs text-gray-500">{c.university?.name} • {c.country}</p>
                 <div className="flex gap-2 mt-3">
-                  <Link href={`/partner/program/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[#2563EB] text-white h-9 text-xs">View Program</Button></Link>
-                  <Link href={`/partner/apply/${selectedStudent?.id || 'student'}/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[#F97316] text-white h-9 text-xs" disabled={!selectedStudent}>Apply for Own Student</Button></Link>
+                  <Link href={`/partner/program/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[#0057B8] text-white h-9 text-xs">View Program</Button></Link>
+                  <Link href={`/partner/apply/${selectedStudent?.id || 'student'}/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[#E8501A] text-white h-9 text-xs" disabled={!selectedStudent}>Apply for Own Student</Button></Link>
                 </div>
                 <p className="text-[10px] text-gray-500 mt-2">Partner can see ONLY own permitted commission — backend must enforce, not frontend hiding. Other partner students/commissions/internal ALO notes/staff risk notes/full finance blocked.</p>
               </Card>

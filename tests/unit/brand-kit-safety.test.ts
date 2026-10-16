@@ -13,8 +13,8 @@ describe('stored brand kit never invents business contacts', () => {
     expect(promptWithBrand('Draft', kit, 'SQUARE')).toContain('do not invent a logo');
   });
   it('filters invalid JSON, unsafe URLs, malformed phone/colors and preserves valid settings', async () => {
-    mocks.assets.mockResolvedValue([{ assetType: 'BRAND_KIT', value: JSON.stringify({ logoUrl: 'javascript:alert(1)', phone: 'invented', website: 'http://unsafe.example', primary: 'red;script', cta: '#F97316', address: 'Line\nInjection' }) }]);
-    expect(await getBrandKit()).toMatchObject({ logoUrl: '', phone: '', website: '', primary: '#2563EB', cta: '#F97316', address: '' });
+    mocks.assets.mockResolvedValue([{ assetType: 'BRAND_KIT', value: JSON.stringify({ logoUrl: 'javascript:alert(1)', phone: 'invented', website: 'http://unsafe.example', primary: 'red;script', cta: '#E8501A', address: 'Line\nInjection' }) }]);
+    expect(await getBrandKit()).toMatchObject({ logoUrl: '', phone: '', website: '', primary: '#0057B8', cta: '#E8501A', address: '' });
     mocks.assets.mockResolvedValue([{ assetType: 'BRAND_KIT', value: JSON.stringify({ website: 'https://example.com', phone: '+447700900123', logoUrl: '/uploads/brand.png' }) }]);
     expect(await getBrandKit()).toMatchObject({ website: 'https://example.com/', phone: '+447700900123', logoUrl: '/uploads/brand.png' });
   });

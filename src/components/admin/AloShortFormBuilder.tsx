@@ -115,7 +115,7 @@ function ScoreRing({ value, size = 'normal' }: { value: number; size?: 'normal' 
   const stroke = size === 'small' ? 3 : 4;
   const circumference = 2 * Math.PI * radius;
   const dash = circumference * Math.max(0, Math.min(value, 100)) / 100;
-  const color = value >= 90 ? '#16a34a' : value >= 80 ? '#2563eb' : '#f97316';
+  const color = value >= 90 ? '#10B981' : value >= 80 ? '#0057B8' : '#E8501A';
   return (
     <div className={`relative ${size === 'small' ? 'h-10 w-10' : 'h-12 w-12'}`} aria-label={`Page health ${value} out of 100`}>
       <svg viewBox="0 0 48 48" className="h-full w-full -rotate-90" aria-hidden="true">

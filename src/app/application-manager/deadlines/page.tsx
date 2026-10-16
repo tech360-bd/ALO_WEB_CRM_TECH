@@ -28,8 +28,8 @@ export default function DeadlinesPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
       <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-[#0F172A]">Deadline Engine — Real DB</h1><p className="text-sm text-gray-500">Application/Document/Offer Condition/Deposit/CAS/I20/COE/B2B follow-up/University follow-up — DUE_TODAY/3_DAYS/7_DAYS/OVERDUE alerts tasks/notifications</p></div><Button variant="outline" className="border-[#E2E8F0]" onClick={fetchDeadlines}><RefreshCw className={`w-4 h-4 ${loading?'animate-spin':''}`} /></Button></div>
-      <div className="flex gap-2"><select value={filter} onChange={e=>setFilter(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm"><option value="all">All Deadlines</option><option value="OVERDUE">OVERDUE</option><option value="DUE_TODAY">DUE_TODAY</option><option value="3_DAYS">3_DAYS</option><option value="7_DAYS">7_DAYS</option></select><Button className="bg-[#2563EB] text-white" onClick={fetchDeadlines}>Filter</Button></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#2563EB]" /></div> : (
+      <div className="flex gap-2"><select value={filter} onChange={e=>setFilter(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm"><option value="all">All Deadlines</option><option value="OVERDUE">OVERDUE</option><option value="DUE_TODAY">DUE_TODAY</option><option value="3_DAYS">3_DAYS</option><option value="7_DAYS">7_DAYS</option></select><Button className="bg-[#0057B8] text-white" onClick={fetchDeadlines}>Filter</Button></div>
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
         <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Deadlines ({deadlines.length})</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-2">

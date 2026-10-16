@@ -180,7 +180,7 @@ export default function ScholarshipsListing() {
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#1D4ED8] h-12 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] h-12 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
                       <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[#E2E8F0] h-12 text-xs">Check Eligibility</Button></Link>
                     </div>
                   </Card>
@@ -191,7 +191,7 @@ export default function ScholarshipsListing() {
         )}
 
         {/* Final CTA — spec §24 */}
-        <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl text-white text-center">
+        <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
           <p className="text-sm text-blue-100 mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">

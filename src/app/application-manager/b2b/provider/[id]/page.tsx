@@ -42,7 +42,7 @@ export default function B2BProviderDetailPage() {
     } catch (e:any){ setMsg({type:'error', text:e.message}); } finally { setSaving(false); }
   };
 
-  if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#2563EB]" /></div>;
+  if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#0057B8]" /></div>;
   if (error) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-6 text-center max-w-md"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">{error}</p></div></div>;
   if (!provider) return <div className="p-8 bg-white min-h-screen text-center">Provider not found</div>;
 
@@ -68,13 +68,13 @@ export default function B2BProviderDetailPage() {
                 <div className="col-span-12"><label className="text-xs font-medium">Commission Rule (confidential)</label><textarea value={provider.commissionRule||''} onChange={e=>setProvider({...provider, commissionRule:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[60px]" /></div>
                 <div className="col-span-12"><label className="text-xs font-medium">Internal Note (confidential)</label><textarea value={provider.internalNote||''} onChange={e=>setProvider({...provider, internalNote:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[60px]" /></div>
               </div>
-              <Button onClick={handleSave} disabled={saving} className="bg-[#2563EB] text-white min-h-[48px]">{saving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Saving...</> : 'Save Provider — Audit Logged'}</Button>
+              <Button onClick={handleSave} disabled={saving} className="bg-[#0057B8] text-white min-h-[48px]">{saving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Saving...</> : 'Save Provider — Audit Logged'}</Button>
             </CardContent>
           </Card>
         </div>
         <div className="col-span-12 lg:col-span-4 space-y-4">
           <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-            <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center gap-2"><Shield className="w-4 h-4 text-[#2563EB]" />Security & Audit</CardTitle></CardHeader>
+            <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center gap-2"><Shield className="w-4 h-4 text-[#0057B8]" />Security & Audit</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-3 text-xs">
               <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="font-semibold">Created By</p><p className="text-gray-600">{provider.createdBy?.substring(0,8) || 'System'}</p></div>
               <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="font-semibold">Last Reviewed</p><p className="text-gray-600">{provider.lastReviewedAt ? new Date(provider.lastReviewedAt).toLocaleString() : 'Never'}</p></div>

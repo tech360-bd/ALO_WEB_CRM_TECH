@@ -193,7 +193,7 @@ function PrivateAmount({
       <span className={cn("inline-flex items-center gap-1.5 tabular-nums", className)}>
         <span className="text-sm font-semibold">{display}</span>
         {privacyOn && revealed && (
-          <button onClick={rehide} className="text-muted-foreground hover:text-[#2563EB]" title="Hide again">
+          <button onClick={rehide} className="text-muted-foreground hover:text-[#0057B8]" title="Hide again">
             <Icon name="EyeOff" className="size-3" />
           </button>
         )}
@@ -207,7 +207,7 @@ function PrivateAmount({
         <span className="select-none font-mono text-sm font-semibold blur-sm">{display}</span>
         <button
           onClick={() => setShowPin(true)}
-          className="inline-flex items-center gap-0.5 rounded border border-[#2563EB]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#2563EB] hover:bg-[#e8f0fb]"
+          className="inline-flex items-center gap-0.5 rounded border border-[#0057B8]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#0057B8] hover:bg-[#e8f0fb]"
           title="Click to reveal (requires PIN)"
         >
           <Icon name="Lock" className="size-2.5" />
@@ -223,15 +223,15 @@ function PrivateAmount({
           }}
         >
           <div
-            className="w-full max-w-xs rounded-2xl border-2 border-[#2563EB]/20 bg-white p-5 shadow-xl"
+            className="w-full max-w-xs rounded-2xl border-2 border-[#0057B8]/20 bg-white p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                 <Icon name="ShieldCheck" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#2563EB]">Reveal amount</p>
+                <p className="text-sm font-bold text-[#0057B8]">Reveal amount</p>
                 <p className="text-xs text-muted-foreground">Enter your PIN to view this amount</p>
               </div>
             </div>
@@ -265,7 +265,7 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+                className="flex-1 h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
                 disabled={pin.length < 4}
                 onClick={() => {
                   reveal(id);
@@ -437,7 +437,7 @@ export function HrmDashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
               <CardContent className="pt-5">
                 <SensitiveField
                   id="hrm-payroll-total"
@@ -448,7 +448,7 @@ export function HrmDashboard() {
                 />
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
               <CardContent className="pt-5">
                 <SensitiveField
                   id="hrm-avg-salary"
@@ -463,7 +463,7 @@ export function HrmDashboard() {
                 />
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
               <CardContent className="pt-5">
                 <InfoRow label="Pending Commissions" value={metrics?.pendingCommissions ?? 0} mono />
                 <InfoRow label="Pending Bonuses" value={metrics?.pendingBonuses ?? 0} mono />
@@ -540,13 +540,13 @@ export function HrmDashboard() {
                       return (
                         <TableRow key={emp.id} className="hover:bg-[#e8f0fb]/40">
                           <TableCell>
-                            <span className="font-mono text-xs font-semibold text-[#2563EB]">
+                            <span className="font-mono text-xs font-semibold text-[#0057B8]">
                               {emp.employeeId}
                             </span>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <div className="flex size-7 items-center justify-center rounded-full bg-[#e8f0fb] text-[#2563EB]">
+                              <div className="flex size-7 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0057B8]">
                                 <Icon name="User" className="size-3.5" />
                               </div>
                               <span className="text-sm font-semibold text-foreground">
@@ -603,7 +603,7 @@ export function HrmDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleViewProfile(emp)}
-                              className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                             >
                               <Icon name="Eye" className="size-3.5" />
                               <span className="hidden md:inline">View Profile</span>
@@ -738,7 +738,7 @@ export function HrmDashboard() {
                             variant="outline"
                             onClick={() => handleApproveCommission(c)}
                             disabled={c.status !== "PENDING"}
-                            className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                            className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                           >
                             <Icon name="CheckCheck" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -806,7 +806,7 @@ export function HrmDashboard() {
                             variant="outline"
                             onClick={() => handleApproveBonus(b)}
                             disabled={b.status !== "PENDING"}
-                            className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                            className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                           >
                             <Icon name="CheckCheck" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -891,7 +891,7 @@ export function HrmDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleApproveIncrement(inc)}
-                              className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                             >
                               <Icon name="CheckCheck" className="size-3.5" />
                               <span className="hidden md:inline">Approve</span>
@@ -933,7 +933,7 @@ export function HrmDashboard() {
                   <TableBody>
                     {performance.map((p) => {
                       const color =
-                        p.score >= 80 ? "#10b981" : p.score >= 50 ? "#F97316" : "#ef4444";
+                        p.score >= 80 ? "#10b981" : p.score >= 50 ? "#E8501A" : "#ef4444";
                       return (
                         <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
                           <TableCell>
@@ -970,7 +970,7 @@ export function HrmDashboard() {
                               <span className="text-xs font-semibold text-foreground tabular-nums">
                                 {p.conversionRate}%
                               </span>
-                              <MiniBar value={p.conversionRate} max={100} color="#2563EB" />
+                              <MiniBar value={p.conversionRate} max={100} color="#0057B8" />
                             </div>
                           </TableCell>
                           <TableCell>
@@ -1011,8 +1011,8 @@ export function HrmDashboard() {
         description="How sensitive HRM data is protected."
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#2563EB]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
               <Icon name="Lock" className="size-4" />
             </div>
             <div>
@@ -1022,8 +1022,8 @@ export function HrmDashboard() {
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#2563EB]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fdece4] text-[#F97316]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fdece4] text-[#E8501A]">
               <Icon name="KeyRound" className="size-4" />
             </div>
             <div>

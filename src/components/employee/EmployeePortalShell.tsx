@@ -171,8 +171,8 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Audit Logging Active</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs h-7" onClick={() => router.push('/admin/access-control-center')}>View Acting-As Audit</Button>
-            <Button size="sm" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold h-7 shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
+            <Button size="sm" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs" onClick={() => router.push('/admin/access-control-center')}>View Acting-As Audit</Button>
+            <Button size="sm" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
           </div>
         </div>
       )}

@@ -49,7 +49,7 @@ export default function ServiceDetailHub({ slug }: Props) {
         </nav>
 
         {/* 1. Hero */}
-        <div className="bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl p-8 md:p-12 text-white shadow-xl">
+        <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl p-8 md:p-12 text-white shadow-xl">
           <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">ALO Comprehensive Service</Badge>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">{service.heroTitle || title}</h1>
           <p className="text-base md:text-lg text-blue-100 max-w-3xl leading-relaxed">{service.heroSubtitle || service.shortDescription || service.longDescription?.substring(0, 200) || ''}</p>
@@ -212,7 +212,7 @@ export default function ServiceDetailHub({ slug }: Props) {
             })()}
 
             {/* Final CTA (spec §12): Ready to Take the Next Step? */}
-            <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl text-white text-center">
+            <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Ready to Take the Next Step?</h3>
               <p className="text-sm text-blue-100 mb-6">Consultation is free — move from information to eligibility to application with an ALO counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">

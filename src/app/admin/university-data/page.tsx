@@ -64,7 +64,7 @@ export default function UniversityDataCenterPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#F97316] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -98,7 +98,7 @@ export default function UniversityDataCenterPage() {
         <button
           onClick={() => { setActiveTab('universities'); setSearch(''); }}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'universities' ? 'border-[#2563EB] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'universities' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
           }`}
         >
           Universities ({universities.length})
@@ -106,7 +106,7 @@ export default function UniversityDataCenterPage() {
         <button
           onClick={() => { setActiveTab('courses'); setSearch(''); }}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'courses' ? 'border-[#2563EB] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'courses' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
           }`}
         >
           Courses ({courses.length})
@@ -129,7 +129,7 @@ export default function UniversityDataCenterPage() {
           <select
             value={countryFilter}
             onChange={e => setCountryFilter(e.target.value)}
-            className="bg-[#0d1526] border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-300 focus:outline-none focus:border-[#2563EB]"
+            className="bg-[#0d1526] border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-300 focus:outline-none focus:border-[#0057B8]"
           >
             <option value="all">All Countries</option>
             <option value="UK">United Kingdom</option>

@@ -369,13 +369,13 @@ export function AsyncBlock<T>({
         </div>
         <div className="flex flex-wrap gap-3">
           {state.onRetry && (
-            <Button onClick={state.onRetry} className="h-10 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button onClick={state.onRetry} className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
               <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
               Try Again
             </Button>
           )}
           {resetAction && (
-            <Button variant="outline" onClick={resetAction.onClick} className="h-10 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button variant="outline" onClick={resetAction.onClick} className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               {resetAction.label}
             </Button>
           )}

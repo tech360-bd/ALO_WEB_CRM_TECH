@@ -97,7 +97,7 @@ const LEVEL_COLORS: Record<string, string> = {
 };
 
 function levelColor(level: string) {
-  return LEVEL_COLORS[level] || "bg-[#e8f0fb] text-[#2563EB]";
+  return LEVEL_COLORS[level] || "bg-[#e8f0fb] text-[#0057B8]";
 }
 
 // Extract leading numeric value from tuition strings for sorting
@@ -270,7 +270,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
   return (
     <div className="bg-white pb-32">
       {/* HERO + Breadcrumb */}
-      <div className="border-b border-[#2563EB]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
+      <div className="border-b border-[#0057B8]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
           <Breadcrumb
             items={[
@@ -279,7 +279,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
             ]}
           />
           <div className="mt-5">
-            <h1 className="text-3xl font-black tracking-tight text-[#2563EB] sm:text-4xl">
+            <h1 className="text-3xl font-black tracking-tight text-[#0057B8] sm:text-4xl">
               Course Finder
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
@@ -292,7 +292,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
 
       <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
         {/* Search & filter panel */}
-        <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-white alo-shadow">
+        <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
           <CardContent className="p-5 lg:p-6">
             <div className="flex flex-col gap-4">
               {/* Search input row */}
@@ -361,12 +361,12 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   {activeFilterCount > 0 ? (
                     <>
-                      <Badge className="bg-[#2563EB] text-white hover:bg-[#2563EB]">
+                      <Badge className="bg-[#0057B8] text-white hover:bg-[#0057B8]">
                         {activeFilterCount} active filter{activeFilterCount > 1 ? "s" : ""}
                       </Badge>
                       <button
                         onClick={clearFilters}
-                        className="font-medium text-[#2563EB] hover:underline"
+                        className="font-medium text-[#0057B8] hover:underline"
                       >
                         Clear all
                       </button>
@@ -381,7 +381,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                 <div className="flex items-center gap-2 sm:ml-auto">
                   <Button
                     onClick={() => setQuery((q) => q)}
-                    className="h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                    className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                   >
                     <Icon name="Search" className="size-4" />
                     Search
@@ -389,7 +389,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                   <Button
                     onClick={clearFilters}
                     variant="ghost"
-                    className="h-11 text-[#2563EB] hover:bg-[#e8f0fb]"
+                    className="h-11 text-[#0057B8] hover:bg-[#e8f0fb]"
                   >
                     <Icon name="RotateCcw" className="size-4" />
                     Reset
@@ -445,7 +445,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
                     onClick={clearFilters}
-                    className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+                    className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
                   >
                     <Icon name="RotateCcw" className="size-4" />
                     Clear filters
@@ -453,7 +453,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                   <Button
                     onClick={() => onNavigate("public-universities")}
                     variant="outline"
-                    className="border-[#2563EB] text-[#2563EB] hover:bg-[#e8f0fb]"
+                    className="border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
                   >
                     <Icon name="Building2" className="size-4" />
                     Browse all universities
@@ -483,27 +483,27 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
 
       {/* Compare bar (floating) */}
       {compareSlugs.length > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#2563EB]/15 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#0057B8]/15 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
           <div className="mx-auto max-w-[1280px] px-4 py-3 lg:px-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                   <Icon name="Scale" className="size-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-[#2563EB]">
+                  <p className="text-sm font-bold text-[#0057B8]">
                     Comparing {compareSlugs.length} of {COMPARE_LIMIT}
                   </p>
                   <div className="flex flex-wrap items-center gap-1.5">
                     {compareCourses.map((c) => (
                       <span
                         key={c.slug}
-                        className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[11px] font-medium text-[#2563EB]"
+                        className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[11px] font-medium text-[#0057B8]"
                       >
                         {c.name}
                         <button
                           onClick={() => toggleCompare(c.slug)}
-                          className="hover:text-[#F97316]"
+                          className="hover:text-[#E8501A]"
                           aria-label={`Remove ${c.name} from compare`}
                         >
                           <Icon name="X" className="size-3" />
@@ -517,14 +517,14 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                 <Button
                   onClick={() => setCompareSlugs([])}
                   variant="ghost"
-                  className="h-10 text-muted-foreground hover:bg-[#e8f0fb] hover:text-[#2563EB]"
+                  className="h-10 text-muted-foreground hover:bg-[#e8f0fb] hover:text-[#0057B8]"
                 >
                   Clear
                 </Button>
                 <Button
                   onClick={() => setCompareOpen(true)}
                   disabled={compareSlugs.length < 2}
-                  className="h-10 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+                  className="h-10 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
                 >
                   <Icon name="Scale" className="size-4" />
                   Compare Now
@@ -538,8 +538,8 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
       {/* Compare dialog */}
       <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
         <DialogContent className="max-w-5xl overflow-hidden p-0">
-          <DialogHeader className="border-b border-[#2563EB]/10 px-5 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
+          <DialogHeader className="border-b border-[#0057B8]/10 px-5 py-4">
+            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
               <Icon name="Scale" className="size-5" />
               Course Comparison
             </DialogTitle>
@@ -555,7 +555,7 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
       <Dialog open={!!applyCourse} onOpenChange={(o) => !o && setApplyCourse(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#2563EB]">
+            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
               <Icon name="Send" className="size-5" />
               Apply for {applyCourse?.name}
             </DialogTitle>
@@ -644,8 +644,8 @@ function CourseCard({
       className={cn(
         "flex flex-col rounded-2xl border-2 transition-all hover:-translate-y-0.5 hover:shadow-lg",
         isComparing
-          ? "border-[#2563EB] bg-[#e8f0fb]/40"
-          : "border-[#2563EB]/15 hover:border-[#2563EB]/40"
+          ? "border-[#0057B8] bg-[#e8f0fb]/40"
+          : "border-[#0057B8]/15 hover:border-[#0057B8]/40"
       )}
     >
       <CardContent className="flex flex-1 flex-col p-5">
@@ -655,7 +655,7 @@ function CourseCard({
             <Badge className={cn("hover:opacity-90", levelColor(course.level))}>
               {course.level}
             </Badge>
-            <Badge variant="outline" className="border-[#2563EB]/30 text-[#2563EB]">
+            <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
               {course.subject}
             </Badge>
           </div>
@@ -663,17 +663,17 @@ function CourseCard({
             className={cn(
               "flex cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
               isComparing
-                ? "border-[#2563EB] bg-[#2563EB] text-white"
+                ? "border-[#0057B8] bg-[#0057B8] text-white"
                 : compareDisabled
                 ? "cursor-not-allowed border-muted text-muted-foreground/60"
-                : "border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                : "border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
             )}
           >
             <Checkbox
               checked={isComparing}
               disabled={compareDisabled}
               onCheckedChange={() => onCompare()}
-              className="size-3.5 border-[#2563EB]/40 data-[state=checked]:border-white data-[state=checked]:bg-white data-[state=checked]:text-[#2563EB]"
+              className="size-3.5 border-[#0057B8]/40 data-[state=checked]:border-white data-[state=checked]:bg-white data-[state=checked]:text-[#0057B8]"
             />
             Compare
           </label>
@@ -684,7 +684,7 @@ function CourseCard({
           onClick={() => onNavigate("public-course", course.slug)}
           className="mt-3 text-left"
         >
-          <h3 className="line-clamp-2 text-base font-bold leading-snug text-[#2563EB] hover:underline">
+          <h3 className="line-clamp-2 text-base font-bold leading-snug text-[#0057B8] hover:underline">
             {course.name}
           </h3>
         </button>
@@ -707,7 +707,7 @@ function CourseCard({
             <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
               Tuition
             </p>
-            <p className="mt-0.5 text-base font-black text-[#2563EB]">{course.tuition}</p>
+            <p className="mt-0.5 text-base font-black text-[#0057B8]">{course.tuition}</p>
           </div>
           <div className="rounded-lg bg-[#f7f9fc] p-2.5">
             <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -728,14 +728,14 @@ function CourseCard({
         {/* Requirements */}
         <div className="mt-3 space-y-1.5 text-xs">
           <div className="flex items-start gap-1.5">
-            <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
+            <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
             <span className="text-foreground/80">
               <span className="font-semibold text-foreground">English:</span>{" "}
               {course.englishRequirement}
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <Icon name="GraduationCap" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
+            <Icon name="GraduationCap" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
             <span className="line-clamp-2 text-foreground/80">
               <span className="font-semibold text-foreground">Academic:</span>{" "}
               {course.academicRequirement}
@@ -748,7 +748,7 @@ function CourseCard({
           {intakeList.slice(0, 3).map((i) => (
             <span
               key={i}
-              className="rounded-full bg-[#e8f0fb]/80 px-2 py-0.5 font-medium text-[#2563EB]"
+              className="rounded-full bg-[#e8f0fb]/80 px-2 py-0.5 font-medium text-[#0057B8]"
             >
               {i}
             </span>
@@ -786,7 +786,7 @@ function CourseCard({
           <Button
             onClick={() => onNavigate("public-course", course.slug)}
             variant="outline"
-            className="h-10 flex-1 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+            className="h-10 flex-1 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
             size="sm"
           >
             <Icon name="Eye" className="size-4" />
@@ -794,7 +794,7 @@ function CourseCard({
           </Button>
           <Button
             onClick={onApply}
-            className="h-10 flex-1 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+            className="h-10 flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
             size="sm"
           >
             <Icon name="Send" className="size-4" />
@@ -832,7 +832,7 @@ function CompareTable({
     { label: "Level", icon: "GraduationCap", key: (c) => c.level },
     { label: "Duration", icon: "Clock", key: (c) => c.duration },
     { label: "Intake", icon: "Calendar", key: (c) => c.intake },
-    { label: "Tuition", icon: "CreditCard", key: (c) => <span className="font-bold text-[#2563EB]">{c.tuition}</span> },
+    { label: "Tuition", icon: "CreditCard", key: (c) => <span className="font-bold text-[#0057B8]">{c.tuition}</span> },
     { label: "Scholarship", icon: "Award", key: (c) => c.scholarship || "—" },
     { label: "English req.", icon: "Languages", key: (c) => c.englishRequirement },
     { label: "Academic req.", icon: "ClipboardCheck", key: (c) => c.academicRequirement },
@@ -843,7 +843,7 @@ function CompareTable({
     <div className="max-h-[70vh] overflow-auto alo-scroll">
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-white">
-          <TableRow className="border-b border-[#2563EB]/15">
+          <TableRow className="border-b border-[#0057B8]/15">
             <TableHead className="sticky left-0 z-20 w-32 bg-white text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Attribute
             </TableHead>
@@ -851,7 +851,7 @@ function CompareTable({
               <TableHead key={c.slug} className="min-w-[180px] align-top">
                 <button
                   onClick={() => onNavigate(c.slug)}
-                  className="text-left text-sm font-bold text-[#2563EB] hover:underline"
+                  className="text-left text-sm font-bold text-[#0057B8] hover:underline"
                 >
                   {c.name}
                 </button>
@@ -864,10 +864,10 @@ function CompareTable({
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.label} className="border-b border-[#2563EB]/8">
+            <TableRow key={row.label} className="border-b border-[#0057B8]/8">
               <TableCell className="sticky left-0 z-10 bg-[#f7f9fc] align-top text-xs font-semibold text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <Icon name={row.icon} className="size-3.5 text-[#2563EB]" />
+                  <Icon name={row.icon} className="size-3.5 text-[#0057B8]" />
                   {row.label}
                 </span>
               </TableCell>

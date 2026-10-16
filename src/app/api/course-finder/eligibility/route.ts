@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 // ============================================================
 // SMART ELIGIBILITY CHECKER
-// Brand: ALO Education — Blue #2563EB, Orange #F97316
+// Brand: ALO Education — Blue #0057B8, Orange #E8501A
 // Rule-based matching against published courses.
 // ============================================================
 

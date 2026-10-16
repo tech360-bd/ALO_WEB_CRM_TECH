@@ -18,8 +18,8 @@ const ICONS = {
 };
 
 const TONES = {
-  blue: 'border-[#2563EB]/30 bg-[#2563EB]/[0.04] text-[#2563EB]',
-  orange: 'border-[#F97316]/30 bg-[#F97316]/[0.04] text-[#B63A12]',
+  blue: 'border-[#0057B8]/30 bg-[#0057B8]/[0.04] text-[#0057B8]',
+  orange: 'border-[#E8501A]/30 bg-[#E8501A]/[0.04] text-[#B63A12]',
   green: 'border-emerald-300 bg-emerald-50 text-emerald-700',
   slate: 'border-slate-300 bg-slate-50 text-slate-700',
 };
@@ -48,7 +48,7 @@ export default function EditorialFlowDiagram({
     <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" aria-labelledby={titleId}>
       <figcaption id={titleId} className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2563EB]">System map</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">System map</p>
           <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
         </div>
         <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">static · auditable</span>

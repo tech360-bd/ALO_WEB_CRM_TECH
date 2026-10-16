@@ -163,7 +163,7 @@ const MARKETING_STATUS_COLORS: Record<string, string> = {
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#2563EB]/15 text-[#2563EB]",
+  PUBLISHED: "bg-[#0057B8]/15 text-[#0057B8]",
   ARCHIVED: "bg-slate-200 text-slate-600",
 };
 
@@ -229,11 +229,11 @@ function QuotaBar({ label, used, limit, icon, hint }: { label: string; used: num
   const remaining = Math.max(0, limit - used);
   const color = quotaColor(pct);
   return (
-    <Card className="rounded-2xl border-2 border-[#2563EB]/20">
+    <Card className="rounded-2xl border-2 border-[#0057B8]/20">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
               <Icon name={icon} className="size-5" />
             </div>
             <div>
@@ -304,14 +304,14 @@ function AiContentCard({
   action?: React.ReactNode;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+    <Card className="rounded-2xl border-2 border-[#0057B8]/15">
       <CardContent className="pt-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
               <Icon name={icon} className="size-3.5" />
             </div>
-            <p className="text-sm font-semibold text-[#2563EB]">{title}</p>
+            <p className="text-sm font-semibold text-[#0057B8]">{title}</p>
           </div>
           {action}
         </div>
@@ -624,8 +624,8 @@ export function PartnerMarketingStudio() {
             <QuotaBar label="Image Quota" icon="Image" used={imagesUsed} limit={imageLimit} hint="AI marketing visuals" />
             <QuotaBar label="Video Quota" icon="Video" used={videosUsed} limit={videoLimit} hint={`Max ${videoDurationLimit}s per video`} />
           </div>
-          <div className="flex items-start gap-2 rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
-            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
+          <div className="flex items-start gap-2 rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
+            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
             <p>
               <strong>Video max duration: {videoDurationLimit} seconds.</strong> Quota resets at the start of each UTC calendar month. Color coding: green &lt;60%, amber 60-80%, red &gt;80%.
               {requiresAloApproval && " ALO approval is required before publishing."}
@@ -640,7 +640,7 @@ export function PartnerMarketingStudio() {
           <div className="flex min-w-[760px] items-center gap-1 overflow-x-auto pb-2">
             {WORKFLOW_STEPS.map((step, i) => (
               <React.Fragment key={step.label}>
-                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#2563EB]/15 bg-white px-3 py-2.5">
+                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#0057B8]/15 bg-white px-3 py-2.5">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-alo-gradient text-white">
                     <Icon name={step.icon} className="size-4" />
                   </div>
@@ -648,7 +648,7 @@ export function PartnerMarketingStudio() {
                   <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 {i < WORKFLOW_STEPS.length - 1 && (
-                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#2563EB]/40" />
+                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#0057B8]/40" />
                 )}
               </React.Fragment>
             ))}
@@ -659,10 +659,10 @@ export function PartnerMarketingStudio() {
       {/* Compliance rules card */}
       <SectionCard title="Compliance Rules" description="All AI content must follow ALO Education brand guidelines" icon="ShieldCheck">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 px-4 py-3">
+          <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Icon name="Sparkles" className="size-4 text-[#2563EB]" />
-              <p className="text-sm font-semibold text-[#2563EB]">AI Content MUST</p>
+              <Icon name="Sparkles" className="size-4 text-[#0057B8]" />
+              <p className="text-sm font-semibold text-[#0057B8]">AI Content MUST</p>
             </div>
             <ul className="mt-2 space-y-1 text-xs text-foreground/85">
               <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Follow ALO brand voice: professional, encouraging, student-focused</li>
@@ -803,7 +803,7 @@ export function PartnerMarketingStudio() {
                       </div>
                     </div>
                     <Button
-                      className="w-full bg-[#F97316] text-white hover:bg-[#F97316]/90 h-12"
+                      className="w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12"
                       disabled={generating || !canCreateCampaign}
                       onClick={generateContent}
                     >
@@ -854,7 +854,7 @@ export function PartnerMarketingStudio() {
                         {[0, 1, 2].map((i) => (
                           <span
                             key={i}
-                            className="size-2 rounded-full bg-[#2563EB]"
+                            className="size-2 rounded-full bg-[#0057B8]"
                             style={{ animation: `pulse 1s ease-in-out ${i * 0.15}s infinite` }}
                           />
                         ))}
@@ -874,18 +874,18 @@ export function PartnerMarketingStudio() {
                         content={currentRequest.instagramCaption}
                         action={<CopyButton text={currentRequest.instagramCaption || ""} label="Instagram caption" />}
                       />
-                      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+                      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
                         <CardContent className="pt-4">
                           <div className="mb-2 flex items-center gap-2">
-                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#2563EB]">
+                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
                               <Icon name="Hash" className="size-3.5" />
                             </div>
-                            <p className="text-sm font-semibold text-[#2563EB]">Hashtags</p>
+                            <p className="text-sm font-semibold text-[#0057B8]">Hashtags</p>
                           </div>
                           {hashtags.length > 0 ? (
                             <div className="flex flex-wrap gap-1.5">
                               {hashtags.map((h, i) => (
-                                <Badge key={i} variant="outline" className="border-[#2563EB]/20 bg-[#e8f0fb]/40 font-mono text-[#2563EB]">
+                                <Badge key={i} variant="outline" className="border-[#0057B8]/20 bg-[#e8f0fb]/40 font-mono text-[#0057B8]">
                                   {h}
                                 </Badge>
                               ))}
@@ -904,7 +904,7 @@ export function PartnerMarketingStudio() {
                             <CopyButton text={currentRequest.imagePrompt || ""} label="Image prompt" />
                             <Button
                               size="sm"
-                              className="h-7 bg-[#2563EB] px-2 text-xs text-white hover:bg-[#2563EB]/90"
+                              className="h-7 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
                               disabled={!canCreateCampaign || assetLoading === "generate_image" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
                               onClick={() => runAssetAction("generate_image")}
                             >
@@ -926,7 +926,7 @@ export function PartnerMarketingStudio() {
                             <CopyButton text={currentRequest.videoPrompt || ""} label="Video prompt" />
                             <Button
                               size="sm"
-                              className="h-7 bg-[#2563EB] px-2 text-xs text-white hover:bg-[#2563EB]/90"
+                              className="h-7 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
                               disabled={!canCreateCampaign || assetLoading === "generate_video" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
                               onClick={() => runAssetAction("generate_video")}
                             >
@@ -964,10 +964,10 @@ export function PartnerMarketingStudio() {
                       )}
 
                       {/* Workflow action buttons */}
-                      <Card className="rounded-2xl border-2 border-[#F97316]/30 bg-[#fdece4]/30">
+                      <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-[#fdece4]/30">
                         <CardContent className="pt-4">
                           <div className="mb-3 flex items-center justify-between">
-                            <p className="text-sm font-semibold text-[#F97316]">Workflow Actions</p>
+                            <p className="text-sm font-semibold text-[#E8501A]">Workflow Actions</p>
                             <Badge className={MARKETING_STATUS_COLORS[currentRequest.approvalStatus] ?? "bg-slate-100 text-slate-700"}>
                               {STATUS_LABELS[currentRequest.approvalStatus] ?? currentRequest.approvalStatus}
                             </Badge>
@@ -1048,7 +1048,7 @@ export function PartnerMarketingStudio() {
                             </p>
                           )}
                           {currentRequest.publishedUrl && (
-                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#2563EB]">
+                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#0057B8]">
                               <Icon name="ExternalLink" className="size-3" />
                               <span>Published at <code className="font-mono">{currentRequest.publishedUrl}</code></span>
                             </p>
@@ -1106,7 +1106,7 @@ export function PartnerMarketingStudio() {
                     ? 'Submitted partner campaigns that require ALO review will appear here.'
                     : 'Generate your first marketing campaign in the Create Campaign tab.'}
                   action={!isAloReviewMode ? (
-                    <Button className="bg-[#F97316] text-white hover:bg-[#F97316]/90 h-12" onClick={() => setTab("create")}>
+                    <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={() => setTab("create")}>
                       <Icon name="Sparkles" className="size-4" />
                       Create Campaign
                     </Button>
@@ -1137,7 +1137,7 @@ export function PartnerMarketingStudio() {
                             ) : null}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="border-[#2563EB]/20 text-[#2563EB]">
+                            <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
                               {PLATFORM_LABELS[r.platform] ?? r.platform}
                             </Badge>
                           </TableCell>

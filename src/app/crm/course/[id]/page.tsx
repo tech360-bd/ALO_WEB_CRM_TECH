@@ -17,7 +17,7 @@ export default function CrmCourseDetailPage() {
     <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-16">
       <div className="mx-auto max-w-4xl px-4 space-y-6">
         <Card className="p-8 bg-white border-[#E2E8F0] rounded-3xl shadow-sm">
-          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-3">CRM Course Detail — Permission-Based Internal Fields</Badge>
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-3">CRM Course Detail — Permission-Based Internal Fields</Badge>
           <h1 className="text-3xl font-bold text-[#0F172A]">{course.courseTitle}</h1>
           <p className="text-sm text-gray-600 mt-2">{course.university?.name} • {course.country} • {course.studyLevel} • Tuition: {course.tuitionFee ? `${course.currency} ${course.tuitionFee}` : 'Tuition information is currently being verified.'}</p>
           <div className="grid sm:grid-cols-2 gap-3 mt-6 text-xs">

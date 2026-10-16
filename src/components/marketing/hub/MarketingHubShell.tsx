@@ -182,22 +182,22 @@ const subNavGroups: SubNavGroup[] = [
     title: 'Overview',
     items: [
       { icon: LayoutDashboard, label: '1. Marketing Overview', view: 'dashboard' },
-      { icon: Bot, label: '2. AI Marketing Command Center', view: 'ai-director', badge: 'AI', badgeColor: 'bg-[#F97316]' },
+      { icon: Bot, label: '2. AI Marketing Command Center', view: 'ai-director', badge: 'AI', badgeColor: 'bg-[#E8501A]' },
     ],
   },
   {
     title: 'Campaign & Content',
     items: [
       { icon: Megaphone, label: '3. Campaign Manager', view: 'campaign-manager' },
-      { icon: Palette, label: '4. AI Content Studio', view: 'content-studio', badge: 'NEW', badgeColor: 'bg-[#2563EB]' },
+      { icon: Palette, label: '4. AI Content Studio', view: 'content-studio', badge: 'NEW', badgeColor: 'bg-[#0057B8]' },
       { icon: Image, label: '5. AI Video Studio', view: 'video-studio' },
     ],
   },
   {
     title: 'Channels',
     items: [
-      { icon: Share2, label: '6. Social Media Manager', view: 'social-media', badge: '12', badgeColor: 'bg-[#2563EB]' },
-      { icon: Target, label: '7. Advertising Manager', view: 'advertising', badge: 'NEW', badgeColor: 'bg-[#F97316]' },
+      { icon: Share2, label: '6. Social Media Manager', view: 'social-media', badge: '12', badgeColor: 'bg-[#0057B8]' },
+      { icon: Target, label: '7. Advertising Manager', view: 'advertising', badge: 'NEW', badgeColor: 'bg-[#E8501A]' },
       { icon: MessageCircle, label: '8. WhatsApp Marketing', view: 'whatsapp-marketing', badge: '8', badgeColor: 'bg-emerald-500' },
       { icon: MessageCircle, label: '9. SMS Marketing', view: 'sms-marketing' },
       { icon: MessageCircle, label: '10. Email Marketing', view: 'email-marketing' },
@@ -214,7 +214,7 @@ const subNavGroups: SubNavGroup[] = [
   {
     title: 'Operations',
     items: [
-      { icon: Bot, label: '14. AI Employee Department', view: 'ai-employees', badge: '20', badgeColor: 'bg-[#F97316]' },
+      { icon: Bot, label: '14. AI Employee Department', view: 'ai-employees', badge: '20', badgeColor: 'bg-[#E8501A]' },
       { icon: Calendar, label: '15. Marketing Calendar', view: 'marketing-calendar' },
       { icon: CheckSquare, label: '16. Approval Center', view: 'approval-center', badge: '7', badgeColor: 'bg-purple-500' },
     ],
@@ -253,13 +253,13 @@ function SubSidebarNavItem({
           onClick={onClick}
           className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 cursor-pointer ${
             isActive
-              ? 'bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20'
+              ? 'bg-[#E8501A]/10 text-[#E8501A] border border-[#E8501A]/20'
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
           }`}
         >
           <Icon
             className={`w-4 h-4 shrink-0 ${
-              isActive ? 'text-[#F97316]' : 'text-gray-400'
+              isActive ? 'text-[#E8501A]' : 'text-gray-400'
             }`}
           />
           <span className="flex-1 text-left truncate">{item.label}</span>
@@ -271,7 +271,7 @@ function SubSidebarNavItem({
             </span>
           )}
           {isActive && (
-            <ChevronRight className="w-3 h-3 text-[#F97316] shrink-0" />
+            <ChevronRight className="w-3 h-3 text-[#E8501A] shrink-0" />
           )}
         </button>
       </TooltipTrigger>
@@ -297,7 +297,7 @@ function SubSidebarContent({
     <div className="flex flex-col h-full">
       {/* Logo Area */}
       <div className="p-3 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F97316] to-[#FFB347] text-white flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E8501A] to-[#FFB347] text-white flex items-center justify-center shrink-0">
           <Megaphone className="w-4 h-4" />
         </div>
         <div className="flex-1 min-w-0">
@@ -389,7 +389,7 @@ export default function MarketingHubShell({ children }: MarketingHubShellProps) 
               onClick={() => setActiveView(item.view)}
               className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-colors cursor-pointer ${
                 activeView === item.view
-                  ? 'bg-[#F97316] text-white'
+                  ? 'bg-[#E8501A] text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >

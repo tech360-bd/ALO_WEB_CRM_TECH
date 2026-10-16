@@ -160,10 +160,10 @@ function agentTypeMeta(t: string) {
 }
 
 function successRateColor(rate: number): string {
-  if (rate >= 95) return "#15803D";
-  if (rate >= 85) return "#C2410C";
+  if (rate >= 95) return "#047857";
+  if (rate >= 85) return "#C93D13";
   if (rate >= 70) return "#FBBF24";
-  return "#DC2626";
+  return "#EF4444";
 }
 
 function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
@@ -223,9 +223,9 @@ function ArchitectureBox({
   accent: "blue" | "violet" | "orange";
 }) {
   const accentMap: Record<string, string> = {
-    blue: "border-[#2563EB] bg-[#EFF6FF] text-[#2563EB]",
+    blue: "border-[#0057B8] bg-[#EFF6FF] text-[#0057B8]",
     violet: "border-violet-300 bg-violet-50 text-violet-700",
-    orange: "border-[#C2410C] bg-[#FFF7ED] text-[#C2410C]",
+    orange: "border-[#C93D13] bg-[#FFF7ED] text-[#C93D13]",
   };
   return (
     <div className={cn("flex flex-1 flex-col items-center gap-2 rounded-2xl border-2 p-4 text-center alo-shadow", accentMap[accent])}>
@@ -596,7 +596,7 @@ export function CentralAiCommand() {
                       onClick={() => setSelected(a)}
                       className="cursor-pointer border-[#E2E8F0] transition-colors hover:bg-[#EFF6FF]/50"
                     >
-                      <TableCell className="font-mono text-xs font-semibold text-[#2563EB]">{a.agentCode}</TableCell>
+                      <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{a.agentCode}</TableCell>
                       <TableCell className="font-medium text-[#0F172A]">{a.agentName}</TableCell>
                       <TableCell><TypePill type={a.agentType} /></TableCell>
                       <TableCell>
@@ -652,9 +652,9 @@ export function CentralAiCommand() {
       {/* AI integration + Safety */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SectionCard title="Centralized Integration" icon="Workflow">
-          <div className="rounded-2xl border border-[#2563EB]/20 bg-gradient-to-br from-[#EFF6FF] to-white p-4">
+          <div className="rounded-2xl border border-[#0057B8]/20 bg-gradient-to-br from-[#EFF6FF] to-white p-4">
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB] text-white">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0057B8] text-white">
                 <Icon name="Network" className="size-5" />
               </div>
               <div>
@@ -674,7 +674,7 @@ export function CentralAiCommand() {
                 { icon: "Users", label: "Invisible to users" },
               ].map((s) => (
                 <div key={s.label} className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-2 py-1.5">
-                  <Icon name={s.icon} className="size-3.5 text-[#2563EB]" />
+                  <Icon name={s.icon} className="size-3.5 text-[#0057B8]" />
                   <span className="badge-text text-[#475569]">{s.label}</span>
                 </div>
               ))}
@@ -724,7 +724,7 @@ export function CentralAiCommand() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#2563EB]">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#0057B8]">
                     <Icon name={agentTypeMeta(selected.agentType).icon} className="size-5" />
                   </div>
                   <div>
@@ -808,7 +808,7 @@ export function CentralAiCommand() {
                 {selected.config && (
                   <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
                     <p className="card-title flex items-center gap-1.5 text-[#0F172A]">
-                      <Icon name="Settings2" className="size-4 text-[#2563EB]" />
+                      <Icon name="Settings2" className="size-4 text-[#0057B8]" />
                       Configuration
                     </p>
                     <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -858,7 +858,7 @@ export function CentralAiCommand() {
                         <div className="mt-2 max-h-48 space-y-1.5 overflow-auto alo-scroll">
                           {log.slice(-10).reverse().map((entry, i) => (
                             <div key={i} className="flex items-start gap-2 rounded-md border border-[#E2E8F0] bg-slate-50/60 px-2 py-1.5">
-                              <Icon name="CircleDot" className="mt-0.5 size-3 shrink-0 text-[#2563EB]" />
+                              <Icon name="CircleDot" className="mt-0.5 size-3 shrink-0 text-[#0057B8]" />
                               <div className="min-w-0">
                                 <p className="body-text font-medium text-[#0F172A]">
                                   {entry?.action || entry?.event || "Invocation"}

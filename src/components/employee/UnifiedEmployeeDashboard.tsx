@@ -237,13 +237,13 @@ export default function UnifiedEmployeeDashboard({
       {/* 2. Top Header Shell */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 sm:px-6 py-3 shadow-sm flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#003C80] text-white flex items-center justify-center font-black text-lg shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#003C80] text-white flex items-center justify-center font-black text-lg shadow-sm">
             ALO
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base font-bold text-slate-800 tracking-tight">{pageTitle}</h1>
-              <Badge className="bg-blue-50 text-[#2563EB] border-blue-200 font-semibold text-xs capitalize">
+              <Badge className="bg-blue-50 text-[#0057B8] border-blue-200 font-semibold text-xs capitalize">
                 {activeRole.toLowerCase().replace(/_/g, ' ')}
               </Badge>
             </div>
@@ -269,7 +269,7 @@ export default function UnifiedEmployeeDashboard({
             <Button
               size="sm"
               onClick={() => setShowLeadModal(true)}
-              className="bg-[#F97316] hover:bg-[#D04010] text-white text-xs h-9 font-semibold gap-1.5 shadow-sm"
+              className="bg-[#E8501A] hover:bg-[#D04010] text-white text-xs h-9 font-semibold gap-1.5 shadow-sm"
             >
               <Plus className="w-4 h-4" /> Quick Lead
             </Button>
@@ -342,7 +342,7 @@ export default function UnifiedEmployeeDashboard({
         {/* Loading Skeleton */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-24 text-slate-400">
-            <Loader2 className="w-8 h-8 animate-spin text-[#2563EB] mb-2" />
+            <Loader2 className="w-8 h-8 animate-spin text-[#0057B8] mb-2" />
             <p className="text-sm font-medium">Loading live operating metrics...</p>
           </div>
         )}
@@ -379,7 +379,7 @@ export default function UnifiedEmployeeDashboard({
                   <p className="font-bold text-sm text-slate-800">Marketing content library</p>
                   <p className="text-[11px] text-slate-500">External social publishing and provider delivery are not configured or verified.</p>
                 </div>
-                <button onClick={() => router.push('/crm/marketing-manager')} className="h-9 px-4 rounded-xl bg-[#F97316] text-white text-xs font-bold hover:bg-[#d04010]">Open library</button>
+                <button onClick={() => router.push('/crm/marketing-manager')} className="h-9 px-4 rounded-xl bg-[#E8501A] text-white text-xs font-bold hover:bg-[#d04010]">Open library</button>
               </div>
             )}
             {/* Top KPI Cards Grid — 12-column responsive: desktop 12-col, tablet 2-col, mobile 1-col; role-specific KPIs */}
@@ -393,7 +393,7 @@ export default function UnifiedEmployeeDashboard({
                     <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.assignedLeads)}</h3>
                     <p className="text-[11px] text-slate-500 mt-1 font-medium">{displayMetric(data?.hotLeads)} marked hot • {displayMetric(data?.newLeads)} marked new</p>
                   </div>
-                  <div className="w-11 h-11 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-orange-50 text-[#E8501A] flex items-center justify-center">
                     <Users className="w-6 h-6" />
                   </div>
                 </CardContent>
@@ -406,7 +406,7 @@ export default function UnifiedEmployeeDashboard({
                     <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.activeStudents)}</h3>
                     <p className="text-[11px] text-slate-400 mt-1 font-medium">{displayMetric(data?.totalStudents)} student records in scope</p>
                   </div>
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#0057B8] flex items-center justify-center">
                     <GraduationCap className="w-6 h-6" />
                   </div>
                 </CardContent>
@@ -417,7 +417,7 @@ export default function UnifiedEmployeeDashboard({
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{activeRole.includes('COUNTRY') ? 'Country Applications' : activeRole.includes('BRANCH') ? 'Branch Applications' : 'Active Applications'}</p>
                     <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.activeApplications ?? data?.branchApplications ?? data?.countryApplications)}</h3>
-                    <p className="text-[11px] text-[#2563EB] font-medium mt-1">{displayMetric(data?.offersReceived ?? data?.countryOffers ?? data?.offerCount)} Offers Received</p>
+                    <p className="text-[11px] text-[#0057B8] font-medium mt-1">{displayMetric(data?.offersReceived ?? data?.countryOffers ?? data?.offerCount)} Offers Received</p>
                   </div>
                   <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                     <FileText className="w-6 h-6" />
@@ -468,7 +468,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-slate-800 mt-1">{displayMetric(data?.appointmentsToday)}</h3>
                         <p className="text-[11px] text-slate-500 mt-1">Scheduled or confirmed for assigned students.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#0057B8] flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-slate-200/80 shadow-sm">
@@ -745,22 +745,22 @@ export default function UnifiedEmployeeDashboard({
             {/* Navigation Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
               <TabsList className="bg-white border border-slate-200 p-1 rounded-xl shadow-sm flex flex-wrap h-auto gap-1">
-                <TabsTrigger value="overview" className="text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+                <TabsTrigger value="overview" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
                   Dashboard Overview
                 </TabsTrigger>
-                <TabsTrigger value="leads" className="text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+                <TabsTrigger value="leads" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
                   My Leads ({displayMetric(data?.assignedLeads)})
                 </TabsTrigger>
-                <TabsTrigger value="students" className="text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+                <TabsTrigger value="students" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
                   My Students ({displayMetric(data?.activeStudents)})
                 </TabsTrigger>
-                <TabsTrigger value="applications" className="text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+                <TabsTrigger value="applications" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
                   Applications ({displayMetric(data?.activeApplications)})
                 </TabsTrigger>
-                <TabsTrigger value="tasks" className="text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">
+                <TabsTrigger value="tasks" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
                   Tasks & Follow-ups
                 </TabsTrigger>
-                <TabsTrigger value="ai-assistant" className="text-xs font-semibold data-[state=active]:bg-[#2563EB] data-[state=active]:text-white flex items-center gap-1">
+                <TabsTrigger value="ai-assistant" className="text-xs font-semibold data-[state=active]:bg-[#0057B8] data-[state=active]:text-white flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-amber-400" /> AI Workspace
                 </TabsTrigger>
               </TabsList>
@@ -780,7 +780,7 @@ export default function UnifiedEmployeeDashboard({
                           variant="ghost"
                           size="sm"
                           onClick={() => setActiveTab('students')}
-                          className="text-xs text-[#2563EB] font-semibold gap-1"
+                          className="text-xs text-[#0057B8] font-semibold gap-1"
                         >
                           View All <ChevronRight className="w-3.5 h-3.5" />
                         </Button>
@@ -791,7 +791,7 @@ export default function UnifiedEmployeeDashboard({
                             data.myStudents.map((s: any) => (
                               <div key={s.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-9 h-9 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center font-bold text-xs">
+                                  <div className="w-9 h-9 rounded-full bg-blue-100 text-[#0057B8] flex items-center justify-center font-bold text-xs">
                                     {s.fullName?.substring(0, 2).toUpperCase() || 'ST'}
                                   </div>
                                   <div>
@@ -803,7 +803,7 @@ export default function UnifiedEmployeeDashboard({
                                   <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 capitalize text-xs">
                                     {s.currentStage || 'Stage not recorded'}
                                   </Badge>
-                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-xs text-[#2563EB] font-medium h-7">
+                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-xs text-[#0057B8] font-medium h-7">
                                     Open
                                   </Button>
                                 </div>
@@ -866,14 +866,14 @@ export default function UnifiedEmployeeDashboard({
                         {data?.pendingTasksCount > 0 ? (
                           <div className="space-y-2">
                             <div className="flex items-start gap-3 p-2.5 rounded-lg bg-orange-50 border border-orange-100">
-                              <Clock className="w-4 h-4 text-[#F97316] mt-0.5 shrink-0" />
+                              <Clock className="w-4 h-4 text-[#E8501A] mt-0.5 shrink-0" />
                               <div className="text-xs">
                                 <p className="font-bold text-slate-800">{data.followUpsDue ?? 0} Follow-ups Due Today</p>
                                 <p className="text-slate-500">{data.overdueFollowUps ?? 0} overdue — take action</p>
                               </div>
                             </div>
                             <div className="flex items-start gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                              <Calendar className="w-4 h-4 text-[#2563EB] mt-0.5 shrink-0" />
+                              <Calendar className="w-4 h-4 text-[#0057B8] mt-0.5 shrink-0" />
                               <div className="text-xs">
                                 <p className="font-bold text-slate-800">{data.pendingTasksCount ?? 0} Pending Tasks</p>
                                 <p className="text-slate-500">View in Tasks tab for details</p>
@@ -894,7 +894,7 @@ export default function UnifiedEmployeeDashboard({
                         <Button
                           variant="outline"
                           onClick={() => router.push('/admin/university-data')}
-                          className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-blue-50 hover:text-[#2563EB]"
+                          className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-blue-50 hover:text-[#0057B8]"
                         >
                           <Building className="w-4 h-4" /> Course Finder
                         </Button>
@@ -908,7 +908,7 @@ export default function UnifiedEmployeeDashboard({
                         <Button
                           variant="outline"
                           onClick={() => router.push('/employee/visa-dashboard')}
-                          className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-orange-50 hover:text-[#F97316]"
+                          className="h-14 text-xs flex-col gap-1 border-slate-200 hover:bg-orange-50 hover:text-[#E8501A]"
                         >
                           <ShieldCheck className="w-4 h-4" /> Visa Cases
                         </Button>
@@ -934,7 +934,7 @@ export default function UnifiedEmployeeDashboard({
                       <p className="text-xs text-slate-400">Inbound and walk-in prospective international students</p>
                     </div>
                     {canCreateLead && (
-                      <Button size="sm" onClick={() => setShowLeadModal(true)} className="bg-[#F97316] text-white text-xs h-8">
+                      <Button size="sm" onClick={() => setShowLeadModal(true)} className="bg-[#E8501A] text-white text-xs h-8">
                         <Plus className="w-3.5 h-3.5 mr-1" /> Add Lead
                       </Button>
                     )}
@@ -964,7 +964,7 @@ export default function UnifiedEmployeeDashboard({
                               <td className="p-3 text-slate-600">{lead.destination || lead.country || '—'}</td>
                               <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} text-[10px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
                               <td className="p-3 text-right">
-                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[#2563EB] text-xs h-7">Contact</Button>
+                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[#0057B8] text-xs h-7">Contact</Button>
                               </td>
                             </tr>
                           ))})() : (
@@ -990,7 +990,7 @@ export default function UnifiedEmployeeDashboard({
                             </div>
                             <div className="mt-3 flex gap-2">
                               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 text-xs h-8"><PhoneCall className="w-3 h-3 mr-1" /> Call</Button>
-                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[#2563EB] text-white text-xs h-8"><MessageSquare className="w-3 h-3 mr-1" /> Message</Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[#0057B8] text-white text-xs h-8"><MessageSquare className="w-3 h-3 mr-1" /> Message</Button>
                             </div>
                           </div>
                         ));
@@ -1121,7 +1121,7 @@ export default function UnifiedEmployeeDashboard({
                 <Button type="button" variant="outline" size="sm" onClick={() => setShowLeadModal(false)} className="text-xs">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={creatingLead} size="sm" className="bg-[#F97316] hover:bg-[#D04010] text-white text-xs font-semibold">
+                <Button type="submit" disabled={creatingLead} size="sm" className="bg-[#E8501A] hover:bg-[#D04010] text-white text-xs font-semibold">
                   {creatingLead ? 'Saving...' : 'Register Lead'}
                 </Button>
               </div>

@@ -63,7 +63,7 @@ export default function ServicesDirectoryPage() {
                     </div>
                   </div>
                   <div className="p-6 pt-0">
-                    <Link href={`/services/${s.slug}`} className="block w-full"><Button className="w-full bg-[#0057B8] text-white hover:bg-[#1D4ED8] text-xs font-bold h-12 rounded-xl flex items-center justify-center gap-1.5">View Details <ArrowRight className="h-4 w-4" /></Button></Link>
+                    <Link href={`/services/${s.slug}`} className="block w-full"><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl flex items-center justify-center gap-1.5">View Details <ArrowRight className="h-4 w-4" /></Button></Link>
                   </div>
                 </Card>
               ))}

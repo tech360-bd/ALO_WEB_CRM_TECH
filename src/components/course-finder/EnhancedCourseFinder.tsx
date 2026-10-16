@@ -226,7 +226,7 @@ export default function EnhancedCourseFinder() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-6">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-12 shadow-sm">
-          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs mb-4">Verified, source-linked courses</Badge>
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">Verified, source-linked courses</Badge>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Find Your Course</h1>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">
             Search verified course records across our partner destinations. Only courses with a published, verified record and a source link are listed. Where a fee, intake, or requirement is not recorded, the course page says so.
@@ -235,7 +235,7 @@ export default function EnhancedCourseFinder() {
 
         <div className="grid lg:grid-cols-4 gap-6">
           <Card className="p-5 lg:col-span-1 h-fit bg-white border-[#E2E8F0] rounded-2xl shadow-sm" aria-label="Course filters">
-            <h2 className="font-semibold text-sm text-[#0F172A] mb-4 flex items-center gap-2"><Filter className="w-4 h-4 text-[#2563EB]" aria-hidden="true" />Filters{activeCount > 0 ? ` (${activeCount} active)` : ''}</h2>
+            <h2 className="font-semibold text-sm text-[#0F172A] mb-4 flex items-center gap-2"><Filter className="w-4 h-4 text-[#0057B8]" aria-hidden="true" />Filters{activeCount > 0 ? ` (${activeCount} active)` : ''}</h2>
             <div className="space-y-4">
               <div>
                 <label htmlFor="cf-search" className={label}>Course, subject or university</label>
@@ -370,7 +370,7 @@ export default function EnhancedCourseFinder() {
                 </div>
               </div>
               <p className="text-[11px] text-gray-500">IELTS: shows courses whose verified IELTS requirement is at or below your score.</p>
-              <Button variant="outline" onClick={clearAll} disabled={activeCount === 0} className="w-full border-[#E2E8F0] h-11">Clear all filters</Button>
+              <Button variant="outline" onClick={clearAll} disabled={activeCount === 0} className="w-full border-[#E2E8F0] h-12">Clear all filters</Button>
               <TestPreparationMiniCard compact contextTitle="Prepare for English proficiency tests for this course" />
               <p className="text-[11px] text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Commission, internal notes and partner information are never shown on this page.</p>
             </div>
@@ -388,7 +388,7 @@ export default function EnhancedCourseFinder() {
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" aria-hidden="true" />
                 <p className="font-semibold text-red-900">Courses could not be loaded.</p>
                 <p className="text-sm text-red-800 mt-1">{state.message}</p>
-                <Button onClick={() => setRetryNonce((n) => n + 1)} className="mt-4 bg-[#2563EB] text-white h-11">Try again</Button>
+                <Button onClick={() => setRetryNonce((n) => n + 1)} className="mt-4 bg-[#0057B8] text-white h-12">Try again</Button>
               </Card>
             )}
 
@@ -397,7 +397,7 @@ export default function EnhancedCourseFinder() {
                 <Search className="w-12 h-12 text-gray-300 mx-auto mb-3" aria-hidden="true" />
                 <p className="text-sm font-semibold text-gray-700">No courses match your current filters.</p>
                 <p className="text-xs text-gray-500 mt-2">Try removing a filter. Only verified, source-linked courses are listed.</p>
-                {activeCount > 0 && <Button variant="outline" onClick={clearAll} className="mt-4 border-[#E2E8F0] h-11">Clear all filters</Button>}
+                {activeCount > 0 && <Button variant="outline" onClick={clearAll} className="mt-4 border-[#E2E8F0] h-12">Clear all filters</Button>}
               </Card>
             )}
 
@@ -406,10 +406,10 @@ export default function EnhancedCourseFinder() {
                 <p className="text-sm text-gray-600">Showing {firstResult}–{lastResult} of {ready.total} courses</p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {ready.courses.map((c) => (
-                    <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                    <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-2">
-                          <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">{c.studyLevel || 'Level not recorded'}</Badge>
+                          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">{c.studyLevel || 'Level not recorded'}</Badge>
                           {c.yearlyTuition > 0
                             ? <span className="text-xs font-bold text-[#0F172A]">{c.tuitionCurrency} {c.yearlyTuition.toLocaleString()}/yr</span>
                             : <span className="text-[11px] text-gray-500">Fee information requires counselor verification</span>}
@@ -418,7 +418,7 @@ export default function EnhancedCourseFinder() {
                         <p className="text-xs text-gray-600 flex items-center gap-1 mb-2">
                           <Building2 className="w-3 h-3" aria-hidden="true" />
                           {c.universitySlug
-                            ? <Link href={`/universities/${encodeURIComponent(c.universitySlug)}`} className="text-[#2563EB] underline">{c.universityName}</Link>
+                            ? <Link href={`/universities/${encodeURIComponent(c.universitySlug)}`} className="text-[#0057B8] underline">{c.universityName}</Link>
                             : c.universityName}
                           {' · '}{[c.city, c.country].filter(Boolean).join(', ') || 'Location not recorded'}
                         </p>
@@ -432,16 +432,16 @@ export default function EnhancedCourseFinder() {
                           {c.applicationDeadline && <Badge className="bg-[#F8FAFC] text-slate-700 border-[#E2E8F0] text-[10px]">Deadline: {c.applicationDeadline}</Badge>}
                         </div>
                         <p className="text-[10px] text-gray-500 mt-2">
-                          Source: {c.courseSourceUrl ? <a href={c.courseSourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#2563EB] underline">Official record</a> : 'not recorded'}
+                          Source: {c.courseSourceUrl ? <a href={c.courseSourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">Official record</a> : 'not recorded'}
                           {' · '}Last verified: {c.courseLastVerifiedAt ? new Date(c.courseLastVerifiedAt).toLocaleDateString() : 'not recorded'}
                         </p>
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         <Link href={`/course/${encodeURIComponent(c.slug || c.courseId)}`} className="block col-span-1">
-                          <Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] h-11 text-xs font-bold">View course</Button>
+                          <Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] h-12 text-xs font-bold">View course</Button>
                         </Link>
                         <Link href="/eligibility-check" className="block col-span-1">
-                          <Button variant="outline" className="w-full h-11 text-xs border-[#E2E8F0]">Check eligibility</Button>
+                          <Button variant="outline" className="w-full h-12 text-xs border-[#E2E8F0]">Check eligibility</Button>
                         </Link>
                         <CompareToggle id={c.slug || c.courseId} title={c.courseTitle} />
                       </div>
@@ -451,8 +451,8 @@ export default function EnhancedCourseFinder() {
                 <nav className="flex justify-between items-center pt-4 text-xs text-gray-600" aria-label="Course results pages">
                   <span>Page {page} of {Math.max(1, totalPages)}</span>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-11 px-4" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
-                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-11 px-4" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
+                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-12 px-4" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-12 px-4" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
                   </div>
                 </nav>
               </>
@@ -493,7 +493,7 @@ function CompareToggle({ id, title }: { id: string; title: string }) {
       </Button>
       {full && <span role="status" className="text-red-700">You can compare up to {COMPARE_MAX} courses.</span>}
       {list.length > 0 && !full && (
-        <Link href={`/compare?courses=${encodeURIComponent(list.join(','))}`} className="text-[#2563EB] underline">Compare ({list.length})</Link>
+        <Link href={`/compare?courses=${encodeURIComponent(list.join(','))}`} className="text-[#0057B8] underline">Compare ({list.length})</Link>
       )}
     </div>
   );

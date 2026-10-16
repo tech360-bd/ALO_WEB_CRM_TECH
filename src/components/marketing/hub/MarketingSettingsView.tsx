@@ -12,8 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export default function MarketingSettingsView() {
   const [settings, setSettings] = useState({
     timezone:'Asia/Dhaka',
-    brandOrange:'#F97316',
-    brandBlue:'#2563EB',
+    brandOrange:'#E8501A',
+    brandBlue:'#0057B8',
     brandAccent:'#FFB347',
     autoPublish:false,
     requireApprovalFor:'medium',
@@ -24,13 +24,13 @@ export default function MarketingSettingsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Settings className="w-6 h-6 text-[#F97316]" />Marketing Settings</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Settings className="w-6 h-6 text-[#E8501A]" />Marketing Settings</h2>
         <p className="text-sm text-gray-500">Brand, permissions, automation policies, timezone, budget limits, consent enforcement — server-enforced.</p>
       </div>
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-[#F97316]" />Brand Identity</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Palette className="w-4 h-4 text-[#E8501A]" />Brand Identity</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-3 gap-3">
                 <div><label className="text-xs font-semibold">ALO Orange</label><Input value={settings.brandOrange} onChange={e=>setSettings({...settings, brandOrange:e.target.value})} className="mt-1 h-9" /></div>
@@ -46,7 +46,7 @@ export default function MarketingSettingsView() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#2563EB]" />Automation & Approval Policies</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#0057B8]" />Automation & Approval Policies</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-xs">Allow auto-execution for low-risk (research, drafts)</Label>
@@ -70,7 +70,7 @@ export default function MarketingSettingsView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#2563EB]" />Timezone & Scheduling</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#0057B8]" />Timezone & Scheduling</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div><label className="text-xs font-semibold">Primary Timezone</label><Select value={settings.timezone} onValueChange={v=>setSettings({...settings, timezone:v})}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Asia/Dhaka">Asia/Dhaka (ALO local)</SelectItem><SelectItem value="UTC">UTC</SelectItem></SelectContent></Select></div>
               <p className="text-[11px] text-gray-500">All MarketingCalendar.scheduledAt + cron scheduler are timezone-aware. Jobs have persistent records, idempotency, locks, retries, audit trails — no browser timers.</p>

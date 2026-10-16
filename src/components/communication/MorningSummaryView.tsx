@@ -87,7 +87,7 @@ export default function MorningSummaryView() {
     return (
       <div className="flex items-center justify-center min-h-64 text-slate-400">
         <div className="text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs">Loading your briefing...</p>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function MorningSummaryView() {
       <div className="p-8 text-center">
         <AlertTriangle className="w-8 h-8 text-[#EF4444] mx-auto mb-2" />
         <p className="text-sm font-medium text-[#EF4444]">{error}</p>
-        <button onClick={fetchSummary} className="mt-3 text-xs text-[#2563EB] hover:underline">Retry</button>
+        <button onClick={fetchSummary} className="mt-3 text-xs text-[#0057B8] hover:underline">Retry</button>
       </div>
     );
   }
@@ -141,13 +141,13 @@ export default function MorningSummaryView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           {
-            icon: <MessageSquare className="w-6 h-6 text-[#2563EB]" />,
+            icon: <MessageSquare className="w-6 h-6 text-[#0057B8]" />,
             value: summary.overnight.newConversations,
             label: 'New Conversations',
             bg: 'bg-blue-50',
           },
           {
-            icon: <AlertTriangle className="w-6 h-6 text-[#F97316]" />,
+            icon: <AlertTriangle className="w-6 h-6 text-[#E8501A]" />,
             value: summary.overnight.highPriority,
             label: 'High Priority',
             bg: 'bg-orange-50',
@@ -177,9 +177,9 @@ export default function MorningSummaryView() {
       {summary.topPriorityConversations.length > 0 && (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
           <div className="px-5 py-3.5 border-b border-[#E2E8F0] flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-[#F97316]" />
+            <AlertTriangle className="w-4 h-4 text-[#E8501A]" />
             <h2 className="font-bold text-sm text-[#0F172A]">Urgent / High Priority Conversations</h2>
-            <span className="ml-auto text-xs font-bold text-[#F97316] bg-red-50 px-2 py-0.5 rounded-full">
+            <span className="ml-auto text-xs font-bold text-[#E8501A] bg-red-50 px-2 py-0.5 rounded-full">
               {summary.topPriorityConversations.length} cases
             </span>
           </div>
@@ -218,7 +218,7 @@ export default function MorningSummaryView() {
       {Object.keys(summary.overnight.byChannel).length > 0 && (
         <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-4 h-4 text-[#2563EB]" />
+            <BarChart3 className="w-4 h-4 text-[#0057B8]" />
             <h2 className="font-bold text-sm text-[#0F172A]">Overnight Channel Breakdown</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -230,7 +230,7 @@ export default function MorningSummaryView() {
                     {CHANNEL_ICONS[channel] || <Globe className="w-3.5 h-3.5 text-slate-400" />}
                     <span className="text-xs font-medium capitalize text-[#0F172A]">{channel}</span>
                   </div>
-                  <span className="text-sm font-extrabold text-[#2563EB]">{count}</span>
+                  <span className="text-sm font-extrabold text-[#0057B8]">{count}</span>
                 </div>
               ))}
           </div>

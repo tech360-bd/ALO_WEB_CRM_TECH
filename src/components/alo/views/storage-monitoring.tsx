@@ -12,9 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 import { timeAgo, fmtDate } from "@/lib/alo-types";
 
 const POOL_COLORS: Record<string, { border: string; bg: string; text: string; bar: string }> = {
-  STUDENT_PARTNER: { border: "border-blue-200", bg: "bg-blue-50/50", text: "text-blue-700", bar: "#2563EB" },
-  OFFICIAL: { border: "border-orange-200", bg: "bg-orange-50/50", text: "text-orange-700", bar: "#F97316" },
-  OPERATIONAL: { border: "border-violet-200", bg: "bg-violet-50/50", text: "text-violet-700", bar: "#7c3aed" },
+  STUDENT_PARTNER: { border: "border-blue-200", bg: "bg-blue-50/50", text: "text-blue-700", bar: "#0057B8" },
+  OFFICIAL: { border: "border-orange-200", bg: "bg-orange-50/50", text: "text-orange-700", bar: "#E8501A" },
+  OPERATIONAL: { border: "border-violet-200", bg: "bg-violet-50/50", text: "text-violet-700", bar: "#0284C7" },
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -156,9 +156,9 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border-2 border-[#E2E8F0] bg-white p-1.5">
-          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">Overview</TabsTrigger>
-          <TabsTrigger value="files" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">File Browser</TabsTrigger>
-          <TabsTrigger value="audit" className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">Audit Trail</TabsTrigger>
+          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">Overview</TabsTrigger>
+          <TabsTrigger value="files" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">File Browser</TabsTrigger>
+          <TabsTrigger value="audit" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">Audit Trail</TabsTrigger>
         </TabsList>
 
         {/* OVERVIEW TAB */}

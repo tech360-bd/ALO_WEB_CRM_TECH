@@ -5,14 +5,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-sm font-semibold leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-alo-brand focus-visible:ring-offset-2 cursor-pointer select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-[15px] font-semibold leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-alo-brand focus-visible:ring-offset-2 cursor-pointer select-none",
   {
     variants: {
       variant: {
-        /* PRIMARY ACTION — ALO Orange #F97316 (hover #EA580C, active #C2410C) */
+        /* PRIMARY ACTION — ALO Orange #E8501A (hover #C93D13, active #C93D13) */
         default:
           "bg-alo-cta text-white shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-active",
-        /* Information / navigation / system actions — ALO Blue #2563EB */
+        /* Information / navigation / system actions — ALO Blue #0057B8 */
         brand:
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
         /* Legacy alias of `brand` — kept so existing call sites stay valid. */
@@ -21,15 +21,15 @@ const buttonVariants = cva(
         /* Legacy alias of `default` (orange primary). */
         cta:
           "bg-alo-cta text-white shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-active",
-        /* SECONDARY — white, strong border, navy text */
+        /* SECONDARY (Master §07) — white, blue text, blue-tint border, pale-blue hover */
         outline:
-          "border border-alo-border-strong bg-white text-alo-navy shadow-sm hover:bg-alo-page dark:bg-card dark:text-foreground dark:hover:bg-secondary",
-        /* Ghost — toolbar / tertiary actions */
+          "border border-alo-brand-border bg-white text-alo-brand shadow-sm hover:bg-alo-brand-light dark:bg-card dark:text-foreground dark:hover:bg-secondary",
+        /* TERTIARY (Master §07) — transparent, blue text, pale-blue hover */
         ghost:
-          "text-alo-navy hover:bg-secondary dark:hover:bg-secondary",
+          "text-alo-brand hover:bg-alo-brand-pale dark:hover:bg-secondary",
         /* Link — inline text action (blue) */
         link:
-          "text-alo-brand underline-offset-4 hover:text-alo-brand-hover hover:underline p-0 h-auto",
+          "text-alo-brand underline-offset-4 hover:text-alo-brand-hover hover:underline p-0 h-auto min-h-0",
         /* SUCCESS — use sparingly (completed / verified) */
         success:
           "bg-alo-success text-white shadow-sm hover:bg-alo-success-dark active:bg-alo-success-dark",
@@ -50,14 +50,16 @@ const buttonVariants = cva(
           "border border-alo-cta text-alo-cta-active bg-white hover:bg-alo-cta-soft",
       },
       size: {
-        /* Height scale: 32 (inline) · 40 (CRM dense / input-height) · 44 (default) · 48–52 (large CTA) */
-        xs: "h-8 rounded-md gap-1 px-2.5 text-xs has-[>svg]:px-2",
-        sm: "h-10 rounded-button gap-1.5 px-3.5 text-[13px] has-[>svg]:px-3",
-        default: "h-11 px-5 py-2.5 has-[>svg]:px-4",
+        /* Master §07: ALL buttons are at least 48px tall (touch-safe).
+           xs/sm keep compact widths/typography for dense CRM toolbars
+           without dropping below the 48px minimum height. */
+        xs: "h-12 rounded-button gap-1 px-2.5 text-xs has-[>svg]:px-2",
+        sm: "h-12 rounded-button gap-1.5 px-3.5 text-[13px] has-[>svg]:px-3",
+        default: "h-12 px-5 py-2.5 has-[>svg]:px-4",
         lg: "h-12 rounded-button px-6 text-[15px] has-[>svg]:px-5",
         xl: "h-[52px] rounded-button px-7 text-[15px] has-[>svg]:px-6",
-        icon: "size-11",
-        "icon-sm": "size-10",
+        icon: "size-12",
+        "icon-sm": "size-12",
         "icon-lg": "size-12",
       },
     },

@@ -197,7 +197,7 @@ function HealthScoreRing({ score }: { score: number }) {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = score >= 80 ? '#059669' : score >= 60 ? '#d97706' : '#ef4444';
+  const color = score >= 80 ? '#059669' : score >= 60 ? '#92400E' : '#ef4444';
 
   return (
     <div className="relative flex items-center justify-center">

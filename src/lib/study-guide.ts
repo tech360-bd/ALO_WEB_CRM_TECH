@@ -212,7 +212,7 @@ export function renderGuideAsHTML(guide: StudyGuide): string {
 <title>${escapeHtml(c.name)} — Study Guide | ALO Education</title>
 <style>
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:900px;margin:0 auto;padding:24px;color:#1f2937;line-height:1.6;}
-  h1{color:#0f172a;border-bottom:3px solid #2563eb;padding-bottom:8px;}
+  h1{color:#0f172a;border-bottom:3px solid #0057B8;padding-bottom:8px;}
   h2{color:#1e40af;margin-top:32px;border-bottom:1px solid #e5e7eb;padding-bottom:4px;}
   h3{color:#374151;margin-top:20px;}
   .meta{background:#f8fafc;padding:12px 16px;border-radius:8px;margin:12px 0;font-size:14px;}
@@ -229,23 +229,23 @@ export function renderGuideAsHTML(guide: StudyGuide): string {
 ${guide.verificationStatus !== "VERIFIED" ? `<div class="unverified">⚠️ This guide contains ${guide.unverifiedFields.length} unverified field(s): ${guide.unverifiedFields.map(escapeHtml).join(", ")}. Verify before publishing.</div>` : ""}
 
 <h2>Course Overview</h2>
-<p>${c.overview ? escapeHtml(c.overview) : '<em style="color:#dc2626;">UNVERIFIED — overview missing</em>'}</p>
+<p>${c.overview ? escapeHtml(c.overview) : '<em style="color:#EF4444;">UNVERIFIED — overview missing</em>'}</p>
 
 <h3>Quick Facts</h3>
 <ul>
-  <li><strong>Level:</strong> ${c.level || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Subject:</strong> ${c.subject || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Duration:</strong> ${c.duration || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Intake:</strong> ${c.intake || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Tuition:</strong> ${c.tuition || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Scholarship:</strong> ${c.scholarship || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Deadline:</strong> ${c.deadline || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
+  <li><strong>Level:</strong> ${c.level || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Subject:</strong> ${c.subject || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Duration:</strong> ${c.duration || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Intake:</strong> ${c.intake || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Tuition:</strong> ${c.tuition || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Scholarship:</strong> ${c.scholarship || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Deadline:</strong> ${c.deadline || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
 </ul>
 
 <h3>Requirements</h3>
 <ul>
-  <li><strong>English:</strong> ${c.englishRequirement || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
-  <li><strong>Academic:</strong> ${c.academicRequirement || '<em style="color:#dc2626;">UNVERIFIED</em>'}</li>
+  <li><strong>English:</strong> ${c.englishRequirement || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
+  <li><strong>Academic:</strong> ${c.academicRequirement || '<em style="color:#EF4444;">UNVERIFIED</em>'}</li>
 </ul>
 
 ${c.modules.length > 0 ? `<h3>Modules</h3><ul>${listItems(c.modules)}</ul>` : ""}
@@ -255,7 +255,7 @@ ${c.faqs.length > 0 ? `<h3>FAQs</h3><ul>${listItems(c.faqs)}</ul>` : ""}
 
 ${u ? `
 <h2>University: ${escapeHtml(u.name || "")}</h2>
-<p>${u.overview ? escapeHtml(u.overview) : '<em style="color:#dc2626;">UNVERIFIED — overview missing</em>'}</p>
+<p>${u.overview ? escapeHtml(u.overview) : '<em style="color:#EF4444;">UNVERIFIED — overview missing</em>'}</p>
 
 <h3>University Facts</h3>
 <ul>
@@ -269,7 +269,7 @@ ${Object.keys(u.quickFacts).length > 0 ? `<h3>Quick Facts</h3><ul>${factsList(u.
 ${u.applicationSteps.length > 0 ? `<h3>Application Steps</h3><ul>${listItems(u.applicationSteps)}</ul>` : ""}
 ${u.documents.length > 0 ? `<h3>University Documents</h3><ul>${listItems(u.documents)}</ul>` : ""}
 ${u.faqs.length > 0 ? `<h3>University FAQs</h3><ul>${listItems(u.faqs)}</ul>` : ""}
-` : '<h2>University</h2><p><em style="color:#dc2626;">UNVERIFIED — university not linked</em></p>'}
+` : '<h2>University</h2><p><em style="color:#EF4444;">UNVERIFIED — university not linked</em></p>'}
 
 <hr style="margin-top:40px;border-top:1px solid #e5e7eb;" />
 <p style="font-size:12px;color:#6b7280;">

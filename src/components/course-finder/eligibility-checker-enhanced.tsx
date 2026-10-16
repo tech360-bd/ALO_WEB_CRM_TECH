@@ -31,8 +31,8 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#2563EB';
-const ALO_ORANGE = '#F97316';
+const ALO_BLUE = '#0057B8';
+const ALO_ORANGE = '#E8501A';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AcademicQualification {
@@ -213,7 +213,7 @@ const CURRENCIES = ['GBP', 'USD', 'EUR', 'AUD', 'CAD', 'NZD', 'INR', 'BDT', 'PKR
 const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: string; textClass: string; borderClass: string; icon: React.ReactNode }> = {
   ELIGIBLE: {
     label: 'Eligible',
-    color: '#16A34A',
+    color: '#10B981',
     bgClass: 'bg-green-100 dark:bg-green-950',
     textClass: 'text-green-800 dark:text-green-200',
     borderClass: 'border-green-300 dark:border-green-700',
@@ -221,7 +221,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   },
   LIKELY_ELIGIBLE: {
     label: 'Likely Eligible',
-    color: '#2563EB',
+    color: '#0057B8',
     bgClass: 'bg-blue-100 dark:bg-blue-950',
     textClass: 'text-blue-800 dark:text-blue-200',
     borderClass: 'border-blue-300 dark:border-blue-700',
@@ -237,7 +237,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   },
   PARTIALLY_MATCHED: {
     label: 'Partial',
-    color: '#F97316',
+    color: '#E8501A',
     bgClass: 'bg-orange-100 dark:bg-orange-950',
     textClass: 'text-orange-800 dark:text-orange-200',
     borderClass: 'border-orange-300 dark:border-orange-700',
@@ -245,7 +245,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   },
   NOT_CURRENTLY_ELIGIBLE: {
     label: 'Not Currently Eligible',
-    color: '#DC2626',
+    color: '#EF4444',
     bgClass: 'bg-red-100 dark:bg-red-950',
     textClass: 'text-red-800 dark:text-red-200',
     borderClass: 'border-red-300 dark:border-red-700',
@@ -261,7 +261,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   },
   COUNSELLOR_REVIEW_REQUIRED: {
     label: 'Counsellor Review',
-    color: '#7C3AED',
+    color: '#0284C7',
     bgClass: 'bg-purple-100 dark:bg-purple-950',
     textClass: 'text-purple-800 dark:text-purple-200',
     borderClass: 'border-purple-300 dark:border-purple-700',
@@ -563,7 +563,7 @@ export function EligibilityCheckerEnhanced() {
             Get preliminary guidance on your eligibility for courses worldwide. Our engine evaluates your academic profile, English scores, and preferences against verified course data.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={goNext} className="bg-white text-[#2563EB] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
+            <Button size="lg" onClick={goNext} className="bg-white text-[#0057B8] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
               <ClipboardCheck className="h-5 w-5 mr-2" />
               Start Eligibility Check
             </Button>
@@ -1279,7 +1279,7 @@ function MatchScoreRing({ score }: { score: number }) {
   const radius = 22;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = score >= 75 ? '#16A34A' : score >= 50 ? '#2563EB' : score >= 30 ? '#CA8A04' : '#DC2626';
+  const color = score >= 75 ? '#10B981' : score >= 50 ? '#0057B8' : score >= 30 ? '#CA8A04' : '#EF4444';
 
   return (
     <div className="relative inline-flex items-center justify-center">
@@ -1549,7 +1549,7 @@ function ResultCard({ result, expanded, onToggle }: {
               <p className="text-sm text-muted-foreground mb-3">
                 This course has specific requirements that need human evaluation. Our automated engine cannot fully assess your eligibility for this programme. An ALO Education counsellor will review your profile against the full course requirements, including subject-specific criteria, work experience relevance, and any special conditions.
               </p>
-              <Button asChild size="sm" style={{ background: '#7C3AED', color: '#fff' }}>
+              <Button asChild size="sm" style={{ background: '#0284C7', color: '#fff' }}>
                 <Link href="/book-consultation"><MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review</Link>
               </Button>
             </div>

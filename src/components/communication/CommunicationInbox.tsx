@@ -76,7 +76,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
       <Card className="border border-gray-200 shadow-sm">
         <CardHeader className="pb-3 border-b bg-gray-50 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-bold flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-[#2563EB]" /> Unified Inbox — All Channels (SLA-sorted)
+            <MessageSquare className="w-5 h-5 text-[#0057B8]" /> Unified Inbox — All Channels (SLA-sorted)
             <Badge variant="outline" className="ml-2 bg-white">{counts.total} threads</Badge>
             {counts.overdue > 0 && <Badge className="bg-red-100 text-red-700 border-red-200">{counts.overdue} SLA overdue</Badge>}
           </CardTitle>
@@ -139,7 +139,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
               </SelectContent>
             </Select>
             <Input placeholder="Lead/Student/App/Partner" value={filters.search} onChange={e => setFilters(s => ({ ...s, search: e.target.value }))} className="h-8 text-xs" />
-            <Button size="sm" className="h-8 bg-[#2563EB] hover:bg-[#004a9e]" onClick={fetchInbox}><Search className="w-3.5 h-3.5 mr-1" /> Search</Button>
+            <Button size="sm" className="h-8 bg-[#0057B8] hover:bg-[#004a9e]" onClick={fetchInbox}><Search className="w-3.5 h-3.5 mr-1" /> Search</Button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px]">
             <Input placeholder="Office" value={filters.office} onChange={e => setFilters(s => ({ ...s, office: e.target.value }))} className="h-7 text-xs" />

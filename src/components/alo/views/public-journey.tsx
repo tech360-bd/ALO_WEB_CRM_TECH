@@ -21,7 +21,7 @@ export function PublicJourney({ onNavigate }: PublicJourneyProps) {
   return (
     <div className="bg-white">
       {/* CUSTOM HERO */}
-      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -30,12 +30,12 @@ export function PublicJourney({ onNavigate }: PublicJourneyProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
               <Icon name="Compass" className="mr-1 size-3" />
               Your Story Starts Here
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              From ambition to <span className="text-[#2563EB]">admission</span>
+              From ambition to <span className="text-[#0057B8]">admission</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Every Bangladeshi student's study-abroad journey follows the same 12 steps — but yours is uniquely
@@ -43,11 +43,11 @@ export function PublicJourney({ onNavigate }: PublicJourneyProps) {
               university and beyond.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#F97316] px-6 text-white hover:bg-[#c8451a]">
+              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#c8451a]">
                 <Icon name="CalendarCheck" className="size-4" />
                 Begin Your Journey
               </Button>
-              <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[#2563EB]/30 bg-white px-6 text-[#2563EB] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[#0057B8]/30 bg-white px-6 text-[#0057B8] hover:bg-[#EAF3FF]">
                 <Icon name="Briefcase" className="size-4" />
                 Explore Services
               </Button>

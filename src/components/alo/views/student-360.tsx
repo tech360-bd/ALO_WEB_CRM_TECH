@@ -415,7 +415,7 @@ export function Student360() {
       />
 
       {/* Student selector */}
-      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
         <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Icon name="Search" className="size-4" />
@@ -427,7 +427,7 @@ export function Student360() {
             <p className="text-sm text-muted-foreground">No students available.</p>
           ) : (
             <Select value={selectedId} onValueChange={setSelectedId}>
-              <SelectTrigger className="h-10 flex-1 rounded-xl border-[#2563EB]/15">
+              <SelectTrigger className="h-10 flex-1 rounded-xl border-[#0057B8]/15">
                 <SelectValue placeholder="Pick a student" />
               </SelectTrigger>
               <SelectContent>
@@ -442,7 +442,7 @@ export function Student360() {
             </Select>
           )}
           {student && (
-            <Badge variant="outline" className="h-10 border-[#2563EB]/20 px-3 text-xs">
+            <Badge variant="outline" className="h-10 border-[#0057B8]/20 px-3 text-xs">
               {students.findIndex((s) => s.id === selectedId) + 1} of {students.length}
             </Badge>
           )}
@@ -454,15 +454,15 @@ export function Student360() {
       ) : (
         <>
           {/* Header card */}
-          <Card className="rounded-2xl border-2 border-[#2563EB]/20">
+          <Card className="rounded-2xl border-2 border-[#0057B8]/20">
             <CardContent className="pt-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-bold text-[#2563EB]">{student.fullName}</h2>
+                    <h2 className="text-2xl font-bold text-[#0057B8]">{student.fullName}</h2>
                     <Badge
                       variant="outline"
-                      className="border-[#2563EB]/20 bg-[#e8f0fb]/60 font-mono text-[#2563EB]"
+                      className="border-[#0057B8]/20 bg-[#e8f0fb]/60 font-mono text-[#0057B8]"
                     >
                       {student.studentId}
                     </Badge>
@@ -495,7 +495,7 @@ export function Student360() {
                 <div className="flex flex-wrap gap-2">
                   <Button
                     variant="outline"
-                    className="h-10 rounded-xl border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]/60"
+                    className="h-10 rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]/60"
                     onClick={() =>
                       toast({
                         title: "Edit profile",
@@ -508,7 +508,7 @@ export function Student360() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="h-10 rounded-xl border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]/60"
+                    className="h-10 rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]/60"
                     onClick={() =>
                       toast({
                         title: "Message sent",
@@ -528,7 +528,7 @@ export function Student360() {
                   <span className="font-medium uppercase tracking-wide text-muted-foreground">
                     Profile Completion
                   </span>
-                  <span className="font-bold text-[#2563EB]">{student.profileCompletion}%</span>
+                  <span className="font-bold text-[#0057B8]">{student.profileCompletion}%</span>
                 </div>
                 <Progress value={student.profileCompletion} className="h-2.5" />
               </div>
@@ -537,7 +537,7 @@ export function Student360() {
 
           {/* Tabs */}
           <Tabs defaultValue="overview">
-            <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border-2 border-[#2563EB]/15 bg-white p-1.5">
+            <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border-2 border-[#0057B8]/15 bg-white p-1.5">
               {[
                 { v: "overview", l: "Overview", i: "LayoutDashboard" },
                 { v: "timeline", l: "Timeline", i: "Activity" },
@@ -549,7 +549,7 @@ export function Student360() {
                 <TabsTrigger
                   key={t.v}
                   value={t.v}
-                  className="rounded-xl data-[state=active]:bg-[#2563EB] data-[state=active]:text-white"
+                  className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white"
                 >
                   <Icon name={t.i} className="mr-1.5 size-4" />
                   {t.l}
@@ -734,7 +734,7 @@ function TimelineTab({ events }: { events: TimelineEvent[] }) {
               <div key={ev.id} className="relative flex gap-3">
                 {/* Vertical line */}
                 {!isLast && (
-                  <div className="absolute left-[15px] top-8 h-full w-px bg-[#2563EB]/15" />
+                  <div className="absolute left-[15px] top-8 h-full w-px bg-[#0057B8]/15" />
                 )}
                 {/* Icon */}
                 <div
@@ -747,7 +747,7 @@ function TimelineTab({ events }: { events: TimelineEvent[] }) {
                 </div>
                 {/* Body */}
                 <div className="flex-1 pb-2">
-                  <div className="rounded-xl border border-[#2563EB]/10 bg-white p-3">
+                  <div className="rounded-xl border border-[#0057B8]/10 bg-white p-3">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-semibold text-foreground">{ev.title}</p>
                       <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -760,7 +760,7 @@ function TimelineTab({ events }: { events: TimelineEvent[] }) {
                     <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
                       <Badge
                         variant="outline"
-                        className="border-[#2563EB]/15 bg-[#e8f0fb]/40 font-normal text-[#2563EB]"
+                        className="border-[#0057B8]/15 bg-[#e8f0fb]/40 font-normal text-[#0057B8]"
                       >
                         {ev.type.replace(/_/g, " ")}
                       </Badge>
@@ -888,7 +888,7 @@ function DocumentsTab({ documents }: { documents: Document[] }) {
                 </TableCell>
                 <TableCell>
                   {doc.required ? (
-                    <span className="text-xs font-semibold text-[#F97316]">Required</span>
+                    <span className="text-xs font-semibold text-[#E8501A]">Required</span>
                   ) : (
                     <span className="text-xs text-muted-foreground">Optional</span>
                   )}
@@ -941,7 +941,7 @@ function InterviewsTab({ interviews }: { interviews: InterviewSession[] }) {
           return (
             <div
               key={iv.id}
-              className="rounded-2xl border-2 border-[#2563EB]/10 bg-white p-4"
+              className="rounded-2xl border-2 border-[#0057B8]/10 bg-white p-4"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-1">
@@ -980,11 +980,11 @@ function InterviewsTab({ interviews }: { interviews: InterviewSession[] }) {
               {iv.feedback && (
                 <Accordion type="single" collapsible className="mt-3">
                   <AccordionItem value="feedback" className="border-0">
-                    <AccordionTrigger className="rounded-lg bg-[#e8f0fb]/40 px-3 py-2 text-xs font-semibold text-[#2563EB] hover:no-underline">
+                    <AccordionTrigger className="rounded-lg bg-[#e8f0fb]/40 px-3 py-2 text-xs font-semibold text-[#0057B8] hover:no-underline">
                       View feedback & scores
                     </AccordionTrigger>
                     <AccordionContent className="px-1 pt-3">
-                      <p className="rounded-lg border border-[#2563EB]/10 bg-muted/30 p-3 text-xs text-foreground">
+                      <p className="rounded-lg border border-[#0057B8]/10 bg-muted/30 p-3 text-xs text-foreground">
                         {iv.feedback}
                       </p>
                       {scoreEntries.length > 0 && (
@@ -995,12 +995,12 @@ function InterviewsTab({ interviews }: { interviews: InterviewSession[] }) {
                                 <span className="font-medium capitalize text-muted-foreground">
                                   {k.replace(/_/g, " ")}
                                 </span>
-                                <span className="font-bold tabular-nums text-[#2563EB]">
+                                <span className="font-bold tabular-nums text-[#0057B8]">
                                   {v}
                                   <span className="text-[10px] text-muted-foreground">/10</span>
                                 </span>
                               </div>
-                              <MiniBar value={v} max={maxScore} color="#2563EB" />
+                              <MiniBar value={v} max={maxScore} color="#0057B8" />
                             </div>
                           ))}
                         </div>
@@ -1053,11 +1053,11 @@ function PaymentsTab({ payments }: { payments: Payment[] }) {
             ৳{totalPending.toLocaleString()}
           </p>
         </div>
-        <div className="col-span-2 rounded-xl border-2 border-[#2563EB]/15 bg-[#e8f0fb]/40 p-3 sm:col-span-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-[#2563EB]">
+        <div className="col-span-2 rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3 sm:col-span-1">
+          <p className="text-xs font-medium uppercase tracking-wide text-[#0057B8]">
             Total Transactions
           </p>
-          <p className="mt-1 text-lg font-bold tabular-nums text-[#2563EB]">{payments.length}</p>
+          <p className="mt-1 text-lg font-bold tabular-nums text-[#0057B8]">{payments.length}</p>
         </div>
       </div>
 

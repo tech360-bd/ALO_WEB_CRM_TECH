@@ -20,8 +20,8 @@ import {
 import { cn } from '@/lib/utils';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#2563EB';
-const ALO_ORANGE = '#F97316';
+const ALO_BLUE = '#0057B8';
+const ALO_ORANGE = '#E8501A';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const QUALIFICATIONS = ['SSC', 'HSC', 'Bachelor', 'Master', 'Other'] as const;
@@ -288,7 +288,7 @@ export function EligibilityChecker() {
                       isActive
                         ? { background: ALO_BLUE }
                         : isCompleted
-                          ? { background: '#16a34a' }
+                          ? { background: '#10B981' }
                           : undefined
                     }
                   >

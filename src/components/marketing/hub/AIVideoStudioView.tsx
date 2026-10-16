@@ -31,7 +31,7 @@ export default function AIVideoStudioView() {
       } else {
         const alt = await fetch('/api/marketing/content-generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contentType:'short_video_script', topic: title+' '+topic, platform, tone:'energetic', targetAudience:'Bangladeshi students', keyMessage: topic, cta:'Book free consultation' })});
         const j2 = await alt.json();
-        setResult({ script: j2.content, subtitle: 'Generated subtitles', thumbnailConcept: 'Bold ALO Orange #F97316 + campus image + “Jan 2027 UK” text', aspectRatio: aspect });
+        setResult({ script: j2.content, subtitle: 'Generated subtitles', thumbnailConcept: 'Bold ALO Orange #E8501A + campus image + “Jan 2027 UK” text', aspectRatio: aspect });
       }
     } catch { setResult({ script: 'Failed — check AI credentials', error: true }); }
     finally { setLoading(false); }
@@ -40,12 +40,12 @@ export default function AIVideoStudioView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Video className="w-6 h-6 text-[#F97316]" />AI Video Studio</h2>
+        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Video className="w-6 h-6 text-[#E8501A]" />AI Video Studio</h2>
         <p className="text-sm text-gray-500">Scripts, storyboards, voiceover (Bangla/English/mixed), subtitles, thumbnails, aspect ratios (9:16,1:1,16:9), storage & versioning. Respects provider availability — no text substitute for video file.</p>
       </div>
 
-      <Card className="border-[#2563EB]/20">
-        <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clapperboard className="w-4 h-4 text-[#2563EB]" /> Video Generation</CardTitle></CardHeader>
+      <Card className="border-[#0057B8]/20">
+        <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clapperboard className="w-4 h-4 text-[#0057B8]" /> Video Generation</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid md:grid-cols-2 gap-3">
             <div><label className="text-xs font-semibold">Title</label><Input value={title} onChange={e=>setTitle(e.target.value)} className="mt-1" /></div>
@@ -55,9 +55,9 @@ export default function AIVideoStudioView() {
             <div><label className="text-xs font-semibold">Language Voice</label><Select value={language} onValueChange={setLanguage}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="bangla">Bangla</SelectItem><SelectItem value="english">English</SelectItem><SelectItem value="mixed">Mixed</SelectItem></SelectContent></Select></div>
             <div><label className="text-xs font-semibold">Duration (sec)</label><Input type="number" value={duration} onChange={e=>setDuration(parseInt(e.target.value)||30)} className="mt-1 h-9 w-24" /></div>
           </div>
-          <Button onClick={handleScript} disabled={loading || !title.trim()} className="bg-[#F97316] hover:bg-[#d85f1b] text-white">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate Script</Button>
+          <Button onClick={handleScript} disabled={loading || !title.trim()} className="bg-[#E8501A] hover:bg-[#d85f1b] text-white">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate Script</Button>
           <div className="flex gap-2 text-[11px]">
-            <Badge className="bg-[#2563EB]/10 text-[#2563EB]">Aspect: {aspect}</Badge>
+            <Badge className="bg-[#0057B8]/10 text-[#0057B8]">Aspect: {aspect}</Badge>
             <Badge className="bg-[#FFB347]/20 text-[#0F172A]">Brand overlay: ALO Orange</Badge>
             <Badge variant="outline">Voiceover: {language}</Badge>
           </div>
@@ -67,15 +67,15 @@ export default function AIVideoStudioView() {
       {result && (
         <div className="grid lg:grid-cols-2 gap-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Mic className="w-4 h-4 text-[#F97316]" /> Script & Storyboard</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Mic className="w-4 h-4 text-[#E8501A]" /> Script & Storyboard</CardTitle></CardHeader>
             <CardContent><pre className="text-xs whitespace-pre-wrap bg-[#F8FAFC] border rounded-xl p-4 max-h-[400px] overflow-auto">{typeof result.script === 'string' ? result.script : JSON.stringify(result.script, null, 2)}</pre></CardContent>
           </Card>
           <div className="space-y-4">
             <Card>
-              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Subtitles className="w-4 h-4 text-[#2563EB]" /> Subtitles & Thumbnail</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Subtitles className="w-4 h-4 text-[#0057B8]" /> Subtitles & Thumbnail</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 <div><p className="text-xs font-semibold">Subtitles/CC</p><p className="text-xs bg-white border rounded-lg p-3 mt-1">{result.subtitle || 'Auto-generated subtitles will appear here.'}</p></div>
-                <div><p className="text-xs font-semibold flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Thumbnail Concept</p><p className="text-xs bg-[#FFB347]/10 border border-[#FFB347]/30 rounded-lg p-3 mt-1">{result.thumbnailConcept || 'ALO Orange #F97316 bold text + campus visual + scholarship badge, 1280x720, CTR-optimized'}</p></div>
+                <div><p className="text-xs font-semibold flex items-center gap-1"><ImageIcon className="w-3 h-3" /> Thumbnail Concept</p><p className="text-xs bg-[#FFB347]/10 border border-[#FFB347]/30 rounded-lg p-3 mt-1">{result.thumbnailConcept || 'ALO Orange #E8501A bold text + campus visual + scholarship badge, 1280x720, CTR-optimized'}</p></div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="p-2 bg-white border rounded-lg text-center">9:16<br /><span className="text-gray-400">1080x1920</span></div>
                   <div className="p-2 bg-white border rounded-lg text-center">1:1<br /><span className="text-gray-400">1080x1080</span></div>

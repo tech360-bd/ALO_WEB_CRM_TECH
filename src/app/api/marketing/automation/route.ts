@@ -149,9 +149,9 @@ export async function GET(req: NextRequest) {
         lastSyncAt: account.lastSyncAt,
       })),
       brandConfig: {
-        primaryColor: '#F97316',
+        primaryColor: '#E8501A',
         backgroundColor: '#FFFFFF',
-        accentColor: '#2563EB',
+        accentColor: '#0057B8',
         logoConfigured: brandAssets.some((a) => a.type.toLowerCase() === 'logo' || a.name.toLowerCase().includes('logo')),
       },
     });
