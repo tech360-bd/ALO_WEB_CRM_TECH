@@ -1,0 +1,127 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// GET /api/integrations/3cx/config
+[REDACTED: potential embedded credential in legacy reference]
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const role = (session.user as any).role;
+  if (role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN only" }, { status: 403 });
+  }
+
+  try {
+    const acct = await db.connectedAccount.findFirst({
+      where: { platform: "THREECX" },
+      orderBy: { updatedAt: "desc" },
+    });
+    if (!acct) {
+      return NextResponse.json({ configured: false });
+    }
+    return NextResponse.json(redact(acct));
+  } catch (err: any) {
+    console.error("[3cx/config GET] error", err);
+    return NextResponse.json({ error: err?.message || "Failed to load config" }, { status: 500 });
+  }
+}
+
+// POST /api/integrations/3cx/config
+// Create / update the 3CX integration config. Auth: super admin.
+[REDACTED: potential embedded credential in legacy reference]
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const role = (session.user as any).role;
+  if (role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN only" }, { status: 403 });
+  }
+
+  try {
+    const body = await req.json().catch(() => ({}));
+[REDACTED: potential embedded credential in legacy reference]
+    if (!baseUrl) {
+      return NextResponse.json({ error: "baseUrl is required" }, { status: 400 });
+    }
+
+    const existingMeta: Record<string, unknown> = {};
+    const existing = await db.connectedAccount.findFirst({
+      where: { platform: "THREECX" },
+      orderBy: { updatedAt: "desc" },
+    });
+    if (existing?.metadata) {
+      try { Object.assign(existingMeta, JSON.parse(existing.metadata)); } catch {}
+    }
+
+    const meta = {
+      ...existingMeta,
+      baseUrl,
+[REDACTED: potential embedded credential in legacy reference]
+      ...(metadata || {}),
+    };
+
+    if (existing) {
+      const updated = await db.connectedAccount.update({
+        where: { id: existing.id },
+        data: {
+          accountName: baseUrl,
+[REDACTED: potential embedded credential in legacy reference]
+          metadata: JSON.stringify(meta),
+          connectionStatus: "CONNECTED",
+          lastSync: new Date(),
+        },
+      });
+      return NextResponse.json(redact(updated));
+    }
+
+    const created = await db.connectedAccount.create({
+      data: {
+        platform: "THREECX",
+        accountName: baseUrl,
+        accountId: `3cx-${Date.now()}`,
+        connectionStatus: "CONNECTED",
+[REDACTED: potential embedded credential in legacy reference]
+        metadata: JSON.stringify(meta),
+        lastSync: new Date(),
+      },
+    });
+    return NextResponse.json(redact(created), { status: 201 });
+  } catch (err: any) {
+    console.error("[3cx/config POST] error", err);
+    return NextResponse.json({ error: err?.message || "Failed to save config" }, { status: 500 });
+  }
+}
+
+function redact(acct: any) {
+  return {
+    id: acct.id,
+    platform: acct.platform,
+    baseUrl: (() => {
+      try { return JSON.parse(acct.metadata || "{}").baseUrl || acct.accountName; } catch { return acct.accountName; }
+    })(),
+    status: acct.connectionStatus,
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+    })(),
+[REDACTED: potential embedded credential in legacy reference]
+      try {
+[REDACTED: potential embedded credential in legacy reference]
+        return v ? "***REDACTED***" : null;
+      } catch { return null; }
+    })(),
+    lastSync: acct.lastSync,
+    createdAt: acct.createdAt,
+    updatedAt: acct.updatedAt,
+  };
+}

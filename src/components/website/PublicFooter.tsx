@@ -33,6 +33,7 @@ import {
   Youtube,
 } from 'lucide-react';
 import React from 'react';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import {
   ALO_CONTACT,
   ALO_POLICY_LINKS,
@@ -242,10 +243,12 @@ function FooterColumn({
   title,
   links,
   className = '',
+  children,
 }: {
   title: string;
   links: FooterLink[];
   className?: string;
+  children?: React.ReactNode;
 }) {
   return (
     <nav aria-label={title} className={className}>
@@ -264,6 +267,7 @@ function FooterColumn({
             </Link>
           </li>
         ))}
+        {children}
       </ul>
     </nav>
   );
@@ -404,7 +408,15 @@ export default function PublicFooter() {
             title="Quick Links"
             links={quickL}
             className="lg:col-span-2"
-          />
+          >
+            <li>
+              <EnglishExamButton
+                location="footer"
+                label="English Test"
+                className="text-[13px] font-medium text-alo-text-secondary transition-colors hover:text-alo-brand focus-visible:text-alo-brand focus-visible:outline-none"
+              />
+            </li>
+          </FooterColumn>
           <FooterColumn
             title="Company"
             links={companyL}

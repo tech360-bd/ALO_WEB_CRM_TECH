@@ -48,7 +48,7 @@ export default function UniversityHub({ slug }: Props) {
     const controller = new AbortController();
     setCourseLoading(true);
     const params = new URLSearchParams({
-      intakeWindow: '2027-01:2028-01',
+      catalogue: 'international',
       coursePage: String(coursePage),
       courseLimit: '12',
     });
@@ -60,7 +60,7 @@ export default function UniversityHub({ slug }: Props) {
       })
       .then(d => setCourseListing(d.data || d.university || null))
       .catch((e) => {
-        if (e.name !== 'AbortError') setCourseListing({ error: e.message, popularCourses: [], intakeWindow: null });
+        if (e.name !== 'AbortError') setCourseListing({ error: e.message, popularCourses: [], internationalCourseCatalog: null });
       })
       .finally(() => {
         if (!controller.signal.aborted) setCourseLoading(false);
@@ -76,11 +76,12 @@ export default function UniversityHub({ slug }: Props) {
   const city = uni.city || 'City not recorded';
   const website = uni.website || uni.officialUrl || '';
   const courses = courseListing?.popularCourses || [];
-  const intakeWindow = courseListing?.intakeWindow;
-  const courseTotal = intakeWindow?.totalCourses ?? 0;
-  const courseTotalPages = intakeWindow?.totalPages ?? 0;
-  const firstCourseNumber = courseTotal === 0 ? 0 : (coursePage - 1) * (intakeWindow?.pageSize || 12) + 1;
-  const lastCourseNumber = Math.min(coursePage * (intakeWindow?.pageSize || 12), courseTotal);
+  const internationalCourseCatalog = courseListing?.internationalCourseCatalog;
+  const courseTotal = internationalCourseCatalog?.totalCourses ?? 0;
+  const courseTotalPages = internationalCourseCatalog?.totalPages ?? 0;
+  const coursePageSize = internationalCourseCatalog?.pageSize || 12;
+  const firstCourseNumber = courseTotal === 0 ? 0 : (coursePage - 1) * coursePageSize + 1;
+  const lastCourseNumber = Math.min(coursePage * coursePageSize, courseTotal);
   const scholarships = uni.scholarshipList || uni.scholarshipRecords || [];
   const rankings = uni.rankings || uni.rankingRecords || [];
   const campusList: string[] = (() => {
@@ -121,7 +122,7 @@ export default function UniversityHub({ slug }: Props) {
           <p className="text-lg text-gray-600 flex items-center gap-2 mb-6"><MapPin className="w-5 h-5 text-[#E8501A]" />{city}, {country} {uni.founded ? `• Established ${uni.founded}` : ''}</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 px-6 font-bold">Apply Through ALO</Button></Link>
-            <Link href="#popular-courses"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">View Jan 2027–Jan 2028 Courses ({courseTotal})</Button></Link>
+            <Link href="#popular-courses"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">View International Courses ({courseTotal})</Button></Link>
             <Link href="/compare"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Compare University</Button></Link>
             {website ? <a href={website} target="_blank" rel="noopener noreferrer"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official Website</Button></a> : <Button variant="outline" disabled title="No official website URL is recorded" className="border-[#E2E8F0] h-12 px-6 flex gap-1.5"><Globe className="w-4 h-4" />Official website not recorded</Button>}
           </div>
@@ -134,7 +135,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Tuition range</p><p className="font-bold">{tuition || 'Not recorded'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">International student count</p><p className="font-bold">{uni.intlStudents || 'Not recorded'}</p></div>
             <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Scholarships</p><p className="font-bold text-emerald-600">{uni.scholarships ? 'Availability recorded' : 'Not recorded'}</p></div>
-            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Jan 2027–Jan 2028 courses</p><p className="font-bold">{courseLoading ? 'Loading…' : courseTotal}</p></div>
+            <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-gray-500 text-[10px] uppercase">Verified international courses</p><p className="font-bold">{courseLoading ? 'Loading…' : courseTotal}</p></div>
           </div>
           </div>
         </div>
@@ -159,36 +160,36 @@ export default function UniversityHub({ slug }: Props) {
             <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Globe className="w-5 h-5 text-[#0057B8]" />Official Website & International Student Information</h3><div className="grid sm:grid-cols-2 gap-4 text-sm"><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">Official Website</p>{website ? <a href={website} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] font-semibold underline break-all">{website}</a> : <span className="text-xs text-gray-500">Official website URL is not recorded.</span>}</div><div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-xs text-gray-500">International Admissions</p>{uni.officialInternationalAdmissionsUrl ? <a href={uni.officialInternationalAdmissionsUrl} target="_blank" className="text-[#0057B8] underline">View Admissions Page</a> : <span className="text-xs">Information not currently verified. Please check with an ALO Education counselor.</span>}</div></div><p className="text-xs text-gray-500 mt-3">International Student Support: {uni.internationalStudentSupportSummary || 'Information not currently verified. Please check with an ALO Education counselor.'}</p></Card>
 
             {/* Verified record summary */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">What this record confirms</h3><ul className="space-y-2 text-sm text-gray-700">{rankings.length > 0 ? <li>• {rankings.length} ranking record{rankings.length === 1 ? '' : 's'} are recorded and displayed with their available source metadata.</li> : <li>• No ranking record is currently available in the published university profile.</li>}{courseTotal > 0 ? <li>• {courseTotal} active, published, source-verified course record{courseTotal === 1 ? '' : 's'} with explicit international eligibility have a source-verified intake in the displayed January 2027–January 2028 window.</li> : <li>• No matching source-verified international course/intake record was returned for this period; this does not establish that no courses exist.</li>}{scholarships.length > 0 ? <li>• {scholarships.length} active, verified scholarship record{scholarships.length === 1 ? '' : 's'} are linked to this profile.</li> : <li>• No verified scholarship records are linked to this profile.</li>}</ul><p className="mt-3 text-[10px] text-slate-500">These are database coverage facts, not a promotional ranking or a claim of complete institutional coverage.</p></Card>
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">What this record confirms</h3><ul className="space-y-2 text-sm text-gray-700">{rankings.length > 0 ? <li>• {rankings.length} ranking record{rankings.length === 1 ? '' : 's'} are recorded and displayed with their available source metadata.</li> : <li>• No ranking record is currently available in the published university profile.</li>}{courseTotal > 0 ? <li>• {courseTotal} active, published, source-linked and verified course record{courseTotal === 1 ? '' : 's'} have an explicit positive international-eligibility status.</li> : <li>• No published, verified course record with an explicit positive international-eligibility status was returned; this does not establish that no courses exist.</li>}{scholarships.length > 0 ? <li>• {scholarships.length} active, verified scholarship record{scholarships.length === 1 ? '' : 's'} are linked to this profile.</li> : <li>• No verified scholarship records are linked to this profile.</li>}</ul><p className="mt-3 text-[10px] text-slate-500">These are database coverage facts, not a promotional ranking or a claim of complete institutional coverage.</p></Card>
 
-            {/* 8. Complete intake-window course listing */}
+            {/* Complete paginated catalogue of verified international-eligible course records */}
             <Card id="popular-courses" className="p-6 md:p-8 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><GraduationCap className="w-6 h-6 text-[#0057B8]" />Verified international courses with intakes: January 2027 – January 2028</h2>
-                  <p className="text-xs text-gray-600 mt-2">All matching source-linked, verified, published records with explicit international eligibility are paginated across study levels; this list is not an exhaustive-catalogue certification.</p>
+                  <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><GraduationCap className="w-6 h-6 text-[#0057B8]" />Verified courses open to international students</h2>
+                  <p className="text-xs text-gray-600 mt-2">All matching source-linked, verified, published records with explicit positive international eligibility are paginated across study levels. Listing does not require an intake in a particular year, and the database count is not an exhaustive-catalogue certification.</p>
                 </div>
                 <Badge className="bg-slate-50 text-slate-700 border-slate-200">Institution code on file: {uni.universityCode?.trim() || 'Not recorded'}</Badge>
               </div>
-              {intakeWindow && (
+              {internationalCourseCatalog && (
                 <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-950" role="status" aria-live="polite">
-                  <p className="font-semibold">Full course-catalogue coverage: {intakeWindow.catalogueCoverageStatus || 'RESEARCH_REQUIRED'}</p>
-                  <p className="mt-1">Showing {courseTotal} source-verified international course records with a verified intake in this window. {intakeWindow.courseRecordsNotCurrentlyPublishable || 0} of {intakeWindow.candidateCourseRecords || 0} CRM course records are not currently publishable; {intakeWindow.eligibilityNotConfirmedCourseRecords || 0} do not have an explicit positive international-eligibility status; {intakeWindow.verifiedInternationalCoursesWithoutWindowIntake || 0} verified international course records have no source-verified intake in this window.</p>
-                  <p className="mt-1">These are counts of records in ALO’s database, not a count of every course in the university’s official catalogue. The page cannot claim that no course is left out until the official catalogue has been exhaustively reconciled.</p>
+                  <p className="font-semibold">Catalogue coverage: {internationalCourseCatalog.catalogueCoverageStatus || 'RESEARCH_REQUIRED'}</p>
+                  <p className="mt-1">Showing {courseTotal} source-linked, verified, published course records with explicit positive international eligibility, regardless of intake year. {internationalCourseCatalog.courseRecordsNotCurrentlyPublishable || 0} of {internationalCourseCatalog.candidateCourseRecords || 0} CRM course records are not currently published and verified; {internationalCourseCatalog.eligibilityNotConfirmedCourseRecords || 0} records do not have an explicit positive international-eligibility status.</p>
+                  <p className="mt-1">{internationalCourseCatalog.verifiedInternationalCoursesWithoutVerifiedIntake || 0} verified eligible course records have no linked source-verified intake/fee record. The course remains listed; no intake or fee is inferred. These are database counts, not a count of every course in the institution’s official catalogue.</p>
                 </div>
               )}
-              {intakeWindow && (
+              {internationalCourseCatalog && (
                 <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-950" role="status">
-                  <p className="font-semibold">Code coverage is not certified by the stored text fields.</p>
-                  <p className="mt-1">{intakeWindow.courseCodesRecorded} of {intakeWindow.totalCourses} listed course records have a non-empty course-code field; {intakeWindow.courseCodesMissing} have none. This is a field-presence count, not proof that every official code is present, active, or international-student applicable.</p>
+                  <p className="font-semibold">Course-code coverage is not certified by stored text fields.</p>
+                  <p className="mt-1">{internationalCourseCatalog.courseCodesRecorded} of {courseTotal} listed eligible course records have a non-empty course-code field; {internationalCourseCatalog.courseCodesMissing} have none. This is a field-presence count, not proof that every official code is present, active, or international-student applicable.</p>
                 </div>
               )}
               {courseLoading && courses.length === 0 ? (
-                <p className="text-sm text-gray-500" role="status">Loading approved course records and their recorded intake data…</p>
+                <p className="text-sm text-gray-500" role="status">Loading verified international course records…</p>
               ) : courseListing?.error ? (
                 <p className="text-sm text-red-700" role="alert">Course data could not be loaded. {courseListing.error}</p>
               ) : courses.length === 0 ? (
-                <p className="text-sm text-gray-600">No approved, verified course record with a matching intake was returned for this period. This may indicate a data-coverage gap; it does not establish that the university has no courses.</p>
+                <p className="text-sm text-gray-600">No published, source-linked course record with verified explicit international eligibility was returned. This may indicate a data-coverage gap; it does not establish that the university has no internationally eligible courses.</p>
               ) : (
                 <div className={`grid sm:grid-cols-2 gap-4 ${courseLoading ? 'opacity-60' : ''}`} aria-busy={courseLoading}>
                   {courses.map((c: any) => {
@@ -210,7 +211,7 @@ export default function UniversityHub({ slug }: Props) {
                           <div><dt className="inline font-semibold">International-student eligibility:</dt><dd className="inline ml-1">{eligibilityLabel}</dd></div>
                         </dl>
                         <div className="mt-3">
-                          <p className="text-xs font-semibold text-gray-700">Intakes in the requested window</p>
+                          <p className="text-xs font-semibold text-gray-700">Source-verified intake and fee records (all years)</p>
                           {uniqueIntakes.length ? (
                             <ul className="mt-1 space-y-1 text-xs text-gray-600">
                               {uniqueIntakes.map((intake: any, index: number) => (
@@ -221,7 +222,7 @@ export default function UniversityHub({ slug }: Props) {
                                 </li>
                               ))}
                             </ul>
-                          ) : <p className="text-xs text-gray-500 mt-1">Intake details not recorded.</p>}
+                          ) : <p className="text-xs text-gray-500 mt-1">No source-verified intake or fee record is linked. Course eligibility is recorded separately.</p>}
                         </div>
                         <p className="text-[10px] text-gray-500 mt-3">Course source: {c.sourceUrl || c.officialUrl || 'Not recorded'}{c.lastVerifiedAt ? ` • Last checked ${new Date(c.lastVerifiedAt).toLocaleDateString()}` : ' • Verification date not recorded'}</p>
                         <Link href={`/course/${c.slug || c.courseId}`} className="mt-3 inline-flex text-xs font-semibold text-[#0057B8] underline">View course details →</Link>
@@ -253,7 +254,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="grid md:grid-cols-3 gap-4">
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#0057B8]" />Tuition range</h4><p className="text-lg font-bold text-[#0F172A]">{tuition || 'Not recorded'}</p><p className="text-xs text-gray-500 mt-1">Official tuition source: {uni.officialTuitionFeeUrl ? <a href={uni.officialTuitionFeeUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">View</a> : 'Not recorded'}</p></Card>
               <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><Award className="w-4 h-4 text-[#E8501A]" />Scholarship records</h4><p className="text-sm font-semibold">{scholarships.length > 0 ? `${scholarships.length} active, verified record${scholarships.length === 1 ? '' : 's'}` : 'No verified scholarship record linked'}</p><p className="text-xs text-gray-500 mt-1">{scholarships.slice(0,2).map((s:any)=> s.scholarshipName || s.name).filter(Boolean).join(', ') || 'Coverage may be incomplete; no scholarship is inferred.'}</p><Link href={`/scholarships?university=${encodeURIComponent(uni.universityId || '')}`} className="text-xs text-[#0057B8] underline mt-2 inline-block">Search scholarship records →</Link></Card>
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-emerald-600" />Intakes</h4><p className="text-sm">January 2027 – January 2028</p><p className="text-xs text-gray-500 mt-1">{courseLoading ? 'Loading matching intake records…' : `${courseTotal} matching course records with a recorded intake in this window.`}</p></Card>
+              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[#0F172A] mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-emerald-600" />Verified intake records</h4><p className="text-sm">All years, when source-backed</p><p className="text-xs text-gray-500 mt-1">{courseLoading ? 'Loading verified intake records…' : `${courses.reduce((count: number, course: any) => count + (course.intakes?.length || 0), 0)} source-verified intake/fee records are attached to the current course page.`}</p></Card>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">

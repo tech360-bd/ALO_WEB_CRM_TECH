@@ -1,0 +1,179 @@
+# ALO Education — Deployment Guide
+
+## System Requirements
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| OS | Ubuntu 22.04 LTS | Ubuntu 24.04 LTS |
+| CPU | 2 cores | 4+ cores |
+| RAM | 4 GB (dev only) | 8+ GB (production) |
+| Storage | 50 GB SSD | 120+ GB SSD |
+| Node.js | 20+ | 22 LTS |
+| Bun | 1.1+ | 1.2+ |
+| MySQL | 8.0+ | 8.0+ |
+| Redis | 7.0+ | 7.0+ |
+
+## Pre-Deployment Checklist
+
+- [ ] MySQL 8 database created (`db_education`)
+- [ ] MySQL user created (`user_edu`) with full privileges
+- [ ] Redis installed and running on port 6379
+- [ ] SSL certificate for `aloeducation.com`
+- [ ] Three storage mount points:
+  - `/mnt/ssd1` (Student & Partner documents — SSD)
+  - `/mnt/ssd2` (Official documents — SSD)
+  - `/home/aloedu/storage` (Operational files)
+- [ ] Caddy or Nginx reverse proxy configured
+- [ ] PM2 process manager installed (`npm i -g pm2`)
+
+## Deployment Steps
+
+### Step 1: Upload & Extract
+
+```bash
+scp ALO-EDUCATION-COMPLETE-PROJECT.zip root@your-server:/opt/
+cd /opt
+unzip ALO-EDUCATION-COMPLETE-PROJECT.zip -d alo-education
+cd alo-education
+```
+
+### Step 2: Install Dependencies
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+bun install
+```
+
+### Step 3: Create Storage Directories
+
+```bash
+mkdir -p /mnt/ssd1/student-partner
+mkdir -p /mnt/ssd2/official
+mkdir -p /home/aloedu/storage/operational
+mkdir -p /home/aloedu/storage/uploads
+mkdir -p /home/aloedu/storage/temp/quarantine
+
+chown -R www-data:www-data /mnt/ssd1 /mnt/ssd2 /home/aloedu/storage
+chmod -R 770 /mnt/ssd1 /mnt/ssd2 /home/aloedu/storage
+```
+
+### Step 4: Push Database Schema
+
+```bash
+bunx prisma generate
+bunx prisma db push
+bun run db:seed
+```
+
+### Step 5: Import University Data (400 universities + 17,653 courses)
+
+```bash
+bun run prisma/seed-university-data.ts
+```
+
+### Step 6: Build for Production
+
+```bash
+bun run build
+```
+
+### Step 7: Start with PM2
+
+```bash
+pm2 start ecosystem.config.cjs --env production
+pm2 save
+pm2 startup
+```
+
+### Step 8: Configure Caddy
+
+```caddyfile
+aloeducation.com {
+    reverse_proxy localhost:3025
+    encode gzip zstd
+    header {
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+    }
+}
+```
+
+```bash
+caddy reload --config /etc/caddy/Caddyfile
+```
+
+### Step 9: Start Mini-Services
+
+```bash
+cd mini-services/university-monitor && bun install && pm2 start index.ts --name university-monitor --interpreter bun && cd ../..
+cd mini-services/sla-monitor && bun install && pm2 start index.ts --name sla-monitor --interpreter bun && cd ../..
+cd mini-services/follow-up-sender && bun install && pm2 start index.ts --name follow-up-sender --interpreter bun && cd ../..
+```
+
+### Step 10: Verify
+
+```bash
+curl https://aloeducation.com/api/health
+pm2 status
+```
+
+## Environment Variables
+
+See `.env.example` for all required variables.
+
+## Production Memory Settings
+
+```bash
+# Set in environment or PM2 config:
+PRISMA_CLIENT_ENGINE_TYPE=binary
+NODE_OPTIONS="--max-old-space-size=1536"
+```
+
+## Database Provider
+
+- **Production:** MySQL 8 (`provider = "mysql"` in schema.prisma)
+- **Development:** SQLite (switch temporarily for local dev)
+
+## Backup Strategy
+
+```bash
+# Daily MySQL backup (cron)
+[REDACTED: potential embedded credential in legacy reference]
+
+# Weekly storage backup
+0 3 * * 0 rsync -av /mnt/ssd1/ /backup/ssd1/
+0 3 * * 0 rsync -av /mnt/ssd2/ /backup/ssd2/
+
+# Keep 30 days
+0 4 * * * find /backup -name "*.sql.gz" -mtime +30 -delete
+```
+
+## Troubleshooting
+
+### Server Won't Start
+```bash
+lsof -i :3025
+pm2 logs alo-education
+```
+
+### Database Connection Failed
+```bash
+[REDACTED: potential embedded credential in legacy reference]
+```
+
+### Prisma Client Error
+```bash
+# For dev (SQLite):
+sed -i 's/provider = "mysql"/provider = "sqlite"/' prisma/schema.prisma
+DATABASE_URL="file:./db/custom.db" bunx prisma generate
+
+# For production (MySQL):
+sed -i 's/provider = "sqlite"/provider = "mysql"/' prisma/schema.prisma
+bunx prisma generate
+```
+
+### OOM (Out of Memory)
+- Ensure 8GB+ RAM in production
+- Set `PRISMA_CLIENT_ENGINE_TYPE=binary`
+- Prisma logging: `['error']` only (not `['query']`)

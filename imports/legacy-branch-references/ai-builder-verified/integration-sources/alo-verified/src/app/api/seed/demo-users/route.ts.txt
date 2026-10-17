@@ -1,0 +1,166 @@
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+[REDACTED: potential embedded credential in legacy reference]
+import { requireRole } from '@/lib/auth-rbac';
+import { NextRequest } from 'next/server';
+
+/**
+ * Ensures demo users for Student and Partner workspaces exist.
+ * Idempotent — safe to call multiple times.
+ *
+ * SECURITY: This endpoint is gated behind super_admin + NODE_ENV=development.
+ * It NEVER returns credentials in the JSON response — the caller already
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+ */
+export async function POST(request: NextRequest) {
+  // Gate 1: only super_admin can call this
+  const authOrResponse = await requireRole(request, ['super_admin']);
+  if (authOrResponse instanceof NextResponse) return authOrResponse;
+
+  // Gate 2: never allow in production
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_SEED_IN_PRODUCTION !== 'true') {
+    return NextResponse.json(
+      { error: 'Seeding is disabled in production. Set ALLOW_SEED_IN_PRODUCTION=true to override.' },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const results: Record<string, string> = {};
+[REDACTED: potential embedded credential in legacy reference]
+
+    const studentRole = await db.role.findUnique({ where: { name: 'student' } });
+    const partnerRole = await db.role.findUnique({ where: { name: 'partner_super_admin' } });
+    const counselorRole = await db.role.findUnique({ where: { name: 'counselor' } });
+
+    // ─── Student demo user ──────────────────────────────────────────────────
+    const existingStudent = await db.user.findUnique({
+      where: { email: 'student@aloeducation.com' },
+    });
+
+    if (!existingStudent) {
+      const studentRecord = await db.student.findFirst({
+        orderBy: { createdAt: 'asc' },
+      });
+
+      const user = await db.user.create({
+        data: {
+          email: 'student@aloeducation.com',
+[REDACTED: potential embedded credential in legacy reference]
+          name: studentRecord
+            ? `${studentRecord.firstName} ${studentRecord.lastName}`
+            : 'Alo Student',
+          phone: studentRecord?.phone ?? '+8801712345678',
+          userType: 'student',
+          referenceId: studentRecord?.id ?? null,
+[REDACTED: potential embedded credential in legacy reference]
+          status: 'active',
+        },
+      });
+
+      if (studentRole) {
+        await db.userRole.create({
+          data: { userId: user.id, roleId: studentRole.id },
+        });
+      }
+
+      if (studentRecord) {
+        await db.student.update({
+          where: { id: studentRecord.id },
+          data: { userId: user.id },
+        });
+      }
+
+      results.student = `Created — linked to ${studentRecord?.studentId ?? 'no student record'}`;
+    } else {
+      results.student = 'Already exists';
+    }
+
+    // ─── Partner demo user ──────────────────────────────────────────────────
+    const existingPartner = await db.user.findUnique({
+      where: { email: 'partner@aloeducation.com' },
+    });
+
+    if (!existingPartner) {
+      const partnerRecord = await db.partner.findFirst({
+        orderBy: { createdAt: 'asc' },
+      });
+
+      const user = await db.user.create({
+        data: {
+          email: 'partner@aloeducation.com',
+[REDACTED: potential embedded credential in legacy reference]
+          name: partnerRecord?.companyName ?? 'ALO Partner',
+          phone: partnerRecord?.phone ?? '+8801712345679',
+          userType: 'partner',
+          referenceId: partnerRecord?.id ?? null,
+[REDACTED: potential embedded credential in legacy reference]
+          status: 'active',
+        },
+      });
+
+      if (partnerRole) {
+        await db.userRole.create({
+          data: { userId: user.id, roleId: partnerRole.id },
+        });
+      }
+
+      if (partnerRecord) {
+        await db.partner.update({
+          where: { id: partnerRecord.id },
+          data: { userId: user.id },
+        });
+      }
+
+      results.partner = `Created — linked to ${partnerRecord?.partnerId ?? 'no partner record'}`;
+    } else {
+      results.partner = 'Already exists';
+    }
+
+    // ─── Counselor demo user ────────────────────────────────────────────────
+    const existingCounselor = await db.user.findUnique({
+      where: { email: 'counselor@aloeducation.com' },
+    });
+    if (!existingCounselor) {
+      const empRecord = await db.employee.findFirst({
+        orderBy: { createdAt: 'asc' },
+      });
+      const u = await db.user.create({
+        data: {
+          email: 'counselor@aloeducation.com',
+[REDACTED: potential embedded credential in legacy reference]
+          name: empRecord ? `${empRecord.firstName} ${empRecord.lastName}` : 'ALO Counselor',
+          phone: empRecord?.phone ?? '+8801712345680',
+          userType: 'employee',
+          referenceId: empRecord?.id ?? null,
+[REDACTED: potential embedded credential in legacy reference]
+          status: 'active',
+        },
+      });
+      if (counselorRole) {
+        await db.userRole.create({ data: { userId: u.id, roleId: counselorRole.id } });
+      }
+      results.counselor = 'Created';
+    } else {
+      results.counselor = 'Already exists';
+    }
+
+    return NextResponse.json({
+      message: 'Demo users ready',
+      results,
+      credentials: {
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+      },
+    });
+  } catch (error) {
+    console.error('Demo users error:', error);
+    return NextResponse.json(
+      { error: 'Failed to create demo users', details: error instanceof Error ? error.message : 'Unknown' },
+      { status: 500 }
+    );
+  }
+}

@@ -1,0 +1,847 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import {
+  Megaphone, Lightbulb, FileText, Calendar, Image as ImageIcon, Video,
+  CheckCircle, Clock, Send, Plus, Sparkles, Search, Filter, Eye,
+  ArrowRight, ThumbsUp, ThumbsDown, MessageSquare, ChevronRight,
+  BarChart3, Users, Zap, LayoutGrid, Edit, Trash2, Copy, Play
+} from 'lucide-react'
+import { toast } from 'sonner'
+
+// ─── Platform Colors ───
+const PC: Record<string, string> = { facebook: '#1877F2', instagram: '#E4405F', tiktok: '#000000', youtube: '#FF0000', linkedin: '#0A66C2', whatsapp: '#25D366' }
+const PL: Record<string, string> = { facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', linkedin: 'LinkedIn', whatsapp: 'WhatsApp' }
+const SIZES: Record<string, string> = { facebook: '1200×630', instagram_post: '1080×1080', instagram_story: '1080×1920', tiktok: '1080×1920', youtube: '1280×720', linkedin: '1200×627', whatsapp: '1080×1920' }
+
+const catColor: Record<string, string> = { seo: 'bg-emerald-100 text-emerald-700', social: 'bg-pink-100 text-pink-700', email: 'bg-sky-100 text-sky-700', whatsapp: 'bg-green-100 text-green-700', blog: 'bg-amber-100 text-amber-700', video: 'bg-purple-100 text-purple-700' }
+const priColor: Record<string, string> = { high: 'bg-red-100 text-red-700', medium: 'bg-yellow-100 text-yellow-700', low: 'bg-gray-100 text-gray-700' }
+const srcIcon: Record<string, string> = { manual: '✏️', ai: '🤖', research_agent: '🔍' }
+const stBadge: Record<string, string> = { draft: 'bg-gray-100 text-gray-700', idea: 'bg-blue-50 text-blue-700', in_progress: 'bg-amber-100 text-amber-700', review: 'bg-purple-100 text-purple-700', approved: 'bg-emerald-100 text-emerald-700', scheduled: 'bg-sky-100 text-sky-700', published: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700', completed: 'bg-emerald-100 text-emerald-700', active: 'bg-green-100 text-green-700' }
+
+// ─── Mock Data ───
+const INIT_IDEAS = [
+  { id: 'i1', title: 'Study in UK - Scholarship Guide', description: 'Create comprehensive guide for UK scholarships targeting Bangladeshi students', category: 'blog', priority: 'high', source: 'manual', status: 'idea', assignedTo: 'Sarah', tags: ['UK', 'scholarship'] },
+  { id: 'i2', title: 'Australia Day Reel', description: 'Fun reel showcasing Australian university life', category: 'video', priority: 'medium', source: 'ai', status: 'approved', assignedTo: 'Mike', tags: ['Australia', 'reel'] },
+  { id: 'i3', title: 'WhatsApp Drip Campaign', description: 'Nurture leads via WhatsApp messages over 7 days', category: 'whatsapp', priority: 'high', source: 'manual', status: 'in_progress', assignedTo: 'Jane', tags: ['WhatsApp', 'leads'] },
+  { id: 'i4', title: 'SEO - Best IELTS Prep', description: 'Target "best IELTS preparation" keyword for Bangladesh', category: 'seo', priority: 'medium', source: 'research_agent', status: 'idea', assignedTo: '', tags: ['SEO', 'IELTS'] },
+  { id: 'i5', title: 'Student Success Story - Canada', description: 'Interview with student who got into UofT', category: 'social', priority: 'high', source: 'manual', status: 'approved', assignedTo: 'Ali', tags: ['Canada', 'success'] },
+  { id: 'i6', title: 'Email Newsletter - March', description: 'Monthly newsletter with new courses and deadlines', category: 'email', priority: 'low', source: 'ai', status: 'idea', assignedTo: '', tags: ['email', 'newsletter'] },
+  { id: 'i7', title: 'TikTok - Day in Life', description: 'Show a day in the life of an international student', category: 'video', priority: 'high', source: 'ai', status: 'in_progress', assignedTo: 'Sarah', tags: ['TikTok', 'student'] },
+  { id: 'i8', title: 'Blog - Visa Tips Malaysia', description: 'Step-by-step Malaysia student visa guide', category: 'blog', priority: 'medium', source: 'research_agent', status: 'idea', assignedTo: '', tags: ['Malaysia', 'visa'] },
+  { id: 'i9', title: 'Instagram Carousel - Top 5 Universities', description: 'Visual carousel of top 5 universities in Australia', category: 'social', priority: 'medium', source: 'manual', status: 'approved', assignedTo: 'Mike', tags: ['Instagram', 'university'] },
+  { id: 'i10', title: 'WhatsApp Quick Reply Templates', description: 'Pre-built templates for common student inquiries', category: 'whatsapp', priority: 'low', source: 'manual', status: 'idea', assignedTo: '', tags: ['WhatsApp', 'templates'] },
+  { id: 'i11', title: 'YouTube - How to Apply', description: 'Step-by-step application process walkthrough', category: 'video', priority: 'high', source: 'manual', status: 'review', assignedTo: 'Ali', tags: ['YouTube', 'application'] },
+  { id: 'i12', title: 'SEO - Study Abroad Cost Comparison', description: 'Target cost comparison keywords for top destinations', category: 'seo', priority: 'medium', source: 'research_agent', status: 'idea', assignedTo: '', tags: ['SEO', 'cost'] },
+]
+
+const INIT_CAMPAIGNS = [
+  { id: 'c1', name: 'Spring 2025 UK Drive', type: 'multi_channel', status: 'active', startDate: '2025-03-01', endDate: '2025-05-31', budget: 5000, reach: 45000, contentCount: 8 },
+  { id: 'c2', name: 'Australia Education Week', type: 'social_media', status: 'active', startDate: '2025-04-10', endDate: '2025-04-17', budget: 2000, reach: 22000, contentCount: 5 },
+  { id: 'c3', name: 'IELTS Prep Email Series', type: 'email', status: 'in_progress', startDate: '2025-03-15', endDate: '2025-04-15', budget: 500, reach: 8000, contentCount: 6 },
+  { id: 'c4', name: 'WhatsApp Lead Nurture', type: 'whatsapp', status: 'active', startDate: '2025-03-01', endDate: '2025-06-30', budget: 300, reach: 3500, contentCount: 4 },
+  { id: 'c5', name: 'Blog Series - Destination Guide', type: 'blog_series', status: 'draft', startDate: '2025-05-01', endDate: '2025-07-31', budget: 1000, reach: 0, contentCount: 3 },
+  { id: 'c6', name: 'Canada Fall 2025', type: 'multi_channel', status: 'draft', startDate: '2025-06-01', endDate: '2025-08-31', budget: 6000, reach: 0, contentCount: 0 },
+]
+
+const INIT_CONTENT = [
+  { id: 'co1', title: 'UK Scholarship Carousel', type: 'social_post', platform: 'instagram', status: 'approved', assignedTo: 'Sarah', campaignId: 'c1' },
+  { id: 'co2', title: 'Australia Week Teaser', type: 'social_post', platform: 'facebook', status: 'scheduled', assignedTo: 'Mike', campaignId: 'c2' },
+  { id: 'co3', title: 'IELTS Tips Email #1', type: 'email_template', platform: 'email', status: 'published', assignedTo: 'Jane', campaignId: 'c3' },
+  { id: 'co4', title: 'WhatsApp Welcome Message', type: 'whatsapp_template', platform: 'whatsapp', status: 'approved', assignedTo: 'Ali', campaignId: 'c4' },
+  { id: 'co5', title: 'Study in UK - Full Guide', type: 'blog_post', platform: 'blog', status: 'in_progress', assignedTo: 'Sarah', campaignId: 'c1' },
+  { id: 'co6', title: 'Australia Day Reel', type: 'video_script', platform: 'instagram', status: 'review', assignedTo: 'Mike', campaignId: 'c2' },
+  { id: 'co7', title: 'Student Testimonial Video', type: 'video_script', platform: 'youtube', status: 'draft', assignedTo: 'Ali', campaignId: 'c1' },
+  { id: 'co8', title: 'TikTok Campus Tour', type: 'social_post', platform: 'tiktok', status: 'scheduled', assignedTo: 'Sarah', campaignId: 'c2' },
+  { id: 'co9', title: 'LinkedIn Thought Leadership', type: 'social_post', platform: 'linkedin', status: 'draft', assignedTo: 'Jane', campaignId: 'c1' },
+  { id: 'co10', title: 'Instagram Story - Poll', type: 'image', platform: 'instagram', status: 'approved', assignedTo: 'Mike', campaignId: 'c2' },
+  { id: 'co11', title: 'WhatsApp Follow-up Day 3', type: 'whatsapp_template', platform: 'whatsapp', status: 'in_progress', assignedTo: 'Ali', campaignId: 'c4' },
+  { id: 'co12', title: 'IELTS Email #2 - Reading Tips', type: 'email_template', platform: 'email', status: 'draft', assignedTo: 'Jane', campaignId: 'c3' },
+  { id: 'co13', title: 'UK Visa Blog Post', type: 'blog_post', platform: 'blog', status: 'review', assignedTo: 'Sarah', campaignId: 'c1' },
+  { id: 'co14', title: 'Facebook Event Cover', type: 'image', platform: 'facebook', status: 'scheduled', assignedTo: 'Mike', campaignId: 'c2' },
+  { id: 'co15', title: 'YouTube Application Walkthrough', type: 'video_script', platform: 'youtube', status: 'draft', assignedTo: 'Ali', campaignId: 'c1' },
+  { id: 'co16', title: 'Malaysia Destination Blog', type: 'blog_post', platform: 'blog', status: 'idea', assignedTo: '', campaignId: 'c5' },
+]
+
+const INIT_SCHEDULED = [
+  { id: 's1', contentId: 'co1', platform: 'instagram', title: 'UK Scholarship Carousel', date: '2025-03-10', time: '10:00', status: 'scheduled' },
+  { id: 's2', contentId: 'co2', platform: 'facebook', title: 'Australia Week Teaser', date: '2025-04-09', time: '14:00', status: 'scheduled' },
+  { id: 's3', contentId: 'co8', platform: 'tiktok', title: 'TikTok Campus Tour', date: '2025-04-11', time: '18:00', status: 'scheduled' },
+  { id: 's4', contentId: 'co14', platform: 'facebook', title: 'Facebook Event Cover', date: '2025-04-10', time: '09:00', status: 'scheduled' },
+  { id: 's5', contentId: 'co10', platform: 'instagram', title: 'Instagram Story - Poll', date: '2025-04-12', time: '12:00', status: 'scheduled' },
+  { id: 's6', contentId: 'co3', platform: 'email', title: 'IELTS Tips Email #1', date: '2025-03-15', time: '08:00', status: 'published' },
+  { id: 's7', contentId: 'co4', platform: 'whatsapp', title: 'WhatsApp Welcome Message', date: '2025-03-20', time: '10:30', status: 'published' },
+  { id: 's8', contentId: 'co9', platform: 'linkedin', title: 'LinkedIn Thought Leadership', date: '2025-04-15', time: '11:00', status: 'scheduled' },
+  { id: 's9', contentId: 'co6', platform: 'youtube', title: 'Student Testimonial Video', date: '2025-04-20', time: '16:00', status: 'scheduled' },
+]
+
+const INIT_PROMPTS = [
+  { id: 'p1', prompt: 'Happy international students studying in modern UK university library', negativePrompt: 'blurry, low quality', style: 'realistic', platform: 'instagram', size: '1080×1080', status: 'generated' },
+  { id: 'p2', prompt: 'Vibrant Australian campus with students walking under sunshine', negativePrompt: 'dark, gloomy', style: 'illustration', platform: 'facebook', size: '1200×630', status: 'pending' },
+  { id: 'p3', prompt: 'Minimalist IELTS exam preparation infographic', negativePrompt: 'cluttered, messy', style: 'minimal', platform: 'instagram', size: '1080×1920', status: 'draft' },
+]
+
+const INIT_SCRIPTS = [
+  { id: 'v1', title: 'Day in Life - UK Student', script: 'Hook: Ever wonder what studying in London looks like?\n\nScene 1: Morning coffee at dorm\nScene 2: Walking to campus\nScene 3: Lecture hall\nScene 4: Library study session\nScene 5: Evening with friends\n\nCTA: Apply now for Fall 2025!', duration: '60s', platform: 'tiktok', hookLine: 'Ever wonder what studying in London looks like?', cta: 'Apply now for Fall 2025!', status: 'approved' },
+  { id: 'v2', title: 'How to Apply - Step by Step', script: 'Hook: Applying abroad seems hard? Let me show you it is easier than you think.\n\nStep 1: Choose your destination\nStep 2: Find your program\nStep 3: Prepare documents\nStep 4: Submit application\nStep 5: Visa process\n\nCTA: Start your application today!', duration: '90s', platform: 'youtube', hookLine: 'Applying abroad seems hard?', cta: 'Start your application today!', status: 'draft' },
+]
+
+const INIT_APPROVALS = [
+  { id: 'a1', title: 'UK Scholarship Carousel', type: 'social_post', platform: 'instagram', requestedBy: 'Sarah', riskLevel: 'low', date: '2025-03-08', content: '🇬🇧 Top 5 UK Scholarships for Bangladeshi Students!\n\n1. Chevening Scholarship\n2. Commonwealth Scholarship\n3. Gates Cambridge\n4. Rhodes Scholarship\n5. University-specific awards\n\nApply now → link in bio\n#StudyInUK #Scholarship' },
+  { id: 'a2', title: 'WhatsApp Promotional Blast', type: 'whatsapp_template', platform: 'whatsapp', requestedBy: 'Ali', riskLevel: 'medium', date: '2025-03-09', content: 'Hi {{name}}! 🎓 Great news! We have new scholarship opportunities for {{country}}. Reply YES to learn more!' },
+  { id: 'a3', title: 'Australia Week Reel Script', type: 'video_script', platform: 'instagram', requestedBy: 'Mike', riskLevel: 'low', date: '2025-03-10', content: 'Hook: G\'day! Ready for an epic education adventure? 🦘\n\nQuick cuts of Australian campuses, beaches, wildlife\n\nCTA: Join our Australia Education Week webinar!' },
+  { id: 'a4', title: 'Discount Offer Email', type: 'email_template', platform: 'email', requestedBy: 'Jane', riskLevel: 'high', date: '2025-03-11', content: 'Subject: 🎉 Exclusive 30% OFF on Application Fees!\n\nLimited time offer - apply before March 31st to get 30% off your application processing fee...' },
+  { id: 'a5', title: 'Malaysia Blog Post', type: 'blog_post', platform: 'blog', requestedBy: 'Sarah', riskLevel: 'low', date: '2025-03-12', content: 'Complete Guide to Studying in Malaysia 2025\n\nMalaysia is becoming one of the top study destinations for Bangladeshi students...' },
+]
+
+// ─── Component ───
+export default function CRMMarketing() {
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const [ideas, setIdeas] = useState(INIT_IDEAS)
+  const [campaigns, setCampaigns] = useState<any[]>([])
+  const [content, setContent] = useState<any[]>([])
+  const [socialSizes, setSocialSizes] = useState<any[]>([])
+  const [scheduled, setScheduled] = useState(INIT_SCHEDULED)
+  const [prompts, setPrompts] = useState(INIT_PROMPTS)
+  const [scripts, setScripts] = useState(INIT_SCRIPTS)
+  const [approvals, setApprovals] = useState(INIT_APPROVALS)
+  const [platformFilter, setPlatformFilter] = useState('all')
+  const [genIdeas, setGenIdeas] = useState<string[]>([])
+  const [showGenIdeas, setShowGenIdeas] = useState(false)
+  const [genContent, setGenContent] = useState('')
+  const [genForm, setGenForm] = useState({ type: 'social_post', platform: 'instagram', topic: '' })
+  const [expandedIdea, setExpandedIdea] = useState<string | null>(null)
+  const [selectedApproval, setSelectedApproval] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchMarketingData = async () => {
+      try {
+        setLoading(true)
+        const res = await fetch('/api/marketing')
+        if (res.ok) {
+          const data = await res.json()
+          setCampaigns(data.campaigns || [])
+          setContent(data.content || [])
+          setSocialSizes(data.socialSizes || [])
+        }
+      } catch (err) {
+        console.error('Failed to fetch marketing data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchMarketingData()
+  }, [])
+
+  // Dialogs
+  const [ideaDialog, setIdeaDialog] = useState(false)
+  const [campaignDialog, setCampaignDialog] = useState(false)
+  const [contentDialog, setContentDialog] = useState(false)
+  const [promptDialog, setPromptDialog] = useState(false)
+  const [scriptDialog, setScriptDialog] = useState(false)
+  const [scheduleDialog, setScheduleDialog] = useState(false)
+
+  // Forms
+  const [ideaForm, setIdeaForm] = useState({ title: '', description: '', category: 'social', priority: 'medium', tags: '' })
+  const [campaignForm, setCampaignForm] = useState({ name: '', type: 'social_media', startDate: '', endDate: '', budget: '' })
+  const [contentForm, setContentForm] = useState({ title: '', type: 'social_post', platform: 'instagram', assignedTo: '', campaignId: '' })
+  const [promptForm, setPromptForm] = useState({ prompt: '', negativePrompt: '', style: 'realistic', platform: 'instagram', size: '1080×1080' })
+  const [scriptForm, setScriptForm] = useState({ title: '', script: '', duration: '60s', platform: 'tiktok', hookLine: '', cta: '' })
+  const [scheduleForm, setScheduleForm] = useState({ contentId: '', date: '', time: '10:00' })
+
+  const addIdea = () => {
+    if (!ideaForm.title) return toast.error('Title required')
+    setIdeas(prev => [...prev, { id: `i${Date.now()}`, ...ideaForm, source: 'manual', status: 'idea', assignedTo: '', tags: ideaForm.tags.split(',').map(t => t.trim()).filter(Boolean) }])
+    setIdeaForm({ title: '', description: '', category: 'social', priority: 'medium', tags: '' })
+    setIdeaDialog(false)
+    toast.success('Idea added')
+  }
+
+  const addCampaign = () => {
+    if (!campaignForm.name) return toast.error('Name required')
+    toast.success('Campaign created')
+    setCampaignForm({ name: '', type: 'social_media', startDate: '', endDate: '', budget: '' })
+    setCampaignDialog(false)
+  }
+
+  const addContent = () => {
+    if (!contentForm.title) return toast.error('Title required')
+    setContent(prev => [...prev, { id: `co${Date.now()}`, ...contentForm, status: 'draft', campaignId: contentForm.campaignId || '' }])
+    setContentForm({ title: '', type: 'social_post', platform: 'instagram', assignedTo: '', campaignId: '' })
+    setContentDialog(false)
+    toast.success('Content created')
+  }
+
+  const addPrompt = () => {
+    if (!promptForm.prompt) return toast.error('Prompt required')
+    setPrompts(prev => [...prev, { id: `p${Date.now()}`, ...promptForm, status: 'draft' }])
+    setPromptForm({ prompt: '', negativePrompt: '', style: 'realistic', platform: 'instagram', size: '1080×1080' })
+    setPromptDialog(false)
+    toast.success('Image prompt created')
+  }
+
+  const addScript = () => {
+    if (!scriptForm.title) return toast.error('Title required')
+    setScripts(prev => [...prev, { id: `v${Date.now()}`, ...scriptForm, status: 'draft' }])
+    setScriptForm({ title: '', script: '', duration: '60s', platform: 'tiktok', hookLine: '', cta: '' })
+    setScriptDialog(false)
+    toast.success('Video script created')
+  }
+
+  const addSchedule = () => {
+    if (!scheduleForm.contentId || !scheduleForm.date) return toast.error('Select content and date')
+    const c = content.find(x => x.id === scheduleForm.contentId)
+    if (!c) return
+    setScheduled(prev => [...prev, { id: `s${Date.now()}`, contentId: c.id, platform: c.platform, title: c.title, date: scheduleForm.date, time: scheduleForm.time, status: 'scheduled' }])
+    setScheduleDialog(false)
+    toast.success('Post scheduled')
+  }
+
+  const generateIdeas = () => {
+    setGenIdeas([
+      '🎓 "5 Mistakes Students Make When Applying Abroad" - Blog series targeting common application errors',
+      '📱 "Campus Tour Tuesday" - Weekly social series showing different university campuses',
+      '💬 "WhatsApp Quiz: Which Country Suits You?" - Interactive lead generation quiz',
+      '🎬 "60-Second Study Hack" - TikTok/Reels series with quick study tips for IELTS/TOEFL',
+      '📧 "Scholarship Alert Newsletter" - Monthly email highlighting new scholarship deadlines'
+    ])
+    setShowGenIdeas(true)
+  }
+
+  const generateContent = () => {
+    if (!genForm.topic) return toast.error('Enter a topic')
+    const templates: Record<string, string> = {
+      social_post: `✨ ${genForm.topic} ✨\n\nDreaming of studying abroad? Here is your chance! 🌍\n\n🔹 World-class education\n🔹 Global networking\n🔹 Career opportunities\n\n📩 DM us "INFO" to get started!\n\n#StudyAbroad #${genForm.platform === 'tiktok' ? 'TikTokStudy' : 'Education'} #InternationalStudents`,
+      blog_post: `# ${genForm.topic}\n\n## Introduction\nThe journey of ${genForm.topic.toLowerCase()} is one that many Bangladeshi students dream about. In this comprehensive guide, we will walk you through everything you need to know.\n\n## Why Choose This Path?\n- Quality education standards\n- Affordable living costs\n- Post-study work opportunities\n\n## How to Get Started\n1. Research your options\n2. Prepare your documents\n3. Apply through ALO Education\n\n## Conclusion\nReady to take the first step? Contact us today!`,
+      email_template: `Subject: 🎓 ${genForm.topic} - Your Journey Starts Here!\n\nDear {{name}},\n\nAre you ready to explore ${genForm.topic.toLowerCase()}? We have exciting opportunities waiting for you!\n\n✅ Expert guidance every step of the way\n✅ Scholarship assistance\n✅ Visa support\n\n[Apply Now Button]\n\nBest regards,\nALO Education Team`,
+      whatsapp_template: `🎓 *${genForm.topic}*\n\nHi {{name}}! Great news about ${genForm.topic.toLowerCase()}!\n\n✅ Expert counseling\n✅ Scholarship help\n✅ Visa guidance\n\nReply YES to learn more! 📩`,
+      image_script: `🖼️ Image Concept: ${genForm.topic}\n\nVisual: Modern university campus with diverse students\nOverlay text: "${genForm.topic}"\nStyle: Clean, professional, inspiring\n\nSuggested size: ${SIZES[genForm.platform] || '1080×1080'}px`,
+[REDACTED: potential embedded credential in legacy reference]
+    }
+    setGenContent(templates[genForm.type] || templates.social_post)
+    toast.success('Content generated!')
+  }
+
+  const approveIdea = (id: string) => { setIdeas(prev => prev.map(i => i.id === id ? { ...i, status: 'approved' } : i)); toast.success('Idea approved') }
+  const rejectIdea = (id: string) => { setIdeas(prev => prev.map(i => i.id === id ? { ...i, status: 'rejected' } : i)); toast.success('Idea rejected') }
+
+  const handleApproval = (id: string, action: 'approved' | 'rejected' | 'changes') => {
+    setApprovals(prev => prev.filter(a => a.id !== id))
+    if (action === 'approved') toast.success('Content approved & added to schedule')
+    else if (action === 'rejected') toast.success('Content rejected')
+    else toast.success('Changes requested')
+    setSelectedApproval(null)
+  }
+
+  const pipelineStages = [
+    { label: 'Ideas', count: ideas.filter(i => i.status === 'idea').length, color: 'bg-blue-500' },
+    { label: 'In Progress', count: content.filter(c => c.status === 'in_progress').length, color: 'bg-amber-500' },
+    { label: 'Review', count: content.filter(c => c.status === 'review').length, color: 'bg-purple-500' },
+    { label: 'Approved', count: content.filter(c => c.status === 'approved').length, color: 'bg-emerald-500' },
+    { label: 'Scheduled', count: scheduled.filter(s => s.status === 'scheduled').length, color: 'bg-sky-500' },
+    { label: 'Published', count: scheduled.filter(s => s.status === 'published').length, color: 'bg-green-500' },
+  ]
+
+  const filteredScheduled = platformFilter === 'all' ? scheduled : scheduled.filter(s => s.platform === platformFilter)
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1A2332]">Marketing Studio</h1>
+          <p className="text-sm text-gray-500">Idea → Campaign → Content → Approval → Schedule → Publish</p>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => { setIdeaDialog(true) }} className="border-[#F37021] text-[#F37021]"><Lightbulb className="h-4 w-4 mr-1" /> New Idea</Button>
+          <Button variant="outline" size="sm" onClick={() => { setCampaignDialog(true) }} className="border-[#0066CC] text-[#0066CC]"><Megaphone className="h-4 w-4 mr-1" /> New Campaign</Button>
+          <Button size="sm" className="bg-[#F37021] hover:bg-[#e06010] text-white"><Sparkles className="h-4 w-4 mr-1" /> AI Generate</Button>
+        </div>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <ScrollArea className="w-full">
+          <TabsList className="bg-gray-100 mb-4 flex w-max min-w-full">
+            <TabsTrigger value="dashboard" className="text-xs sm:text-sm"><LayoutGrid className="h-3 w-3 mr-1" /> Dashboard</TabsTrigger>
+            <TabsTrigger value="ideas" className="text-xs sm:text-sm"><Lightbulb className="h-3 w-3 mr-1" /> Ideas</TabsTrigger>
+            <TabsTrigger value="campaigns" className="text-xs sm:text-sm"><Megaphone className="h-3 w-3 mr-1" /> Campaigns</TabsTrigger>
+            <TabsTrigger value="content" className="text-xs sm:text-sm"><FileText className="h-3 w-3 mr-1" /> Content</TabsTrigger>
+            <TabsTrigger value="planner" className="text-xs sm:text-sm"><Calendar className="h-3 w-3 mr-1" /> Planner</TabsTrigger>
+            <TabsTrigger value="media" className="text-xs sm:text-sm"><ImageIcon className="h-3 w-3 mr-1" /> Media</TabsTrigger>
+            <TabsTrigger value="approvals" className="text-xs sm:text-sm"><CheckCircle className="h-3 w-3 mr-1" /> Approvals</TabsTrigger>
+          </TabsList>
+        </ScrollArea>
+
+        {/* ─── Tab 1: Dashboard ─── */}
+        <TabsContent value="dashboard" className="space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: 'Active Campaigns', value: campaigns.filter(c => c.status === 'active').length, icon: Megaphone, color: '#F37021' },
+              { label: 'Content Pieces', value: content.length, icon: FileText, color: '#0066CC' },
+              { label: 'Scheduled Posts', value: scheduled.filter(s => s.status === 'scheduled').length, icon: Clock, color: '#1A2332' },
+              { label: 'Engagement Rate', value: '4.8%', icon: BarChart3, color: '#F37021' },
+            ].map((s, i) => (
+              <Card key={i} className="border-0 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div><p className="text-xs text-gray-500">{s.label}</p><p className="text-2xl font-bold text-[#1A2332]">{s.value}</p></div>
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${s.color}15` }}><s.icon className="h-5 w-5" style={{ color: s.color }} /></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Content Pipeline</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-1 overflow-x-auto pb-2">
+                {pipelineStages.map((s, i) => (
+                  <div key={i} className="flex items-center min-w-0">
+                    <div className="flex flex-col items-center min-w-[80px]">
+                      <div className={`w-8 h-8 ${s.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>{s.count}</div>
+                      <span className="text-xs text-gray-500 mt-1 text-center">{s.label}</span>
+                    </div>
+                    {i < pipelineStages.length - 1 && <ArrowRight className="h-4 w-4 text-gray-300 mx-1 shrink-0" />}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Quick Actions</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <Button variant="outline" className="justify-start h-auto py-3" onClick={() => { setActiveTab('ideas'); setIdeaDialog(true) }}><Lightbulb className="h-4 w-4 mr-2 text-[#F37021]" /> New Idea</Button>
+                <Button variant="outline" className="justify-start h-auto py-3" onClick={() => { setActiveTab('campaigns'); setCampaignDialog(true) }}><Megaphone className="h-4 w-4 mr-2 text-[#0066CC]" /> New Campaign</Button>
+                <Button variant="outline" className="justify-start h-auto py-3" onClick={() => setActiveTab('content')}><Sparkles className="h-4 w-4 mr-2 text-purple-500" /> AI Generate Content</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ─── Tab 2: Ideas ─── */}
+        <TabsContent value="ideas" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold text-[#1A2332]">Ideas Board ({ideas.length})</h3>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={generateIdeas}><Sparkles className="h-4 w-4 mr-1" /> Generate Ideas</Button>
+              <Button size="sm" className="bg-[#F37021] hover:bg-[#e06010] text-white" onClick={() => setIdeaDialog(true)}><Plus className="h-4 w-4 mr-1" /> Add Idea</Button>
+            </div>
+          </div>
+
+          {showGenIdeas && (
+            <Card className="border-[#F37021]/30 bg-[#F37021]/5">
+              <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#F37021]" /> AI Generated Ideas</CardTitle></CardHeader>
+              <CardContent className="space-y-2">
+                {genIdeas.map((idea, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2 bg-white rounded-lg">
+                    <Badge className="bg-[#F37021]/10 text-[#F37021] shrink-0">AI</Badge>
+                    <p className="text-sm">{idea}</p>
+                    <Button variant="ghost" size="sm" className="shrink-0 ml-auto" onClick={() => { setIdeaForm({ title: idea.split(' - ')[0].replace(/^[^\s]+\s/, ''), description: idea.split(' - ')[1] || '', category: 'social', priority: 'medium', tags: '' }); setIdeaDialog(true); setShowGenIdeas(false) }}><Plus className="h-3 w-3" /></Button>
+                  </div>
+                ))}
+                <Button variant="ghost" size="sm" onClick={() => setShowGenIdeas(false)}>Close</Button>
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {ideas.map(idea => (
+              <Card key={idea.id} className={`border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow ${expandedIdea === idea.id ? 'ring-2 ring-[#F37021]/30' : ''}`} onClick={() => setExpandedIdea(expandedIdea === idea.id ? null : idea.id)}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-medium text-sm text-[#1A2332] line-clamp-1">{idea.title}</h4>
+                    <span className="text-sm">{srcIcon[idea.source]}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    <Badge className={`text-[10px] ${catColor[idea.category] || 'bg-gray-100 text-gray-700'}`}>{idea.category}</Badge>
+                    <Badge className={`text-[10px] ${priColor[idea.priority]}`}>{idea.priority}</Badge>
+                    <Badge className={`text-[10px] ${stBadge[idea.status] || 'bg-gray-100 text-gray-700'}`}>{idea.status}</Badge>
+                  </div>
+                  {idea.assignedTo && <p className="text-xs text-gray-500">Assigned: {idea.assignedTo}</p>}
+                  {expandedIdea === idea.id && (
+                    <div className="mt-3 pt-3 border-t space-y-2" onClick={e => e.stopPropagation()}>
+                      <p className="text-sm text-gray-600">{idea.description}</p>
+                      {idea.tags.length > 0 && <div className="flex flex-wrap gap-1">{idea.tags.map((t, i) => <Badge key={i} variant="outline" className="text-[10px]">{t}</Badge>)}</div>}
+                      <div className="flex gap-2 pt-1">
+                        <Button size="sm" variant="outline" className="text-green-600 border-green-300 h-7 text-xs" onClick={() => approveIdea(idea.id)}><ThumbsUp className="h-3 w-3 mr-1" /> Approve</Button>
+                        <Button size="sm" variant="outline" className="text-red-600 border-red-300 h-7 text-xs" onClick={() => rejectIdea(idea.id)}><ThumbsDown className="h-3 w-3 mr-1" /> Reject</Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* ─── Tab 3: Campaigns ─── */}
+        <TabsContent value="campaigns" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold text-[#1A2332]">Campaigns ({campaigns.length})</h3>
+            <Button size="sm" className="bg-[#0066CC] hover:bg-[#0055aa] text-white" onClick={() => setCampaignDialog(true)}><Plus className="h-4 w-4 mr-1" /> Create Campaign</Button>
+          </div>
+          <div className="space-y-3">
+            {campaigns.map(c => (
+              <Card key={c.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-semibold text-[#1A2332]">{c.name}</h4>
+                        <Badge className={`text-xs ${stBadge[c.status]}`}>{c.status}</Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-3 text-xs text-gray-500">
+                        <span className="capitalize">{c.type.replace('_', ' ')}</span>
+                        <span>{c.startDate} → {c.endDate}</span>
+                        {c.budget > 0 && <span>Budget: ${c.budget.toLocaleString()}</span>}
+                        {c.reach > 0 && <span>Reach: {c.reach.toLocaleString()}</span>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-center"><p className="text-lg font-bold text-[#0066CC]">{c.contentCount}</p><p className="text-[10px] text-gray-500">Content</p></div>
+                      <Button variant="ghost" size="sm"><ChevronRight className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* ─── Tab 4: Content Creation ─── */}
+        <TabsContent value="content" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2 space-y-3">
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-[#1A2332]">Content Pieces ({content.length})</h3>
+                <Button size="sm" className="bg-[#F37021] hover:bg-[#e06010] text-white" onClick={() => setContentDialog(true)}><Plus className="h-4 w-4 mr-1" /> Create Content</Button>
+              </div>
+              <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+                {content.map(c => (
+                  <div key={c.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-2 h-8 rounded-full shrink-0" style={{ backgroundColor: PC[c.platform] || '#999' }} />
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm text-[#1A2332] truncate">{c.title}</p>
+                        <p className="text-xs text-gray-500">{c.type.replace('_', ' ')} • {PL[c.platform] || c.platform}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {c.assignedTo && <span className="text-xs text-gray-400 hidden sm:inline">{c.assignedTo}</span>}
+                      <Badge className={`text-[10px] ${stBadge[c.status] || 'bg-gray-100 text-gray-700'}`}>{c.status}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Card className="border-0 shadow-sm h-fit">
+              <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4 text-[#F37021]" /> AI Content Generator</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                <div><Label className="text-xs">Content Type</Label>
+                  <Select value={genForm.type} onValueChange={v => setGenForm({ ...genForm, type: v })}>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="social_post">Social Post</SelectItem><SelectItem value="blog_post">Blog Post</SelectItem>
+                      <SelectItem value="email_template">Email Template</SelectItem><SelectItem value="whatsapp_template">WhatsApp Template</SelectItem>
+                      <SelectItem value="image">Image</SelectItem><SelectItem value="video_script">Video Script</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div><Label className="text-xs">Platform</Label>
+                  <Select value={genForm.platform} onValueChange={v => setGenForm({ ...genForm, platform: v })}>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(PL).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div><Label className="text-xs">Topic / Keywords</Label>
+                  <Input className="h-8 text-sm" placeholder="e.g., Study in UK scholarships" value={genForm.topic} onChange={e => setGenForm({ ...genForm, topic: e.target.value })} />
+                </div>
+                <div className="text-[10px] text-gray-400 bg-gray-50 p-2 rounded">
+                  📐 Recommended size: {SIZES[genForm.platform] || SIZES[`${genForm.platform}_post`] || '1080×1080'}px
+                </div>
+                <Button className="w-full bg-[#F37021] hover:bg-[#e06010] text-white text-sm" onClick={generateContent}><Sparkles className="h-4 w-4 mr-1" /> Generate with AI</Button>
+                {genContent && (
+                  <div className="space-y-2">
+                    <div className="bg-gray-50 rounded-lg p-3 max-h-60 overflow-y-auto">
+                      <pre className="text-xs whitespace-pre-wrap font-sans">{genContent}</pre>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => { navigator.clipboard.writeText(genContent); toast.success('Copied!') }}><Copy className="h-3 w-3 mr-1" /> Copy</Button>
+                      <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => setGenContent('')}><Edit className="h-3 w-3 mr-1" /> Clear</Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* ─── Tab 5: Social Media Planner ─── */}
+        <TabsContent value="planner" className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Filter className="h-4 w-4 text-gray-400" />
+              {['all', ...Object.keys(PL)].map(p => (
+                <Button key={p} variant={platformFilter === p ? 'default' : 'outline'} size="sm" className={`h-7 text-xs ${platformFilter === p ? 'bg-[#1A2332] text-white' : ''}`} onClick={() => setPlatformFilter(p)}>
+                  {p === 'all' ? 'All' : PL[p]}
+                </Button>
+              ))}
+            </div>
+            <Button size="sm" className="bg-[#0066CC] hover:bg-[#0055aa] text-white" onClick={() => setScheduleDialog(true)}><Plus className="h-4 w-4 mr-1" /> Schedule Post</Button>
+          </div>
+
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Calendar View</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-7 gap-1 text-center">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d} className="text-xs font-medium text-gray-500 py-1">{d}</div>)}
+                {Array.from({ length: 35 }, (_, i) => {
+                  const day = i - 6
+                  const dateStr = day > 0 && day <= 30 ? `2025-04-${String(day).padStart(2, '0')}` : ''
+                  const dayPosts = dateStr ? scheduled.filter(s => s.date === dateStr) : []
+                  return (
+                    <div key={i} className={`min-h-[48px] sm:min-h-[64px] p-1 rounded text-xs border ${dayPosts.length > 0 ? 'bg-gray-50 border-gray-200' : 'border-transparent'} ${day > 0 && day <= 30 ? '' : 'text-gray-300'}`}>
+                      {day > 0 && day <= 30 && <span className="text-[10px] text-gray-400">{day}</span>}
+                      {dayPosts.slice(0, 2).map(p => (
+                        <div key={p.id} className="mt-0.5 px-1 py-0.5 rounded text-[9px] text-white truncate" style={{ backgroundColor: PC[p.platform] }}>{p.title.slice(0, 12)}</div>
+                      ))}
+                      {dayPosts.length > 2 && <div className="text-[9px] text-gray-400">+{dayPosts.length - 2}</div>}
+                    </div>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Scheduled Posts</CardTitle></CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-72 overflow-y-auto">
+                <Table>
+                  <TableHeader><TableRow><TableHead className="text-xs">Date/Time</TableHead><TableHead className="text-xs">Platform</TableHead><TableHead className="text-xs">Content</TableHead><TableHead className="text-xs">Status</TableHead></TableRow></TableHeader>
+                  <TableBody>
+                    {filteredScheduled.map(s => (
+                      <TableRow key={s.id}>
+                        <TableCell className="text-xs whitespace-nowrap">{s.date} {s.time}</TableCell>
+                        <TableCell><Badge className="text-[10px] text-white" style={{ backgroundColor: PC[s.platform] }}>{PL[s.platform]}</Badge></TableCell>
+                        <TableCell className="text-xs max-w-[200px] truncate">{s.title}</TableCell>
+                        <TableCell><Badge className={`text-[10px] ${stBadge[s.status]}`}>{s.status}</Badge></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ─── Tab 6: Image/Video Content ─── */}
+        <TabsContent value="media" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-[#1A2332]">Image Prompts ({prompts.length})</h3>
+                <Button size="sm" variant="outline" onClick={() => setPromptDialog(true)}><Plus className="h-4 w-4 mr-1" /> Create Prompt</Button>
+              </div>
+              <div className="space-y-2 max-h-[500px] overflow-y-auto">
+                {prompts.map(p => (
+                  <Card key={p.id} className="border-0 shadow-sm">
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between mb-1">
+                        <p className="text-sm font-medium line-clamp-2">{p.prompt}</p>
+                        <Badge className={`text-[10px] ml-2 shrink-0 ${stBadge[p.status]}`}>{p.status}</Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        <Badge variant="outline" className="text-[10px]">{p.style}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{PL[p.platform]}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{p.size}</Badge>
+                      </div>
+                      {p.negativePrompt && <p className="text-[10px] text-red-400 mt-1">Neg: {p.negativePrompt}</p>}
+                      <Button variant="outline" size="sm" className="mt-2 w-full h-7 text-xs" onClick={() => { toast.success('Image generation started (mock)') }}><ImageIcon className="h-3 w-3 mr-1" /> Generate Image</Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-[#1A2332]">Video Scripts ({scripts.length})</h3>
+                <Button size="sm" variant="outline" onClick={() => setScriptDialog(true)}><Plus className="h-4 w-4 mr-1" /> Create Script</Button>
+              </div>
+              <div className="space-y-2 max-h-[500px] overflow-y-auto">
+                {scripts.map(s => (
+                  <Card key={s.id} className="border-0 shadow-sm">
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between mb-1">
+                        <h4 className="text-sm font-medium">{s.title}</h4>
+                        <Badge className={`text-[10px] ml-2 shrink-0 ${stBadge[s.status]}`}>{s.status}</Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        <Badge variant="outline" className="text-[10px]">{s.duration}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{PL[s.platform]}</Badge>
+                      </div>
+                      {s.hookLine && <p className="text-xs text-[#F37021] font-medium mb-1">🪝 {s.hookLine}</p>}
+                      <pre className="text-[11px] text-gray-600 whitespace-pre-wrap bg-gray-50 p-2 rounded max-h-24 overflow-y-auto font-sans">{s.script}</pre>
+                      {s.cta && <p className="text-xs text-[#0066CC] font-medium mt-1">📢 {s.cta}</p>}
+                      <Button variant="outline" size="sm" className="mt-2 w-full h-7 text-xs" onClick={() => toast.success('AI script enhancement started (mock)')}><Sparkles className="h-3 w-3 mr-1" /> Generate with AI</Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* ─── Tab 7: Approval Queue ─── */}
+        <TabsContent value="approvals" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-[#1A2332]">Content Approval Queue ({approvals.length})</h3>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <Card className="border-0 shadow-sm">
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader><TableRow>
+                      <TableHead className="text-xs">Title</TableHead><TableHead className="text-xs">Type</TableHead>
+                      <TableHead className="text-xs hidden sm:table-cell">Platform</TableHead><TableHead className="text-xs hidden md:table-cell">By</TableHead>
+                      <TableHead className="text-xs">Risk</TableHead><TableHead className="text-xs">Actions</TableHead>
+                    </TableRow></TableHeader>
+                    <TableBody>
+                      {approvals.length === 0 ? (
+                        <TableRow><TableCell colSpan={6} className="text-center py-8 text-gray-400">No items awaiting approval</TableCell></TableRow>
+                      ) : approvals.map(a => (
+                        <TableRow key={a.id} className={selectedApproval === a.id ? 'bg-[#F37021]/5' : 'cursor-pointer'} onClick={() => setSelectedApproval(a.id)}>
+                          <TableCell className="text-xs font-medium">{a.title}</TableCell>
+                          <TableCell className="text-xs">{a.type.replace('_', ' ')}</TableCell>
+                          <TableCell className="text-xs hidden sm:table-cell"><Badge className="text-[10px] text-white" style={{ backgroundColor: PC[a.platform] }}>{PL[a.platform]}</Badge></TableCell>
+                          <TableCell className="text-xs hidden md:table-cell">{a.requestedBy}</TableCell>
+                          <TableCell><Badge className={`text-[10px] ${a.riskLevel === 'high' ? 'bg-red-100 text-red-700' : a.riskLevel === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{a.riskLevel}</Badge></TableCell>
+                          <TableCell>
+                            <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-green-600" onClick={() => handleApproval(a.id, 'approved')}><ThumbsUp className="h-3 w-3" /></Button>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-600" onClick={() => handleApproval(a.id, 'rejected')}><ThumbsDown className="h-3 w-3" /></Button>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-amber-600" onClick={() => handleApproval(a.id, 'changes')}><MessageSquare className="h-3 w-3" /></Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-0 shadow-sm h-fit">
+              <CardHeader className="pb-2"><CardTitle className="text-base">Preview</CardTitle></CardHeader>
+              <CardContent>
+                {selectedApproval ? (() => {
+                  const a = approvals.find(x => x.id === selectedApproval)
+                  if (!a) return <p className="text-sm text-gray-400">Not found</p>
+                  return (
+                    <div className="space-y-3">
+                      <div>
+                        <h4 className="font-medium text-sm">{a.title}</h4>
+                        <div className="flex gap-1 mt-1">
+                          <Badge className="text-[10px] text-white" style={{ backgroundColor: PC[a.platform] }}>{PL[a.platform]}</Badge>
+                          <Badge className={`text-[10px] ${a.riskLevel === 'high' ? 'bg-red-100 text-red-700' : a.riskLevel === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{a.riskLevel} risk</Badge>
+                        </div>
+                      </div>
+                      <Separator />
+                      <div className="bg-gray-50 rounded-lg p-3 max-h-48 overflow-y-auto">
+                        <pre className="text-xs whitespace-pre-wrap font-sans">{a.content}</pre>
+                      </div>
+                      <div className="text-[10px] text-gray-400">Requested by {a.requestedBy} on {a.date}</div>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="flex-1 bg-green-600 hover:bg-green-700 text-white h-8 text-xs" onClick={() => handleApproval(a.id, 'approved')}><CheckCircle className="h-3 w-3 mr-1" /> Approve</Button>
+                        <Button size="sm" variant="outline" className="flex-1 h-8 text-xs text-red-600 border-red-300" onClick={() => handleApproval(a.id, 'rejected')}><ThumbsDown className="h-3 w-3 mr-1" /> Reject</Button>
+                      </div>
+                      <Button size="sm" variant="outline" className="w-full h-8 text-xs text-amber-600 border-amber-300" onClick={() => handleApproval(a.id, 'changes')}><MessageSquare className="h-3 w-3 mr-1" /> Request Changes</Button>
+                    </div>
+                  )
+                })() : <p className="text-sm text-gray-400 text-center py-8">Select an item to preview</p>}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* ─── Dialogs ─── */}
+      <Dialog open={ideaDialog} onOpenChange={setIdeaDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Add Idea</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Title *</Label><Input className="h-8 text-sm" value={ideaForm.title} onChange={e => setIdeaForm({ ...ideaForm, title: e.target.value })} /></div>
+            <div><Label className="text-xs">Description</Label><Textarea className="text-sm" rows={2} value={ideaForm.description} onChange={e => setIdeaForm({ ...ideaForm, description: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Category</Label>
+                <Select value={ideaForm.category} onValueChange={v => setIdeaForm({ ...ideaForm, category: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['seo', 'social', 'email', 'whatsapp', 'blog', 'video'].map(c => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Priority</Label>
+                <Select value={ideaForm.priority} onValueChange={v => setIdeaForm({ ...ideaForm, priority: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['high', 'medium', 'low'].map(p => <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div><Label className="text-xs">Tags (comma separated)</Label><Input className="h-8 text-sm" value={ideaForm.tags} onChange={e => setIdeaForm({ ...ideaForm, tags: e.target.value })} placeholder="UK, scholarship" /></div>
+            <Button className="w-full bg-[#F37021] hover:bg-[#e06010] text-white" onClick={addIdea}>Add Idea</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={campaignDialog} onOpenChange={setCampaignDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Create Campaign</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Name *</Label><Input className="h-8 text-sm" value={campaignForm.name} onChange={e => setCampaignForm({ ...campaignForm, name: e.target.value })} /></div>
+            <div><Label className="text-xs">Type</Label>
+              <Select value={campaignForm.type} onValueChange={v => setCampaignForm({ ...campaignForm, type: v })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>{['social_media', 'email', 'whatsapp', 'blog_series', 'multi_channel'].map(t => <SelectItem key={t} value={t} className="capitalize">{t.replace('_', ' ')}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Start Date</Label><Input type="date" className="h-8 text-sm" value={campaignForm.startDate} onChange={e => setCampaignForm({ ...campaignForm, startDate: e.target.value })} /></div>
+              <div><Label className="text-xs">End Date</Label><Input type="date" className="h-8 text-sm" value={campaignForm.endDate} onChange={e => setCampaignForm({ ...campaignForm, endDate: e.target.value })} /></div>
+            </div>
+            <div><Label className="text-xs">Budget</Label><Input type="number" className="h-8 text-sm" value={campaignForm.budget} onChange={e => setCampaignForm({ ...campaignForm, budget: e.target.value })} placeholder="$0" /></div>
+            <Button className="w-full bg-[#0066CC] hover:bg-[#0055aa] text-white" onClick={addCampaign}>Create Campaign</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={contentDialog} onOpenChange={setContentDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Create Content</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Title *</Label><Input className="h-8 text-sm" value={contentForm.title} onChange={e => setContentForm({ ...contentForm, title: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Type</Label>
+                <Select value={contentForm.type} onValueChange={v => setContentForm({ ...contentForm, type: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['social_post', 'blog_post', 'email_template', 'whatsapp_template', 'image', 'video_script'].map(t => <SelectItem key={t} value={t} className="capitalize">{t.replace('_', ' ')}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Platform</Label>
+                <Select value={contentForm.platform} onValueChange={v => setContentForm({ ...contentForm, platform: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Object.entries(PL).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Assigned To</Label><Input className="h-8 text-sm" value={contentForm.assignedTo} onChange={e => setContentForm({ ...contentForm, assignedTo: e.target.value })} /></div>
+              <div><Label className="text-xs">Campaign</Label>
+                <Select value={contentForm.campaignId} onValueChange={v => setContentForm({ ...contentForm, campaignId: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectContent><SelectItem value="none">None</SelectItem>{campaigns.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button className="w-full bg-[#F37021] hover:bg-[#e06010] text-white" onClick={addContent}>Create Content</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={promptDialog} onOpenChange={setPromptDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Create Image Prompt</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Prompt *</Label><Textarea className="text-sm" rows={2} value={promptForm.prompt} onChange={e => setPromptForm({ ...promptForm, prompt: e.target.value })} /></div>
+            <div><Label className="text-xs">Negative Prompt</Label><Input className="h-8 text-sm" value={promptForm.negativePrompt} onChange={e => setPromptForm({ ...promptForm, negativePrompt: e.target.value })} /></div>
+            <div className="grid grid-cols-3 gap-3">
+              <div><Label className="text-xs">Style</Label>
+                <Select value={promptForm.style} onValueChange={v => setPromptForm({ ...promptForm, style: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['realistic', 'illustration', 'abstract', 'cartoon', 'minimal'].map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Platform</Label>
+                <Select value={promptForm.platform} onValueChange={v => setPromptForm({ ...promptForm, platform: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Object.entries(PL).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Size</Label>
+                <Select value={promptForm.size} onValueChange={v => setPromptForm({ ...promptForm, size: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['1080×1080', '1200×630', '1080×1920', '1280×720', '1200×627'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button className="w-full bg-[#F37021] hover:bg-[#e06010] text-white" onClick={addPrompt}>Create Prompt</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={scriptDialog} onOpenChange={setScriptDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Create Video Script</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Title *</Label><Input className="h-8 text-sm" value={scriptForm.title} onChange={e => setScriptForm({ ...scriptForm, title: e.target.value })} /></div>
+            <div><Label className="text-xs">Script</Label><Textarea className="text-sm" rows={4} value={scriptForm.script} onChange={e => setScriptForm({ ...scriptForm, script: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Duration</Label>
+                <Select value={scriptForm.duration} onValueChange={v => setScriptForm({ ...scriptForm, duration: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['15s', '30s', '60s', '90s', '3min', '5min'].map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div><Label className="text-xs">Platform</Label>
+                <Select value={scriptForm.platform} onValueChange={v => setScriptForm({ ...scriptForm, platform: v })}>
+                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>{['tiktok', 'instagram', 'youtube', 'facebook', 'linkedin'].map(p => <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div><Label className="text-xs">Hook Line</Label><Input className="h-8 text-sm" value={scriptForm.hookLine} onChange={e => setScriptForm({ ...scriptForm, hookLine: e.target.value })} placeholder="Ever wonder what studying abroad looks like?" /></div>
+            <div><Label className="text-xs">CTA</Label><Input className="h-8 text-sm" value={scriptForm.cta} onChange={e => setScriptForm({ ...scriptForm, cta: e.target.value })} placeholder="Apply now!" /></div>
+            <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" onClick={addScript}><Sparkles className="h-4 w-4 mr-1" /> Create Script</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={scheduleDialog} onOpenChange={setScheduleDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Schedule Post</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Content *</Label>
+              <Select value={scheduleForm.contentId} onValueChange={v => setScheduleForm({ ...scheduleForm, contentId: v })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Select content" /></SelectTrigger>
+                <SelectContent>{content.filter(c => c.status === 'approved' || c.status === 'draft').map(c => <SelectItem key={c.id} value={c.id}>{c.title} ({PL[c.platform]})</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label className="text-xs">Date *</Label><Input type="date" className="h-8 text-sm" value={scheduleForm.date} onChange={e => setScheduleForm({ ...scheduleForm, date: e.target.value })} /></div>
+              <div><Label className="text-xs">Time</Label><Input type="time" className="h-8 text-sm" value={scheduleForm.time} onChange={e => setScheduleForm({ ...scheduleForm, time: e.target.value })} /></div>
+            </div>
+            <Button className="w-full bg-[#0066CC] hover:bg-[#0055aa] text-white" onClick={addSchedule}><Send className="h-4 w-4 mr-1" /> Schedule</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

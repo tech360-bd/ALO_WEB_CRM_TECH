@@ -18,6 +18,24 @@ export const VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES = [
   'true',
 ] as const;
 
+/** Values editors may record; only the positive values above are publishable. */
+export const INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES = [
+  'not_verified',
+  ...VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES,
+  'not eligible',
+  'not_eligible',
+  'ineligible',
+  'closed',
+  'closed to international students',
+  'closed_to_international_students',
+  'domestic only',
+  'domestic_only',
+  'no',
+  'false',
+  'not applicable',
+  'not_applicable',
+] as const;
+
 export function verifiedInternationalEligibilityWhere() {
   return { internationalEligibility: { in: [...VERIFIED_INTERNATIONAL_ELIGIBILITY_VALUES] } };
 }

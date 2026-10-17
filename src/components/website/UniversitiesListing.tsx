@@ -24,16 +24,10 @@ interface UniversityListingItem {
 }
 
 const PAGE_SIZE = 24;
-// Must match the stored `country` values exactly (the filter is an exact match).
-// Aligned with the university master data (data/01_ALO_UNIVERSITY_MASTER.csv).
-const COUNTRIES = [
-  'United Kingdom', 'United States', 'Canada', 'Australia', 'Ireland',
-  'New Zealand', 'Germany', 'France', 'Netherlands', 'Italy',
-  'Malta', 'Cyprus', 'South Korea', 'UAE',
-];
 
 export default function UniversitiesListing() {
   const [universities, setUniversities] = useState<UniversityListingItem[]>([]);
+  const [countries, setCountries] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -58,6 +52,7 @@ export default function UniversitiesListing() {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Unable to load universities');
         setUniversities(Array.isArray(data.universities) ? data.universities : []);
+        setCountries(Array.isArray(data.countries) ? data.countries.filter((country: unknown): country is string => typeof country === 'string' && !!country.trim()) : []);
         setTotal(Number.isFinite(data.total) ? data.total : 0);
         setTotalPages(Math.max(1, Number.isFinite(data.totalPages) ? data.totalPages : 1));
       } catch (requestError) {
@@ -86,9 +81,9 @@ export default function UniversitiesListing() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">{total ? `${total} Partner Universities Worldwide` : 'Partner Universities Worldwide'}</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Top Partner Universities Worldwide</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse partner universities across the UK, USA, Canada, Australia, Germany, New Zealand, Ireland, and Dubai. Find entry requirements, tuition fees, and scholarship guidance.</p>
+          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">{total ? `${total} published university records` : 'Published university directory'}</Badge>
+          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">University Directory Worldwide</h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.</p>
           <div className="flex gap-2 mt-4">
 
 
@@ -115,7 +110,7 @@ export default function UniversitiesListing() {
               aria-label="Filter universities by country"
             >
               <option value="">All countries</option>
-              {COUNTRIES.map(country => <option key={country} value={country}>{country}</option>)}
+              {countries.map(country => <option key={country} value={country}>{country}</option>)}
             </select>
           </div>
         </Card>

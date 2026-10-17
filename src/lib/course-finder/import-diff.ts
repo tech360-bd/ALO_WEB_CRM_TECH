@@ -210,6 +210,9 @@ export const UNIVERSITY_IMPORT_FIELDS: FieldSpec[] = [
   { column: 'website', field: 'website', type: 'url' },
   { column: 'official_url', field: 'officialUrl', type: 'url' },
   { column: 'source_url', field: 'sourceUrl', type: 'url' },
+  { column: 'university_website', field: 'website', type: 'url' },
+  { column: 'university_official_url', field: 'officialUrl', type: 'url' },
+  { column: 'university_source_url', field: 'sourceUrl', type: 'url' },
 ];
 
 export const COURSE_IMPORT_FIELDS: FieldSpec[] = [
@@ -221,6 +224,9 @@ export const COURSE_IMPORT_FIELDS: FieldSpec[] = [
   { column: 'duration_months', field: 'durationMonths', type: 'number' },
   { column: 'official_url', field: 'officialUrl', type: 'url' },
   { column: 'source_url', field: 'sourceUrl', type: 'url' },
+  { column: 'course_official_url', field: 'officialUrl', type: 'url' },
+  { column: 'course_source_url', field: 'sourceUrl', type: 'url' },
+  { column: 'international_eligibility', field: 'internationalEligibility', type: 'text' },
 ];
 
 export const INTAKE_FEE_IMPORT_FIELDS: FieldSpec[] = [

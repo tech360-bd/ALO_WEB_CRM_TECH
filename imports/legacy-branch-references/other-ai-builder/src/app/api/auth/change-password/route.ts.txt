@@ -1,0 +1,50 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+
+[REDACTED: potential embedded credential in legacy reference]
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+  }
+
+  const user = await db.user.findUnique({ where: { id: (session.user as any).id } });
+  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+
+  if (!isValid) {
+[REDACTED: potential embedded credential in legacy reference]
+  }
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+  await db.user.update({
+    where: { id: user.id },
+[REDACTED: potential embedded credential in legacy reference]
+  });
+
+  // Audit log
+  await db.auditLog.create({
+    data: {
+      userId: user.id,
+      action: "PROFILE_UPDATE",
+      resource: "User",
+      resourceId: user.id,
+[REDACTED: potential embedded credential in legacy reference]
+    },
+  });
+
+[REDACTED: potential embedded credential in legacy reference]
+}

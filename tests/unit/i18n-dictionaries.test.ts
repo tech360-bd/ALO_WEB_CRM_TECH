@@ -30,7 +30,7 @@ describe('i18n dictionaries (English + বাংলা)', () => {
   });
 
   it('translates known keys per locale', () => {
-    expect(translate('en', 'cta.bookConsultation')).toBe('Book Free Consultation');
+    expect(translate('en', 'cta.bookConsultation')).toBe('Book Free Counseling');
     expect(translate('bn', 'cta.bookConsultation')).toBe('ফ্রি পরামর্শ নিন');
     expect(translate('bn', 'nav.destinations')).toBe('গন্তব্য');
   });

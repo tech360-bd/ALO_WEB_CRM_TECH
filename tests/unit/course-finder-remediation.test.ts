@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -130,6 +131,81 @@ describe('new intake on an existing verified course', () => {
     expect(classified[1].newIntake).toBeUndefined();
     expect(toUpdateRequests(classified)).toEqual([]);
     expect(rowsForDraftStaging(classified).map((r) => r.courseId)).toEqual(['CRS-NEW']);
+  });
+});
+
+describe('course-only discoveries without fabricated intake facts', () => {
+  it('stages a university-only destination candidate without requiring a course row', async () => {
+    const header = 'university_id,university_name,country,university_website,university_official_url,university_source_url,course_id,course_title';
+    const row = 'UNI-AU-0181,University of Melbourne,Australia,https://www.unimelb.edu.au,https://www.unimelb.edu.au,https://www.unimelb.edu.au,,';
+    const parsed = parseCatalogueCsv(`${header}\n${row}`);
+    const classified = await classifyCatalogueRows(parsed, lookup({ universities: async () => [], courses: async () => [], intakeFees: async () => [], requirements: async () => [], universityPool: async () => [] }));
+    expect(classified[0].courseId).toBe('');
+    expect(classified[0].entities.map((entity) => entity.entity)).toEqual(['university']);
+    expect(classified[0].action).toBe('NEW_PENDING_REVIEW');
+    expect(rowsForDraftStaging(classified)).toHaveLength(1);
+  });
+
+  it('accepts a source-linked course candidate with blank intake fields and stages only the course as draft', async () => {
+    const header = 'university_id,university_name,country,university_website,university_official_url,university_source_url,course_id,course_title,course_official_url,course_source_url,international_eligibility,intake_year,intake_month';
+    const row = 'UNI-1,University One,United Kingdom,https://www.uni-one.ac.uk,https://www.uni-one.ac.uk,https://www.uni-one.ac.uk/courses,CRS-NEW,BSc Robotics,https://www.uni-one.ac.uk/courses/robotics,https://www.uni-one.ac.uk/courses/robotics,not_verified,,';
+    const parsed = parseCatalogueCsv(`${header}\n${row}`);
+    const classified = await classifyCatalogueRows(parsed, lookup({ courses: async () => [] }));
+    expect(classified[0].entities.map((entity) => entity.entity)).toEqual(['university', 'course']);
+    expect(classified[0].newIntake).toBeUndefined();
+    expect(classified[0].action).toBe('PENDING_CHANGE'); // university source update is a proposal
+    expect(rowsForDraftStaging(classified).map((entry) => entry.courseId)).toEqual(['CRS-NEW']);
+    expect(rowsForDraftStaging(classified)[0].row.course_source_url).toBe('https://www.uni-one.ac.uk/courses/robotics');
+    expect(rowsForDraftStaging(classified)[0].row.international_eligibility).toBe('not_verified');
+  });
+
+  it('rejects half an intake and unsupported eligibility statuses', () => {
+    expect(validateCatalogueRow({ university_id: 'UNI-1', university_name: 'X', course_id: 'C-1', course_title: 'Y', intake_year: '2027' }).map((issue) => issue.column)).toContain('intake_month');
+    expect(validateCatalogueRow({ university_id: 'UNI-1', university_name: 'X', course_id: 'C-1', course_title: 'Y', international_eligibility: 'probably' }).map((issue) => issue.column)).toContain('international_eligibility');
+  });
+});
+
+describe('generated review queues are valid draft candidates, not verified data', () => {
+  beforeAll(() => {
+    // The CSV outputs are deliberately git-ignored; regenerate them from the
+    // checked-in source evidence instead of making tests depend on local files.
+    execFileSync(process.env.PYTHON || 'python3', ['scripts/build-catalogue-review-queues.py'], {
+      cwd: process.cwd(),
+      stdio: 'pipe',
+    });
+  });
+
+  it('keeps source-derived queues unverified and blocks duplicate candidates', async () => {
+    const emptyLookup = lookup({ universities: async () => [], courses: async () => [], intakeFees: async () => [], requirements: async () => [], universityPool: async () => [] });
+    const aston = parseCatalogueCsv(readFileSync('data/catalogue-review/aston-course-discovery-candidates.csv', 'utf8'));
+    expect(aston.length).toBeGreaterThan(0);
+    expect(new Set(aston.map((row) => row.course_official_url)).size).toBe(aston.length);
+    expect(aston.every((row) => validateCatalogueRow(row).length === 0)).toBe(true);
+    expect(aston.every((row) => row.international_eligibility === 'not_verified' && row.verification_status === 'NEEDS_REVIEW' && row.publication_status === 'draft' && row.individual_course_page_checked === 'false')).toBe(true);
+    expect(aston.every((row) => !row.intake_year && !row.intake_month && !row.application_deadline && !row.yearly_tuition && !row.total_tuition)).toBe(true);
+    const astonClassified = await classifyCatalogueRows(aston, emptyLookup);
+    expect(rowsForDraftStaging(astonClassified)).toHaveLength(aston.length);
+    expect(astonClassified.every((row) => !row.newIntake && !row.entities.some((entity) => entity.entity === 'intake_fee'))).toBe(true);
+
+    const uk = parseCatalogueCsv(readFileSync('data/catalogue-review/uk-university-profile-review-queue.csv', 'utf8'));
+    expect(uk.length).toBeGreaterThan(0);
+    expect(new Set(uk.map((row) => row.university_id)).size).toBe(uk.length);
+    expect(uk.every((row) => validateCatalogueRow(row).length === 0)).toBe(true);
+    expect(uk.every((row) => row.ranking_verification_status === 'NOT_VERIFIED' && !row.ranking_provider && !row.ranking_edition && !row.world_rank && row.publication_status === 'draft' && row.course_catalogue_status === 'NOT_CHECKED')).toBe(true);
+    const ukClassified = await classifyCatalogueRows(uk, emptyLookup);
+    const ukStaged = rowsForDraftStaging(ukClassified);
+    expect(ukStaged.length).toBeGreaterThan(0);
+    expect(ukClassified.filter((row) => row.action === 'BLOCK_DUPLICATE').every((row) => Boolean(row.entities[0]?.result.duplicateOf))).toBe(true);
+    expect(ukClassified.every((row) => row.action === 'BLOCK_DUPLICATE' || ukStaged.includes(row))).toBe(true);
+
+    const foreign = parseCatalogueCsv(readFileSync('data/catalogue-review/bangladesh-destination-review-shortlist.csv', 'utf8'));
+    expect(foreign.length).toBeGreaterThan(0);
+    expect(new Set(foreign.map((row) => row.university_id)).size).toBe(foreign.length);
+    expect(foreign.every((row) => validateCatalogueRow(row).length === 0)).toBe(true);
+    expect(foreign.every((row) => row.market_popularity_status === 'NOT_VERIFIED' && row.verification_status === 'NEEDS_REVIEW' && row.publication_status === 'draft' && row.course_catalogue_status === 'NOT_CHECKED')).toBe(true);
+    const foreignClassified = await classifyCatalogueRows(foreign, emptyLookup);
+    expect(foreignClassified.every((row) => row.courseId === '' && row.entities.length === 1 && row.entities[0].entity === 'university')).toBe(true);
+    expect(rowsForDraftStaging(foreignClassified).every((row) => row.courseId === '')).toBe(true);
   });
 });
 

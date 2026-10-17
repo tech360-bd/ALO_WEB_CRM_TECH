@@ -1,0 +1,117 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// GET /api/facebook/callback?code=...&state=...
+// PUBLIC OAuth callback — exchanges the code for a long-lived access token
+// and persists it as a ConnectedAccount (platform=FACEBOOK).
+export async function GET(req: NextRequest) {
+  const code = req.nextUrl.searchParams.get("code");
+  const state = req.nextUrl.searchParams.get("state");
+  const errorParam = req.nextUrl.searchParams.get("error");
+
+  if (errorParam) {
+    return NextResponse.json({ error: `OAuth error: ${errorParam}` }, { status: 400 });
+  }
+  if (!code) {
+    return NextResponse.json({ error: "Missing code parameter" }, { status: 400 });
+  }
+
+  const clientId = process.env.FACEBOOK_APP_ID;
+[REDACTED: potential embedded credential in legacy reference]
+  const redirectUri = process.env.FACEBOOK_REDIRECT_URI ||
+    `${process.env.NEXTAUTH_URL || ""}/api/facebook/callback`;
+
+[REDACTED: potential embedded credential in legacy reference]
+    return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+      { status: 500 }
+    );
+  }
+
+  try {
+    // Exchange code for short-lived user access token
+[REDACTED: potential embedded credential in legacy reference]
+    tokenUrl.searchParams.set("client_id", clientId);
+[REDACTED: potential embedded credential in legacy reference]
+    tokenUrl.searchParams.set("redirect_uri", redirectUri);
+    tokenUrl.searchParams.set("code", code);
+
+    const tokenRes = await fetch(tokenUrl.toString(), { method: "GET" });
+    const tokenJson: any = await tokenRes.json().catch(() => ({}));
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+      return NextResponse.json(
+        { error: tokenJson.error?.message || "Failed to exchange code for access token" },
+        { status: 400 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+
+    // Exchange for long-lived token
+[REDACTED: potential embedded credential in legacy reference]
+    longLivedUrl.searchParams.set("grant_type", "fb_exchange_token");
+    longLivedUrl.searchParams.set("client_id", clientId);
+[REDACTED: potential embedded credential in legacy reference]
+    longLivedUrl.searchParams.set("fb_exchange_token", shortLivedToken);
+
+    const longRes = await fetch(longLivedUrl.toString(), { method: "GET" });
+    const longJson: any = await longRes.json().catch(() => ({}));
+[REDACTED: potential embedded credential in legacy reference]
+    const expiresAt = longJson.expires_in
+      ? new Date(Date.now() + Number(longJson.expires_in) * 1000)
+      : null;
+
+    // Persist as a ConnectedAccount
+    const existing = await db.connectedAccount.findFirst({
+      where: { platform: "FACEBOOK" },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    if (existing) {
+      await db.connectedAccount.update({
+        where: { id: existing.id },
+        data: {
+[REDACTED: potential embedded credential in legacy reference]
+          connectionStatus: "CONNECTED",
+          lastSync: new Date(),
+          metadata: JSON.stringify({
+            tokenExpiresAt: expiresAt?.toISOString() ?? null,
+            oauthState: state,
+            connectedAt: new Date().toISOString(),
+          }),
+        },
+      });
+    } else {
+      await db.connectedAccount.create({
+        data: {
+          platform: "FACEBOOK",
+          accountName: "Facebook Integration",
+          accountId: `fb-${Date.now()}`,
+          connectionStatus: "CONNECTED",
+[REDACTED: potential embedded credential in legacy reference]
+          metadata: JSON.stringify({
+            tokenExpiresAt: expiresAt?.toISOString() ?? null,
+            oauthState: state,
+            connectedAt: new Date().toISOString(),
+          }),
+          lastSync: new Date(),
+        },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      connected: true,
+      expiresAt,
+      redirect: "/marketing/social-dashboard",
+    });
+  } catch (err: any) {
+    console.error("[facebook/callback] error", err);
+    return NextResponse.json({ error: err?.message || "OAuth callback failed" }, { status: 500 });
+  }
+}

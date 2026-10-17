@@ -48,6 +48,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import LanguageToggle from '@/components/website/LanguageToggle';
 import { useI18n } from '@/i18n';
 import { ALO_CONTACT, ALO_TAGLINE } from '@/lib/alo-site-info';
@@ -496,6 +497,11 @@ export default function PublicNavbar() {
           <DesktopLink href="/course-finder" label={t('nav.courseFinder')} />
           <DesktopLink href="/services" label={t('nav.services')} />
           <DesktopLink href="/language-prep" label={t('nav.languagePrep')} />
+          <EnglishExamButton
+            location="navbar"
+            label={t('nav.englishTest')}
+            className={`${MENU_ITEM_BASE} text-alo-body hover:bg-alo-brand-light hover:text-alo-brand`}
+          />
 
           <DropdownTrigger label={t('nav.resources')} id="header-resources" {...triggerProps('resources')}>
             <div className="grid w-[440px] grid-cols-2 gap-x-4 gap-y-0.5">
@@ -577,6 +583,12 @@ export default function PublicNavbar() {
                       <MobileLink href="/course-finder" label={t('nav.courseFinder')} onClick={closeMobile} />
                       <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
                       <MobileLink href="/language-prep" label={t('nav.languagePrep')} onClick={closeMobile} />
+                      <EnglishExamButton
+                        location="mobile_navbar"
+                        label={t('nav.englishTest')}
+                        onNavigate={closeMobile}
+                        className="flex min-h-[44px] items-center rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand"
+                      />
 
                       <MobileAccordionSection value="resources" label={t('nav.resources')}>
                         {RESOURCE_ITEMS.map((item) => (

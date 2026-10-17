@@ -1,0 +1,236 @@
+'use client'
+
+import { Suspense, useState } from 'react'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Loader2, Eye, EyeOff, Lock, CheckCircle2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { toast } from 'sonner'
+
+// ============================================================
+[REDACTED: potential embedded credential in legacy reference]
+// Reads ?token=...&userId=... from the query (set by the
+// /verify-otp page after OTP verification), collects a new
+[REDACTED: potential embedded credential in legacy reference]
+// ============================================================
+
+[REDACTED: potential embedded credential in legacy reference]
+  lengthOk: boolean
+  hasLetter: boolean
+  hasNumber: boolean
+  allOk: boolean
+} {
+  const lengthOk = pwd.length >= 8
+  const hasLetter = /[a-zA-Z]/.test(pwd)
+  const hasNumber = /[0-9]/.test(pwd)
+  return { lengthOk, hasLetter, hasNumber, allOk: lengthOk && hasLetter && hasNumber }
+}
+
+[REDACTED: potential embedded credential in legacy reference]
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const token = searchParams.get('token') ?? ''
+  const userId = searchParams.get('userId') ?? ''
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+  const [loading, setLoading] = useState(false)
+
+[REDACTED: potential embedded credential in legacy reference]
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!token || !userId) {
+      toast.error('Invalid reset link. Please request a new OTP.')
+      return
+    }
+    if (!strength.allOk) {
+[REDACTED: potential embedded credential in legacy reference]
+      return
+    }
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+      return
+    }
+
+    setLoading(true)
+    try {
+[REDACTED: potential embedded credential in legacy reference]
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          resetToken: token,
+[REDACTED: potential embedded credential in legacy reference]
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+[REDACTED: potential embedded credential in legacy reference]
+      }
+[REDACTED: potential embedded credential in legacy reference]
+      router.push('/')
+    } catch (err) {
+[REDACTED: potential embedded credential in legacy reference]
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Card className="border-slate-200 shadow-md">
+      <CardHeader>
+[REDACTED: potential embedded credential in legacy reference]
+        <CardDescription>
+[REDACTED: potential embedded credential in legacy reference]
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+[REDACTED: potential embedded credential in legacy reference]
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+                placeholder="••••••••"
+[REDACTED: potential embedded credential in legacy reference]
+                required
+                className="pl-9 pr-10"
+              />
+              <button
+                type="button"
+[REDACTED: potential embedded credential in legacy reference]
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+[REDACTED: potential embedded credential in legacy reference]
+              >
+[REDACTED: potential embedded credential in legacy reference]
+              </button>
+            </div>
+            {/* Strength hints */}
+            <ul className="mt-1.5 space-y-1 text-xs">
+              <li className={strength.lengthOk ? 'text-emerald-600' : 'text-slate-500'}>
+                • At least 8 characters
+              </li>
+              <li className={strength.hasLetter ? 'text-emerald-600' : 'text-slate-500'}>
+                • At least one letter
+              </li>
+              <li className={strength.hasNumber ? 'text-emerald-600' : 'text-slate-500'}>
+                • At least one number
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-1.5">
+[REDACTED: potential embedded credential in legacy reference]
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+                placeholder="••••••••"
+[REDACTED: potential embedded credential in legacy reference]
+                required
+                className="pl-9"
+              />
+[REDACTED: potential embedded credential in legacy reference]
+                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500" />
+              )}
+            </div>
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+            )}
+          </div>
+
+          <Button
+            type="submit"
+[REDACTED: potential embedded credential in legacy reference]
+            className="w-full bg-[#0057B8] hover:bg-[#00449a] text-white"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Resetting…
+              </>
+            ) : (
+[REDACTED: potential embedded credential in legacy reference]
+            )}
+          </Button>
+        </form>
+      </CardContent>
+
+      <CardFooter className="flex flex-col gap-3 border-t border-slate-100 pt-4">
+        <Link
+          href="/"
+          className="text-xs text-slate-600 hover:text-[#0057B8] transition-colors"
+        >
+          Back to login
+        </Link>
+      </CardFooter>
+    </Card>
+  )
+}
+
+[REDACTED: potential embedded credential in legacy reference]
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Header */}
+      <header
+        className="text-white"
+        style={{ background: 'linear-gradient(135deg, #0057B8, #E8501A)' }}
+      >
+        <div className="max-w-md mx-auto px-6 py-8 flex items-center gap-3">
+          <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center font-bold">
+            ALO
+          </div>
+          <div>
+            <h1 className="text-lg font-bold leading-tight">ALO Education</h1>
+[REDACTED: potential embedded credential in legacy reference]
+          </div>
+        </div>
+      </header>
+
+      {/* Main */}
+      <main className="flex-1 flex items-start justify-center px-4 py-8">
+        <div className="w-full max-w-md">
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-6 w-6 text-[#0057B8] animate-spin" />
+              </div>
+            }
+          >
+[REDACTED: potential embedded credential in legacy reference]
+          </Suspense>
+        </div>
+      </main>
+
+      {/* Sticky footer */}
+      <footer
+        className="mt-auto text-white"
+        style={{ background: 'linear-gradient(135deg, #0057B8, #E8501A)' }}
+      >
+        <div className="max-w-md mx-auto px-6 py-4 text-center text-xs">
+          © {new Date().getFullYear()} ALO Education. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  )
+}

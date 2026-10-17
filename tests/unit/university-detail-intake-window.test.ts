@@ -80,7 +80,61 @@ beforeEach(() => {
   ]);
 });
 
-describe('university information intake-window API', () => {
+describe('university information catalogue API', () => {
+  it('returns all-year paginated international-eligible courses without requiring an intake record', async () => {
+    mocks.courseCount.mockReset()
+      .mockResolvedValueOnce(471) // candidate CRM course records
+      .mockResolvedValueOnce(450) // verified and published course records
+      .mockResolvedValueOnce(120) // explicit international-eligibility records
+      .mockResolvedValueOnce(200) // eligibility not explicitly confirmed
+      .mockResolvedValueOnce(115) // course codes recorded
+      .mockResolvedValueOnce(15); // no verified source-backed intake/fee record
+    mocks.courseFindMany.mockResolvedValueOnce([{
+      id: 'course-db-id', courseId: 'CS-2027', courseCode: 'CS-2027',
+      courseTitle: 'Computer Science', slug: 'computer-science', studyLevel: 'Master',
+      qualification: 'MSc', durationMonths: 12, status: 'active',
+      internationalEligibility: 'eligible', verificationStatus: 'VERIFIED',
+      publicationStatus: 'published', officialUrl: 'https://example.edu/cs',
+      sourceUrl: 'https://example.edu/cs', lastVerifiedAt: '2026-09-01', intakeFees: [], requirements: [],
+    }]);
+    const response = await GET(
+      makeRequest('https://alo.test/api/universities/example-university?catalogue=international&coursePage=3&courseLimit=12'),
+      { params: Promise.resolve({ slug: 'example-university' }) },
+    );
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.data.internationalCourseCatalog).toMatchObject({
+      page: 3, pageSize: 12, totalCourses: 120, totalPages: 10,
+      candidateCourseRecords: 471, verifiedPublishedCourseRecords: 450,
+      verifiedInternationalCourseRecords: 120, eligibilityNotConfirmedCourseRecords: 200,
+      courseCodesRecorded: 115, courseCodesMissing: 5,
+      verifiedInternationalCoursesWithoutVerifiedIntake: 15,
+      catalogueCoverageStatus: 'RESEARCH_REQUIRED',
+    });
+    expect(body.data.intakeWindow).toBeUndefined();
+    expect(body.data.popularCourses[0]).toMatchObject({ courseCode: 'CS-2027', internationalEligibility: 'eligible', intakes: [] });
+    expect(mocks.courseFindMany).toHaveBeenCalledWith(expect.objectContaining({
+      skip: 24,
+      take: 12,
+      orderBy: [{ studyLevel: 'asc' }, { courseTitle: 'asc' }],
+      where: expect.objectContaining({
+        universityId: 'UNI-001',
+        status: 'active',
+        verificationStatus: 'VERIFIED',
+        publicationStatus: { in: ['published', 'PUBLISHED'] },
+        internationalEligibility: expect.objectContaining({ in: expect.arrayContaining(['eligible']) }),
+      }),
+      include: expect.objectContaining({
+        intakeFees: expect.objectContaining({ where: expect.objectContaining({
+          status: 'active', verificationStatus: 'VERIFIED',
+          OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }],
+        }) }),
+      }),
+    }));
+    const courseWhere = mocks.courseFindMany.mock.calls[0][0].where;
+    expect(courseWhere).not.toHaveProperty('intakeFees');
+  });
+
   it('returns a bounded, paginated, explicitly international-eligible January 2027–January 2028 listing and honest coverage status', async () => {
     const response = await GET(
       makeRequest('https://alo.test/api/universities/example-university?intakeWindow=2027-01%3A2028-01&coursePage=2&courseLimit=12'),

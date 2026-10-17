@@ -59,27 +59,18 @@ export function publicCourseWhere() {
   };
 }
 
-/**
- * Intake rows shown publicly.
- *
- * Two verification states are listed:
- *   • VERIFIED  — the month, deadline and fees came from an official source and
- *                 were checked (the only state that may carry fee/deadline data).
- *   • SCHEDULED — the ALO intake window (Jan 2027 … Jan 2028) row created by the
- *                 backfill. It asserts only that ALO tracks that month as an
- *                 intake; tuition, deposit, application fee and deadline stay
- *                 EMPTY until a source is verified, and the API flags each such
- *                 row (`verified: false`) so no screen can present it as fact.
- *
- * EXPIRED / NEEDS_REVIEW / anything else stays out of public results.
- */
+/** Only active, verified intake rows with recorded official-source evidence are student-facing. */
 export function publicIntakeWhere() {
-  return { status: 'active', verificationStatus: { in: ['VERIFIED', 'SCHEDULED'] } };
+  return {
+    status: 'active',
+    verificationStatus: 'VERIFIED',
+    AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
+  };
 }
 
-/** Intake rows whose month, deadline and fees are all source-verified. */
+/** Alias for callers that explicitly require all fee/intake fields verified. */
 export function publicVerifiedIntakeWhere() {
-  return { status: 'active', verificationStatus: 'VERIFIED' };
+  return publicIntakeWhere();
 }
 
 export function publicRequirementWhere() {

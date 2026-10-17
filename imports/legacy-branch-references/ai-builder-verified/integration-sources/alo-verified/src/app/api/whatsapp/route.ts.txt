@@ -1,0 +1,293 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { logAudit } from '@/lib/audit';
+import { requireMarketingAccess } from '@/lib/auth-rbac';
+
+/**
+ * WhatsApp outbound API.
+ *
+ * GET  — list conversations / number pool / templates (marketing-only).
+ * POST — send an outbound WhatsApp message via Meta's Cloud API, then
+ *        persist the result. If Meta credentials are missing, the message
+ *        is stored with status 'queued' (not failed) so a sender worker or
+ *        human can pick it up later.
+ *
+ * Both handlers require an authenticated marketing user (any marketing role
+ * approved by MarketingUserAccess).
+ */
+
+[REDACTED: potential embedded credential in legacy reference]
+const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
+const META_API_VERSION = process.env.WHATSAPP_API_VERSION || 'v18.0';
+
+export async function GET(request: NextRequest) {
+  // Auth: marketing access required
+  const authOrResponse = await requireMarketingAccess(request);
+  if (authOrResponse instanceof NextResponse) return authOrResponse;
+  const auth = authOrResponse;
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const status = searchParams.get('status') || '';
+    const studentId = searchParams.get('studentId') || '';
+    const partnerId = searchParams.get('partnerId') || '';
+    const employeeId = searchParams.get('employeeId') || '';
+
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+    if (status) where.status = status;
+    if (studentId) where.studentId = studentId;
+    if (partnerId) where.partnerId = partnerId;
+    if (employeeId) where.employeeId = employeeId;
+
+    const [conversations, total] = await Promise.all([
+      db.whatsappConversation.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { lastMessageAt: 'desc' },
+        include: {
+          messages_relation: {
+            take: 1,
+            orderBy: { sentAt: 'desc' },
+          },
+        },
+      }),
+      db.whatsappConversation.count({ where }),
+    ]);
+
+    const numberPool = await db.whatsappNumberPool.findMany({
+      where: { status: 'active' },
+      orderBy: { category: 'asc' },
+    });
+
+    const templates = await db.whatsappTemplate.findMany({
+      where: { status: 'approved' },
+    });
+
+    return NextResponse.json({
+      conversations,
+      numberPool,
+      templates,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error('WhatsApp GET error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+/**
+ * Send an outbound WhatsApp message via Meta's Cloud API.
+ * On success → status 'sent' + store externalMessageId in the audit log
+ * (the schema has no externalMessageId column on WhatsappMessage, so we
+ * persist it in the audit trail for traceability).
+ * On failure → status 'failed' + store the error reason.
+[REDACTED: potential embedded credential in legacy reference]
+ * 'queued' (request still succeeds at the API layer; a sender worker can
+ * pick the message up later).
+ */
+async function sendViaMetaCloudApi(
+  contactNumber: string,
+  messageText: string,
+): Promise<{ externalMessageId?: string; error?: string; queued?: boolean }> {
+[REDACTED: potential embedded credential in legacy reference]
+    console.warn(
+[REDACTED: potential embedded credential in legacy reference]
+    );
+    return { queued: true };
+  }
+
+  try {
+    const res = await fetch(
+      `https://graph.facebook.com/${META_API_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
+      {
+        method: 'POST',
+        headers: {
+[REDACTED: potential embedded credential in legacy reference]
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to: contactNumber,
+          type: 'text',
+          text: { body: messageText },
+        }),
+      },
+    );
+
+    const data = (await res.json().catch(() => null)) as
+      | { messages?: Array<{ id?: string }>; error?: { message?: string; code?: number } }
+      | null;
+
+    if (!res.ok) {
+      const msg = data?.error?.message || `Meta API HTTP ${res.status}`;
+      return { error: msg };
+    }
+
+    const externalMessageId = data?.messages?.[0]?.id;
+    if (!externalMessageId) {
+      return { error: 'Meta API returned 200 but no message id' };
+    }
+    return { externalMessageId };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Network error calling Meta API';
+    return { error: msg };
+  }
+}
+
+export async function POST(request: NextRequest) {
+  // Auth: marketing access required
+  const authOrResponse = await requireMarketingAccess(request);
+  if (authOrResponse instanceof NextResponse) return authOrResponse;
+  const auth = authOrResponse;
+
+  try {
+    const body = await request.json();
+    const {
+      conversationId,
+      phoneNumber,
+      contactNumber,
+      contactName,
+      messageText,
+      mediaUrl,
+      mediaType,
+      studentId,
+      partnerId,
+      employeeId,
+      templateId,
+    } = body;
+
+    // If conversationId is provided, send to existing conversation.
+    // Otherwise, create a new conversation.
+    let conversation;
+
+    if (conversationId) {
+      conversation = await db.whatsappConversation.findUnique({
+        where: { id: conversationId },
+      });
+      if (!conversation) {
+        return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+      }
+    } else {
+      if (!phoneNumber || !contactNumber) {
+        return NextResponse.json(
+          { error: 'Phone number and contact number are required for new conversation' },
+          { status: 400 },
+        );
+      }
+
+      conversation = await db.whatsappConversation.findFirst({
+        where: { phoneNumber, contactNumber, status: 'open' },
+      });
+
+      if (!conversation) {
+        conversation = await db.whatsappConversation.create({
+          data: {
+            phoneNumber,
+            contactNumber,
+            contactName: contactName || null,
+            studentId: studentId || null,
+            partnerId: partnerId || null,
+            employeeId: employeeId || null,
+            status: 'open',
+          },
+        });
+      }
+    }
+
+    // Persist the outbound message with status 'queued' first; we will update
+    // it to 'sent' or 'failed' once Meta responds. This way the row exists
+    // even if Meta's API is slow or unreachable.
+    const message = await db.whatsappMessage.create({
+      data: {
+        conversationId: conversation.id,
+        messageText: messageText || null,
+        mediaUrl: mediaUrl || null,
+        mediaType: mediaType || null,
+        direction: 'outbound',
+        templateId: templateId || null,
+        status: 'queued',
+        sentAt: new Date(),
+      },
+    });
+
+    // Attempt to deliver via Meta's Cloud API (text messages only — media
+    // would need a separate template-id flow, out of scope for this fix).
+    let finalStatus: 'sent' | 'failed' | 'queued' = 'queued';
+    let externalMessageId: string | undefined;
+    let errorMessage: string | undefined;
+
+    if (messageText) {
+      const result = await sendViaMetaCloudApi(conversation.contactNumber, messageText);
+      if (result.queued) {
+        finalStatus = 'queued';
+      } else if (result.externalMessageId) {
+        finalStatus = 'sent';
+        externalMessageId = result.externalMessageId;
+      } else {
+        finalStatus = 'failed';
+        errorMessage = result.error;
+      }
+    }
+
+    const updated = await db.whatsappMessage.update({
+      where: { id: message.id },
+      data: { status: finalStatus },
+    });
+
+    await db.whatsappConversation.update({
+      where: { id: conversation.id },
+      data: {
+        lastMessage: messageText || '[Media]',
+        lastMessageAt: new Date(),
+      },
+    });
+
+    await logAudit({
+      userId: auth.user.id,
+      action:
+        finalStatus === 'sent'
+          ? 'whatsapp.message.sent'
+          : finalStatus === 'failed'
+            ? 'whatsapp.message.failed'
+            : 'whatsapp.message.queued',
+      module: 'whatsapp',
+      recordId: message.id,
+      newData: {
+        conversationId: conversation.id,
+        contactNumber: conversation.contactNumber,
+        preview: (messageText || '').substring(0, 200),
+        status: finalStatus,
+        externalMessageId: externalMessageId ?? null,
+        error: errorMessage ?? null,
+      },
+      ip: request.headers.get('x-forwarded-for') || null,
+      userAgent: request.headers.get('user-agent') || null,
+    });
+
+    return NextResponse.json(
+      {
+        conversation,
+        message: updated,
+        delivery: {
+          status: finalStatus,
+          externalMessageId: externalMessageId ?? null,
+          error: errorMessage ?? null,
+        },
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error('WhatsApp POST error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

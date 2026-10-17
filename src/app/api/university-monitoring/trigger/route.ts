@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { mutationOriginAllowed } from "@/lib/request-origin";
 import { requireMonitoringAdmin } from "@/lib/university-monitoring-auth";
 import { startMonitoringRun } from "@/lib/university-monitoring-runner";
 
@@ -18,6 +19,9 @@ import { startMonitoringRun } from "@/lib/university-monitoring-runner";
 export async function POST(req: NextRequest) {
   const guard = await requireMonitoringAdmin(req);
   if (!guard.ok) return guard.response;
+  if (!mutationOriginAllowed(req, guard.actor.auth)) {
+    return NextResponse.json({ error: "Cross-origin monitoring triggers are not allowed" }, { status: 403 });
+  }
   const actor = guard.actor;
 
   const body = await req.json().catch(() => ({}));

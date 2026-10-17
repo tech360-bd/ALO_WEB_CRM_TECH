@@ -1,18 +1,89 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
+
+const INTAKE_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+function intakeMonthNumber(value: unknown): number | null {
+  if (typeof value !== 'string' && typeof value !== 'number') return null;
+  const normalized = String(value).trim().toLowerCase();
+  if (/^\d{1,2}$/.test(normalized)) {
+    const month = Number(normalized);
+    return Number.isInteger(month) && month >= 1 && month <= 12 ? month : null;
+  }
+  if (!/^[a-z]{3,9}$/.test(normalized)) return null;
+  const index = INTAKE_MONTHS.findIndex((month) => month === normalized || month.startsWith(normalized));
+  return index < 0 ? null : index + 1;
+}
 
 export async function POST(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
-      const body = await req.json();
-      const { courseId, universityId, intakeYear, intakeMonth } = body;
+      const body = await req.json().catch(() => null);
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return NextResponse.json({ success: false, error: 'A valid application request is required' }, { status: 400 });
+      }
+      const courseId = typeof body.courseId === 'string' ? body.courseId.trim() : '';
+      const universityId = typeof body.universityId === 'string' ? body.universityId.trim() : '';
+      const rawIntakeYear = body.intakeYear;
+      const rawIntakeMonth = body.intakeMonth;
 
-      if (!courseId) {
-        return NextResponse.json({ success: false, error: 'courseId is required' }, { status: 400 });
+      const hasControlCharacters = [...courseId].some((character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127);
+      if (!courseId || courseId.length > 191 || hasControlCharacters) {
+        return NextResponse.json({ success: false, error: 'A valid courseId is required' }, { status: 400 });
       }
 
-      // Find or create student record for this user
+      // Students may draft only against a published, verified, source-linked
+      // course and an intake explicitly verified against its official source.
+      // Never fall back to guessed country, level, intake month, or year.
+      const course = await db.crmCourse.findFirst({
+        where: {
+          AND: [
+            publicCourseWhere(),
+            { OR: [{ courseId }, { id: courseId }] },
+          ],
+        },
+        include: {
+          university: true,
+          intakeFees: {
+            where: { ...publicIntakeWhere(), intakeSourceUrl: { not: '' } },
+            orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
+          },
+        },
+      });
+
+      if (!course) {
+        return NextResponse.json({ success: false, error: 'No published, verified course record is available' }, { status: 404 });
+      }
+      if (universityId && universityId !== course.universityId && universityId !== course.university?.id) {
+        return NextResponse.json({ success: false, error: 'The selected university does not match this course' }, { status: 400 });
+      }
+
+      const hasIntakeYear = rawIntakeYear !== undefined && rawIntakeYear !== null && String(rawIntakeYear).trim() !== '';
+      const hasIntakeMonth = rawIntakeMonth !== undefined && rawIntakeMonth !== null && String(rawIntakeMonth).trim() !== '';
+      if (hasIntakeYear !== hasIntakeMonth) {
+        return NextResponse.json({ success: false, error: 'Both intakeYear and intakeMonth are required when selecting an intake' }, { status: 400 });
+      }
+
+      let selectedIntake: (typeof course.intakeFees)[number] | null = null;
+      if (hasIntakeYear) {
+        if ((typeof rawIntakeYear !== 'number' && typeof rawIntakeYear !== 'string') || (typeof rawIntakeMonth !== 'number' && typeof rawIntakeMonth !== 'string')) {
+          return NextResponse.json({ success: false, error: 'The selected intake is invalid' }, { status: 400 });
+        }
+        const year = Number(rawIntakeYear);
+        const month = intakeMonthNumber(rawIntakeMonth);
+        if (!Number.isInteger(year) || year < 1900 || year > 2200 || month === null) {
+          return NextResponse.json({ success: false, error: 'The selected intake is invalid' }, { status: 400 });
+        }
+        selectedIntake = course.intakeFees.find((fee) => fee.intakeYear === year && intakeMonthNumber(fee.intakeMonth) === month) ?? null;
+        if (!selectedIntake) {
+          return NextResponse.json({ success: false, error: 'That intake is not recorded as source-verified for this course' }, { status: 422 });
+        }
+      }
+      const targetIntake = selectedIntake ? `${selectedIntake.intakeMonth} ${selectedIntake.intakeYear}` : '';
+
+      // Find or create the student's CRM record only after course/intake checks pass.
       let student = await db.student.findFirst({
         where: {
           OR: [
@@ -35,19 +106,6 @@ export async function POST(request: NextRequest) {
           },
         });
       }
-
-      // Find course details
-      const course = await db.crmCourse.findFirst({
-        where: { OR: [{ courseId }, { id: courseId }] },
-        include: { university: true, intakeFees: true, requirements: true },
-      });
-
-      if (!course) {
-        return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
-      }
-
-      const targetIntake = intakeMonth || course.intakeFees?.[0]?.intakeMonth || 'September';
-      const targetYear = intakeYear || course.intakeFees?.[0]?.intakeYear || 2026;
 
       // Prevent duplicate draft for same student + course
       const existingApp = await db.application.findFirst({
@@ -74,11 +132,11 @@ export async function POST(request: NextRequest) {
         data: {
           applicationId: appCode,
           studentId: student.id,
-          universityName: course.university?.name || universityId || '',
+          universityName: course.university?.name || '',
           courseName: course.courseTitle,
-          intake: `${targetIntake} ${targetYear}`,
-          country: course.country || course.university?.country || 'United Kingdom',
-          level: course.studyLevel || 'Postgraduate',
+          intake: targetIntake,
+          country: course.country || course.university?.country || '',
+          level: course.studyLevel || course.programLevel || '',
           stage: 'counseling',
           status: 'draft',
         },
@@ -105,13 +163,14 @@ export async function POST(request: NextRequest) {
         }).catch(() => null);
       }
 
-      // Create Timeline Entry
+      // Create Timeline Entry without implying an intake when none was confirmed.
+      const intakeContext = targetIntake ? ` (${targetIntake})` : ' (intake not yet confirmed)';
       await db.timelineEvent.create({
         data: {
           studentId: student.id,
           stage: 'counseling',
           title: `Application Drafted: ${course.courseTitle}`,
-          description: `Student initiated university application for ${course.university?.name} (${targetIntake} ${targetYear}). Document checklist created.`,
+          description: `Student initiated university application for ${course.university?.name || 'the selected university'}${intakeContext}. Document checklist created.`,
           actor: auth.name || 'Student',
         },
       }).catch(() => null);
@@ -123,8 +182,9 @@ export async function POST(request: NextRequest) {
         applicationId: application.applicationId,
         data: application,
       });
-    } catch (error: any) {
-      return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    } catch (error) {
+      console.error('[student/applications/create-draft] failed', error);
+      return NextResponse.json({ success: false, error: 'Failed to create application draft' }, { status: 500 });
     }
   })(request);
 }
