@@ -8,12 +8,12 @@ beforeEach(()=>{
   fetchMock.mockReset();storage.clear();usePortalStore.setState({currentView:'register',isAuthenticated:false,token:null,loginLoading:false,loginError:null});
 });
 afterEach(()=>vi.unstubAllGlobals());
-const input={name:'Synthetic student',email:'synthetic@example.test',phone:'01700000000',password:'Not-a-real-password',portalType:'student'};
+const input={name:'Synthetic student',email:'synthetic@example.test',phone:'01700000000',password:'Not-a-real-password',portalType:'student',agreeTerms:true};
 it('public student signup calls canonical registration, then verification; never establishes fake session',async()=>{
   fetchMock.mockResolvedValue(Response.json({success:true},{status:201}));
   expect(await usePortalStore.getState().register(input)).toBe(true);
   expect(fetchMock.mock.calls[0][0]).toBe('/api/auth/register');
-  expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({name:input.name,email:input.email,phone:input.phone,password:input.password,role:'STUDENT'});
+  expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({name:input.name,email:input.email,phone:input.phone,password:input.password,role:'STUDENT',termsAccepted:true});
   expect(storage.get('portal_otp_type')).toBe('canonical-student');
   expect(usePortalStore.getState()).toMatchObject({currentView:'verify-otp',isAuthenticated:false,token:null});
 });
@@ -32,4 +32,12 @@ it('noncommitted registration failure preserves form and does not enter verifica
   fetchMock.mockResolvedValue(Response.json({success:false,error:'Transaction failed'},{status:503}));
   await usePortalStore.getState().register(input);
   expect(usePortalStore.getState().currentView).toBe('register');expect(storage.size).toBe(0);
+});
+
+it.each([false, undefined])('student signup never invents consent when agreeTerms is %s', async (agreeTerms) => {
+  fetchMock.mockResolvedValue(Response.json({ success: false, error: 'Terms acceptance required' }, { status: 400 }));
+  expect(await usePortalStore.getState().register({ ...input, agreeTerms })).toBe(false);
+  expect(JSON.parse(fetchMock.mock.calls[0][1].body).termsAccepted).toBe(false);
+  expect(usePortalStore.getState()).toMatchObject({ currentView: 'register', isAuthenticated: false, token: null });
+  expect(storage.size).toBe(0);
 });

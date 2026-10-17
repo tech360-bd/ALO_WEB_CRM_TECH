@@ -23,7 +23,7 @@ import CountryDestinationPage from '@/app/destinations/[slug]/page';
 import CountryCoursesPage from '@/app/destinations/[slug]/courses/page';
 import CountryUniversitiesPage from '@/app/destinations/[slug]/universities/page';
 import CountryScholarshipsPage from '@/app/destinations/[slug]/scholarships/page';
-import { publicCourseWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
+import { publicIntakeWhere, publicCourseWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
 
 const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
 
@@ -70,7 +70,7 @@ describe('/destinations/[slug] pages', () => {
     await CountryDestinationPage(params('uk'));
     const courseQuery = m.courseFindMany.mock.calls[0][0];
     expect(courseQuery.where.AND[0]).toEqual(publicCourseWhere());
-    expect(courseQuery.include.intakeFees.where).toEqual({ status: 'active', verificationStatus: 'VERIFIED' });
+    expect(courseQuery.include.intakeFees.where).toEqual(publicIntakeWhere());
     expect(courseQuery.include.requirements.where).toEqual({ verificationStatus: 'VERIFIED' });
     expect(m.uniFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicUniversityWhere());
     expect(m.scholFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicScholarshipWhere());

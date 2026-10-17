@@ -28,7 +28,7 @@ import { GET as courseFinderGET } from '@/app/api/course-finder/route';
 import { GET as courseDetailGET } from '@/app/api/courses/[slug]/route';
 import { GET as courseFinderDetailGET } from '@/app/api/course-finder/[slug]/route';
 import { GET as coursesListGET } from '@/app/api/courses/route';
-import { publicCourseWhere } from '@/lib/public-catalog';
+import { publicIntakeWhere, publicCourseWhere } from '@/lib/public-catalog';
 
 const SECRET = 'aloeduca_secret_user at mysql.internal.host';
 
@@ -280,5 +280,5 @@ it('filters similar-course intakes as strictly as the main public course', async
   const res = await courseDetailGET(new NextRequest('https://alo.test/api/courses/msc-data-science-leeds'), { params: Promise.resolve({ slug: 'msc-data-science-leeds' }) });
   expect(res.status).toBe(200);
   const query = mocks.courseFindMany.mock.calls[0][0];
-  expect(query.select.intakeFees.where).toEqual({ status: 'active', verificationStatus: 'VERIFIED' });
+  expect(query.select.intakeFees.where).toEqual(publicIntakeWhere());
 });

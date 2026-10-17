@@ -16,7 +16,7 @@ beforeEach(() => {
   db.student.findFirst.mockResolvedValue({ id: 'own-student' });
   db.document.findMany.mockResolvedValue([]);
   db.document.create.mockImplementation(async ({ data }) => ({ id: 'unit-document', ...data }));
-  db.document.findUnique.mockResolvedValue({ id: 'other-document', studentId: 'other-student', name: 'Document' });
+  db.document.findUnique.mockResolvedValue({ id: 'other-document', studentId: 'other-student', name: 'Document', status: 'UPLOADED' });
 });
 describe('document ownership applies to canonical NextAuth students, not just StudentSession auth', () => {
   it('scopes canonical-student list to canonical own Student.id when no target supplied', async () => {
@@ -55,12 +55,21 @@ describe('document ownership applies to canonical NextAuth students, not just St
     const other = new NextRequest('https://example.com/api/documents?studentId=other-student', { headers: { Authorization: 'Bearer isolated-test-session' } });
     expect((await GET(other)).status).toBe(403);
   });
-  it('retains admin review behavior while denying canonical students', async () => {
+  it('allows admin approval of an uploaded document', async () => {
     db.user.findUnique.mockResolvedValue({ id: 'unit-admin', role: 'SUPER_ADMIN', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
     db.student.findUnique.mockResolvedValue({ id: 'other-student', userId: null, counselorId: null });
     db.document.update.mockResolvedValue({ id: 'other-document', status: 'APPROVED' });
     expect((await PATCH(request('PATCH', '', { id: 'other-document', status: 'APPROVED' }))).status).toBe(200);
     expect(db.document.update).toHaveBeenCalledOnce();
+  });
+  it.each(['REJECTED', 'PENDING_UPLOAD'])('does not let an admin approve a document in %s state', async (status) => {
+    db.user.findUnique.mockResolvedValue({ id: 'unit-admin', role: 'SUPER_ADMIN', status: 'ACTIVE', emailVerified: true, permissions: '[]' });
+    db.student.findUnique.mockResolvedValue({ id: 'other-student', userId: null, counselorId: null });
+    db.document.findUnique.mockResolvedValue({ id: 'other-document', studentId: 'other-student', name: 'Document', status });
+    const res = await PATCH(request('PATCH', '', { id: 'other-document', status: 'APPROVED' }));
+    expect(res.status).toBe(409);
+    expect(db.document.update).not.toHaveBeenCalled();
+    expect(db.auditLog.create).not.toHaveBeenCalled();
   });
   it('rejects anonymous requests', async () => {
     getServerSession.mockResolvedValue(null);

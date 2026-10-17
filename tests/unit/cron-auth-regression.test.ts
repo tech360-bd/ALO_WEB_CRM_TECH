@@ -16,9 +16,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const { dbCalls, dbMock } = vi.hoisted(() => {
   const calls: string[] = [];
-  const record = (name: string) => (..._args: unknown[]) => {
+  const record = (name: string, result: unknown = null) => (..._args: unknown[]) => {
     calls.push(name);
-    return Promise.resolve(null);
+    return Promise.resolve(result);
   };
   const many = (name: string) => (..._args: unknown[]) => {
     calls.push(name);
@@ -27,13 +27,14 @@ const { dbCalls, dbMock } = vi.hoisted(() => {
   return {
     dbCalls: calls,
     dbMock: {
-      cronJobLog: { create: record('cronJobLog.create'), update: record('cronJobLog.update') },
+      cronLock: { create: vi.fn(record('cronLock.create')), updateMany: vi.fn(record('cronLock.updateMany', { count: 1 })) },
+      cronJobLog: { create: record('cronJobLog.create', { id: 'test-run' }), update: record('cronJobLog.update') },
       communicationThread: { count: record('communicationThread.count') },
       lead: { count: record('lead.count') },
       socialInboxMessage: { count: record('socialInboxMessage.count') },
       dashboardAlarm: { count: record('dashboardAlarm.count') },
       whatsAppFollowUpSchedule: { count: record('whatsAppFollowUpSchedule.count'), findMany: many('whatsAppFollowUpSchedule.findMany') },
-      whatsAppAnalyticsDaily: { findUnique: record('whatsAppAnalyticsDaily.findUnique'), upsert: record('whatsAppAnalyticsDaily.upsert') },
+      whatsAppAnalyticsDaily: { findUnique: record('whatsAppAnalyticsDaily.findUnique'), upsert: record('whatsAppAnalyticsDaily.upsert', { id: 'test-summary' }) },
       studentDocument: { count: record('studentDocument.count') },
       student: { count: record('student.count') },
       employee: { findMany: many('employee.findMany') },
@@ -65,6 +66,7 @@ const req = (init?: RequestInit) => new Request('http://localhost/api/cron/x', i
 const ORIGINAL_ENV = { ...process.env };
 
 beforeEach(() => {
+  vi.clearAllMocks();
   dbCalls.length = 0;
   process.env.ALO_CRON_SECRET = SECRET;
   process.env.NODE_ENV = 'production';
@@ -120,17 +122,33 @@ describe('cron routes reject anonymous callers before touching the database', ()
     const res = await analyticsGET(req({ headers: { authorization: 'Bearer wrong-secret-value-aaaaaaaaaa' } }));
     expect(res.status).toBe(401);
     // A session lookup is legitimate auth work; the JOB must not have run.
+    expect(dbCalls).not.toContain('cronLock.create');
     expect(dbCalls).not.toContain('cronJobLog.create');
     expect(dbCalls).not.toContain('communicationThread.count');
   });
 });
 
 describe('cron routes accept an authorized scheduler', () => {
+  it('does not run the job when another runner holds the lease', async () => {
+    dbMock.cronLock.create.mockRejectedValueOnce({ code: 'P2002' });
+    dbMock.cronLock.updateMany.mockResolvedValueOnce({ count: 0 });
+    const res = await analyticsGET(req({ headers: { authorization: `Bearer ${SECRET}` } }));
+    expect(res.status).toBe(423);
+    expect(await res.json()).toMatchObject({ success: false, status: 'skipped_locked' });
+    expect(dbCalls).not.toContain('cronJobLog.create');
+    expect(dbCalls).not.toContain('communicationThread.count');
+    expect(dbCalls).not.toContain('whatsAppAnalyticsDaily.upsert');
+  });
+
   it('GET /api/cron/analytics proceeds with the correct secret', async () => {
     const res = await analyticsGET(req({ headers: { authorization: `Bearer ${SECRET}` } }));
-    // The job runs (db is mocked to nulls, so a 500 from the handler is fine —
-    // the point is that it was NOT rejected at the auth boundary).
-    expect(res.status).not.toBe(401);
-    expect(dbCalls.length).toBeGreaterThan(0);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ success: true, job: 'daily-analytics-summary', status: 'ran' });
+    expect(dbCalls[0]).toBe('cronLock.create');
+    expect(dbCalls).toContain('cronJobLog.create');
+    expect(dbCalls).toContain('communicationThread.count');
+    expect(dbCalls).toContain('whatsAppAnalyticsDaily.upsert');
+    expect(dbCalls).toContain('cronJobLog.update');
+    expect(dbCalls.at(-1)).toBe('cronLock.updateMany');
   });
 });
