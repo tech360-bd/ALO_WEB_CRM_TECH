@@ -152,12 +152,12 @@ export default function EnglishTestHub() {
             lede="Compare format, scoring, duration and acceptance for IELTS, IELTS UKVI, PTE Academic, TOEFL iBT, Duolingo, OET, LanguageCert, Oxford ELLT, OIETC, GRE, GMAT, SAT and more — then see what each destination actually requires."
           />
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild className="h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
               <Link href="/language-prep/comparison">
                 Compare Tests <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
-            <Button asChild variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/book-consultation">Book Free Consultation</Link>
             </Button>
           </div>
@@ -273,13 +273,13 @@ export default function EnglishTestHub() {
             destination and profile and we will confirm exactly which test and score you need before you book anything.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Button asChild className="h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
               <Link href="/eligibility-check">Check My Eligibility</Link>
             </Button>
-            <Button asChild variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/compare/countries">Compare Countries</Link>
             </Button>
-            <Button asChild variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/language-prep">Explore Test Preparation</Link>
             </Button>
           </div>
@@ -322,16 +322,16 @@ function TestCard({ test }: { test: EnglishTestRecord }) {
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2 pt-1 lg:mt-auto">
-        <Button asChild className="h-10 rounded-button bg-alo-brand px-4 text-[14px] font-semibold text-white hover:bg-alo-brand-hover">
+        <Button asChild className="h-12 rounded-button bg-alo-brand px-4 text-[14px] font-semibold text-white hover:bg-alo-brand-hover">
           <Link href={`/english-tests/${test.slug}`}>
             View Test Guide <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </Link>
         </Button>
-        <Button asChild variant="outline" className="h-10 rounded-button border-alo-border px-4 text-[14px] font-semibold">
+        <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-4 text-[14px] font-semibold">
           <Link href={`/language-prep/${test.slug}`}>Preparation Plan</Link>
         </Button>
         {test.officialUrl && (
-          <Button asChild variant="ghost" className="h-10 rounded-button px-3 text-[13px] font-semibold text-alo-text-secondary">
+          <Button asChild variant="ghost" className="h-12 rounded-button px-3 text-[13px] font-semibold text-alo-text-secondary">
             <a href={test.officialUrl} target="_blank" rel="noopener noreferrer nofollow">
               <FileText className="mr-1.5 h-4 w-4" aria-hidden="true" />
               Official

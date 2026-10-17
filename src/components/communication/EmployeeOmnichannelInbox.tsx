@@ -253,7 +253,7 @@ export default function EmployeeOmnichannelInbox() {
         <div className="px-4 pt-4 pb-3 border-b border-[#E2E8F0] space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[#2563EB] rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-[#0057B8] rounded-lg flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-sm text-[#0F172A]">Unified Inbox</span>
@@ -284,7 +284,7 @@ export default function EmployeeOmnichannelInbox() {
               placeholder="Search by name, phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0057B8]/20 focus:border-[#0057B8]"
             />
           </div>
 
@@ -296,8 +296,8 @@ export default function EmployeeOmnichannelInbox() {
                 onClick={() => setActiveChannel(ch)}
                 className={`text-[10px] font-semibold px-2.5 py-1 rounded-full transition ${
                   activeChannel === ch
-                    ? 'bg-[#2563EB] text-white shadow-sm'
-                    : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#2563EB] hover:text-[#2563EB]'
+                    ? 'bg-[#0057B8] text-white shadow-sm'
+                    : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#0057B8] hover:text-[#0057B8]'
                 }`}
               >
                 {ch === 'all' ? 'All Channels' : CHANNEL_LABELS[ch] || ch}
@@ -314,7 +314,7 @@ export default function EmployeeOmnichannelInbox() {
               onClick={() => setActiveFilter(f.key)}
               className={`text-[10px] font-semibold px-3 py-2.5 whitespace-nowrap border-b-2 transition ${
                 activeFilter === f.key
-                  ? 'border-[#2563EB] text-[#2563EB]'
+                  ? 'border-[#0057B8] text-[#0057B8]'
                   : 'border-transparent text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -327,7 +327,7 @@ export default function EmployeeOmnichannelInbox() {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-8 text-center">
-              <div className="w-6 h-6 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <div className="w-6 h-6 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               <p className="text-xs text-slate-400">Loading conversations...</p>
             </div>
           ) : conversations.length === 0 ? (
@@ -342,7 +342,7 @@ export default function EmployeeOmnichannelInbox() {
                 onClick={() => selectConversation(conv)}
                 className={`w-full text-left px-4 py-3 border-b border-[#E2E8F0] hover:bg-[#F8FAFC] transition-all ${
                   selectedConv?.id === conv.id
-                    ? 'bg-blue-50 border-l-2 border-l-[#2563EB]'
+                    ? 'bg-blue-50 border-l-2 border-l-[#0057B8]'
                     : 'border-l-2 border-l-transparent'
                 }`}
               >
@@ -355,12 +355,12 @@ export default function EmployeeOmnichannelInbox() {
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {conv.unreadCount > 0 && (
-                      <span className="min-w-[16px] h-4 bg-[#2563EB] text-white text-[9px] font-bold rounded-full px-1 flex items-center justify-center">
+                      <span className="min-w-[16px] h-4 bg-[#0057B8] text-white text-[9px] font-bold rounded-full px-1 flex items-center justify-center">
                         {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
                       </span>
                     )}
                     {(conv.priority === 'urgent' || conv.priority === 'high') && (
-                      <AlertTriangle className="w-3 h-3 text-[#F97316]" />
+                      <AlertTriangle className="w-3 h-3 text-[#E8501A]" />
                     )}
                   </div>
                 </div>
@@ -388,7 +388,7 @@ export default function EmployeeOmnichannelInbox() {
             {/* Conversation header */}
             <div className="px-5 py-3.5 bg-white border-b border-[#E2E8F0] flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057B8] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {(selectedConv.participantName || 'U')[0].toUpperCase()}
                 </div>
                 <div className="min-w-0">
@@ -467,7 +467,7 @@ export default function EmployeeOmnichannelInbox() {
                         )}
                         <div className={`px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
                           msg.direction === 'outbound'
-                            ? 'bg-[#2563EB] text-white rounded-br-none'
+                            ? 'bg-[#0057B8] text-white rounded-br-none'
                             : 'bg-white border border-[#E2E8F0] text-[#0F172A] rounded-bl-none shadow-sm'
                         }`}>
                           {msg.content}
@@ -556,7 +556,7 @@ export default function EmployeeOmnichannelInbox() {
                 <button
                   onClick={() => setIsInternalNote(false)}
                   className={`text-[10px] font-semibold px-3 py-1 rounded-full transition ${
-                    !isInternalNote ? 'bg-[#2563EB] text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
+                    !isInternalNote ? 'bg-[#0057B8] text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
                   }`}
                 >
                   Reply to Customer
@@ -595,13 +595,13 @@ export default function EmployeeOmnichannelInbox() {
                   className={`flex-1 text-xs resize-none p-3 rounded-xl border focus:outline-none focus:ring-2 transition ${
                     isInternalNote
                       ? 'bg-amber-50 border-amber-200 focus:ring-amber-300 focus:border-amber-400'
-                      : 'bg-[#F8FAFC] border-[#E2E8F0] focus:ring-[#2563EB]/20 focus:border-[#2563EB]'
+                      : 'bg-[#F8FAFC] border-[#E2E8F0] focus:ring-[#0057B8]/20 focus:border-[#0057B8]'
                   }`}
                 />
                 <button
                   onClick={sendMessage}
                   disabled={(!messageInput.trim() && !selectedFile) || sending}
-                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[#2563EB] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
+                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[#0057B8] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
                 >
                   {sending ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -631,7 +631,7 @@ export default function EmployeeOmnichannelInbox() {
         <div className="w-64 flex-shrink-0 bg-white border-l border-[#E2E8F0] flex flex-col overflow-y-auto">
           {/* Contact card */}
           <div className="p-4 border-b border-[#E2E8F0] text-center">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#2563EB] to-blue-400 mx-auto flex items-center justify-center text-white font-bold text-xl mb-2">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0057B8] to-blue-400 mx-auto flex items-center justify-center text-white font-bold text-xl mb-2">
               {(selectedConv.participantName || 'U')[0].toUpperCase()}
             </div>
             <p className="font-bold text-sm text-[#0F172A]">{selectedConv.participantName}</p>
@@ -677,7 +677,7 @@ export default function EmployeeOmnichannelInbox() {
             {selectedConv.leadId && (
               <div>
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Lead ID</label>
-                <p className="mt-1 text-[#2563EB] font-mono text-[10px]">{selectedConv.leadId.substring(0, 16)}...</p>
+                <p className="mt-1 text-[#0057B8] font-mono text-[10px]">{selectedConv.leadId.substring(0, 16)}...</p>
               </div>
             )}
 

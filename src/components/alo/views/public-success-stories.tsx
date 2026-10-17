@@ -116,7 +116,7 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -125,12 +125,12 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
               <Icon name="Sparkles" className="mr-1 size-3" />
               Real Students, Real Journeys
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Student <span className="text-[#2563EB]">Success Stories</span>
+              Student <span className="text-[#0057B8]">Success Stories</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Every story published here has been shared with the explicit consent of the student. We never fabricate
@@ -158,7 +158,7 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             title="Success stories coming soon"
             description="We're collecting consent from our recent students. Check back soon for real testimonials from ALO graduates."
             action={
-              <Button onClick={() => onNavigate("public-about")} className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
+              <Button onClick={() => onNavigate("public-about")} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
                 <Icon name="Info" className="size-4" /> About ALO Education
               </Button>
             }
@@ -177,7 +177,7 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                       {story.studentName.split(" ").map((p) => p[0]).slice(0, 2).join("")}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="truncate text-base font-bold text-[#0B2447] group-hover:text-[#2563EB]">{story.studentName}</h3>
+                      <h3 className="truncate text-base font-bold text-[#0B2447] group-hover:text-[#0057B8]">{story.studentName}</h3>
                       {story.homeDistrict && (
                         <p className="text-xs text-[#5A7299]">From {story.homeDistrict}</p>
                       )}
@@ -186,7 +186,7 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                   {story.countrySlug && (
                     <div className="mt-3 flex items-center gap-2">
                       <span className="text-lg">{COUNTRY_FLAGS[story.countrySlug] || "🌍"}</span>
-                      <span className="text-xs font-semibold text-[#2563EB]">
+                      <span className="text-xs font-semibold text-[#0057B8]">
                         {COUNTRY_NAMES[story.countrySlug] || story.countrySlug}
                       </span>
                     </div>
@@ -220,15 +220,15 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
         )}
 
         {/* Consent note */}
-        <div className="mt-10 rounded-2xl border border-[#2563EB]/15 bg-[#EAF3FF]/30 p-6">
+        <div className="mt-10 rounded-2xl border border-[#0057B8]/15 bg-[#EAF3FF]/30 p-6">
           <div className="flex items-start gap-3">
-            <Icon name="ShieldCheck" className="mt-0.5 size-5 shrink-0 text-[#2563EB]" />
+            <Icon name="ShieldCheck" className="mt-0.5 size-5 shrink-0 text-[#0057B8]" />
             <div>
               <p className="text-sm font-bold text-[#0B2447]">Every story published with explicit consent</p>
               <p className="mt-1 text-sm leading-relaxed text-[#5A7299]">
                 ALO Education never publishes a student testimonial without their written consent. We never modify
                 a student's words. If you're an ALO graduate and would like to share your story,{" "}
-                <button onClick={() => onNavigate("public-contact")} className="font-semibold text-[#2563EB] hover:underline">
+                <button onClick={() => onNavigate("public-contact")} className="font-semibold text-[#0057B8] hover:underline">
                   contact us
                 </button>{" "}
                 — we'll send you a secure review invitation.
@@ -308,7 +308,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
             title="Story not found"
             description="We couldn't find that success story."
             action={
-              <Button onClick={() => onNavigate("public-success-stories")} className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90">
+              <Button onClick={() => onNavigate("public-success-stories")} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
                 <Icon name="ArrowLeft" className="size-4" /> Back to Stories
               </Button>
             }
@@ -320,7 +320,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
 
   return (
     <div className="bg-white">
-      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-3xl px-4 py-10 lg:px-6 lg:py-14">
           <Breadcrumb
             items={[
@@ -339,7 +339,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
               </h1>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                 {story.countrySlug && (
-                  <Badge className="bg-[#FFF3EA] text-[#F97316] hover:bg-[#FFF3EA]">
+                  <Badge className="bg-[#FFF3EA] text-[#E8501A] hover:bg-[#FFF3EA]">
                     {COUNTRY_FLAGS[story.countrySlug] || "🌍"} {COUNTRY_NAMES[story.countrySlug] || story.countrySlug}
                   </Badge>
                 )}
@@ -359,7 +359,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
         {/* Quick facts */}
         <div className="grid gap-3 sm:grid-cols-3">
           {story.homeDistrict && (
-            <Card className="rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/40">
+            <Card className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40">
               <CardContent className="p-4">
                 <p className="text-xs text-[#5A7299]">Home District</p>
                 <p className="mt-0.5 text-sm font-bold text-[#0B2447]">{story.homeDistrict}</p>
@@ -367,7 +367,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
             </Card>
           )}
           {story.universityName && (
-            <Card className="rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/40">
+            <Card className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40">
               <CardContent className="p-4">
                 <p className="text-xs text-[#5A7299]">University</p>
                 <p className="mt-0.5 text-sm font-bold text-[#0B2447]">{story.universityName}</p>
@@ -375,7 +375,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
             </Card>
           )}
           {story.courseName && (
-            <Card className="rounded-xl border border-[#2563EB]/15 bg-[#EAF3FF]/40">
+            <Card className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40">
               <CardContent className="p-4">
                 <p className="text-xs text-[#5A7299]">Course</p>
                 <p className="mt-0.5 text-sm font-bold text-[#0B2447]">{story.courseName}</p>
@@ -386,8 +386,8 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
 
         {/* Testimonial */}
         <div className="mt-8">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#F97316]">Testimonial</p>
-          <blockquote className="mt-3 border-l-4 border-[#F97316] bg-[#FFF3EA]/40 px-6 py-5 text-base italic leading-relaxed text-[#0B2447] sm:text-lg">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Testimonial</p>
+          <blockquote className="mt-3 border-l-4 border-[#E8501A] bg-[#FFF3EA]/40 px-6 py-5 text-base italic leading-relaxed text-[#0B2447] sm:text-lg">
             {story.testimonial}
           </blockquote>
         </div>
@@ -405,13 +405,13 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
         </div>
 
         {/* CTA */}
-        <div className="mt-10 rounded-2xl border-2 border-[#2563EB]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
+        <div className="mt-10 rounded-2xl border-2 border-[#0057B8]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-bold text-[#0B2447]">Want to write your own success story?</p>
               <p className="text-sm text-[#5A7299]">Start your free consultation today.</p>
             </div>
-            <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[#F97316] text-white hover:bg-[#c8451a]">
+            <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[#E8501A] text-white hover:bg-[#c8451a]">
               <Icon name="CalendarCheck" className="size-4" />
               Book Free Consultation
             </Button>

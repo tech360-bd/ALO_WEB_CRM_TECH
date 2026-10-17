@@ -26,7 +26,7 @@ const OFFICIAL_SOCIALS = [
 
 const DESTINATIONS = ['UK', 'Australia', 'Canada', 'Ireland', 'New Zealand', 'USA', 'Dubai'];
 const QUICK_LINKS = ['Course Finder', 'Services', 'Language Prep', 'Scholarships'];
-const COMPANY = ['About Us', 'Contact Us', 'Code of Conduct', 'Student Complaint Policy', 'AQF Compliance'];
+const COMPANY = ['About Us', 'Contact Us', 'Global Offices', 'Code of Conduct', 'Student Complaint Policy', 'AQF Compliance'];
 
 function columnLinks(page: import('@playwright/test').Page, name: string) {
   return page.locator(`#alo-public-footer nav[aria-label="${name}"] a`);
@@ -92,7 +92,7 @@ test.describe('site-wide footer', () => {
       'href',
       'https://wa.me/8801805020101'
     );
-    await expect(footer.getByRole('link', { name: '+88 01805 020101-10' })).toHaveAttribute(
+    await expect(footer.getByRole('link', { name: '+8801805020101-10' })).toHaveAttribute(
       'href',
       'tel:+8801805020101'
     );
@@ -114,7 +114,7 @@ test.describe('site-wide footer', () => {
     await expect(strip).toHaveCount(1);
     await expect(strip.locator('svg.lucide-graduation-cap').first()).toBeAttached();
 
-    for (const colour of ['#0066CC', '#F37021', '#FFB347']) {
+    for (const colour of ['#0057B8', '#E8501A', '#FFB347']) {
       await expect(strip.locator(`div[style*="${colour}"]`), `${colour} row missing`).toHaveCount(1);
     }
 

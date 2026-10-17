@@ -7,8 +7,8 @@
  *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
  *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
  *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
- *   • CTA: "Book Free Counseling" (ALO Orange #F37021 button)
- *   • Education Blue #0066CC for navigation/links, #FFB347 accent, #000/#555
+ *   • CTA: "Book Free Counseling" (ALO Orange #E8501A button)
+ *   • Education Blue #0057B8 for navigation/links, #FFB347 accent, #000/#555
  *     neutral text — all values come from the design tokens in globals.css.
  *
  * The footer and this header are mounted once for the whole public site by
@@ -153,7 +153,7 @@ function DropdownTrigger({
         aria-expanded={isOpen}
         aria-controls={`${id}-panel`}
         className={`${MENU_ITEM_BASE} ${
-          isOpen ? 'bg-alo-brand-light text-alo-brand' : 'text-alo-text hover:bg-alo-brand-light hover:text-alo-brand'
+          isOpen ? 'bg-alo-brand-light text-alo-brand' : 'text-alo-body hover:bg-alo-brand-light hover:text-alo-brand'
         }`}
       >
         {label}
@@ -204,7 +204,7 @@ function DesktopLink({ href, label }: { href: string; label: string }) {
       href={href}
       aria-current={active ? 'page' : undefined}
       className={`${MENU_ITEM_BASE} ${
-        active ? 'bg-alo-brand-light text-alo-brand' : 'text-alo-text hover:bg-alo-brand-light hover:text-alo-brand'
+        active ? 'bg-alo-brand-light text-alo-brand' : 'text-alo-body hover:bg-alo-brand-light hover:text-alo-brand'
       }`}
     >
       {label}

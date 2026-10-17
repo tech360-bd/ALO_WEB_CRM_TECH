@@ -72,7 +72,7 @@ const MATCHED_UNIVERSITIES: MatchedUniversity[] = [
     tuition: "£24,000/year",
     scholarship: "£5,000 Global Excellence",
     deadline: "Jan 15, 2027",
-    image: "https://images.unsplash.com/photo-1562774053-701939366bbc?w=800&q=80",
+    image: "/images/cards/uk.png",
   },
   {
     name: "University of Toronto",
@@ -82,7 +82,7 @@ const MATCHED_UNIVERSITIES: MatchedUniversity[] = [
     tuition: "CAD $32,000/year",
     scholarship: "CAD $10,000 Lester B. Pearson",
     deadline: "Jan 10, 2027",
-    image: "https://images.unsplash.com/photo-1592280771190-3e2e4d571329?w=800&q=80",
+    image: "/images/cards/canada.png",
   },
   {
     name: "University of Melbourne",
@@ -92,7 +92,7 @@ const MATCHED_UNIVERSITIES: MatchedUniversity[] = [
     tuition: "AUD $38,000/year",
     scholarship: "AUD $8,000 Merit",
     deadline: "Feb 28, 2027",
-    image: "https://images.unsplash.com/photo-1571987499613-4afc3f452d62?w=800&q=80",
+    image: "/images/cards/australia.png",
   },
 ];
 
@@ -109,7 +109,7 @@ const OCR_DOCUMENTS: OCRDocument[] = [
       { label: "Nationality", value: "Bangladeshi" },
       { label: "DOB", value: "15 Mar 2002" },
     ],
-    thumbnail: "https://images.unsplash.com/photo-1633675104092-ede08f5a5c29?w=400&q=80",
+    thumbnail: "/images/services/english-test.png",
   },
   {
     id: "doc-2",
@@ -123,7 +123,7 @@ const OCR_DOCUMENTS: OCRDocument[] = [
       { label: "Writing", value: "7.0" },
       { label: "Speaking", value: "7.5" },
     ],
-    thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80",
+    thumbnail: "/images/services/counseling.png",
   },
   {
     id: "doc-3",
@@ -137,7 +137,7 @@ const OCR_DOCUMENTS: OCRDocument[] = [
       { label: "University", value: "BUET" },
       { label: "Year", value: "2024" },
     ],
-    thumbnail: "https://images.unsplash.com/photo-1524174354095-251a4f6561c5?w=400&q=80",
+    thumbnail: "/images/services/visa.png",
   },
 ];
 
@@ -145,7 +145,7 @@ const PENDING_APPROVALS: PendingApproval[] = [
   {
     id: "app-1",
     studentName: "Tanvir Ahmed",
-    studentAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    studentAvatar: "/images/testimonials/default.png",
     university: "University of Birmingham",
     course: "MSc Data Science",
     sopConfidence: 94,
@@ -157,7 +157,7 @@ const PENDING_APPROVALS: PendingApproval[] = [
   {
     id: "app-2",
     studentName: "Fatima Khan",
-    studentAvatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80",
+    studentAvatar: "/images/testimonials/default.png",
     university: "University of Toronto",
     course: "MASc Computer Engineering",
     sopConfidence: 91,
@@ -207,12 +207,12 @@ export function NexAbroadDashboard() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="nx-pulse flex size-3 rounded-full bg-[#F97316]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#F97316]">70% AI Engine Active</span>
+                  <span className="nx-pulse flex size-3 rounded-full bg-[#E8501A]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">70% AI Engine Active</span>
                 </div>
                 <h1 className="mt-2 text-3xl font-black tracking-tight lg:text-4xl">
                   Your AI Co-Pilot is{" "}
-                  <span className="bg-gradient-to-r from-[#F97316] to-[#EA580C] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#E8501A] to-[#C93D13] bg-clip-text text-transparent">
                     working
                   </span>
                 </h1>
@@ -221,7 +221,7 @@ export function NexAbroadDashboard() {
                 </p>
               </div>
               <div className="flex gap-3">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="nx-btn-glow bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white hover:opacity-90 rounded-2xl px-6">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="nx-btn-glow bg-gradient-to-r from-[#E8501A] to-[#C93D13] text-white hover:opacity-90 rounded-2xl px-6">
                   <Icon name="Sparkles" className="mr-2 size-4" />
                   Run AI Pipeline
                 </Button>
@@ -278,7 +278,7 @@ function NexAbroadNav() {
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#F97316] to-[#1E40AF] text-lg font-black text-white">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E8501A] to-[#1E40AF] text-lg font-black text-white">
             N
           </div>
           <div>
@@ -294,7 +294,7 @@ function NexAbroadNav() {
             <input
               type="text"
               placeholder="Search students, universities, applications..."
-              className="h-9 w-full rounded-xl border border-white/5 bg-white/5 pl-9 pr-16 text-sm text-white placeholder:text-[#64748B] focus:border-[#F97316]/40 focus:outline-none focus:ring-2 focus:ring-[#F97316]/20"
+              className="h-9 w-full rounded-xl border border-white/5 bg-white/5 pl-9 pr-16 text-sm text-white placeholder:text-[#64748B] focus:border-[#E8501A]/40 focus:outline-none focus:ring-2 focus:ring-[#E8501A]/20"
             />
             <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-[#64748B]">⌘K</kbd>
           </div>
@@ -302,16 +302,16 @@ function NexAbroadNav() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <div className="nx-ai-active hidden items-center gap-2 rounded-full border border-[#F97316]/20 px-3 py-1.5 sm:flex">
-            <span className="nx-pulse flex size-2 rounded-full bg-[#F97316]" />
-            <span className="text-xs font-semibold text-[#F97316]">AI Engine Active</span>
+          <div className="nx-ai-active hidden items-center gap-2 rounded-full border border-[#E8501A]/20 px-3 py-1.5 sm:flex">
+            <span className="nx-pulse flex size-2 rounded-full bg-[#E8501A]" />
+            <span className="text-xs font-semibold text-[#E8501A]">AI Engine Active</span>
           </div>
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative text-[#94A3B8] hover:bg-white/5 hover:text-white">
             <Icon name="Bell" className="size-5" />
-            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#F97316]" />
+            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#E8501A]" />
           </Button>
           <Avatar className="size-9 border border-white/10">
-            <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658c42c2b1f?w=100&q=80" />
+            <AvatarImage src="/images/testimonials/default.png" />
             <AvatarFallback className="bg-[#1E40AF] text-xs font-bold text-white">RA</AvatarFallback>
           </Avatar>
         </div>
@@ -325,10 +325,10 @@ function NexAbroadNav() {
 // ════════════════════════════════════════════════════════════════
 function AIPipelineBar({ stats }: { stats: typeof AI_PIPELINE_STATS }) {
   const items = [
-    { label: "OCR Processed", value: stats.ocrProcessed, icon: "ScanText", color: "text-[#3B82F6]" },
-    { label: "SOPs Drafted", value: stats.sopsDrafted, icon: "FileText", color: "text-[#F97316]" },
+    { label: "OCR Processed", value: stats.ocrProcessed, icon: "ScanText", color: "text-[#0284C7]" },
+    { label: "SOPs Drafted", value: stats.sopsDrafted, icon: "FileText", color: "text-[#E8501A]" },
     { label: "Matches Generated", value: stats.matchesGenerated, icon: "Target", color: "text-[#22C55E]" },
-    { label: "Applications Staged", value: stats.applicationsStaged, icon: "Send", color: "text-[#3B82F6]" },
+    { label: "Applications Staged", value: stats.applicationsStaged, icon: "Send", color: "text-[#0284C7]" },
     { label: "Human Approvals Pending", value: stats.humanApprovalsPending, icon: "UserCheck", color: "text-[#FBBF24]" },
   ];
 
@@ -357,7 +357,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E8501A] to-[#C93D13]">
             <Icon name="BrainCircuit" className="size-5 text-white" />
           </div>
           <div>
@@ -376,7 +376,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
         {universities.map((uni, i) => (
           <div
             key={uni.name}
-            className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-3 transition-all hover:border-[#F97316]/20 hover:bg-white/8"
+            className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-3 transition-all hover:border-[#E8501A]/20 hover:bg-white/8"
           >
             {/* Match Score Circle */}
             <div className="relative flex size-14 shrink-0 items-center justify-center">
@@ -384,7 +384,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
                 <circle cx="28" cy="28" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
                 <circle
                   cx="28" cy="28" r="24" fill="none"
-                  stroke={i === 0 ? "#F97316" : i === 1 ? "#3B82F6" : "#22C55E"}
+                  stroke={i === 0 ? "#E8501A" : i === 1 ? "#0284C7" : "#22C55E"}
                   strokeWidth="4" strokeLinecap="round"
                   strokeDasharray={`${2 * Math.PI * 24}`}
                   strokeDashoffset={`${2 * Math.PI * 24 * (1 - uni.matchScore / 100)}`}
@@ -402,15 +402,15 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
               </div>
               <p className="text-xs text-[#64748B]">{uni.tuition} · {uni.deadline}</p>
               <div className="mt-1 flex items-center gap-1">
-                <Icon name="Award" className="size-3 text-[#F97316]" />
-                <span className="text-xs font-medium text-[#F97316]">{uni.scholarship}</span>
+                <Icon name="Award" className="size-3 text-[#E8501A]" />
+                <span className="text-xs font-medium text-[#E8501A]">{uni.scholarship}</span>
               </div>
             </div>
 
             {/* 1-Click Apply */}
             <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
               size="sm"
-              className="shrink-0 bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white hover:opacity-90 rounded-xl"
+              className="shrink-0 bg-gradient-to-r from-[#E8501A] to-[#C93D13] text-white hover:opacity-90 rounded-xl"
             >
               <Icon name="Zap" className="mr-1 size-3" />
               1-Click Apply
@@ -422,7 +422,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
         <span className="text-xs text-[#64748B]">Visa probability calculated from 847 data points</span>
-        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-xs font-semibold text-[#3B82F6] hover:underline">
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-xs font-semibold text-[#0284C7] hover:underline">
           View all 156 matches →
         </button>
       </div>
@@ -465,7 +465,7 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-[#94A3B8]">Scholarship</span>
-            <span className="font-bold text-[#F97316]">{university.scholarship}</span>
+            <span className="font-bold text-[#E8501A]">{university.scholarship}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-[#94A3B8]">Net Cost</span>
@@ -513,7 +513,7 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
     <div className="nx-glass h-full p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#3B82F6] to-[#1E40AF]">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0284C7] to-[#1E40AF]">
             <Icon name="ScanText" className="size-4 text-white" />
           </div>
           <div>
@@ -537,7 +537,7 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
             <div className="flex items-center gap-2.5">
               {/* Document Icon */}
               <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                <Icon name={typeIcons[doc.type] || "File"} className="size-4 text-[#3B82F6]" />
+                <Icon name={typeIcons[doc.type] || "File"} className="size-4 text-[#0284C7]" />
               </div>
 
               {/* Name + Confidence */}
@@ -570,7 +570,7 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
       </div>
 
       {/* Upload */}
-      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[#64748B] transition-colors hover:border-[#F97316]/30 hover:text-[#F97316]">
+      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[#64748B] transition-colors hover:border-[#E8501A]/30 hover:text-[#E8501A]">
         <Icon name="Upload" className="size-3.5" />
         Upload new document
       </button>
@@ -594,7 +594,7 @@ function FinTechCard() {
     <div className="nx-glass h-full p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#22C55E] to-[#15803D]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#22C55E] to-[#047857]">
             <Icon name="Wallet" className="size-5 text-white" />
           </div>
           <div>
@@ -622,7 +622,7 @@ function FinTechCard() {
             <span className="text-sm font-bold text-[#22C55E]">{blockedAccount.currency}{blockedAccount.current.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
-            <div className="nx-progress-fill" style={{ width: `${blockedPct}%`, background: "linear-gradient(90deg, #22C55E, #15803D)" }} />
+            <div className="nx-progress-fill" style={{ width: `${blockedPct}%`, background: "linear-gradient(90deg, #22C55E, #047857)" }} />
           </div>
           <p className="mt-1 text-[10px] text-[#64748B]">Target: €11,208 (Fintiba verified) · 100% complete</p>
         </div>
@@ -631,7 +631,7 @@ function FinTechCard() {
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <span className="text-sm font-semibold text-white">🇬🇧 UK Tuition Deposit</span>
-            <span className="text-sm font-bold text-[#F97316]">£{tuitionDeposit.current.toLocaleString()} / £{tuitionDeposit.target.toLocaleString()}</span>
+            <span className="text-sm font-bold text-[#E8501A]">£{tuitionDeposit.current.toLocaleString()} / £{tuitionDeposit.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
             <div className="nx-progress-fill nx-progress-gradient" style={{ width: `${tuitionPct}%` }} />
@@ -643,10 +643,10 @@ function FinTechCard() {
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <span className="text-sm font-semibold text-white">🏠 Living Cost Proof</span>
-            <span className="text-sm font-bold text-[#3B82F6]">£{livingCost.current.toLocaleString()} / £{livingCost.target.toLocaleString()}</span>
+            <span className="text-sm font-bold text-[#0284C7]">£{livingCost.current.toLocaleString()} / £{livingCost.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
-            <div className="nx-progress-fill" style={{ width: `${livingPct}%`, background: "linear-gradient(90deg, #3B82F6, #1E40AF)" }} />
+            <div className="nx-progress-fill" style={{ width: `${livingPct}%`, background: "linear-gradient(90deg, #0284C7, #1E40AF)" }} />
           </div>
           <p className="mt-1 text-[10px] text-[#64748B]">50% complete · Bank statement uploaded, awaiting verification</p>
         </div>
@@ -660,7 +660,7 @@ function FinTechCard() {
         </div>
         <div className="text-center">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748B]">Pending</p>
-          <p className="mt-0.5 text-lg font-bold text-[#F97316]">£18,000</p>
+          <p className="mt-0.5 text-lg font-bold text-[#E8501A]">£18,000</p>
         </div>
         <div className="text-center">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748B]">Visa Readiness</p>
@@ -685,7 +685,7 @@ function CounselorApprovalCard({
     <div className="nx-glass nx-glass-glow-orange h-full p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E8501A] to-[#C93D13]">
             <Icon name="UserCheck" className="size-5 text-white" />
           </div>
           <div>
@@ -734,8 +734,8 @@ function CounselorApprovalCard({
               {/* Confidence Breakdown */}
               <div className="mt-3 grid grid-cols-3 gap-2">
                 {[
-                  { label: "SOP", value: app.sopConfidence, color: "#F97316" },
-                  { label: "OCR", value: app.ocrConfidence, color: "#3B82F6" },
+                  { label: "SOP", value: app.sopConfidence, color: "#E8501A" },
+                  { label: "OCR", value: app.ocrConfidence, color: "#0284C7" },
                   { label: "Match", value: app.matchConfidence, color: "#22C55E" },
                 ].map((item) => (
                   <div key={item.label} className="rounded-lg bg-white/5 p-2 text-center">
@@ -758,7 +758,7 @@ function CounselorApprovalCard({
                 <Button
                   size="sm"
                   onClick={() => onApprove(app.id)}
-                  className="nx-btn-glow ml-auto bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white hover:opacity-90 rounded-xl"
+                  className="nx-btn-glow ml-auto bg-gradient-to-r from-[#E8501A] to-[#C93D13] text-white hover:opacity-90 rounded-xl"
                 >
                   <Icon name="Check" className="mr-1 size-3" />
                   Approve & Submit

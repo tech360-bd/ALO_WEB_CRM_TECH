@@ -187,7 +187,7 @@ export default function CrmHRMPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900 p-6 rounded-2xl text-white shadow-md">
         <div>
           <div className="flex items-center gap-2">
-            <Badge className="bg-[#F97316] text-white text-[10px] uppercase font-bold">HR & WORKFORCE</Badge>
+            <Badge className="bg-[#E8501A] text-white text-[10px] uppercase font-bold">HR & WORKFORCE</Badge>
             <span className="text-xs text-blue-200 font-mono">ALO_EMPLOYEE_ACCESS_SYSTEM</span>
           </div>
           <h1 className="text-xl font-black text-white mt-1">Enterprise Human Resource & Workforce System</h1>
@@ -202,9 +202,9 @@ export default function CrmHRMPage() {
             variant="outline"
             className="border-slate-700 bg-slate-800 text-white text-xs font-bold gap-2 hover:bg-slate-700"
           >
-            <ArrowRight className="w-4 h-4 text-[#F97316]" /> Work Reassignment
+            <ArrowRight className="w-4 h-4 text-[#E8501A]" /> Work Reassignment
           </Button>
-          <Button asChild className="bg-[#2563EB] hover:bg-[#004088] text-white text-xs font-bold gap-2"><a href="/admin/access-control-center">
+          <Button asChild className="bg-[#0057B8] hover:bg-[#004088] text-white text-xs font-bold gap-2"><a href="/admin/access-control-center">
               <ShieldCheck className="w-4 h-4" /> Control Center
             </a></Button>
         </div>
@@ -214,7 +214,7 @@ export default function CrmHRMPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-slate-200 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#2563EB] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0057B8] flex items-center justify-center font-bold">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -365,7 +365,7 @@ export default function CrmHRMPage() {
                 <Button
                   onClick={handleGeneratePayroll}
                   disabled={payrollLoading}
-                  className="bg-[#2563EB] hover:bg-[#004088] text-white text-xs font-bold px-4 py-2 rounded-xl"
+                  className="bg-[#0057B8] hover:bg-[#004088] text-white text-xs font-bold px-4 py-2 rounded-xl"
                 >
                   {payrollLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : '1. Prepare AI Draft Payroll'}
                 </Button>
@@ -385,7 +385,7 @@ export default function CrmHRMPage() {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900">Payroll Cycle: {currentPayroll.monthYear}</span>
-                  <Badge className="bg-blue-100 text-[#2563EB] font-bold uppercase">{currentPayroll.status}</Badge>
+                  <Badge className="bg-blue-100 text-[#0057B8] font-bold uppercase">{currentPayroll.status}</Badge>
                 </div>
                 <div className="grid grid-cols-3 gap-3 pt-2 font-mono">
                   <div>Gross Payroll: <strong className="text-slate-900">৳{currentPayroll.totalGross?.toLocaleString()}</strong></div>
@@ -415,7 +415,7 @@ export default function CrmHRMPage() {
           <Card className="p-6 bg-white w-full max-w-md rounded-2xl shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <ArrowRight className="w-5 h-5 text-[#F97316]" /> Work Reassignment Tool
+                <ArrowRight className="w-5 h-5 text-[#E8501A]" /> Work Reassignment Tool
               </h3>
               <button onClick={() => setShowReassignModal(false)} className="text-slate-400 hover:text-slate-600 font-bold text-base">✕</button>
             </div>
@@ -446,7 +446,7 @@ export default function CrmHRMPage() {
               <Button variant="outline" onClick={() => setShowReassignModal(false)} className="text-xs font-bold">
                 Cancel
               </Button>
-              <Button onClick={handleReassignWork} disabled={reassigning} className="bg-[#F97316] text-white text-xs font-bold px-4 py-2 rounded-xl">
+              <Button onClick={handleReassignWork} disabled={reassigning} className="bg-[#E8501A] text-white text-xs font-bold px-4 py-2 rounded-xl">
                 {reassigning ? 'Reassigning...' : 'Execute Reassignment'}
               </Button>
             </div>

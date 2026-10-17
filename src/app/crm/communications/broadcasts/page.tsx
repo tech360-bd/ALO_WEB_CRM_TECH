@@ -44,7 +44,7 @@ export default function BroadcastsPage() {
   return (
     <div className="p-4 lg:p-6 bg-[#F8FAFC] min-h-screen space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Megaphone className="w-5 h-5 text-[#2563EB]" /> Broadcast System</h1>
+        <h1 className="text-xl font-bold text-[#0F172A] flex items-center gap-2"><Megaphone className="w-5 h-5 text-[#0057B8]" /> Broadcast System</h1>
         <p className="text-xs text-gray-500">WhatsApp/SMS/Email/Portal announcement — Student/Partner/Marketing campaign — Requires approval by Marketing Manager or Super Admin — Mass {'>'}100 requires Super Admin — Opt-out respected — No SMTP password visible</p>
       </div>
 
@@ -59,7 +59,7 @@ export default function BroadcastsPage() {
             </SelectContent></Select>
           </div>
           <Textarea placeholder="Message body — will respect opt-out, log send/failure per recipient" value={form.messageBody} onChange={e => setForm(s => ({ ...s, messageBody: e.target.value }))} className="min-h-[80px]" />
-          <Button size="sm" className="bg-[#F97316]" onClick={create}><Send className="w-4 h-4 mr-1" /> Create & Request Approval</Button>
+          <Button size="sm" className="bg-[#E8501A]" onClick={create}><Send className="w-4 h-4 mr-1" /> Create & Request Approval</Button>
           <div className="text-[11px] text-gray-500">Audience: All leads, Hot leads, Students, Partner students, B2B partners, Partners, Visa pending, Documents missing, Offer received, Deposit pending, Country/Campaign/Intake-based — Opt-out: WhatsApp/SMS/Email/Phone/Marketing/Transactional preferences respected — Transactional allowed where legal, marketing requires consent</div>
         </CardContent>
       </Card>

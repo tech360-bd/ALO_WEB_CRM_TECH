@@ -14,16 +14,16 @@ const badgeVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground border border-border",
         destructive:
-          "bg-crm-danger-bg text-crm-danger-text border border-crm-danger/20",
+          "bg-crm-danger-bg text-crm-danger-text border border-crm-danger-border",
         outline:
           "text-foreground border border-border bg-transparent",
         /* CRM Semantic Variants */
         success:
-          "bg-crm-success-bg text-crm-success-text border border-crm-success/20",
+          "bg-crm-success-bg text-crm-success-text border border-crm-success-border",
         warning:
-          "bg-crm-warning-bg text-crm-warning-text border border-crm-warning/30",
+          "bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border",
         danger:
-          "bg-crm-danger-bg text-crm-danger-text border border-crm-danger/20",
+          "bg-crm-danger-bg text-crm-danger-text border border-crm-danger-border",
         /* Brand Variants */
         brand:
           "bg-alo-brand-light text-alo-brand border border-alo-brand/20 dark:bg-alo-brand/10 dark:text-alo-brand dark:border-alo-brand/30",
@@ -36,14 +36,16 @@ const badgeVariants = cva(
         muted:
           "bg-muted text-muted-foreground border border-transparent",
         /* Compatibility aliases used by legacy CRM views. */
+        /* Information (Master §13): #EFF6FF bg · #003F87 text · #BFDBFE border */
         info:
-          "bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900",
+          "bg-alo-info-bg text-alo-info-text border border-alo-info-border",
         blue:
-          "bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900",
+          "bg-alo-info-bg text-alo-info-text border border-alo-info-border",
         orange:
           "bg-orange-100 text-orange-700 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-900",
+        /* Neutral (Master §13): #F1F5F9 bg · #475569 text · #E2E8F0 border */
         neutral:
-          "bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
+          "bg-crm-neutral-bg text-crm-neutral-text border border-crm-neutral-border",
         alo:
           "bg-alo-brand-light text-alo-brand border border-alo-brand/20 dark:bg-alo-brand/10 dark:text-alo-brand dark:border-alo-brand/30",
       },

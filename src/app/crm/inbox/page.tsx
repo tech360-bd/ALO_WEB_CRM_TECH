@@ -76,7 +76,7 @@ export default function InboxPage() {
       <div className="w-1/3 border-r border-gray-200 bg-white flex flex-col">
         <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
           <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-[#2563EB]" />
+            <MessageSquare className="w-5 h-5 text-[#0057B8]" />
             Unified Inbox
           </h2>
         </div>
@@ -92,7 +92,7 @@ export default function InboxPage() {
                 <div
                   key={c.id}
                   onClick={() => setActiveThreadId(c.id)}
-                  className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[#2563EB]' : 'border-l-4 border-transparent'}`}
+                  className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[#0057B8]' : 'border-l-4 border-transparent'}`}
                 >
                   <div className="flex justify-between items-start mb-1">
                     <span className="font-semibold text-gray-900 capitalize flex items-center gap-2">
@@ -132,7 +132,7 @@ export default function InboxPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((m) => (
                 <div key={m.id} className={`flex ${m.direction === 'outbound' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[#2563EB] text-white rounded-tr-none shadow-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
+                  <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[#0057B8] text-white rounded-tr-none shadow-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
                     <p className="text-sm whitespace-pre-wrap">{m.content}</p>
                     <div className={`text-xs mt-1 text-right ${m.direction === 'outbound' ? 'text-blue-200' : 'text-gray-400'}`}>
                       {new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
@@ -150,11 +150,11 @@ export default function InboxPage() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Type your message..."
-                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all"
+                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0057B8]/50 focus:border-[#0057B8] transition-all"
                 />
                 <button
                   onClick={handleSend}
-                  className="bg-[#2563EB] hover:bg-[#0052a3] text-white p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm"
+                  className="bg-[#0057B8] hover:bg-[#003F87] text-white p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm"
                 >
                   <Send className="w-5 h-5" />
                 </button>

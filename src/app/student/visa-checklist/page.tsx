@@ -43,11 +43,11 @@ export default function StudentVisaChecklistPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-[#F97316] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-[#E8501A] flex items-center justify-center">
               <FileCheck className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Visa Documents & Compliance Checklist — Real DB — 25+ Types — No Fake</h1>
+              <h1 className="text-2xl font-bold text-white">Visa Documents & Compliance Checklist — 25+ Types</h1>
               <p className="text-gray-400 text-xs">Official checklist verified by your ALO Visa Interview Officer — Passport/Photo/Offer Letter/CAS/Academic Certificates/Transcripts/English Test/Bank Statement/Solvency Certificate/Sponsor Letter/Sponsor ID/Sponsor Occupation Proof/Source of Funds/Birth Certificate/Marriage Certificate/Work Experience/Study Gap Evidence/Refusal Letter/TB/Medical/Accommodation/Consent Documents/Visa Application/Biometric Appointment/Payment Receipt/Other Country-specific — statuses NOT_UPLOADED/UPLOADED/PENDING_REVIEW/APPROVED/REJECTED/NEEDS_UPDATE/EXPIRED/NOT_APPLICABLE — Do not permanently delete submitted visa documents — Use replacement/version history — API: /api/student-portal/visa — real DB</p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function StudentVisaChecklistPage() {
       </div>
 
       <Card className="bg-[#0d1526] border-white/10 text-white">
-        <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold">Required Compliance Documents — Real DB — No Permanent Delete — Version History</CardTitle></CardHeader>
+        <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold">Required Compliance Documents — No Permanent Delete — Version History</CardTitle></CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -76,7 +76,7 @@ export default function StudentVisaChecklistPage() {
                     <td className="p-3">{item.isRequired ? <Badge className="bg-rose-500/20 text-rose-300 border-rose-500/30 text-[10px]">Required</Badge> : <Badge variant="outline" className="text-gray-400 text-[10px]">Optional</Badge>}</td>
                     <td className="p-3"><Badge className={item.status === 'APPROVED' || item.status === 'approved' || item.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]' : item.status === 'UPLOADED' || item.status === 'uploaded' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30 text-[10px]' : 'bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]'}>{(item.status || 'NOT_UPLOADED').toUpperCase()}</Badge></td>
                     <td className="p-3 text-xs text-gray-300 max-w-xs">{item.note || item.reason || 'Ensure high-resolution scan in PDF format — supportive/clear/professional/actionable — student-safe feedback'}</td>
-                    <td className="p-3 text-right"><Link href="/student/documents"><Button size="sm" className="bg-[#2563EB] hover:bg-[#0046a0] text-white text-xs h-7"><Upload className="w-3 h-3 mr-1" /> Upload — Replacement Previous Versions Remain Auditable Officer Cannot Silently Delete History</Button></Link></td>
+                    <td className="p-3 text-right"><Link href="/student/documents"><Button size="sm" className="bg-[#0057B8] hover:bg-[#0046a0] text-white text-xs h-7"><Upload className="w-3 h-3 mr-1" /> Upload — Replacement Previous Versions Remain Auditable Officer Cannot Silently Delete History</Button></Link></td>
                   </tr>
                 ))}
               </tbody>

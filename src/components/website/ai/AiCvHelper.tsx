@@ -205,7 +205,7 @@ export default function AiCvHelper() {
               )}
             </div>
           ))}
-          <Button variant="outline" className="h-10 rounded-button border-alo-border px-4 text-[13px] font-semibold" onClick={() => patch({ education: [...(profile.education ?? []), { ...EMPTY_EDUCATION }] })}>
+          <Button variant="outline" className="h-12 rounded-button border-alo-border px-4 text-[13px] font-semibold" onClick={() => patch({ education: [...(profile.education ?? []), { ...EMPTY_EDUCATION }] })}>
             <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
             Add Education
           </Button>
@@ -236,7 +236,7 @@ export default function AiCvHelper() {
               </Button>
             </div>
           ))}
-          <Button variant="outline" className="h-10 rounded-button border-alo-border px-4 text-[13px] font-semibold" onClick={() => patch({ experience: [...(profile.experience ?? []), { ...EMPTY_EXPERIENCE }] })}>
+          <Button variant="outline" className="h-12 rounded-button border-alo-border px-4 text-[13px] font-semibold" onClick={() => patch({ experience: [...(profile.experience ?? []), { ...EMPTY_EXPERIENCE }] })}>
             <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
             Add Experience
           </Button>
@@ -255,19 +255,19 @@ export default function AiCvHelper() {
 
       {/* Actions + preview */}
       <div className="mt-6 flex flex-wrap gap-3">
-        <Button onClick={() => setShowPreview((value) => !value)} variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+        <Button onClick={() => setShowPreview((value) => !value)} variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
           <Eye className="mr-2 h-4 w-4" aria-hidden="true" />
           {showPreview ? 'Hide Preview' : 'Preview CV'}
         </Button>
-        <Button onClick={exportCv} className="h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+        <Button onClick={exportCv} className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
           <Download className="mr-2 h-4 w-4" aria-hidden="true" />
           Export CV
         </Button>
-        <Button onClick={() => window.print()} variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+        <Button onClick={() => window.print()} variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
           <Printer className="mr-2 h-4 w-4" aria-hidden="true" />
           Print
         </Button>
-        <Button asChild variant="ghost" className="h-11 rounded-button px-5 text-[14px] font-semibold text-alo-brand">
+        <Button asChild variant="ghost" className="h-12 rounded-button px-5 text-[14px] font-semibold text-alo-brand">
           <Link href="/ai/sop-helper">Write Your Statement of Purpose</Link>
         </Button>
       </div>
@@ -364,7 +364,7 @@ function ListEditor({
           placeholder={placeholder}
           className="h-11 rounded-input border-alo-border"
         />
-        <Button type="button" variant="outline" className="h-11 shrink-0 rounded-button border-alo-border px-3" onClick={onAdd} aria-label={`Add ${label}`}>
+        <Button type="button" variant="outline" className="h-12 shrink-0 rounded-button border-alo-border px-3" onClick={onAdd} aria-label={`Add ${label}`}>
           <Plus className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>

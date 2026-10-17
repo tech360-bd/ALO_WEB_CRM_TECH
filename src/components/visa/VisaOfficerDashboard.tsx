@@ -72,7 +72,7 @@ export default function VisaOfficerDashboard() {
     loadDashboardData();
   }, [loadDashboardData]);
 
-  // Real API-driven metrics — no fake fallback numbers per spec
+  // -driven metrics — no fake fallback numbers per spec
   const totalAssigned = metrics.totalAssigned;
   const highRiskCount = metrics.highRiskCount;
   const interviewQueueCount = metrics.interviewQueueCount;
@@ -212,14 +212,14 @@ export default function VisaOfficerDashboard() {
         </div>
       </div>
 
-      {/* KPI Cards — Real API, no fake numbers, with loading/empty/error states */}
+      {/* KPI Cards, no fake numbers, with loading/empty/error states */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500">Assigned Visa Cases</p>
               <p className="text-2xl font-bold text-slate-900 mt-1">{metricsLoading ? '...' : totalAssigned}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">{totalAssigned === 0 ? 'No cases — empty state' : 'Real DB count'}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">{totalAssigned === 0 ? 'No cases — empty state' : 'Live count'}</p>
             </div>
             <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><UserCheck className="w-5 h-5" /></div>
           </CardContent>
@@ -332,7 +332,7 @@ export default function VisaOfficerDashboard() {
           <Card className="bg-white border-slate-200">
             <CardHeader className="pb-3 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <CardTitle className="text-sm font-bold">Assigned Visa Cases — Real DB</CardTitle>
+                <CardTitle className="text-sm font-bold">Assigned Visa Cases</CardTitle>
                 <CardDescription className="text-xs">Filter and manage — no fake data — empty state if none</CardDescription>
               </div>
               <div className="flex flex-wrap items-center gap-2">

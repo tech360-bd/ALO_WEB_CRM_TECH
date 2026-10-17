@@ -145,7 +145,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#2563EB]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -154,12 +154,12 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#F97316] border border-[#F97316]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
               <Icon name="Phone" className="mr-1 size-3" />
               24-Hour Response Promise
             </Badge>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Contact <span className="text-[#2563EB]">ALO Education</span>
+              Contact <span className="text-[#0057B8]">ALO Education</span>
             </h1>
             <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
               Have a question, want to book a consultation, or just need someone to talk to about studying abroad?
@@ -177,14 +177,14 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
               <div className="space-y-3">
                 {CONTACT_INFO.map((info) => {
                   const accentColors = {
-                    blue: "bg-[#EAF3FF] text-[#2563EB]",
-                    orange: "bg-[#FFF3EA] text-[#F97316]",
+                    blue: "bg-[#EAF3FF] text-[#0057B8]",
+                    orange: "bg-[#FFF3EA] text-[#E8501A]",
                     emerald: "bg-emerald-50 text-emerald-600",
                   };
                   return (
                     <div
                       key={info.label}
-                      className="flex items-start gap-3 rounded-xl border border-[#E2E8F0] bg-white p-4 transition-colors hover:border-[#2563EB]/30"
+                      className="flex items-start gap-3 rounded-xl border border-[#E2E8F0] bg-white p-4 transition-colors hover:border-[#0057B8]/30"
                     >
                       <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", accentColors[info.accent])}>
                         <Icon name={info.icon} className="size-5" />
@@ -196,7 +196,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                             href={info.href}
                             target={info.href.startsWith("http") ? "_blank" : undefined}
                             rel={info.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="mt-0.5 block whitespace-pre-line text-sm font-semibold text-[#0B2447] transition-colors hover:text-[#2563EB]"
+                            className="mt-0.5 block whitespace-pre-line text-sm font-semibold text-[#0B2447] transition-colors hover:text-[#0057B8]"
                           >
                             {info.value}
                           </a>
@@ -231,9 +231,9 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl border border-[#2563EB]/15 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/30 hover:bg-[#EAF3FF]/30"
+                    className="flex items-center gap-2 rounded-xl border border-[#0057B8]/15 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30 hover:bg-[#EAF3FF]/30"
                   >
-                    <Icon name={s.icon} className="size-5 text-[#2563EB]" />
+                    <Icon name={s.icon} className="size-5 text-[#0057B8]" />
                     <span className="text-sm font-semibold text-[#0B2447]">{s.label}</span>
                   </a>
                 ))}
@@ -242,7 +242,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
 
             {/* Map placeholder */}
             <SectionCard title="Visit our office" description="Banani, Dhaka" icon="MapPin">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-[#2563EB]/15 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-[#0057B8]/15 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <div className="flex size-14 items-center justify-center rounded-2xl bg-alo-gradient text-white alo-shadow">
@@ -254,7 +254,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                       href="https://www.google.com/maps/search/?api=1&query=Banani+Dhaka+Bangladesh"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#2563EB] hover:underline"
+                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0057B8] hover:underline"
                     >
                       Open in Google Maps
                       <Icon name="ExternalLink" className="size-3" />
@@ -281,7 +281,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                   <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
                     <Button
                       onClick={() => onNavigate("public-home")}
-                      className="h-11 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+                      className="h-11 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
                     >
                       <Icon name="Home" className="size-4" />
                       Back to Home
@@ -300,16 +300,16 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="rounded-2xl border-2 border-[#2563EB]/15 bg-white alo-shadow">
+              <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
                 <CardContent className="p-6">
                   <div className="mb-5">
-                    <h3 className="text-lg font-bold text-[#2563EB]">Send us a message</h3>
+                    <h3 className="text-lg font-bold text-[#0057B8]">Send us a message</h3>
                     <p className="mt-1 text-sm text-[#5A7299]">We respond within 24 hours.</p>
                   </div>
                   <form onSubmit={submit} className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div>
-                        <Label className="text-xs font-semibold">Full Name <span className="text-[#F97316]">*</span></Label>
+                        <Label className="text-xs font-semibold">Full Name <span className="text-[#E8501A]">*</span></Label>
                         <Input
                           required
                           value={form.fullName}
@@ -319,7 +319,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-semibold">Phone <span className="text-[#F97316]">*</span></Label>
+                        <Label className="text-xs font-semibold">Phone <span className="text-[#E8501A]">*</span></Label>
                         <Input
                           required
                           value={form.phone}
@@ -363,17 +363,17 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                       <Checkbox
                         checked={form.consent}
                         onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })}
-                        className="mt-0.5 border-[#2563EB]/40 data-[state=checked]:bg-[#2563EB]"
+                        className="mt-0.5 border-[#0057B8]/40 data-[state=checked]:bg-[#0057B8]"
                       />
                       <span>
                         I agree to be contacted by ALO Education via phone, WhatsApp, and email about my inquiry.
-                        My data is private, RBAC-protected, and audit-logged. <span className="text-[#F97316]">*</span>
+                        My data is private, RBAC-protected, and audit-logged. <span className="text-[#E8501A]">*</span>
                       </span>
                     </label>
                     <Button
                       type="submit"
                       disabled={loading || !form.fullName || !form.phone || !form.consent}
-                      className="h-12 w-full bg-[#F97316] text-white hover:bg-[#c8451a]"
+                      className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#c8451a]"
                     >
                       {loading ? (
                         <><Icon name="Loader2" className="size-4 animate-spin" /> Sending...</>

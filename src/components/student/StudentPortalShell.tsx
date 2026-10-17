@@ -179,7 +179,7 @@ function SidebarContent() {
       <div className="p-3">
         <Button
           variant="ghost"
-          className="w-full justify-start text-red-600 hover:bg-red-50 h-10"
+          className="w-full justify-start text-red-600 hover:bg-red-50"
           onClick={logout}
         >
           <LogOut className="w-4 h-4 mr-2" />

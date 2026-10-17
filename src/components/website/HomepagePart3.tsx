@@ -28,8 +28,8 @@ import { EnglishExamButton } from '@/components/website/EnglishExamCta';
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#2563EB',
-  orange: '#F97316',
+  blue: '#0057B8',
+  orange: '#E8501A',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -181,11 +181,11 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#2563EB]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#C2410C' }}>
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#C93D13' }}>
                       {sch.deadline}
                     </span>
                   </div>
@@ -359,7 +359,7 @@ function EnglishTestsSection() {
 
                       {/* Score range badge */}
                       {test.scoreRange && (
-                        <div className="inline-flex self-start px-2.5 py-1 rounded-md text-xs font-medium mb-4" style={{ backgroundColor: '#F0FDF4', color: '#15803D' }}>
+                        <div className="inline-flex self-start px-2.5 py-1 rounded-md text-xs font-medium mb-4" style={{ backgroundColor: '#F0FDF4', color: '#047857' }}>
                           {test.scoreRange}
                         </div>
                       )}
@@ -427,16 +427,16 @@ function EnglishTestsSection() {
             <h3 className="text-xl md:text-2xl font-bold" style={{ color: C.text }}>
               English Test Comparison
             </h3>
-            <Button asChild variant="outline" className="h-10 text-xs font-semibold rounded-lg border-[#2563EB] text-[#2563EB]"><Link href="/language-prep/comparison">
+            <Button asChild variant="outline" className="h-12 text-xs font-semibold rounded-lg border-[#0057B8] text-[#0057B8]"><Link href="/language-prep/comparison">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Link></Button>
           </div>
           <div className="rounded-2xl border shadow-sm overflow-hidden bg-white" style={{ borderColor: C.border }}>
             <Table>
               <TableHeader>
-                <TableRow style={{ backgroundColor: C.blue }}>
-                  <TableHead className="text-white font-semibold text-xs uppercase">Test</TableHead>
-                  <TableHead className="text-white font-semibold text-xs uppercase">Accepted Destinations</TableHead>
+                <TableRow style={{ backgroundColor: "#F8FAFC" }}>
+                  <TableHead className="text-[#64748B] font-semibold text-xs uppercase">Test</TableHead>
+                  <TableHead className="text-[#64748B] font-semibold text-xs uppercase">Accepted Destinations</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden md:table-cell">Format</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden lg:table-cell">Score Range</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden lg:table-cell">Result Time</TableHead>
@@ -474,7 +474,7 @@ function EnglishTestsSection() {
           <motion.div variants={staggerItem}>
             <EnglishExamButton
               location="homepage_english_tests"
-              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#F97316] px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#E8501A] px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
             >
               Take the English Test
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />

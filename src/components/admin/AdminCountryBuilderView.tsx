@@ -168,16 +168,16 @@ export default function AdminCountryBuilderView() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#E2E8F0] shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <Globe className="w-7 h-7 text-[#2563EB]" />
+            <Globe className="w-7 h-7 text-[#0057B8]" />
             <h1 className="text-2xl font-bold">ALO Admin Country Builder & Import Center — 10x</h1>
-            <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-xs">21 Tabs + CSV Import + RBAC + CSRF + Audit Logged</Badge>
+            <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs">21 Tabs + CSV Import + RBAC + CSRF + Audit Logged</Badge>
           </div>
           <p className="text-sm text-gray-500 mt-1">Manage 21-section destination guides per spec: Overview, Hero, Quick Facts, Why Study, Pathways, Courses, Universities, Tuition, Entry Requirements, English Tests, Documents, Visa, AI Visa Checker, Interview, Work Rights, Scholarships, Cities, ALO Support, FAQs, Sources, SEO, Publish — Admin can Create/Edit/Reorder/Publish/Unpublish/Verify/Update source/Update verification date — All changes RBAC protected, CSRF protected, Audit logged.</p>
           <p className="text-[11px] text-gray-400 mt-2">Countries: UK, Canada, Australia, USA, Ireland, New Zealand, Dubai/UAE — same premium design system, ALL CONTENT country-specific, NEVER copy UK rules into another country.</p>
         </div>
         <div className="flex items-center gap-3">
           <Button onClick={() => handleSimulateCsvImport('country_pages.csv')} className="bg-emerald-600 hover:bg-emerald-700 text-white h-11 text-xs"><FileSpreadsheet className="w-4 h-4 mr-1" />CSV Facts Import</Button>
-          <Button onClick={() => { setSelectedCountry(null); setFormData({ name: '', slug: '', code: '', flag: '🌐', capital: '', currency: '', heroTitle: '', heroSubtitle: '', overview: '', whyStudySummary: '', visaType: '', tuitionRange: '', livingCost: '', workRights: '', seoTitle: '', seoDescription: '', visaOverview: '', costOfLiving: '' }); setIsEditing(true); setActiveTab('Overview'); }} className="bg-[#2563EB] text-white h-11 text-xs"><Plus className="w-4 h-4 mr-1" />Add Destination</Button>
+          <Button onClick={() => { setSelectedCountry(null); setFormData({ name: '', slug: '', code: '', flag: '🌐', capital: '', currency: '', heroTitle: '', heroSubtitle: '', overview: '', whyStudySummary: '', visaType: '', tuitionRange: '', livingCost: '', workRights: '', seoTitle: '', seoDescription: '', visaOverview: '', costOfLiving: '' }); setIsEditing(true); setActiveTab('Overview'); }} className="bg-[#0057B8] text-white h-11 text-xs"><Plus className="w-4 h-4 mr-1" />Add Destination</Button>
         </div>
       </div>
 
@@ -188,14 +188,14 @@ export default function AdminCountryBuilderView() {
           <h2 className="font-bold text-sm">Active Destinations — 7 Countries — Same Premium Design System, Country-Specific Content</h2>
           <div className="space-y-3">
             {countries.map((c) => (
-              <Card key={c.id} className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm flex items-center justify-between hover:border-[#2563EB] transition">
+              <Card key={c.id} className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm flex items-center justify-between hover:border-[#0057B8] transition">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{c.flag || '🌐'}</span>
                   <div><h3 className="font-bold text-sm">{c.name}</h3><p className="text-xs text-gray-500 font-mono">/destinations/{c.slug} • {c.visaType || 'Student Visa'}</p><p className="text-[10px] text-gray-400">Capital: {c.capital || 'Check'} • Currency: {c.currency || 'Check'} • Last Verified: Check DB</p></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <a href={`/destinations/${c.slug}`} target="_blank" rel="noreferrer" className="p-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl hover:bg-white"><ExternalLink className="w-4 h-4" /></a>
-                  <Button onClick={() => handleEditCountry(c)} className="bg-[#2563EB] text-white h-9 text-xs"><Edit className="w-3.5 h-3.5 mr-1" />Edit — 21 Tabs</Button>
+                  <Button onClick={() => handleEditCountry(c)} className="bg-[#0057B8] text-white h-9 text-xs"><Edit className="w-3.5 h-3.5 mr-1" />Edit — 21 Tabs</Button>
                 </div>
               </Card>
             ))}
@@ -216,13 +216,13 @@ export default function AdminCountryBuilderView() {
 
               <div className="flex flex-wrap gap-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-2">
                 {TABS.map(tab => (
-                  <Button key={tab} type="button" size="sm" variant={activeTab===tab ? 'default' : 'outline'} className={`h-8 text-[10px] ${activeTab===tab ? 'bg-[#2563EB] text-white' : 'border-[#E2E8F0] bg-white'}`} onClick={()=>setActiveTab(tab)}>{tab}</Button>
+                  <Button key={tab} type="button" size="sm" variant={activeTab===tab ? 'default' : 'outline'} className={`h-8 text-[10px] ${activeTab===tab ? 'bg-[#0057B8] text-white' : 'border-[#E2E8F0] bg-white'}`} onClick={()=>setActiveTab(tab)}>{tab}</Button>
                 ))}
               </div>
 
               {activeTab==='Overview' && (
                 <div className="space-y-4">
-                  <h4 className="font-bold flex items-center gap-2"><Globe className="w-4 h-4 text-[#2563EB]" />Overview Tab</h4>
+                  <h4 className="font-bold flex items-center gap-2"><Globe className="w-4 h-4 text-[#0057B8]" />Overview Tab</h4>
                   <div className="grid grid-cols-2 gap-3">
                     <div><Label className="text-xs">Country Name *</Label><Input required value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} className="bg-white border-[#E2E8F0] h-11 mt-1" placeholder="United Kingdom" /></div>
                     <div><Label className="text-xs">URL Slug *</Label><Input required value={formData.slug} onChange={e=>setFormData({...formData, slug:e.target.value})} className="bg-white border-[#E2E8F0] h-11 mt-1" placeholder="uk" /></div>
@@ -271,7 +271,7 @@ export default function AdminCountryBuilderView() {
 
               {activeTab==='Pathways' && <div className="space-y-3"><h4 className="font-bold">Pathways Tab — Visual Pathway for Bangladeshi Students</h4><p className="text-gray-500">SSC/O-Level → Foundation/Bachelor, HSC/A-Level → Bachelor, Diploma/HND → Top-up/Bachelor, Bachelor → Masters/MBA, Masters → PhD/Research — country-specific admission structures + note Final eligibility depends on university, course, academic profile, English score, study gap and other admission requirements.</p></div>}
 
-              {activeTab==='Courses' && <div className="space-y-3"><h4 className="font-bold">Courses Tab — Dynamic from DB Filter country_id — No Fake Static Cards</h4><p className="text-gray-500">Load courses dynamically from existing courses table filter country_id — show premium course cards — every card MUST link to actual course detail page — if missing BUILD route/page — Course Finder link /course-finder?country=[country]</p><Button variant="outline" className="border-[#E2E8F0] h-11 w-full text-xs">View Courses — DB Filter country_id — Same DB</Button></div>}
+              {activeTab==='Courses' && <div className="space-y-3"><h4 className="font-bold">Courses Tab — Dynamic from DB Filter country_id Static Cards</h4><p className="text-gray-500">Load courses dynamically from existing courses table filter country_id — show premium course cards — every card MUST link to actual course detail page — if missing BUILD route/page — Course Finder link /course-finder?country=[country]</p><Button variant="outline" className="border-[#E2E8F0] h-11 w-full text-xs">View Courses — DB Filter country_id — Same DB</Button></div>}
 
               {activeTab==='Universities' && <div className="space-y-3"><h4 className="font-bold">Universities Tab — Load from universities table filter country — Real Links</h4><p className="text-gray-500">Each university card: name, city, country, popular subjects, intakes, scholarship indicator, English requirements, last verified — buttons View University/View Courses/Apply Through ALO — every card MUST have real working destination — if detail missing BUILD it — never use fake university logos — if legally approved logo exists use it otherwise elegant text-based university identity card.</p></div>}
 
@@ -318,7 +318,7 @@ export default function AdminCountryBuilderView() {
 
               {activeTab==='FAQs' && <div className="space-y-3"><h4 className="font-bold">FAQs Tab — Minimum 20 FAQs for EACH Country — Country-Specific — Accordion UI — Original ALO Content</h4><p className="text-gray-500">FAQs must be country-specific — use accordion UI — FAQ answers must be original ALO content — if answer depends on changing rules show source + verification date — 20 FAQs minimum per country already in COUNTRY_DESTINATIONS — UK/Canada/Australia/USA/Ireland/New Zealand/Dubai all have 20 country-specific FAQs with country-specific visa terminology (CAS for UK, LOA/DLI/PGWP for Canada, COE/GTE for Australia, I-20/OPT/CPT for USA, etc) — no fake visa success claims — no commission data publicly.</p><Button variant="outline" className="border-[#E2E8F0] h-11 w-full text-xs">Manage FAQs — 20 Minimum — Country-Specific — Accordion UI</Button></div>}
 
-              {activeTab==='Sources' && <div className="space-y-3"><h4 className="font-bold">Sources Tab — Data & Verification Section — Clean</h4><p className="text-gray-500">For each important dynamic claim show Data section/Source name/Official/source URL/Last verified/Verified by/Status especially for Visa/Work rights/Post-study route/Tuition/Living costs/English requirements/Scholarships/Entry requirements — if not verified DO NOT GUESS Display Data pending verification or Check with counselor.</p><Button variant="outline" className="border-[#E2E8F0] h-11 w-full text-xs">Manage Sources — Source Name + Official URL + Last Verified + Verified By + Status</Button></div>}
+              {activeTab==='Sources' && <div className="space-y-3"><h4 className="font-bold">Sources &amp; Verification</h4><p className="text-gray-500">Every important figure — visa rules, work rights, tuition, living costs, English requirements, scholarships and entry requirements — needs a source name, official URL, last-verified date and status. Anything unverified is shown to students as &ldquo;pending verification&rdquo;, never guessed.</p><Button variant="outline" className="border-[#E2E8F0] h-11 w-full text-xs">Manage Sources — Source Name + Official URL + Last Verified + Verified By + Status</Button></div>}
 
               {activeTab==='SEO' && (
                 <div className="space-y-4">
@@ -333,17 +333,17 @@ export default function AdminCountryBuilderView() {
                 <div className="space-y-4">
                   <h4 className="font-bold">Publish Tab — Publish/Unpublish/Verify/Update Source/Update Verification Date — RBAC/CSRF/Audit Logged</h4>
                   <p className="text-gray-500">Admin can Create/Edit/Reorder/Publish/Unpublish/Verify/Update source/Update verification date — All changes RBAC protected, CSRF protected, Audit logged — final verification: Every country URL, Every hero CTA, Every course card, Every university card, Every scholarship card, Every city card, Every service link, Every English test link, Every form, Every database query, Every filter, Every dynamic country relation, Every mobile layout, Every image, Every source URL, Every verification date, Every login-aware feature — Confirm UK data does not appear on Canada etc — check database country_id relationships — no duplicate country pages/components — no broken links — no fake data/statistics/visa success claims — no commission data publicly — no internal CRM fields publicly — no hardcoded DB credentials — prepared statements — CSRF — RBAC — mobile responsive — accessibility — SEO metadata — canonical URLs — structured data.</p>
-                  <Button onClick={handleSaveCountry} className="w-full bg-[#2563EB] text-white h-12 font-bold"><Save className="w-4 h-4 mr-2" />Save + Publish — Audit Logged + RBAC + CSRF</Button>
+                  <Button onClick={handleSaveCountry} className="w-full bg-[#0057B8] text-white h-12 font-bold"><Save className="w-4 h-4 mr-2" />Save + Publish — Audit Logged + RBAC + CSRF</Button>
                 </div>
               )}
 
               <div className="flex justify-between pt-6 border-t border-[#E2E8F0]">
                 <Button type="button" variant="outline" className="border-[#E2E8F0] h-11 text-xs" disabled={TABS.indexOf(activeTab)===0} onClick={()=>setActiveTab(TABS[TABS.indexOf(activeTab)-1])}>Previous: {TABS[TABS.indexOf(activeTab)-1] || ''}</Button>
-                <Button type="button" className="bg-[#2563EB] text-white h-11 text-xs" disabled={TABS.indexOf(activeTab)===TABS.length-1} onClick={()=>setActiveTab(TABS[TABS.indexOf(activeTab)+1])}>Next: {TABS[TABS.indexOf(activeTab)+1] || ''}</Button>
+                <Button type="button" className="bg-[#0057B8] text-white h-11 text-xs" disabled={TABS.indexOf(activeTab)===TABS.length-1} onClick={()=>setActiveTab(TABS[TABS.indexOf(activeTab)+1])}>Next: {TABS[TABS.indexOf(activeTab)+1] || ''}</Button>
               </div>
             </form>
           ) : (
-            <Card className="p-12 text-center text-xs text-gray-400 bg-white rounded-3xl border border-[#E2E8F0]">Select a country from left to edit its 21 sections — Tabs: {TABS.join(', ')} — per spec section 26 — or click Add Destination. All changes RBAC protected, CSRF protected, Audit logged.</Card>
+            <Card className="p-12 text-center text-xs text-gray-400 bg-white rounded-3xl border border-[#E2E8F0]">Select a country on the left to edit its sections ({TABS.join(', ')}), or click Add Destination. All changes are permission-checked and audit-logged.</Card>
           )}
         </div>
       </div>

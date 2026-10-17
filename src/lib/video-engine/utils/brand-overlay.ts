@@ -64,7 +64,7 @@ export const BrandOverlay: React.FC<{
 }> = ({ 
   logoUrl = "/brand/alo-logo.png", 
   position = "bottom-right",
-  primaryColor = "#F97316"
+  primaryColor = "#E8501A"
 }) => {
   const positionStyles = {
     "top-left": { top: 20, left: 20 },
@@ -115,8 +115,8 @@ export const BRAND_GUIDELINES = {
     clearSpace: 20,
   },
   colors: {
-    primary: "#F97316",
-    secondary: "#2563EB",
+    primary: "#E8501A",
+    secondary: "#0057B8",
     white: "#FFFFFF",
     black: "#000000",
   },

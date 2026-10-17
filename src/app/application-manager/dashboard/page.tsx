@@ -79,14 +79,14 @@ export default function ApplicationManagerDashboard() {
           <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto" />
           <h3 className="font-semibold text-[#0F172A]">Failed to load dashboard</h3>
           <p className="text-sm text-gray-600">{error}</p>
-          <Button onClick={fetchDashboardData} className="bg-[#2563EB] text-white">Retry</Button>
+          <Button onClick={fetchDashboardData} className="bg-[#0057B8] text-white">Retry</Button>
         </div>
       </div>
     );
   }
 
   const kpis = [
-    { label: 'Total Applications', value: metrics?.totalApplications ?? metrics?.total ?? 0, icon: FileCheck, color: 'text-[#2563EB] bg-[#2563EB]/10 border-[#2563EB]/20' },
+    { label: 'Total Applications', value: metrics?.totalApplications ?? metrics?.total ?? 0, icon: FileCheck, color: 'text-[#0057B8] bg-[#0057B8]/10 border-[#0057B8]/20' },
     { label: 'New Today', value: metrics?.newToday ?? 0, icon: Plus, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
     { label: 'Direct', value: metrics?.direct ?? 0, icon: User, color: 'text-blue-600 bg-blue-50 border-blue-200' },
     { label: 'Partner', value: metrics?.partner ?? 0, icon: Handshake, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
@@ -102,7 +102,7 @@ export default function ApplicationManagerDashboard() {
     { label: 'Documents Pending', value: metrics?.documentsPending ?? 0, icon: FileWarning, color: 'text-orange-600 bg-orange-50 border-orange-200' },
     { label: 'CAS / I-20 / COE Pending', value: metrics?.casPending ?? 0, icon: Shield, color: 'text-cyan-600 bg-cyan-50 border-cyan-200' },
     { label: 'Urgent Deadlines', value: metrics?.urgentDeadlines ?? 0, icon: AlertTriangle, color: 'text-red-600 bg-red-50 border-red-200' },
-    { label: 'Pending Tasks', value: metrics?.pendingTasks ?? 0, icon: CheckSquare, color: 'text-[#2563EB] bg-[#2563EB]/10 border-[#2563EB]/20' },
+    { label: 'Pending Tasks', value: metrics?.pendingTasks ?? 0, icon: CheckSquare, color: 'text-[#0057B8] bg-[#0057B8]/10 border-[#0057B8]/20' },
   ];
 
   return (
@@ -114,14 +114,14 @@ export default function ApplicationManagerDashboard() {
           <div className="col-span-12">
             <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#2563EB] flex items-center justify-center shadow-sm">
+                <div className="w-12 h-12 rounded-xl bg-[#0057B8] flex items-center justify-center shadow-sm">
                   <FileCheck className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h1 className="text-xl md:text-2xl font-bold text-[#0F172A]">Application Command Center</h1>
                   <p className="text-sm text-gray-500">Direct, Partner & B2B Inbound/Outbound — 30+ stage pipeline with safe status mapping</p>
                   <div className="flex gap-2 mt-2">
-                    <Badge className="bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/20 text-[10px]">REAL API</Badge>
+                    <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">REAL API</Badge>
                     <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">B2B SECURED</Badge>
                     <Badge className="bg-[#F8FAFC] text-gray-600 border-[#E2E8F0] text-[10px]">{recentApps.length} live records</Badge>
                   </div>
@@ -139,7 +139,7 @@ export default function ApplicationManagerDashboard() {
         {/* KPI Cards — 4 per row desktop, 2 tablet, 1 mobile — 17 cards */}
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12">
-            <h2 className="text-sm font-semibold text-[#0F172A] mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#2563EB]" />Key Performance Indicators — Live Database</h2>
+            <h2 className="text-sm font-semibold text-[#0F172A] mb-3 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#0057B8]" />Key Performance Indicators — Live Database</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {kpis.map((kpi, idx) => {
                 const Icon = kpi.icon;
@@ -168,15 +168,15 @@ export default function ApplicationManagerDashboard() {
           <div className="col-span-12 lg:col-span-8">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
               <CardHeader className="p-4 border-b border-[#E2E8F0] flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2"><Briefcase className="w-4 h-4 text-[#2563EB]" />Pipeline Stages — 30+ Internal Mapping</CardTitle>
-                <Link href="/application-manager/applications" className="text-xs text-[#2563EB] hover:underline">View pipeline →</Link>
+                <CardTitle className="text-sm font-semibold flex items-center gap-2"><Briefcase className="w-4 h-4 text-[#0057B8]" />Pipeline Stages — 30+ Internal Mapping</CardTitle>
+                <Link href="/application-manager/applications" className="text-xs text-[#0057B8] hover:underline">View pipeline →</Link>
               </CardHeader>
               <CardContent className="p-4">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {Object.entries(dashboard?.breakdowns?.stages || {}).slice(0, 12).map(([stage, count]: any) => (
                     <div key={stage} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 flex items-center justify-between">
                       <span className="text-[11px] font-medium text-[#0F172A] truncate">{stage.replace(/_/g, ' ')}</span>
-                      <Badge className="bg-white border-[#E2E8F0] text-[#2563EB] text-[10px]">{count as any}</Badge>
+                      <Badge className="bg-white border-[#E2E8F0] text-[#0057B8] text-[10px]">{count as any}</Badge>
                     </div>
                   ))}
                   {(!dashboard?.breakdowns?.stages || Object.keys(dashboard.breakdowns.stages).length === 0) && (
@@ -233,7 +233,7 @@ export default function ApplicationManagerDashboard() {
           {/* Document review */}
           <div className="col-span-12 lg:col-span-4">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><FileCheck className="w-4 h-4 text-[#2563EB]" />Document Review Queue</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><FileCheck className="w-4 h-4 text-[#0057B8]" />Document Review Queue</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-2">
                 {(dashboard?.documents || []).slice(0, 5).map((doc: any, i: number) => (
                   <div key={i} className="flex items-center justify-between bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">
@@ -291,7 +291,7 @@ export default function ApplicationManagerDashboard() {
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
               <CardHeader className="p-4 border-b border-[#E2E8F0] flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-semibold flex items-center gap-2"><Calendar className="w-4 h-4 text-red-600" />Deadline Engine</CardTitle>
-                <Link href="/application-manager/deadlines" className="text-xs text-[#2563EB]">View all →</Link>
+                <Link href="/application-manager/deadlines" className="text-xs text-[#0057B8]">View all →</Link>
               </CardHeader>
               <CardContent className="p-4 space-y-2">
                 {(dashboard?.deadlines || []).slice(0, 5).map((dl: any, i: number) => (
@@ -300,7 +300,7 @@ export default function ApplicationManagerDashboard() {
                     <Badge className={`${dl.status === 'OVERDUE' ? 'bg-red-50 text-red-700 border-red-200' : dl.status === 'DUE_TODAY' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-[#F8FAFC] text-gray-600 border-[#E2E8F0]'} text-[10px]`}>{dl.status}</Badge>
                   </div>
                 ))}
-                {(dashboard?.deadlines || []).length === 0 && <p className="text-xs text-gray-500 py-4 text-center">No pending deadlines. Real DB will populate alerts DUE_TODAY/3_DAYS/7_DAYS/OVERDUE.</p>}
+                {(dashboard?.deadlines || []).length === 0 && <p className="text-xs text-gray-500 py-4 text-center">No pending deadlines. Alerts will appear here as deadlines approach.</p>}
               </CardContent>
             </Card>
           </div>
@@ -308,11 +308,11 @@ export default function ApplicationManagerDashboard() {
           {/* Activity */}
           <div className="col-span-12 lg:col-span-6">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Clock className="w-4 h-4 text-[#2563EB]" />Recent Activity — Timeline</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Clock className="w-4 h-4 text-[#0057B8]" />Recent Activity — Timeline</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-2">
                 {(dashboard?.statusLogs || []).slice(0, 6).map((log: any, i: number) => (
                   <div key={i} className="flex gap-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">
-                    <div className="w-2 h-2 rounded-full bg-[#2563EB] mt-1.5 flex-shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[#0057B8] mt-1.5 flex-shrink-0" />
                     <div className="flex-1 min-w-0"><p className="text-xs font-medium text-[#0F172A] truncate">{log.note || `${log.oldStatus} → ${log.newStatus}`}</p><p className="text-[11px] text-gray-500">{new Date(log.createdAt).toLocaleString()} • {log.visibility}</p></div>
                   </div>
                 ))}
@@ -325,8 +325,8 @@ export default function ApplicationManagerDashboard() {
           <div className="col-span-12 lg:col-span-6">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
               <CardHeader className="p-4 border-b border-[#E2E8F0] flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2"><CheckSquare className="w-4 h-4 text-[#2563EB]" />Pending Tasks</CardTitle>
-                <Link href="/application-manager/tasks" className="text-xs text-[#2563EB]">View tasks →</Link>
+                <CardTitle className="text-sm font-semibold flex items-center gap-2"><CheckSquare className="w-4 h-4 text-[#0057B8]" />Pending Tasks</CardTitle>
+                <Link href="/application-manager/tasks" className="text-xs text-[#0057B8]">View tasks →</Link>
               </CardHeader>
               <CardContent className="p-4 space-y-2">
                 {(dashboard?.tasks || []).slice(0, 6).map((task: any, i: number) => (
@@ -343,7 +343,7 @@ export default function ApplicationManagerDashboard() {
           {/* Source performance */}
           <div className="col-span-12 lg:col-span-6">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Globe className="w-4 h-4 text-[#2563EB]" />Source Performance — 10 Normalized Sources</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Globe className="w-4 h-4 text-[#0057B8]" />Source Performance — 10 Normalized Sources</CardTitle></CardHeader>
               <CardContent className="p-4">
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(dashboard?.breakdowns?.sources || {}).map(([src, count]: any) => (
@@ -353,7 +353,7 @@ export default function ApplicationManagerDashboard() {
                     </div>
                   ))}
                   {(!dashboard?.breakdowns?.sources || Object.keys(dashboard.breakdowns.sources).length === 0) && (
-                    <div className="col-span-2 py-6 text-center text-xs text-gray-500">No source data yet. Real DB will show DIRECT_ALO_APPLICATION, STUDENT_SELF_APPLICATION, PARTNER_APPLICATION, B2B_INBOUND, B2B_OUTBOUND, UNIVERSITY_DIRECT_PORTAL, MANUAL_IMPORT, REFERRAL, EVENT_SEMINAR_LEAD, WEBSITE_COURSE_FINDER_LEAD.</div>
+                    <div className="col-span-2 py-6 text-center text-xs text-gray-500">No source data yet. Application sources will appear here once applications are submitted.</div>
                   )}
                 </div>
               </CardContent>
@@ -363,7 +363,7 @@ export default function ApplicationManagerDashboard() {
           {/* University response */}
           <div className="col-span-12 lg:col-span-6">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><GraduationCap className="w-4 h-4 text-[#2563EB]" />University Response & Country Breakdown</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><GraduationCap className="w-4 h-4 text-[#0057B8]" />University Response & Country Breakdown</CardTitle></CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3">
                   <div>
@@ -386,8 +386,8 @@ export default function ApplicationManagerDashboard() {
           <div className="col-span-12">
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
               <CardHeader className="p-4 border-b border-[#E2E8F0] flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-[#2563EB]" />Live Application Stream — Real DB Records</CardTitle>
-                <Link href="/application-manager/applications" className="text-xs text-[#2563EB] hover:underline">View full table →</Link>
+                <CardTitle className="text-sm font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-[#0057B8]" />Live Application Stream</CardTitle>
+                <Link href="/application-manager/applications" className="text-xs text-[#0057B8] hover:underline">View full table →</Link>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
@@ -410,7 +410,7 @@ export default function ApplicationManagerDashboard() {
                       ) : (
                         recentApps.map((app: any) => (
                           <tr key={app.id} className="border-b border-[#E2E8F0]/60 hover:bg-[#F8FAFC] transition-colors">
-                            <td className="p-3 font-mono text-xs text-[#2563EB]">{app.applicationCode || app.id.substring(0, 10)}</td>
+                            <td className="p-3 font-mono text-xs text-[#0057B8]">{app.applicationCode || app.id.substring(0, 10)}</td>
                             <td className="p-3 font-medium text-[#0F172A]">{app.studentId?.substring(0, 8) || 'Student'}</td>
                             <td className="p-3 text-[#0F172A]">{app.universityName}</td>
                             <td className="p-3 text-xs text-gray-600">{app.courseName}</td>
@@ -419,7 +419,7 @@ export default function ApplicationManagerDashboard() {
                             </td>
                             <td className="p-3 text-xs text-amber-600 font-medium">{app.stage}</td>
                             <td className="p-3"><Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">{app.safeStatus || 'UNDER REVIEW'}</Badge></td>
-                            <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[#0F172A] hover:text-[#2563EB]"><Eye className="w-4 h-4 mr-1" />Manage</Button></Link></td>
+                            <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[#0F172A] hover:text-[#0057B8]"><Eye className="w-4 h-4 mr-1" />Manage</Button></Link></td>
                           </tr>
                         ))
                       )}

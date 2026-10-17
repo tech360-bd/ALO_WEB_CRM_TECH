@@ -30,7 +30,7 @@ export default function HrmNoticesPage() {
           <Input type="date" value={form.noticeDate} onChange={e=> setForm({...form, noticeDate:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
           <Input type="number" placeholder="Period days" value={form.noticePeriodDays} onChange={e=> setForm({...form, noticePeriodDays: Number(e.target.value)})} className="h-9 text-xs bg-white border-slate-200" />
           <Input placeholder="Reason" value={form.reason} onChange={e=> setForm({...form, reason:e.target.value})} className="h-9 text-xs bg-white border-slate-200 md:col-span-2" />
-          <Button onClick={create} className="bg-[#F97316] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-3">Create Notice</Button>
+          <Button onClick={create} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-3">Create Notice</Button>
         </CardContent>
       </Card>
       <Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Notices ({list.length})</CardTitle></CardHeader>

@@ -95,7 +95,7 @@ export default function JourneyMapDiagram({
       <figcaption className="mb-4 flex items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2563EB]">{eyebrow}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">{eyebrow}</p>
           ) : null}
           <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
         </div>

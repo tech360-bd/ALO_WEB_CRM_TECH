@@ -94,7 +94,7 @@ Your ALO Education employee account (${employeeCode}) is ready. Open this one-ti
 The link expires in ${expiryHours} hours. Contact ALO IT / HR Admin if you did not expect this message.`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 8px;">
-        <h2 style="color: #2563EB;">Activate your ALO Education employee account</h2>
+        <h2 style="color: #0057B8;">Activate your ALO Education employee account</h2>
         <p>Hello <strong>${safeName}</strong>,</p>
         <p>Your ALO Education employee account has been created:</p>
         <table style="border-collapse: collapse; font-size: 14px; margin: 12px 0;">
@@ -105,7 +105,7 @@ The link expires in ${expiryHours} hours. Contact ALO IT / HR Admin if you did n
         </table>
         <p><strong>Password creation instructions:</strong> Click the activation link below, then create a strong password (minimum 8 characters with at least one uppercase letter and one number). You cannot log in until your password has been created successfully.</p>
         <p style="margin: 24px 0;">
-          <a href="${safeActivationUrl}" style="background-color: #F97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Activate Account</a>
+          <a href="${safeActivationUrl}" style="background-color: #E8501A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Activate Account</a>
         </p>
         <p style="color: #64748b; font-size: 13px;">This link expires in ${expiryHours} hours and can be used only once. If it expires, ask your administrator to resend the activation email.</p>
         <p style="color: #64748b; font-size: 13px;">Support contact: ALO IT / HR Admin — support@aloeducation.com. If you did not expect this email, contact ALO IT Admin immediately.</p>
@@ -126,10 +126,10 @@ export async function sendPasswordResetEmail(to: string, resetToken: string) {
     subject: `ALO Education Password Reset Request`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 8px;">
-        <h2 style="color: #2563EB;">Password Reset Request</h2>
+        <h2 style="color: #0057B8;">Password Reset Request</h2>
         <p>We received a request to reset your password for ALO Education Web_CRM.</p>
         <p style="margin: 24px 0;">
-          <a href="${safeResetUrl}" style="background-color: #F97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Reset Password</a>
+          <a href="${safeResetUrl}" style="background-color: #E8501A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Reset Password</a>
         </p>
         <p style="color: #64748b; font-size: 13px;">If you did not request a password reset, you can safely ignore this email.</p>
       </div>

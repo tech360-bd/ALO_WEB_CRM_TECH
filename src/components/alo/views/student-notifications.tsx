@@ -102,7 +102,7 @@ export function StudentNotifications() {
               key={n.id}
               className={cn(
                 "rounded-2xl border bg-white transition-colors",
-                n.isRead ? "border-[#DCE8F5]" : "border-[#2563EB]/30 bg-[#EAF3FF]/30"
+                n.isRead ? "border-[#DCE8F5]" : "border-[#0057B8]/30 bg-[#EAF3FF]/30"
               )}
             >
               <CardContent className="flex items-start justify-between gap-3 p-4">
@@ -110,7 +110,7 @@ export function StudentNotifications() {
                   <div
                     className={cn(
                       "flex size-10 shrink-0 items-center justify-center rounded-lg",
-                      n.isRead ? "bg-slate-100 text-slate-500" : "bg-[#EAF3FF] text-[#2563EB]"
+                      n.isRead ? "bg-slate-100 text-slate-500" : "bg-[#EAF3FF] text-[#0057B8]"
                     )}
                   >
                     <Icon name="Bell" className="size-5" />

@@ -14,6 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import {
   ArrowLeft, Search, MapPin, GraduationCap, Award, Users, Building2,
   Phone, Mail, Clock, FileText, Shield, Globe, BookOpen, Star,
+  CheckCircle2, Target, Eye, Heart,
 } from 'lucide-react';
 
 import { usePortalStore } from '@/lib/stores/portal-store';
@@ -23,7 +24,7 @@ import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
 // ============================================================
 // SHARED PUBLIC SHELL
 // ============================================================
-function PublicShell({ title, subtitle, badge, children, heroColor = '#2563EB' }: {
+function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }: {
   title: string;
   subtitle?: string;
   badge?: string;
@@ -37,7 +38,7 @@ function PublicShell({ title, subtitle, badge, children, heroColor = '#2563EB' }
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => setView('website')}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#2563EB] mb-6 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] mb-6 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </button>
@@ -114,7 +115,7 @@ export function PublicCourseFinderPage() {
       <div className="grid lg:grid-cols-4 gap-6">
         <Card className="p-5 lg:col-span-1 h-fit">
           <h3 className="font-semibold text-[#0F172A] mb-4 flex items-center gap-2">
-            <Search className="h-4 w-4 text-[#2563EB]" /> Filters
+            <Search className="h-4 w-4 text-[#0057B8]" /> Filters
           </h3>
           <div className="space-y-4">
             <div>
@@ -183,7 +184,7 @@ export function PublicCourseFinderPage() {
                   >
                     <Card className="p-5 hover:shadow-md transition-shadow h-full">
                       <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary" className="bg-blue-50 text-[#2563EB]">
+                        <Badge variant="secondary" className="bg-blue-50 text-[#0057B8]">
                           {c.studyLevel || c.programLevel || c.level || 'Course'}
                         </Badge>
                         {(c.yearlyTuition || c.tuitionFee) > 0 && (
@@ -252,7 +253,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
               </p>
               <a
                 href={`/destinations/${country.slug}`}
-                className="text-xs text-[#2563EB] font-semibold hover:underline"
+                className="text-xs text-[#0057B8] font-semibold hover:underline"
               >
                 View {country.name} guide
               </a>
@@ -281,21 +282,21 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
 
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#2563EB] mb-2">
+          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
             <GraduationCap className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Tuition Range</span>
           </div>
           <p className="text-lg font-bold text-[#0F172A]">{data.tuitionRange}</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#2563EB] mb-2">
+          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Living Cost</span>
           </div>
           <p className="text-lg font-bold text-[#0F172A]">{data.livingCost}</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#2563EB] mb-2">
+          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
             <Clock className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Work Rights</span>
           </div>
@@ -306,7 +307,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
       <div className="grid md:grid-cols-2 gap-6 mb-10">
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-[#2563EB]" /> Visa Information
+            <FileText className="h-4 w-4 text-[#0057B8]" /> Visa Information
           </h3>
           <p className="text-sm text-slate-600 mb-2">Visa route:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.visaType}</p>
@@ -315,7 +316,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         </Card>
         <Card className="p-6">
           <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <Globe className="h-4 w-4 text-[#2563EB]" /> Country Info
+            <Globe className="h-4 w-4 text-[#0057B8]" /> Country Info
           </h3>
           <p className="text-sm text-slate-600 mb-2">Currency:</p>
           <p className="font-semibold text-[#0F172A] mb-3">{data.currency}</p>
@@ -353,7 +354,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
                 href={source.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2563EB] hover:underline"
+                className="text-[#0057B8] hover:underline"
               >
                 {source.sourceName}
               </a>
@@ -363,12 +364,12 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         </ul>
       </Card>
 
-      <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center">
+      <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to study in {data.name}?</h3>
         <p className="text-blue-100 mb-5">
           Fees and visa rules change. A counselor confirms the current requirements for your case.
         </p>
-        <Button asChild className="bg-[#F97316] text-white hover:brightness-110">
+        <Button asChild className="bg-[#E8501A] text-white hover:brightness-110">
           <a href="/book-consultation">Book Free Consultation</a>
         </Button>
       </div>
@@ -450,12 +451,12 @@ export function PublicUniversitiesPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: '#2563EB' }}
+                    style={{ backgroundColor: '#0057B8' }}
                   >
                     {u.name?.[0] || 'U'}
                   </div>
                   {u.worldRanking && (
-                    <Badge variant="secondary" className="bg-orange-50 text-[#F97316]">
+                    <Badge variant="secondary" className="bg-orange-50 text-[#E8501A]">
                       Rank #{u.worldRanking}
                     </Badge>
                   )}
@@ -471,7 +472,7 @@ export function PublicUniversitiesPage() {
                 {u.ieltsMin && (
                   <div className="text-xs">
                     <span className="text-slate-500">IELTS min: </span>
-                    <span className="font-semibold text-[#2563EB]">{u.ieltsMin}</span>
+                    <span className="font-semibold text-[#0057B8]">{u.ieltsMin}</span>
                   </div>
                 )}
               </Card>
@@ -509,7 +510,7 @@ export function PublicScholarshipsPage() {
       title="Scholarships & Funding Directory"
       badge="100% VERIFIED FUNDING SCHEMES"
       subtitle="Explore fully funded government scholarships, university merit grants, and tuition fee waivers across the UK, USA, Australia, Canada, Germany, Ireland, and New Zealand."
-      heroColor="#F97316"
+      heroColor="#E8501A"
     >
       {loading ? (
         <div className="text-center py-20 text-slate-500 font-medium">Loading verified global scholarships...</div>
@@ -519,10 +520,10 @@ export function PublicScholarshipsPage() {
             const slug = s.slug || (s.title ? s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `scholarship-${i}`);
             return (
               <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#2563EB]">
+                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#0057B8]">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <Badge className="bg-orange-50 text-[#F97316] border-orange-200 font-semibold text-[11px]">
+                      <Badge className="bg-orange-50 text-[#E8501A] border-orange-200 font-semibold text-[11px]">
                         {s.coverageType || 'Merit Scholarship'}
                       </Badge>
                       <span className="text-xs font-semibold text-slate-500">
@@ -530,7 +531,7 @@ export function PublicScholarshipsPage() {
                       </span>
                     </div>
                     <h3 className="font-bold text-[#0F172A] text-lg mb-2 line-clamp-2">{s.title || s.name}</h3>
-                    <p className="text-xs text-[#2563EB] font-semibold mb-3">{s.provider || 'University Partner'}</p>
+                    <p className="text-xs text-[#0057B8] font-semibold mb-3">{s.provider || 'University Partner'}</p>
                     <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{s.description || s.eligibility}</p>
                   </div>
 
@@ -539,7 +540,7 @@ export function PublicScholarshipsPage() {
                       Award: {s.awardAmount || s.amount || 'Varies by degree'}
                     </div>
                     <div className="flex gap-2">
-                      <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
+                      <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
                           View Full Details & Apply →
                         </a></Button>
                     </div>
@@ -579,12 +580,12 @@ export function PublicServicesPage() {
       title="Our 10 Comprehensive Services"
       badge="END-TO-END STUDY ABROAD ADVISORY"
       subtitle="We are committed to guiding Bangladeshi students on their journey to study abroad with confidence and success. Explore our 10 comprehensive services designed for every stage of your international education."
-      heroColor="#2563EB"
+      heroColor="#0057B8"
     >
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {MASTER_SERVICES_DATA.map((s: any, i: number) => (
           <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#2563EB] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
+            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
               <div>
                 <div className="h-44 w-full overflow-hidden relative">
                   <img src={s.heroImage} alt={s.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
@@ -602,7 +603,7 @@ export function PublicServicesPage() {
               </div>
 
               <div className="p-6 pt-0">
-                <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
+                <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
                     Explore Full Service Details & Process →
                   </a></Button>
               </div>
@@ -611,10 +612,10 @@ export function PublicServicesPage() {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] rounded-2xl p-8 text-white text-center shadow-lg">
+      <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
-        <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
+        <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
             Book Free Consultation
           </a></Button>
       </div>
@@ -624,60 +625,127 @@ export function PublicServicesPage() {
 
 // ============================================================
 // ABOUT PAGE
+// Brand brief copy, verbatim: Who We Are (founded February 2023 by
+// Taslima Akter), the five study-abroad strengths, Our Purpose / Mission /
+// Vision. Layout: 2-column (text + visual motif). No invented statistics —
+// the previous "360+ partners / 8,800+ courses" tiles were removed because
+// no verified source backs those numbers.
 // ============================================================
 export function PublicAboutPage() {
+  const strengths = [
+    'World-class universities and research excellence',
+    'Industry-aligned programmes and employability',
+    'International student-friendly policies',
+    'Scholarships and funding opportunities',
+    'Safe cities and vibrant student life',
+  ];
   return (
     <PublicShell
       title="About ALO Education"
       badge="ESTABLISHED 2023"
-      subtitle="In February 2023, ALO Education was founded by Taslima Akter, who envisioned creating a platform that would connect ambitious students with world-class education opportunities abroad."
+      subtitle="Your Dream – Our Commitment. ALO Education connects ambitious Bangladeshi students with world-class education opportunities abroad."
     >
-      <div className="prose prose-slate max-w-none mb-12">
-        <p className="text-base text-slate-700 leading-relaxed mb-6">
-          That same year, our first office opened in Dhaka, Bangladesh, with an initial focus on
-          assisting students in Bangladesh to secure admissions into leading universities and colleges
-          in the UK, USA, Australia, Canada, New Zealand, Ireland and Europe. Guided by the founder's
-          vision of trust, transparency, and professionalism, we set a clear strategy to expand our
-          services beyond Bangladesh. Today, ALO Education continues to grow with the mission of offering
-          global opportunities and becoming a trusted partner in international education consultancy.
-        </p>
+      {/* Who We Are — 2-column: text + visual motif */}
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14 mb-14">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-5">Who We Are</h2>
+          <div className="space-y-4 text-base text-slate-700 leading-relaxed">
+            <p>
+              In February 2023, Taslima Akter founded ALO Education with a vision to connect ambitious
+              Bangladeshi students with world-class education opportunities abroad. Her personal
+              experience navigating the complexities of international admissions inspired her to create
+              a platform built on trust, transparency, and genuine care for every student&apos;s future.
+            </p>
+            <p>
+              That same year, our first office opened in Dhaka, Bangladesh, with a dedicated focus on
+              helping students secure admissions to leading universities and colleges across the United
+              Kingdom, United States, Australia, Canada, New Zealand, Ireland, and Europe. From the very
+              first day, our approach has been centered on providing personalized, honest, and
+              comprehensive guidance.
+            </p>
+            <p>
+              Guided by the founder&apos;s vision of trust, transparency, and professionalism, ALO
+              Education continues to grow with the mission of offering global opportunities and becoming
+              a trusted partner in international education consultancy. We are not just consultants — we
+              are mentors, guides, and partners in your journey toward a brighter future.
+            </p>
+          </div>
+          <ul className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {strengths.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-sm font-medium text-[#0F172A]">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#E8501A]" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="relative">
+          <div className="overflow-hidden rounded-3xl shadow-2xl">
+            <img
+              src="/images/landing/Copy of pexels-rdne-7092364.webp"
+              alt="ALO Education counsellors guiding students in Dhaka"
+              className="h-auto w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="absolute -bottom-4 left-4 flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xl">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E8501A]">
+              <Heart className="h-5 w-5 text-white" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block text-sm font-bold text-[#0F172A]">Student-First</span>
+              <span className="block text-xs text-slate-500">Since February 2023 · Dhaka, Bangladesh</span>
+            </span>
+          </div>
+        </div>
       </div>
 
+      {/* Our Purpose */}
+      <div className="mb-6 text-center">
+        <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.18em] bg-[#FFF1EA] text-[#E8501A] mb-4">
+          Our Purpose
+        </span>
+        <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">
+          Our Commitment to Your Study-Abroad Dream
+        </h2>
+      </div>
       <div className="grid md:grid-cols-2 gap-6 mb-12">
         <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-blue-100">
-          <h3 className="text-xl font-bold text-[#2563EB] mb-3">Our Mission</h3>
-          <p className="text-slate-700 leading-relaxed">
-            At ALO Education, our mission is simple yet powerful: turning student dreams into global
-            opportunities. We strive to be a trusted pathway to world-class education, guiding every
-            student with honesty, professionalism, and care. By offering transparent counseling and
-            authentic guidance, we help students choose the right programs that match their ambitions
-            and potential.
-          </p>
+          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0057B8]">
+            <Target className="h-6 w-6 text-white" aria-hidden="true" />
+          </span>
+          <h3 className="text-xl font-bold text-[#0057B8] mb-3">Our Mission</h3>
+          <div className="space-y-3 text-slate-700 leading-relaxed">
+            <p>
+              At ALO Education, our mission is simple yet powerful — turning student dreams into global
+              opportunities. We strive to be a trusted pathway to world-class education, guiding every
+              student with honesty, professionalism, and genuine care.
+            </p>
+            <p>
+              Our commitment goes beyond admissions. We are dedicated to guiding ambitions, shaping
+              brighter futures, and ensuring that students from Bangladesh to the world can access
+              education without boundaries.
+            </p>
+          </div>
         </Card>
         <Card className="p-8 bg-gradient-to-br from-orange-50 to-white border-orange-100">
-          <h3 className="text-xl font-bold text-[#F97316] mb-3">Our Vision</h3>
-          <p className="text-slate-700 leading-relaxed">
-            The vision of ALO Education is to become a globally recognized education consultancy that
-            inspires trust, integrity, and excellence. We aspire to guide students toward courses and
-            institutions that best suit their academic interests, career goals, and personal growth.
-            Our focus is on nurturing the holistic development of students by enhancing their knowledge,
-            skills, and confidence so they can thrive in a competitive world.
-          </p>
+          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E8501A]">
+            <Eye className="h-6 w-6 text-white" aria-hidden="true" />
+          </span>
+          <h3 className="text-xl font-bold text-[#E8501A] mb-3">Our Vision</h3>
+          <div className="space-y-3 text-slate-700 leading-relaxed">
+            <p>
+              The vision of ALO Education is to become a globally recognized education consultancy that
+              inspires trust, integrity, and excellence in everything we do. We aspire to guide students
+              toward courses and institutions that best suit their academic interests and career goals.
+            </p>
+            <p>
+              Our focus is on nurturing holistic development by enhancing knowledge, skills, and
+              confidence so students can thrive in a competitive world. With continuous innovation, we
+              provide seamless, high-quality services.
+            </p>
+          </div>
         </Card>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        {[
-          { num: '2023', label: 'Established' },
-          { num: '7', label: 'Study destinations' },
-          { num: '360+', label: 'University partners' },
-          { num: '8,800+', label: 'Courses listed' },
-        ].map((stat) => (
-          <Card key={stat.label} className="p-6 text-center">
-            <p className="text-3xl font-bold text-[#2563EB] mb-1">{stat.num}</p>
-            <p className="text-xs text-slate-600">{stat.label}</p>
-          </Card>
-        ))}
       </div>
     </PublicShell>
   );
@@ -720,7 +788,7 @@ export function PublicSuccessStoriesPage() {
       title="Success Stories"
       badge="VOICES OF OUR STUDENTS"
       subtitle="Real stories from students who achieved their dreams of studying abroad with ALO Education."
-      heroColor="#F97316"
+      heroColor="#E8501A"
     >
       {loading ? (
         <div className="text-center py-20 text-slate-500">Loading stories...</div>
@@ -730,18 +798,18 @@ export function PublicSuccessStoriesPage() {
             <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
               <Card className="p-7 h-full">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d80] flex items-center justify-center text-white font-bold text-lg shrink-0">
+                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003F87] flex items-center justify-center text-white font-bold text-lg shrink-0">
                     {s.name?.[0] || 'S'}
                   </div>
                   <div>
                     <h3 className="font-bold text-[#0F172A]">{s.name}</h3>
-                    <p className="text-sm text-[#2563EB]">{s.course || s.program}</p>
+                    <p className="text-sm text-[#0057B8]">{s.course || s.program}</p>
                     <p className="text-xs text-slate-500">Now studying at {s.university}</p>
                   </div>
                 </div>
                 <div className="flex gap-0.5 mb-3">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-[#F97316] text-[#F97316]" />
+                    <Star key={star} className="h-4 w-4 fill-[#E8501A] text-[#E8501A]" />
                   ))}
                 </div>
                 <p className="text-sm text-slate-700 italic leading-relaxed">"{s.quote || s.testimonial}"</p>
@@ -787,11 +855,11 @@ export function PublicTeamPage() {
         {data.map((m: any, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
             <Card className="p-6 text-center hover:shadow-md transition-shadow h-full">
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d80] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003F87] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
                 {m.name?.[0] || 'A'}
               </div>
               <h3 className="font-bold text-[#0F172A]">{m.name}</h3>
-              <p className="text-sm text-[#2563EB] mb-3">{m.role || m.position}</p>
+              <p className="text-sm text-[#0057B8] mb-3">{m.role || m.position}</p>
               <p className="text-xs text-slate-600">{m.bio || m.description}</p>
             </Card>
           </motion.div>
@@ -869,22 +937,22 @@ export function PublicContactPage() {
     >
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <Card className="p-8">
-          <Phone className="h-8 w-8 text-[#2563EB] mb-4" />
+          <Phone className="h-8 w-8 text-[#0057B8] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Phone</h3>
-          <p className="text-2xl font-bold text-[#2563EB] mb-1">+88 01805020101-10</p>
+          <p className="text-2xl font-bold text-[#0057B8] mb-1">+88 01805020101-10</p>
           <p className="text-sm text-slate-600">Sat-Thu: 10 AM - 6 PM</p>
         </Card>
         <Card className="p-8">
-          <Mail className="h-8 w-8 text-[#F97316] mb-4" />
+          <Mail className="h-8 w-8 text-[#E8501A] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Email</h3>
-          <p className="text-2xl font-bold text-[#F97316] mb-1">info@aloeducation.com</p>
+          <p className="text-2xl font-bold text-[#E8501A] mb-1">info@aloeducation.com</p>
           <p className="text-sm text-slate-600">Available 24/7</p>
         </Card>
       </div>
 
       <Card className="p-8 mb-8">
         <div className="flex items-start gap-4">
-          <MapPin className="h-8 w-8 text-[#2563EB] shrink-0" />
+          <MapPin className="h-8 w-8 text-[#0057B8] shrink-0" />
           <div>
             <h3 className="font-bold text-[#0F172A] mb-2">Bangladesh Office</h3>
             <p className="text-slate-700 leading-relaxed">
@@ -989,7 +1057,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
       badge: 'ACCESSIBILITY',
       sections: [
         { h: 'Commitment', p: 'We aim for WCAG 2.1 AA across https://aloeducation.com — semantic HTML, landmarks, skip links, heading hierarchy.' },
-        { h: 'Visual', p: 'Contrast ≥4.5:1 (#2563EB/#F97316 on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
+        { h: 'Visual', p: 'Contrast ≥4.5:1 (#0057B8/#E8501A on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
         { h: 'Keyboard & Screen Reader', p: 'All interactive elements via Tab/Enter/Space, visible focus ring, associated label + aria-describedby errors, NVDA/JAWS conventions.' },
         { h: 'Limitations', p: 'Third-party embeds (Maps/Facebook) may not be fully AA — we provide text address, WhatsApp 01805020100, phone fallbacks.' },
         { h: 'Feedback', p: 'Email info@aloeducation.com with URL + issue. Acknowledge within 2 working days, fix prioritized, review every 6 months.' },
@@ -1004,7 +1072,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
           {content.sections.map((s, i) => (
             <div key={i}>
               <h3 className="font-bold text-[#0F172A] mb-2 flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#2563EB] text-xs font-bold flex items-center justify-center">
+                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#0057B8] text-xs font-bold flex items-center justify-center">
                   {i + 1}
                 </span>
                 {s.h}
@@ -1039,30 +1107,30 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
       title="Language & Admission Test Preparation"
       badge="ALO STUDY ABROAD LANGUAGE PREPARATION CENTRE"
       subtitle="Prepare for English proficiency and admission tests with ALO Education's certified test coaches, score planners, and direct CRM integration."
-      heroColor="#2563EB"
+      heroColor="#0057B8"
     >
       <div className="flex justify-between items-center mb-8 bg-blue-50 p-4 rounded-2xl border border-blue-100">
         <div>
-          <h3 className="font-bold text-[#2563EB] text-base">Comprehensive Test Preparation Directory</h3>
+          <h3 className="font-bold text-[#0057B8] text-base">Comprehensive Test Preparation Directory</h3>
           <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
-        <Button asChild className="bg-[#F97316] text-white hover:bg-[#EA580C] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
+        <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
             View All Test Prep →
           </a></Button>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tests.map((t: any) => (
-          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#2563EB] flex flex-col justify-between">
+          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge className="bg-orange-50 text-[#F97316] font-semibold text-[11px]">
+                <Badge className="bg-orange-50 text-[#E8501A] font-semibold text-[11px]">
                   {t.logoBadge}
                 </Badge>
                 <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
               </div>
               <h3 className="font-bold text-[#0F172A] text-lg mb-1">{t.name}</h3>
-              <p className="text-xs text-[#2563EB] font-semibold mb-3">{t.officialOwner}</p>
+              <p className="text-xs text-[#0057B8] font-semibold mb-3">{t.officialOwner}</p>
               <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
             </div>
 
@@ -1073,9 +1141,9 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-500 font-medium">Target Score:</span>
-                <span className="font-bold text-[#2563EB]">{t.expectedScore}</span>
+                <span className="font-bold text-[#0057B8]">{t.expectedScore}</span>
               </div>
-              <Button asChild className="w-full bg-[#2563EB] text-white hover:bg-[#003d80] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
+              <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
                   Explore Full Test Prep & Modules →
                 </a></Button>
             </div>
@@ -1114,7 +1182,7 @@ export function PublicResourcesPage() {
           return (
             <Card key={i} className="p-6 hover:shadow-md transition-shadow">
               <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                <Icon className="h-6 w-6 text-[#2563EB]" />
+                <Icon className="h-6 w-6 text-[#0057B8]" />
               </div>
               <h3 className="font-bold text-[#0F172A] mb-2">{r.title}</h3>
               <p className="text-sm text-slate-600">{r.desc}</p>
@@ -1199,7 +1267,7 @@ export function PublicVisaReadinessPage() {
                             href={source.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#2563EB] hover:underline"
+                            className="text-[#0057B8] hover:underline"
                           >
                             {source.sourceName}
                           </a>
@@ -1211,7 +1279,7 @@ export function PublicVisaReadinessPage() {
                 )}
                 <a
                   href={`/destinations/${country.slug}`}
-                  className="mt-4 inline-block text-sm font-semibold text-[#2563EB] hover:underline"
+                  className="mt-4 inline-block text-sm font-semibold text-[#0057B8] hover:underline"
                 >
                   View full {country.name} guide
                 </a>
@@ -1229,13 +1297,13 @@ export function PublicVisaReadinessPage() {
         </p>
       )}
 
-      <Card className="p-8 bg-gradient-to-r from-[#2563EB] to-[#003d80] text-white text-center">
+      <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
         <p className="text-blue-100 mb-5">
           Fees, processing times and document rules change and differ by nationality. A counselor checks the current
           requirements for your case against the official source.
         </p>
-        <Button asChild className="bg-[#F97316] text-white hover:brightness-110">
+        <Button asChild className="bg-[#E8501A] text-white hover:brightness-110">
           <a href="/book-consultation">Book Visa Consultation</a>
         </Button>
       </Card>
@@ -1268,11 +1336,11 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-medium">English Language Requirement</p>
-                <p className="text-sm font-semibold text-[#2563EB]">IELTS 6.5 (Min 6.0 components)</p>
+                <p className="text-sm font-semibold text-[#0057B8]">IELTS 6.5 (Min 6.0 components)</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-medium">Application Deadline</p>
-                <p className="text-sm font-semibold text-[#F97316]">Open for Upcoming Intake</p>
+                <p className="text-sm font-semibold text-[#E8501A]">Open for Upcoming Intake</p>
               </div>
             </div>
           </Card>
@@ -1289,16 +1357,16 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6 border-2 border-[#2563EB]/20 bg-gradient-to-br from-blue-50/30 to-white">
+          <Card className="p-6 border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/30 to-white">
             <h3 className="font-bold text-[#0F172A] mb-2 text-lg">Apply for this Course</h3>
             <p className="text-xs text-slate-600 mb-4 leading-relaxed">
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
-              <Button asChild className="w-full bg-[#F97316] text-white hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
+              <Button asChild className="w-full bg-[#E8501A] text-white hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
                   Check Your Eligibility
                 </a></Button>
-              <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[#2563EB] text-[#2563EB] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
+              <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[#0057B8] text-[#0057B8] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
                   Talk to ALO Counselor
                 </a></Button>
             </div>
@@ -1328,7 +1396,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <Button asChild className="bg-[#F97316] text-white text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
+          <Button asChild className="bg-[#E8501A] text-white text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
         </div>
       </Card>
     </PublicShell>

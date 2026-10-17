@@ -146,9 +146,9 @@ export default function SocialIntegrationCenterPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <Share2 className="w-7 h-7 text-[#2563EB]" />
+            <Share2 className="w-7 h-7 text-[#0057B8]" />
             <h1 className="text-2xl font-bold">ALO Social Integration Center</h1>
-            <span className="bg-blue-100 text-[#2563EB] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+            <span className="bg-blue-100 text-[#0057B8] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
               OAuth 2.0 Official Platform
             </span>
           </div>
@@ -255,7 +255,7 @@ export default function SocialIntegrationCenterPage() {
                   ) : (
                     <button
                       onClick={() => handleStartOAuthWizard(item)}
-                      className="w-full py-2 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition"
+                      className="w-full py-2 bg-[#0057B8] hover:bg-blue-700 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition"
                     >
                       <PlusCircle className="w-4 h-4" /> Connect via OAuth 2.0
                     </button>
@@ -294,7 +294,7 @@ export default function SocialIntegrationCenterPage() {
             {wizardStep === 1 && (
               <div className="space-y-4 text-sm">
                 <div className="p-4 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2 font-semibold text-[#2563EB] dark:text-blue-300">
+                  <div className="flex items-center gap-2 font-semibold text-[#0057B8] dark:text-blue-300">
                     <Shield className="w-4 h-4" /> Official Integration Guarantee
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-300">
@@ -311,13 +311,13 @@ export default function SocialIntegrationCenterPage() {
                     placeholder={`e.g. ALO Education Official ${selectedProvider.name}`}
                     value={accountNameInput}
                     onChange={(e) => setAccountNameInput(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0057B8]"
                   />
                 </div>
 
                 <button
                   onClick={() => setWizardStep(2)}
-                  className="w-full py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 text-sm transition"
+                  className="w-full py-2.5 bg-[#0057B8] hover:bg-blue-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 text-sm transition"
                 >
                   <ExternalLink className="w-4 h-4" /> Authenticate on {selectedProvider.name}
                 </button>

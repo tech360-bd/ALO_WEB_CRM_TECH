@@ -33,11 +33,11 @@ export default function CommentsPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
       <div><h1 className="text-xl font-bold text-[#0F172A]">Comments — Channels</h1><p className="text-sm text-gray-500">STUDENT_VISIBLE/PARTNER_VISIBLE/COUNSELOR_VISIBLE/APPLICATION_TEAM_INTERNAL/B2B_CONFIDENTIAL/UNIVERSITY/FINANCE/VISA_HANDOVER — visibility filtered backend</p></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#2563EB]" /></div> : (
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
         <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
-          <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Recent Comments ({comments.length}) — Real DB</CardTitle></CardHeader>
+          <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm">Recent Comments ({comments.length})</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-2">
-            {comments.length===0 ? <p className="text-sm text-gray-500 py-6 text-center">No comments found. Real DB empty.</p> : comments.map((c:any, i:number)=>(
+            {comments.length===0 ? <p className="text-sm text-gray-500 py-6 text-center">No comments found. Nothing here yet.</p> : comments.map((c:any, i:number)=>(
               <div key={i} className={`border rounded-xl p-3 ${c.isB2bConfidential ? 'bg-rose-50 border-rose-200' : 'bg-[#F8FAFC] border-[#E2E8F0]'}`}>
                 <div className="flex items-center justify-between"><span className="text-xs font-medium">{c.applicationCode || c.applicationId?.substring(0,8)} — {c.role}</span><Badge className={`${c.isB2bConfidential ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-[#F8FAFC] border-[#E2E8F0] text-gray-600'} text-[10px]`}>{c.isB2bConfidential && <Lock className="w-2.5 h-2.5 mr-1" />}{c.visibility} • {c.commentType}</Badge></div>
                 <p className="text-xs mt-2 text-[#0F172A]">{c.commentText}</p><p className="text-[11px] text-gray-500 mt-1">{new Date(c.createdAt).toLocaleString()}</p>

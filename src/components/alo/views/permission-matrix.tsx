@@ -313,7 +313,7 @@ export function PermissionMatrix() {
           icon="Lock"
           subtitle="Granular role-based access control. Super Admin can grant or revoke any permission per role."
           action={
-            <Button variant="outline" className="h-12 border-[#2563EB]/30 text-[#2563EB]" disabled>
+            <Button variant="outline" className="h-12 border-[#0057B8]/30 text-[#0057B8]" disabled>
               <Icon name="RefreshCw" className="size-4" /> Refresh
             </Button>
           }
@@ -338,7 +338,7 @@ export function PermissionMatrix() {
           action={
             <Button
               onClick={fetchPermissions}
-              className="h-12 bg-[#F97316] hover:bg-[#F97316]/90 text-white"
+              className="h-12 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
             >
               <Icon name="RefreshCw" className="size-4" /> Reload
             </Button>
@@ -370,7 +370,7 @@ export function PermissionMatrix() {
           <Button
             variant="outline"
             onClick={fetchPermissions}
-            className="h-12 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
           >
             <Icon name="RefreshCw" className="size-4" /> Refresh
           </Button>
@@ -378,14 +378,14 @@ export function PermissionMatrix() {
       />
 
       {/* ------------------------------------------------- security notice */}
-      <Card className="rounded-2xl border-2 border-[#F97316]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[#E8501A]/40 bg-orange-50/40">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#F97316] text-white">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white">
               <Icon name="ShieldAlert" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#F97316]">
+              <CardTitle className="text-base text-[#E8501A]">
                 Security Notice — Frontend vs Backend Authority
               </CardTitle>
               <CardDescription className="text-xs">
@@ -397,9 +397,9 @@ export function PermissionMatrix() {
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="flex items-start gap-2.5 rounded-xl bg-white/70 p-3">
-              <Icon name="Eye" className="mt-0.5 size-4 shrink-0 text-[#2563EB]" />
+              <Icon name="Eye" className="mt-0.5 size-4 shrink-0 text-[#0057B8]" />
               <p className="text-xs text-foreground">
-                <span className="font-semibold text-[#2563EB]">Frontend PermissionGate</span>{" "}
+                <span className="font-semibold text-[#0057B8]">Frontend PermissionGate</span>{" "}
                 only hides buttons & routes — it&apos;s never the source of truth.
               </p>
             </div>
@@ -411,9 +411,9 @@ export function PermissionMatrix() {
               </p>
             </div>
             <div className="flex items-start gap-2.5 rounded-xl bg-white/70 p-3">
-              <Icon name="ScrollText" className="mt-0.5 size-4 shrink-0 text-[#F97316]" />
+              <Icon name="ScrollText" className="mt-0.5 size-4 shrink-0 text-[#E8501A]" />
               <p className="text-xs text-foreground">
-                <span className="font-semibold text-[#F97316]">All permission changes</span>{" "}
+                <span className="font-semibold text-[#E8501A]">All permission changes</span>{" "}
                 are written to the audit log with actor, role, scope, and action.
               </p>
             </div>
@@ -431,13 +431,13 @@ export function PermissionMatrix() {
           {SCOPE_INFO.map((s) => (
             <div
               key={s.value}
-              className="flex items-start gap-3 rounded-xl border border-[#2563EB]/15 bg-[#e8f0fb]/40 p-3"
+              className="flex items-start gap-3 rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3"
             >
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#2563EB] text-white">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#0057B8] text-white">
                 <Icon name={s.icon} className="size-4" />
               </div>
               <div className="min-w-0">
-                <p className="font-mono text-xs font-bold text-[#2563EB]">{s.label}</p>
+                <p className="font-mono text-xs font-bold text-[#0057B8]">{s.label}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{s.description}</p>
               </div>
             </div>
@@ -446,15 +446,15 @@ export function PermissionMatrix() {
       </SectionCard>
 
       {/* --------------------------------------------- role selector chips */}
-      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
         <CardContent className="pt-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Icon name="Users" className="size-4 text-[#2563EB]" />
-              <span className="text-sm font-semibold text-[#2563EB]">Select role to configure</span>
+              <Icon name="Users" className="size-4 text-[#0057B8]" />
+              <span className="text-sm font-semibold text-[#0057B8]">Select role to configure</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Badge variant="outline" className="border-[#2563EB]/30 text-[#2563EB]">
+              <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
                 {selectedRole === "__ALL__"
                   ? "Viewing all roles"
                   : `${stats.granted} of ${stats.total} granted`}
@@ -469,8 +469,8 @@ export function PermissionMatrix() {
               className={cn(
                 "rounded-full border-2 px-3.5 py-1.5 text-xs font-semibold transition-colors",
                 selectedRole === "__ALL__"
-                  ? "border-[#2563EB] bg-[#2563EB] text-white"
-                  : "border-[#2563EB]/20 bg-white text-[#2563EB] hover:bg-[#e8f0fb]"
+                  ? "border-[#0057B8] bg-[#0057B8] text-white"
+                  : "border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#e8f0fb]"
               )}
             >
               All roles
@@ -485,8 +485,8 @@ export function PermissionMatrix() {
                   className={cn(
                     "rounded-full border-2 px-3.5 py-1.5 text-xs font-semibold transition-colors",
                     active
-                      ? "border-[#2563EB] bg-[#2563EB] text-white"
-                      : "border-[#2563EB]/20 bg-white text-[#2563EB] hover:bg-[#e8f0fb]"
+                      ? "border-[#0057B8] bg-[#0057B8] text-white"
+                      : "border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#e8f0fb]"
                   )}
                 >
                   {ROLE_LABELS[role] || role}
@@ -561,7 +561,7 @@ export function PermissionMatrix() {
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <span className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-1.5 py-0.5 text-[10px] font-semibold text-[#2563EB]">
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-1.5 py-0.5 text-[10px] font-semibold text-[#0057B8]">
                                           <Icon name="Star" className="size-2.5" /> default
                                         </span>
                                       </TooltipTrigger>
@@ -590,7 +590,7 @@ export function PermissionMatrix() {
                             </TableCell>
                             <TableCell>
                               {granted ? (
-                                <code className="font-mono text-[11px] text-[#2563EB]">
+                                <code className="font-mono text-[11px] text-[#0057B8]">
                                   {SCOPE_LABELS[granted.scope] || granted.scope}
                                 </code>
                               ) : (

@@ -29,7 +29,6 @@ import {
   intakeMonthsForYear,
 } from '@/lib/course-finder/intake-window';
 import {
-  Building2,
   CalendarDays,
   CheckCircle2,
   ChevronLeft,
@@ -98,6 +97,7 @@ interface UniversityRow {
   city: string;
   worldRanking: number | null;
   courseCount: number;
+  logo?: string;
 }
 
 interface Facets {
@@ -240,9 +240,11 @@ export default function PublicCourseFinder() {
   const windowYearOptions = INTAKE_YEAR_OPTIONS;
   const intakeOptions = intakeMonthsForYear(intakeYear);
 
-  /* UNIVERSITIES form */
-  const [lookingFor, setLookingFor] = useState('');
-  const [studyIn, setStudyIn] = useState('');
+  /* UNIVERSITIES form — pre-filled from the homepage Smart Course Finder
+     (?tab=universities&subject=…&university=…) so a homepage search lands
+     here with its fields already set. */
+  const [lookingFor, setLookingFor] = useState(searchParams.get('subject') || '');
+  const [studyIn, setStudyIn] = useState(searchParams.get('university') || '');
 
   /* results */
   const [courses, setCourses] = useState<CourseRow[]>([]);
@@ -329,7 +331,26 @@ export default function PublicCourseFinder() {
       const res = await fetch(`/api/course-finder/universities?${params.toString()}`);
       const json = await res.json();
       if (!res.ok || !json.success) throw new Error(json.error || 'University search failed.');
-      setUniversities(json.universities ?? []);
+      // The directory API returns Prisma rows (courseCount lives under
+      // _count.courses, ranking may be null) — normalise to the row shape
+      // this table renders so counts/rankings never silently disappear.
+      setUniversities(
+        (json.universities ?? []).map((u: Record<string, unknown>) => {
+          const count = (u._count as { courses?: number } | undefined)?.courses;
+          return {
+            id: String(u.id ?? u.universityId ?? u.slug ?? ''),
+            slug: String(u.slug ?? u.universityId ?? ''),
+            name: String(u.name ?? ''),
+            country: String(u.country ?? ''),
+            city: String(u.city ?? ''),
+            worldRanking:
+              typeof u.worldRanking === 'number' && u.worldRanking > 0 ? u.worldRanking : null,
+            courseCount:
+              typeof u.courseCount === 'number' ? u.courseCount : typeof count === 'number' ? count : 0,
+            logo: typeof u.logo === 'string' ? u.logo : '',
+          } as UniversityRow & { logo: string };
+        }),
+      );
     } catch (err) {
       setUniversities([]);
       setError(err instanceof Error ? err.message : 'University search failed.');
@@ -512,7 +533,7 @@ export default function PublicCourseFinder() {
                   </label>
                   <select
                     id="cf-intake-year"
-                    className="h-9 rounded-input border border-alo-border bg-white px-2 text-sm"
+                    className="h-12 rounded-input border border-input bg-white px-2 text-sm"
                     value={intakeYear}
                     onChange={(event) => setIntakeYear(Number(event.target.value))}
                   >
@@ -550,7 +571,7 @@ export default function PublicCourseFinder() {
                       type="button"
                       aria-pressed={selected}
                       onClick={() => toggleMonth(entry.key)}
-                      className={`rounded-full border px-3.5 py-2 font-heading text-[12px] font-bold transition-colors ${
+                      className={`rounded-full border min-h-[48px] px-3.5 py-2 font-heading text-[12px] font-bold transition-colors ${
                         selected
                           ? 'border-alo-cta bg-alo-cta text-white'
                           : 'border-alo-border bg-white text-alo-text hover:border-alo-brand hover:text-alo-brand'
@@ -755,7 +776,7 @@ export default function PublicCourseFinder() {
                         <td className="whitespace-nowrap px-4 py-3">
                           <Link
                             href={`/apply/${encodeURIComponent(course.slug || course.courseId)}`}
-                            className="inline-flex h-10 items-center gap-1.5 rounded-button bg-alo-cta px-4 font-heading text-[12px] font-bold text-white transition-colors hover:bg-alo-cta-hover"
+                            className="inline-flex h-12 items-center gap-1.5 rounded-button bg-alo-cta px-4 font-heading text-[12px] font-bold text-white transition-colors hover:bg-alo-cta-hover"
                           >
                             Apply Now
                           </Link>
@@ -826,9 +847,15 @@ export default function PublicCourseFinder() {
                     <td className="px-4 py-3">
                       <Link
                         href={`/universities/${encodeURIComponent(university.slug)}`}
-                        className="inline-flex items-center gap-2 font-heading text-[13px] font-bold text-alo-brand underline-offset-2 hover:underline"
+                        className="inline-flex items-center gap-2.5 font-heading text-[13px] font-bold text-alo-brand underline-offset-2 hover:underline"
                       >
-                        <Building2 className="h-4 w-4" aria-hidden="true" />
+                        {university.logo ? (
+                          <img src={university.logo} alt="" className="h-8 w-8 shrink-0 rounded-lg border border-alo-border object-contain bg-white" loading="lazy" />
+                        ) : (
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-alo-brand font-heading text-[10px] font-extrabold text-white" aria-hidden="true">
+                            {university.name.replace(/\b(of|the|and|for|at|in)\b/gi, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
+                          </span>
+                        )}
                         {university.name}
                       </Link>
                     </td>
@@ -844,7 +871,7 @@ export default function PublicCourseFinder() {
                     <td className="whitespace-nowrap px-4 py-3">
                       <Link
                         href={`/course-finder?university=${encodeURIComponent(university.slug)}`}
-                        className="inline-flex h-10 items-center rounded-button border border-alo-brand px-4 font-heading text-[12px] font-bold text-alo-brand transition-colors hover:bg-alo-brand-light"
+                        className="inline-flex h-12 items-center rounded-button border border-alo-brand px-4 font-heading text-[12px] font-bold text-alo-brand transition-colors hover:bg-alo-brand-light"
                       >
                         View courses
                       </Link>

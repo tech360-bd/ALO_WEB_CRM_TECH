@@ -4,6 +4,29 @@
  * destinations, and benefits to high-quality optimized visual assets.
  */
 
+/**
+ * Photographic destination cards — real landmark photography stored locally
+ * (London, Sydney, Toronto, New York, Dublin, Auckland, Dubai). Prefer these
+ * for image-led cards and heroes; the wide "hero-banners" graphics remain
+ * only as fallbacks for destinations without a photographic card.
+ */
+export const DESTINATION_CARD_IMAGES: Record<string, string> = {
+  uk: '/images/cards/uk.png',
+  'united-kingdom': '/images/cards/uk.png',
+  usa: '/images/cards/usa.png',
+  'united-states': '/images/cards/usa.png',
+  canada: '/images/cards/canada.png',
+  australia: '/images/cards/australia.png',
+  ireland: '/images/cards/ireland.png',
+  'new-zealand': '/images/cards/new-zealand.png',
+  dubai: '/images/cards/dubai.png',
+  'dubai-uae': '/images/cards/dubai.png',
+};
+
+export function destinationCardImage(slug: string, fallback?: string): string {
+  return DESTINATION_CARD_IMAGES[slug.toLowerCase()] || fallback || '/images/cards/uk.png';
+}
+
 export const IMAGES = {
   // Course/subject related images
   courses: {

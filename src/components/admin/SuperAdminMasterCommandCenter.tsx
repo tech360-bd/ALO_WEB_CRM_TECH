@@ -12,14 +12,14 @@ export function SuperAdminMasterCommandCenter() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Top banner */}
-      <div className="bg-gradient-to-r from-[#2563EB] to-[#003d82] text-white px-6 py-4">
+      <div className="bg-gradient-to-r from-[#0057B8] to-[#003d82] text-white px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">🛡️ Super Admin — Master Command Center <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">Paid-App Quality</span></h1>
-            <p className="text-sm text-blue-100 mt-1">Edit any part of website & CRM directly • Perform any agent task • Real DB • Audit Logged • RBAC • Mobile PWA Native-like</p>
+            <p className="text-sm text-blue-100 mt-1">Edit any part of website & CRM directly • Perform any agent task • Live data • Audit logged • RBAC protected</p>
           </div>
           <div className="flex gap-2 text-xs">
-            <span className="bg-green-500/20 border border-green-400/30 px-3 py-1.5 rounded-full">✓ Real DB Operations</span>
+            <span className="bg-green-500/20 border border-green-400/30 px-3 py-1.5 rounded-full">✓ Live Operations</span>
             <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">✓ Audit Logged</span>
             <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">📱 PWA Mobile App</span>
           </div>
@@ -36,7 +36,7 @@ export function SuperAdminMasterCommandCenter() {
             { key: "system", label: "System & Audit", icon: "🔧", desc: "Health, Audit, Permissions, PWA Status" },
             { key: "mobile", label: "Mobile PWA", icon: "📱", desc: "Native app-like experience verification" },
           ].map(t => (
-            <button key={t.key} onClick={()=>setActiveTab(t.key as Tab)} className={`flex-1 min-w-[140px] text-left px-4 py-3 rounded-xl border transition-all ${activeTab===t.key ? "bg-[#2563EB] text-white border-[#2563EB] shadow-md" : "bg-slate-50 hover:bg-white border-slate-200 text-slate-700"}`}>
+            <button key={t.key} onClick={()=>setActiveTab(t.key as Tab)} className={`flex-1 min-w-[140px] text-left px-4 py-3 rounded-xl border transition-all ${activeTab===t.key ? "bg-[#0057B8] text-white border-[#0057B8] shadow-md" : "bg-slate-50 hover:bg-white border-slate-200 text-slate-700"}`}>
               <div className="flex items-center gap-2 font-semibold text-sm"><span>{t.icon}</span>{t.label}</div>
               <div className={`text-[11px] mt-1 ${activeTab===t.key ? "text-blue-100" : "text-slate-500"}`}>{t.desc}</div>
             </button>
@@ -70,7 +70,7 @@ export function SuperAdminMasterCommandCenter() {
                       <ul className="mt-3 space-y-1.5">
                         {card.tasks.map(t=><li key={t} className="text-xs text-slate-600 flex gap-1.5"><span className="text-green-600">✓</span><span>{t}</span></li>)}
                       </ul>
-                      <div className="mt-3 text-[10px] text-slate-400">Real DB • Validated • Audit Logged • SLA Tracked</div>
+                      <div className="mt-3 text-[10px] text-slate-400">Live data • Validated • Audit logged • SLA tracked</div>
                     </div>
                   ))}
                 </div>
@@ -99,7 +99,7 @@ export function SuperAdminMasterCommandCenter() {
                 <h3 className="font-semibold text-sm mb-3">Super Admin Capabilities — Verification Report</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
-                    <thead className="bg-slate-50"><tr><th className="text-left px-3 py-2">Area</th><th className="text-left px-3 py-2">Before</th><th className="text-left px-3 py-2">After (Now)</th><th className="text-left px-3 py-2">Real DB?</th></tr></thead>
+                    <thead className="bg-slate-50"><tr><th className="text-left px-3 py-2">Area</th><th className="text-left px-3 py-2">Before</th><th className="text-left px-3 py-2">After (Now)</th><th className="text-left px-3 py-2">Live data?</th></tr></thead>
                     <tbody>
                       {[
                         ["Website Hero Slides", "Mock in homepage-builder, setTimeout toast", "Full CRUD via /api/admin/website/cms?type=hero-slides + homepage aggregator PUT", "✓ Real"],
@@ -141,7 +141,7 @@ export function SuperAdminMasterCommandCenter() {
                   <div className="border rounded-xl p-5 bg-slate-50">
                     <h3 className="font-semibold text-sm">What Makes It Native-like (Implemented)</h3>
                     <ul className="mt-3 space-y-2 text-xs text-slate-700">
-                      <li>✅ <b>manifest.json:</b> name, short_name, start_url /?pwa=1, display standalone, theme_color #2563EB, background_color #fff, icons 72-512 maskable, screenshots, shortcuts (Student, CRM, Knowledge, International), orientation any, categories education/business/productivity</li>
+                      <li>✅ <b>manifest.json:</b> name, short_name, start_url /?pwa=1, display standalone, theme_color #0057B8, background_color #fff, icons 72-512 maskable, screenshots, shortcuts (Student, CRM, Knowledge, International), orientation any, categories education/business/productivity</li>
                       <li>✅ <b>Service Worker sw.js:</b> Install cache static shell, activate clean old, fetch strategies — API network-first with cache fallback, static cache-first, navigation network-first with offline fallback, background sync for leads/messages, push notification ready, notificationclick handler</li>
                       <li>✅ <b>Offline Page /offline:</b> Friendly offline UI with retry, cached home link, PWA branding</li>
                       <li>✅ <b>PwaRegister Component:</b> Registers /sw.js on load, listens beforeinstallprompt, shows install banner, handles appinstalled event, checks standalone mode</li>
@@ -170,9 +170,9 @@ export function SuperAdminMasterCommandCenter() {
                   </div>
                 </div>
 
-                <div className="mt-6 bg-gradient-to-r from-[#2563EB] to-[#003d82] rounded-xl p-5 text-white">
+                <div className="mt-6 bg-gradient-to-r from-[#0057B8] to-[#003d82] rounded-xl p-5 text-white">
                   <h3 className="font-bold text-sm">Verification: Super Admin Can Edit Any Part from Mobile</h3>
-                  <p className="text-xs text-blue-100 mt-2">Super Admin logs in on mobile browser → Installs PWA → Opens Super Admin Master Command Center → Website CMS tab → Edits hero slides, services, stories, team, FAQs, countries (with 9 sub-tables) → Saves → Real DB updated, audit logged. CRM Command tab → Views leads, students, applications, documents, visa cases → Performs agent tasks (assign lead, move application stage, verify document, update visa case) → Real DB, realistic workflow with knowledge/skills checks, nothing overlooked. All mobile-responsive, touch-friendly, offline-capable, push-ready — paid-app quality.</p>
+                  <p className="text-xs text-blue-100 mt-2">Super Admin logs in on mobile browser → Installs PWA → Opens Super Admin Master Command Center → Website CMS tab → Edits hero slides, services, stories, team, FAQs, countries (with 9 sub-tables) → Saves → Changes saved and audit logged. CRM Command tab → Views leads, students, applications, documents, visa cases → Performs agent tasks (assign lead, move application stage, verify document, update visa case) → Workflows run with skills checks so nothing is overlooked. All mobile-responsive, touch-friendly, offline-capable, push-ready — paid-app quality.</p>
                 </div>
               </div>
             </div>

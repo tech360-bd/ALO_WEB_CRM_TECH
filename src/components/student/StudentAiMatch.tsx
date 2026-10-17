@@ -247,7 +247,7 @@ export default function StudentAiMatch() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Header ─────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-[#2563EB] to-[#003d8f] px-4 py-8 md:py-10">
+      <section className="bg-gradient-to-r from-[#0057B8] to-[#003d8f] px-4 py-8 md:py-10">
         <div className="max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 md:p-8">
             <div className="flex items-start gap-4">

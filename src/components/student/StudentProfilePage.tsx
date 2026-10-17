@@ -950,7 +950,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
         <Button
           type="button"
           onClick={addEducation}
-          className="bg-[#2563EB] hover:bg-[#003d82] text-white shrink-0"
+          className="bg-[#0057B8] hover:bg-[#003d82] text-white shrink-0"
         >
           <Plus className="size-4 mr-1.5" />
           Add Education
@@ -992,7 +992,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
       {educations.map((edu) => (
         <Card key={edu.id} className="border border-slate-200 rounded-xl p-5 bg-white">
           <div className="flex items-start justify-between mb-4">
-            <Badge variant="outline" className="text-xs font-medium border-[#2563EB] text-[#2563EB]">
+            <Badge variant="outline" className="text-xs font-medium border-[#0057B8] text-[#0057B8]">
               {edu.academicLevel || 'New Entry'}
             </Badge>
             <Button
@@ -1280,7 +1280,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
       ) : (
         <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-[#2563EB] mt-0.5 shrink-0" />
+            <AlertCircle className="size-5 text-[#0057B8] mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-slate-900 mb-1">Apply for Passport</p>
               <p className="text-sm text-slate-600 mb-4">
@@ -1289,7 +1289,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 type="button"
                 variant="outline"
-                className="border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white"
+                className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8] hover:text-white"
               >
                 <Bell className="size-4 mr-1.5" />
                 Set Reminder
@@ -1533,7 +1533,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
       {testStatus === 'No' && (
         <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-[#2563EB] mt-0.5 shrink-0" />
+            <AlertCircle className="size-5 text-[#0057B8] mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-medium text-slate-900 mb-1">English Test Required</p>
               <p className="text-sm text-slate-600">
@@ -1615,7 +1615,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
           <Button
             type="button"
             onClick={addWorkExp}
-            className="bg-[#2563EB] hover:bg-[#003d82] text-white"
+            className="bg-[#0057B8] hover:bg-[#003d82] text-white"
           >
             <Plus className="size-4 mr-1.5" />
             Add Work Experience
@@ -1631,7 +1631,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
           {workExps.map((exp) => (
             <Card key={exp.id} className="border border-slate-200 rounded-xl p-5 bg-white">
               <div className="flex items-start justify-between mb-4">
-                <Badge variant="outline" className="text-xs font-medium border-[#2563EB] text-[#2563EB]">
+                <Badge variant="outline" className="text-xs font-medium border-[#0057B8] text-[#0057B8]">
                   {exp.companyName || 'New Entry'}
                 </Badge>
                 <Button
@@ -2602,7 +2602,7 @@ export default function StudentProfilePage() {
               <span className="text-slate-500">Profile Completion</span>
               <Badge
                 className="text-white text-xs px-2.5 py-0.5"
-                style={{ backgroundColor: profileCompletion >= 80 ? '#16a34a' : profileCompletion >= 50 ? '#C2410C' : '#64748b' }}
+                style={{ backgroundColor: profileCompletion >= 80 ? '#10B981' : profileCompletion >= 50 ? '#C93D13' : '#64748b' }}
               >
                 {profileCompletion}%
               </Badge>
@@ -2633,7 +2633,7 @@ export default function StudentProfilePage() {
                       className={`
                         flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
                         ${isActive
-                          ? 'bg-[#2563EB] text-white shadow-sm'
+                          ? 'bg-[#0057B8] text-white shadow-sm'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }
                       `}
@@ -2660,7 +2660,7 @@ export default function StudentProfilePage() {
                       className={`
                         w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left
                         ${isActive
-                          ? 'bg-[#2563EB] text-white shadow-sm'
+                          ? 'bg-[#0057B8] text-white shadow-sm'
                           : 'text-slate-600 hover:bg-slate-100'
                         }
                       `}
@@ -2692,14 +2692,14 @@ export default function StudentProfilePage() {
               <Card className="mt-6 border border-slate-200 rounded-xl p-4 bg-white">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-slate-500">Overall Progress</span>
-                  <span className="text-sm font-bold text-[#C2410C]">{profileCompletion}%</span>
+                  <span className="text-sm font-bold text-[#C93D13]">{profileCompletion}%</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2">
                   <div
                     className="h-2 rounded-full transition-all duration-500"
                     style={{
                       width: `${profileCompletion}%`,
-                      backgroundColor: profileCompletion >= 80 ? '#16a34a' : '#C2410C',
+                      backgroundColor: profileCompletion >= 80 ? '#10B981' : '#C93D13',
                     }}
                   />
                 </div>
@@ -2738,7 +2738,7 @@ export default function StudentProfilePage() {
           <p className="text-sm text-slate-500 hidden sm:block">
             Section <span className="font-semibold text-slate-900">{activeIndex + 1}</span> of <span className="font-semibold text-slate-900">11</span>
             <span className="mx-2 text-slate-300">|</span>
-            Profile <span className="font-semibold" style={{ color: profileCompletion >= 80 ? '#16a34a' : '#C2410C' }}>{profileCompletion}%</span> complete
+            Profile <span className="font-semibold" style={{ color: profileCompletion >= 80 ? '#10B981' : '#C93D13' }}>{profileCompletion}%</span> complete
           </p>
           <p className="text-sm text-slate-500 sm:hidden">
             {activeIndex + 1}/11 — {profileCompletion}%
@@ -2770,7 +2770,7 @@ export default function StudentProfilePage() {
                 type="button"
                 onClick={handleSaveAndContinue}
                 disabled={saving}
-                className="bg-[#C2410C] hover:bg-[#9a3412] text-white"
+                className="bg-[#C93D13] hover:bg-[#9a3412] text-white"
               >
                 Save &amp; Continue
                 <ChevronRight className="size-4 ml-1" />
@@ -2780,7 +2780,7 @@ export default function StudentProfilePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-[#C2410C] hover:bg-[#9a3412] text-white"
+                className="bg-[#C93D13] hover:bg-[#9a3412] text-white"
               >
                 <Save className="size-4 mr-1" />
                 {saving ? 'Saving...' : 'Complete Profile'}

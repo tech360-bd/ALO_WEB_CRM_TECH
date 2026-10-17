@@ -25,17 +25,17 @@ export default function EnglishTestNotice() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
           href="/student/english-prep"
-          className="flex min-h-11 items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white p-5 text-sm font-semibold text-[#0F172A] hover:border-[#2563EB]"
+          className="flex min-h-11 items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white p-5 text-sm font-semibold text-[#0F172A] hover:border-[#0057B8]"
         >
           My English preparation profile
-          <ArrowRight className="h-4 w-4 text-[#2563EB]" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 text-[#0057B8]" aria-hidden="true" />
         </Link>
         <Link
           href="/english-test-prep"
-          className="flex min-h-11 items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white p-5 text-sm font-semibold text-[#0F172A] hover:border-[#2563EB]"
+          className="flex min-h-11 items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white p-5 text-sm font-semibold text-[#0F172A] hover:border-[#0057B8]"
         >
           Preparation guides
-          <ArrowRight className="h-4 w-4 text-[#2563EB]" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 text-[#0057B8]" aria-hidden="true" />
         </Link>
       </div>
     </div>

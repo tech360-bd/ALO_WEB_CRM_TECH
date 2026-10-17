@@ -310,7 +310,7 @@ export default function FormBDocumentsSection({
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="min-w-0">
                       <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[#0F172A]">
-                        <FileText className="size-4 text-[#2563EB]" />
+                        <FileText className="size-4 text-[#0057B8]" />
                         {required.label}
                         {required.conditional === 'visaRefusal' && (
                           <span className="text-[11px] font-normal text-slate-500">(if you answered Yes to visa refusal)</span>
@@ -355,13 +355,13 @@ export default function FormBDocumentsSection({
                       type="button"
                       onClick={() => void upload(required.category)}
                       disabled={busy}
-                      className="h-9 gap-2 bg-[#2563EB] text-xs font-semibold text-white"
+                      className="h-9 gap-2 bg-[#0057B8] text-xs font-semibold text-white"
                     >
                       {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Upload className="size-3.5" />}
                       {document ? 'Upload new version' : 'Upload'}
                     </Button>
                     {document && (
-                      <a href={document.downloadUrl} className="text-xs font-semibold text-[#2563EB] underline" target="_blank" rel="noopener noreferrer">
+                      <a href={document.downloadUrl} className="text-xs font-semibold text-[#0057B8] underline" target="_blank" rel="noopener noreferrer">
                         Download current file
                       </a>
                     )}

@@ -283,10 +283,10 @@ export default function CountryComparisonClient({
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button asChild className="h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
               <Link href="/course-finder">Find My Course</Link>
             </Button>
-            <Button asChild variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/eligibility-check">Check Eligibility</Link>
             </Button>
           </div>

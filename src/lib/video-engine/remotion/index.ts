@@ -32,8 +32,8 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
       courses: ["Business", "Engineering", "Computer Science"],
       logoUrl: "/brand/alo-logo.png",
       images: [],
-      primaryColor: "#F97316",
-      secondaryColor: "#2563EB",
+      primaryColor: "#E8501A",
+      secondaryColor: "#0057B8",
       studentName: "",
       cta: "Apply for 2027 Intake",
     },
@@ -189,7 +189,7 @@ export const REMOTION_COMPOSITIONS: RemotionComposition[] = [
     defaultProps: {
       texts: ["Study in UK", "2027 Intake Open", "Scholarships Available"],
       animation: "typewriter",
-      backgroundColor: "#2563EB",
+      backgroundColor: "#0057B8",
       textColor: "#FFFFFF",
     },
   },
@@ -299,7 +299,7 @@ export async function generateRemotionCompositionFromPrompt(
   const compositionCode = `
 import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 
-export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.slice(0, 50)}", primaryColor = "#F97316" }) => {
+export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.slice(0, 50)}", primaryColor = "#E8501A" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   
@@ -307,7 +307,7 @@ export const ${compositionId}: React.FC<any> = ({ title = "${prompt.description.
   const titleScale = spring({ frame, fps, config: { damping: 100 } });
   
   return (
-    <AbsoluteFill style={{ backgroundColor: "#2563EB", justifyContent: "center", alignItems: "center" }}>
+    <AbsoluteFill style={{ backgroundColor: "#0057B8", justifyContent: "center", alignItems: "center" }}>
       <Sequence from={0} durationInFrames={${(prompt.durationSec || 30) * 30}}>
         <div style={{ opacity: titleOpacity, transform: \`scale(\${titleScale})\`, color: "white", fontSize: 80, fontWeight: 800, textAlign: "center", padding: 40 }}>
           {title}

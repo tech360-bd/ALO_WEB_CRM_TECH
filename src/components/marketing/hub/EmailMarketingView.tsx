@@ -234,7 +234,7 @@ export default function EmailMarketingView() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2">
-          <Mail className="w-6 h-6 text-[#F97316]" />Email Marketing
+          <Mail className="w-6 h-6 text-[#E8501A]" />Email Marketing
         </h2>
         <p className="text-sm text-gray-500">
           Drafts, confirmation, and a queue that sends under caps. Nothing is marked sent until the SMTP server accepts the message.
@@ -300,7 +300,7 @@ export default function EmailMarketingView() {
                 <input type="checkbox" className="mt-0.5" checked={draft.testMode} onChange={(e) => setDraft({ ...draft, testMode: e.target.checked })} />
                 <span>Test campaign: keep only the configured test recipients. Turn this off only for a real send.</span>
               </label>
-              <Button onClick={createDraft} disabled={busy} className="bg-[#F97316] text-white">
+              <Button onClick={createDraft} disabled={busy} className="bg-[#E8501A] text-white">
                 {busy ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}Create draft (nothing is sent)
               </Button>
             </CardContent>
@@ -385,7 +385,7 @@ export default function EmailMarketingView() {
                       <p className="text-gray-600">Type the exact recipient count ({campaign.recipientCount}) and subject to queue this campaign.</p>
                       <Input value={queueConfirm.recipientCount} onChange={(e) => setQueueConfirm({ ...queueConfirm, recipientCount: e.target.value })} placeholder={`Recipient count: ${campaign.recipientCount}`} className="h-8" />
                       <Input value={queueConfirm.subject} onChange={(e) => setQueueConfirm({ ...queueConfirm, subject: e.target.value })} placeholder="Subject (exact)" className="h-8" />
-                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[#F97316] text-white">
+                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[#E8501A] text-white">
                         Queue {campaign.recipientCount} email(s)
                       </Button>
                     </div>

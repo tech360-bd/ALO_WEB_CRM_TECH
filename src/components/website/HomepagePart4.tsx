@@ -35,8 +35,8 @@ import {
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#2563EB',
-  orange: '#F97316',
+  blue: '#0057B8',
+  orange: '#E8501A',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -59,7 +59,7 @@ interface SuccessStory {
   name: string;
   photo: string;
   course: string;
-  stars: number;
+  stars?: number;
   testimonial: string;
   university: string;
 }
@@ -85,47 +85,29 @@ interface FaqItem {
 const RESOURCES: ResourceItem[] = [
   { icon: BookOpen, title: 'Study Abroad Guide', href: '/resources/study-abroad-guide', color: C.blue },
   { icon: Search, title: 'University Search', href: '/resources/university-search', color: C.orange },
-  { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#8B5CF6' },
-  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#10B981' },
-  { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#F59E0B' },
-  { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#EF4444' },
-  { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#EC4899' },
-  { icon: Clock, title: 'Intake Calendar', href: '/resources/intake-calendar', color: '#06B6D4' },
+  { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#0284C7' },
+  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#003F87' },
+  { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#003F87' },
+  { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#003F87' },
+  { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#003F87' },
+  { icon: Clock, title: 'Intake Calendar', href: '/resources/intake-calendar', color: '#0284C7' },
   { icon: Globe, title: 'Country Comparison', href: '/resources/country-compare', color: C.blue },
   { icon: GraduationCap, title: 'Course Finder', href: '/resources/course-finder', color: C.orange },
-  { icon: FileText, title: 'CV Templates', href: '/resources/cv-templates', color: '#8B5CF6' },
-  { icon: Target, title: 'Cost Calculator', href: '/resources/cost-calculator', color: '#10B981' },
-  { icon: Users, title: 'Student Community', href: '/resources/community', color: '#F59E0B' },
-  { icon: Zap, title: 'Pre-Departure Guide', href: '/resources/pre-departure', color: '#EF4444' },
-  { icon: BookMarked, title: 'Education Blog', href: '/resources/blog', color: '#EC4899' },
-  { icon: Compass, title: 'Career Path Finder', href: '/resources/career-paths', color: '#06B6D4' },
+  { icon: FileText, title: 'CV Templates', href: '/resources/cv-templates', color: '#0284C7' },
+  { icon: Target, title: 'Cost Calculator', href: '/resources/cost-calculator', color: '#003F87' },
+  { icon: Users, title: 'Student Community', href: '/resources/community', color: '#003F87' },
+  { icon: Zap, title: 'Pre-Departure Guide', href: '/resources/pre-departure', color: '#003F87' },
+  { icon: BookMarked, title: 'Education Blog', href: '/resources/blog', color: '#003F87' },
+  { icon: Compass, title: 'Career Path Finder', href: '/resources/career-paths', color: '#0284C7' },
   { icon: CalendarCheck, title: 'Deadline Tracker', href: '/resources/deadlines', color: C.blue },
   { icon: Lightbulb, title: 'FAQ Library', href: '/resources/faqs', color: C.orange },
-  { icon: HeadphonesIcon, title: 'Support Center', href: '/resources/support', color: '#8B5CF6' },
-  { icon: Heart, title: 'Mental Wellness Guide', href: '/resources/wellness', color: '#10B981' },
+  { icon: HeadphonesIcon, title: 'Support Center', href: '/resources/support', color: '#0284C7' },
+  { icon: Heart, title: 'Mental Wellness Guide', href: '/resources/wellness', color: '#003F87' },
   { icon: DollarSign, title: 'Financial Planning', href: '/resources/financial-planning', color: C.blue },
   { icon: Globe, title: 'Accommodation Guide', href: '/resources/accommodation', color: C.orange },
-  { icon: ShieldCheck, title: 'Insurance Guide', href: '/resources/insurance', color: '#8B5CF6' },
+  { icon: ShieldCheck, title: 'Insurance Guide', href: '/resources/insurance', color: '#0284C7' },
 ];
 
-const DEFAULT_STORIES: SuccessStory[] = [
-  {
-    name: 'Tushar Imran Nahid',
-    photo: '/images/testimonials/Tushar Imran Nahid.png',
-    course: 'MSc Data Science',
-    stars: 5,
-    testimonial: 'ALO Education made my dream of studying in the UK a reality. Their expert counselors guided me through every step — from choosing the right university to acing my visa interview. I couldn\'t have done it without them!',
-    university: 'University of Leeds, UK',
-  },
-  {
-    name: 'Ummaye Mayesha Manna',
-    photo: '/images/testimonials/Ummaye Mayesha Manna.PNG',
-    course: 'MBA International Business',
-    stars: 5,
-    testimonial: 'I was overwhelmed by the application process, but ALO Education simplified everything. They helped me secure a scholarship and even prepared me for life abroad. Their support was truly exceptional.',
-    university: 'University of Birmingham, UK',
-  },
-];
 
 const TEAM_MEMBERS: TeamMember[] = [
   {
@@ -134,7 +116,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Strategic Planning & Partnerships',
     bio: 'Founded ALO Education to make global education pathways clearer for Bangladeshi students.',
     initials: 'TA',
-    gradient: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
+    gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
   },
   {
     name: 'Al Aminn',
@@ -142,7 +124,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Operations & Process Optimization',
     bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #F97316 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #E8501A 0%, #FFB347 100%)',
   },
   {
     name: 'Nusrat Jahan',
@@ -346,7 +328,7 @@ function ResourcesSection() {
    SECTION 20 — SUCCESS STORIES
    ═══════════════════════════════════════════════════════════════ */
 function SuccessStoriesSection() {
-  const [stories, setStories] = useState<SuccessStory[]>(DEFAULT_STORIES);
+  const [stories, setStories] = useState<SuccessStory[]>([]);
 
   useEffect(() => {
     fetch('/api/website/homepage')
@@ -359,15 +341,19 @@ function SuccessStoriesSection() {
               name: (s.studentName as string) || '',
               photo: (s.photo as string) || '/images/testimonials/default.png',
               course: (s.course as string) || '',
-              stars: 5,
+              stars: typeof s.rating === 'number' ? Math.max(0, Math.min(5, Math.round(s.rating))) : undefined,
               testimonial: (s.testimonial as string) || '',
               university: (s.university as string) || '',
             }));
           if (mapped.length > 0) setStories(mapped);
         }
       })
-      .catch(() => { /* use defaults */ });
+      .catch(() => { /* no verified stories yet — section stays hidden */ });
   }, []);
+
+  // Only approved, consent-verified stories from the API are shown. With none
+  // available the section is omitted entirely — testimonials are never invented.
+  if (stories.length === 0) return null;
 
   return (
     <section className="py-16 md:py-20" style={{ background: '#FFFFFF' }}>
@@ -440,14 +426,16 @@ function SuccessStoriesSection() {
                   </div>
 
                   {/* Stars */}
-                  <div className="flex gap-1 mb-4">
+                  {typeof story.stars === 'number' && (
+                  <div className="flex gap-1 mb-4" aria-label={`Rated ${story.stars} out of 5`}>
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star
                         key={si}
-                        className={`h-4.5 w-4.5 ${si < story.stars ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
+                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
+                  )}
 
                   {/* Testimonial */}
                   <p className="text-sm leading-relaxed flex-grow mb-4" style={{ color: C.textSoft }}>
@@ -483,7 +471,7 @@ function TeamSection({ dbMembers }: { dbMembers?: Array<{ id: string; name: stri
         bio: m.bio,
         photo: m.photo,
         initials: m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-        gradient: 'linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)',
+        gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
       }))
     : TEAM_MEMBERS;
   return (
@@ -588,7 +576,7 @@ function FaqSection() {
           if (mapped.length > 0) setFaqs(mapped.slice(0, 20));
         }
       })
-      .catch(() => { /* use defaults */ });
+      .catch(() => { /* no verified stories yet — section stays hidden */ });
   }, []);
 
   return (
@@ -733,18 +721,13 @@ function FinalCtaSection() {
   }, [formData]);
 
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: gradients.blue }}>
-      {/* Decorative elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-40 h-40 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)' }} />
-        <div className="absolute bottom-10 right-10 w-60 h-60 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)' }} />
-      </div>
+    <section className="py-16 md:py-20 relative overflow-hidden bg-[#FFF1EA]">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Column — Content */}
           <motion.div
-            className="text-white"
+            className="text-[#0F172A]"
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
@@ -753,7 +736,7 @@ function FinalCtaSection() {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
               Ready to Start Your Study Abroad Journey?
             </h2>
-            <p className="text-base md:text-lg mb-8 opacity-90 leading-relaxed">
+            <p className="text-base md:text-lg mb-8 text-[#334155] leading-relaxed">
               Take the first step today. Fill out the form and one of our expert counselors will get back to you within 24 hours with a personalized plan.
             </p>
 
@@ -770,8 +753,8 @@ function FinalCtaSection() {
                 </Link>
               </Button>
               <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white text-white shadow-lg border-none"
-                style={{ color: C.blue }}
+                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[#BFDBFE]"
+                style={{ color: "#0057B8" }}
                 asChild
               >
                 <Link href="/course-finder">
@@ -785,33 +768,33 @@ function FinalCtaSection() {
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center">
-                  <Phone className="h-4.5 w-4.5 text-white" />
+                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                  <Phone className="h-4.5 w-4.5 text-[#0057B8]" />
                 </div>
                 <div>
-                  <p className="text-xs opacity-70">Call / WhatsApp</p>
+                  <p className="text-xs text-[#64748B]">Call / WhatsApp</p>
                   <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">
                     {ALO_CONTACT.mobileDisplay}
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center">
-                  <Mail className="h-4.5 w-4.5 text-white" />
+                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                  <Mail className="h-4.5 w-4.5 text-[#0057B8]" />
                 </div>
                 <div>
-                  <p className="text-xs opacity-70">Email Us</p>
+                  <p className="text-xs text-[#64748B]">Email Us</p>
                   <a href={ALO_CONTACT.emailHref} className="text-sm font-semibold hover:underline">
                     {ALO_CONTACT.email}
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center">
-                  <MapPin className="h-4.5 w-4.5 text-white" />
+                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                  <MapPin className="h-4.5 w-4.5 text-[#0057B8]" />
                 </div>
                 <div>
-                  <p className="text-xs opacity-70">Visit Us</p>
+                  <p className="text-xs text-[#64748B]">Visit Us</p>
                   <a
                     href={ALO_CONTACT.mapsUrl}
                     target="_blank"

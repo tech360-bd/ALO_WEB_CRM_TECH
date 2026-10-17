@@ -317,7 +317,7 @@ function NotificationDropdown() {
           >
             <Bell className="w-5 h-5 text-alo-text-secondary" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#F97316] text-white text-[10px] flex items-center justify-center font-bold px-1">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#E8501A] text-white text-[10px] flex items-center justify-center font-bold px-1">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}

@@ -179,7 +179,13 @@
   --color-alo-brand-hover: var(--alo-brand-hover);
   --color-alo-brand-deep: var(--alo-brand-deep);
   --color-alo-brand-light: var(--alo-brand-light);
+  --color-alo-brand-pale: var(--alo-brand-pale);
   --color-alo-brand-border: var(--alo-brand-border);
+  --color-alo-body: var(--alo-body);
+  --color-alo-info: var(--alo-info);
+  --color-alo-info-bg: var(--alo-info-bg);
+  --color-alo-info-text: var(--alo-info-text);
+  --color-alo-info-border: var(--alo-info-border);
   --color-alo-cta: var(--alo-cta);
   --color-alo-cta-hover: var(--alo-cta-hover);
   --color-alo-cta-active: var(--alo-cta-active);
@@ -208,6 +214,12 @@
   --color-crm-danger: var(--crm-danger);
   --color-crm-danger-bg: var(--crm-danger-bg);
   --color-crm-danger-text: var(--crm-danger-text);
+  --color-crm-success-border: var(--crm-success-border);
+  --color-crm-warning-border: var(--crm-warning-border);
+  --color-crm-danger-border: var(--crm-danger-border);
+  --color-crm-neutral-bg: var(--crm-neutral-bg);
+  --color-crm-neutral-text: var(--crm-neutral-text);
+  --color-crm-neutral-border: var(--crm-neutral-border);
 
   /* --- Neutral tokens --- */
   --color-alo-page: var(--alo-page);
@@ -225,16 +237,66 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: 16px;
-  --radius-input: 8px;
-  --radius-button: 10px;
+  --radius-input: 10px;
+  --radius-button: 12px;
+  --radius-card: 16px;
   --radius-feature: 20px;
   --radius-pill: 999px;
 
-  /* --- Shadow scale: restrained by design --- */
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+  /* --- Shadow scale (Master §06): card · hover · floating · modal --- */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 4px 20px rgba(15, 23, 42, 0.06);
-  --shadow-xl: 0 20px 50px rgba(15, 23, 42, 0.16);
+  --shadow-lg: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 24px 64px rgba(15, 23, 42, 0.16);
+  --shadow-card: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 10px 28px rgba(15, 23, 42, 0.08);
+  --shadow-floating: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --shadow-modal: 0 24px 64px rgba(15, 23, 42, 0.16);
+
+  /* --- Tailwind palette remap (Master §03): legacy utility classes such as
+         bg-blue-600 / bg-orange-500 used across older components resolve to
+         the exact master brand colours, so one token change re-skins every
+         surface without a second competing palette. --- */
+  --color-blue-500: #0284C7;
+  --color-blue-600: #0057B8;
+  --color-blue-700: #003F87;
+  --color-blue-800: #003F87;
+  --color-orange-50: #FFF1EA;
+  --color-orange-100: #FFE8DD;
+  --color-orange-500: #E8501A;
+  --color-orange-600: #C93D13;
+  --color-orange-700: #C93D13;
+  --color-green-500: #10B981;
+  --color-green-600: #10B981;
+  --color-green-700: #047857;
+  --color-emerald-500: #10B981;
+  --color-emerald-600: #047857;
+  --color-emerald-700: #047857;
+  --color-red-500: #EF4444;
+  --color-red-600: #EF4444;
+  --color-amber-600: #92400E;
+  /* AI accents: legacy purple/violet/indigo classes resolve to the master
+     Info blue family (#0284C7 / brand blue) — no unrelated purple palette. */
+  --color-purple-50: #EFF6FF;
+  --color-purple-100: #EAF3FF;
+  --color-purple-200: #BFDBFE;
+  --color-purple-300: #93C5FD;
+  --color-purple-400: #0284C7;
+  --color-purple-500: #0284C7;
+  --color-purple-600: #0057B8;
+  --color-purple-700: #003F87;
+  --color-purple-800: #003F87;
+  --color-violet-50: #EFF6FF;
+  --color-violet-100: #EAF3FF;
+  --color-violet-200: #BFDBFE;
+  --color-violet-300: #93C5FD;
+  --color-violet-400: #0284C7;
+  --color-violet-500: #0284C7;
+  --color-violet-600: #0057B8;
+  --color-violet-700: #003F87;
+  --color-indigo-500: #0284C7;
+  --color-indigo-600: #0057B8;
+  --color-indigo-700: #003F87;
 
   /* --- Typography scale (desktop) --- */
   --text-display: 3rem;
@@ -270,105 +332,117 @@
 
   /* Page & surface */
   --background: #F8FAFC;
-  --foreground: #000000;
+  --foreground: #0F172A;
   --card: #FFFFFF;
-  --card-foreground: #000000;
+  --card-foreground: #0F172A;
   --popover: #FFFFFF;
-  --popover-foreground: #000000;
+  --popover-foreground: #0F172A;
 
-  /* Primary (selected states, focus, links) — Education Blue #0066CC */
-  --primary: #0066CC;
+  /* Primary (selected states, focus, links) — Education Blue #0057B8 */
+  --primary: #0057B8;
   --primary-foreground: #FFFFFF;
 
   /* Secondary / muted surfaces */
   --secondary: #F1F5F9;
-  --secondary-foreground: #000000;
+  --secondary-foreground: #0F172A;
   --muted: #F1F5F9;
-  --muted-foreground: #555555;
+  --muted-foreground: #64748B;
 
   /* Accent (blue soft) */
-  --accent: #E6F2FF;
-  --accent-foreground: #0052A3;
+  --accent: #EAF3FF;
+  --accent-foreground: #003F87;
 
   /* Destructive */
-  --destructive: #DC2626;
+  --destructive: #EF4444;
 
   /* Border & input */
   --border: #E2E8F0;
   --input: #CBD5E1;
-  --ring: #0066CC;
+  --ring: #0057B8;
 
   /* ── Brand ─────────────────────────────────────────────── */
   /* Neutral — text / structure */
-  --alo-navy: #000000;
-  --alo-navy-dark: #000000;
-  /* Blue — Education Blue #0066CC (navigation / information / links) */
-  --alo-brand: #0066CC;
-  --alo-brand-hover: #0052A3;
-  --alo-brand-deep: #003D7A;
-  --alo-brand-light: #E6F2FF;
-  --alo-brand-border: #B3D9FF;
-  /* Orange — ALO Orange #F37021 (primary action) */
-  --alo-cta: #F37021;
-  --alo-cta-hover: #D95D12;
-  --alo-cta-active: #B64A0B;
+  --alo-navy: #0F172A;
+  --alo-navy-dark: #0F172A;
+  /* Blue — Education Blue #0057B8 (navigation / information / links) */
+  --alo-brand: #0057B8;
+  --alo-brand-hover: #003F87;
+  --alo-brand-deep: #003F87;
+  --alo-brand-light: #EAF3FF;
+  --alo-brand-border: #BFDBFE;
+  /* Orange — ALO Orange #E8501A (primary action) */
+  --alo-cta: #E8501A;
+  --alo-cta-hover: #C93D13;
+  --alo-cta-active: #C93D13;
   --alo-cta-accent: #FFB347;
-  --alo-cta-light: #FFE3CB;
-  --alo-cta-soft: #FFF4EC;
+  --alo-cta-light: #FFE8DD;
+  --alo-cta-soft: #FFF1EA;
   /* Accent — #FFB347 (highlights, badges, focus accents) */
   --alo-accent: #FFB347;
   /* Green — success / WhatsApp */
-  --alo-success: #16A34A;
-  --alo-success-dark: #15803D;
-  --alo-success-soft: #F0FDF4;
+  --alo-success: #10B981;
+  --alo-success-dark: #047857;
+  --alo-success-soft: #ECFDF5;
   --alo-whatsapp: #25D366;
   /* Red — destructive / error only */
-  --alo-error: #DC2626;
+  --alo-error: #EF4444;
   --alo-error-soft: #FEF2F2;
   /* Yellow/amber — warning / pending */
-  --alo-warning: #D97706;
+  --alo-warning: #F59E0B;
   --alo-warning-soft: #FFFBEB;
   /* Purple — AI only */
-  --alo-ai: #7C3AED;
-  --alo-ai-soft: #F5F3FF;
+  --alo-ai: #0284C7;
+  --alo-ai-soft: #EFF6FF;
 
-  /* CRM semantic status (same meaning on every surface) */
-  --crm-success: #16A34A;
-  --crm-success-bg: #F0FDF4;
-  --crm-success-text: #15803D;
-  --crm-warning: #D97706;
+  /* CRM semantic status — Master §13 exact badge tints */
+  --crm-success: #10B981;
+  --crm-success-bg: #ECFDF5;
+  --crm-success-text: #047857;
+  --crm-success-border: #A7F3D0;
+  --crm-warning: #F59E0B;
   --crm-warning-bg: #FFFBEB;
-  --crm-warning-text: #B45309;
-  --crm-danger: #DC2626;
+  --crm-warning-text: #92400E;
+  --crm-warning-border: #FDE68A;
+  --crm-danger: #EF4444;
   --crm-danger-bg: #FEF2F2;
   --crm-danger-text: #B91C1C;
+  --crm-danger-border: #FECACA;
+  --crm-neutral-bg: #F1F5F9;
+  --crm-neutral-text: #475569;
+  --crm-neutral-border: #E2E8F0;
+  --alo-brand-pale: #F4F8FF;
+  --alo-body: #334155;
+  --alo-info: #0284C7;
+  --alo-info-bg: #EFF6FF;
+  --alo-info-text: #1D4ED8;
+  --alo-info-border: #BFDBFE;
 
   /* Neutrals — brand Neutral #000 / #555 */
   --alo-page: #F8FAFC;
   --alo-surface-muted: #F1F5F9;
-  --alo-text: #000000;
-  --alo-text-secondary: #555555;
-  --alo-text-muted: #6B7280;
+  --alo-text: #0F172A;
+  --alo-text-secondary: #334155;
+  --alo-text-muted: #64748B;
   --alo-border: #E2E8F0;
   --alo-border-strong: #CBD5E1;
-  --alo-placeholder: #94A3B8;
+  --alo-placeholder: #64748B;
 
   /* Charts — max five series, no rainbow */
-  --chart-1: #0066CC;
-  --chart-2: #F37021;
-  --chart-3: #16A34A;
-  --chart-4: #7C3AED;
-  --chart-5: #D97706;
+  --chart-1: #0057B8;
+  --chart-2: #E8501A;
+  --chart-3: #10B981;
+  --chart-4: #0284C7;
+  --chart-5: #F59E0B;
 
   /* Sidebar (CRM / portals) */
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #0066CC;
+  --sidebar-foreground: #0F172A;
+  --sidebar-primary: #0057B8;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E6F2FF;
-  --sidebar-accent-foreground: #0052A3;
+  --sidebar-accent: #EAF3FF;
+  --sidebar-accent-foreground: #003F87;
   --sidebar-border: #E2E8F0;
-  --sidebar-ring: #0066CC;
+  --sidebar-ring: #0057B8;
 }
 
 /* ============================================================
@@ -403,19 +477,19 @@
   /* Brand (dark) */
   --alo-navy: #F1F5F9;
   --alo-navy-dark: #F8FAFC;
-  --alo-brand: #4D9FFF;
+  --alo-brand: #5EA9F5;
   --alo-brand-hover: #7DB8FF;
   --alo-brand-deep: #7DB8FF;
   --alo-brand-light: #10305A;
   --alo-brand-border: #1B4E8C;
-  --alo-cta: #FF8A3D;
-  --alo-cta-hover: #F37021;
-  --alo-cta-active: #D95D12;
+  --alo-cta: #FF7A45;
+  --alo-cta-hover: #E8501A;
+  --alo-cta-active: #C93D13;
   --alo-cta-accent: #FFB347;
   --alo-cta-light: #431407;
   --alo-cta-soft: #2A1408;
   --alo-accent: #FFB347;
-  --alo-success: #4ADE80;
+  --alo-success: #34D399;
   --alo-success-dark: #86EFAC;
   --alo-success-soft: #14532D;
   --alo-whatsapp: #25D366;
@@ -427,7 +501,7 @@
   --alo-ai-soft: #2E1065;
 
   /* CRM semantic (dark) */
-  --crm-success: #4ADE80;
+  --crm-success: #34D399;
   --crm-success-bg: #14532D;
   --crm-success-text: #86EFAC;
   --crm-warning: #FDE047;
@@ -436,6 +510,18 @@
   --crm-danger: #F87171;
   --crm-danger-bg: #7F1D1D;
   --crm-danger-text: #FCA5A5;
+  --crm-success-border: #065F46;
+  --crm-warning-border: #92400E;
+  --crm-danger-border: #991B1B;
+  --crm-neutral-bg: #1E293B;
+  --crm-neutral-text: #CBD5E1;
+  --crm-neutral-border: #334155;
+  --alo-brand-pale: #0B2447;
+  --alo-body: #CBD5E1;
+  --alo-info: #38BDF8;
+  --alo-info-bg: #0C2A4A;
+  --alo-info-text: #7DD3FC;
+  --alo-info-border: #003F87;
 
   /* Neutrals (dark) */
   --alo-page: #0F172A;
@@ -448,9 +534,9 @@
   --alo-placeholder: #64748B;
 
   /* Charts (dark) */
-  --chart-1: #60A5FA;
+  --chart-1: #5EA9F5;
   --chart-2: #FB923C;
-  --chart-3: #4ADE80;
+  --chart-3: #34D399;
   --chart-4: #A78BFA;
   --chart-5: #FCD34D;
 
@@ -482,6 +568,21 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--alo-font-heading);
   }
+}
+
+/* Master §15: respect reduced-motion for every custom animation. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background: #EAF3FF;
+  color: #003F87;
 }
 
 /* ============================================================

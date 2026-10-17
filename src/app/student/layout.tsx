@@ -128,7 +128,7 @@ export default function StudentPortalLayout({
     return (
       <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center animate-pulse">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
           <p className="text-gray-400 text-sm">Loading your portal...</p>
@@ -157,21 +157,21 @@ export default function StudentPortalLayout({
           {/* Logo */}
           <div className="p-6 border-b border-white/5">
             <Link href="/student/dashboard" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#F97316] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
                 <GraduationCap className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="text-white font-bold text-sm">Student Portal</p>
-                <p className="text-[#2563EB] text-xs font-medium">ALO Education</p>
+                <p className="text-[#0057B8] text-xs font-medium">ALO Education</p>
               </div>
             </Link>
           </div>
 
           {/* Student ID Card */}
           {student && (
-            <div className="p-4 mx-3 mt-4 bg-gradient-to-br from-[#2563EB]/20 to-[#F97316]/10 rounded-xl border border-[#2563EB]/30">
+            <div className="p-4 mx-3 mt-4 bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/10 rounded-xl border border-[#0057B8]/30">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">{student.name.charAt(0).toUpperCase()}</span>
                 </div>
                 <div className="min-w-0">
@@ -187,7 +187,7 @@ export default function StudentPortalLayout({
                   </div>
                   <div className="h-1.5 bg-white/10 rounded-full">
                     <div
-                      className="h-full bg-gradient-to-r from-[#2563EB] to-[#F97316] rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-[#0057B8] to-[#E8501A] rounded-full transition-all"
                       style={{ width: `${student.profileComplete}%` }}
                     />
                   </div>
@@ -209,7 +209,7 @@ export default function StudentPortalLayout({
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group
                     ${isActive
-                      ? 'bg-[#2563EB] text-white shadow-lg shadow-[#2563EB]/20'
+                      ? 'bg-[#0057B8] text-white shadow-lg shadow-[#0057B8]/20'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }
                   `}
@@ -217,7 +217,7 @@ export default function StudentPortalLayout({
                   <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`} />
                   <span>{item.label}</span>
                   {item.href === '/student/messages' && unreadCount > 0 && (
-                    <span className="ml-auto bg-[#F97316] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="ml-auto bg-[#E8501A] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
@@ -254,12 +254,12 @@ export default function StudentPortalLayout({
               <Link href="/student/messages" aria-label={unreadCount > 0 ? `Messages, ${unreadCount} unread` : 'Messages'} className="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#F97316] rounded-full" />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#E8501A] rounded-full" />
                 )}
               </Link>
               {student && (
                 <div className="flex items-center gap-2 pl-2 border-l border-white/10">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#003d82] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center">
                     <span className="text-white text-sm font-bold">{student.name.charAt(0).toUpperCase()}</span>
                   </div>
                   <div className="hidden sm:block">

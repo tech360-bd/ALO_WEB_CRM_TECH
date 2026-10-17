@@ -142,7 +142,7 @@ export default function ResourceDetailHub({ slug }: Props) {
 
             <RelatedContentEngine sourceType="resource" sourceId={resource.id} sourceSlug={resource.slug} country={resource.countrySlug} studyLevel={resource.studyLevel} title="Explore More — Related Resources, Services, Scholarships, Courses" />
 
-            <Card id="next" className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003d80] rounded-3xl text-white text-center scroll-mt-28">
+            <Card id="next" className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center scroll-mt-28">
               <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
               <p className="text-sm text-blue-100 mb-6">Move from information to eligibility to application — with verified knowledge and an ALO counselor beside you.</p>
               <div className="flex flex-wrap justify-center gap-3">

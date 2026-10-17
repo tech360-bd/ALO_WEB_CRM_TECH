@@ -102,7 +102,7 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
   return (
     <div className="bg-white">
       {/* HERO + Breadcrumb */}
-      <div className="border-b border-[#2563EB]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
+      <div className="border-b border-[#0057B8]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
           <Breadcrumb
             items={[
@@ -111,7 +111,7 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
             ]}
           />
           <div className="mt-5">
-            <h1 className="text-3xl font-black tracking-tight text-[#2563EB] sm:text-4xl">
+            <h1 className="text-3xl font-black tracking-tight text-[#0057B8] sm:text-4xl">
               English Tests &amp; Mock Exams
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
@@ -124,12 +124,12 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
 
       <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
         {/* Free mock policy banner */}
-        <div className="mb-8 flex flex-col gap-3 rounded-2xl border-2 border-[#F97316]/30 bg-[#fdece4]/60 p-5 sm:flex-row sm:items-center sm:gap-5">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#F97316] text-white">
+        <div className="mb-8 flex flex-col gap-3 rounded-2xl border-2 border-[#E8501A]/30 bg-[#fdece4]/60 p-5 sm:flex-row sm:items-center sm:gap-5">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white">
             <Icon name="Gift" className="size-6" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-[#F97316]">Free mock policy</p>
+            <p className="text-sm font-bold text-[#E8501A]">Free mock policy</p>
             <p className="mt-1 text-sm text-foreground/80">
               ALO registered students get <span className="font-semibold">3 free full mocks</span>.
               Guests get <span className="font-semibold">1 free mock</span>. After the free limit,
@@ -138,7 +138,7 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
           </div>
           <Button
             onClick={() => onNavigate("public-exam", "placement-test")}
-            className="h-11 shrink-0 border-2 border-[#F97316] bg-white text-[#F97316] hover:bg-[#fdece4]"
+            className="h-11 shrink-0 border-2 border-[#E8501A] bg-white text-[#E8501A] hover:bg-[#fdece4]"
             variant="outline"
           >
             <Icon name="Compass" className="size-4" />
@@ -148,11 +148,11 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
 
         {/* Placement test highlight (only if it exists in dataset) */}
         {placement && (
-          <Card className="mb-8 overflow-hidden rounded-2xl border-2 border-[#2563EB]/20 bg-gradient-to-br from-[#e8f0fb]/80 to-white">
+          <Card className="mb-8 overflow-hidden rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-[#e8f0fb]/80 to-white">
             <CardContent className="grid gap-5 p-6 md:grid-cols-[1fr_auto] md:items-center md:p-7">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="bg-[#2563EB] text-white hover:bg-[#2563EB]">
+                  <Badge className="bg-[#0057B8] text-white hover:bg-[#0057B8]">
                     <Icon name="Sparkles" className="mr-1 size-3" />
                     Not sure where to start?
                   </Badge>
@@ -160,18 +160,18 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
                     Last verified {fmtDate(placement.lastVerifiedAt)}
                   </span>
                 </div>
-                <h2 className="mt-3 text-xl font-bold text-[#2563EB] sm:text-2xl">
+                <h2 className="mt-3 text-xl font-bold text-[#0057B8] sm:text-2xl">
                   {placement.name}
                 </h2>
                 <p className="mt-0.5 text-xs text-muted-foreground">{placement.fullName}</p>
                 <p className="mt-2 max-w-2xl text-sm text-foreground/80">{placement.intro}</p>
-                <p className="mt-3 text-sm font-medium text-[#F97316]">
+                <p className="mt-3 text-sm font-medium text-[#E8501A]">
                   Free for everyone · 30–40 minutes · Instant CEFR level + test recommendation
                 </p>
               </div>
               <Button
                 onClick={() => onNavigate("public-exam", placement.slug)}
-                className="h-12 w-full bg-[#F97316] text-white hover:bg-[#F97316]/90 md:w-auto"
+                className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90 md:w-auto"
               >
                 <Icon name="Play" className="size-4" />
                 Start Placement Test
@@ -198,7 +198,7 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
             action={
               <Button
                 onClick={() => onNavigate("public-destinations")}
-                className="bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+                className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
               >
                 <Icon name="Globe" className="size-4" />
                 Browse Destinations
@@ -226,7 +226,7 @@ export function PublicExams({ onNavigate }: PublicExamsProps) {
         {/* Bottom CTA */}
         <div className="mt-12">
           <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold text-[#2563EB]">
+            <h2 className="text-2xl font-bold text-[#0057B8]">
               Not sure which test to take?
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -265,17 +265,17 @@ function ExamCard({
     null;
 
   return (
-    <Card className="group flex flex-col rounded-2xl border-2 border-[#2563EB]/15 transition-all hover:-translate-y-0.5 hover:border-[#2563EB]/40 hover:shadow-lg">
+    <Card className="group flex flex-col rounded-2xl border-2 border-[#0057B8]/15 transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/40 hover:shadow-lg">
       <CardContent className="flex flex-1 flex-col p-5">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="truncate text-lg font-bold text-[#2563EB]">{exam.name}</h3>
+            <h3 className="truncate text-lg font-bold text-[#0057B8]">{exam.name}</h3>
             <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
               {exam.fullName}
             </p>
           </div>
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#2563EB]">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
             <Icon name="GraduationCap" className="size-5" />
           </div>
         </div>
@@ -285,7 +285,7 @@ function ExamCard({
 
         {/* Free quota badge */}
         {freeBadge && (
-          <div className="mt-3 inline-flex items-center gap-1.5 self-start rounded-full bg-[#fdece4] px-3 py-1 text-xs font-semibold text-[#F97316]">
+          <div className="mt-3 inline-flex items-center gap-1.5 self-start rounded-full bg-[#fdece4] px-3 py-1 text-xs font-semibold text-[#E8501A]">
             <Icon name="Gift" className="size-3.5" />
             {freeBadge}
           </div>
@@ -303,7 +303,7 @@ function ExamCard({
           )}
           {pricing.paid && (
             <div className="flex items-start gap-1.5">
-              <Icon name="CreditCard" className="mt-0.5 size-3.5 shrink-0 text-[#2563EB]" />
+              <Icon name="CreditCard" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
               <span className="text-foreground/80">
                 <span className="font-semibold text-foreground">Paid:</span> {pricing.paid}
               </span>
@@ -319,7 +319,7 @@ function ExamCard({
           </span>
           <Button
             onClick={() => onNavigate("public-exam", exam.slug)}
-            className="h-10 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+            className="h-10 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
             size="sm"
           >
             <Icon name="Play" className="size-4" />

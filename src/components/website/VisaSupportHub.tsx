@@ -51,10 +51,10 @@ export default function VisaSupportHub({ countries }: { countries: VisaCountryOp
             lede="Select your destination to see the verified visa process, work rights, financial evidence and document requirements — each with the official source it came from and the date it was last checked."
           />
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild className="h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
               <Link href="/book-consultation">Book Free Consultation</Link>
             </Button>
-            <Button asChild variant="outline" className="h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold">
+            <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/ai/visa-coach">Practise Your Interview</Link>
             </Button>
           </div>
@@ -101,7 +101,7 @@ export default function VisaSupportHub({ countries }: { countries: VisaCountryOp
               We only publish visa guidance we have checked against an official source. Verification for this
               destination is in progress — talk to an advisor for current requirements in the meantime.
             </p>
-            <Button asChild className="mt-2 h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="mt-2 h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
               <Link href="/book-consultation">Book Free Consultation</Link>
             </Button>
           </Panel>
@@ -238,7 +238,7 @@ export default function VisaSupportHub({ countries }: { countries: VisaCountryOp
                     Credibility and visa interviews test whether you can explain your course choice, your funding
                     and your plans after graduating.
                   </p>
-                  <Button asChild variant="outline" className="mt-4 h-10 w-full rounded-button border-alo-border text-[13px] font-semibold">
+                  <Button asChild variant="outline" className="mt-4 h-12 w-full rounded-button border-alo-border text-[13px] font-semibold">
                     <Link href="/ai/visa-coach">Practise With the Visa Coach</Link>
                   </Button>
                 </div>

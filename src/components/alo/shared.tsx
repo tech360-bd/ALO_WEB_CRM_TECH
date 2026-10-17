@@ -32,9 +32,9 @@ export function StatCard({
   trend?: string;
 }) {
   const accentMap: Record<string, string> = {
-    blue: "bg-[#EFF6FF] text-[#2563EB]",
-    orange: "bg-[#FFF7ED] text-[#C2410C]",
-    emerald: "bg-[#DCFCE7] text-[#15803D]",
+    blue: "bg-[#EFF6FF] text-[#0057B8]",
+    orange: "bg-[#FFF7ED] text-[#C93D13]",
+    emerald: "bg-[#DCFCE7] text-[#047857]",
     amber: "bg-[#FEF3C7] text-[#92400E]",
     violet: "bg-violet-50 text-violet-600",
     rose: "bg-[#FEE2E2] text-[#991B1B]",
@@ -54,8 +54,8 @@ export function StatCard({
         </div>
         {trend && (
           <div className="mt-3 flex items-center gap-1.5 body-text">
-            <Icon name="TrendingUp" className="size-3.5 text-[#15803D]" />
-            <span className="font-medium text-[#15803D]">{trend}</span>
+            <Icon name="TrendingUp" className="size-3.5 text-[#047857]" />
+            <span className="font-medium text-[#047857]">{trend}</span>
           </div>
         )}
       </CardContent>
@@ -76,7 +76,7 @@ export function SemanticBadge({ type, children }: { type: "success" | "warning" 
     success: "badge-success",
     warning: "badge-warning",
     danger: "badge-danger",
-    info: "bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB]",
+    info: "bg-[#EFF6FF] text-[#0057B8] border border-[#0057B8]",
   };
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 badge-text", cls[type])}>{children}</span>;
 }
@@ -102,7 +102,7 @@ export function SectionCard({
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-2.5">
             {icon && (
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#2563EB]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#0057B8]">
                 <Icon name={icon} className="size-4" />
               </div>
             )}
@@ -122,7 +122,7 @@ export function SectionCard({
 export function EmptyState({ icon = "Inbox", title, description, action }: { icon?: string; title: string; description?: string; action?: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-12 text-center">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#2563EB]">
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#0057B8]">
         <Icon name={icon} className="size-7" />
       </div>
       <p className="mt-4 card-title text-[#0F172A]">{title}</p>
@@ -160,7 +160,7 @@ export function CompletionRing({ value, size = 64, label }: { value: number; siz
   const r = (size - 8) / 2;
   const c = 2 * Math.PI * r;
   const offset = c - (value / 100) * c;
-  const color = value >= 80 ? "#15803D" : value >= 50 ? "#C2410C" : "#FBBF24";
+  const color = value >= 80 ? "#047857" : value >= 50 ? "#C93D13" : "#FBBF24";
   return (
     <div className="relative inline-flex flex-col items-center" style={{ width: size }}>
       <svg width={size} height={size} className="-rotate-90">
@@ -175,7 +175,7 @@ export function CompletionRing({ value, size = 64, label }: { value: number; siz
   );
 }
 
-export function MiniBar({ value, max, color = "#2563EB" }: { value: number; max: number; color?: string }) {
+export function MiniBar({ value, max, color = "#0057B8" }: { value: number; max: number; color?: string }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
     <div className="h-2 w-full overflow-hidden rounded-full bg-[#F1F5F9]">

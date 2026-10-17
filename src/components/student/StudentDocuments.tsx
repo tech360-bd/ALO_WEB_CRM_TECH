@@ -314,7 +314,7 @@ function UploadDialog({
               className={cn(
                 'flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 cursor-pointer transition-colors',
                 isDragging
-                  ? 'border-[#C2410C] bg-orange-50/50'
+                  ? 'border-[#C93D13] bg-orange-50/50'
                   : file
                     ? 'border-emerald-300 bg-emerald-50/30'
                     : 'border-[#0F172A]/15 bg-[#0F172A]/[0.01] hover:border-[#0F172A]/30 hover:bg-[#0F172A]/[0.02]'
@@ -337,7 +337,7 @@ function UploadDialog({
                 </>
               ) : (
                 <>
-                  <Upload className={cn('size-10', isDragging ? 'text-[#C2410C]' : 'text-[#0F172A]/25')} />
+                  <Upload className={cn('size-10', isDragging ? 'text-[#C93D13]' : 'text-[#0F172A]/25')} />
                   <div className="text-center">
                     <p className="text-sm font-medium text-[#0F172A]/70">
                       {isDragging ? 'Drop your file here' : 'Drag files here or click to browse'}
@@ -486,7 +486,7 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
             <Download className="size-3.5" />
             Download
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#C2410C] hover:text-[#C2410C] hover:bg-orange-50 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#C93D13] hover:text-[#C93D13] hover:bg-orange-50 text-xs h-8">
             <RefreshCw className="size-3.5" />
             Replace
           </Button>
@@ -837,7 +837,7 @@ export default function StudentDocuments() {
                         <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]" aria-label="Download document">
                           <Download className="size-4" />
                         </Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#C2410C]/60 hover:text-[#C2410C]">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#C93D13]/60 hover:text-[#C93D13]">
                           <RefreshCw className="size-4" />
                         </Button>
                       </div>

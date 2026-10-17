@@ -219,7 +219,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
     <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" aria-label="Marketing kit library">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2563EB]">Marketing kit</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">Marketing kit</p>
           <h2 className="mt-1 text-base font-bold text-slate-900">Marketing content library</h2>
           <p className="mt-1 max-w-3xl text-xs text-slate-500">
             Campaign kits, email sequences, lead magnets, SMS templates, a social calendar, and a CRO checklist — copy individual assets or download the complete library.
@@ -264,9 +264,9 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               tabIndex={isActive ? 0 : -1}
               onClick={() => setActiveTab(tab.id)}
               onKeyDown={(event) => handleTabKeyDown(event, index)}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
                 isActive
-                  ? 'border-[#2563EB] bg-[#EFF6FF] text-[#1D4ED8]'
+                  ? 'border-[#0057B8] bg-[#EFF6FF] text-[#003F87]'
                   : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -285,7 +285,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
         role="tabpanel"
         aria-labelledby={`${instanceId}-tab-${activeTab}`}
         tabIndex={0}
-        className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2"
+        className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2"
       >
       {/* Campaign kits */}
       {activeTab === 'campaigns' && kit ? (
@@ -297,9 +297,9 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 type="button"
                 aria-pressed={item.id === kit.id}
                 onClick={() => setActiveKit(item.id)}
-                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${
+                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
                   item.id === kit.id
-                    ? 'border-[#F97316] bg-[#FFF7ED] text-[#C2410C]'
+                    ? 'border-[#E8501A] bg-[#FFF7ED] text-[#C93D13]'
                     : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                 }`}
               >
@@ -358,7 +358,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               <div>
                 <dt className="font-bold uppercase tracking-[0.12em] text-slate-400">CTA</dt>
                 <dd className="mt-0.5">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#F97316] px-3 py-1.5 font-bold text-white">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#E8501A] px-3 py-1.5 font-bold text-white">
                     <Target className="h-3.5 w-3.5" />
                     {kit.cta}
                   </span>
@@ -393,7 +393,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                           type="checkbox"
                           checked={reviewedItemIds.includes(item.id)}
                           onChange={() => toggleReviewItem(item.id)}
-                          className="mt-0.5 h-4 w-4 shrink-0 accent-[#2563EB]"
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-[#0057B8]"
                         />
                         <span>
                           <span className="block text-xs font-semibold text-slate-800">{item.label}</span>
@@ -428,9 +428,9 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 type="button"
                 aria-pressed={item.id === sequence.id}
                 onClick={() => setActiveSequence(item.id)}
-                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${
+                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
                   item.id === sequence.id
-                    ? 'border-[#2563EB] bg-[#EFF6FF] text-[#1D4ED8]'
+                    ? 'border-[#0057B8] bg-[#EFF6FF] text-[#003F87]'
                     : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                 }`}
               >
@@ -472,7 +472,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 <h4 className="text-sm font-bold text-slate-900">{email.subject}</h4>
                 <p className="text-xs italic text-slate-500">{email.preview}</p>
                 <p className="mt-2 text-xs leading-relaxed text-slate-700">{email.body}</p>
-                <p className="mt-2 text-xs font-bold text-[#C2410C]">CTA: {email.cta}</p>
+                <p className="mt-2 text-xs font-bold text-[#C93D13]">CTA: {email.cta}</p>
               </article>
             ))}
           </div>
@@ -497,7 +497,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             return (
               <article key={magnet.id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF7ED] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#C2410C]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF7ED] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#C93D13]">
                     <Gift className="h-3 w-3" />
                     {magnet.format}
                   </span>
@@ -506,7 +506,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-slate-900">{magnet.name}</h3>
-                <p className="mt-1 text-xs font-semibold text-[#1D4ED8]">{magnet.hook}</p>
+                <p className="mt-1 text-xs font-semibold text-[#003F87]">{magnet.hook}</p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-600">{magnet.description}</p>
                 <ul className="mt-3 space-y-1 text-xs text-slate-600">
                   {magnet.deliverable.map((item) => (
@@ -518,7 +518,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 </ul>
                 <p className="mt-1 text-[11px] text-slate-500">Audience: {magnet.audience}</p>
                 <div className="mt-auto flex items-center justify-between gap-2 pt-4">
-                  <span className="text-xs font-bold text-[#C2410C]">CTA: {magnet.cta}</span>
+                  <span className="text-xs font-bold text-[#C93D13]">CTA: {magnet.cta}</span>
                   <CopyButton id={`magnet-${magnet.id}`} label={`${magnet.name} lead magnet`} text={magnetText} copied={copied} onCopy={copyText} />
                 </div>
               </article>
@@ -570,7 +570,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             <article key={`${post.day}-${post.platform}`} className="rounded-2xl border border-slate-200 bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#1D4ED8]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#003F87]">
                     <CalendarDays className="h-3 w-3" />
                     Day {post.day}
                   </span>
@@ -591,7 +591,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               </div>
               <h3 className="text-sm font-bold text-slate-900">{post.hook}</h3>
               <p className="mt-1 text-xs leading-relaxed text-slate-700">{post.copy}</p>
-              <p className="mt-2 text-xs font-bold text-[#C2410C]">CTA: {post.cta}</p>
+              <p className="mt-2 text-xs font-bold text-[#C93D13]">CTA: {post.cta}</p>
             </article>
           ))}
         </div>
@@ -622,7 +622,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 />
               </div>
               <p className="mt-1 flex items-start gap-1.5 text-xs leading-relaxed text-slate-700">
-                <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#2563EB]" />
+                <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0057B8]" />
                 {item.action}
               </p>
               <p className="mt-1 text-[11px] italic text-slate-500">Experiment: {item.experiment}</p>

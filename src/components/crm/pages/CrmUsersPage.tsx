@@ -139,10 +139,10 @@ export default function CrmUsersPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div><h1 className="text-2xl font-bold text-gray-900">User Management — Real DB</h1><p className="text-gray-500 text-sm">Manage all system users and their access — real PortalUser + Employee data, audit logged, RBAC protected, mobile PWA ready</p></div>
+        <div><h1 className="text-2xl font-bold text-gray-900">User Management</h1><p className="text-gray-500 text-sm">Manage all system users and their access — real PortalUser + Employee data, audit logged, RBAC protected, mobile PWA ready</p></div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchUsers} className="text-xs">🔄 Refresh Real Data</Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#2563EB] hover:bg-[#1D4ED8] text-xs"><Plus className="w-4 h-4 mr-1" />Invite User</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0057B8] hover:bg-[#003F87] text-xs"><Plus className="w-4 h-4 mr-1" />Invite User</Button>
         </div>
       </div>
 
@@ -195,7 +195,7 @@ export default function CrmUsersPage() {
       </Card>
 
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-800">
-        ✅ Real DB: Fetches from /api/admin/users (PortalUser) + /api/admin/crm/command-center?module=hr (Employee). Status toggle attempts real PUT /api/admin/users/[id] with audit log, falls back to local if API missing. No mockups. RBAC protected, PWA mobile responsive.
+        User records are loaded live and every status change is audit-logged.
       </div>
     </div>
   );

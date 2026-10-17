@@ -2,7 +2,7 @@ import { SuperAdminWebsiteCmsHub } from "@/components/admin/SuperAdminWebsiteCms
 
 export const metadata = {
   title: "Website CMS Hub — Super Admin",
-  description: "Edit any part of website directly — hero slides, services, success stories, team, FAQs, sections, english tests, countries with sub-data. Real DB, audit logged, mobile PWA ready.",
+  description: "Edit any part of website directly — hero slides, services, success stories, team, FAQs, sections, english tests, countries with sub-data. Changes saved and audit logged, mobile PWA ready.",
 };
 
 export default function WebsiteCmsPage() {

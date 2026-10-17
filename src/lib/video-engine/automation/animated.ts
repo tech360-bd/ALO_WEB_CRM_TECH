@@ -102,7 +102,7 @@ export async function createScholarshipAnnouncement(
       data.cta,
     ],
     animation: "kinetic",
-    backgroundColor: "#2563EB",
+    backgroundColor: "#0057B8",
     textColor: "#FFFFFF",
     aspectRatio: "1:1",
     resolution: "1080p",

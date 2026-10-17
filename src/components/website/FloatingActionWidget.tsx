@@ -119,13 +119,13 @@ export default function FloatingActionWidget() {
               id="alo-ai-chat-trigger"
               onClick={openChat}
               aria-label="Open the ALO Education guided assistant chat"
-              className="flex items-center gap-2.5 bg-[#2563EB] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-[#1D4ED8] transition-all hover:scale-105 group border-2 border-white"
+              className="flex items-center gap-2.5 bg-[#0057B8] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-[#003F87] transition-all hover:scale-105 group border-2 border-white"
             >
               <span className="h-7 w-7 rounded-full bg-white/20 flex items-center justify-center">
                 <Bot className="h-4 w-4 text-white" />
               </span>
               <span className="text-xs font-bold whitespace-nowrap pr-1">Chat with AI Agent</span>
-              <Badge className="bg-[#F97316] text-white text-[10px] px-1.5 py-0.5 font-bold">24/7</Badge>
+              <Badge className="bg-[#E8501A] text-white text-[10px] px-1.5 py-0.5 font-bold">24/7</Badge>
             </button>
 
             {/* 2. WHATSAPP BUTTON */}
@@ -166,7 +166,7 @@ export default function FloatingActionWidget() {
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-label={expanded ? 'Close contact options' : 'Open contact options'}
-          className="h-12 w-12 rounded-full bg-[#F97316] text-white shadow-2xl flex items-center justify-center hover:bg-[#EA580C] transition-all border-2 border-white"
+          className="h-12 w-12 rounded-full bg-[#E8501A] text-white shadow-2xl flex items-center justify-center hover:bg-[#C93D13] transition-all border-2 border-white"
         >
           {expanded ? <X className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
         </button>
@@ -187,9 +187,9 @@ export default function FloatingActionWidget() {
             className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 flex flex-col h-[580px]"
           >
             {/* HEADER */}
-            <div className="bg-gradient-to-r from-[#2563EB] to-[#003d80] text-white p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="h-9 w-9 rounded-full bg-[#F97316] flex items-center justify-center text-white font-bold">
+                <span className="h-9 w-9 rounded-full bg-[#E8501A] flex items-center justify-center text-white font-bold">
                   <Bot className="h-5 w-5" />
                 </span>
                 <div>
@@ -213,7 +213,7 @@ export default function FloatingActionWidget() {
                   <div
                     className={`max-w-[85%] p-3 rounded-2xl ${
                       m.sender === 'user'
-                        ? 'bg-[#2563EB] text-white rounded-br-none'
+                        ? 'bg-[#0057B8] text-white rounded-br-none'
                         : 'bg-white text-slate-800 border border-slate-200 shadow-sm rounded-bl-none'
                     }`}
                   >
@@ -226,7 +226,7 @@ export default function FloatingActionWidget() {
               <div className="flex flex-wrap gap-2 pt-2">
                 <Link
                   href="/course-finder"
-                  className="inline-flex items-center rounded-full border border-[#2563EB] px-3 py-1.5 text-[11px] font-semibold text-[#2563EB] hover:bg-blue-50"
+                  className="inline-flex items-center rounded-full border border-[#0057B8] px-3 py-1.5 text-[11px] font-semibold text-[#0057B8] hover:bg-blue-50"
                 >
                   Find a course
                 </Link>
@@ -264,9 +264,9 @@ export default function FloatingActionWidget() {
                 value={userMsg}
                 onChange={(e) => setUserMsg(e.target.value)}
                 placeholder="Ask about courses, fees, or your application..."
-                className="flex-1 h-10 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#2563EB]"
+                className="flex-1 h-10 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#0057B8]"
               />
-              <Button type="submit" aria-label="Send message" className="bg-[#F97316] text-white h-10 px-4 rounded-xl font-bold text-xs">
+              <Button type="submit" aria-label="Send message" className="bg-[#E8501A] text-white h-12 px-4 rounded-xl font-bold text-xs">
                 <Send className="h-3.5 w-3.5" />
               </Button>
             </form>

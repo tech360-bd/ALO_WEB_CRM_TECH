@@ -126,7 +126,7 @@ export function CrmEmail() {
                           {c.fromName || c.fromEmail}
                         </p>
                         {c.unread > 0 && (
-                          <Badge className="bg-[#F97316] text-white">{c.unread}</Badge>
+                          <Badge className="bg-[#E8501A] text-white">{c.unread}</Badge>
                         )}
                       </div>
                       <p className="truncate text-xs text-[#5A7299]">
@@ -157,7 +157,7 @@ export function CrmEmail() {
                           key={m.id}
                           className={`rounded-xl px-4 py-2 text-sm ${
                             m.direction === "OUTBOUND"
-                              ? "ml-auto max-w-[75%] bg-[#2563EB] text-white"
+                              ? "ml-auto max-w-[75%] bg-[#0057B8] text-white"
                               : "max-w-[75%] bg-white text-[#0B2447]"
                           }`}
                         >
@@ -185,7 +185,7 @@ export function CrmEmail() {
                         <Button
                           onClick={handleSend}
                           disabled={sending || !reply.trim()}
-                          className="bg-[#2563EB] text-white hover:bg-[#0052a3]"
+                          className="bg-[#0057B8] text-white hover:bg-[#003F87]"
                         >
                           <Icon name="Send" className="mr-1.5 size-4" /> Send Reply
                         </Button>

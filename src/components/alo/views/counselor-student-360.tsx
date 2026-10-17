@@ -580,7 +580,7 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
           title="No students assigned"
           description="You don't have any students assigned yet. Add a lead in CRM to get started."
           action={
-            <Button onClick={() => onNavigate("crm")} className="h-11 bg-[#F97316] text-white hover:bg-[#F97316]/90">
+            <Button onClick={() => onNavigate("crm")} className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
               <Icon name="UserPlus" className="mr-2 size-4" /> Go to CRM
             </Button>
           }
@@ -592,14 +592,14 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
   return (
     <div className="space-y-6">
       {/* STUDENT SELECTOR */}
-      <Card className="rounded-2xl border-2 border-[#2563EB]/15">
+      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
         <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Icon name="Search" className="size-4" />
             Select student:
           </div>
           <Select value={selectedId} onValueChange={setSelectedId}>
-            <SelectTrigger className="h-10 flex-1 rounded-xl border-[#2563EB]/15">
+            <SelectTrigger className="h-10 flex-1 rounded-xl border-[#0057B8]/15">
               <SelectValue placeholder="Pick a student" />
             </SelectTrigger>
             <SelectContent>
@@ -612,7 +612,7 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
               ))}
             </SelectContent>
           </Select>
-          <Badge variant="outline" className="h-10 border-[#2563EB]/20 px-3 text-xs">
+          <Badge variant="outline" className="h-10 border-[#0057B8]/20 px-3 text-xs">
             {students.findIndex((s) => s.id === selectedId) + 1} of {students.length}
           </Badge>
         </CardContent>
@@ -671,13 +671,13 @@ function StudentDetailBody({
   return (
     <>
       {/* STUDENT HEADER CARD */}
-      <Card className="rounded-2xl border-2 border-[#2563EB]/20">
+      <Card className="rounded-2xl border-2 border-[#0057B8]/20">
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-bold text-[#2563EB]">{student.fullName}</h2>
-                <Badge variant="outline" className="border-[#2563EB]/20 bg-[#e8f0fb]/60 font-mono text-[#2563EB]">
+                <h2 className="text-2xl font-bold text-[#0057B8]">{student.fullName}</h2>
+                <Badge variant="outline" className="border-[#0057B8]/20 bg-[#e8f0fb]/60 font-mono text-[#0057B8]">
                   {student.studentId}
                 </Badge>
                 <StatusBadge status={student.status} colorMap={STUDENT_STATUS_COLORS} />
@@ -691,7 +691,7 @@ function StudentDetailBody({
                 </span>
                 {student.partnerId && (
                   <span className="flex items-center gap-1.5">
-                    <Icon name="Handshake" className="size-3.5 text-[#F97316]" />
+                    <Icon name="Handshake" className="size-3.5 text-[#E8501A]" />
                     Partner: <span className="font-mono font-medium text-foreground">{student.partnerId.slice(-8)}</span>
                   </span>
                 )}
@@ -705,8 +705,8 @@ function StudentDetailBody({
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-2 rounded-xl bg-[#e8f0fb]/50 p-2.5 text-sm">
-                <Icon name="Flag" className="size-4 text-[#2563EB]" />
-                <span className="font-medium text-[#2563EB]">Next action:</span>
+                <Icon name="Flag" className="size-4 text-[#0057B8]" />
+                <span className="font-medium text-[#0057B8]">Next action:</span>
                 <span className="text-foreground">{nextAction}</span>
               </div>
             </div>
@@ -722,7 +722,7 @@ function StudentDetailBody({
               <Button
                 onClick={() => onNavigate("sop-studio", student.studentId)}
                 variant="outline"
-                className="h-10 rounded-xl border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                className="h-10 rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
               >
                 <Icon name="FileText" className="mr-1.5 size-4" />
                 Generate SOP
@@ -734,7 +734,7 @@ function StudentDetailBody({
                     description: `A document request template was prepared for ${student.fullName}.`,
                   })
                 }
-                className="h-10 rounded-xl bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                className="h-10 rounded-xl bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
               >
                 <Icon name="FileUp" className="mr-1.5 size-4" />
                 Request Documents
@@ -748,7 +748,7 @@ function StudentDetailBody({
               <span className="flex items-center gap-1.5 font-medium text-muted-foreground">
                 <Icon name="UserCheck" className="size-3.5" /> Profile completion
               </span>
-              <span className="font-semibold text-[#2563EB]">{student.profileCompletion}%</span>
+              <span className="font-semibold text-[#0057B8]">{student.profileCompletion}%</span>
             </div>
             <Progress value={student.profileCompletion} className="h-2" />
           </div>
@@ -759,31 +759,31 @@ function StudentDetailBody({
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <ScrollArea className="w-full whitespace-nowrap rounded-xl">
           <TabsList className="flex w-max gap-1 bg-[#e8f0fb]/60 p-1">
-            <TabsTrigger value="profile" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="User" className="mr-1.5 size-3.5" /> Profile
             </TabsTrigger>
-            <TabsTrigger value="applications" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="applications" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="ClipboardList" className="mr-1.5 size-3.5" /> Applications
             </TabsTrigger>
-            <TabsTrigger value="documents" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="documents" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="FolderLock" className="mr-1.5 size-3.5" /> Documents
             </TabsTrigger>
-            <TabsTrigger value="comments" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="comments" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="MessageSquare" className="mr-1.5 size-3.5" /> Comments
-              <Badge className="ml-1.5 bg-[#F97316] text-white" variant="secondary">
+              <Badge className="ml-1.5 bg-[#E8501A] text-white" variant="secondary">
                 {internalComments.length + studentComments.length}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="communication" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="communication" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="Inbox" className="mr-1.5 size-3.5" /> Communication
             </TabsTrigger>
-            <TabsTrigger value="sopcv" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="sopcv" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="FileText" className="mr-1.5 size-3.5" /> SOP / CV
             </TabsTrigger>
-            <TabsTrigger value="interview" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="interview" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="Mic" className="mr-1.5 size-3.5" /> Interview
             </TabsTrigger>
-            <TabsTrigger value="timeline" className="data-[state=active]:bg-white data-[state=active]:text-[#2563EB]">
+            <TabsTrigger value="timeline" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
               <Icon name="History" className="mr-1.5 size-3.5" /> Timeline
             </TabsTrigger>
           </TabsList>
@@ -968,7 +968,7 @@ function StudentDetailBody({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                  className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                   onClick={() => toast({ title: "Request document", description: "Document request template opened." })}
                 >
                   <Icon name="FileUp" className="mr-1.5 size-3.5" /> Request Document
@@ -976,7 +976,7 @@ function StudentDetailBody({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 border-[#F97316]/30 text-[#F97316] hover:bg-[#fdece4]"
+                  className="h-8 border-[#E8501A]/30 text-[#E8501A] hover:bg-[#fdece4]"
                   onClick={() => toast({ title: "Upload on behalf", description: "Counselor upload form opened — student will be notified." })}
                 >
                   <Icon name="Upload" className="mr-1.5 size-3.5" /> Upload on Behalf
@@ -1144,7 +1144,7 @@ function StudentDetailBody({
               <Button
                 size="sm"
                 onClick={() => onNavigate("unified-inbox")}
-                className="h-8 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
               >
                 <Icon name="Send" className="mr-1.5 size-3.5" /> Open Inbox
               </Button>
@@ -1160,7 +1160,7 @@ function StudentDetailBody({
                     <div
                       key={m.id}
                       className={`flex items-start gap-3 rounded-xl border p-3 ${
-                        inbound ? "border-[#2563EB]/15 bg-[#e8f0fb]/30" : "border-emerald-200 bg-emerald-50/30"
+                        inbound ? "border-[#0057B8]/15 bg-[#e8f0fb]/30" : "border-emerald-200 bg-emerald-50/30"
                       }`}
                     >
                       <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${CHANNEL_COLORS[m.channel] ?? "bg-slate-100 text-slate-700"}`}>
@@ -1206,7 +1206,7 @@ function StudentDetailBody({
                 <Button
                   size="sm"
                   onClick={() => onNavigate("sop-studio", student.studentId)}
-                  className="h-8 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                  className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                 >
                   <Icon name="Sparkles" className="mr-1.5 size-3.5" /> Generate New SOP
                 </Button>
@@ -1257,7 +1257,7 @@ function StudentDetailBody({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                          className="h-7 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                           onClick={() => toast({ title: "Sent to student portal", description: "SOP draft is now visible to the student for review." })}
                         >
                           <Icon name="Send" className="mr-1 size-3" /> Send to Student Portal
@@ -1265,7 +1265,7 @@ function StudentDetailBody({
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-7 text-[#2563EB] hover:bg-[#e8f0fb]"
+                          className="h-7 text-[#0057B8] hover:bg-[#e8f0fb]"
                           onClick={() => onNavigate("sop-studio", student.studentId)}
                         >
                           <Icon name="Pencil" className="mr-1 size-3" /> Edit
@@ -1298,7 +1298,7 @@ function StudentDetailBody({
                       <Button
                         size="sm"
                         variant="outline"
-                        className="mt-2 h-7 border-[#2563EB]/30 text-[#2563EB] hover:bg-[#e8f0fb]"
+                        className="mt-2 h-7 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
                         onClick={() => toast({ title: "Sent to student portal", description: "CV draft shared with the student." })}
                       >
                         <Icon name="Send" className="mr-1 size-3" /> Send to Student Portal
@@ -1321,7 +1321,7 @@ function StudentDetailBody({
               <Button
                 size="sm"
                 onClick={() => onNavigate("ai-interview")}
-                className="h-8 bg-[#F97316] text-white hover:bg-[#F97316]/90"
+                className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
               >
                 <Icon name="Mic" className="mr-1.5 size-3.5" /> Start New Interview
               </Button>
@@ -1356,14 +1356,14 @@ function StudentDetailBody({
                                 <span className="capitalize text-muted-foreground">{k.replace(/_/g, " ")}</span>
                                 <span className="font-semibold text-foreground">{v.toFixed(1)} / {maxScore}</span>
                               </div>
-                              <MiniBar value={v} max={maxScore} color={v >= maxScore * 0.8 ? "#10b981" : v >= maxScore * 0.5 ? "#F97316" : "#f43f5e"} />
+                              <MiniBar value={v} max={maxScore} color={v >= maxScore * 0.8 ? "#10b981" : v >= maxScore * 0.5 ? "#E8501A" : "#f43f5e"} />
                             </div>
                           ))}
                         </div>
                       )}
                       {iv.feedback && (
                         <div className="mt-3 rounded-lg bg-[#e8f0fb]/40 p-2.5 text-xs text-foreground">
-                          <p className="mb-1 flex items-center gap-1 font-semibold text-[#2563EB]">
+                          <p className="mb-1 flex items-center gap-1 font-semibold text-[#0057B8]">
                             <Icon name="Lightbulb" className="size-3.5" /> AI feedback
                           </p>
                           {iv.feedback}
@@ -1537,7 +1537,7 @@ function CommentComposer({
           className={
             isInternal
               ? "h-9 bg-amber-600 text-white hover:bg-amber-700"
-              : "h-9 bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
+              : "h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
           }
         >
           {posting ? <Icon name="Loader2" className="mr-1.5 size-3.5 animate-spin" /> : <Icon name="Send" className="mr-1.5 size-3.5" />}

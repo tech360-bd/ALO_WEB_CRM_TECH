@@ -33,13 +33,13 @@ export const diagramTokens = {
   /** Stronger borders, baselines */
   ruleSolid: '#CBD5E1',
   /** Focal — 1–2 per diagram max (ALO CTA orange) */
-  accent: '#F97316',
+  accent: '#E8501A',
   /** Fill for accent-bordered boxes */
   accentTint: 'rgba(249, 115, 22, 0.08)',
   /** External / API / link arrows (ALO brand blue) */
-  link: '#2563EB',
+  link: '#0057B8',
   /** Success / positive state */
-  success: '#16A34A',
+  success: '#10B981',
   /**
    * Series palette — multi-series charts only. Fills at 0.18 opacity,
    * strokes full color. Never backfill to non-chart diagram types.

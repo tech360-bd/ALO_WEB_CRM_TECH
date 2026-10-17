@@ -66,6 +66,7 @@ const quickLinks = [
 const companyLinks = [
   { label: 'About Us', href: '/about' },
   { label: 'Contact Us', href: '/contact' },
+  { label: 'Global Offices', href: '/global-offices' },
   { label: 'Code of Conduct', href: ALO_POLICY_LINKS.codeOfConduct },
   { label: 'Student Complaint Policy', href: ALO_POLICY_LINKS.studentComplaintPolicy },
   { label: 'AQF Compliance', href: ALO_POLICY_LINKS.aqfCompliance },
@@ -81,8 +82,8 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /* ------------------------------------------------------------------ */
 /*  DECORATIVE CAP-ICON STRIP                                          */
 /*                                                                     */
-/*  Three ALO brand colours — Education Blue #0066CC, ALO Orange        */
-/*  #F37021 and Accent #FFB347 — drifting in opposite directions behind  */
+/*  Three ALO brand colours — Education Blue #0057B8, ALO Orange        */
+/*  #E8501A and Accent #FFB347 — drifting in opposite directions behind  */
 /*  the footer. Each row renders the same sequence of graduation caps    */
 /*  four times inside a `width: max-content` track and animates it by    */
 /*  exactly one sequence (-25%), so the loop is seamless and the strip   */
@@ -90,7 +91,7 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /*  aria-hidden and every animation stops for prefers-reduced-motion.    */
 /* ------------------------------------------------------------------ */
 
-const CAP_COLORS = ['#0066CC', '#F37021', '#FFB347'] as const;
+const CAP_COLORS = ['#0057B8', '#E8501A', '#FFB347'] as const;
 
 /** One sequence of caps. Rendered CAP_SEQUENCE_COPIES times per row. */
 const CAP_SEQUENCE = [
@@ -257,7 +258,7 @@ function FooterColumn({
           <li key={`${link.href}-${link.label}`}>
             <Link
               href={link.href}
-              className="text-[13px] font-medium text-alo-text-secondary transition-colors hover:text-alo-cta focus-visible:text-alo-cta focus-visible:outline-none"
+              className="text-[13px] font-medium text-alo-text-secondary transition-colors hover:text-alo-brand focus-visible:text-alo-brand focus-visible:outline-none"
             >
               {link.label}
             </Link>
@@ -415,10 +416,10 @@ export default function PublicFooter() {
       {/* Decorative moving cap-icon strip — three ALO brand colours */}
       <GraduationCapStrip />
 
-      {/* Bottom bar — ALO Orange #F37021.
-          Text is near-black rather than white on purpose: white on #F37021 is
+      {/* Bottom bar — ALO Orange #E8501A.
+          Text is near-black rather than white on purpose: white on #E8501A is
           2.94:1, which fails WCAG AA for both body and large text, while black
-          on #F37021 is ~7:1. Same brand colour, readable for everyone. */}
+          on #E8501A is ~7:1. Same brand colour, readable for everyone. */}
       <div className="bg-alo-cta py-4 text-black">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs font-medium sm:flex-row sm:px-6 lg:px-8">
           <p className="font-heading font-bold tracking-wide">© {year} ALO Education. All rights reserved.</p>

@@ -19,8 +19,8 @@ import { toast } from 'sonner';
 import { COUNTRY_FLAGS } from './types';
 
 // ─── ALO Brand Colors ─────────────────────────────────────────────────────────
-const ALO_BLUE = '#2563EB';
-const ALO_ORANGE = '#F97316';
+const ALO_BLUE = '#0057B8';
+const ALO_ORANGE = '#E8501A';
 const MAX_ITEMS = 4;
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -120,11 +120,11 @@ function formatDate(iso: string | null | undefined): string {
 function getLevelBadgeClasses(level: string): string {
   switch (level?.toLowerCase()) {
     case 'undergraduate': case 'bachelor':
-      return 'bg-[#2563EB]/10 text-[#2563EB]';
+      return 'bg-[#0057B8]/10 text-[#0057B8]';
     case 'postgraduate': case 'master':
-      return 'bg-[#2563EB]/20 text-[#2563EB]';
+      return 'bg-[#0057B8]/20 text-[#0057B8]';
     case 'phd': case 'doctorate':
-      return 'bg-[#2563EB]/30 text-[#2563EB]';
+      return 'bg-[#0057B8]/30 text-[#0057B8]';
     default:
       return 'bg-slate-100 text-slate-700';
   }
@@ -480,7 +480,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       render: (c) => (
         <Link
           href={c.university?.slug ? `/course-finder?slug=${c.university.slug}` : '#'}
-          className="font-medium text-[#2563EB] hover:underline text-sm"
+          className="font-medium text-[#0057B8] hover:underline text-sm"
         >
           {c.university?.name || 'N/A'}
           {c.university?.rankingValue && (
@@ -672,7 +672,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
         <button
           onClick={() => window.history.back()}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#2563EB] transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] transition-colors mb-6"
         >
           <ArrowLeft className="size-4" />
           Back
@@ -680,8 +680,8 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#2563EB]/10 flex items-center justify-center">
-              <GitCompare className="size-5 text-[#2563EB]" />
+            <div className="w-10 h-10 rounded-lg bg-[#0057B8]/10 flex items-center justify-center">
+              <GitCompare className="size-5 text-[#0057B8]" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Compare</h1>
@@ -693,7 +693,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
               </p>
             </div>
             {hasItems && (
-              <Badge variant="secondary" className="bg-[#2563EB]/10 text-[#2563EB]">
+              <Badge variant="secondary" className="bg-[#0057B8]/10 text-[#0057B8]">
                 {items.length}/{MAX_ITEMS}
               </Badge>
             )}
@@ -702,14 +702,14 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
           {/* Mode Toggle */}
           <div className="flex items-center bg-slate-100 rounded-lg p-1">
             <button
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'courses' ? 'bg-white text-[#2563EB] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'courses' ? 'bg-white text-[#0057B8] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               onClick={() => setMode('courses')}
             >
               <GraduationCap className="size-4 inline mr-1.5" />
               Courses
             </button>
             <button
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'universities' ? 'bg-white text-[#2563EB] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'universities' ? 'bg-white text-[#0057B8] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               onClick={() => setMode('universities')}
             >
               <Building2 className="size-4 inline mr-1.5" />
@@ -785,7 +785,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                             className="mt-1"
                           />
                           <Link href={`/course-finder?slug=${course.slug}`} className="group block">
-                            <p className="text-sm font-semibold text-[#2563EB] group-hover:underline leading-snug line-clamp-2">
+                            <p className="text-sm font-semibold text-[#0057B8] group-hover:underline leading-snug line-clamp-2">
                               {course.title}
                             </p>
                             <p className="text-xs text-slate-500 mt-1">
@@ -920,7 +920,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                           <X className="size-4" />
                         </button>
                         <Link href={`/course-finder?slug=${uni.slug}`} className="block pr-6 group">
-                          <p className="text-sm font-semibold text-[#2563EB] group-hover:underline leading-snug">
+                          <p className="text-sm font-semibold text-[#0057B8] group-hover:underline leading-snug">
                             {uni.name}
                           </p>
                           <p className="text-xs text-slate-500 mt-1">
