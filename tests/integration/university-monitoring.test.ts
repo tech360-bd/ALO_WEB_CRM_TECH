@@ -167,10 +167,10 @@ integrationDescribe('Scheduler: 7-day job configuration and persistence', () => 
   it('computes the next run exactly 7 days ahead', () => {
     const from = new Date('2026-08-01T12:00:00.000Z');
     const next = computeNextRunAt(from);
-    const deltaDays = Math.round((next.getTime() - from.getTime()) / 86_400_000);
-    // Normalised to 03:00 local, so allow the 6/7 day boundary.
-    expect([MONITORING_INTERVAL_DAYS - 1, MONITORING_INTERVAL_DAYS]).toContain(deltaDays);
-    expect(next.getHours()).toBe(3);
+    // The runner uses elapsed time, not a host-local 03:00 boundary.
+    expect(next.getTime() - from.getTime()).toBe(MONITORING_INTERVAL_DAYS * 86_400_000);
+    expect(next.toISOString()).toBe('2026-08-08T12:00:00.000Z');
+    expect(from.toISOString()).toBe('2026-08-01T12:00:00.000Z');
   });
 
   it('persists nextRunAt so the schedule survives a process restart', async () => {
