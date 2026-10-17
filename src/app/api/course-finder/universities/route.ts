@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search')?.trim() || '';
-    const countries = searchParams.get('countries') || '';
+    const countryFilter = searchParams.get('countries') || '';
     const cities = searchParams.get('cities') || '';
     const institutionType = searchParams.get('institutionType') || '';
     const rankingProvider = searchParams.get('rankingProvider') || '';
@@ -51,7 +51,7 @@ export async function GET(req: Request) {
       });
     }
 
-    const countryList = countries.split(',').map(value => value.trim()).filter(Boolean);
+    const countryList = countryFilter.split(',').map(value => value.trim()).filter(Boolean);
     if (countryList.length) andConditions.push({ country: { in: countryList } });
 
     const cityList = cities.split(',').map(value => value.trim()).filter(Boolean);
@@ -112,7 +112,7 @@ export async function GET(req: Request) {
           ? { courses: { _count: 'desc' as const } }
           : { name: 'asc' as const };
 
-    const [total, universities] = await Promise.all([
+    const [total, universities, countryRows] = await Promise.all([
       db.crmUniversity.count({ where }),
       db.crmUniversity.findMany({
         where,
@@ -148,11 +148,20 @@ export async function GET(req: Request) {
         take: limit,
         orderBy,
       }),
+      db.crmUniversity.findMany({
+        where: publicUniversityWhere(),
+        select: { country: true },
+        distinct: ['country'],
+        orderBy: { country: 'asc' },
+        take: 500,
+      }),
     ]);
+    const countries = [...new Set(countryRows.map((row) => row.country.trim()).filter(Boolean))];
 
     return NextResponse.json({
       success: true,
       universities,
+      countries,
       total,
       page,
       totalPages: Math.ceil(total / limit),

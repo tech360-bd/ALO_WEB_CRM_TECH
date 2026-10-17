@@ -28,7 +28,7 @@ import { GET as courseFinderGET } from '@/app/api/course-finder/route';
 import { GET as courseDetailGET } from '@/app/api/courses/[slug]/route';
 import { GET as courseFinderDetailGET } from '@/app/api/course-finder/[slug]/route';
 import { GET as coursesListGET } from '@/app/api/courses/route';
-import { publicIntakeWhere, publicCourseWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
 
 const SECRET = 'aloeduca_secret_user at mysql.internal.host';
 
@@ -244,6 +244,9 @@ describe('GET /api/courses (public list)', () => {
     expect(where).not.toHaveProperty('status', 'all');
     expect(where).toEqual(publicCourseWhere());
     expect(JSON.stringify(where)).toContain('"verificationStatus":"VERIFIED"');
+    const include = mocks.courseFindMany.mock.calls[0][0].include;
+    expect(include.intakeFees.where).toEqual(publicIntakeWhere());
+    expect(include.englishRequirements.where).toEqual({ sourceUrl: { not: '' }, lastVerifiedAt: { not: null } });
   });
 });
 

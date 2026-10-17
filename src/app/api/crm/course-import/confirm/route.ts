@@ -3,6 +3,11 @@ import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 import { mutationOriginAllowed } from '@/lib/request-origin';
 import { buildDuplicateKey } from '@/lib/crm/import-constants';
+import { MAX_CELL_LENGTH, MAX_COURSE_TITLE_LENGTH } from '@/lib/course-finder/catalogue-import-service';
+import {
+  INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES,
+  normalizeIntakeMonth,
+} from '@/lib/university-intake-window';
 
 function getVal(row: Record<string, string>, field: string): string {
   return (row[field] || '').trim();
@@ -22,6 +27,19 @@ function getBool(row: Record<string, string>, field: string, fallback: boolean =
   return fallback;
 }
 
+function intakeDuplicateKey(universityId: string, courseId: string, year: string, month: string) {
+  const monthNumber = normalizeIntakeMonth(month);
+  return buildDuplicateKey(universityId, courseId, year, monthNumber ? String(monthNumber).padStart(2, '0') : month.trim().toLowerCase());
+}
+
+function courseOnlyDuplicateKey(universityId: string, courseId: string) {
+  return `${universityId}|${courseId}|COURSE_ONLY`;
+}
+
+function universityOnlyDuplicateKey(universityId: string) {
+  return `${universityId}|UNIVERSITY_ONLY`;
+}
+
 export async function POST(request: Request) {
   return withAuth(async (req, auth) => {
   try {
@@ -34,11 +52,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Provide between 1 and 500 rows' }, { status: 400 });
     }
 
-    if (rows.some(row => !row || typeof row !== 'object' || Array.isArray(row)
-      || Object.values(row).some(value => typeof value !== 'string' || value.length > 191)
-      || !['university_id', 'course_id', 'university_name', 'course_title', 'intake_year', 'intake_month'].every(key => getVal(row, key))
-      || !/^\d{4}$/.test(getVal(row, 'intake_year')))) {
-      return NextResponse.json({ error: 'Each row needs string cells (maximum 191 characters), identifiers, names and a four-digit intake year/month' }, { status: 400 });
+    if (rows.some(row => {
+      if (!row || typeof row !== 'object' || Array.isArray(row)) return true;
+      if (Object.entries(row).some(([key, value]) => typeof value !== 'string' || value.length > (key === 'course_title' ? MAX_COURSE_TITLE_LENGTH : MAX_CELL_LENGTH))) return true;
+      if (!['university_id', 'university_name'].every(key => getVal(row, key))) return true;
+      const courseId = getVal(row, 'course_id');
+      const courseTitle = getVal(row, 'course_title');
+      if (!!courseId !== !!courseTitle) return true;
+      const intakeYear = getVal(row, 'intake_year');
+      const intakeMonth = getVal(row, 'intake_month');
+      if (!!intakeYear !== !!intakeMonth) return true;
+      if (!courseId && (intakeYear || intakeMonth)) return true;
+      if (intakeYear && !/^\d{4}$/.test(intakeYear)) return true;
+      if (intakeMonth && !normalizeIntakeMonth(intakeMonth)) return true;
+      const eligibility = getVal(row, 'international_eligibility').toLowerCase();
+      if (eligibility && !(INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES as readonly string[]).includes(eligibility)) return true;
+      return false;
+    })) {
+      return NextResponse.json({ error: 'Each row needs string cells (maximum 191 characters), university/course identifiers and names. Intake year/month are optional but must be provided together; eligibility must use a supported status.' }, { status: 400 });
     }
 
     const batchId = `batch_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -54,9 +85,7 @@ export async function POST(request: Request) {
     });
     const existingKeys = new Set<string>();
     for (const intake of existingIntakes) {
-      existingKeys.add(
-        buildDuplicateKey(intake.universityId, intake.courseId, String(intake.intakeYear), intake.intakeMonth)
-      );
+      existingKeys.add(intakeDuplicateKey(intake.universityId, intake.courseId, String(intake.intakeYear), intake.intakeMonth));
     }
 
     const csvKeys = new Set<string>();
@@ -66,11 +95,16 @@ export async function POST(request: Request) {
       const rowNumber = i + 1;
       const uid = getVal(row, 'university_id');
       const cid = getVal(row, 'course_id');
+      const intakeYearText = getVal(row, 'intake_year');
       const iyear = getNum(row, 'intake_year');
       const imonth = getVal(row, 'intake_month');
+      const hasCourse = !!cid;
+      const hasIntake = hasCourse && !!intakeYearText && !!imonth;
 
-      // Duplicate check
-      const key = buildDuplicateKey(uid, cid, String(iyear), imonth);
+      // University-only and course-only rows have separate duplicate keys; neither fabricates an intake.
+      const key = !hasCourse
+        ? universityOnlyDuplicateKey(uid)
+        : hasIntake ? intakeDuplicateKey(uid, cid, intakeYearText, imonth) : courseOnlyDuplicateKey(uid, cid);
       if (existingKeys.has(key) || csvKeys.has(key)) {
         rowsDuplicate++;
         importErrors.push({
@@ -78,9 +112,9 @@ export async function POST(request: Request) {
           universityId: uid,
           courseId: cid,
           field: 'duplicate_key',
-          errorMessage: `Duplicate: ${uid}/${cid}/${iyear}/${imonth}`,
+          errorMessage: hasCourse ? `Duplicate: ${uid}/${cid}/${iyear}/${imonth}` : `Duplicate university candidate: ${uid}`,
           severity: 'error',
-          rowData: JSON.stringify(row),
+          rowData: JSON.stringify({ university_id: uid, course_id: cid, intake_year: intakeYearText, intake_month: imonth }).slice(0, 191),
         });
         continue;
       }
@@ -95,13 +129,15 @@ export async function POST(request: Request) {
 
         // An import is never verification. Do not overwrite approved/public rows;
         // those require the existing reviewed update workflow.
-        const existingCourse = await tx.crmCourse.findFirst({ where: { universityId: uid, courseId: cid } });
-        if ([existingUni, existingCourse].some(record => record && (record.verificationStatus.toUpperCase().startsWith('VERIFIED') || record.publicationStatus.toUpperCase() === 'PUBLISHED'))) {
+        const existingCourse = hasCourse ? await tx.crmCourse.findFirst({ where: { universityId: uid, courseId: cid } }) : null;
+        const protectedUniversity = !!existingUni && (existingUni.verificationStatus.toUpperCase().startsWith('VERIFIED') || existingUni.publicationStatus.toUpperCase() === 'PUBLISHED');
+        const protectedCourse = !!existingCourse && (existingCourse.verificationStatus.toUpperCase().startsWith('VERIFIED') || existingCourse.publicationStatus.toUpperCase() === 'PUBLISHED');
+        if (protectedCourse) {
           throw new Error('Reviewed or published catalogue records require a reviewed update request, not bulk overwrite');
         }
         const uniStatus = 'draft';
 
-        if (existingUni) {
+        if (existingUni && !protectedUniversity) {
           const updated = await tx.crmUniversity.updateMany({
             where: { id: existingUni.id, updatedAt: existingUni.updatedAt, publicationStatus: { notIn: ['published', 'PUBLISHED'] }, verificationStatus: { notIn: ['VERIFIED', 'verified', 'VERIFIED_OFFICIAL'] } },
             data: {
@@ -117,9 +153,9 @@ export async function POST(request: Request) {
               ieltsMin: getNum(row, 'ielts_min', existingUni.ieltsMin),
               scholarships: getBool(row, 'scholarships', existingUni.scholarships),
               featured: getBool(row, 'featured', existingUni.featured),
-              website: getVal(row, 'website') || existingUni.website,
-              officialUrl: getVal(row, 'official_url') || existingUni.officialUrl,
-              sourceUrl: getVal(row, 'source_url') || existingUni.sourceUrl,
+              website: getVal(row, 'university_website') || getVal(row, 'website') || existingUni.website,
+              officialUrl: getVal(row, 'university_official_url') || getVal(row, 'official_url') || existingUni.officialUrl,
+              sourceUrl: getVal(row, 'university_source_url') || getVal(row, 'source_url') || existingUni.sourceUrl,
               lastVerifiedAt: '',
               verificationStatus: 'NEEDS_REVIEW',
               publicationStatus: 'draft',
@@ -128,7 +164,7 @@ export async function POST(request: Request) {
             },
           });
           if (updated.count !== 1) throw new Error('University changed during import; retry after review');
-        } else {
+        } else if (!existingUni) {
           await tx.crmUniversity.create({
             data: {
               universityId: uid,
@@ -144,15 +180,26 @@ export async function POST(request: Request) {
               ieltsMin: getNum(row, 'ielts_min'),
               scholarships: getBool(row, 'scholarships'),
               featured: getBool(row, 'featured'),
-              website: getVal(row, 'website'),
-              officialUrl: getVal(row, 'official_url'),
-              sourceUrl: getVal(row, 'source_url'),
+              website: getVal(row, 'university_website') || getVal(row, 'website'),
+              officialUrl: getVal(row, 'university_official_url') || getVal(row, 'official_url'),
+              sourceUrl: getVal(row, 'university_source_url') || getVal(row, 'source_url'),
               lastVerifiedAt: '',
               verificationStatus: 'NEEDS_REVIEW',
               publicationStatus: 'draft',
               status: uniStatus,
             },
           });
+        }
+
+        if (!hasCourse) {
+          await tx.portalAuditLog.create({ data: {
+            actorUserId: auth.actorUserId,
+            action: 'CATALOG_ROW_IMPORTED',
+            entityType: 'CrmUniversity',
+            entityId: uid,
+            metadata: JSON.stringify({ identityDomain: auth.identityDomain, effectiveUserId: auth.userId, batchId, universityId: uid, universityOnly: true, publicationStatus: 'draft' }),
+          } });
+          return;
         }
 
         // 2. Upsert Course
@@ -169,7 +216,9 @@ export async function POST(request: Request) {
               disciplineArea: getVal(row, 'discipline_area') || existingCourse.disciplineArea,
               durationMonths: getNum(row, 'duration_months', existingCourse.durationMonths),
               publicTags: getVal(row, 'public_tags') || existingCourse.publicTags,
-              sourceUrl: getVal(row, 'source_url') || existingCourse.sourceUrl,
+              officialUrl: getVal(row, 'course_official_url') || getVal(row, 'official_url') || existingCourse.officialUrl,
+              sourceUrl: getVal(row, 'course_source_url') || getVal(row, 'source_url') || existingCourse.sourceUrl,
+              internationalEligibility: getVal(row, 'international_eligibility').toLowerCase() || existingCourse.internationalEligibility,
               lastVerifiedAt: '',
               verificationStatus: 'NEEDS_REVIEW',
               publicationStatus: 'draft',
@@ -190,7 +239,9 @@ export async function POST(request: Request) {
               disciplineArea: getVal(row, 'discipline_area'),
               durationMonths: getNum(row, 'duration_months'),
               publicTags: getVal(row, 'public_tags'),
-              sourceUrl: getVal(row, 'source_url'),
+              officialUrl: getVal(row, 'course_official_url') || getVal(row, 'official_url'),
+              sourceUrl: getVal(row, 'course_source_url') || getVal(row, 'source_url'),
+              internationalEligibility: getVal(row, 'international_eligibility').toLowerCase() || 'not_verified',
               lastVerifiedAt: '',
               verificationStatus: 'NEEDS_REVIEW',
               publicationStatus: 'draft',
@@ -202,52 +253,61 @@ export async function POST(request: Request) {
         // Course writes above serialize this importer's duplicate check. Unique
         // universityId/courseId constraints reject concurrent creates. No retry
         // after ambiguous failures; row transaction rolls back before reporting.
-        const duplicateIntake = await tx.crmCourseIntakeFee.findFirst({ where: { universityId: uid, courseId: cid, intakeYear: iyear, intakeMonth: imonth }, select: { id: true } });
-        if (duplicateIntake) throw new Error('Intake already exists; not duplicated');
-        // 3. Create CourseIntakeFee
-        await tx.crmCourseIntakeFee.create({
-          data: {
-            universityId: uid,
-            courseId: cid,
-            intakeYear: iyear,
-            intakeMonth: imonth,
-            intakeName: getVal(row, 'intake_name'),
-            applicationDeadline: getVal(row, 'application_deadline'),
-            appFeeCurrency: getVal(row, 'app_fee_currency').toUpperCase(),
-            appFeeAmount: getNum(row, 'app_fee_amount'),
-            tuitionCurrency: getVal(row, 'tuition_currency').toUpperCase(),
-            yearlyTuition: getNum(row, 'yearly_tuition'),
-            totalTuition: getNum(row, 'total_tuition'),
-            depositCurrency: getVal(row, 'deposit_currency').toUpperCase(),
-            depositAmount: getNum(row, 'deposit_amount'),
-            batchId,
-            status: 'draft',
-            verificationStatus: 'NEEDS_REVIEW',
-          },
-        });
+        if (hasIntake) {
+          const duplicateIntake = await tx.crmCourseIntakeFee.findFirst({ where: { universityId: uid, courseId: cid, intakeYear: iyear, intakeMonth: imonth }, select: { id: true } });
+          if (duplicateIntake) throw new Error('Intake already exists; not duplicated');
+          // 3. Create CourseIntakeFee
+          await tx.crmCourseIntakeFee.create({
+            data: {
+              universityId: uid,
+              courseId: cid,
+              intakeYear: iyear,
+              intakeMonth: imonth,
+              intakeName: getVal(row, 'intake_name'),
+              applicationDeadline: getVal(row, 'application_deadline'),
+              appFeeCurrency: getVal(row, 'app_fee_currency').toUpperCase(),
+              appFeeAmount: getNum(row, 'app_fee_amount'),
+              tuitionCurrency: getVal(row, 'tuition_currency').toUpperCase(),
+              yearlyTuition: getNum(row, 'yearly_tuition'),
+              totalTuition: getNum(row, 'total_tuition'),
+              depositCurrency: getVal(row, 'deposit_currency').toUpperCase(),
+              depositAmount: getNum(row, 'deposit_amount'),
+              batchId,
+              status: 'draft',
+              verificationStatus: 'NEEDS_REVIEW',
+            },
+          });
+        }
 
-        // 4. Create CourseRequirement
-        await tx.crmCourseRequirement.create({
-          data: {
-            universityId: uid,
-            courseId: cid,
-            academicReq: getVal(row, 'academic_req'),
-            gradingSystem: getVal(row, 'grading_system'),
-            minScore: getVal(row, 'min_score'),
-            ieltsOverall: getNum(row, 'ielts_overall'),
-            ieltsMinBand: getNum(row, 'ielts_min_band'),
-            pteOverall: getNum(row, 'pte_overall'),
-            pteMinBand: getNum(row, 'pte_min_band'),
-            toeflOverall: getNum(row, 'toefl_overall'),
-            detOverall: getNum(row, 'det_overall'),
-            moiAccepted: getBool(row, 'moi_accepted'),
-            ownEnglishTest: false,
-            portfolioRequired: getBool(row, 'portfolio_required'),
-            interviewRequired: getBool(row, 'interview_required'),
-            batchId,
-            verificationStatus: 'NEEDS_REVIEW',
-          },
-        });
+        // Only create a requirements row when the import contains requirement facts.
+        const requirementFields = [
+          'academic_req', 'grading_system', 'min_score', 'ielts_overall', 'ielts_min_band',
+          'pte_overall', 'pte_min_band', 'toefl_overall', 'det_overall', 'moi_accepted',
+          'portfolio_required', 'interview_required',
+        ];
+        if (requirementFields.some((field) => getVal(row, field))) {
+          await tx.crmCourseRequirement.create({
+            data: {
+              universityId: uid,
+              courseId: cid,
+              academicReq: getVal(row, 'academic_req'),
+              gradingSystem: getVal(row, 'grading_system'),
+              minScore: getVal(row, 'min_score'),
+              ieltsOverall: getNum(row, 'ielts_overall'),
+              ieltsMinBand: getNum(row, 'ielts_min_band'),
+              pteOverall: getNum(row, 'pte_overall'),
+              pteMinBand: getNum(row, 'pte_min_band'),
+              toeflOverall: getNum(row, 'toefl_overall'),
+              detOverall: getNum(row, 'det_overall'),
+              moiAccepted: getBool(row, 'moi_accepted'),
+              ownEnglishTest: false,
+              portfolioRequired: getBool(row, 'portfolio_required'),
+              interviewRequired: getBool(row, 'interview_required'),
+              batchId,
+              verificationStatus: 'NEEDS_REVIEW',
+            },
+          });
+        }
 
         // 5. Create Scholarship if data provided
         const scholarshipName = getVal(row, 'scholarship_name');
@@ -268,7 +328,7 @@ export async function POST(request: Request) {
 
         // 6. Create Commission if internal data provided
         const internalExpected = getNum(row, 'internal_expected');
-        if (internalExpected > 0) {
+        if (hasIntake && internalExpected > 0) {
           await tx.crmCommission.create({
             data: {
               universityId: uid,
@@ -302,7 +362,7 @@ export async function POST(request: Request) {
           field: 'import',
           errorMessage: msg,
           severity: 'error',
-          rowData: JSON.stringify(row),
+          rowData: JSON.stringify({ university_id: uid, course_id: cid, intake_year: intakeYearText, intake_month: imonth }).slice(0, 191),
         });
       }
     }

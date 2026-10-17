@@ -23,7 +23,7 @@ import CountryDestinationPage from '@/app/destinations/[slug]/page';
 import CountryCoursesPage from '@/app/destinations/[slug]/courses/page';
 import CountryUniversitiesPage from '@/app/destinations/[slug]/universities/page';
 import CountryScholarshipsPage from '@/app/destinations/[slug]/scholarships/page';
-import { publicIntakeWhere, publicCourseWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
 
 const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
 

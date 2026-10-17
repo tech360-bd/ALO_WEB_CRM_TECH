@@ -17,7 +17,7 @@ vi.mock('@/lib/rate-limiter', () => ({ rateLimitMiddleware: () => null }));
 
 import { NextResponse } from 'next/server';
 import { POST } from '@/app/api/course-finder/eligibility-engine/route';
-import { publicIntakeWhere, publicCourseWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
 
 function course(overrides: Record<string, unknown> = {}) {
   return {

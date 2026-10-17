@@ -1,4 +1,4 @@
-// Course CSV Template - 50 columns
+// Combined university/course discovery template. Course and intake fields may be blank for university-only/course-only rows.
 export const COURSE_COLUMNS = [
   'university_id',
   'university_name',
@@ -13,10 +13,16 @@ export const COURSE_COLUMNS = [
   'scholarships',
   'featured',
   'website',
+  'university_website',
   'official_url',
+  'university_official_url',
   'source_url',
+  'university_source_url',
   'course_id',
   'course_title',
+  'course_official_url',
+  'course_source_url',
+  'international_eligibility',
   'study_level',
   'program_level',
   'subject_area',
@@ -97,15 +103,7 @@ export const NUMBER_FIELDS = [
   'internal_expected',
 ];
 export const DATE_FIELDS = ['application_deadline'];
-export const REQUIRED_FIELDS = [
-  'university_id',
-  'university_name',
-  'course_id',
-  'course_title',
-  'study_level',
-  'intake_year',
-  'intake_month',
-];
+export const REQUIRED_FIELDS = ['university_id', 'university_name'];
 
 // Simple CSV row parser that handles quoted fields
 export function parseCsvLine(line: string): string[] {

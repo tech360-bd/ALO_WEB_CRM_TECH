@@ -101,12 +101,17 @@ describe('public visibility predicates', () => {
     expect(JSON.stringify(publicCourseWhere())).not.toContain('NEEDS_REVIEW');
     expect(publicIntakeWhere()).toEqual({
       status: 'active',
-      verificationStatus: { in: ['VERIFIED', 'SCHEDULED'] },
+      verificationStatus: 'VERIFIED',
+      AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
     });
   });
 
-  it('keeps source-verified intake queries stricter than the public schedule', () => {
-    expect(publicVerifiedIntakeWhere()).toEqual({ status: 'active', verificationStatus: 'VERIFIED' });
+  it('requires source evidence for explicitly verified intake queries too', () => {
+    expect(publicVerifiedIntakeWhere()).toEqual({
+      status: 'active',
+      verificationStatus: 'VERIFIED',
+      AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
+    });
   });
 
   it('looks up a single course by exact identifier only (no fuzzy title match)', () => {

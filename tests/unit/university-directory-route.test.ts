@@ -28,7 +28,7 @@ describe('public university directory API', () => {
     const response = await GET(request);
 
     expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ success: true, total: 31, page: 2, totalPages: 3, limit: 12 });
+    expect(await response.json()).toMatchObject({ success: true, total: 31, page: 2, totalPages: 3, limit: 12, countries: ['United Kingdom'] });
     expect(mocks.universityFindMany).toHaveBeenCalledWith(expect.objectContaining({
       skip: 12,
       take: 12,

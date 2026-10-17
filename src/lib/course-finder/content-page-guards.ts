@@ -12,12 +12,14 @@
  *    NEEDS_REVIEW (and a PUBLISHED record to PENDING_REVIEW) instead of
  *    silently keeping, or refreshing, its verified state.
  *
- * NOTE: the Prisma schema defaults for CoursePage are
- * verificationStatus="VERIFIED" / approvalStatus="PUBLISHED". Schema changes
- * were not authorised in Phase 1, so every create path must set both values
- * explicitly. See AUDIT/catalogue-phase1-2026-10-12/.
+ * NOTE: the Prisma schema defaults for CoursePage remain
+ * verificationStatus="VERIFIED" / approvalStatus="PUBLISHED". Every create
+ * path must set both values explicitly. International eligibility defaults to
+ * `not_verified` and is a fact field, so edits to it downgrade verified pages.
+ * See AUDIT/catalogue-phase1-2026-10-12/.
  */
 import { isSyntheticHost } from './catalogue-import-service';
+import { INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES } from '@/lib/university-intake-window';
 
 export const UNVERIFIED = 'UNVERIFIED';
 export const NEEDS_REVIEW = 'NEEDS_REVIEW';
@@ -47,7 +49,7 @@ export function isAcceptableSourceUrl(raw: unknown): raw is string {
   return !isSyntheticHost(url.toString());
 }
 
-type FieldKind = 'string' | 'nullableString' | 'jsonList' | 'slug' | 'url';
+type FieldKind = 'string' | 'nullableString' | 'jsonList' | 'slug' | 'url' | 'internationalEligibility';
 
 /** Editable CoursePage content fields and how each is validated. */
 export const COURSE_PAGE_FIELDS: Record<string, FieldKind> = {
@@ -57,6 +59,7 @@ export const COURSE_PAGE_FIELDS: Record<string, FieldKind> = {
   countrySlug: 'slug',
   city: 'string',
   level: 'string',
+  internationalEligibility: 'internationalEligibility',
   subject: 'string',
   duration: 'string',
   intake: 'string',
@@ -75,7 +78,7 @@ export const COURSE_PAGE_FIELDS: Record<string, FieldKind> = {
 
 /** Fields whose change alters a factual claim (everything except presentation-only identity). */
 export const COURSE_PAGE_FACT_FIELDS = new Set([
-  'universitySlug', 'countrySlug', 'city', 'level', 'subject', 'duration', 'intake', 'tuition',
+  'universitySlug', 'countrySlug', 'city', 'level', 'internationalEligibility', 'subject', 'duration', 'intake', 'tuition',
   'scholarship', 'englishRequirement', 'academicRequirement', 'overview', 'modules',
   'careerOutcomes', 'documents', 'faqs', 'deadline', 'sourceUrl', 'name',
 ]);
@@ -121,6 +124,17 @@ export function sanitizeCoursePageFields(body: Record<string, unknown>): Sanitiz
         if (!isAcceptableSourceUrl(value)) return { ok: false, error: `${field} must be an https official source URL` };
         data[field] = (value as string).trim();
         break;
+      case 'internationalEligibility': {
+        if (typeof value !== 'string' || value.length > 100) {
+          return { ok: false, error: `${field} must be a supported eligibility status` };
+        }
+        const normalized = value.trim().toLowerCase();
+        if (!(INTERNATIONAL_ELIGIBILITY_REVIEW_VALUES as readonly string[]).includes(normalized)) {
+          return { ok: false, error: `${field} must be a supported eligibility status` };
+        }
+        data[field] = normalized;
+        break;
+      }
       case 'jsonList': {
         let list: unknown = value;
         if (typeof value === 'string') {

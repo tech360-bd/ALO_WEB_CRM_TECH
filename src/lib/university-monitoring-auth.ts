@@ -110,8 +110,8 @@ export type MonitoringAuthResult =
 
 /**
  * Super-Admin-only guard for privileged monitoring actions:
- * approve, reject, mark verified, request recheck, trigger a run,
- * register/modify sources, resolve conflicts, change frequency.
+ * approve or reject a detected change, request a recheck, trigger a run,
+ * register/modify sources, resolve conflicts, and change monitoring frequency.
  */
 export async function authorizeMonitoringAdmin(req: Request): Promise<MonitoringAuthResult> {
   const session = await resolveSession(req);
