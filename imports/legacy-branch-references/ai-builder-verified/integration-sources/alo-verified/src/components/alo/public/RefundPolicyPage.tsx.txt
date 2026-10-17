@@ -1,0 +1,249 @@
+'use client'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useAppStore } from '@/lib/store'
+import { ShieldCheck, Clock, FileText, CreditCard, AlertTriangle, Mail, Phone, ArrowRight } from 'lucide-react'
+
+const refundRules = [
+  {
+    service: 'Consultation Services',
+    icon: FileText,
+    color: '#0066CC',
+    rules: [
+      { condition: 'Cancellation 48+ hours before appointment', refund: '100%', processing: '5-7 business days' },
+      { condition: 'Cancellation 24-48 hours before appointment', refund: '50%', processing: '5-7 business days' },
+      { condition: 'Cancellation less than 24 hours before', refund: '0%', processing: 'N/A' },
+      { condition: 'No-show', refund: '0%', processing: 'N/A' },
+    ]
+  },
+  {
+    service: 'Application Processing',
+    icon: CreditCard,
+    color: '#F37021',
+    rules: [
+      { condition: 'Before application submission to university', refund: '80%', processing: '7-10 business days' },
+      { condition: 'After application submission, before decision', refund: '30%', processing: '14-21 business days' },
+      { condition: 'After university decision received', refund: '0%', processing: 'N/A' },
+      { condition: 'Visa refusal (with valid documentation)', refund: '50%', processing: '14-21 business days' },
+    ]
+  },
+  {
+    service: 'English Test Preparation',
+    icon: ShieldCheck,
+    color: '#FFB347',
+    rules: [
+      { condition: 'Before course start date', refund: '90%', processing: '5-7 business days' },
+      { condition: 'Within first week of course', refund: '60%', processing: '7-10 business days' },
+      { condition: 'After first week but before midpoint', refund: '30%', processing: '7-10 business days' },
+      { condition: 'After course midpoint', refund: '0%', processing: 'N/A' },
+    ]
+  },
+  {
+    service: 'Document Preparation & Translation',
+    icon: FileText,
+    color: '#1A2332',
+    rules: [
+      { condition: 'Before work commences', refund: '100%', processing: '5-7 business days' },
+      { condition: 'Work in progress', refund: '50%', processing: '7-10 business days' },
+      { condition: 'After delivery of documents', refund: '0%', processing: 'N/A' },
+    ]
+  },
+]
+
+export default function RefundPolicyPage() {
+  const { setCurrentView } = useAppStore()
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F9FC' }}>
+      {/* Header */}
+      <section className="py-16" style={{ background: 'linear-gradient(135deg, #1A2332 0%, #0066CC 100%)' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: 'rgba(243,112,33,0.2)' }}>
+            <ShieldCheck className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Refund Policy</h1>
+          <p className="text-blue-100 text-lg">Last updated: March 4, 2026</p>
+        </div>
+      </section>
+
+      {/* General Policy */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <h2 className="text-xl font-bold mb-4" style={{ color: '#1A2332' }}>General Refund Policy</h2>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                At ALO Education, we strive to provide the best service to our students. We understand that circumstances may change, and we have established this refund policy to ensure fairness and transparency in all refund-related matters.
+              </p>
+              <div className="space-y-3">
+                {[
+                  'All refund requests must be submitted in writing via email or through your student portal.',
+                  'Refunds are processed to the original payment method unless otherwise agreed.',
+                  'Processing times begin once the refund request is approved.',
+                  'Third-party fees (university application fees, visa fees, etc.) are non-refundable once paid to the respective institution.',
+                  'Any discounts or promotional offers may affect the refund amount.',
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3">
+                    <ArrowRight className="w-4 h-4 mt-1 shrink-0" style={{ color: '#F37021' }} />
+                    <p className="text-gray-600 text-sm">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Service-Specific Refund Rules */}
+      <section className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-8" style={{ color: '#1A2332' }}>Service-Specific Refund Rules</h2>
+
+          <div className="space-y-6">
+            {refundRules.map((service, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-3" style={{ backgroundColor: '#F7F9FC' }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: service.color + '20' }}>
+                      <service.icon className="w-5 h-5" style={{ color: service.color }} />
+                    </div>
+                    <CardTitle className="text-lg" style={{ color: '#1A2332' }}>{service.service}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b" style={{ borderColor: '#E5E7EB' }}>
+                          <th className="text-left py-2 pr-4 font-medium" style={{ color: '#1A2332' }}>Condition</th>
+                          <th className="text-center py-2 pr-4 font-medium" style={{ color: '#1A2332' }}>Refund %</th>
+                          <th className="text-center py-2 font-medium" style={{ color: '#1A2332' }}>Processing Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {service.rules.map((rule, j) => (
+                          <tr key={j} className="border-b last:border-0" style={{ borderColor: '#F3F4F6' }}>
+                            <td className="py-2 pr-4 text-gray-600">{rule.condition}</td>
+                            <td className="py-2 pr-4 text-center">
+                              <Badge className={rule.refund === '0%' ? '' : ''} style={{
+                                backgroundColor: rule.refund === '0%' ? '#EF4444' : rule.refund === '100%' ? '#22C55E' : '#F37021',
+                                color: 'white'
+                              }}>
+                                {rule.refund}
+                              </Badge>
+                            </td>
+                            <td className="py-2 text-center text-gray-600">{rule.processing}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Eligibility */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <h2 className="text-xl font-bold mb-4" style={{ color: '#1A2332' }}>Refund Eligibility</h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  { title: 'Eligible', items: ['Written request submitted within policy timeframe', 'Service not yet delivered or partially delivered', 'Valid reason with supporting documentation', 'Account in good standing'], color: '#22C55E' },
+                  { title: 'Not Eligible', items: ['Verbal-only refund requests', 'Services fully delivered and completed', 'University/visa fees paid to third parties', 'Violations of our terms of service'], color: '#EF4444' },
+                ].map((section, i) => (
+                  <div key={i} className="p-4 rounded-lg" style={{ backgroundColor: section.color + '10' }}>
+                    <h3 className="font-semibold mb-3" style={{ color: section.color }}>{section.title}</h3>
+                    <ul className="space-y-2">
+                      {section.items.map((item, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm text-gray-600">
+                          <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: section.color }} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* How to Request */}
+      <section className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <h2 className="text-xl font-bold mb-6" style={{ color: '#1A2332' }}>How to Request a Refund</h2>
+              <div className="space-y-4">
+                {[
+                  { step: 1, title: 'Submit Request', desc: 'Send a written refund request via email to billing@aloeducation.com or through your student portal. Include your student ID, service details, and reason for refund.' },
+                  { step: 2, title: 'Review Process', desc: 'Our team will review your request within 2-3 business days. We may request additional documentation to support your claim.' },
+                  { step: 3, title: 'Decision', desc: 'You will receive a written decision via email. If approved, the refund amount and processing timeline will be communicated.' },
+                  { step: 4, title: 'Refund Processing', desc: 'Approved refunds are processed within the specified timeline to your original payment method. Bank processing times may vary.' },
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-sm text-white" style={{ backgroundColor: '#F37021' }}>
+                      {step.step}
+                    </div>
+                    <div>
+                      <h3 className="font-medium" style={{ color: '#1A2332' }}>{step.title}</h3>
+                      <p className="text-gray-600 text-sm">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Dispute */}
+      <section className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card>
+            <CardContent className="p-6 md:p-8">
+              <div className="flex items-start gap-4">
+                <AlertTriangle className="w-6 h-6 shrink-0" style={{ color: '#F37021' }} />
+                <div>
+                  <h2 className="text-xl font-bold mb-2" style={{ color: '#1A2332' }}>Refund Disputes</h2>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    If you disagree with a refund decision, you may escalate the matter by contacting our management team at management@aloeducation.com within 14 days of receiving the decision. We will conduct an independent review and provide a final decision within 10 business days.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card style={{ backgroundColor: '#1A2332' }}>
+            <CardContent className="p-6 md:p-8 text-center">
+              <h2 className="text-xl font-bold text-white mb-4">Need Help With a Refund?</h2>
+              <p className="text-gray-300 mb-6">Our billing team is here to assist you with any refund-related queries.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button variant="outline" className="text-white border-white/30 hover:bg-white/10" onClick={() => setCurrentView('contact')}>
+                  <Mail className="w-4 h-4 mr-2" /> Contact Us
+                </Button>
+                <span className="text-gray-400">or</span>
+                <a href="mailto:billing@aloeducation.com" className="text-sm" style={{ color: '#FFB347' }}>
+                  billing@aloeducation.com
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    </div>
+  )
+}

@@ -8,14 +8,35 @@ Baseline main: `15001b4dd743b59614a45fb29f7d8b5387357b8f`.
 Remote inventory at audit: **61 heads including main; 60 non-main branches**.
 **56 non-main tips are ancestors of main; 4 are not.** An ancestry result means the commits are incorporated, not that every historic line remains unchanged or every feature is functional.
 
-## Integration decision
+## Final reconciliation requested by the user
+
+After reviewing the initial exclusions below, the user reiterated “please add all”.
+The consolidation candidate therefore includes **all 60 original non-main branch
+histories**, without activating unsafe legacy applications:
+
+- 56 were already ancestors of main.
+- 1 university-monitoring hardening branch is merged into the active application.
+- 3 legacy branches are preserved via `imports/legacy-branch-references/manifest.json`
+  and inert reference files. Their histories are reconciled with the current tree
+  after preservation, not used to replace the live app. This is explicitly an
+  archive-preserving `ours` reconciliation, **not a claim that every legacy feature
+  has been ported or certified**.
+
+The manifest inventories all 1,937 changed donor paths. Identical blobs refer to
+existing paths at pinned commit `809fd425cc8be33ff56ac26a1faa6e7e7cccbeb9`.
+Differing source is stored as non-executable `.txt`/`.asset` files with hashes.
+Potential credential-bearing lines are scrubbed. One process-id file and six
+private-storage files are inventoried but deliberately not republished.
+No branch is deleted or force-pushed. Main integration is through PR #14 after CI.
+
+## Initial review (before the user's all-branches confirmation)
 
 - `arena/bec1d052-alo-web-crm-tech` (`6b09c785fe63737ca9edff389520d302c8842fc8`): consolidate its university monitoring and verified-catalogue hardening into the current session branch, together with the CI fixes. Preserve current brand colours when resolving UniversityHub; keep the incoming source-evidence requirements and unrestricted-year international course pagination. Resolve test import-order conflicts and update the explicit intake-policy test. Fix the optional search-parameter inference error caught by TypeScript. This includes three additive/widening MySQL migrations; no live database migration was run locally.
 - `integration/ai-builder-full-20261013` (`9b99840ebcec2a0d67a0f89603b8db824bf9c217`): **not merged**. PR #7 was closed unmerged. Rechecked that this snapshot uses SQLite instead of the root MySQL datasource and lacks the root AI execution route's session guard. See `PR7-INTEGRATION-VERIFICATION-2026-10-14.md` and merged PR #9 for the prior manual reconciliation. A blanket merge would undo later safeguards.
 - `integration/ai-builder-alo-verified-20261013` (`5b27f58b68e34b73223b4a55107ffc7852a828f3`): **not merged**. Adds a separate 451-file application under `integration-sources/alo-verified`, not a patch to the root runtime. Only 60 donor blobs have byte-identical counterparts anywhere in baseline main; the remaining 391 are not proven equivalent. Needs an explicit archive-versus-feature-port decision and security/compatibility review, not an assumption that the name “verified” means validated.
 - `other-ai-builder-2026-09-13` (`b22a18ae282452049686c8f3251b7680c6cdb523`): **not merged**. Unrelated history; no merge base with main. Its 747-file tree includes the removed `alo-cpanel` PHP application. 424 blobs have identical counterparts in baseline main; 323 do not. Prior reports document selective integration of useful code. Do not force an unrelated-history merge into the live application.
 
-No branch was deleted, force-pushed, or marked merged using an `ours`-only history merge. The three deferred snapshots remain available on their original branches.
+These initial exclusions led to the explicit archive-preserving reconciliation described above. The donor branches remain available unchanged. The following baseline inventory is historical, not the final ancestry result.
 
 ## Local validation of the consolidated candidate
 

@@ -1,0 +1,148 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// GET /api/admin/scholarships/[id] — single scholarship with FAQs + relationships
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const role = (session.user as any).role;
+  if (role !== "SUPER_ADMIN" && role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN or ADMIN only" }, { status: 403 });
+  }
+
+  try {
+    const { id } = await params;
+    const scholarship = await db.scholarship.findUnique({
+      where: { id },
+      include: {
+        faqs: { orderBy: { sortOrder: "asc" } },
+        relationships: { orderBy: { sortOrder: "asc" } },
+        reverseRelationships: { orderBy: { sortOrder: "asc" } },
+      },
+    });
+    if (!scholarship) {
+      return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
+    }
+    return NextResponse.json({ scholarship });
+  } catch (err: any) {
+    console.error("[admin.scholarships.get] error:", err);
+    return NextResponse.json({ error: "Failed to fetch scholarship", detail: err.message }, { status: 500 });
+  }
+}
+
+// PATCH /api/admin/scholarships/[id] — update scholarship
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const role = (session.user as any).role;
+  const userId = (session.user as any).id;
+  if (role !== "SUPER_ADMIN" && role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN or ADMIN only" }, { status: 403 });
+  }
+
+  try {
+    const { id } = await params;
+    const existing = await db.scholarship.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
+    }
+
+    const body = await req.json();
+    const patch: any = { ...body };
+    delete patch.id;
+    delete patch.faqs;
+    delete patch.relationships;
+    delete patch.reverseRelationships;
+    delete patch.createdAt;
+    delete patch.updatedAt;
+
+    // Normalise JSON-encoded fields
+    if (patch.coverage && typeof patch.coverage !== "string") patch.coverage = JSON.stringify(patch.coverage);
+    if (patch.minimumRequirements && typeof patch.minimumRequirements !== "string") patch.minimumRequirements = JSON.stringify(patch.minimumRequirements);
+    if (patch.documentsRequired && typeof patch.documentsRequired !== "string") patch.documentsRequired = JSON.stringify(patch.documentsRequired);
+    if (patch.lastVerifiedAt) patch.lastVerifiedAt = new Date(patch.lastVerifiedAt);
+
+    if (patch.slug && patch.slug !== existing.slug) {
+      const clash = await db.scholarship.findUnique({ where: { slug: patch.slug } });
+      if (clash) return NextResponse.json({ error: "Slug already in use" }, { status: 409 });
+    }
+    if (patch.scholarshipCode && patch.scholarshipCode !== existing.scholarshipCode) {
+      const clash = await db.scholarship.findUnique({ where: { scholarshipCode: patch.scholarshipCode } });
+      if (clash) return NextResponse.json({ error: "Scholarship code already in use" }, { status: 409 });
+    }
+
+    const updated = await db.scholarship.update({
+      where: { id },
+      data: patch,
+      include: { faqs: { orderBy: { sortOrder: "asc" } } },
+    });
+
+    await db.auditLog.create({
+      data: {
+        userId,
+        action: "SCHOLARSHIP_UPDATE",
+        resource: "Scholarship",
+        resourceId: id,
+        details: JSON.stringify({ changes: Object.keys(patch) }),
+      },
+    }).catch(() => {});
+
+    return NextResponse.json({ scholarship: updated });
+  } catch (err: any) {
+    console.error("[admin.scholarships.update] error:", err);
+    return NextResponse.json({ error: "Failed to update scholarship", detail: err.message }, { status: 500 });
+  }
+}
+
+// DELETE /api/admin/scholarships/[id] — soft delete (set status to CLOSED)
+// Pass ?hard=1 to hard delete (cascades FAQs + relationships)
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const role = (session.user as any).role;
+  const userId = (session.user as any).id;
+  if (role !== "SUPER_ADMIN" && role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden — SUPER_ADMIN or ADMIN only" }, { status: 403 });
+  }
+
+  try {
+    const { id } = await params;
+    const hard = req.nextUrl.searchParams.get("hard") === "1";
+    const existing = await db.scholarship.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
+    }
+
+    if (hard) {
+      await db.scholarship.delete({ where: { id } });
+    } else {
+      await db.scholarship.update({ where: { id }, data: { status: "CLOSED" } });
+    }
+
+    await db.auditLog.create({
+      data: {
+        userId,
+        action: hard ? "SCHOLARSHIP_DELETE" : "SCHOLARSHIP_CLOSE",
+        resource: "Scholarship",
+        resourceId: id,
+        details: JSON.stringify({ slug: existing.slug, hard }),
+      },
+    }).catch(() => {});
+
+    return NextResponse.json({ success: true, id, hard });
+  } catch (err: any) {
+    console.error("[admin.scholarships.delete] error:", err);
+    return NextResponse.json({ error: "Failed to delete scholarship", detail: err.message }, { status: 500 });
+  }
+}

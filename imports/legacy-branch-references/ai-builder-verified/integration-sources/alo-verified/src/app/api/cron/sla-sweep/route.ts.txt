@@ -1,0 +1,32 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { logAudit } from '@/lib/audit';
+
+export async function POST(request: NextRequest) {
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+  try {
+    const config = await db.slaConfig.findFirst({ where: { active: true } });
+    if (!config) return NextResponse.json({ message: 'No SLA config' });
+    const escalations = await db.slaEscalation.findMany({ where: { resolvedAt: null } });
+    let escalated = 0;
+    for (const e of escalations) {
+      const minutesSince = (Date.now() - e.createdAt.getTime()) / 60000;
+      let newLevel = e.currentLevel;
+      if (minutesSince > config.firstReminderMinutes && e.currentLevel < 1) newLevel = 1;
+      else if (minutesSince > (config.firstReminderMinutes + config.secondReminderMinutes) && e.currentLevel < 2) newLevel = 2;
+      else if (minutesSince > (config.firstReminderMinutes + config.secondReminderMinutes + config.finalReminderMinutes) && e.currentLevel < 3) newLevel = 3;
+      if (newLevel > e.currentLevel) {
+        await db.slaEscalation.update({ where: { id: e.id }, data: { currentLevel: newLevel } });
+        await logAudit({ action: `whatsapp.sla.escalation_${newLevel}`, module: 'whatsapp', recordId: e.id, newData: { channel: e.channel, level: newLevel } });
+        escalated++;
+      }
+    }
+    return NextResponse.json({ processed: escalations.length, escalated, timestamp: new Date().toISOString() });
+  } catch (error) {
+    console.error('SLA sweep error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

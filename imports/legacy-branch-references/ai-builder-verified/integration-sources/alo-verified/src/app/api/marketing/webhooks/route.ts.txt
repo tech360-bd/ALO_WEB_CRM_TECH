@@ -1,0 +1,310 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { requireMarketingManager } from '@/lib/auth-rbac';
+import { logAudit, logAutomationRun } from '@/lib/audit';
+
+/**
+ * n8n webhook manager.
+ * - GET: any marketing access.
+ * - POST/PUT/DELETE: marketing_manager / super_admin.
+ * - `trigger` action ACTUALLY fires `fetch(webhook.webhookUrl, ...)`.
+ */
+export async function GET(request: NextRequest) {
+  try {
+    // GET is read-only — allow any marketing access
+    const { requireMarketingAccess } = await import('@/lib/auth-rbac');
+    const authOrResponse = await requireMarketingAccess(request);
+    if (authOrResponse instanceof NextResponse) return authOrResponse;
+
+    const webhooks = await db.n8nWebhook.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return NextResponse.json({ webhooks });
+  } catch (error) {
+    console.error('Webhooks GET error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const authOrResponse = await requireMarketingManager(request);
+    if (authOrResponse instanceof NextResponse) return authOrResponse;
+    const auth = authOrResponse;
+
+    const body = await request.json();
+    const { action } = body;
+
+    if (action === 'trigger') {
+      const { id, triggerEvent, workflowType, payload } = body;
+      if (!id) {
+        return NextResponse.json({ error: 'id is required' }, { status: 400 });
+      }
+
+      const webhook = await db.n8nWebhook.findUnique({ where: { id } });
+      if (!webhook) {
+        return NextResponse.json({ error: 'Webhook not found' }, { status: 404 });
+      }
+      if (!webhook.isActive) {
+        return NextResponse.json(
+          { error: 'Webhook is not active' },
+          { status: 400 }
+        );
+      }
+      if (!webhook.webhookUrl) {
+        return NextResponse.json(
+          { error: 'Webhook has no URL configured' },
+          { status: 400 }
+        );
+      }
+
+      const type = workflowType || webhook.workflowType;
+      const event = triggerEvent || `manual_trigger_${type}`;
+      const startedAt = Date.now();
+
+      // ACTUALLY fire the webhook
+      let responseStatus: number | null = null;
+      let responseOk = false;
+      let responseBody = '';
+      let failureMessage: string | null = null;
+
+      try {
+        const res = await fetch(webhook.webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+              : {}),
+          },
+          body: JSON.stringify({
+            workflowType: type,
+            triggerEvent: event,
+            timestamp: new Date().toISOString(),
+            payload: payload || null,
+            triggeredBy: auth.user.id,
+          }),
+          signal: AbortSignal.timeout(15000),
+        });
+        responseStatus = res.status;
+        responseOk = res.ok;
+        responseBody = await res.text().catch(() => '');
+      } catch (fetchErr) {
+        failureMessage =
+          fetchErr instanceof Error ? fetchErr.message : String(fetchErr);
+      }
+
+      const executionMs = Date.now() - startedAt;
+
+      if (responseOk) {
+        // Success: bump counters + lastTriggeredAt
+        const updated = await db.n8nWebhook.update({
+          where: { id },
+          data: {
+            lastTriggeredAt: new Date(),
+            triggerCount: { increment: 1 },
+          },
+        });
+
+        await logAutomationRun({
+          ruleName: webhook.name,
+          triggerEvent: event,
+          entityType: 'n8n_webhook',
+          entityId: webhook.id,
+          status: 'success',
+          message: `Webhook ${webhook.name} triggered — HTTP ${responseStatus}`,
+          executionMs,
+        });
+
+        await logAudit({
+          userId: auth.user.id,
+          action: 'n8n.workflow_triggered',
+          module: 'marketing',
+          recordId: webhook.id,
+          newData: {
+            webhookId: webhook.id,
+            workflowType: type,
+            triggerEvent: event,
+            httpStatus: responseStatus,
+            executionMs,
+          },
+          ip: request.headers.get('x-forwarded-for') || undefined,
+          userAgent: request.headers.get('user-agent') || undefined,
+        });
+
+        return NextResponse.json({
+          webhook: updated,
+          triggered: true,
+          httpStatus: responseStatus,
+          responseBody: responseBody.slice(0, 1000),
+          executionMs,
+        });
+      }
+
+      // Failure: bump failureCount on WebhookEndpoint if registered; log failure
+      // Also try to bump on N8nWebhook — but schema has no failureCount column.
+      // We rely on AutomationRunLog + WebhookEndpoint registry for failure counts.
+      if (webhook.workflowType) {
+        await db.webhookEndpoint
+          .updateMany({
+            where: { name: webhook.name, source: 'n8n' },
+            data: {
+              failureCount: { increment: 1 },
+              lastTriggeredAt: new Date(),
+            },
+          })
+          .catch(() => {});
+      }
+
+      await logAutomationRun({
+        ruleName: webhook.name,
+        triggerEvent: event,
+        entityType: 'n8n_webhook',
+        entityId: webhook.id,
+        status: 'failed',
+        message: failureMessage
+          ? `Webhook fetch failed: ${failureMessage}`
+          : `Webhook returned non-OK HTTP ${responseStatus}`,
+        executionMs,
+      });
+
+      await logAudit({
+        userId: auth.user.id,
+        action: 'n8n.workflow_trigger_failed',
+        module: 'marketing',
+        recordId: webhook.id,
+        newData: {
+          webhookId: webhook.id,
+          workflowType: type,
+          triggerEvent: event,
+          httpStatus: responseStatus,
+          failureMessage,
+          executionMs,
+        },
+        ip: request.headers.get('x-forwarded-for') || undefined,
+        userAgent: request.headers.get('user-agent') || undefined,
+      });
+
+      return NextResponse.json(
+        {
+          webhook,
+          triggered: false,
+          httpStatus: responseStatus,
+          failureMessage,
+          executionMs,
+        },
+        { status: 502 }
+      );
+    }
+
+    // Create webhook
+    if (!body.name || !body.workflowType) {
+      return NextResponse.json(
+        { error: 'name and workflowType are required' },
+        { status: 400 }
+      );
+    }
+    const webhook = await db.n8nWebhook.create({
+      data: {
+        name: body.name,
+        webhookUrl: body.webhookUrl || null,
+[REDACTED: potential embedded credential in legacy reference]
+        workflowType: body.workflowType,
+        isActive: body.isActive !== false,
+        createdBy: auth.user.id,
+      },
+    });
+
+    await logAudit({
+      userId: auth.user.id,
+      action: 'n8n.webhook_created',
+      module: 'marketing',
+      recordId: webhook.id,
+      newData: webhook,
+      ip: request.headers.get('x-forwarded-for') || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+    });
+
+    return NextResponse.json({ webhook }, { status: 201 });
+  } catch (error) {
+    console.error('Webhooks POST error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const authOrResponse = await requireMarketingManager(request);
+    if (authOrResponse instanceof NextResponse) return authOrResponse;
+    const auth = authOrResponse;
+
+    const body = await request.json();
+    const { id, ...updateData } = body;
+    if (!id) {
+      return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    }
+
+    const existing = await db.n8nWebhook.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Webhook not found' }, { status: 404 });
+    }
+
+    const webhook = await db.n8nWebhook.update({
+      where: { id },
+      data: updateData,
+    });
+
+    await logAudit({
+      userId: auth.user.id,
+      action: 'n8n.webhook_updated',
+      module: 'marketing',
+      recordId: webhook.id,
+      oldData: existing,
+      newData: webhook,
+      ip: request.headers.get('x-forwarded-for') || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+    });
+
+    return NextResponse.json({ webhook });
+  } catch (error) {
+    console.error('Webhooks PUT error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const authOrResponse = await requireMarketingManager(request);
+    if (authOrResponse instanceof NextResponse) return authOrResponse;
+    const auth = authOrResponse;
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'id is required' }, { status: 400 });
+    }
+
+    const existing = await db.n8nWebhook.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Webhook not found' }, { status: 404 });
+    }
+
+    await db.n8nWebhook.delete({ where: { id } });
+
+    await logAudit({
+      userId: auth.user.id,
+      action: 'n8n.webhook_deleted',
+      module: 'marketing',
+      recordId: id,
+      oldData: existing,
+      ip: request.headers.get('x-forwarded-for') || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+    });
+
+    return NextResponse.json({ deleted: true, id });
+  } catch (error) {
+    console.error('Webhooks DELETE error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

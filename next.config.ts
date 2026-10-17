@@ -4,6 +4,10 @@ import path from "path";
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname),
+  // Legacy branch variants are inert review material, never deployable runtime.
+  outputFileTracingExcludes: {
+    '*': ['./imports/legacy-branch-references/**/*'],
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   // Dev-only origin allowlist. Next.js refuses HMR and dev-chunk requests from

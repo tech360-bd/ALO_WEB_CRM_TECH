@@ -1,0 +1,178 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+[REDACTED: potential embedded credential in legacy reference]
+import { logAudit } from '@/lib/audit';
+import crypto from 'crypto';
+
+// ============================================================
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+// Public — accepts the signed reset token (from /verify-otp) +
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+// ============================================================
+
+// ----------------------------------------------------------
+[REDACTED: potential embedded credential in legacy reference]
+// ----------------------------------------------------------
+export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for') || undefined;
+  const userAgent = request.headers.get('user-agent') || undefined;
+
+  try {
+    const body = await request.json().catch(() => ({}));
+[REDACTED: potential embedded credential in legacy reference]
+      userId?: string;
+      resetToken?: string;
+[REDACTED: potential embedded credential in legacy reference]
+    };
+
+[REDACTED: potential embedded credential in legacy reference]
+      return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+        { status: 400 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+    if (pwdError) {
+      return NextResponse.json({ error: pwdError }, { status: 400 });
+    }
+
+    // Verify the reset-token signature.
+    const parsed = parseResetToken(resetToken);
+    if (!parsed || parsed.userId !== userId) {
+      return NextResponse.json(
+        { error: 'Invalid or expired reset token' },
+        { status: 400 }
+      );
+    }
+
+    const expectedSig = signResetToken(parsed.userId, parsed.expiresAtMs);
+    if (!safeEqualHex(expectedSig, parsed.signature)) {
+      return NextResponse.json(
+        { error: 'Invalid or expired reset token' },
+        { status: 400 }
+      );
+    }
+
+    if (Date.now() >= parsed.expiresAtMs) {
+      return NextResponse.json(
+        { error: 'Invalid or expired reset token' },
+        { status: 400 }
+      );
+    }
+
+    // Confirm the user still exists.
+    const user = await db.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Invalid or expired reset token' },
+        { status: 400 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+      },
+    });
+
+[REDACTED: potential embedded credential in legacy reference]
+    await db.otpVerification.deleteMany({
+[REDACTED: potential embedded credential in legacy reference]
+    }).catch(() => {
+      // Non-critical — best-effort cleanup.
+    });
+
+    // Force re-login everywhere by deleting all sessions for this user.
+    await db.userSession.deleteMany({ where: { userId: user.id } }).catch(() => {
+      // Non-critical — best-effort cleanup.
+    });
+
+    await logAudit({
+      userId: user.id,
+[REDACTED: potential embedded credential in legacy reference]
+      module: 'auth',
+      ip,
+      userAgent,
+    });
+
+    return NextResponse.json({
+      success: true,
+[REDACTED: potential embedded credential in legacy reference]
+    });
+  } catch (error) {
+[REDACTED: potential embedded credential in legacy reference]
+    return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+      { status: 500 }
+    );
+  }
+}
+
+// ----------------------------------------------------------
+[REDACTED: potential embedded credential in legacy reference]
+// min 8 chars, at least 1 letter + 1 number
+// ----------------------------------------------------------
+[REDACTED: potential embedded credential in legacy reference]
+  if (typeof pwd !== 'string' || pwd.length < 8) {
+[REDACTED: potential embedded credential in legacy reference]
+  }
+  if (!/[a-zA-Z]/.test(pwd)) {
+[REDACTED: potential embedded credential in legacy reference]
+  }
+  if (!/[0-9]/.test(pwd)) {
+[REDACTED: potential embedded credential in legacy reference]
+  }
+  return null;
+}
+
+// ----------------------------------------------------------
+// Helper: parse `<userId>.<expiresAtMs>.<signature>` token
+// ----------------------------------------------------------
+function parseResetToken(
+  token: string
+): { userId: string; expiresAtMs: number; signature: string } | null {
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [userId, expiresAtStr, signature] = parts;
+  if (!userId || !expiresAtStr || !signature) return null;
+  const expiresAtMs = Number(expiresAtStr);
+  if (!Number.isFinite(expiresAtMs)) return null;
+  return { userId, expiresAtMs, signature };
+}
+
+// ----------------------------------------------------------
+[REDACTED: potential embedded credential in legacy reference]
+// (Mirrors the signer in /verify-otp — must stay in sync.)
+// ----------------------------------------------------------
+function signResetToken(userId: string, expiresAtMs: number): string {
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+    throw new Error(
+[REDACTED: potential embedded credential in legacy reference]
+    );
+  }
+  return crypto
+[REDACTED: potential embedded credential in legacy reference]
+    .update(`${userId}:${expiresAtMs}`)
+    .digest('hex');
+}
+
+// ----------------------------------------------------------
+// Helper: timing-safe hex string comparison
+// ----------------------------------------------------------
+function safeEqualHex(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(a, 'hex'), Buffer.from(b, 'hex'));
+  } catch {
+    return false;
+  }
+}

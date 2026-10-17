@@ -1,0 +1,124 @@
+<?php
+/**
+ * Users — Edit endpoint (POST)
+ *
+ * Updates a user's profile (name, email, role, status) without touching the
+[REDACTED: potential embedded credential in legacy reference]
+ */
+declare(strict_types=1);
+
+require_once __DIR__ . '/../app/bootstrap.php';
+require_login();
+require_permission('users.edit');
+
+$pdo = db();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    flash('error', 'Invalid request.');
+    redirect('users/index.php');
+}
+
+$id     = (int) ($_POST['id'] ?? 0);
+$name   = trim((string) ($_POST['name'] ?? ''));
+$email  = strtolower(trim((string) ($_POST['email'] ?? '')));
+$role   = trim((string) ($_POST['role'] ?? 'counselor'));
+$phone  = trim((string) ($_POST['phone'] ?? ''));
+$status = trim((string) ($_POST['status'] ?? 'active'));
+
+$allowedRoles    = ['super_admin','admin','manager','counselor','marketing','finance','documentation','agent','student'];
+$allowedStatuses = ['active','inactive','suspended'];
+
+if ($id <= 0) {
+    flash('error', 'Invalid user ID.');
+    redirect('users/index.php');
+}
+
+$errors = [];
+if (!validate_required($name)) $errors[] = 'Name is required.';
+elseif (!validate_max($name, 150)) $errors[] = 'Name must be 150 characters or fewer.';
+if (!validate_email($email)) $errors[] = 'A valid email is required.';
+if (!in_array($role, $allowedRoles, true)) $errors[] = 'Invalid role.';
+if (!in_array($status, $allowedStatuses, true)) $errors[] = 'Invalid status.';
+if ($phone !== '' && !validate_phone($phone)) $errors[] = 'Phone is invalid.';
+
+/* Fetch existing user */
+$stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
+$stmt->execute([':id' => $id]);
+$user = $stmt->fetch();
+if (!$user) {
+    flash('error', 'User not found.');
+    redirect('users/index.php');
+}
+$user = is_array($user) ? $user : [];
+
+/* Email uniqueness (excluding self) */
+if (!$errors) {
+    $chk = $pdo->prepare('SELECT id FROM users WHERE email = :email AND id != :id');
+    $chk->execute([':email' => $email, ':id' => $id]);
+    if ($chk->fetch()) {
+        $errors[] = 'A user with this email already exists.';
+    }
+}
+
+/* Prevent last super_admin from being demoted */
+if (!$errors && $user['role'] === 'super_admin' && $role !== 'super_admin') {
+    $cnt = $pdo->query("SELECT COUNT(*) FROM users WHERE role='super_admin' AND status='active'")->fetchColumn();
+    if ((int) $cnt <= 1) {
+        $errors[] = 'Cannot demote the last active super_admin.';
+    }
+}
+
+if ($errors) {
+    flash('error', implode(' ', $errors));
+    redirect('users/index.php');
+}
+
+$phoneVal = $phone !== '' ? $phone : null;
+
+try {
+    $pdo->beginTransaction();
+    $stmt = $pdo->prepare(
+        'UPDATE users
+            SET name    = :name,
+                email    = :email,
+                role     = :role,
+                phone    = :phone,
+                status   = :status,
+                updated_at = NOW()
+          WHERE id = :id'
+    );
+    $stmt->bindParam(':id',    $id, PDO::PARAM_INT);
+    $stmt->bindParam(':name',   $name);
+    $stmt->bindParam(':email',   $email);
+    $stmt->bindParam(':role',    $role);
+    $stmt->bindParam(':phone',   $phoneVal);
+    $stmt->bindParam(':status',  $status);
+    $stmt->execute();
+
+    /* Activity log */
+    $act = $pdo->prepare(
+        'INSERT INTO activities
+            (user_id, crm_id, type, description, created_at)
+         VALUES (:uid, NULL, :type, :desc, NOW())'
+    );
+    $userId = (int) ($_SESSION['user_id'] ?? 0);
+    $type = 'user_updated';
+    $desc = 'User updated: ' . $name . ' (' . $email . ') — role ' . $role . ', status ' . $status;
+    $act->bindParam(':uid',  $userId, PDO::PARAM_INT);
+    $act->bindParam(':type', $type);
+    $act->bindParam(':desc', $desc);
+    $act->execute();
+
+    $pdo->commit();
+
+    log_audit('update', 'users', $id, $user, [
+        'name' => $name, 'email' => $email, 'role' => $role, 'status' => $status,
+    ]);
+
+    flash('success', 'User updated.');
+} catch (Throwable $ex) {
+    try { $pdo->rollBack(); } catch (Throwable $e) {}
+    flash('error', 'Failed to update user: ' . $ex->getMessage());
+}
+
+redirect('users/index.php');

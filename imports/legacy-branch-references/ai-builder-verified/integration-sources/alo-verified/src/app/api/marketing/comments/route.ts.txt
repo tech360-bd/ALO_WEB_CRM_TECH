@@ -1,0 +1,243 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { requireMarketingAccess } from '@/lib/auth-rbac';
+import { logAudit } from '@/lib/audit';
+
+[REDACTED: potential embedded credential in legacy reference]
+
+/**
+ * Social media comments — auto-reply, DM, lead capture pipeline.
+ *
+ * GET: marketing access only.
+ * POST: called by the Meta/WhatsApp webhook handler — must present a valid
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const authOrResponse = await requireMarketingAccess(request);
+    if (authOrResponse instanceof NextResponse) return authOrResponse;
+
+    const { searchParams } = new URL(request.url);
+    const platform = searchParams.get('platform');
+    const status = searchParams.get('status');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '50');
+
+    const where: Record<string, unknown> = {};
+    if (platform) where.platform = platform;
+    if (status) where.status = status;
+
+    const skip = (page - 1) * limit;
+    const [comments, total, convertedCount] = await Promise.all([
+      db.socialComment.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { receivedAt: 'desc' },
+      }),
+      db.socialComment.count({ where }),
+      db.socialComment.count({ where: { status: 'converted' } }),
+    ]);
+    return NextResponse.json({
+      comments,
+      convertedCount,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error('Social comments GET error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+
+    let authUserId: string | undefined = undefined;
+
+[REDACTED: potential embedded credential in legacy reference]
+      // Require marketing access
+      const authOrResponse = await requireMarketingAccess(request);
+      if (authOrResponse instanceof NextResponse) return authOrResponse;
+      authUserId = authOrResponse.user.id;
+    }
+
+    const body = await request.json();
+    // Inbound comment received from webhook
+    if (!body.platform || !body.commentText) {
+      return NextResponse.json(
+        { error: 'platform and commentText are required' },
+        { status: 400 }
+      );
+    }
+
+    // 1. Match keyword
+    const triggers = await db.keywordTrigger.findMany({
+      where: {
+        status: 'active',
+        OR: [{ platform: 'all' }, { platform: body.platform }],
+      },
+    });
+    const lowerText = (body.commentText || '').toLowerCase();
+    const matched = triggers.find((t) =>
+      lowerText.includes(t.keyword.toLowerCase())
+    );
+
+    // FIX: dead ternary `matched ? 'new' : 'new'` → `matched ? 'new' : 'ignored'`
+    const comment = await db.socialComment.create({
+      data: {
+        platform: body.platform,
+        postId: body.postId || null,
+        postUrl: body.postUrl || null,
+        commenterId: body.commenterId || null,
+        commenterName: body.commenterName || null,
+        commenterAvatar: body.commenterAvatar || null,
+        commentText: body.commentText,
+        matchedKeyword: matched?.keyword || null,
+        autoReplySent: false,
+        dmSent: false,
+        status: matched ? 'new' : 'ignored',
+        receivedAt: new Date(),
+      },
+    });
+
+    let leadCreated = false;
+    let studentId: string | null = null;
+
+    // 2. Auto-reply + DM if matched
+    if (matched) {
+      await db.socialComment.update({
+        where: { id: comment.id },
+        data: {
+          autoReplySent: true,
+          autoReplyText: matched.autoReplyText,
+          dmSent: !!matched.autoDmText,
+        },
+      });
+      await db.keywordTrigger.update({
+        where: { id: matched.id },
+        data: { matchCount: { increment: 1 } },
+      });
+
+      await logAudit({
+        userId: authUserId,
+        action: 'comment_to_lead.auto_reply_sent',
+        module: 'marketing',
+        recordId: comment.id,
+        newData: {
+          platform: body.platform,
+          matchedKeyword: matched.keyword,
+          autoReplyText: matched.autoReplyText,
+          dmSent: !!matched.autoDmText,
+        },
+        ip: request.headers.get('x-forwarded-for') || undefined,
+        userAgent: request.headers.get('user-agent') || undefined,
+      });
+
+      // 3. Create CommentLead (dedupe by phone+email+socialId)
+      if (matched.createLead) {
+        const dedupeKey = `${body.commenterId || ''}|${body.phone || ''}|${body.email || ''}`;
+        const existingLead = await db.commentLead.findFirst({
+          where: { dedupeKey },
+        });
+        if (!existingLead) {
+          const commentLead = await db.commentLead.create({
+            data: {
+              source: `${body.platform}_comment`,
+              sourceId: comment.id,
+              name: body.commenterName || null,
+              phone: body.phone || null,
+              email: body.email || null,
+              socialId: body.commenterId || null,
+              message: body.commentText,
+              matchedKeyword: matched.keyword,
+              dedupeKey,
+              counselorId: matched.assignCounselorId || null,
+              status: 'new',
+            },
+          });
+          // Create Lead in CRM — generate deterministic leadId
+          const year = new Date().getFullYear();
+          const lastLead = await db.lead.findFirst({
+            where: { leadId: { startsWith: `LEAD-${year}` } },
+            orderBy: { leadId: 'desc' },
+            select: { leadId: true },
+          });
+          let nextNum = 1;
+          if (lastLead?.leadId) {
+            const parts = lastLead.leadId.split('-');
+            const lastNum = parseInt(parts[parts.length - 1], 10);
+            if (!isNaN(lastNum)) nextNum = lastNum + 1;
+          }
+          const leadIdStr = `LEAD-${year}${nextNum.toString().padStart(4, '0')}`;
+
+          const lead = await db.lead
+            .create({
+              data: {
+                leadId: leadIdStr,
+                firstName: body.commenterName || 'Social',
+                lastName: '',
+                email: body.email || null,
+                phone: body.phone || null,
+                source: `${body.platform}_comment`,
+                status: 'new',
+                assignedTo: matched.assignCounselorId || null,
+                notes: `Auto-captured from ${body.platform} comment. Keyword: ${matched.keyword}. Comment: ${body.commentText}`,
+              },
+            })
+            .catch(() => null);
+          if (lead) {
+            await db.commentLead.update({
+              where: { id: commentLead.id },
+              data: { leadId: lead.id },
+            });
+            await db.socialComment.update({
+              where: { id: comment.id },
+              data: { leadId: lead.id, status: 'replied' },
+            });
+            leadCreated = true;
+
+            await logAudit({
+              userId: authUserId,
+              action: 'comment_to_lead.lead_created',
+              module: 'marketing',
+              recordId: lead.id,
+              newData: {
+                leadId: lead.leadId,
+                platform: body.platform,
+                matchedKeyword: matched.keyword,
+                source: `${body.platform}_comment`,
+              },
+              ip: request.headers.get('x-forwarded-for') || undefined,
+              userAgent: request.headers.get('user-agent') || undefined,
+            });
+          }
+        } else {
+          // Duplicate — link to existing
+          await db.socialComment.update({
+            where: { id: comment.id },
+            data: { leadId: existingLead.leadId, status: 'replied' },
+          });
+        }
+      }
+    }
+
+    return NextResponse.json(
+      { comment, matched: !!matched, leadCreated, studentId },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Social comments POST error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

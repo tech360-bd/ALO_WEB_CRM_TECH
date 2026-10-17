@@ -1,0 +1,49 @@
+import { NextRequest, NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// POST /api/whatsapp/status
+// PUBLIC webhook — receives WhatsApp message status updates from Meta.
+[REDACTED: potential embedded credential in legacy reference]
+export async function POST(req: NextRequest) {
+  try {
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-hub-signature-256");
+
+    const { verifyWhatsAppSignature, parseWhatsAppStatus, persistWhatsAppStatus } =
+      await import("@/lib/whatsapp-cloud-api");
+
+    if (!verifyWhatsAppSignature(rawBody, signature)) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+
+    let payload: any;
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const parsed = parseWhatsAppStatus(payload);
+    if (!parsed || !parsed.messageId) {
+      // Not a status payload (no messageId) — accept silently
+      return NextResponse.json({ success: true, ignored: true });
+    }
+
+    const result = await persistWhatsAppStatus(
+      parsed.messageId || "",
+      parsed.status || "UNKNOWN",
+      parsed.recipientPhone || null,
+      parsed
+    ).then(() => true).catch((e: any) => {
+      console.error("[whatsapp/status] persist failed", e);
+      return false;
+    });
+
+    return NextResponse.json({ success: true, status: parsed, persisted: result });
+  } catch (err: any) {
+    console.error("[whatsapp/status] error", err);
+    return NextResponse.json({ error: err?.message || "Webhook processing failed" }, { status: 500 });
+  }
+}

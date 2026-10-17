@@ -1,0 +1,101 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+[REDACTED: potential embedded credential in legacy reference]
+import { requireAuth } from '@/lib/auth-rbac';
+import { logAudit } from '@/lib/audit';
+[REDACTED: potential embedded credential in legacy reference]
+
+// ============================================================
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+// ============================================================
+
+export async function POST(request: NextRequest) {
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  const ip = request.headers.get('x-forwarded-for') || undefined;
+  const userAgent = request.headers.get('user-agent') || undefined;
+
+  try {
+    const body = await request.json().catch(() => ({}));
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+    };
+
+[REDACTED: potential embedded credential in legacy reference]
+      return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+        { status: 400 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+      return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+        { status: 400 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+    if (pwdError) {
+      return NextResponse.json({ error: pwdError }, { status: 400 });
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+    const user = await db.user.findUnique({
+      where: { id: auth.user.id },
+[REDACTED: potential embedded credential in legacy reference]
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+    if (!matches) {
+      await logAudit({
+        userId: auth.user.id,
+[REDACTED: potential embedded credential in legacy reference]
+        module: 'auth',
+        ip,
+        userAgent,
+      });
+      return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+        { status: 400 }
+      );
+    }
+
+[REDACTED: potential embedded credential in legacy reference]
+    await db.user.update({
+      where: { id: auth.user.id },
+      data: {
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+      },
+    });
+
+    await logAudit({
+      userId: auth.user.id,
+[REDACTED: potential embedded credential in legacy reference]
+      module: 'auth',
+      ip,
+      userAgent,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+[REDACTED: potential embedded credential in legacy reference]
+    return NextResponse.json(
+[REDACTED: potential embedded credential in legacy reference]
+      { status: 500 }
+    );
+  }
+}

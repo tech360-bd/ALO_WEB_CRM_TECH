@@ -1,0 +1,149 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import { registerStudentAtomically } from "@/lib/student/canonical-student";
+
+// POST — Register a new user (student self-register, partner needs approval)
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+[REDACTED: potential embedded credential in legacy reference]
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+  }
+
+  // Role validation — students can self-register, partners need approval, employees cannot self-register
+  const allowedSelfRegisterRoles = ["STUDENT", "PARTNER"];
+  const userRole = role || "STUDENT";
+  if (!allowedSelfRegisterRoles.includes(userRole)) {
+    return NextResponse.json(
+      { error: "This role cannot self-register. Contact ALO Education." },
+      { status: 403 }
+    );
+  }
+
+  // ─── STUDENT: atomic User+Student creation via canonical-student service ───
+  if (userRole === "STUDENT") {
+    try {
+      const result = await registerStudentAtomically({
+        name,
+        email,
+        phone: phone ?? "N/A",
+[REDACTED: potential embedded credential in legacy reference]
+      });
+
+      // Generate OTP for email verification (6-digit code)
+      const otp = crypto.randomInt(100000, 999999).toString();
+      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+      // Store OTP in audit log (in production: send via email/SMS)
+      await db.auditLog.create({
+        data: {
+          userId: result.userId,
+          action: "DATA_IMPORT",
+          resource: "User",
+          resourceId: result.userId,
+          details: JSON.stringify({
+            otp,
+            otpExpiry,
+            type: "email_verification",
+            studentId: result.studentId,
+            studentCode: result.studentCode,
+          }),
+        },
+      });
+
+      return NextResponse.json({
+        user: {
+          id: result.userId,
+          email: result.email,
+          name: result.fullName,
+          role: "STUDENT",
+          status: "ACTIVE",
+          studentId: result.studentId,
+          studentCode: result.studentCode,
+        },
+        otp: process.env.NODE_ENV === "development" ? otp : undefined, // Only return OTP in dev
+        message:
+          "Registration successful. Please verify your email with the OTP sent to your email address.",
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Registration failed";
+      // Detect duplicate email error to return 400 (not 500)
+      if (message.toLowerCase().includes("already exists")) {
+        return NextResponse.json({ error: message }, { status: 400 });
+      }
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
+
+  // ─── PARTNER: unchanged — pending approval workflow ───
+  // Check if email already exists
+  const existing = await db.user.findUnique({ where: { email: email.toLowerCase() } });
+  if (existing) {
+    return NextResponse.json(
+      { error: "An account with this email already exists" },
+      { status: 400 }
+    );
+  }
+
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+
+  // Create user (PENDING status for partner approval)
+  const user = await db.user.create({
+    data: {
+      email: email.toLowerCase(),
+      name,
+      phone,
+[REDACTED: potential embedded credential in legacy reference]
+      role: userRole,
+      status: "PENDING",
+      mustChangePwd: false,
+      permissions: JSON.stringify([]),
+    },
+  });
+
+  // Generate OTP for email verification (6-digit code)
+  const otp = crypto.randomInt(100000, 999999).toString();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  // Store OTP in audit log
+  await db.auditLog.create({
+    data: {
+      userId: user.id,
+      action: "DATA_IMPORT",
+      resource: "User",
+      resourceId: user.id,
+      details: JSON.stringify({ otp, otpExpiry, type: "email_verification" }),
+    },
+  });
+
+  // Notify ALO Super Admin of pending partner approval
+  await db.auditLog.create({
+    data: {
+      action: "DATA_IMPORT",
+      resource: "User",
+      resourceId: user.id,
+      details: JSON.stringify({
+        type: "partner_registration_pending",
+        email,
+        name,
+      }),
+    },
+  });
+
+  return NextResponse.json({
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      status: user.status,
+    },
+    otp: process.env.NODE_ENV === "development" ? otp : undefined,
+    message:
+      "Registration submitted. Your partner account is pending ALO Education approval. You will receive an email once approved.",
+  });
+}

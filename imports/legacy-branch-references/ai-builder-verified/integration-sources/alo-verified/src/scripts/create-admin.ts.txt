@@ -1,0 +1,56 @@
+/**
+ * Create the first super_admin user for a fresh production database.
+ *
+ * Usage:
+ *   bun run src/scripts/create-admin.ts
+ *
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+ */
+import { db } from '../lib/db';
+[REDACTED: potential embedded credential in legacy reference]
+
+async function main() {
+  const email = process.env.ADMIN_EMAIL || 'admin@aloeducation.com';
+[REDACTED: potential embedded credential in legacy reference]
+[REDACTED: potential embedded credential in legacy reference]
+  })();
+
+  console.log(`Creating/Updating super_admin: ${email}`);
+
+[REDACTED: potential embedded credential in legacy reference]
+
+  // Upsert user
+  const user = await db.user.upsert({
+    where: { email },
+[REDACTED: potential embedded credential in legacy reference]
+    create: {
+      email,
+[REDACTED: potential embedded credential in legacy reference]
+      name: 'Super Admin',
+      userType: 'employee',
+      status: 'active',
+[REDACTED: potential embedded credential in legacy reference]
+    },
+  });
+
+  // Ensure super_admin role exists
+  const role = await db.role.upsert({
+    where: { name: 'super_admin' },
+    update: {},
+    create: { name: 'super_admin', displayName: 'Super Admin', description: 'Full system access' },
+  });
+
+  // Assign role
+  await db.userRole.upsert({
+    where: { userId_roleId: { userId: user.id, roleId: role.id } },
+    update: {},
+    create: { userId: user.id, roleId: role.id },
+  });
+
+  console.log(`✅ Super admin ready: ${email} (id: ${user.id})`);
+[REDACTED: potential embedded credential in legacy reference]
+  await db.$disconnect();
+}
+
+main().catch((e) => { console.error(e); process.exit(1); });
