@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
-import { EXCLUDED_PROVIDERS } from '@/lib/ai-providers/catalog';
+import { EXCLUDED_PROVIDERS, FREE_TIER_CLAIMS_SOURCE } from '@/lib/ai-providers/catalog';
 import { listProviderStatus } from '@/lib/ai-providers/resolve';
 
 // ============================================================
@@ -35,5 +35,8 @@ export const GET = withAuth(async () => {
     onboardingNote:
       'Set the listed environment variable on the server to connect a provider. ' +
       'No API key is ever accepted through this API.',
+    // Surfaced so no UI can present the catalogued allowances as confirmed facts.
+    freeTierClaimsSource: FREE_TIER_CLAIMS_SOURCE,
+    freeTierClaimsVerified: providers.filter((p) => p.freeTierVerified).length,
   });
 }, { requireUserTypes: [...AI_PROVIDER_ROLES] });

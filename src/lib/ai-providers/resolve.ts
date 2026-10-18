@@ -13,7 +13,14 @@
  *                                          display goes through maskKey()
  */
 
-import { FREE_PROVIDERS, getProviderDefinition, type FreeProviderDefinition, type ProviderProvenance } from './catalog';
+import {
+  FREE_PROVIDERS,
+  FREE_TIER_CLAIMS_SOURCE,
+  getProviderDefinition,
+  isFreeTierVerified,
+  type FreeProviderDefinition,
+  type ProviderProvenance,
+} from './catalog';
 
 export class ProviderConfigurationError extends Error {
   constructor(message: string, readonly slug: string) {
@@ -182,6 +189,12 @@ export interface ProviderStatus {
   name: string;
   freeTier: FreeProviderDefinition['freeTier'];
   freeTierNote: string;
+  /**
+   * False unless the tier has been checked against the provider's own
+   * documentation and recorded in VERIFIED_FREE_TIERS. A UI must not render
+   * `freeTierNote` as a confirmed allowance while this is false.
+   */
+  freeTierVerified: boolean;
   provenance: ProviderProvenance;
   configured: boolean;
   apiKeyEnv: string;
@@ -244,6 +257,7 @@ export function listProviderStatus(): ProviderStatus[] {
       name: definition.name,
       freeTier: definition.freeTier,
       freeTierNote: definition.freeTierNote,
+      freeTierVerified: isFreeTierVerified(definition.slug),
       provenance: definition.provenance,
       configured,
       apiKeyEnv: definition.apiKeyEnv,

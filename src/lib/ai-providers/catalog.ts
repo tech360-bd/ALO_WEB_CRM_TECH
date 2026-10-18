@@ -858,6 +858,43 @@ export function isFreeProviderSlug(value: string): value is FreeProviderSlug {
 }
 
 /**
+ * PROVENANCE OF THE FREE-TIER CLAIMS — read before trusting any `freeTierNote`.
+ *
+ * Every `freeTier` and `freeTierNote` value in this file was transcribed from an
+ * owner-supplied provider list (the OmniRoute catalog, 2026-10-18). NONE of them
+ * has been checked against the provider's own documentation, and none could be:
+ * outbound requests to provider hosts are blocked from the build environment.
+ *
+ * This matters because free tiers change without notice. AI/ML API is already in
+ * EXCLUDED_PROVIDERS for exactly this reason — its free tier was discontinued and
+ * the service became pay-as-you-go. The same can happen to any entry here.
+ *
+ * Consequences, enforced in src/lib/ai-providers/resolve.ts:
+ *   - `listProviderStatus()` reports freeTierVerified=false for every entry, so a
+ *     UI can never present these allowances as confirmed.
+ *   - A provider is only trusted after POST /api/ai-providers/[slug]/verify
+ *     succeeds with a real key, which is empirical evidence rather than a claim.
+ *   - `freeTier: 'one-time-credit'` entries are never selected for implicit
+ *     routing, because a grant that silently expires must not become a
+ *     production dependency.
+ *
+ * When a tier IS verified against official documentation, record the date and the
+ * URL in VERIFIED_FREE_TIERS below — do not just flip a boolean.
+ */
+export const FREE_TIER_CLAIMS_SOURCE = 'owner-supplied provider list, 2026-10-18 — not verified against official documentation';
+
+/**
+ * Tiers confirmed against the provider's own documentation.
+ * Empty on purpose: nothing has been verified yet. Add entries as
+ * `{ slug, verifiedOn: 'YYYY-MM-DD', source: '<official docs URL>' }`.
+ */
+export const VERIFIED_FREE_TIERS: ReadonlyArray<{ slug: FreeProviderSlug; verifiedOn: string; source: string }> = [];
+
+export function isFreeTierVerified(slug: string): boolean {
+  return VERIFIED_FREE_TIERS.some((entry) => entry.slug === slug);
+}
+
+/**
  * Providers deliberately NOT catalogued, with the reason.
  *
  * This list exists because the operator supplied a much longer provider list and

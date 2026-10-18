@@ -13,8 +13,11 @@ import {
   EXCLUDED_PROVIDERS,
   FREE_PROVIDERS,
   FREE_PROVIDER_SLUGS,
+  FREE_TIER_CLAIMS_SOURCE,
+  VERIFIED_FREE_TIERS,
   getProviderDefinition,
   isFreeProviderSlug,
+  isFreeTierVerified,
 } from '@/lib/ai-providers/catalog';
 import {
   ProviderConfigurationError,
@@ -300,5 +303,36 @@ describe('implicit routing never selects a provider the owner did not approve', 
 
   it('treats a keyless provider as configured', () => {
     expect(isProviderConfigured(getProviderDefinition('pollinations')!)).toBe(true);
+  });
+});
+
+describe('free-tier claims are labelled as unverified until proven otherwise', () => {
+  it('records the provenance of the free-tier notes', () => {
+    // The notes were transcribed from an owner-supplied list, not from official
+    // provider documentation. The string must say so, so no UI can present them
+    // as confirmed allowances.
+    expect(FREE_TIER_CLAIMS_SOURCE).toMatch(/not verified against official documentation/);
+  });
+
+  it('verifies nothing until someone records an official source', () => {
+    expect(VERIFIED_FREE_TIERS).toEqual([]);
+    for (const slug of FREE_PROVIDER_SLUGS) {
+      expect(isFreeTierVerified(slug), `${slug} must not claim verification`).toBe(false);
+    }
+  });
+
+  it('reports freeTierVerified=false through the status API', () => {
+    const status = listProviderStatus();
+    expect(status.length).toBe(FREE_PROVIDERS.length);
+    expect(status.every((entry) => entry.freeTierVerified === false)).toBe(true);
+  });
+
+  it('requires a date and an official source for any future verification entry', () => {
+    // Guards the shape of future entries: flipping a boolean without evidence is
+    // not verification.
+    for (const entry of VERIFIED_FREE_TIERS) {
+      expect(entry.verifiedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(entry.source).toMatch(/^https:\/\//);
+    }
   });
 });
