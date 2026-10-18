@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2396,
+  "filesScanned": 2410,
   "summary": {
-    "UNUSED": 80,
-    "REFERENCED_WITH_FALLBACK": 139,
-    "REFERENCED": 99,
-    "REFERENCED_FAIL_CLOSED": 14,
+    "UNUSED": 120,
+    "REFERENCED_WITH_FALLBACK": 141,
+    "REFERENCED": 100,
+    "REFERENCED_FAIL_CLOSED": 15,
     "PUBLIC": 8
   },
   "productionRequired": [
@@ -20,6 +20,21 @@
   ],
   "publicSecretSuspects": [],
   "variables": [
+    {
+      "name": "AGENTROUTER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
     {
       "name": "AGENT_APPROVAL_POLICY",
       "classification": "UNUSED",
@@ -82,6 +97,21 @@
     },
     {
       "name": "AGENT_TOKEN_BUDGET",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "AI21_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
       "referenceCount": 0,
@@ -178,6 +208,23 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "ALO_AI_ALLOW_UNOFFICIAL_PROVIDERS",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/resolve.ts"
+      ]
     },
     {
       "name": "ALO_APP_URL",
@@ -292,7 +339,7 @@
       "name": "ALO_DB_DRIVER",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 2,
+      "referenceCount": 3,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -300,7 +347,8 @@
       "declaredIn": [],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
-        "src/lib/db.ts"
+        "src/lib/db.ts",
+        "src/lib/identity/student-create-lock.ts"
       ]
     },
     {
@@ -658,6 +706,21 @@
       ]
     },
     {
+      "name": "ARCEE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "ASTON_COURSE_LIMIT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -687,17 +750,19 @@
     },
     {
       "name": "AUTH_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/oauth-state.ts"
+      ]
     },
     {
       "name": "AWF_SECURITY_CANARY",
@@ -712,6 +777,21 @@
       "sampleReferences": [
         "scripts/ai-workforce/security-suite.ts"
       ]
+    },
+    {
+      "name": "BASETEN_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "BITWARDEN_URL",
@@ -729,6 +809,36 @@
       "sampleReferences": [
         "src/lib/vaultwarden-client.ts"
       ]
+    },
+    {
+      "name": "BLACKBOX_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "BLUESMINDS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "BRAND_LOGO_URL",
@@ -818,6 +928,21 @@
       ]
     },
     {
+      "name": "BYTEZ_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "CAP_PUBLIC_BASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -830,6 +955,21 @@
       "sampleReferences": [
         "src/lib/cap-recording.ts"
       ]
+    },
+    {
+      "name": "CEREBRAS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "CHATWOOT_ACCOUNT_ID",
@@ -913,6 +1053,40 @@
       ]
     },
     {
+      "name": "CLAMAV_HOST",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/documents/malware-scan.ts"
+      ]
+    },
+    {
+      "name": "CLAMAV_PORT",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/documents/malware-scan.ts"
+      ]
+    },
+    {
       "name": "COGVIDEO_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
@@ -967,6 +1141,21 @@
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
       ]
+    },
+    {
+      "name": "COHERE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "COMFYUI_API_KEY",
@@ -1232,6 +1421,36 @@
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "DEEPINFRA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "DEEPSEEK_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
@@ -1510,7 +1729,7 @@
       "name": "ENCRYPTION_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 3,
+      "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1521,7 +1740,6 @@
       ],
       "sampleReferences": [
         "src/lib/hrms/encryption.ts",
-        "src/lib/social/token-encryption.ts",
         "src/lib/token-encryption.ts"
       ]
     },
@@ -1630,6 +1848,21 @@
       ]
     },
     {
+      "name": "FEATHERLESS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "FFMPEG_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -1707,6 +1940,51 @@
       ]
     },
     {
+      "name": "FIREWORKS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "FREEMODEL_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "FRIENDLIAI_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "GA4_API_SECRET",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -1739,6 +2017,21 @@
       "sampleReferences": [
         "src/lib/seo/ga4.ts"
       ]
+    },
+    {
+      "name": "GEMINI_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "GHOST_ADMIN_API_KEY",
@@ -2006,6 +2299,21 @@
       ]
     },
     {
+      "name": "HACKCLUB_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "HLS_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
@@ -2226,6 +2534,21 @@
       ]
     },
     {
+      "name": "HUGGINGFACE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "HUNYUAN_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
@@ -2266,6 +2589,21 @@
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
       ]
+    },
+    {
+      "name": "HYPERBOLIC_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "IMAGE_GEN_API_KEY",
@@ -2374,6 +2712,21 @@
       "sampleReferences": []
     },
     {
+      "name": "INFERENCE_NET_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "INFINITETALK_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
@@ -2449,6 +2802,21 @@
     },
     {
       "name": "INSTAGRAM_APP_SECRET",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "INTERNLM_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
       "referenceCount": 0,
@@ -2724,6 +3092,21 @@
         "src/app/api/workforce/metrics/route.ts",
         "src/components/alo/views/ai-command-center.tsx"
       ]
+    },
+    {
+      "name": "LONGCAT_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "LONGCAT_API_URL",
@@ -3014,6 +3397,36 @@
       "sampleReferences": []
     },
     {
+      "name": "MISTRAL_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "MODELSCOPE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "MOLX_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -3046,6 +3459,21 @@
       "sampleReferences": [
         "src/lib/research/molx-firecrawl-client.ts"
       ]
+    },
+    {
+      "name": "MORPH_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "N8N_API_KEY",
@@ -3150,10 +3578,40 @@
       ]
     },
     {
+      "name": "NARA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "NEBIUS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "NEXTAUTH_SECRET",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 5,
+      "referenceCount": 6,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": true,
@@ -3445,6 +3903,51 @@
       ]
     },
     {
+      "name": "NOVITA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "NSCALE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "NVIDIA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "OPENAI_API_BASE",
       "classification": "REFERENCED",
       "referenced": true,
@@ -3543,6 +4046,21 @@
       "sampleReferences": []
     },
     {
+      "name": "OPENVECTA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "OTP_PEPPER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -3588,6 +4106,21 @@
       "sampleReferences": []
     },
     {
+      "name": "PIONEER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "PIXELLE_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
@@ -3614,6 +4147,21 @@
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
       ]
+    },
+    {
+      "name": "POLLINATIONS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "POP3_HOST",
@@ -3720,6 +4268,21 @@
       "sampleReferences": []
     },
     {
+      "name": "PUTER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "PYTHON_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -3732,6 +4295,21 @@
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
       ]
+    },
+    {
+      "name": "QWEN_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "REDDIT_CLIENT_ID",
@@ -4026,6 +4604,51 @@
       ]
     },
     {
+      "name": "SAMBANOVA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SCALEWAY_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SEALION_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "SEED_PORTAL_PASSWORD",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -4088,6 +4711,21 @@
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SILICONFLOW_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
@@ -4513,6 +5151,21 @@
       ]
     },
     {
+      "name": "TOGETHER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "TRANSLATION_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
@@ -4638,6 +5291,21 @@
       "sampleReferences": [
         "src/lib/umami-analytics.ts"
       ]
+    },
+    {
+      "name": "UPSTAGE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "VAULTWARDEN_ADMIN_TOKEN",
@@ -5200,7 +5868,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referenceCount": 5,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,

@@ -1,4 +1,15 @@
-export type ProviderName = 'groq' | 'local' | 'openrouter' | 'zai' | 'fallback';
+import { firstConfiguredFreeProvider } from '@/lib/ai-providers/resolve';
+
+/**
+ * Provider identifiers. The four literals below are the native adapters in
+ * src/lib/ai.ts; 'fallback' is the guard's "not a real provider" marker.
+ *
+ * Any slug from src/lib/ai-providers/catalog.ts is also accepted — `(string & {})`
+ * keeps editor autocomplete on the literals while allowing the catalogued set to
+ * grow without touching this union. Slugs are validated at runtime by
+ * resolveFreeProvider, which rejects unknown, unconfigured, paid or blocked ones.
+ */
+export type ProviderName = 'groq' | 'local' | 'openrouter' | 'zai' | 'fallback' | (string & {});
 export interface ModelRoute { provider: ProviderName; model: string; reason: string; estimatedCost?: string; }
 
 const PRIVATE_TASKS = new Set(['PII_REDACTION', 'KYC', 'DOCUMENT_CHECK_PRIVATE', 'HR_REVIEW']);
@@ -23,6 +34,13 @@ export async function routeModel(opts: { taskType?: string; department?: string;
   };
   if (process.env.OPENROUTER_API_KEY) return { provider: 'openrouter', model: opts.modelHint || process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct', reason: 'configured_openrouter' };
   if (process.env.ZAI_API_KEY) return { provider: 'zai', model: opts.modelHint || 'glm-4-flash', reason: 'configured_zai' };
+  // No native adapter is configured. Prefer a catalogued free tier over failing,
+  // so the system keeps working without ever reaching a paid API. Only official
+  // providers with a recurring free tier are eligible for implicit selection.
+  const catalogued = firstConfiguredFreeProvider();
+  if (catalogued) {
+    return { provider: catalogued.slug, model: opts.modelHint || catalogued.defaultModel, reason: `catalog:${catalogued.slug}` };
+  }
   throw new Error('No AI provider is configured');
 }
 

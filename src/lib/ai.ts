@@ -1,8 +1,19 @@
-// AI wrapper supporting multi-provider fallback (Groq, OpenRouter, ZAI/GLM).
+// AI wrapper supporting multi-provider fallback (Groq, OpenRouter, ZAI/GLM),
+// plus any OpenAI-compatible free tier catalogued in src/lib/ai-providers.
 import ZAI from 'z-ai-web-dev-sdk';
 import { z } from 'zod';
+import { getProviderDefinition } from '@/lib/ai-providers/catalog';
+import { resolveFreeProvider, toChatCompletionsUrl } from '@/lib/ai-providers/resolve';
 
-export type TextProvider = 'groq' | 'openrouter' | 'zai' | 'local';
+/** Providers with a hand-written adapter below. */
+export type NativeTextProvider = 'groq' | 'openrouter' | 'zai' | 'local';
+
+/**
+ * Any catalogued free-tier slug can also be requested. Resolution, free-tier
+ * enforcement and endpoint validation happen in resolveFreeProvider, so an
+ * unknown or unconfigured slug throws instead of silently reaching a paid API.
+ */
+export type TextProvider = NativeTextProvider | string;
 
 export interface GenerateTextOptions {
   prompt: string;
@@ -99,10 +110,25 @@ async function requestText(provider: TextProvider, options: GenerateTextOptions)
     local: { key: process.env.LOCAL_AI_API_KEY, url: process.env.LOCAL_AI_URL, model: process.env.LOCAL_AI_MODEL },
     zai: { key: process.env.ZAI_API_KEY, url: '', model: 'glm-4-flash' },
   };
-  const config = defaults[provider];
+  const isNative = provider in defaults;
+
+  // Catalogued free-tier providers are resolved into the same { key, url, model }
+  // shape as the native adapters, so they flow through the identical request,
+  // validation and response-parsing code below rather than a second copy of it.
+  // resolveFreeProvider enforces free-only, HTTPS, and no-credentials-in-URL, and
+  // throws for an unknown, unconfigured or blocked slug.
+  const resolvedCatalog = isNative ? null : resolveFreeProvider(provider, options.model);
+  const config = isNative
+    ? defaults[provider as NativeTextProvider]
+    : { key: resolvedCatalog!.apiKey ?? '', url: toChatCompletionsUrl(resolvedCatalog!.baseUrl), model: resolvedCatalog!.model };
+
+  // Keyless catalogued providers (e.g. Pollinations' free tier) legitimately have
+  // no key; every other external provider must.
+  const keyOptional = resolvedCatalog ? getProviderDefinition(provider)?.keyOptional === true : provider === 'local';
+
   const model = options.model || config.model;
   if (!model) throw new Error(`AI provider ${provider} requires a configured model`);
-  if (provider !== 'local' && !config.key) throw new Error(`AI provider ${provider} is not configured`);
+  if (!keyOptional && !config.key) throw new Error(`AI provider ${provider} is not configured`);
   if (provider === 'zai') {
     const client = await getZai();
     // The SDK has no AbortSignal support. Bound caller wait; the underlying SDK
@@ -119,7 +145,10 @@ async function requestText(provider: TextProvider, options: GenerateTextOptions)
   if (!endpoint) throw new Error(`AI provider ${provider} endpoint is not configured`);
   const url = new URL(endpoint);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Invalid AI endpoint');
-  if (provider !== 'local' && url.protocol !== 'https:') throw new Error('External AI requires HTTPS');
+  // Catalog-resolved endpoints were already validated by resolveFreeProvider
+  // (HTTPS, or plain HTTP only on loopback for a same-host server). The original
+  // rule is kept for the native external adapters.
+  if (isNative && provider !== 'local' && url.protocol !== 'https:') throw new Error('External AI requires HTTPS');
   // LOCAL_AI_URL is a trusted server configuration, never a browser-supplied URL.
   // Accept a base URL, /v1 base, or full OpenAI-compatible chat endpoint (Ollama supports /v1).
   if (!url.pathname.endsWith('/chat/completions')) {

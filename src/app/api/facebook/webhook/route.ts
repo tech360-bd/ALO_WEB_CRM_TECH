@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import crypto from "crypto";
 import { createLeadWithReference } from '@/lib/lead-reference';
+import { decryptStoredToken } from "@/lib/social/token-encryption";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,7 +23,8 @@ export async function GET(req: NextRequest) {
         where: { verifyToken: { not: null } },
         select: { verifyToken: true },
       });
-      integrationToken = integration?.verifyToken || null;
+      // Stored encrypted at rest; decrypt before comparing.
+      integrationToken = decryptStoredToken(integration?.verifyToken) || null;
     }
 
     const expectedToken = envToken || integrationToken;
@@ -107,7 +109,7 @@ export async function POST(req: NextRequest) {
           const integration = await db.facebookIntegration.findUnique({
             where: { pageId: String(pageId) },
           });
-          const token = integration?.pageAccessToken;
+          const token = decryptStoredToken(integration?.pageAccessToken);
           if (token) {
             // Fetch lead details
             const leadRes = await fetch(
@@ -241,7 +243,7 @@ export async function POST(req: NextRequest) {
             // Send via Graph if token present (best-effort)
             try {
               const integ = await db.facebookIntegration.findFirst({ where: { pageId: String((entry as any).id) } });
-              const token = integ?.pageAccessToken || process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
+              const token = decryptStoredToken(integ?.pageAccessToken) || process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
               if (token && intake.reply) {
                 await fetch(`https://graph.facebook.com/v18.0/me/messages?access_token=${encodeURIComponent(token)}`, {
                   method: 'POST', headers: { 'Content-Type':'application/json' },
