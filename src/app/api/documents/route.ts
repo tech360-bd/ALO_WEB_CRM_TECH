@@ -5,6 +5,7 @@ import {
   REJECTION_REASON_CODES,
 } from '@/lib/communications/document-policy';
 import { db } from '@/lib/db';
+import { MalwareScanUnavailableError, scanForMalware } from '@/lib/documents/malware-scan';
 import { authenticateUnified, type UnifiedAuthContext } from '@/lib/unified-auth';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 
@@ -152,6 +153,22 @@ export async function POST(req: NextRequest) {
   const extension = file.name.split('.').pop()?.toLowerCase() || '';
   if (!mimeType || EXTENSION_MIME[extension] !== mimeType || (file.type && file.type !== mimeType)) {
     return NextResponse.json({ error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
+  }
+
+  // Malware screening before the bytes reach private storage, mirroring the UCC
+  // upload path (see src/lib/documents/malware-scan.ts for the layering and the
+  // fail-closed production policy).
+  const scan = await scanForMalware(bytes).catch((error) => {
+    if (error instanceof MalwareScanUnavailableError) {
+      return { verdict: 'unavailable', threat: null, engine: 'none', scanned: false, detail: error.message } as const;
+    }
+    throw error;
+  });
+  if (scan.verdict === 'infected') {
+    return NextResponse.json({ error: 'The file was rejected by malware scanning.', threat: scan.threat }, { status: 400 });
+  }
+  if (!scan.scanned) {
+    return NextResponse.json({ error: 'The file could not be scanned for malware and was not stored.' }, { status: 503 });
   }
 
   const stored = await storePrivateFile(bytes, file.name);

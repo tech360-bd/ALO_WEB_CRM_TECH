@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createOAuthState, safeReturnTo } from "@/lib/social/oauth-state";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,9 +28,11 @@ export async function GET(req: NextRequest) {
       "pages_messaging",
     ].join(",");
 
-    // Optional state param (anti-CSRF)
-    const returnTo = req.nextUrl.searchParams.get("returnTo") || "/admin/marketing";
-    const state = Buffer.from(JSON.stringify({ returnTo, ts: Date.now() })).toString("base64url");
+    // Signed, expiring anti-CSRF state. The callback rejects any state this
+    // server did not issue, and the embedded returnTo is constrained to a
+    // same-origin absolute path (see src/lib/social/oauth-state.ts).
+    const returnTo = safeReturnTo(req.nextUrl.searchParams.get("returnTo"), "/admin/marketing");
+    const state = createOAuthState("facebook", returnTo);
 
     const authUrl =
       `https://www.facebook.com/v18.0/dialog/oauth` +
