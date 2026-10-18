@@ -91,28 +91,47 @@ describe.skipIf(!HAS_TEST_DB)('Student ID allocation on real MySQL', () => {
 });
 
 describe.skipIf(!HAS_TEST_DB)('advisory lock serialization on real MySQL', () => {
-  it('blocks a second holder until the first releases', async () => {
+  it('blocks a second connection until the first releases', async () => {
     const db = requireClient();
-    const lockName = `${runId}-lock`;
 
-    // Hold the lock on a dedicated connection for the length of the test.
-    const held = await db.$queryRaw<Array<{ got: bigint }>>`SELECT GET_LOCK(${lockName}, 5) AS got`;
-    expect(Number(held[0].got)).toBe(1);
-
+    // GET_LOCK is RE-ENTRANT on a single MySQL connection: asking twice from the
+    // same connection succeeds and just increments a counter. Prisma serves
+    // sequential $queryRaw calls from one pooled connection, so a test that
+    // acquires and then contends using the same PrismaClient proves nothing — it
+    // observes re-entrancy, not exclusion.
+    //
+    // A second PrismaClient has its own pool and therefore its own physical
+    // connection, which is what real concurrent requests use. The CONNECTION_ID
+    // assertions below make that precondition explicit: if the two clients ever
+    // shared a connection the test would fail loudly instead of passing falsely.
+    const holder = new PrismaClient({ datasourceUrl: databaseUrl! });
     try {
-      // A second acquisition with a short timeout must time out (0), proving the
-      // lock genuinely excludes concurrent holders rather than being a no-op.
-      const contended = await db.$queryRaw<Array<{ got: bigint | null }>>`
-        SELECT GET_LOCK(${lockName}, 1) AS got`;
-      expect(Number(contended[0].got ?? 0)).toBe(0);
-    } finally {
-      await db.$queryRawUnsafe(`SELECT RELEASE_LOCK(?)`, lockName);
-    }
+      const [holderConn, contenderConn] = await Promise.all([
+        holder.$queryRaw<Array<{ id: bigint }>>`SELECT CONNECTION_ID() AS id`,
+        db.$queryRaw<Array<{ id: bigint }>>`SELECT CONNECTION_ID() AS id`,
+      ]);
+      expect(Number(holderConn[0].id)).not.toBe(Number(contenderConn[0].id));
 
-    // After release, the lock is acquirable again.
-    const reacquired = await db.$queryRaw<Array<{ got: bigint }>>`SELECT GET_LOCK(${lockName}, 5) AS got`;
-    expect(Number(reacquired[0].got)).toBe(1);
-    await db.$queryRawUnsafe(`SELECT RELEASE_LOCK(?)`, lockName);
+      const lockName = `${runId}-lock`;
+      const held = await holder.$queryRaw<Array<{ got: bigint }>>`SELECT GET_LOCK(${lockName}, 5) AS got`;
+      expect(Number(held[0].got)).toBe(1);
+
+      try {
+        // A genuinely different connection with a short timeout must time out (0).
+        const contended = await db.$queryRaw<Array<{ got: bigint | null }>>`
+          SELECT GET_LOCK(${lockName}, 1) AS got`;
+        expect(Number(contended[0].got ?? 0)).toBe(0);
+      } finally {
+        await holder.$queryRawUnsafe(`SELECT RELEASE_LOCK(?)`, lockName);
+      }
+
+      // After release, the contending connection can take it.
+      const reacquired = await db.$queryRaw<Array<{ got: bigint }>>`SELECT GET_LOCK(${lockName}, 5) AS got`;
+      expect(Number(reacquired[0].got)).toBe(1);
+      await db.$queryRawUnsafe(`SELECT RELEASE_LOCK(?)`, lockName);
+    } finally {
+      await holder.$disconnect();
+    }
   }, 60_000);
 
   it('stores a student row created under the lock with a canonical identifier', async () => {

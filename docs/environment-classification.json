@@ -1,11 +1,11 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2406,
+  "filesScanned": 2410,
   "summary": {
-    "UNUSED": 79,
+    "UNUSED": 99,
     "REFERENCED_WITH_FALLBACK": 141,
-    "REFERENCED": 99,
+    "REFERENCED": 100,
     "REFERENCED_FAIL_CLOSED": 15,
     "PUBLIC": 8
   },
@@ -178,6 +178,23 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "ALO_AI_ALLOW_UNOFFICIAL_PROVIDERS",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/resolve.ts"
+      ]
     },
     {
       "name": "ALO_APP_URL",
@@ -659,6 +676,21 @@
       ]
     },
     {
+      "name": "ARCEE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "ASTON_COURSE_LIMIT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -835,6 +867,21 @@
       ]
     },
     {
+      "name": "CEREBRAS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "CHATWOOT_ACCOUNT_ID",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -1004,6 +1051,21 @@
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
       ]
+    },
+    {
+      "name": "COHERE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "COMFYUI_API_KEY",
@@ -1269,6 +1331,36 @@
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "DEEPINFRA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "DEEPSEEK_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
@@ -1666,6 +1758,21 @@
       ]
     },
     {
+      "name": "FEATHERLESS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "FFMPEG_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -1743,6 +1850,21 @@
       ]
     },
     {
+      "name": "FRIENDLIAI_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "GA4_API_SECRET",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -1775,6 +1897,21 @@
       "sampleReferences": [
         "src/lib/seo/ga4.ts"
       ]
+    },
+    {
+      "name": "GEMINI_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "GHOST_ADMIN_API_KEY",
@@ -2260,6 +2397,21 @@
         "src/app/api/integrations/httpsms/webhook/route.ts",
         "src/lib/httpsms-webhook.ts"
       ]
+    },
+    {
+      "name": "HUGGINGFACE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "HUNYUAN_API_KEY",
@@ -3050,6 +3202,36 @@
       "sampleReferences": []
     },
     {
+      "name": "MISTRAL_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "MODELSCOPE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "MOLX_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -3082,6 +3264,21 @@
       "sampleReferences": [
         "src/lib/research/molx-firecrawl-client.ts"
       ]
+    },
+    {
+      "name": "MORPH_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "N8N_API_KEY",
@@ -3481,6 +3678,21 @@
       ]
     },
     {
+      "name": "NVIDIA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "OPENAI_API_BASE",
       "classification": "REFERENCED",
       "referenced": true,
@@ -3652,6 +3864,21 @@
       ]
     },
     {
+      "name": "POLLINATIONS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "POP3_HOST",
       "classification": "UNUSED",
       "referenced": false,
@@ -3768,6 +3995,21 @@
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
       ]
+    },
+    {
+      "name": "QWEN_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "REDDIT_CLIENT_ID",
@@ -4062,6 +4304,36 @@
       ]
     },
     {
+      "name": "SAMBANOVA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SCALEWAY_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "SEED_PORTAL_PASSWORD",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
@@ -4124,6 +4396,21 @@
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SILICONFLOW_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
@@ -4549,6 +4836,21 @@
       ]
     },
     {
+      "name": "TOGETHER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "TRANSLATION_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
@@ -4674,6 +4976,21 @@
       "sampleReferences": [
         "src/lib/umami-analytics.ts"
       ]
+    },
+    {
+      "name": "UPSTAGE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "VAULTWARDEN_ADMIN_TOKEN",
@@ -5236,7 +5553,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referenceCount": 5,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
