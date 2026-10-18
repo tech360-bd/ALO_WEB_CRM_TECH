@@ -237,9 +237,12 @@ describe('maskKey never leaks a credential', () => {
   });
 
   it('shows only a prefix and suffix of a long key', () => {
-    const masked = maskKey('sk-abcdefghijklmnopqrstuvwxyz123456');
-    expect(masked).toBe('sk-abc…3456');
-    expect(masked).not.toContain('defghijklmnop');
+    // Deliberately NOT shaped like a real provider key: CI's secret-leak scan
+    // matches `sk-[A-Za-z0-9]{32,}`, so a realistic fixture here would fail the
+    // build. The masking behaviour does not depend on the prefix.
+    const masked = maskKey('not-a-real-key-abcdefghijklmnopqrstuvwxyz');
+    expect(masked).toBe('not-a-…wxyz');
+    expect(masked).not.toContain('bcdefghijklmnop');
   });
 });
 
