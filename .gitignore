@@ -266,3 +266,9 @@ prisma/dev.db*
 
 # Synthetic generator output (scripts/lib/synthetic-output-guard.*) - never commit
 /staging/synthetic/
+
+# Research deliverable required by the ALO master implementation specification.
+# The blanket `*.csv` rule above would otherwise silently drop it, the same way
+# the bare `test` pattern silently dropped an API route. Negation must follow
+# the pattern it overrides, so it lives here at the end of the file.
+!docs/research/GITHUB_SOURCE_CATALOG.csv
