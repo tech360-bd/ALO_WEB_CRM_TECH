@@ -350,7 +350,14 @@ async function main(): Promise<void> {
 
   // ── C. Registry integrity ─────────────────────────────────────────────────
   {
-    check('C1 the registry has 21 entries', JOB_REGISTRY.length === 21, String(JOB_REGISTRY.length));
+    // Tied to the declared count rather than a magic number so adding a real
+    // job (e.g. webhook-dispatch, 2026-10-18) cannot silently desynchronise
+    // the registry from the declarations.
+    check(
+      `C1 the registry has ${CRON_JOB_COUNT} entries`,
+      JOB_REGISTRY.length === CRON_JOB_COUNT,
+      `registry=${JOB_REGISTRY.length} declared=${CRON_JOB_COUNT}`,
+    );
 
     const keys = JOB_REGISTRY.map((j) => j.key);
     check('C2 job keys are unique', new Set(keys).size === keys.length);

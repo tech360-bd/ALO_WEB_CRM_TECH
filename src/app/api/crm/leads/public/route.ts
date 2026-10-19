@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { createLeadWithReference } from '@/lib/lead-reference';
+import {
+  captureAttributionFromRequest,
+  describeAttribution,
+  newLeadAttribution,
+  toLeadFormColumns,
+} from '@/lib/attribution/lead-attribution';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +26,10 @@ export async function POST(request: NextRequest) {
       message,
       service,
       source,
+      // Marketing consent must be an explicit, affirmative act by the visitor.
+      // It is read from the submission and never assumed.
+      consent,
+      marketingConsent,
     } = body;
 
     if (!name || !phone || !email) {
@@ -29,8 +39,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const country = preferredCountry || destination || 'United Kingdom';
+    // Acquisition attribution (Google Free Stack). Captured from the request
+    // URL, the `referer` header and the attribution keys the form forwarded,
+    // so a lead that converts on an SPA route still carries the UTM values it
+    // originally arrived with.
+    const attribution = captureAttributionFromRequest(request, {
+      body: body as Record<string, unknown>,
+      landingPage: typeof body?.landingPage === 'string' ? body.landingPage : null,
+      visitorId: typeof body?.visitorId === 'string' ? body.visitorId : null,
+    });
+
+    // No destination is a legitimate outcome: many visitors enquire before
+    // choosing a country. The old code substituted 'United Kingdom' here, which
+    // wrote a country the visitor never named into three tables and then fed it
+    // to lead scoring ("Has preferred destination" = +15 points) and to the
+    // counselor's queue. An unknown destination must stay unknown.
+    const country = preferredCountry || destination || '';
     const leadCode = `LEAD-${Date.now().toString(36).toUpperCase()}`;
+    const consentGranted = consent === true || marketingConsent === true;
 
     // 1. Create Lead in LeadForm (public web capture)
     const leadFormRecord = await db.leadForm.create({
@@ -39,35 +65,50 @@ export async function POST(request: NextRequest) {
         phone,
         email,
         preferredCountry: country,
-        preferredLevel: preferredLevel || 'Postgraduate',
+        // Only what the visitor actually selected. 'Postgraduate', 'September
+        // 2026' and 'IELTS' used to be substituted here; those invented values
+        // were indistinguishable from real answers downstream.
+        preferredLevel: preferredLevel || '',
         preferredSubject: preferredSubject || '',
-        intake: intake || 'September 2026',
+        intake: intake || '',
         budget: budget || '',
-        englishTest: englishTest || 'IELTS',
+        englishTest: englishTest || '',
         englishScore: englishScore || '',
         message: message || (service ? `Service requested: ${service}` : ''),
         source: source || 'public_website',
         status: 'pending',
+        ...toLeadFormColumns(attribution),
       },
     }).catch(() => null);
 
     // 2. Create Lead in MarketingLead (CRM pipeline)
+    // `ieltsScore` is a non-nullable Float whose schema default is 0. Writing a
+    // parsed value only when the visitor supplied a number keeps 0 meaning "no
+    // score recorded" rather than "scored zero". The authoritative English test
+    // fields are `Lead.englishTest` / `Lead.englishScore`.
+    const parsedEnglishScore = Number.parseFloat(typeof englishScore === 'string' ? englishScore : '');
     const marketingLeadRecord = await db.marketingLead.create({
       data: {
         name,
         phone,
         email,
         destination: country,
-        level: preferredLevel || 'Postgraduate',
-        intake: intake || 'September 2026',
+        level: preferredLevel || '',
+        intake: intake || '',
         budget: budget || '',
-        ieltsScore: parseFloat(englishScore) || 0,
+        ...(Number.isFinite(parsedEnglishScore) ? { ieltsScore: parsedEnglishScore } : {}),
         source: source || 'website_inquiry',
-        sourceDetail: `[Subject: ${preferredSubject || 'N/A'}] [Test: ${englishTest || 'N/A'}] ${message || ''}`,
+        sourceDetail: `[Subject: ${preferredSubject || 'not supplied'}] [Test: ${englishTest || 'not supplied'}] ${message || ''}`,
         status: 'new',
-        score: 75,
-        hotLead: true,
-        consent: true,
+        // Score and hot-lead flag are computed below by the same
+        // `scoreLead()` engine every other lead goes through. They used to be
+        // hard-coded to 75 / true here, which marked every public enquiry as a
+        // hot lead before anything was known about it.
+        //
+        // Consent is likewise no longer assumed. Recording `consent: true` for a
+        // visitor who was never asked created an affirmative marketing-consent
+        // record that ALO could not substantiate.
+        consent: consentGranted,
       },
     }).catch(() => null);
 
@@ -105,14 +146,18 @@ export async function POST(request: NextRequest) {
             source: source || 'WEBSITE',
             sourceDetail: `Public inquiry form (${source || 'website_inquiry'})${service ? ` — service: ${service}` : ''}`,
             preferredCountry: country,
-            preferredLevel: preferredLevel || 'Postgraduate',
-            preferredIntake: intake || 'September 2026',
+            preferredLevel: preferredLevel || '',
+            preferredIntake: intake || '',
             budget: budget || '',
-            englishTest: englishTest || 'IELTS',
+            englishTest: englishTest || '',
             englishScore: englishScore || '',
             notes: message || '',
             rawSubmission: JSON.stringify(body),
             status: 'NEW',
+            // Full attribution triplet + first/last touch. For a brand-new lead
+            // the two are the same; `mergeAttribution` keeps first touch
+            // immutable on later conversions by this visitor.
+            ...newLeadAttribution(attribution),
         });
         crmLeadId = crmLead.id;
 
@@ -127,7 +172,19 @@ export async function POST(request: NextRequest) {
           },
         }).catch(() => {});
 
-        await scoreLead(crmLead.id).catch(() => {});
+        // Score with the shared engine, then propagate the REAL result to the
+        // MarketingLead copy so the two pipelines cannot disagree. Previously
+        // MarketingLead kept its hard-coded 75 while Lead held the computed
+        // score.
+        const scored = await scoreLead(crmLead.id).catch(() => null);
+        if (scored && marketingLeadRecord?.id) {
+          await db.marketingLead
+            .update({
+              where: { id: marketingLeadRecord.id },
+              data: { score: scored.score, hotLead: scored.tier === 'HOT' || scored.tier === 'URGENT' },
+            })
+            .catch(() => null);
+        }
         const assignment = await autoAssignCounselor(crmLead.id);
         counselorAssigned = !!assignment.counselorId;
         assignmentReason = assignment.reason;
@@ -159,7 +216,19 @@ export async function POST(request: NextRequest) {
         action: 'PUBLIC_LEAD_SUBMITTED',
         targetCollection: 'LeadForm',
         targetId: leadFormRecord?.id || marketingLeadRecord?.id || leadCode,
-        afterData: JSON.stringify({ name, email, phone, country, crmLeadId, counselorAssigned, assignmentReason }),
+        afterData: JSON.stringify({
+          name,
+          email,
+          phone,
+          country,
+          crmLeadId,
+          counselorAssigned,
+          assignmentReason,
+          consentGranted,
+          // Attribution is stored as its description, not the raw record, so the
+          // audit log stays free of click identifiers.
+          attribution: describeAttribution(attribution),
+        }),
       },
     }).catch(() => null);
 

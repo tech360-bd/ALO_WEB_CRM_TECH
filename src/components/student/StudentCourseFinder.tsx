@@ -1,1077 +1,482 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+// ============================================================
+// STUDENT COURSE FINDER — real catalogue + real eligibility engine
+// (spec s45, s15, s16, s92, s93)
+// ============================================================
+// This file previously held a 1000-line static MOCK_COURSES list that performed
+// NO data fetching and rendered a fabricated "High Chance" admission badge and
+// match percentage for invented courses at real universities. That is prohibited
+// by s92, and an admission-chance claim is exactly the unverifiable prediction
+// s15 and s93 forbid.
+//
+// It is replaced by the implementation that already existed at
+// src/app/student/course-finder/page.tsx, which reads the SAME canonical course
+// database as the public finder (/api/courses/search) and scores it with the
+// real eligibility engine in src/lib/university-course/eligibility-engine.ts.
+// Keeping it here means the portal view map in src/app/page.tsx resolves to the
+// real thing without a change to that file, and the standalone route now renders
+// this component instead of duplicating it.
+//
+// One deliberate change from the previous implementation: the student profile no
+// longer defaults to invented values (nationality "Bangladeshi", GPA 3.2, IELTS
+// 6.5). Scoring against fabricated inputs produces a confident-looking eligibility
+// label for a student who never supplied them, so the profile starts EMPTY and
+// the engine's own "Missing Information" label is shown until the student enters
+// real data.
+// ============================================================
+
+import { useState, useEffect, useCallback } from 'react';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
-} from '@/components/ui/pagination';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Search,
-  Sparkles,
-  SlidersHorizontal,
-  ChevronDown,
-  Bookmark,
-  GraduationCap,
-  Globe,
-  Calendar,
-  Award,
-  Languages,
-  Clock,
+  MapPin,
+  BookmarkPlus,
+  GitCompare,
+  Send,
   AlertTriangle,
-  Star,
-  X,
+  RefreshCw,
+  Info,
 } from 'lucide-react';
+import Link from 'next/link';
+import {
+  calculateEligibilityScore,
+  calculateMatchScore,
+  type CourseRequirement,
+  type StudentProfileInput,
+} from '@/lib/university-course/eligibility-engine';
 
-// ─── Types ───────────────────────────────────────────────────────────
-interface CourseData {
-  id: string;
-  name: string;
-  university: string;
-  country: string;
-  city: string;
-  flag: string;
-  intake: string;
-  duration: string;
-  tuition: string;
-  scholarship: string | null;
-  matchScore: number;
-  ielts: string;
-  gpa: string;
-  admissionChance: 'High' | 'Medium' | 'Low';
-  deposit: string;
-  appFee: string;
-  deadline: string;
-  daysRemaining: number;
-  level: string;
-  subject: string;
-  ranking: number;
-  logoColor: string;
+interface Profile {
+  nationality: string;
+  highestQualification: string;
+  gpa: number | null;
+  englishTest: string;
+  englishScore: number | null;
+  preferredCountry: string;
+  preferredSubject: string;
+  budgetMax: number | null;
 }
 
-// ─── Mock Data ───────────────────────────────────────────────────────
-const MOCK_COURSES: CourseData[] = [
-  {
-    id: '1',
-    name: 'MSc Data Science',
-    university: 'University of Glasgow',
-    country: 'UK',
-    city: 'Glasgow',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '1 year',
-    tuition: '£24,000',
-    scholarship: null,
-    matchScore: 92,
-    ielts: '6.5',
-    gpa: '3.2+',
-    admissionChance: 'High',
-    deposit: '£2,000',
-    appFee: 'Free',
-    deadline: '15 Jul 2026',
-    daysRemaining: 245,
-    level: 'Masters',
-    subject: 'Computer Science',
-    ranking: 76,
-    logoColor: 'bg-[#003F87]',
-  },
-  {
-    id: '2',
-    name: 'MSc International Business',
-    university: 'University of Leeds',
-    country: 'UK',
-    city: 'Leeds',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '1 year',
-    tuition: '£21,000',
-    scholarship: null,
-    matchScore: 88,
-    ielts: '6.0',
-    gpa: '3.0+',
-    admissionChance: 'High',
-    deposit: '£1,500',
-    appFee: 'Free',
-    deadline: '30 Jun 2026',
-    daysRemaining: 230,
-    level: 'Masters',
-    subject: 'Business',
-    ranking: 86,
-    logoColor: 'bg-[#9B1B30]',
-  },
-  {
-    id: '3',
-    name: 'MSc Computer Science',
-    university: 'University of Birmingham',
-    country: 'UK',
-    city: 'Birmingham',
-    flag: '🇬🇧',
-    intake: 'Jan 2026',
-    duration: '1 year',
-    tuition: '£28,000',
-    scholarship: null,
-    matchScore: 85,
-    ielts: '6.5',
-    gpa: '3.3+',
-    admissionChance: 'High',
-    deposit: '£2,500',
-    appFee: '£50',
-    deadline: '15 Nov 2025',
-    daysRemaining: 42,
-    level: 'Masters',
-    subject: 'Computer Science',
-    ranking: 84,
-    logoColor: 'bg-[#0057B8]',
-  },
-  {
-    id: '4',
-    name: 'MBA',
-    university: 'University of Aberdeen',
-    country: 'UK',
-    city: 'Aberdeen',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '1 year',
-    tuition: '£18,000',
-    scholarship: '£3,000',
-    matchScore: 82,
-    ielts: '6.5',
-    gpa: '3.0+',
-    admissionChance: 'High',
-    deposit: '£1,000',
-    appFee: 'Free',
-    deadline: '31 Jul 2026',
-    daysRemaining: 261,
-    level: 'Masters',
-    subject: 'Business',
-    ranking: 208,
-    logoColor: 'bg-[#8B0000]',
-  },
-  {
-    id: '5',
-    name: 'MSc Engineering Management',
-    university: 'University of Sheffield',
-    country: 'UK',
-    city: 'Sheffield',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '1 year',
-    tuition: '£26,000',
-    scholarship: null,
-    matchScore: 80,
-    ielts: '6.5',
-    gpa: '3.0+',
-    admissionChance: 'Medium',
-    deposit: '£2,000',
-    appFee: '£60',
-    deadline: '30 Jun 2026',
-    daysRemaining: 230,
-    level: 'Masters',
-    subject: 'Engineering',
-    ranking: 104,
-    logoColor: 'bg-[#2D4A7A]',
-  },
-  {
-    id: '6',
-    name: 'BSc Nursing',
-    university: 'University of Manchester',
-    country: 'UK',
-    city: 'Manchester',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '3 years',
-    tuition: '£22,000/yr',
-    scholarship: null,
-    matchScore: 75,
-    ielts: '7.0',
-    gpa: '3.5+',
-    admissionChance: 'Medium',
-    deposit: '£3,000',
-    appFee: 'Free',
-    deadline: '15 Jan 2026',
-    daysRemaining: 12,
-    level: 'Undergraduate',
-    subject: 'Medicine',
-    ranking: 54,
-    logoColor: 'bg-[#660099]',
-  },
-  {
-    id: '7',
-    name: 'MSc Finance',
-    university: 'University of Edinburgh',
-    country: 'UK',
-    city: 'Edinburgh',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '1 year',
-    tuition: '£32,000',
-    scholarship: null,
-    matchScore: 70,
-    ielts: '7.0',
-    gpa: '3.5+',
-    admissionChance: 'Medium',
-    deposit: '£3,500',
-    appFee: '£50',
-    deadline: '31 May 2026',
-    daysRemaining: 199,
-    level: 'Masters',
-    subject: 'Business',
-    ranking: 22,
-    logoColor: 'bg-[#B50127]',
-  },
-  {
-    id: '8',
-    name: 'Foundation in Business',
-    university: 'INTO London',
-    country: 'UK',
-    city: 'London',
-    flag: '🇬🇧',
-    intake: 'Jan 2026',
-    duration: '9 months',
-    tuition: '£15,000',
-    scholarship: null,
-    matchScore: 65,
-    ielts: '5.5',
-    gpa: '2.5+',
-    admissionChance: 'High',
-    deposit: '£500',
-    appFee: 'Free',
-    deadline: '01 Dec 2025',
-    daysRemaining: 28,
-    level: 'Foundation',
-    subject: 'Business',
-    ranking: 0,
-    logoColor: 'bg-[#0057B8]',
-  },
-  {
-    id: '9',
-    name: 'MSc Artificial Intelligence',
-    university: 'University of Southampton',
-    country: 'UK',
-    city: 'Southampton',
-    flag: '🇬🇧',
-    intake: 'Sep 2026',
-    duration: '1 year',
-    tuition: '£29,000',
-    scholarship: null,
-    matchScore: 90,
-    ielts: '6.5',
-    gpa: '3.3+',
-    admissionChance: 'High',
-    deposit: '£2,500',
-    appFee: '£50',
-    deadline: '31 Jul 2026',
-    daysRemaining: 261,
-    level: 'Masters',
-    subject: 'Computer Science',
-    ranking: 80,
-    logoColor: 'bg-[#6B2D5B]',
-  },
-];
+/** Empty by design — see the note above about fabricated defaults. */
+const EMPTY_PROFILE: Profile = {
+  nationality: '',
+  highestQualification: '',
+  gpa: null,
+  englishTest: '',
+  englishScore: null,
+  preferredCountry: '',
+  preferredSubject: '',
+  budgetMax: null,
+};
 
-// ─── Filter Configs ──────────────────────────────────────────────────
-const COUNTRIES = [
-  'UK', 'USA', 'Canada', 'Australia', 'Germany',
-  'Netherlands', 'Sweden', 'Denmark', 'New Zealand', 'Ireland',
-];
+const LABEL_STYLE: Record<string, string> = {
+  Eligible: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  'Likely Eligible': 'bg-blue-50 text-blue-700 border-blue-100',
+  'Need Review': 'bg-amber-50 text-amber-700 border-amber-200',
+  'Not Eligible': 'bg-red-50 text-red-700 border-red-200',
+  'Missing Information': 'bg-slate-50 text-slate-600 border-slate-200',
+};
 
-const PROGRAM_LEVELS = [
-  'Foundation', 'Undergraduate', 'Pre-Master', 'Masters',
-  'PhD', 'PGD', 'Certificate', 'Diploma',
-];
-
-const SUBJECT_AREAS = [
-  'Business', 'Engineering', 'Computer Science', 'Medicine',
-  'Law', 'Arts', 'Science', 'Social Science', 'Education',
-  'Architecture', 'Media & Communication', 'Health Sciences',
-];
-
-const INTAKES = [
-  'Jan 2026', 'Feb 2026', 'Mar 2026', 'Sep 2025', 'Sep 2026', 'Jan 2027',
-];
-
-const TUITION_RANGES = [
-  'Under 10L BDT', '10-15L BDT', '15-20L BDT', '20-30L BDT', '30L+', 'Any',
-];
-
-const IELTS_SCORES = ['5.5', '6.0', '6.5', '7.0', '7.5', '8.0+'];
-
-const QUICK_FILTERS = [
-  { label: 'No Interview', icon: null },
-  { label: 'Low Deposit', icon: null },
-  { label: 'Fast Offer', icon: null },
-  { label: 'Open Programs', icon: null },
-  { label: 'Scholarship Available', icon: null },
-  { label: 'High Visa Success', icon: null },
-  { label: 'Affordable', icon: null },
-  { label: 'High Acceptance Rate', icon: null },
-  { label: 'Co-op/Internship', icon: null },
-  { label: 'No Deposit', icon: null },
-  { label: 'MOI Accepted', icon: null },
-  { label: 'Without English Test', icon: null },
-];
-
-// ─── Match Score Color ───────────────────────────────────────────────
-function matchColor(score: number) {
-  if (score >= 90) return 'bg-emerald-500 text-white';
-  if (score >= 80) return 'bg-[#0057B8] text-white';
-  if (score >= 70) return 'bg-amber-500 text-white';
-  return 'bg-slate-400 text-white';
+function parseNumber(value: string): number | null {
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
-function admissionColor(chance: string) {
-  switch (chance) {
-    case 'High': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-    case 'Medium': return 'bg-amber-50 text-amber-700 border-amber-200';
-    case 'Low': return 'bg-red-50 text-red-700 border-red-200';
-    default: return '';
-  }
+/**
+ * Adapt the form state to the engine's input. `null` means "not supplied" here,
+ * but the engine treats a present key as supplied, so nulls are dropped rather
+ * than passed through — otherwise an empty GPA field would be scored as a real
+ * value instead of contributing to "Missing Information".
+ */
+function toProfileInput(profile: Profile): StudentProfileInput {
+  const input: StudentProfileInput = {};
+  if (profile.nationality.trim()) input.nationality = profile.nationality.trim();
+  if (profile.highestQualification.trim()) input.highestQualification = profile.highestQualification.trim();
+  if (profile.gpa !== null) input.gpa = profile.gpa;
+  if (profile.englishTest.trim()) input.englishTest = profile.englishTest.trim();
+  if (profile.englishScore !== null) input.englishScore = profile.englishScore;
+  if (profile.preferredCountry.trim()) input.preferredCountry = profile.preferredCountry.trim();
+  if (profile.preferredSubject.trim()) input.preferredSubject = profile.preferredSubject.trim();
+  if (profile.budgetMax !== null) input.budgetMax = profile.budgetMax;
+  return input;
 }
 
-// ─── Filter Sidebar Content ──────────────────────────────────────────
-function FilterSidebarContent({
-  selectedCountries,
-  setSelectedCountries,
-  selectedLevels,
-  setSelectedLevels,
-  selectedSubjects,
-  setSelectedSubjects,
-  selectedIntakes,
-  setSelectedIntakes,
-  selectedTuition,
-  setSelectedTuition,
-  selectedIelts,
-  setSelectedIelts,
-  scholarshipFilter,
-  setScholarshipFilter,
-  activeQuickFilters,
-  toggleQuickFilter,
-}: {
-  selectedCountries: string[];
-  setSelectedCountries: (v: string[]) => void;
-  selectedLevels: string[];
-  setSelectedLevels: (v: string[]) => void;
-  selectedSubjects: string[];
-  setSelectedSubjects: (v: string[]) => void;
-  selectedIntakes: string[];
-  setSelectedIntakes: (v: string[]) => void;
-  selectedTuition: string[];
-  setSelectedTuition: (v: string[]) => void;
-  selectedIelts: string[];
-  setSelectedIelts: (v: string[]) => void;
-  scholarshipFilter: string;
-  setScholarshipFilter: (v: string) => void;
-  activeQuickFilters: string[];
-  toggleQuickFilter: (f: string) => void;
-}) {
-  const toggleItem = (arr: string[], item: string, setter: (v: string[]) => void) => {
-    setter(arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item]);
-  };
+/** Narrow an unknown requirements payload to the engine's shape without casting blindly. */
+function toRequirements(course: Record<string, unknown>): CourseRequirement {
+  const raw = course.requirements;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const source = raw as Record<string, unknown>;
+  const requirement: CourseRequirement = {};
+  const num = (value: unknown): number | undefined =>
+    typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+  const str = (value: unknown): string | undefined =>
+    typeof value === 'string' && value.trim() ? value : undefined;
+  const bool = (value: unknown): boolean | undefined => (typeof value === 'boolean' ? value : undefined);
 
-  return (
-    <div className="space-y-1 pr-2">
-      {/* Quick Filters */}
-      <div className="mb-4">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Quick Filters</h4>
-        <div className="flex flex-wrap gap-2">
-          {QUICK_FILTERS.map((f) => (
-            <button
-              key={f.label}
-              onClick={() => toggleQuickFilter(f.label)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all border cursor-pointer
-                ${activeQuickFilters.includes(f.label)
-                  ? 'bg-[#0057B8] text-white border-[#0057B8]'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-[#0057B8] hover:text-[#0057B8]'
-                }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Separator className="mb-3" />
-
-      {/* Country */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><Globe className="size-4" /> Country</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {COUNTRIES.map((c) => (
-              <label key={c} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={selectedCountries.includes(c)}
-                  onCheckedChange={() => toggleItem(selectedCountries, c, setSelectedCountries)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{c}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
-
-      {/* Program Level */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><GraduationCap className="size-4" /> Program Level</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {PROGRAM_LEVELS.map((l) => (
-              <label key={l} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={selectedLevels.includes(l)}
-                  onCheckedChange={() => toggleItem(selectedLevels, l, setSelectedLevels)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{l}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
-
-      {/* Subject Area */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><Star className="size-4" /> Subject Area</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {SUBJECT_AREAS.map((s) => (
-              <label key={s} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={selectedSubjects.includes(s)}
-                  onCheckedChange={() => toggleItem(selectedSubjects, s, setSelectedSubjects)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{s}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
-
-      {/* Intake */}
-      <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><Calendar className="size-4" /> Intake</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {INTAKES.map((i) => (
-              <label key={i} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={selectedIntakes.includes(i)}
-                  onCheckedChange={() => toggleItem(selectedIntakes, i, setSelectedIntakes)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{i}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
-
-      {/* Tuition Fee */}
-      <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><Award className="size-4" /> Tuition Fee</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {TUITION_RANGES.map((t) => (
-              <label key={t} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={selectedTuition.includes(t)}
-                  onCheckedChange={() => toggleItem(selectedTuition, t, setSelectedTuition)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{t}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
-
-      {/* IELTS Score */}
-      <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><Languages className="size-4" /> IELTS Score</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {IELTS_SCORES.map((s) => (
-              <label key={s} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={selectedIelts.includes(s)}
-                  onCheckedChange={() => toggleItem(selectedIelts, s, setSelectedIelts)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{s}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <Separator />
-
-      {/* Scholarship */}
-      <Collapsible>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-2 text-sm font-semibold text-slate-800 hover:text-[#0057B8] transition-colors cursor-pointer">
-          <span className="flex items-center gap-2"><Award className="size-4" /> Scholarship</span>
-          <ChevronDown className="size-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="space-y-2 pb-3 pl-1">
-            {['Available', 'Not Available'].map((s) => (
-              <label key={s} className="flex items-center gap-2.5 cursor-pointer group">
-                <Checkbox
-                  checked={scholarshipFilter === s}
-                  onCheckedChange={() => setScholarshipFilter(scholarshipFilter === s ? '' : s)}
-                  className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-                />
-                <span className="text-sm text-slate-700 group-hover:text-[#0057B8] transition-colors">{s}</span>
-              </label>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
-  );
+  requirement.academicReq = str(source.academicReq);
+  requirement.minGpa = num(source.minGpa);
+  requirement.gpaScale = str(source.gpaScale);
+  requirement.backlogAllowed = num(source.backlogAllowed);
+  requirement.workExperienceRequired = bool(source.workExperienceRequired);
+  requirement.portfolioRequired = bool(source.portfolioRequired);
+  requirement.interviewRequired = bool(source.interviewRequired);
+  requirement.ieltsOverall = num(source.ieltsOverall);
+  requirement.ieltsMinBand = num(source.ieltsMinBand);
+  requirement.pteOverall = num(source.pteOverall);
+  requirement.toeflOverall = num(source.toeflOverall);
+  requirement.detOverall = num(source.detOverall);
+  requirement.moiAccepted = bool(source.moiAccepted);
+  return requirement;
 }
 
-// ─── Course Card ─────────────────────────────────────────────────────
-function CourseCard({ course, onShortlist, onCompare, isShortlisted, isCompareChecked }: {
-  course: CourseData;
-  onShortlist: () => void;
-  onCompare: (checked: boolean) => void;
-  isShortlisted: boolean;
-  isCompareChecked: boolean;
-}) {
-  return (
-    <div className="group relative bg-white rounded-xl border border-slate-200 p-4 hover:shadow-lg hover:border-slate-300 transition-all duration-200 flex flex-col gap-3">
-      {/* Top Row: Logo + Match + Admission Chance */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className={`shrink-0 size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
-            {course.university.charAt(0)}
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-slate-900 line-clamp-2 text-sm leading-tight">
-              {course.name}
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5 truncate">{course.university}</p>
-          </div>
-        </div>
-        <div className={`shrink-0 size-11 rounded-full ${matchColor(course.matchScore)} flex flex-col items-center justify-center text-xs font-bold`}>
-          <span>{course.matchScore}%</span>
-          <span className="text-[9px] font-medium opacity-80">Match</span>
-        </div>
-      </div>
-
-      {/* Location */}
-      <div className="flex items-center gap-1.5 text-xs text-slate-600">
-        <span className="text-base">{course.flag}</span>
-        <span>{course.city}</span>
-        <span className="text-slate-300">•</span>
-        <span>{course.country}</span>
-      </div>
-
-      {/* Badge row */}
-      <div className="flex flex-wrap gap-1.5">
-        <Badge variant="outline" className="text-[11px] px-2 py-0 font-medium border-slate-200 text-slate-600">
-          <Calendar className="size-3 mr-1" /> {course.intake}
-        </Badge>
-        <Badge variant="outline" className="text-[11px] px-2 py-0 font-medium border-slate-200 text-slate-600">
-          <Clock className="size-3 mr-1" /> {course.duration}
-        </Badge>
-        <Badge className={`text-[11px] px-2 py-0 font-medium ${admissionColor(course.admissionChance)}`}>
-          {course.admissionChance} Chance
-        </Badge>
-      </div>
-
-      {/* Tuition */}
-      <div className="flex items-baseline gap-2">
-        <span className="text-lg font-bold text-slate-900">{course.tuition}</span>
-        {course.scholarship && (
-          <span className="text-sm font-semibold text-emerald-600">Scholarship {course.scholarship}</span>
-        )}
-      </div>
-
-      {/* Requirements */}
-      <div className="flex items-center gap-3 text-xs text-slate-500">
-        <span className="flex items-center gap-1"><Languages className="size-3" /> IELTS {course.ielts}+</span>
-        <span className="flex items-center gap-1"><GraduationCap className="size-3" /> GPA {course.gpa}</span>
-      </div>
-
-      {/* Deposit & App Fee */}
-      <div className="flex items-center gap-4 text-xs text-slate-500">
-        <span>Deposit: <span className="font-medium text-slate-700">{course.deposit}</span></span>
-        <span>App Fee: <span className="font-medium text-slate-700">{course.appFee}</span></span>
-      </div>
-
-      {/* Deadline */}
-      <div className={`flex items-center gap-1.5 text-xs ${course.daysRemaining <= 30 ? 'text-red-600 font-medium' : 'text-slate-500'}`}>
-        <AlertTriangle className="size-3" />
-        <span>Deadline: {course.deadline}</span>
-        {course.daysRemaining > 0 && (
-          <span className="ml-1">({course.daysRemaining} days left)</span>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
-          Apply
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className={`h-8 text-xs ${isShortlisted ? 'border-amber-400 bg-amber-50 text-amber-700' : ''}`}
-          onClick={onShortlist}
-        >
-          <Bookmark className={`size-3 ${isShortlisted ? 'fill-amber-500 text-amber-500' : ''}`} />
-          {isShortlisted ? 'Saved' : 'Shortlist'}
-        </Button>
-        <label className="flex items-center gap-1.5 cursor-pointer text-xs text-slate-500 hover:text-[#0057B8] transition-colors whitespace-nowrap">
-          <Checkbox
-            checked={isCompareChecked}
-            onCheckedChange={(checked) => onCompare(checked === true)}
-            className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
-          />
-          Compare
-        </label>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ──────────────────────────────────────────────────
 export default function StudentCourseFinder() {
-  usePortalStore(); // initialize store
+  const [courses, setCourses] = useState<Record<string, unknown>[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [profile, setProfile] = useState<Profile>(EMPTY_PROFILE);
+  const [search, setSearch] = useState('');
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('relevance');
-  const [currentPage, setCurrentPage] = useState(1);
+  // Has the student actually supplied anything to score against?
+  const hasProfile =
+    profile.highestQualification.trim() !== '' ||
+    profile.gpa !== null ||
+    profile.englishScore !== null;
 
-  // Filters
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedIntakes, setSelectedIntakes] = useState<string[]>([]);
-  const [selectedTuition, setSelectedTuition] = useState<string[]>([]);
-  const [selectedIelts, setSelectedIelts] = useState<string[]>([]);
-  const [scholarshipFilter, setScholarshipFilter] = useState('');
-  const [activeQuickFilters, setActiveQuickFilters] = useState<string[]>([]);
+  const fetchCourses = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const params = new URLSearchParams();
+      if (search.trim()) params.set('q', search.trim());
+      if (profile.preferredCountry.trim()) params.set('country', profile.preferredCountry.trim());
+      params.set('limit', '24');
 
-  // State
-  const [shortlistedIds, setShortlistedIds] = useState<Set<string>>(new Set());
-  const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-
-  const toggleQuickFilter = (f: string) => {
-    setActiveQuickFilters((prev) =>
-      prev.includes(f) ? prev.filter((i) => i !== f) : [...prev, f]
-    );
-  };
-
-  // Filter + sort courses
-  const filteredCourses = useMemo(() => {
-    let courses = [...MOCK_COURSES];
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      courses = courses.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.university.toLowerCase().includes(q) ||
-          c.subject.toLowerCase().includes(q) ||
-          c.city.toLowerCase().includes(q)
-      );
-    }
-
-    if (selectedCountries.length > 0) {
-      courses = courses.filter((c) => selectedCountries.includes(c.country));
-    }
-    if (selectedLevels.length > 0) {
-      courses = courses.filter((c) => selectedLevels.includes(c.level));
-    }
-    if (selectedSubjects.length > 0) {
-      courses = courses.filter((c) => selectedSubjects.includes(c.subject));
-    }
-    if (selectedIntakes.length > 0) {
-      courses = courses.filter((c) => selectedIntakes.includes(c.intake));
-    }
-    if (scholarshipFilter === 'Available') {
-      courses = courses.filter((c) => c.scholarship !== null);
-    } else if (scholarshipFilter === 'Not Available') {
-      courses = courses.filter((c) => c.scholarship === null);
-    }
-
-    switch (sortBy) {
-      case 'tuition-low':
-        courses.sort((a, b) => parseInt(a.tuition.replace(/[^0-9]/g, '')) - parseInt(b.tuition.replace(/[^0-9]/g, '')));
-        break;
-      case 'ranking':
-        courses.sort((a, b) => a.ranking - b.ranking);
-        break;
-      case 'match':
-        courses.sort((a, b) => b.matchScore - a.matchScore);
-        break;
-      default:
-        courses.sort((a, b) => b.matchScore - a.matchScore);
-    }
-
-    return courses;
-  }, [searchQuery, selectedCountries, selectedLevels, selectedSubjects, selectedIntakes, selectedTuition, selectedIelts, scholarshipFilter, activeQuickFilters, sortBy]);
-
-  const toggleShortlist = (id: string) => {
-    setShortlistedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleCompare = (id: string, checked: boolean) => {
-    setCompareIds((prev) => {
-      const next = new Set(prev);
-      if (checked) {
-        if (next.size < 5) next.add(id);
-      } else {
-        next.delete(id);
+      const res = await fetch(`/api/courses/search?${params.toString()}`, { cache: 'no-store' });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        setCourses([]);
+        setLoadError(json?.error || `Course search failed with status ${res.status}.`);
+        return;
       }
-      return next;
-    });
-  };
+      const data = Array.isArray(json?.data) ? json.data : [];
 
-  const totalResults = filteredCourses.length;
-  const pageSize = 6;
-  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
-  const paginatedCourses = filteredCourses.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+      // Score against the real engine, but only when there is a real profile.
+      // Without one, an eligibility percentage would be invented from nothing.
+      const enriched = data.map((course: Record<string, unknown>) => {
+        if (!hasProfile) return { ...course, eligibility: null, matchScore: null };
+        const eligibility = calculateEligibilityScore(toProfileInput(profile), toRequirements(course), course);
+        const matchScore = calculateMatchScore(toProfileInput(profile), course, eligibility.score);
+        return { ...course, eligibility, matchScore };
+      });
+      setCourses(enriched);
+    } catch (error) {
+      setCourses([]);
+      setLoadError(error instanceof Error ? error.message : 'Could not reach the course catalogue.');
+    } finally {
+      setLoading(false);
+    }
+  }, [search, profile, hasProfile]);
 
-  // Filtering and sorting invalidate the current page. Clamp again when a
-  // result set shrinks after a deletion or a restrictive filter.
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedCountries, selectedLevels, selectedSubjects, selectedIntakes, selectedTuition, selectedIelts, scholarshipFilter, activeQuickFilters, sortBy]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [currentPage, totalPages]);
-
-  // Clear all filters
-  const clearAllFilters = () => {
-    setSelectedCountries([]);
-    setSelectedLevels([]);
-    setSelectedSubjects([]);
-    setSelectedIntakes([]);
-    setSelectedTuition([]);
-    setSelectedIelts([]);
-    setScholarshipFilter('');
-    setActiveQuickFilters([]);
-    setSearchQuery('');
-  };
-
-  const hasActiveFilters =
-    selectedCountries.length > 0 ||
-    selectedLevels.length > 0 ||
-    selectedSubjects.length > 0 ||
-    selectedIntakes.length > 0 ||
-    selectedTuition.length > 0 ||
-    selectedIelts.length > 0 ||
-    scholarshipFilter !== '' ||
-    activeQuickFilters.length > 0;
+    void fetchCourses();
+  }, [fetchCourses, reloadKey]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ─── Search Bar Hero ─────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-slate-900 via-[#0a1628] to-slate-900 px-4 py-8 md:py-12">
-        <div className="max-w-5xl mx-auto text-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            Find Your Perfect Course
-          </h1>
-          <p className="text-slate-400 text-sm md:text-base">
-            Search courses by country, subject, level and intake
+    <div className="space-y-6">
+      <div className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm sm:p-8">
+        <Badge className="mb-3 border-[#0057B8]/20 bg-[#0057B8]/10 text-xs text-[#0057B8]">
+          Same catalogue as the public finder · scored against your own profile
+        </Badge>
+        <h1 className="mb-2 text-2xl font-bold text-[#0F172A] sm:text-3xl">Find courses</h1>
+        <p className="max-w-3xl text-sm text-slate-600">
+          Results come from the live course database. Eligibility is calculated from the details you
+          enter below — nationality, qualification, GPA, English test and score, budget and
+          preferences. Labels are Eligible, Likely Eligible, Need Review, Not Eligible and Missing
+          Information. <strong className="font-semibold">An eligibility label is never a guarantee
+          of admission or of a visa.</strong>
+        </p>
+
+        {!hasProfile && (
+          <p className="mt-4 flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+            <Info className="mt-0.5 size-4 shrink-0" />
+            Enter at least your qualification, GPA or English score to see eligibility labels. Until
+            then every course is shown as <strong className="font-semibold">Missing Information</strong>{' '}
+            rather than being scored against details you have not given.
           </p>
-        </div>
-        <div className="max-w-4xl mx-auto flex gap-3">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-400" />
+        )}
+
+        <div className="mt-6 grid gap-3 md:grid-cols-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-qual" className="text-xs font-semibold">Highest qualification</Label>
             <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search courses, universities, or subjects..."
-              className="h-12 pl-12 pr-4 text-base rounded-xl bg-white border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-[#0057B8]"
+              id="cf-qual"
+              placeholder="e.g. Bachelor"
+              value={profile.highestQualification}
+              onChange={(e) => setProfile({ ...profile, highestQualification: e.target.value })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
             />
           </div>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
-            variant="brand"
-            size="lg"
-            className="h-12 px-6 rounded-xl shrink-0"
-          >
-            <Sparkles className="size-4" />
-            AI Match
-          </Button>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-gpa" className="text-xs font-semibold">GPA / CGPA</Label>
+            <Input
+              id="cf-gpa"
+              placeholder="e.g. 3.2"
+              value={profile.gpa ?? ''}
+              onChange={(e) => setProfile({ ...profile, gpa: parseNumber(e.target.value) })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-test" className="text-xs font-semibold">English test</Label>
+            <Input
+              id="cf-test"
+              placeholder="e.g. IELTS"
+              value={profile.englishTest}
+              onChange={(e) => setProfile({ ...profile, englishTest: e.target.value })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-score" className="text-xs font-semibold">English score</Label>
+            <Input
+              id="cf-score"
+              placeholder="e.g. 6.5"
+              value={profile.englishScore ?? ''}
+              onChange={(e) => setProfile({ ...profile, englishScore: parseNumber(e.target.value) })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
         </div>
 
-        {/* Filter Chips Row */}
-        <div className="max-w-4xl mx-auto mt-4 flex flex-wrap gap-2">
-          {[
-            { label: 'Country', value: selectedCountries.length },
-            { label: 'Level', value: selectedLevels.length },
-            { label: 'Subject', value: selectedSubjects.length },
-            { label: 'Intake', value: selectedIntakes.length },
-            { label: 'Scholarship', value: scholarshipFilter ? 1 : 0 },
-            { label: 'IELTS Score', value: selectedIelts.length },
-          ].map((chip) => (
-            <button
-              key={chip.label}
-              onClick={() => setFilterSheetOpen(true)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium border transition-all cursor-pointer
-                ${chip.value > 0
-                  ? 'bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/30'
-                  : 'bg-white/10 text-white/80 border-white/20 hover:bg-white/20'
-                }`}
-            >
-              {chip.label}
-              {chip.value > 0 && (
-                <span className="size-4 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
-                  {chip.value}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Main Content ────────────────────────────────────────── */}
-      <div className="max-w-[1400px] mx-auto px-4 py-6">
-        <div className="flex gap-6">
-          {/* Desktop Filter Sidebar */}
-          <aside className="hidden lg:block w-72 shrink-0">
-            <div className="sticky top-6 bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                  <SlidersHorizontal className="size-4" /> Filters
-                </h2>
-                {hasActiveFilters && (
-                  <Button variant="ghost" size="sm" className="text-xs text-red-500 hover:text-red-600 h-7 px-2" onClick={clearAllFilters}>
-                    Clear All
-                  </Button>
-                )}
-              </div>
-              <ScrollArea className="h-[calc(100vh-220px)]">
-                <FilterSidebarContent
-                  selectedCountries={selectedCountries}
-                  setSelectedCountries={setSelectedCountries}
-                  selectedLevels={selectedLevels}
-                  setSelectedLevels={setSelectedLevels}
-                  selectedSubjects={selectedSubjects}
-                  setSelectedSubjects={setSelectedSubjects}
-                  selectedIntakes={selectedIntakes}
-                  setSelectedIntakes={setSelectedIntakes}
-                  selectedTuition={selectedTuition}
-                  setSelectedTuition={setSelectedTuition}
-                  selectedIelts={selectedIelts}
-                  setSelectedIelts={setSelectedIelts}
-                  scholarshipFilter={scholarshipFilter}
-                  setScholarshipFilter={setScholarshipFilter}
-                  activeQuickFilters={activeQuickFilters}
-                  toggleQuickFilter={toggleQuickFilter}
-                />
-              </ScrollArea>
-            </div>
-          </aside>
-
-          {/* Main Course Grid */}
-          <main className="flex-1 min-w-0">
-            {/* Sort + Count Bar */}
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <div className="flex items-center gap-3">
-                {/* Mobile Filter Button */}
-                <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
-                  <SheetTrigger asChild>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="lg:hidden gap-2">
-                      <SlidersHorizontal className="size-4" />
-                      Filters
-                      {hasActiveFilters && (
-                        <span className="size-4 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
-                          {selectedCountries.length + selectedLevels.length + selectedSubjects.length + selectedIntakes.length + selectedIelts.length + (scholarshipFilter ? 1 : 0) + activeQuickFilters.length}
-                        </span>
-                      )}
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="left" className="w-80 p-0 overflow-y-auto">
-                    <SheetHeader className="p-4 pb-2 border-b sticky top-0 bg-white z-10">
-                      <SheetTitle className="flex items-center justify-between">
-                        <span className="flex items-center gap-2"><SlidersHorizontal className="size-4" /> Filters</span>
-                        {hasActiveFilters && (
-                          <Button variant="ghost" size="sm" className="text-xs text-red-500 hover:text-red-600 h-7" onClick={clearAllFilters}>
-                            Clear All
-                          </Button>
-                        )}
-                      </SheetTitle>
-                    </SheetHeader>
-                    <div className="p-4">
-                      <FilterSidebarContent
-                        selectedCountries={selectedCountries}
-                        setSelectedCountries={setSelectedCountries}
-                        selectedLevels={selectedLevels}
-                        setSelectedLevels={setSelectedLevels}
-                        selectedSubjects={selectedSubjects}
-                        setSelectedSubjects={setSelectedSubjects}
-                        selectedIntakes={selectedIntakes}
-                        setSelectedIntakes={setSelectedIntakes}
-                        selectedTuition={selectedTuition}
-                        setSelectedTuition={setSelectedTuition}
-                        selectedIelts={selectedIelts}
-                        setSelectedIelts={setSelectedIelts}
-                        scholarshipFilter={scholarshipFilter}
-                        setScholarshipFilter={setScholarshipFilter}
-                        activeQuickFilters={activeQuickFilters}
-                        toggleQuickFilter={toggleQuickFilter}
-                      />
-                    </div>
-                  </SheetContent>
-                </Sheet>
-
-                <p className="text-sm text-slate-500">
-                  Showing <span className="font-semibold text-slate-800">{totalResults === 0 ? 0 : (currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalResults)}</span> of {totalResults} courses
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 hidden sm:inline">Sort by:</span>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger size="sm" className="w-[160px] text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="relevance">Relevance</SelectItem>
-                    <SelectItem value="tuition-low">Tuition (Low-High)</SelectItem>
-                    <SelectItem value="ranking">Ranking</SelectItem>
-                    <SelectItem value="match">Match Score</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Course Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {paginatedCourses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  onShortlist={() => toggleShortlist(course.id)}
-                  onCompare={(checked) => toggleCompare(course.id, checked)}
-                  isShortlisted={shortlistedIds.has(course.id)}
-                  isCompareChecked={compareIds.has(course.id)}
-                />
-              ))}
-            </div>
-
-            {filteredCourses.length === 0 && (
-              <div className="text-center py-16">
-                <Search className="size-12 text-slate-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-slate-700 mb-1">No courses found</h3>
-                <p className="text-sm text-slate-500 mb-4">Try adjusting your filters or search query</p>
-                <Button variant="outline" onClick={clearAllFilters}>Clear All Filters</Button>
-              </div>
-            )}
-
-            {/* Pagination */}
-            {totalResults > 0 && totalPages > 1 && (
-              <div className="mt-8">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href={`?page=${Math.max(1, currentPage - 1)}`}
-                        aria-disabled={currentPage === 1}
-                        onClick={(e) => { e.preventDefault(); if (currentPage > 1) setCurrentPage((p) => p - 1); }}
-                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                      <PaginationItem key={pageNumber}>
-                        <PaginationLink
-                          href={`?page=${pageNumber}`}
-                          isActive={pageNumber === currentPage}
-                          aria-label={`Go to page ${pageNumber}`}
-                          onClick={(e) => { e.preventDefault(); setCurrentPage(pageNumber); }}
-                          className="cursor-pointer"
-                        >
-                          {pageNumber}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    <PaginationItem>
-                      <PaginationNext
-                        href={`?page=${Math.min(totalPages, currentPage + 1)}`}
-                        aria-disabled={currentPage === totalPages}
-                        onClick={(e) => { e.preventDefault(); if (currentPage < totalPages) setCurrentPage((p) => p + 1); }}
-                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
-          </main>
+        <div className="mt-3 grid gap-3 md:grid-cols-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-country" className="text-xs font-semibold">Preferred country</Label>
+            <Input
+              id="cf-country"
+              placeholder="e.g. United Kingdom"
+              value={profile.preferredCountry}
+              onChange={(e) => setProfile({ ...profile, preferredCountry: e.target.value })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-subject" className="text-xs font-semibold">Preferred subject</Label>
+            <Input
+              id="cf-subject"
+              placeholder="e.g. Business"
+              value={profile.preferredSubject}
+              onChange={(e) => setProfile({ ...profile, preferredSubject: e.target.value })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-budget" className="text-xs font-semibold">Budget max (tuition)</Label>
+            <Input
+              id="cf-budget"
+              placeholder="e.g. 20000"
+              value={profile.budgetMax ?? ''}
+              onChange={(e) => setProfile({ ...profile, budgetMax: parseNumber(e.target.value) })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-nat" className="text-xs font-semibold">Nationality</Label>
+            <Input
+              id="cf-nat"
+              placeholder="e.g. Bangladeshi"
+              value={profile.nationality}
+              onChange={(e) => setProfile({ ...profile, nationality: e.target.value })}
+              className="h-10 border-[#E2E8F0] bg-white text-sm"
+            />
+          </div>
         </div>
       </div>
+
+      <Card className="rounded-2xl border-[#E2E8F0] bg-white p-4 shadow-sm">
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              placeholder="Search the live course catalogue…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-11 border-[#E2E8F0] bg-white pl-9"
+              aria-label="Search courses"
+            />
+          </div>
+          <Button onClick={() => void fetchCourses()} className="h-11 bg-[#0057B8] text-white">
+            Search
+          </Button>
+        </div>
+      </Card>
+
+      {loadError && (
+        <Card className="rounded-2xl border-2 border-amber-200 bg-white p-10 text-center">
+          <AlertTriangle className="mx-auto mb-3 size-10 text-amber-500" />
+          <p className="text-sm font-semibold text-slate-800">Course search unavailable</p>
+          <p className="mx-auto mt-1 max-w-md text-xs text-slate-500">{loadError}</p>
+          <p className="mx-auto mt-2 max-w-md text-[11px] text-slate-400">
+            No results are being shown because the catalogue could not be reached — this is not an
+            empty result set.
+          </p>
+          <Button variant="outline" size="sm" className="mt-4" onClick={() => setReloadKey((k) => k + 1)}>
+            <RefreshCw className="mr-1.5 size-3.5" />
+            Try again
+          </Button>
+        </Card>
+      )}
+
+      {!loadError && loading && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-48 animate-pulse rounded-2xl border border-[#E2E8F0] bg-white" />
+          ))}
+        </div>
+      )}
+
+      {!loadError && !loading && courses.length === 0 && (
+        <Card className="rounded-2xl border-[#E2E8F0] bg-white p-12 text-center">
+          <Search className="mx-auto mb-3 size-12 text-slate-300" />
+          <p className="text-sm text-slate-600">
+            No published courses match your current filters.
+          </p>
+          <p className="mx-auto mt-1 max-w-md text-[11px] text-slate-400">
+            Only published, verified courses with a public university are listed, so a course that is
+            still being verified will not appear here.
+          </p>
+        </Card>
+      )}
+
+      {!loadError && !loading && courses.length > 0 && (
+        <>
+          <p className="text-sm text-slate-500">
+            {courses.length} course{courses.length === 1 ? '' : 's'} from the live catalogue
+            {hasProfile ? ' · scored against your profile' : ' · enter your profile to see eligibility'}
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {courses.map((course) => {
+              const c = course as Record<string, any>;
+              const eligibility = c.eligibility as
+                | { label: string; score: number; reasons: string[]; missing: string[] }
+                | null;
+              const matchScore = c.matchScore as number | null;
+              const courseId = String(c.courseId ?? c.id ?? '');
+              const intakes = Array.isArray(c.intakes) ? c.intakes : [];
+              const scholarships = Array.isArray(c.scholarships) ? c.scholarships : [];
+
+              return (
+                <Card
+                  key={courseId}
+                  className="flex h-full flex-col justify-between rounded-2xl border-[#E2E8F0] bg-white p-5 transition-all hover:border-[#0057B8] hover:shadow-md"
+                >
+                  <div>
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-1.5">
+                      {eligibility ? (
+                        <Badge className={`text-[10px] ${LABEL_STYLE[eligibility.label] ?? LABEL_STYLE['Missing Information']}`}>
+                          {eligibility.label} — {eligibility.score}%
+                        </Badge>
+                      ) : (
+                        <Badge className={`text-[10px] ${LABEL_STYLE['Missing Information']}`}>
+                          Missing Information
+                        </Badge>
+                      )}
+                      {matchScore !== null ? (
+                        <Badge className="border-[#E2E8F0] bg-[#F8FAFC] text-[10px]">
+                          Match {matchScore}%
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px] text-slate-400">
+                          match needs profile
+                        </Badge>
+                      )}
+                    </div>
+
+                    <h3 className="mb-1 line-clamp-2 text-sm font-bold text-[#0F172A]">
+                      {String(c.courseTitle ?? c.name ?? 'Untitled course')}
+                    </h3>
+                    <p className="mb-2 flex items-center gap-1 text-xs text-slate-600">
+                      <MapPin className="size-3" />
+                      {String(c.university?.name ?? c.universityName ?? 'University not recorded')}
+                      {c.country ? ` • ${String(c.country)}` : ''}
+                    </p>
+
+                    <div className="space-y-1 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-[11px]">
+                      {eligibility ? (
+                        <>
+                          <p>
+                            <strong className="font-semibold">Eligibility:</strong>{' '}
+                            {eligibility.reasons.slice(0, 2).join(' • ') || 'No reasons recorded'}
+                          </p>
+                          {eligibility.missing.length > 0 && (
+                            <p className="text-amber-700">
+                              <strong className="font-semibold">Missing:</strong>{' '}
+                              {eligibility.missing.join(', ')}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-slate-600">
+                          <strong className="font-semibold">Eligibility:</strong> not calculated —
+                          enter your qualification, GPA or English score above.
+                        </p>
+                      )}
+                      <p>
+                        <strong className="font-semibold">Tuition:</strong>{' '}
+                        {c.currency ? `${String(c.currency)} ` : ''}
+                        {c.tuitionFee != null && Number(c.tuitionFee) > 0
+                          ? String(c.tuitionFee)
+                          : 'not recorded'}{' '}
+                        • <strong className="font-semibold">Scholarship:</strong>{' '}
+                        {scholarships.length > 0 ? `${scholarships.length} available` : 'check with ALO'}{' '}
+                        • <strong className="font-semibold">Intake:</strong>{' '}
+                        {intakes[0]?.intakeMonth || 'not recorded'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-2">
+                    <Link href={`/student/course/${courseId}`} className="block">
+                      <Button className="h-11 w-full bg-[#0057B8] text-xs font-bold text-white">
+                        View course + eligibility
+                      </Button>
+                    </Link>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button variant="outline" size="sm" className="h-9 border-[#E2E8F0] text-[11px]">
+                        <BookmarkPlus className="mr-1 size-3" />
+                        Save
+                      </Button>
+                      <Link href="/student/compare">
+                        <Button variant="outline" size="sm" className="h-9 w-full border-[#E2E8F0] text-[11px]">
+                          <GitCompare className="mr-1 size-3" />
+                          Compare
+                        </Button>
+                      </Link>
+                      <Link href={`/student/apply/${courseId}`}>
+                        <Button variant="outline" size="sm" className="h-9 w-full border-[#E2E8F0] text-[11px]">
+                          <Send className="mr-1 size-3" />
+                          Apply
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
+            Eligibility and match scores are operational guidance calculated from the requirements
+            recorded in ALO&apos;s catalogue and the profile you entered. They are not an admission
+            decision, not a visa assessment, and not a guarantee. Final requirements are set by the
+            university and confirmed by ALO before submission.
+          </p>
+        </>
+      )}
     </div>
   );
 }

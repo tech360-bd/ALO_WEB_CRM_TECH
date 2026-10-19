@@ -3637,8 +3637,27 @@ model LeadForm {
   sourceSection       String   @default("")
   status              String   @default("new")
   assignedCounselorId String   @default("")
+  // ── Acquisition attribution (Google Free Stack) ──
+  // LeadForm is the public web capture record. It previously stored no
+  // attribution at all, so a consultation booked from a Google Ads click was
+  // indistinguishable from organic. VARCHAR(191) with a literal default is
+  // legal in MySQL (only TEXT/BLOB/JSON defaults are not), and these match the
+  // existing style of this model.
+  utmSource           String   @default("")
+  utmMedium           String   @default("")
+  utmCampaign         String   @default("")
+  utmContent          String   @default("")
+  utmTerm             String   @default("")
+  gclid               String   @default("")
+  fbclid              String   @default("")
+  landingPage         String   @default("")
+  referrer            String   @default("")
+  visitorId           String   @default("")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  @@index([utmSource, utmMedium, utmCampaign])
+  @@index([landingPage])
 }
 
 model SearchLog {
@@ -6564,6 +6583,47 @@ model Lead {
   utmMedium            String?
   utmCampaign          String?
   rawSubmission        String?
+  // ── Acquisition attribution (Google Free Stack — docs/GOOGLE-FREE-STACK.md) ──
+  // Captured by src/lib/attribution/lead-attribution.ts on every public lead
+  // endpoint. All columns are nullable so existing rows are untouched and no
+  // backfill is implied: a lead created before this migration legitimately has
+  // no recorded attribution, and reporting must show that as unknown rather
+  // than as a guessed source.
+  //
+  // `source` above is the acquisition channel (WEBSITE, GOOGLE_MAPS, …). The
+  // fields below are the marketing attribution triplet and the paid-click
+  // identifiers, kept separate so neither meaning is overloaded.
+  medium                  String?
+  campaign                String?
+  content                 String?
+  term                    String?
+  utmContent              String?
+  utmTerm                 String?
+  /// Google Ads click identifier (autotagging). Presence alone marks the lead
+  /// as paid search even when utm_* is absent.
+  gclid                   String?
+  /// Meta click identifier.
+  fbclid                  String?
+  /// Path + query the visitor converted on.
+  landingPage             String?
+  /// Referring origin only — never a full referrer URL, which can carry
+  /// another site's query string and therefore a third party's PII.
+  referrer                String?
+  /// First-touch attribution, written once and never overwritten.
+  firstTouchSource        String?
+  firstTouchMedium        String?
+  firstTouchCampaign      String?
+  firstTouchLandingPage   String?
+  firstTouchAt            DateTime?
+  /// Last-touch attribution, refreshed on each new conversion by the same
+  /// visitor so a multi-session journey stays traceable.
+  lastTouchSource         String?
+  lastTouchMedium         String?
+  lastTouchAt             DateTime?
+  /// Opaque analytics visitor token (src/lib/analytics/visitor.ts). This is the
+  /// join between a GA4 session and the CRM lead; it is NOT a student id and
+  /// carries no personal data.
+  visitorId               String?
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
   leadOutreach         LeadOutreach[]
@@ -6571,6 +6631,10 @@ model Lead {
   @@index([source])
   @@index([status])
   @@index([counselorId])
+  @@index([utmSource, utmMedium, utmCampaign])
+  @@index([landingPage])
+  @@index([visitorId])
+  @@index([gclid])
 }
 
 model Task {
@@ -11742,4 +11806,471 @@ model StudentIdSequence {
   updatedAt DateTime @updatedAt
 
   @@unique([scope, year])
+}
+
+// ==========================================================================
+// ALO OPERATING SYSTEM — PLATFORM CONTROL PLANE
+// Added 2026-10-18 to close verified gaps against the ALO Education Global
+// Education Consultancy Operating System specification:
+//   s13  Parent / Guardian management
+//   s39  University / Institution portal
+//   s77  Outbound webhook system
+//   s108 "What needs attention?" engine snapshots
+//   s110 ALO Opportunity Graph
+//   s111 Application risk score
+//   s112 Student success score
+//   s117 Feature flags
+// Money follows the existing schema convention (Float) for consistency with
+// Application/Payment/Commission models. Amounts that must be cents-exact are
+// handled by src/lib/accounting (Int cents) and are NOT stored here.
+// ==========================================================================
+
+// --------------------------------------------------------------------------
+// s117 — FEATURE FLAGS (real, database-backed, auditable gradual rollout)
+// Replaces the hard-coded FEATURE_FLAGS array that previously only rendered a
+// static list in the super admin dashboard (maturity LEVEL 1 → LEVEL 3).
+// --------------------------------------------------------------------------
+model FeatureFlag {
+  id             String             @id @default(cuid())
+  key            String             @unique
+  module         String             @default("")
+  description    String             @db.Text
+  enabled        Boolean            @default(false)
+  rolloutPercent Int                @default(0)
+  allowRoles     String             @default("[]") @db.Text
+  allowUserIds   String             @default("[]") @db.Text
+  denyUserIds    String             @default("[]") @db.Text
+  environment    String             @default("all")
+  config         String             @default("{}") @db.Text
+  status         String             @default("ACTIVE")
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  auditEntries   FeatureFlagAudit[]
+
+  @@index([module])
+  @@index([enabled])
+  @@index([status])
+}
+
+model FeatureFlagAudit {
+  id         String      @id @default(cuid())
+  flagId     String
+  flagKey    String
+  action     String
+  before     String      @default("{}") @db.LongText
+  after      String      @default("{}") @db.LongText
+  actorId    String      @default("")
+  actorEmail String      @default("")
+  reason     String      @default("") @db.Text
+  createdAt  DateTime    @default(now())
+  flag       FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
+
+  @@index([flagId])
+  @@index([flagKey])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s77 — OUTBOUND WEBHOOK SYSTEM
+// The existing WebhookEvent model is INBOUND only (provider callbacks). These
+// two models add outbound fan-out: subscribe to canonical ALO events and
+// receive signed HTTP deliveries with retry, dead-letter and idempotency.
+// --------------------------------------------------------------------------
+model WebhookSubscription {
+  id          String            @id @default(cuid())
+  name        String
+  targetUrl   String
+  secret      String            @default("") @db.Text
+  events      String            @default("[]") @db.Text
+  active      Boolean           @default(true)
+  environment String            @default("production")
+  partnerId   String?
+  branchId    String?
+  maxRetries  Int               @default(5)
+  timeoutMs   Int               @default(10000)
+  description String            @default("") @db.Text
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deliveries  WebhookDelivery[]
+
+  @@index([active])
+  @@index([partnerId])
+  @@index([environment])
+}
+
+model WebhookDelivery {
+  id             String              @id @default(cuid())
+  subscriptionId String
+  eventId        String
+  eventType      String
+  payload        String              @db.LongText
+  status         String              @default("PENDING")
+  attempts       Int                 @default(0)
+  lastAttemptAt  DateTime?
+  nextAttemptAt  DateTime?
+  responseStatus Int?
+  responseBody   String?             @db.Text
+  errorMessage   String?             @db.Text
+  durationMs     Int?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  subscription   WebhookSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriptionId, eventId])
+  @@index([status])
+  @@index([nextAttemptAt])
+  @@index([eventType])
+}
+
+// --------------------------------------------------------------------------
+// s13 — PARENT / GUARDIAN MANAGEMENT
+// Previously only two flat strings (guardianName/guardianPhone) existed on
+// PortalStudentProfile. Study-abroad decisions are frequently parent-led, so
+// parents need a real profile, explicit consent records, controlled portal
+// access and financial-responsibility tracking.
+// --------------------------------------------------------------------------
+model ParentGuardian {
+  id                 String                                @id @default(cuid())
+  studentId          String
+  userId             String?                               @unique
+  fullName           String
+  relationship       String                                @default("OTHER")
+  email              String                                @default("")
+  phone              String                                @default("")
+  whatsapp           String                                @default("")
+  country            String                                @default("")
+  city               String                                @default("")
+  occupation         String                                @default("")
+  isPrimaryContact   Boolean                               @default(false)
+  isFinancialSponsor Boolean                               @default(false)
+  communicationPrefs String                                @default("[]") @db.Text
+  notificationPrefs  String                                @default("[]") @db.Text
+  accessLevel        String                                @default("LIMITED")
+  portalEnabled      Boolean                               @default(false)
+  status             String                                @default("ACTIVE")
+  notes              String                                @default("") @db.Text
+  createdBy          String?
+  updatedBy          String?
+  createdAt          DateTime                              @default(now())
+  updatedAt          DateTime                              @updatedAt
+  consents           ParentGuardianConsent[]
+  responsibilities   ParentGuardianPaymentResponsibility[]
+
+  @@index([studentId])
+  @@index([status])
+  @@index([portalEnabled])
+}
+
+model ParentGuardianConsent {
+  id          String         @id @default(cuid())
+  parentId    String
+  studentId   String
+  consentType String
+  granted     Boolean        @default(false)
+  grantedAt   DateTime?
+  revokedAt   DateTime?
+  method      String         @default("")
+  evidenceRef String         @default("")
+  ipAddress   String         @default("")
+  version     String         @default("1.0")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  parent      ParentGuardian @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([parentId])
+  @@index([studentId])
+  @@index([consentType])
+}
+
+model ParentGuardianPaymentResponsibility {
+  id            String         @id @default(cuid())
+  parentId      String
+  studentId     String
+  applicationId String         @default("")
+  scope         String         @default("ALL")
+  amount        Float          @default(0)
+  currency      String         @default("USD")
+  paidAmount    Float          @default(0)
+  status        String         @default("PENDING")
+  dueDate       DateTime?
+  notes         String         @default("") @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  parent        ParentGuardian @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([parentId])
+  @@index([studentId])
+  @@index([status])
+}
+
+// --------------------------------------------------------------------------
+// s39 — UNIVERSITY / INSTITUTION PORTAL
+// Institution-facing accounts with strict tenant isolation: a representative
+// only ever sees applications addressed to their own institution.
+// --------------------------------------------------------------------------
+model UniversityPortalAccount {
+  id           String                     @id @default(cuid())
+  universityId String
+  userId       String?                    @unique
+  fullName     String
+  email        String                     @unique
+  jobTitle     String                     @default("")
+  role         String                     @default("UNIVERSITY_REPRESENTATIVE")
+  status       String                     @default("INVITED")
+  permissions  String                     @default("[]") @db.Text
+  lastLoginAt  DateTime?
+  invitedBy    String?
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+  activities   UniversityPortalActivity[]
+
+  @@index([universityId])
+  @@index([status])
+}
+
+model UniversityPortalActivity {
+  id           String                  @id @default(cuid())
+  accountId    String
+  universityId String
+  action       String
+  entityType   String                  @default("")
+  entityId     String                  @default("")
+  metadata     String                  @default("{}") @db.Text
+  createdAt    DateTime                @default(now())
+  account      UniversityPortalAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([universityId])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s111 — APPLICATION RISK SCORE (GREEN / AMBER / RED)
+// Immutable assessment history so risk trends are auditable.
+// --------------------------------------------------------------------------
+model ApplicationRiskAssessment {
+  id            String   @id @default(cuid())
+  applicationId String
+  studentId     String   @default("")
+  riskLevel     String   @default("GREEN")
+  score         Int      @default(0)
+  factors       String   @default("[]") @db.LongText
+  missingItems  String   @default("[]") @db.LongText
+  evaluatedBy   String   @default("SYSTEM")
+  evaluatedById String?
+  metadata      String   @default("{}") @db.Text
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+  @@index([studentId])
+  @@index([riskLevel])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s112 — STUDENT SUCCESS SCORE
+// Operational support score. Explicitly NOT an admission or visa prediction;
+// the disclaimer is persisted with every assessment so it can never be lost.
+// --------------------------------------------------------------------------
+model StudentSuccessAssessment {
+  id          String   @id @default(cuid())
+  studentId   String
+  score       Int      @default(0)
+  band        String   @default("NEEDS_SUPPORT")
+  components  String   @default("{}") @db.LongText
+  nextActions String   @default("[]") @db.LongText
+  disclaimer  String   @default("") @db.Text
+  evaluatedBy String   @default("SYSTEM")
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([band])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s108 — "WHAT NEEDS ATTENTION?" ENGINE snapshots
+// --------------------------------------------------------------------------
+model AttentionSnapshot {
+  id           String   @id @default(cuid())
+  scope        String   @default("GLOBAL")
+  scopeId      String   @default("")
+  generatedFor String   @default("")
+  buckets      String   @db.LongText
+  totals       String   @default("{}") @db.Text
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([scope, scopeId])
+  @@index([generatedFor])
+}
+
+// --------------------------------------------------------------------------
+// s110 — ALO OPPORTUNITY GRAPH
+// Materialised edges connecting Student ↔ Country ↔ University ↔ Course ↔
+// Scholarship ↔ Visa ↔ Partner ↔ Counselor ↔ Career outcome. Computed from
+// real CRM rows only; never from invented relationships.
+// --------------------------------------------------------------------------
+model OpportunityGraphEdge {
+  id         String   @id @default(cuid())
+  sourceType String
+  sourceId   String
+  targetType String
+  targetId   String
+  relation   String
+  weight     Float    @default(0)
+  evidence   String   @default("{}") @db.Text
+  computedBy String   @default("SYSTEM")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([sourceType, sourceId, targetType, targetId, relation])
+  @@index([sourceType, sourceId])
+  @@index([targetType, targetId])
+  @@index([relation])
+}
+
+// --------------------------------------------------------------------------
+// REGULATORY RULE VERSIONING (spec s106) + POLICY CHANGE MONITORING (s64)
+// --------------------------------------------------------------------------
+// Visa and country requirements change. Existing Country* rule tables
+// (CountryEntryRequirement, CountryEnglishTest, CountryVisaStep,
+// CountryWorkRight) carry only `lastVerifiedAt` + `status`, so editing one
+// silently overwrites the requirement a past application was assessed against.
+//
+// These two models make regulatory facts VERSIONED and PROVENANCED (s105):
+//   * RegulatoryRuleVersion — an immutable, dated version of one rule. New
+//     versions are APPENDED; the previous one becomes SUPERSEDED and is kept,
+//     so history is never overwritten (s106).
+//   * PolicyChangeAlert — a detected change from a monitored source, with the
+//     workflows/students/applications it affects and the review task it raised
+//     (s64). High-risk changes are never auto-applied: they become a PROPOSED
+//     rule version awaiting human approval (s116).
+//
+// No Prisma enums are used, matching the existing schema convention (546
+// models, 0 enums). Allowed values are documented inline and enforced in
+// src/lib/rules/rule-versioning.ts, which is unit tested.
+// --------------------------------------------------------------------------
+
+/// One immutable version of a regulatory rule (visa, entry, financial, English,
+/// work-right, deadline or policy). Keyed by `ruleKey` + `versionNumber`.
+model RegulatoryRuleVersion {
+  id            String  @id @default(cuid())
+  /// Stable canonical key, e.g. `country:GBR:entry_requirement:MASTERS`.
+  ruleKey       String
+  /// VISA_REQUIREMENT | ENTRY_REQUIREMENT | ENGLISH_REQUIREMENT |
+  /// FINANCIAL_REQUIREMENT | WORK_RIGHT | APPLICATION_DEADLINE | POLICY | OTHER
+  ruleType      String  @default("OTHER")
+  /// Monotonic per ruleKey. Never reused, never renumbered.
+  versionNumber Int     @default(1)
+  /// The rule content as JSON. Shape is per ruleType and validated in the lib.
+  payload       String  @default("{}") @db.Text
+  /// Human-readable summary of what this version states.
+  summary       String  @default("") @db.Text
+
+  // ---- effective window (s106) ----
+  effectiveFrom DateTime
+  /// Null = open-ended. Set when a newer version supersedes this one, or when
+  /// the rule is withdrawn.
+  effectiveUntil DateTime?
+
+  // ---- provenance (s105) ----
+  /// OFFICIAL_GOVERNMENT | OFFICIAL_UNIVERSITY | APPROVED_PARTNER |
+  /// VERIFIED_INTERNAL | UNVERIFIED
+  sourceType         String   @default("UNVERIFIED")
+  sourceUrl          String   @default("")
+  sourceName         String   @default("")
+  /// NEEDS_REVIEW | VERIFIED | DISPUTED | STALE
+  verificationStatus String   @default("NEEDS_REVIEW")
+  verifiedBy         String   @default("")
+  verifiedAt         DateTime?
+
+  // ---- lifecycle ----
+  /// DRAFT | PENDING_APPROVAL | ACTIVE | SUPERSEDED | REJECTED | EXPIRED
+  status         String    @default("DRAFT")
+  approvedBy     String    @default("")
+  approvedAt     DateTime?
+  rejectionReason String   @default("")
+  /// Free-text reason this version exists (what changed and why).
+  changeReason   String    @default("") @db.Text
+  /// The version this one replaced, if any.
+  supersededById String?
+
+  // ---- optional scoping ----
+  countryId    String @default("")
+  universityId String @default("")
+  /// Free-form scope such as a study level or visa subclass.
+  scope        String @default("")
+
+  /// Set when the rule came from a monitored policy change rather than a manual
+  /// edit, linking s64 detection to s106 versioning.
+  policyChangeAlertId String @default("")
+
+  createdBy String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ruleKey, versionNumber])
+  @@index([ruleKey, status])
+  @@index([ruleKey, effectiveFrom, effectiveUntil])
+  @@index([status])
+  @@index([verificationStatus])
+  @@index([countryId])
+  @@index([policyChangeAlertId])
+}
+
+/// A change detected on a monitored regulatory source (s64). Never auto-applied
+/// for high-risk changes: triage produces a PROPOSED RegulatoryRuleVersion that
+/// still needs human approval (s116).
+model PolicyChangeAlert {
+  id          String   @id @default(cuid())
+  /// Canonical rule the change would affect, if known.
+  ruleKey     String   @default("")
+  ruleType    String   @default("OTHER")
+  /// Short title of the detected change.
+  title       String
+  /// What changed, in plain English, with the evidence quoted.
+  description String   @default("") @db.Text
+  /// INFO | WARNING | URGENT | CRITICAL (s85 severity vocabulary)
+  severity    String   @default("INFO")
+  /// OFFICIAL_GOVERNMENT | OFFICIAL_UNIVERSITY | APPROVED_PARTNER | MONITORED_FEED
+  sourceType  String   @default("OFFICIAL_GOVERNMENT")
+  sourceUrl   String   @default("")
+  sourceName  String   @default("")
+
+  // ---- impact analysis (s64: identify affected workflows/students) ----
+  affectedWorkflows      String @default("[]") @db.Text
+  affectedStudentIds     String @default("[]") @db.Text
+  affectedApplicationIds String @default("[]") @db.Text
+  affectedCountryIds     String @default("[]") @db.Text
+  /// Number of records the change touches, denormalised for dashboards.
+  impactCount            Int    @default(0)
+
+  // ---- lifecycle ----
+  /// DETECTED | TRIAGED | PROPOSED | APPROVED | DISMISSED | EXPIRED
+  status              String    @default("DETECTED")
+  /// Version created from this alert once triaged (s106 link).
+  proposedRuleVersionId String  @default("")
+  /// Task raised for the responsible reviewer.
+  reviewTaskId        String    @default("")
+  /// Whether applying this change requires explicit human approval (s116).
+  requiresApproval    Boolean   @default(true)
+  triagedBy           String    @default("")
+  triagedAt           DateTime?
+  dismissedReason     String    @default("")
+  resolvedAt          DateTime?
+
+  detectedAt DateTime @default(now())
+  createdBy  String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status, severity])
+  @@index([ruleKey])
+  @@index([detectedAt])
+  @@index([proposedRuleVersionId])
 }

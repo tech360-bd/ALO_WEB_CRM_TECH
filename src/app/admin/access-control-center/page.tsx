@@ -54,6 +54,7 @@ import {
   Search,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { FeatureFlagsPanel } from '@/components/alo/feature-flags-panel';
 
 const DESIGNATIONS = [
   'Chairman','CEO','Director','Office Manager','Country Manager','Counselor','Senior Counselor','Application Manager','Application Team','Visa Officer','Finance','Marketing','Front Desk','HR','Support','Viewer','Custom'
@@ -476,6 +477,11 @@ export default function SuperAdminAccessControlCenter() {
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Zap className="w-4 h-4 text-[#0057B8]" /> Feature Access Engine — Helpers mandatory backend checks — canAccessFeature/getQuota/checkQuotaBeforeAction/recordUsage/canViewEmployeePrivateProfile/canViewB2BDetails/canUseStudentBenefit/canApproveAction/canAccessApplication/Document/SendCommunication — social/WhatsApp/email/phone/AI/application/student/document/finance/visa/marketing/partner/B2B/quota permission-controlled — WhatsApp contact matching phone_normalized</h2>
           <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-slate-50 rounded-xl border"><div className="font-bold">Feature Rules ({featureRules.length})</div><div className="space-y-1 mt-2 max-h-48 overflow-y-auto">{featureRules.map((r:any)=><div key={r.id} className="p-2 bg-white rounded border text-[10px] font-mono">{r.featureKey} — {r.displayName} — roles: {r.allowedRoles}</div>)}{featureRules.length===0&&<div className="text-slate-400">No rules — POST /api/employee-access/feature-access with featureKey/displayName/allowedRoles/requiredPermissions — GET ?featureKey&action checks canAccessFeature</div>}</div></div><div className="p-3 bg-blue-50 rounded-xl border border-blue-100"><div className="font-bold">Engine Helpers</div><div className="text-[11px] mt-2 space-y-1"><div>• canAccessFeatureEngine(userId, roles, featureKey, action) — super_admin always, portal permission, temporary, package assignment, break-glass, designation matrix</div><div>• canViewEmployeePrivateProfileEngine — self, super_admin, chairman, HR explicit temporary</div><div>• checkQuotaBeforeActionEngine — counts quotaUsage, limit from package — CHECK→ALLOW/REJECT→RECORD</div><div>• validateAiAction — low-risk READ/ANALYZE/SUMMARIZE/CLASSIFY/DRAFT/RECOMMEND/PREPARE allowed, high-risk FINALIZE/APPROVE/SEND/PAY/DELETE/ESCALATE requires human</div><div>• WhatsApp contact matching phone_normalized — permission-controlled</div></div></div></div>
+
+          {/* Persisted feature flags with rollout control and an audit trail
+              (spec s117). Distinct from the RBAC feature-access rules above:
+              these gate whole platform modules and are evaluated server-side. */}
+          <FeatureFlagsPanel />
         </Card>
       )}
 

@@ -130,6 +130,13 @@ interface PortalState {
   loginError: string | null;
   authMessage: string | null;
   notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>;
+  /**
+   * Transport state of the realtime notification stream (spec s86). Published so
+   * a shell can report "realtime unavailable" rather than showing a bell that
+   * silently never updates (s94). 'idle' means no stream was opened, which is
+   * also the state for a signed-out visitor.
+   */
+  realtimeStatus: 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'not_configured' | 'error';
 
   // Slug for public sub-pages (destination country, language test, etc.)
   publicPageSlug: string | null;
@@ -146,6 +153,9 @@ interface PortalState {
   clearLoginError: () => void;
   clearAuthMessage: () => void;
   setNotifications: (notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>) => void;
+  setRealtimeStatus: (
+    status: 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'not_configured' | 'error',
+  ) => void;
   hasPermission: (module: string, action: string) => boolean;
   hasRole: (roleName: string) => boolean;
 }
@@ -162,6 +172,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   loginError: null,
   authMessage: null,
   notifications: [],
+  realtimeStatus: 'idle',
   publicPageSlug: null,
 
   setView: (view) => set({ currentView: view, loginError: null }),
@@ -346,6 +357,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
       authMessage: null,
       loginLoading: false,
       notifications: [],
+      // Reset the stream state: a signed-out session has no live connection, and
+      // leaving 'connected' would misreport it (s94).
+      realtimeStatus: 'idle',
       sidebarOpen: false,
     });
   },
@@ -354,6 +368,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   clearLoginError: () => set({ loginError: null }),
   clearAuthMessage: () => set({ authMessage: null }),
   setNotifications: (notifications) => set({ notifications }),
+  setRealtimeStatus: (realtimeStatus) => set({ realtimeStatus }),
   hasPermission: (module: string, action: string) => {
     const state = get();
     if (!state.user) return false;

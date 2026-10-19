@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { getSiteSeoDefaults } from "@/lib/cms-managed-content";
+import { getGoogleStackConfig } from "@/lib/google/config";
+import { organizationSchema } from "@/lib/seo/schema-helpers";
 
 // Brand typography (Montserrat/Poppins headings, Open Sans/Roboto body) is
 // declared once in globals.css as self-hosted @font-face rules mapped onto the
@@ -25,6 +27,7 @@ export const viewport = {
 // unreachable (e.g. build-time prerender without a DB).
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSiteSeoDefaults();
+  const googleSiteVerification = getGoogleStackConfig().siteVerificationToken;
   const title = seo?.title ?? "ALO Education — Study Abroad Consultancy in Bangladesh";
   const description =
     seo?.description ??
@@ -78,6 +81,13 @@ export async function generateMetadata(): Promise<Metadata> {
       description: "Study abroad consultancy — UK, USA, Canada, Australia, NZ, Dubai",
     },
     other: {
+      // Search Console ownership verification (HTML meta method). Only emitted
+      // when GOOGLE_SITE_VERIFICATION_TOKEN is set, so the tag is never
+      // rendered empty. The DNS TXT method is preferred for a domain property;
+      // this supports the URL-prefix property and sites that cannot edit DNS.
+      ...(googleSiteVerification
+        ? { "google-site-verification": googleSiteVerification }
+        : {}),
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
       "apple-mobile-web-app-status-bar-style": "black-translucent",
@@ -91,6 +101,10 @@ import FloatingActionWidget from "@/components/website/FloatingActionWidget";
 import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { PwaRegister } from "@/components/pwa/PwaRegister";
 import { I18nProvider } from "@/i18n";
+import { RealtimeNotificationProvider } from "@/components/realtime/RealtimeNotificationProvider";
+import GoogleTags from "@/components/analytics/GoogleTags";
+import AnalyticsPageView from "@/components/analytics/AnalyticsPageView";
+import ConsentBanner from "@/components/analytics/ConsentBanner";
 
 export default function RootLayout({
   children,
@@ -102,6 +116,26 @@ export default function RootLayout({
       <body
         className="font-sans antialiased bg-background text-foreground"
       >
+        {/* Google Free Stack (docs/GOOGLE-FREE-STACK.md). Exactly one tag
+            loader — GTM if a container is configured, otherwise gtag.js — and
+            nothing at all outside production. These render null when
+            unconfigured, so the website never depends on a Google endpoint. */}
+        {/* Site-wide Organization / EducationalOrganization JSON-LD.
+            src/lib/seo/schema-helpers.ts has defined organizationSchema() since
+            it was written but nothing ever rendered it, so Google had no
+            sitewide entity to associate with the Business Profile listing.
+            Serialised with < escaped so a value can never break out of the
+            script element. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema()).replace(/</g, "\\u003c"),
+          }}
+        />
+        <GoogleTags />
+        {/* Owns every page_view, including the SPA navigations the tag loader
+            cannot see. Skips the first view under GTM to avoid double counting. */}
+        <AnalyticsPageView />
         {/* Centralized English + বাংলা i18n (no per-language route forks) */}
         <I18nProvider>
           <PublicLayoutWrapper>
@@ -109,8 +143,15 @@ export default function RootLayout({
           </PublicLayoutWrapper>
           {/* Single global floating contact widget — the only AI / WhatsApp / Facebook control. */}
           <FloatingActionWidget />
+          {/* Live notification stream (spec s86). Renderless: it feeds the portal
+              store that every shell's bell already reads, and opens no connection
+              for a signed-out visitor. */}
+          <RealtimeNotificationProvider />
           <PwaRegister />
           <Toaster />
+          {/* Analytics consent (Consent Mode v2). Tags already load with every
+              consent type denied; this is where a visitor grants or refuses. */}
+          <ConsentBanner />
         </I18nProvider>
       </body>
     </html>

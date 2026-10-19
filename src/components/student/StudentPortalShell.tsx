@@ -83,6 +83,28 @@ const bottomNavItems: NavItem[] = [
 ];
 
 /* ------------------------------------------------------------------ */
+/*  Realtime transport status labels (spec s86, s94)                    */
+/* ------------------------------------------------------------------ */
+const REALTIME_STATUS_LABEL: Record<string, string> = {
+  idle: 'offline',
+  connecting: 'connecting',
+  connected: 'live',
+  reconnecting: 'reconnecting',
+  not_configured: 'not configured',
+  error: 'unavailable',
+};
+
+const REALTIME_STATUS_HINT: Record<string, string> = {
+  idle: 'No live connection is open for this session.',
+  connecting: 'Opening the live notification stream…',
+  connected: 'Live: new notifications arrive without refreshing.',
+  reconnecting: 'The live connection dropped and is being re-established.',
+  not_configured:
+    'Realtime updates are not enabled on this deployment. Refresh the page to check for new notifications.',
+  error: 'The live notification stream failed. Refresh the page to check for new notifications.',
+};
+
+/* ------------------------------------------------------------------ */
 /*  Sidebar content (shared between desktop & mobile sheet)             */
 /* ------------------------------------------------------------------ */
 function SidebarContent() {
@@ -198,7 +220,7 @@ export default function StudentPortalShell({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, setView, notifications, sidebarOpen, setSidebarOpen } =
+  const { user, setView, notifications, sidebarOpen, setSidebarOpen, realtimeStatus } =
     usePortalStore();
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -288,15 +310,44 @@ export default function StudentPortalShell({
                   <span className="font-semibold text-sm text-alo-text">
                     Notifications
                   </span>
-                  <button
-                    onClick={() => {
-                      setView('student-notifications');
-                      setShowNotifDropdown(false);
-                    }}
-                    className="text-xs text-alo-brand hover:underline font-medium"
-                  >
-                    View All
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {/* Live transport state (s86/s94): a bell that silently never
+                        updates is indistinguishable from an empty inbox. */}
+                    <span
+                      className={cn(
+                        'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold',
+                        realtimeStatus === 'connected' && 'bg-emerald-100 text-emerald-700',
+                        realtimeStatus === 'connecting' && 'bg-blue-100 text-blue-700',
+                        realtimeStatus === 'reconnecting' && 'bg-amber-100 text-amber-800',
+                        realtimeStatus === 'not_configured' && 'bg-slate-200 text-slate-600',
+                        realtimeStatus === 'error' && 'bg-red-100 text-red-700',
+                        realtimeStatus === 'idle' && 'bg-slate-100 text-slate-500',
+                      )}
+                      title={REALTIME_STATUS_HINT[realtimeStatus] ?? ''}
+                    >
+                      <span
+                        className={cn(
+                          'size-1.5 rounded-full',
+                          realtimeStatus === 'connected' && 'bg-emerald-500',
+                          realtimeStatus === 'connecting' && 'bg-blue-500',
+                          realtimeStatus === 'reconnecting' && 'animate-pulse bg-amber-500',
+                          realtimeStatus === 'not_configured' && 'bg-slate-400',
+                          realtimeStatus === 'error' && 'bg-red-500',
+                          realtimeStatus === 'idle' && 'bg-slate-400',
+                        )}
+                      />
+                      {REALTIME_STATUS_LABEL[realtimeStatus] ?? 'idle'}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setView('student-notifications');
+                        setShowNotifDropdown(false);
+                      }}
+                      className="text-xs text-alo-brand hover:underline font-medium"
+                    >
+                      View All
+                    </button>
+                  </div>
                 </div>
                 <div className="max-h-72 overflow-y-auto custom-scrollbar">
                   {notifications.length > 0 ? (
@@ -321,7 +372,14 @@ export default function StudentPortalShell({
                     ))
                   ) : (
                     <p className="text-sm text-alo-text-muted p-4 text-center">
-                      No notifications
+                      {/* An empty list means different things depending on whether
+                          the stream is healthy. Never imply "no notifications"
+                          when we could not actually check (s91, s94). */}
+                      {realtimeStatus === 'not_configured' || realtimeStatus === 'error'
+                        ? 'Live updates are unavailable, so this list may be incomplete. Open View All to reload.'
+                        : realtimeStatus === 'connecting' || realtimeStatus === 'reconnecting'
+                          ? 'Connecting to your notifications…'
+                          : 'No notifications'}
                     </p>
                   )}
                 </div>

@@ -14,6 +14,7 @@ import {
   PageHeader,
 } from "@/components/alo/shared";
 import { SensitiveField, usePrivacy } from "@/components/alo/privacy-mode";
+import { FeatureFlagsPanel } from "@/components/alo/feature-flags-panel";
 import { ViewKey, fmtDate, timeAgo, STAGE_LABELS, STAGE_COLORS } from "@/lib/alo-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -404,20 +405,10 @@ const SETTINGS_CARDS = [
   },
 ];
 
-const FEATURE_FLAGS = [
-  { label: "Public Website", enabled: true, icon: "Globe" },
-  { label: "Student Portal", enabled: true, icon: "GraduationCap" },
-  { label: "Partner Portal", enabled: true, icon: "Handshake" },
-  { label: "Employee Portal", enabled: true, icon: "UserCog" },
-  { label: "AI Interview Engine", enabled: true, icon: "Mic" },
-  { label: "AI SOP Writer", enabled: true, icon: "FileText" },
-  { label: "AI Course Match", enabled: true, icon: "Sparkles" },
-  { label: "AI Visa Coach", enabled: false, icon: "Plane" },
-  { label: "Marketing AI Engine", enabled: true, icon: "Megaphone" },
-  { label: "Bulk Import", enabled: true, icon: "Download" },
-  { label: "CSV Pipeline", enabled: true, icon: "FileSpreadsheet" },
-  { label: "Audit Logging", enabled: true, icon: "ScrollText" },
-];
+// The hard-coded FEATURE_FLAGS mock array was removed (spec s92/s117): its
+// `enabled` values were literals unrelated to the platform, and toggling one
+// only showed a toast. Real flag state now comes from the persisted FeatureFlag
+// table via <FeatureFlagsPanel />.
 
 const AI_SAFETY_RULES = [
   "AI must never invent university requirements, deadlines, or scholarship amounts.",
@@ -1792,59 +1783,8 @@ export function SuperAdminDashboard({
             ))}
           </div>
 
-          {/* Feature flags */}
-          <SectionCard
-            title="Feature Flags"
-            description="Enable or disable modules across the platform"
-            icon="ToggleLeft"
-          >
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURE_FLAGS.map((flag) => (
-                <div
-                  key={flag.label}
-                  className={cn(
-                    "flex items-center justify-between rounded-xl border-2 p-3 transition-colors",
-                    flag.enabled
-                      ? "border-emerald-200 bg-emerald-50/50"
-                      : "border-slate-200 bg-slate-50",
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        "flex size-8 items-center justify-center rounded-lg",
-                        flag.enabled ? "bg-emerald-100 text-emerald-600" : "bg-slate-200 text-slate-500",
-                      )}
-                    >
-                      <Icon name={flag.icon} className="size-4" />
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{flag.label}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: `Feature flag: ${flag.label}`,
-                        description: `Currently ${flag.enabled ? "ENABLED" : "DISABLED"}. Toggles require super admin confirmation — use the Access Control Center.`,
-                      })
-                    }
-                    className={cn(
-                      "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors",
-                      flag.enabled ? "bg-emerald-500" : "bg-slate-300",
-                    )}
-                    aria-label={`Toggle ${flag.label}`}
-                  >
-                    <span
-                      className={cn(
-                        "inline-block size-3.5 transform rounded-full bg-white shadow transition-transform",
-                        flag.enabled ? "translate-x-5" : "translate-x-1",
-                      )}
-                    />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
+          {/* Feature flags — real persisted state, audited (spec s117) */}
+          <FeatureFlagsPanel />
         </TabsContent>
       </Tabs>
 
