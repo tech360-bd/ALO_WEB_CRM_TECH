@@ -105,6 +105,12 @@ export interface SendServerEventInput {
   currency?: string;
   /** Override the request timeout. */
   timeoutMs?: number;
+  /**
+   * Environment to resolve configuration from. Defaults to `process.env`.
+   * Injectable so the NOT_CONFIGURED and environment-gate behaviour can be
+   * tested without mutating the real process environment.
+   */
+  env?: NodeJS.ProcessEnv;
 }
 
 /**
@@ -113,7 +119,8 @@ export interface SendServerEventInput {
  * Never throws.
  */
 export async function sendServerEvent(input: SendServerEventInput): Promise<ServerEventResult> {
-  const config = getGoogleStackConfig();
+  const env = input.env ?? process.env;
+  const config = getGoogleStackConfig(env);
   const event = input.event;
 
   if (!config.ga4.measurementId || !config.ga4.apiSecretConfigured) {
@@ -126,7 +133,7 @@ export async function sendServerEvent(input: SendServerEventInput): Promise<Serv
   }
 
   const isProduction = config.environment === 'production';
-  const nonProdAllowed = process.env.ANALYTICS_ALLOW_NON_PRODUCTION === 'true';
+  const nonProdAllowed = env.ANALYTICS_ALLOW_NON_PRODUCTION === 'true';
   if (!isProduction && !nonProdAllowed) {
     return {
       status: 'DISABLED_BY_ENVIRONMENT',
@@ -155,7 +162,7 @@ export async function sendServerEvent(input: SendServerEventInput): Promise<Serv
   const url =
     `https://www.google-analytics.com/mp/collect` +
     `?measurement_id=${encodeURIComponent(config.ga4.measurementId)}` +
-    `&api_secret=${encodeURIComponent(process.env.GA4_API_SECRET || process.env.GA4_MEASUREMENT_PROTOCOL_SECRET || '')}`;
+    `&api_secret=${encodeURIComponent(env.GA4_API_SECRET || env.GA4_MEASUREMENT_PROTOCOL_SECRET || '')}`;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), input.timeoutMs ?? DEFAULT_TIMEOUT_MS);

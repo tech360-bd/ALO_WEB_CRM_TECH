@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { trackAnalyticsEvent } from '@/lib/analytics/client';
 import { buildPageContext, pageContextToEventParams } from '@/lib/analytics/page-context';
@@ -40,7 +40,7 @@ declare global {
   }
 }
 
-export default function AnalyticsPageView() {
+function AnalyticsPageViewInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   /** Path + query of the last view this component emitted. */
@@ -106,4 +106,28 @@ export default function AnalyticsPageView() {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+/**
+ * Public entry point, mounted in the root layout.
+ *
+ * The Suspense boundary is not optional. `useSearchParams()` forces a
+ * client-side render bailout, and without a boundary Next.js cannot prerender
+ * any statically generated page that includes this component. Because it lives
+ * in the ROOT layout, that is every page in the app — the production build fails
+ * at `/_not-found` with "useSearchParams() should be wrapped in a suspense
+ * boundary at page \"/404\"".
+ *
+ * `fallback={null}` is correct here rather than merely convenient: this component
+ * renders nothing, so there is no visual state to suspend. The only cost is that
+ * the very first page_view on a statically generated page is emitted after
+ * hydration instead of during it, which is when the tag loader is available
+ * anyway.
+ */
+export default function AnalyticsPageView() {
+  return (
+    <Suspense fallback={null}>
+      <AnalyticsPageViewInner />
+    </Suspense>
+  );
 }

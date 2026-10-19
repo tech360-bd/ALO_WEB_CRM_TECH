@@ -141,27 +141,43 @@ export const FORBIDDEN_PARAM_PATTERNS: RegExp[] = [
   /secret/i,
   /token/i,
   /api[_-]?key/i,
-  /card[_-]?number/i,
-  /cardnumber/i,
+  // Card data. The narrower `card[_-]?number` spellings missed `credit_card`,
+  // `debit_card` and a bare `card` key, so the specification's explicit "never
+  // send card data" rule had a hole in it. No allowed parameter contains the
+  // substring "card", so the broad pattern costs nothing.
+  /card/i,
+  /credit/i,
+  /debit/i,
   /\bcvv\b/i,
   /\bcvc\b/i,
   /expiry/i,
   /iban/i,
-  /\bbank\b/i,
+  // Unanchored for the same reason as `name`: `\bbank\b` does not match
+  // `bank_account` or `bank_statement`, because an underscore is a word
+  // character and so provides no boundary.
+  /bank/i,
   /account[_-]?number/i,
   /routing[_-]?number/i,
   /payment/i,
   /\bemail\b/i,
   /\bphone\b/i,
   /mobile/i,
-  /\bname\b/i,
-  /full[_-]?name/i,
-  /first[_-]?name/i,
-  /last[_-]?name/i,
+  // A word-boundary `\bname\b` does NOT match `mother_name` or `father_name`,
+  // because an underscore is a word character — so parent and guardian names
+  // were passing straight through. No allowed parameter contains the substring
+  // "name", so the unanchored pattern is safe and closes that hole.
+  /name/i,
   /address/i,
   /date[_-]?of[_-]?birth/i,
   /\bdob\b/i,
   /\bdocument\b/i,
+  // A CV or résumé is a private application document: it carries a name, an
+  // address, a date of birth, an employment history and often a photo. The
+  // specification forbids sending private application documents, and there was
+  // no pattern covering the two spellings a form field would actually use.
+  /\bcv\b/i,
+  /resume/i,
+  /curriculum/i,
   /file[_-]?name/i,
   /file[_-]?path/i,
   /attachment/i,
@@ -216,9 +232,28 @@ function isPlainValue(value: unknown): value is string | number | boolean {
   return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
 }
 
-/** True when a key must never be sent, whatever its value. */
+/**
+ * True when a key must never be sent, whatever its value.
+ *
+ * The key is tested twice: as written, and with `_` / `-` replaced by spaces.
+ *
+ * That second pass is not cosmetic. Most patterns here are word-bounded
+ * (`\bemail\b`, `\bphone\b`, `\bdocument\b`), and in a regular expression an
+ * underscore IS a word character — so `\bemail\b` does not match
+ * `email_address`, and `\bphone\b` does not match `phone_number`. Testing only
+ * the raw key left exactly the compound spellings a developer is most likely to
+ * write unblocked. Separators are normalised to spaces so the word boundaries
+ * behave the way the patterns were written to expect.
+ *
+ * Testing both forms keeps the raw pass too, so a pattern that deliberately
+ * matches across a separator (`card[_-]?number`, `ip[_-]?address`) still works.
+ */
 export function isForbiddenKey(key: string): boolean {
-  return FORBIDDEN_PARAM_PATTERNS.some((pattern) => pattern.test(key));
+  if (!key) return false;
+  const separated = key.replace(/[_-]+/g, ' ');
+  return FORBIDDEN_PARAM_PATTERNS.some(
+    (pattern) => pattern.test(key) || pattern.test(separated),
+  );
 }
 
 /** Identify a PII-shaped value. Returns the human-readable reason, or null. */

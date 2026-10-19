@@ -155,10 +155,11 @@ export default function YouTubeEmbed({
             className="group absolute inset-0 size-full cursor-pointer border-0 bg-slate-900 p-0"
             aria-label={`Play video: ${title}. Loads from YouTube when played.`}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- an external
-                CDN thumbnail cannot go through next/image without a remote
-                pattern allowlist, and optimising a facade image would defeat
-                the point of not contacting YouTube's heavier endpoints. */}
+            {/* A plain <img> rather than next/image: the thumbnail comes from an
+                external CDN, which next/image would need in a remote-pattern
+                allowlist, and routing a facade image through ALO's own image
+                optimiser would add a server round-trip to the one part of this
+                component whose purpose is to load as little as possible. */}
             <img
               src={thumbnailUrl(videoId)}
               alt=""

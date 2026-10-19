@@ -210,6 +210,32 @@ const GTM_ID_PATTERN = /^GTM-[A-Z0-9]{4,12}$/;
 const GA4_ID_PATTERN = /^(G|AW|UA)-[A-Z0-9]{4,15}$/;
 
 /**
+ * Detect a placeholder that satisfies the shape but is not a real identifier.
+ *
+ * `G-XXXXXXXXXX` and `GTM-XXXXXXX` are the *format examples* this file prints in
+ * its own NOT CONFIGURED messages, and both match the patterns above. An
+ * operator who copies the example verbatim into `.env` therefore gets a tag
+ * injected for a container that does not exist: the page loads, Google returns
+ * nothing, `/api/google/status` reports the service as configured, and analytics
+ * silently produces zero data. That is precisely the "reports success while
+ * nothing works" failure this configuration layer exists to prevent, so the
+ * example values are rejected as if they were absent.
+ *
+ * The rule is narrow on purpose — a suffix made of ONE repeated character. A real
+ * container id is effectively never `GTM-AAAAAAA`, and narrowing the rule keeps a
+ * legitimate id from being discarded.
+ */
+export function isPlaceholderTagId(id: string): boolean {
+  const suffix = id.split('-').slice(1).join('-');
+  return suffix.length > 0 && new Set(suffix.split('')).size === 1;
+}
+
+/** A tag id that is both well-formed and not a documentation placeholder. */
+function usableTagId(id: string, pattern: RegExp): boolean {
+  return pattern.test(id) && !isPlaceholderTagId(id);
+}
+
+/**
  * Resolve the deployment environment.
  *
  * `APP_ENV` wins when set (matches the existing convention in
@@ -284,7 +310,7 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
     environment === 'staging' && firstString(env, 'ANALYTICS_ALLOW_NON_PRODUCTION') === 'true';
 
   const ga4IdRaw = firstString(env, 'GA4_MEASUREMENT_ID', 'NEXT_PUBLIC_GA_MEASUREMENT_ID');
-  const ga4MeasurementId = GA4_ID_PATTERN.test(ga4IdRaw) ? ga4IdRaw : '';
+  const ga4MeasurementId = usableTagId(ga4IdRaw, GA4_ID_PATTERN) ? ga4IdRaw : '';
   const ga4Flag = firstString(env, 'NEXT_PUBLIC_GA4_ENABLED');
   const ga4EnabledRequested = ga4Flag === 'true';
   const apiSecretConfigured = firstString(env, 'GA4_API_SECRET', 'GA4_MEASUREMENT_PROTOCOL_SECRET') !== '';
@@ -296,7 +322,9 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
     ga4Reason = 'NOT CONFIGURED — set GA4_MEASUREMENT_ID (format G-XXXXXXXXXX).';
   } else if (!ga4MeasurementId) {
     ga4Inject = false;
-    ga4Reason = `NOT CONFIGURED — GA4_MEASUREMENT_ID value is not a valid measurement ID and was ignored rather than emitted to the page.`;
+    ga4Reason = isPlaceholderTagId(ga4IdRaw)
+      ? 'NOT CONFIGURED — GA4_MEASUREMENT_ID still holds the documentation placeholder. Replace it with the real measurement ID from GA4 > Admin > Data Streams.'
+      : 'NOT CONFIGURED — GA4_MEASUREMENT_ID value is not a valid measurement ID and was ignored rather than emitted to the page.';
   } else if (!ga4EnabledRequested) {
     ga4Inject = false;
     ga4Reason = 'DISABLED — set NEXT_PUBLIC_GA4_ENABLED=true to activate.';
@@ -311,7 +339,7 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
   }
 
   const gtmIdRaw = firstString(env, 'NEXT_PUBLIC_GTM_ID', 'GTM_CONTAINER_ID');
-  const gtmContainerId = GTM_ID_PATTERN.test(gtmIdRaw) ? gtmIdRaw : '';
+  const gtmContainerId = usableTagId(gtmIdRaw, GTM_ID_PATTERN) ? gtmIdRaw : '';
   const gtmEnabledRequested = firstString(env, 'NEXT_PUBLIC_GTM_ENABLED') !== 'false';
 
   let gtmReason: string;
@@ -321,7 +349,9 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
     gtmReason = 'NOT CONFIGURED — set NEXT_PUBLIC_GTM_ID (format GTM-XXXXXXX).';
   } else if (!gtmContainerId) {
     gtmInject = false;
-    gtmReason = 'NOT CONFIGURED — NEXT_PUBLIC_GTM_ID is not a valid container ID and was ignored.';
+    gtmReason = isPlaceholderTagId(gtmIdRaw)
+      ? 'NOT CONFIGURED — NEXT_PUBLIC_GTM_ID still holds the documentation placeholder. Replace it with the real container ID from Tag Manager > Admin > Container Settings.'
+      : 'NOT CONFIGURED — NEXT_PUBLIC_GTM_ID is not a valid container ID and was ignored.';
   } else if (!gtmEnabledRequested) {
     gtmInject = false;
     gtmReason = 'DISABLED — NEXT_PUBLIC_GTM_ENABLED=false.';
@@ -331,6 +361,24 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
   } else {
     gtmInject = true;
     gtmReason = 'ACTIVE — container will be injected.';
+  }
+
+  // GTM owns the page when it is injectable.
+  //
+  // `resolveTagLoader()` already picks exactly one loader at render time, so the
+  // page itself was never going to double-fire. But `ga4.injectTags` is a public
+  // flag that other code consults — `/api/google/status` reports it, and any
+  // future caller that injects based on it would produce a second GA4 tag
+  // alongside the container's own configuration tag, double-counting every
+  // page_view and silently halving every conversion rate. The two flags are
+  // therefore made mutually exclusive here, at the source of truth, rather than
+  // left for each caller to reconcile.
+  if (gtmInject && ga4Inject) {
+    ga4Inject = false;
+    ga4Reason =
+      'OWNED BY GTM — the GA4 configuration tag must live inside the GTM container. The direct gtag.js loader is suppressed so page_view cannot fire twice. Set NEXT_PUBLIC_GTM_ENABLED=false to inject gtag.js directly instead.';
+    gtmReason =
+      'ACTIVE — container will be injected, and it owns GA4. Configure the GA4 tag inside the container; a second gtag.js loader is deliberately not injected.';
   }
 
   const gscSiteUrl = normalizeSiteUrl(firstString(env, 'GOOGLE_SEARCH_CONSOLE_SITE_URL'));
