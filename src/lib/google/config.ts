@@ -417,10 +417,17 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
     ? `CONFIGURED — channel ${ytHandle ? `@${ytHandle}` : ytChannelId}. Embedding needs no API key; the Data API is ${ytDataApi ? 'configured' : 'NOT CONFIGURED (upload/publishing disabled)'}.`
     : 'NOT CONFIGURED — set NEXT_PUBLIC_YOUTUBE_CHANNEL_HANDLE (embedding still works per-video without it).';
 
-  const mapsKey = firstString(env, 'GOOGLE_MAPS_API_KEY', 'NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
+  // Server-side name only. A NEXT_PUBLIC_ alias was deliberately NOT accepted
+  // here: Maps Platform is a PAID service this deployment does not use (ALO
+  // links out to Google Maps instead), so there is no legitimate reason for a
+  // Maps key to be inlined into the client bundle. Reading it on the server
+  // keeps the key out of `publicSecretSuspects` in
+  // docs/environment-classification.json and out of any JavaScript shipped to
+  // a browser.
+  const mapsKey = firstString(env, 'GOOGLE_MAPS_API_KEY');
   const mapsConfigured = mapsKey !== '';
   const mapsReason = mapsConfigured
-    ? 'API KEY PRESENT — note that Maps Platform is a PAID service requiring a Cloud billing account, and the key must be restricted by HTTP referrer and by API before it is used in a browser.'
+    ? 'API KEY PRESENT (server-side only) — Maps Platform is a PAID service requiring a Cloud billing account. Nothing in this codebase loads the Maps JavaScript SDK, so the key is only reported here; it is never rendered into a page. If the SDK is ever adopted, restrict the key by HTTP referrer AND by API first, and add budget alerts.'
     : 'NOT CONFIGURED — intentional. Maps Platform requires billing; ALO uses zero-cost "Open in Google Maps" deep links instead. See docs/GOOGLE-FREE-STACK.md §Maps.';
 
   const cloudProject = firstString(env, 'GOOGLE_CLOUD_PROJECT_ID');
