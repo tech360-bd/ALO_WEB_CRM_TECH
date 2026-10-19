@@ -180,6 +180,17 @@ webhook), `NEXT_PUBLIC_YOUTUBE_CHANNEL_HANDLE`, `NEXT_PUBLIC_YOUTUBE_CHANNEL_ID`
 
 **Deliberately left blank:** `GOOGLE_CLOUD_PROJECT_ID`, `GOOGLE_MAPS_API_KEY`.
 
+> **These must be present at BUILD time, not only at runtime.**
+> `GoogleTags` is a server component and 397 of 946 routes are statically
+> prerendered, so their tag markup is fixed when `next build` runs. Export
+> `GA4_MEASUREMENT_ID`, `NEXT_PUBLIC_GA4_ENABLED`, `NEXT_PUBLIC_GTM_ID` and
+> `NEXT_PUBLIC_SITE_URL` in the build environment and rebuild after changing
+> them. Setting them only at runtime leaves the static pages — the homepage and
+> every destination page among them — with no analytics at all, while the dynamic
+> routes work, which makes the failure look intermittent rather than total.
+> `NEXT_PUBLIC_*` values are additionally inlined into the client bundle at build
+> time, so they cannot be changed at runtime in any case.
+
 Placeholder IDs copied from documentation (`GTM-XXXXXXX`, `G-XXXXXXXXXX`) are
 **rejected**, not injected. Without that guard an unedited `.env.example` would
 load a container that does not exist while `/api/google/status` reported the
@@ -446,6 +457,12 @@ theoretical:
    that does not exist while the status endpoint reported the service as
    configured.
 
+**Two further defects found only by serving the production build** (Part 16):
+the React 19 `<script src async>` hoist that placed the gtag loader ahead of the
+consent defaults in the built HTML, and the discovery that tag configuration is a
+build-time rather than a runtime requirement for the 397 statically prerendered
+routes. Neither was visible to the type checker, the linter or any unit test.
+
 **Two pre-existing defects fixed on the way:**
 
 - `/api/crm/leads/public` substituted `'United Kingdom'`, `'Postgraduate'`,
@@ -514,7 +531,16 @@ ambiguous.
 | Schema diff discipline | **PASS** — 64 additions, **0 deletions**, append-only |
 
 The production build initially **failed** at `/_not-found` because of the missing
-Suspense boundary described in Part 14. It was fixed and the build re-run.
+Suspense boundary described in Part 14. It was fixed and the build re-run to
+completion (946 routes, standalone output verified).
+
+Two further full builds were then run with test GA4 credentials to verify tag
+injection and ordering. One of those builds died with a JavaScript heap OOM at the
+4096 MB cap that `npm run build` hardcodes; re-running with a 6144 MB heap
+succeeded. **This is an environment memory ceiling, not a code defect** — the
+same command at the same cap also succeeded — but it is worth recording because a
+CI runner with less memory than this one may need the heap raised. The build is
+close to its limit at 4096 MB.
 
 **Integration tests: 75 skipped**, all requiring `TEST_DATABASE_URL`, which is
 not configured. This is pre-existing behaviour, not a new gap.
@@ -525,16 +551,48 @@ rollback, but note that the `database-backup` cron job is disabled because
 mysqldump credentials are unavailable — so **no logical dump exists to fall back
 to**. Take a manual backup before applying.
 
-**Runtime checks performed in this environment:**
+**Runtime checks performed in this environment.** A production standalone build
+was produced and served, then exercised over HTTP. These are real observations,
+not inferences from code:
 
-| Check | Result |
-|---|---|
-| `/robots.txt` served with the new disallow list | **PASS** — verified over HTTP against the production build |
-| Analytics bootstrap present in rendered HTML with consent defaults set before the loader | **PASS** — verified over HTTP |
-| Organisation JSON-LD present in rendered HTML | **PASS** — verified over HTTP |
-| Tag injection suppressed with no credentials configured | **PASS** — no `googletagmanager.com` reference in rendered HTML |
-| `/api/google/status` refuses an unauthenticated request | **PASS** — verified over HTTP |
-| `/api/google/status` reports `NOT_CONFIGURED` for every service | **PASS** — verified over HTTP |
+| Check | Result | Evidence |
+|---|---|---|
+| `/robots.txt` served with the hardened list | **PASS** | Exactly **22** `Disallow:` entries over HTTP, including `/counselor/`, `/super-admin/`, `/review/`, `/student/`, plus the `Sitemap:` line |
+| Organisation JSON-LD actually rendered | **PASS** | `EducationalOrganization` present in served HTML on `/`, `/visa` and `/login` — it was defined but never mounted before |
+| Tags suppressed when nothing is configured | **PASS** | **0** references to `googletagmanager` in served HTML, and no bootstrap script — `GoogleTags` returns `null` when no loader resolves |
+| Tags injected when configured | **PASS** | Rebuilt with `GA4_MEASUREMENT_ID` + `NEXT_PUBLIC_GA4_ENABLED=true`: bootstrap, consent defaults, loader and config all present |
+| Consent defaults execute **before** the loader | **PASS** | Verified by byte offset in the prerendered HTML: defaults @5771 → context @6036 → loader @6302 → config @6476 |
+| `send_page_view: false` (no duplicate page views) | **PASS** | Present in the served config object |
+| `wait_for_update: 500` (Consent Mode v2) | **PASS** | Present in the served bootstrap |
+| All storage purposes start `denied` | **PASS** | `ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage` all `'denied'` in served HTML |
+| New admin endpoints reject anonymous callers | **PASS** | **401** on all 8: `/api/google/status` (±`live=true`), `/api/google/business-profile`, `/api/seo/search-console/{status,performance,sitemaps,ingest}`, `/api/analytics/conversion-funnel` |
+| `/admin/google-stack` is not publicly reachable | **PASS** | **307** → `/login?callbackUrl=%2Fadmin%2Fgoogle-stack` |
+| Lead schema accepts the attribution fields | **PASS** | Valid payload with `utmSource`/`gclid`/`visitorId`/`consent` passed validation and reached the database layer (**503**, no DB here) rather than being rejected at **400** |
+| Lead schema still blocks privilege escalation | **PASS** | `counselorId` in the body → **400**; `.strict()` holds after attribution was added |
+| Attribution values are bounded | **PASS** | A 300-character `utmCampaign` → **400** |
+| Contact links exist for the click tracker to classify | **PASS** | Homepage HTML carries 1 `wa.me`, 2 `tel:` and 1 `mailto:` anchor |
+
+**Two defects were found by these runtime checks that unit tests could not
+catch**, and both are fixed:
+
+1. **Consent-defaults ordering was wrong in the built output.** React 19 hoists a
+   `<script src async>` into `<head>` as a resource hint, which placed the gtag
+   loader at byte 2541 while the inline consent defaults sat in the body at byte
+   5702 — the library could execute *before* Consent Mode's defaults were set,
+   which is precisely what Consent Mode v2 forbids. This was invisible to
+   `tsc`, to eslint and to every unit test, because the markup order in the
+   component source was correct; only the *built* HTML revealed the hoist. Fixed
+   by having the bootstrap inject the loader with `document.createElement`
+   instead of rendering a `<script src>`, so ordering is a property of execution
+   sequence rather than markup position. Re-verified above.
+2. **Tag configuration is a BUILD-TIME requirement, not runtime.** `GoogleTags`
+   is a server component, and **397 of 946 routes are statically prerendered**.
+   Their tag markup is baked in when `next build` runs. Setting
+   `GA4_MEASUREMENT_ID` only in the runtime environment therefore produces a site
+   where analytics silently works on the ~549 dynamic routes and does not exist at
+   all on the 397 static ones — including the homepage and every destination page,
+   which are exactly the pages that matter for organic attribution. Verified by
+   inspecting the prerendered `.html` files directly. See Part 6.
 
 **Not performed — and this is the most important caveat in this report:**
 
@@ -687,13 +745,19 @@ None of these can be done from code. Each is a prerequisite for a `BLOCKED` or
    populate the curated video list with **real published ALO video IDs only**.
 6. **Database** — back up manually, then apply all three pending migrations and
    verify the 29 new columns and 6 new indexes exist.
-7. **Verification** — after credentials are in place, confirm in GA4 DebugView and
-   the browser network tab that events are actually sent. Do not consider any
-   `BLOCKED` item closed until it has been observed working.
-8. **Cleanup** — delete the stale `public/public/robots.txt` once confirmed
+7. **Rebuild after setting credentials.** The tag decision is baked into 397
+   statically prerendered pages at build time. Setting `GA4_MEASUREMENT_ID` or
+   `NEXT_PUBLIC_GTM_ID` in the runtime environment alone leaves the homepage and
+   every destination page without analytics. Export them in the build environment
+   and run `npm run build` again.
+8. **Verification** — after credentials are in place and the site is rebuilt,
+   confirm in GA4 DebugView and the browser network tab that events are actually
+   sent. Do not consider any `BLOCKED` item closed until it has been observed
+   working.
+9. **Cleanup** — delete the stale `public/public/robots.txt` once confirmed
    unreferenced, and retire `docs/GOOGLE_SEO_SETUP.md`, whose line 36 claim that
    GA4 was implemented was false.
-9. **Cloud / Maps** — no action. Leave both unconfigured.
+10. **Cloud / Maps** — no action. Leave both unconfigured.
 
 ---
 

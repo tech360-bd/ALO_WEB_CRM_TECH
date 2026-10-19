@@ -113,6 +113,11 @@ loaded on every page.
 | `GOOGLE_CLOUD_PROJECT_ID` | Cloud | No | Unused |
 | `GOOGLE_MAPS_API_KEY` | Maps | No | Unused — leave blank |
 
+> **Build-time variables.** `GA4_MEASUREMENT_ID`, `NEXT_PUBLIC_GA4_ENABLED`,
+> `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_GTM_ENABLED` and `NEXT_PUBLIC_SITE_URL` must
+> be set when `next build` runs, because 397 routes are statically prerendered
+> and their tag markup is fixed at that moment. See §16.
+
 `NEXT_PUBLIC_*` values are embedded in the client bundle. Only identifiers
 Google already ships to every browser belong there. No secret may use that
 prefix, and none does.
@@ -621,6 +626,33 @@ conversion rate is indistinguishable from a broken join.
 ---
 
 ## 16. Environment gating
+
+### Build-time configuration — read this before deploying
+
+`GoogleTags` is a **server component**, and **397 of ALO's 946 routes are
+statically prerendered**. Their tag markup is baked in when `next build` runs, so
+the following must be present in the **build** environment, not merely at
+runtime:
+
+```
+GA4_MEASUREMENT_ID, NEXT_PUBLIC_GA4_ENABLED,
+NEXT_PUBLIC_GTM_ID, NEXT_PUBLIC_GTM_ENABLED, NEXT_PUBLIC_SITE_URL
+```
+
+Setting them only in the runtime environment produces the worst kind of failure:
+analytics works on the ~549 dynamic routes and does not exist at all on the 397
+static ones — which include the homepage and every destination page, exactly the
+pages that matter for organic attribution. It looks intermittent rather than
+total, so it tends to be diagnosed as "GA4 is flaky".
+
+`NEXT_PUBLIC_*` values are additionally inlined into the client bundle at build
+time and cannot be changed at runtime in any case.
+
+**Rebuild after changing any tag variable**, then confirm by viewing source on a
+static page: exactly one of `googletagmanager.com/gtm.js` or `.../gtag/js` should
+appear, and the consent defaults should precede it.
+
+### Traffic gating
 
 Analytics must never mix test traffic into the production property.
 

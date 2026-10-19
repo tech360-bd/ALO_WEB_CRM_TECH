@@ -37,6 +37,8 @@ function buildBootstrapScript(
   siteUrl: string,
   environment: string,
   loader: 'gtm' | 'gtag',
+  /** Loader-specific JavaScript, appended AFTER the consent defaults. */
+  loaderPayload: string,
 ): string {
   const lines: string[] = [
     'window.dataLayer = window.dataLayer || [];',
@@ -71,11 +73,44 @@ function buildBootstrapScript(
       JSON.stringify({ siteUrl, environment, consentMode, loader }) +
       ';',
   );
+  // The loader is appended last, so consent defaults are unconditionally set
+  // before any Google library is fetched. This ordering is the whole point of
+  // having a bootstrap at all.
+  lines.push(loaderPayload);
   return lines.join('\n');
 }
 
-/** gtag.js configuration command for the direct-GA4 path. */
-function buildGa4ConfigScript(measurementId: string, consentMode: boolean): string {
+/**
+ * JavaScript that injects the gtag.js library and then queues its configuration.
+ *
+ * This is deliberately a `document.createElement` call inside the bootstrap
+ * rather than a `<script src async>` element in the markup. React 19 hoists an
+ * async script with a `src` into `<head>` as a resource hint, which puts the
+ * loader physically BEFORE the inline body script that sets the consent
+ * defaults — verified in the prerendered HTML, where `gtag/js` landed at byte
+ * 2541 and the consent defaults at byte 5702. Consent Mode v2 requires the
+ * defaults to be set before the library loads, so the ordering has to be
+ * guaranteed by execution sequence, not by DOM position. Injecting the element
+ * from the bootstrap makes that structural: the defaults have already run by the
+ * time this line is reached.
+ */
+function buildGtagLoaderInjection(measurementId: string, consentMode: boolean): string {
+  const config = buildGa4ConfigObject(consentMode);
+  return [
+    `(function(){`,
+    `  var s=document.createElement('script');`,
+    `  s.async=true;`,
+    `  s.crossOrigin='anonymous';`,
+    `  s.src='https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}';`,
+    `  var f=document.getElementsByTagName('script')[0];`,
+    `  if(f&&f.parentNode){f.parentNode.insertBefore(s,f);}else{document.head.appendChild(s);}`,
+    `})();`,
+    `gtag('config', ${JSON.stringify(measurementId)}, ${JSON.stringify(config)});`,
+  ].join('\n');
+}
+
+/** gtag.js configuration object for the direct-GA4 path. */
+function buildGa4ConfigObject(consentMode: boolean): Record<string, unknown> {
   const config: Record<string, unknown> = {
     // Strip the last octet of the visitor IP before it is stored.
     anonymize_ip: true,
@@ -95,20 +130,12 @@ function buildGa4ConfigScript(measurementId: string, consentMode: boolean): stri
     // conversions statistically instead of dropping them entirely.
     config.consent_mode_update = false;
   }
-  return [
-    'window.dataLayer = window.dataLayer || [];',
-    'function gtag(){dataLayer.push(arguments);}',
-    'window.gtag = window.gtag || gtag;',
-    `gtag('config', ${JSON.stringify(measurementId)}, ${JSON.stringify(config)});`,
-  ].join('\n');
+  return config;
 }
 
 /** GTM container loader. The GA4 tag itself lives inside the container. */
 function buildGtmScript(containerId: string): string {
   return [
-    'window.dataLayer = window.dataLayer || [];',
-    'function gtag(){dataLayer.push(arguments);}',
-    'window.gtag = window.gtag || gtag;',
     `(function(w,d,s,l,i){w[l]=w[l]||[];`,
     `var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;`,
     `j.src='https://www.googletagmanager.com/gtm.js?id='+i+'&l='+l;`,
@@ -135,60 +162,45 @@ export default function GoogleTags({ debugComment = false }: GoogleTagsProps) {
     ) : null;
   }
 
+  const loaderPayload =
+    loader.loader === 'gtm'
+      ? buildGtmScript(loader.id)
+      : buildGtagLoaderInjection(loader.id, config.consentMode);
   const bootstrap = buildBootstrapScript(
     config.consentMode,
     config.siteUrl,
     config.environment,
     loader.loader,
+    loaderPayload,
   );
 
   return (
     <>
-      {/* Plain script elements rather than next/script.
+      {/* A single inline script rather than next/script, and rather than a
+          separate <script src> for the loader.
 
-          next/script's `beforeInteractive` is documented for the Pages Router's
-          _document and the linter warns about it here, while `afterInteractive`
-          injects during hydration — potentially after AnalyticsPageView's
-          effect has already pushed a page_view into a dataLayer whose consent
-          defaults have not been set yet. Rendering real <script> elements
-          inline guarantees the order the consent model depends on: defaults
-          first, then the loader, then the configuration, all during HTML
-          parsing and before React hydrates.
+          next/script's `beforeInteractive` is a Pages Router feature the linter
+          rejects in the App Router, and `afterInteractive` injects during
+          hydration — potentially after AnalyticsPageView has already pushed a
+          page_view into a dataLayer whose consent defaults are not yet set.
+
+          A separate <script src async> is worse: React 19 hoists it into <head>
+          as a resource hint, physically ahead of the inline body script holding
+          the consent defaults. That was observed in the prerendered HTML. So the
+          loader is injected from within the bootstrap instead, which makes
+          "defaults before library" a property of execution order rather than of
+          markup order.
 
           The site's CSP already permits inline scripts (script-src
           'unsafe-inline', required by Next/Tailwind) and allowlists the loader
-          origin. There is deliberately no onError handler: a plain script that
-          fails to load simply does not execute, so the website is unaffected.
-          That is the required failure isolation, achieved without code. */}
+          origin. There is deliberately no onError handler: a script that fails
+          to load simply does not execute, so the website is unaffected. That is
+          the required failure isolation, achieved without code. */}
       <script
         id="alo-analytics-bootstrap"
         dangerouslySetInnerHTML={{ __html: bootstrap }}
         suppressHydrationWarning
       />
-
-      {loader.loader === 'gtm' ? (
-        <script
-          id="alo-gtm-container"
-          dangerouslySetInnerHTML={{ __html: buildGtmScript(loader.id) }}
-          suppressHydrationWarning
-        />
-      ) : (
-        <>
-          <script
-            id="alo-ga4-loader"
-            src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(loader.id)}`}
-            async
-            crossOrigin="anonymous"
-          />
-          <script
-            id="alo-ga4-config"
-            dangerouslySetInnerHTML={{
-              __html: buildGa4ConfigScript(loader.id, config.consentMode),
-            }}
-            suppressHydrationWarning
-          />
-        </>
-      )}
 
       {debugComment ? (
         <>{`<!-- ALO analytics: loader=${loader.loader} id=${loader.id} env=${config.environment} consentMode=${config.consentMode}. ${loader.reason} -->`}</>
