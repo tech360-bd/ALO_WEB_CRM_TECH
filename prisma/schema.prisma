@@ -12117,11 +12117,23 @@ model AttentionSnapshot {
 // --------------------------------------------------------------------------
 model OpportunityGraphEdge {
   id         String   @id @default(cuid())
-  sourceType String
-  sourceId   String
-  targetType String
-  targetId   String
-  relation   String
+  // Bounded to VARCHAR(64) rather than Prisma's VARCHAR(191) default.
+  //
+  // The @@unique below spans all five of these columns. Under utf8mb4 a
+  // VARCHAR(191) column needs 764 index bytes, so five of them need 3820 — above
+  // MySQL/InnoDB's absolute 3072-byte per-index ceiling, which made the migration
+  // fail with ERROR 1071 on a fresh MySQL 8 database. It is not a row-format
+  // setting that can be tuned away; the index simply cannot exist at that width.
+  //
+  // These columns hold type labels ('STUDENT', 'APPLICATION'), relation labels
+  // and cuids (~25 characters), so 64 is generous: the unique key becomes 1280
+  // bytes. This model has no relations, so no foreign key requires the widths to
+  // match another column.
+  sourceType String   @db.VarChar(64)
+  sourceId   String   @db.VarChar(64)
+  targetType String   @db.VarChar(64)
+  targetId   String   @db.VarChar(64)
+  relation   String   @db.VarChar(64)
   weight     Float    @default(0)
   evidence   String   @default("{}") @db.Text
   computedBy String   @default("SYSTEM")

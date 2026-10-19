@@ -266,13 +266,21 @@ CREATE TABLE `AttentionSnapshot` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+-- The five indexed columns below are VARCHAR(64), not Prisma's VARCHAR(191) default.
+-- The @@unique spans all five: at 191 characters under utf8mb4 each needs 764 index
+-- bytes, so the key totals 3820 and exceeds InnoDB's absolute 3072-byte per-index
+-- ceiling. A fresh MySQL 8 database rejects it with ERROR 1071 ("Specified key was
+-- too long"). That ceiling is not a tunable row-format setting, so the columns are
+-- narrowed instead. They hold type labels, relation labels and cuids (~25 chars), so
+-- 64 is generous and the unique key becomes 1280 bytes. This table has no foreign
+-- keys, so no referenced column needs a matching width.
 CREATE TABLE `OpportunityGraphEdge` (
     `id` VARCHAR(191) NOT NULL,
-    `sourceType` VARCHAR(191) NOT NULL,
-    `sourceId` VARCHAR(191) NOT NULL,
-    `targetType` VARCHAR(191) NOT NULL,
-    `targetId` VARCHAR(191) NOT NULL,
-    `relation` VARCHAR(191) NOT NULL,
+    `sourceType` VARCHAR(64) NOT NULL,
+    `sourceId` VARCHAR(64) NOT NULL,
+    `targetType` VARCHAR(64) NOT NULL,
+    `targetId` VARCHAR(64) NOT NULL,
+    `relation` VARCHAR(64) NOT NULL,
     `weight` DOUBLE NOT NULL DEFAULT 0,
     `evidence` TEXT NOT NULL DEFAULT (_utf8mb4'{}'),
     `computedBy` VARCHAR(191) NOT NULL DEFAULT 'SYSTEM',
