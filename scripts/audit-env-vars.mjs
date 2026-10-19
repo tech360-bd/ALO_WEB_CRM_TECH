@@ -155,9 +155,12 @@ for (const file of files) {
     for (const q of m[1].matchAll(/['"]([A-Z][A-Z0-9_]{2,})['"]/g)) found.add(q[1]);
   }
   for (const name of found) {
-    if (refs.has(name)) continue;
-    const entry = { files: new Set([rel]), failClosed: false, hasFallback: false, indirect: true };
-    refs.set(name, entry);
+    const existing = refs.get(name);
+    if (existing && !existing.indirect) continue; // found directly: leave it exactly as it was
+    const entry =
+      existing ?? { files: new Set(), failClosed: false, hasFallback: false, indirect: true };
+    if (!existing) refs.set(name, entry);
+    entry.files.add(rel);
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i].includes(name)) continue;
       // Inline default judged on the reading line only.

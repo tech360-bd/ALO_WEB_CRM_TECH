@@ -4,9 +4,9 @@
   "filesScanned": 2496,
   "summary": {
     "UNUSED": 109,
-    "REFERENCED_WITH_FALLBACK": 150,
+    "REFERENCED_WITH_FALLBACK": 151,
     "REFERENCED_FAIL_CLOSED": 17,
-    "REFERENCED": 119,
+    "REFERENCED": 118,
     "PUBLIC": 13
   },
   "productionRequired": [
@@ -713,7 +713,7 @@
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -722,7 +722,8 @@
         ".env.example"
       ],
       "sampleReferences": [
-        "src/lib/analytics/server-conversions.ts"
+        "src/lib/analytics/server-conversions.ts",
+        "src/lib/google/config.ts"
       ]
     },
     {
@@ -1817,7 +1818,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -1826,7 +1827,8 @@
         ".env.example"
       ],
       "sampleReferences": [
-        "src/lib/email-marketing/config.ts"
+        "src/lib/email-marketing/config.ts",
+        "src/lib/email-marketing/transport.ts"
       ]
     },
     {
@@ -2296,7 +2298,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -2305,7 +2307,8 @@
         ".env.example"
       ],
       "sampleReferences": [
-        "src/lib/analytics/server-conversions.ts"
+        "src/lib/analytics/server-conversions.ts",
+        "src/lib/google/config.ts"
       ]
     },
     {
@@ -2505,7 +2508,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -2514,7 +2517,8 @@
         ".env.example"
       ],
       "sampleReferences": [
-        "src/lib/google/config.ts"
+        "src/lib/google/config.ts",
+        "src/lib/google/oauth.ts"
       ]
     },
     {
@@ -2555,14 +2559,15 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/google/config.ts"
+        "src/lib/google/config.ts",
+        "src/lib/google/oauth.ts"
       ]
     },
     {
@@ -2585,17 +2590,18 @@
     },
     {
       "name": "GOOGLE_SERVICE_ACCOUNT_JSON",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": true,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/google/config.ts"
+        "src/lib/google/config.ts",
+        "src/lib/google/oauth.ts"
       ]
     },
     {
