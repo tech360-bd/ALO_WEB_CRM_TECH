@@ -73,7 +73,7 @@ false and the file is superseded by `docs/GOOGLE-FREE-STACK.md`.
 | Lead attribution capture / merge / persistence | `src/lib/attribution/lead-attribution.ts`, `src/lib/analytics/attribution-payload.ts` | **PASS** — 24 unit tests |
 | Attribution wired into every lead-intake path | 5 API routes, 2 client forms, `registration-lead.ts`, `canonical-student.ts`, `portal-store.ts` | **PASS** — type-checked, unit-tested at the library level |
 | Conversion funnel engine | `src/lib/analytics/conversion-funnel.ts` | **PASS** — 13 unit tests against a stub client |
-| Funnel endpoint | `src/app/api/analytics/conversion-funnel/route.ts` | **BLOCKED** — needs a database |
+| Funnel endpoint | `src/app/api/analytics/conversion-funnel/route.ts` | **BLOCKED** — the engine is unit-tested against a stub client; the HTTP route has not been exercised against a populated database, and CI's smoke test does not call it |
 | Aggregate status endpoint | `src/app/api/google/status/route.ts` | **PARTIAL** — compiles; live checks blocked |
 | Admin module | `src/app/admin/google-stack/page.tsx` | **PARTIAL** — compiles; not exercised in a browser |
 | robots.txt hardening | `src/app/robots.ts` | **PASS** — see Part 15 |
@@ -228,9 +228,14 @@ schema has 0 enums; that is a pre-existing condition recorded in
 automation view, and adding attribution there would create two competing sources
 of truth for the same fact.
 
-**Migration applied?** **BLOCKED** — no `DATABASE_URL` in this environment. The
-SQL is written, additive and reversible, but has not been executed against any
-database. It must be applied and verified before deployment.
+**Migration applied?** **PASS — verified on CI against a real MySQL 8 database.**
+It could not be applied in this development environment, which has no
+`DATABASE_URL` at all, so the pull-request workflow is what proved it. On an empty
+MySQL 8 service container, `prisma migrate deploy` applied all 29 migrations
+(step 6), `prisma migrate status` then reported the database up to date (step 7),
+and the authoritative `prisma migrate diff` from the migrations to
+`schema.prisma` found no drift (step 8). Two defects that only a real database
+could expose were found and fixed on the way — see Part 14.
 
 ---
 
@@ -490,6 +495,66 @@ unbuildable — the production build failed at `/_not-found`. Fixed with
 `<Suspense fallback={null}>`, which is correct rather than merely convenient: the
 component renders nothing, so there is no visual state to suspend.
 
+**Three further defects found only by CI, on a real MySQL 8 database.** This
+development environment has no database at all, so the migrations had never been
+executed anywhere until the pull-request workflow ran them. None of these three
+was visible to `prisma validate`, `tsc`, `eslint`, the 2599-test suite or a
+production build — every one of those gates passed while the defects were live.
+
+1. **A unique index MySQL cannot create at any row format.**
+   `OpportunityGraphEdge_sourceType_sourceId_targetType_targetId_relation_key`
+   spanned five `VARCHAR(191)` columns. Under utf8mb4 that is 5 × 764 = **3820
+   bytes**, above InnoDB's hard **3072-byte** per-index ceiling, so `migrate
+   deploy` failed with Prisma `P3018` / MySQL error 1071 ("Specified key was too
+   long") on an empty database. This is not tunable: the index could not exist on
+   any MySQL 8. Fixed by narrowing the five columns to `VARCHAR(64)` (key now
+   1280 bytes) in `schema.prisma` **and** the migration together, since CI diffs
+   the two. Safe because those columns hold closed-union labels — `GraphNodeType`
+   has 10 members, longest `SCHOLARSHIP` (11 chars); `GraphRelation` has 13,
+   longest `TARGETS_UNIVERSITY` (18 chars) — and cuid/UUID identifiers (≤36
+   chars). The model has no relation fields, so no foreign key needed a matching
+   width. An audit of every index in every migration confirmed this was the only
+   one over the ceiling; the next largest is 2296 bytes.
+
+2. **32 LOB defaults declared in a form MySQL rejects.** MySQL cannot give a
+   `TEXT`/`BLOB`/`JSON` column a literal default (error 1101), so the migrations
+   correctly wrote the expression form `DEFAULT (_utf8mb4'[]')`. But the fields in
+   `schema.prisma` were declared `@default("[]") @db.Text`, which Prisma renders
+   as `DEFAULT '[]'`. The shadow database and the datamodel therefore disagreed on
+   all 32 columns, and `scripts/ci/filter-lob-default-drift.mjs` correctly refused
+   to suppress the drift, because it only suppresses a re-assertion when the field
+   carries the identical `@default(dbgenerated("(_utf8mb4'…')"))`. This repo
+   already enforces that convention everywhere else: `main` has **275** dbgenerated
+   LOB defaults and **zero** plain defaults on a LOB column. All 32 offenders were
+   in models appended on this branch. Fixed in the schema only — the migrations
+   were already correct — taking the count to 307 and the violations to 0.
+
+3. **The environment-variable audit could not see indirect reads.**
+   `scripts/audit-env-vars.mjs` recognised only `process.env.NAME` and
+   `const { NAME } = process.env`. The Google stack reads its configuration
+   through an injectable `env: NodeJS.ProcessEnv` record so it can be unit tested
+   without mutating the real environment (`env.ANALYTICS_ALLOW_NON_PRODUCTION`,
+   `firstString(env, 'NEXT_PUBLIC_GTM_ID', 'GTM_CONTAINER_ID')`), so regenerating
+   `docs/environment-classification.json` reported **13 live variables as UNUSED**
+   — every GA4, GTM, YouTube and Search Console setting. That contradicted
+   `docs/GOOGLE-FREE-STACK.md` and would have told an operator that configuring
+   them does nothing. The same blind spot had already misreported **nine**
+   `EMAIL_*` variables read via `integerSetting(env, 'X', …)` in
+   `src/lib/email-marketing/config.ts`, which were documented as UNUSED on `main`.
+   The script now runs a second pass for property access and helper key literals
+   on any identifier containing `env`; it only records names the direct scan
+   missed, so no existing classification moved, and it cannot invent variables.
+   **33 variables** are correctly rescued from UNUSED and each emitted record now
+   carries `referencedIndirectly`.
+
+Also removed on the way: `resolveGoogleStackConfig` tolerated a
+`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` alias. Nothing client-side consumed it and Maps
+Platform is a paid service this deployment does not use, so the alias only invited
+an operator to inline a paid key into the client bundle. It was the sole entry in
+the audit's `publicSecretSuspects` list — which the script itself calls a hard
+error — and that list is empty again. Only the server-side `GOOGLE_MAPS_API_KEY`
+is read now.
+
 ---
 
 ## Part 15 — Billing risks
@@ -542,14 +607,33 @@ same command at the same cap also succeeded — but it is worth recording becaus
 CI runner with less memory than this one may need the heap raised. The build is
 close to its limit at 4096 MB.
 
-**Integration tests: 75 skipped**, all requiring `TEST_DATABASE_URL`, which is
-not configured. This is pre-existing behaviour, not a new gap.
+**Integration tests: 75 skipped in this environment, PASS on CI.** Locally they
+all skip because `TEST_DATABASE_URL` is not configured — pre-existing behaviour,
+not a new gap. CI supplies a disposable MySQL 8 database, and the
+`MySQL 8 · Migrate · Integrate · Boot` job ran the real integration suite against
+it (step 9) and passed. Those eight files exercise persistence, RBAC and security
+boundaries that unit tests can only stub.
 
-**Database migrations: BLOCKED.** No `DATABASE_URL`. The attribution migration
-has never been applied to any database. It is additive and carries a written
+**Database migrations: PASS — verified on CI against real MySQL 8.** They could
+not be applied here (no `DATABASE_URL`), so the pull-request workflow is the
+evidence:
+
+| CI step | What it proves | Result |
+|---|---|---|
+| 6 — `migrate deploy` on an **empty** MySQL 8 | All 29 migrations execute; every index is creatable | **success** |
+| 7 — `migrate status` | Database reports up to date, no pending migration | **success** |
+| 8 — `migrate diff` migrations → `schema.prisma` | No drift; the schema and the SQL agree | **success** |
+| 9 — integration tests on real MySQL | Persistence and RBAC against a real server | **success** |
+| 10 — production build | 946-route build with the migrated schema | **success** |
+| 11 — boot standalone + HTTP smoke against the real DB | Lead POST persists to `LeadForm`, `SearchLog` row written, missing-contact POST still **400**, `/api/crm/leads` and `/api/admin/student-benefits` still **401/403**, `/api/health` reports `database.connected=true` | **success** |
+
+Steps 6 and 8 initially **failed** and both failures were real defects, not CI
+flakiness: a 3820-byte unique index MySQL cannot create at all, and 32 LOB
+defaults declared in a form the drift filter cannot reconcile. Both are described
+in Part 14 and both are fixed. The migration is additive and carries a written
 rollback, but note that the `database-backup` cron job is disabled because
 mysqldump credentials are unavailable — so **no logical dump exists to fall back
-to**. Take a manual backup before applying.
+to**. Take a manual backup before applying to production.
 
 **Runtime checks performed in this environment.** A production standalone build
 was produced and served, then exercised over HTTP. These are real observations,
@@ -603,8 +687,9 @@ catch**, and both are fixed:
 | Network-tab confirmation that hits are actually sent | **BLOCKED** — no browser session against a configured property |
 | Search Console live query | **BLOCKED** — no credential |
 | Business Profile live read | **BLOCKED** — no credential |
-| Lead form → CRM → attribution persisted end-to-end | **BLOCKED** — no database |
-| Conversion funnel against real data | **BLOCKED** — no database |
+| Lead form → CRM persistence against a real database | **PASS** on CI — the smoke test POSTs `/api/website/lead`, then verifies the `LeadForm` row and its `SearchLog` entry by direct SQL against MySQL 8, and confirms a contact-less POST still returns **400** |
+| …with an actual UTM value round-tripped through MySQL | **BLOCKED** — no automated test sends UTM parameters, so the 19 new `Lead` and 10 new `LeadForm` columns are proven to *exist* on a real database but not proven to *carry a value* through a real insert |
+| Conversion funnel against real data | **BLOCKED** — CI does not call `/api/analytics/conversion-funnel`; the engine is unit-tested against a stub Prisma client only |
 | Core Web Vitals field data | **BLOCKED** — no credential |
 
 **Code that compiles and passes unit tests is not an integration that has been
@@ -697,7 +782,13 @@ forked, and the admin page links to them.
 - Full rollback script in the migration file's comments
 - Neither table has `@@map`, so the SQL targets `Lead` and `LeadForm` literally
 
-**Applied: BLOCKED** — no `DATABASE_URL` in this environment.
+**Applied: PASS — verified on CI against a real MySQL 8 service container.** It
+cannot be applied in this development environment, which has no `DATABASE_URL`,
+so the pull-request workflow is the evidence: `migrate deploy` on an **empty**
+database applied all 29 migrations, `migrate status` reported up to date, and the
+authoritative `migrate diff` against `schema.prisma` found no drift. The
+integration suite then ran against that database, and a standalone production
+server booted against it and passed an HTTP smoke test that persists a real lead.
 
 **Pre-deployment requirement:** take a manual database backup first. The
 `database-backup` cron job is disabled because mysqldump credentials are
@@ -709,8 +800,21 @@ at 64 additions and 0 deletions.
 
 Two earlier migrations from the prior task
 (`20261018000000_platform_control_plane`,
-`20261019000000_regulatory_rule_versioning`) are also unapplied. All three are
-additive.
+`20261019000000_regulatory_rule_versioning`) are also additive, and all three are
+now applied and drift-free on CI. Both defects CI found were in the earlier of the
+two, not in the attribution migration: the uncreatable 3820-byte
+`OpportunityGraphEdge` unique index, and 32 LOB defaults whose `schema.prisma`
+declarations did not match the expression form MySQL requires. Neither migration
+had ever met a real database before this pull request, which is why both survived
+every local gate. See Part 14.
+
+**Column widths changed on this branch.** The five key columns of
+`OpportunityGraphEdge` (`sourceType`, `sourceId`, `targetType`, `targetId`,
+`relation`) are `VARCHAR(64)` rather than Prisma's default `VARCHAR(191)`. That is
+the fix for the index ceiling above, and it is safe: the table is new and empty
+everywhere, the columns hold closed-union labels of at most 18 characters and
+identifiers of at most 36, and the model has no relation fields, so no foreign key
+requires a matching width.
 
 ---
 
@@ -766,7 +870,7 @@ None of these can be done from code. Each is a prerequisite for a `BLOCKED` or
 | Area | Verdict |
 |---|---|
 | Analytics foundation (tags, consent, page views, event vocabulary, PII screen) | **PASS** on logic; **PARTIAL** on delivery |
-| Lead attribution (16 fields, capture, merge, persistence, first-touch immutability) | **PASS** on logic; **BLOCKED** on persistence (no database) |
+| Lead attribution (16 fields, capture, merge, persistence, first-touch immutability) | **PASS** on logic; **PASS** on schema — the columns exist on a real MySQL 8 database (CI). No automated test yet round-trips a UTM *value* through MySQL |
 | Event instrumentation (19 required events) | **PARTIAL** — 18 of 19 implemented; `english_test_complete` is **MISSING** for a real product reason |
 | Server-side business conversions | **PASS** on guards; **BLOCKED** on delivery |
 | Search Console integration | **BLOCKED** — fully implemented, no credential |
@@ -778,11 +882,16 @@ None of these can be done from code. Each is a prerequisite for a `BLOCKED` or
 | Admin module and funnel reporting | **PARTIAL** — built, not exercised against live data |
 | Security | **PASS** |
 | Billing risk | **PASS** — no paid service in use |
-| Test gates (typecheck, lint, 2599 unit tests, production build) | **PASS** |
-| Database migration applied | **BLOCKED** |
+| Test gates (typecheck, lint, 2599 unit tests, production build) | **PASS** locally and on CI |
+| Database-backed gates (migrate deploy on empty MySQL 8, migration status, drift diff, integration tests, standalone boot + HTTP smoke) | **PASS** on CI — these cannot run in this development environment, which has no database |
+| Environment-variable classification gate | **PASS** — `npm run audit:env -- --check`, after fixing a blind spot that misreported 33 live variables as UNUSED |
+| Database migration applied | **PASS** on CI (empty MySQL 8); still to be applied to production, with a manual backup first |
 
-**The Google Free Stack is implemented in code and verified by every gate this
-environment can run. It is not yet verified against Google, because no Google
-credential exists here.** Once the Part 19 console steps are complete and the
-migration is applied, the `BLOCKED` items can be closed by observation — and only
-by observation.
+**The Google Free Stack is implemented in code and verified by every gate that
+can run without a Google credential — including, on CI, a real MySQL 8 database
+that this development environment does not have.** The remaining `BLOCKED` items
+are blocked on Google, not on code: they need the Part 19 console steps and a real
+credential, after which each can be closed by observation — and only by
+observation. The migration is verified on CI but must still be applied to
+production, and the `database-backup` cron job remains quarantined for want of
+mysqldump credentials, so take a manual dump first.
