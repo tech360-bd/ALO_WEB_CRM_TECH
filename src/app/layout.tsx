@@ -105,6 +105,7 @@ import { RealtimeNotificationProvider } from "@/components/realtime/RealtimeNoti
 import GoogleTags from "@/components/analytics/GoogleTags";
 import AnalyticsPageView from "@/components/analytics/AnalyticsPageView";
 import ConsentBanner from "@/components/analytics/ConsentBanner";
+import AnalyticsClickTracker from "@/components/analytics/AnalyticsClickTracker";
 
 export default function RootLayout({
   children,
@@ -136,6 +137,9 @@ export default function RootLayout({
         {/* Owns every page_view, including the SPA navigations the tag loader
             cannot see. Skips the first view under GTM to avoid double counting. */}
         <AnalyticsPageView />
+        {/* One delegated listener measures every WhatsApp / tel: / mailto: link
+            on the site, including ones on pages that predate this work. */}
+        <AnalyticsClickTracker />
         {/* Centralized English + বাংলা i18n (no per-language route forks) */}
         <I18nProvider>
           <PublicLayoutWrapper>

@@ -48,7 +48,9 @@ export const ANALYTICS_EVENT_NAMES = [
   'english_test_start',
   'english_test_complete',
   // Business conversions (server-side Measurement Protocol)
+  'generate_lead',
   'lead_qualified',
+  'application_started',
   'application_submitted',
   'enrollment_completed',
 ] as const;
@@ -111,6 +113,10 @@ export const ALLOWED_EVENT_PARAMS = [
   'currency',
   'items_count',
   'search_term_category',
+  'application_stage',
+  'enrollment_status',
+  'test_session_id',
+  'debug_mode',
 ] as const;
 
 export type AllowedEventParam = (typeof ALLOWED_EVENT_PARAMS)[number];
@@ -308,42 +314,65 @@ export type PageType =
   | 'university_list'
   | 'university_detail'
   | 'country'
-  | 'destination'
   | 'visa'
-  | 'english_test'
   | 'ielts'
-  | 'scholarship'
+  | 'english_test'
+  | 'scholarship_list'
+  | 'scholarship_detail'
   | 'blog'
+  | 'guide'
   | 'contact'
   | 'office'
+  | 'consultation'
+  | 'apply'
+  | 'auth'
   | 'student_portal'
   | 'partner_portal'
+  | 'staff_portal'
   | 'admin'
   | 'legal'
   | 'other';
 
+/**
+ * Route table → page type.
+ *
+ * Derived from the real `src/app` tree, not from guesswork: course detail is
+ * `/course/[slug]` (singular), university detail is `/universities/[slug]`
+ * (plural), scholarship detail is `/scholarships/[slug]`, and country pages are
+ * `/destinations/[slug]` with their own sub-pages. Order matters — the first
+ * matching rule wins, so more specific patterns are listed first.
+ */
 const PAGE_TYPE_RULES: { pattern: RegExp; type: PageType }[] = [
   { pattern: /^\/$/, type: 'home' },
-  { pattern: /^\/course-finder/, type: 'course_list' },
-  { pattern: /^\/courses?$/, type: 'course_list' },
-  { pattern: /^\/course\//, type: 'course_detail' },
+  // Detail pages before their list parents.
+  { pattern: /^\/course\/[^/]+/, type: 'course_detail' },
+  { pattern: /^\/universities\/[^/]+/, type: 'university_detail' },
+  { pattern: /^\/scholarships\/[^/]+/, type: 'scholarship_detail' },
+  { pattern: /^\/language-prep\/(?:ielts|ielts-ukvi)(?:\/|$)/, type: 'ielts' },
+  { pattern: /^\/destinations\/[^/]+/, type: 'country' },
+  // List / hub pages.
+  { pattern: /^\/(?:course-finder|courses|compare|eligibility-check)(?:\/|$)/, type: 'course_list' },
   { pattern: /^\/universities$/, type: 'university_list' },
-  { pattern: /^\/university\//, type: 'university_detail' },
-  { pattern: /^\/scholarship/, type: 'scholarship' },
-  { pattern: /^\/(?:uk|usa|canada|australia|ireland|new-zealand|nz|dubai|uae|europe|germany|malaysia|singapore)(?:\/|$)/, type: 'country' },
-  { pattern: /^\/destinations?(?:\/|$)/, type: 'destination' },
-  { pattern: /visa/, type: 'visa' },
-  { pattern: /ielts/, type: 'ielts' },
-  { pattern: /^\/english-test/, type: 'english_test' },
-  { pattern: /^\/language-prep/, type: 'english_test' },
-  { pattern: /^\/blog/, type: 'blog' },
-  { pattern: /^\/contact/, type: 'contact' },
-  { pattern: /^\/global-offices/, type: 'office' },
-  { pattern: /^\/student/, type: 'student_portal' },
-  { pattern: /^\/parent-portal/, type: 'student_portal' },
-  { pattern: /^\/partner/, type: 'partner_portal' },
-  { pattern: /^\/(?:admin|crm|employee|hr|hrm)/, type: 'admin' },
-  { pattern: /^\/(?:privacy|terms|refund|accessibility|disclaimer|cookie)/, type: 'legal' },
+  { pattern: /^\/scholarships(?:\/|$)/, type: 'scholarship_list' },
+  { pattern: /^\/(?:language-prep|english-test-prep|english-tests)(?:\/|$)/, type: 'english_test' },
+  { pattern: /^\/destinations?(?:\/|$)/, type: 'country' },
+  { pattern: /^\/visa(?:\/|$)/, type: 'visa' },
+  { pattern: /^\/blog(?:\/|$)/, type: 'blog' },
+  { pattern: /^\/guides?(?:\/|$)/, type: 'guide' },
+  { pattern: /^\/(?:contact|faqs)(?:\/|$)/, type: 'contact' },
+  { pattern: /^\/global-offices(?:\/|$)/, type: 'office' },
+  { pattern: /^\/book-consultation(?:\/|$)/, type: 'consultation' },
+  { pattern: /^\/apply(?:\/|$)/, type: 'apply' },
+  { pattern: /^\/(?:login|register|forgot-password|reset-password|verify-email)(?:\/|$)/, type: 'auth' },
+  // Portals. `/counselor`, `/super-admin`, `/dashboard` and
+  // `/application-manager` are STAFF surfaces, not public pages — they are
+  // classified separately so they can never be mistaken for marketing traffic.
+  { pattern: /^\/student(?:\/|$)/, type: 'student_portal' },
+  { pattern: /^\/parent-portal(?:\/|$)/, type: 'student_portal' },
+  { pattern: /^\/partner(?:\/|$)/, type: 'partner_portal' },
+  { pattern: /^\/(?:counselor|super-admin|dashboard|application-manager|review|team|hr|hrm|employee)(?:\/|$)/, type: 'staff_portal' },
+  { pattern: /^\/(?:admin|crm)(?:\/|$)/, type: 'admin' },
+  { pattern: /^\/(?:privacy-policy|terms|cookies|accessibility|code-of-conduct|communication-policy|lead-data-usage-policy|aqf-compliance)(?:\/|$)/, type: 'legal' },
 ];
 
 /** Classify a pathname into ALO's page-type taxonomy. */
@@ -356,15 +385,41 @@ export function detectPageType(pathname: string): PageType {
 }
 
 /**
- * Events that are implied purely by the page a visitor landed on. Used by the
- * route-level emitter so `/uk/student-visa` reports `visa_page_view` without
- * every page component needing its own instrumentation call.
+ * Pull the detail slug out of a canonical detail path.
+ *
+ * Returns '' for anything that is not that kind of detail page, so a caller can
+ * never attach a `course_slug` to a university view.
+ */
+export function extractDetailSlug(pathname: string, kind: 'course' | 'university' | 'scholarship'): string {
+  const path = (pathname || '/').split('?')[0].split('#')[0];
+  const prefix = kind === 'university' || kind === 'scholarship' ? `/${kind === 'university' ? 'universities' : 'scholarships'}/` : '/course/';
+  if (!path.startsWith(prefix)) return '';
+  const rest = path.slice(prefix.length);
+  const slug = rest.split('/')[0] || '';
+  return decodeURIComponent(slug).slice(0, 200);
+}
+
+/**
+ * Events implied purely by the route a visitor landed on.
+ *
+ * Deriving these from the path rather than from each page component means no
+ * page can forget them and no page can emit them twice. The service-page events
+ * (`visa_page_view`, `ielts_page_view`) are matched on the path independently of
+ * `page_type`, because ALO's country pages carry their own visa guide at
+ * `/destinations/[slug]/visa-guide` — a destination by type, a visa page by
+ * intent, and both facts are useful.
  */
 export function pageViewEventsFor(pathname: string): AnalyticsEventName[] {
-  const type = detectPageType(pathname);
+  const path = (pathname || '/').split('?')[0].split('#')[0];
+  const type = detectPageType(path);
   const events: AnalyticsEventName[] = [];
-  if (type === 'visa') events.push('visa_page_view');
-  if (type === 'ielts' || type === 'english_test') events.push('ielts_page_view');
+
+  if (type === 'visa' || /\/visa(?:-guide)?(?:\/|$)/.test(path)) events.push('visa_page_view');
+  if (type === 'ielts' || /ielts/.test(path) || type === 'english_test') events.push('ielts_page_view');
+  if (type === 'course_detail') events.push('course_view');
+  if (type === 'university_detail') events.push('university_view');
+  if (type === 'scholarship_detail') events.push('scholarship_view');
+
   return events;
 }
 

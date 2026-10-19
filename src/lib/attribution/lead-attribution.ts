@@ -240,13 +240,20 @@ export function captureAttribution(input: CaptureInput = {}): LeadAttributionRec
  */
 export function captureAttributionFromRequest(
   request: { url: string; headers?: { get(name: string): string | null } },
-  extra: Omit<CaptureInput, 'url' | 'referer'> = {},
+  extra: Omit<CaptureInput, 'url'> = {},
 ): LeadAttributionRecord {
+  // Precedence for the referring origin:
+  //   1. an explicit `referer` override from the caller (the client-reported
+  //      value, which survives proxies that strip the header),
+  //   2. a `referrer` field inside the posted body,
+  //   3. the request's own `referer` / `referrer` header.
+  const fromBody = extra.body?.referrer;
   const referer =
-    typeof extra.body?.referrer === 'string' && extra.body.referrer !== ''
-      ? extra.body.referrer
-      : (request.headers?.get('referer') ?? request.headers?.get('referrer'));
-  return captureAttribution({ url: request.url, referer, ...extra });
+    extra.referer ??
+    (typeof fromBody === 'string' && fromBody !== '' ? fromBody : null) ??
+    request.headers?.get('referer') ??
+    request.headers?.get('referrer');
+  return captureAttribution({ url: request.url, ...extra, referer });
 }
 
 /** Projection for a `Lead` write. */

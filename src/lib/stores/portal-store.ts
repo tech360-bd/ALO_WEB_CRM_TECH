@@ -147,7 +147,30 @@ interface PortalState {
   setPublicPage: (view: PortalView, slug?: string | null) => void;
   hydrate: () => void;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (data: { name: string; email: string; phone: string; password: string; portalType: string }) => Promise<boolean>;
+  register: (data: {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    portalType: string;
+    /**
+     * Acquisition attribution captured on the public site (Google Free Stack).
+     * Optional so every existing caller keeps compiling; forwarded to the
+     * register endpoints, which store it on the lead they create.
+     */
+    attribution?: {
+      landingPage?: string;
+      referrer?: string;
+      visitorId?: string;
+      utmSource?: string;
+      utmMedium?: string;
+      utmCampaign?: string;
+      utmContent?: string;
+      utmTerm?: string;
+      gclid?: string;
+      fbclid?: string;
+    } | null;
+  }) => Promise<boolean>;
   logout: () => void;
   setSidebarOpen: (open: boolean) => void;
   clearLoginError: () => void;
@@ -282,7 +305,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
       const res = await fetch(canonicalStudent ? '/api/auth/register' : '/api/portal-auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT', termsAccepted: (regData as { agreeTerms?: boolean }).agreeTerms === true } : regData),
+        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT', termsAccepted: (regData as { agreeTerms?: boolean }).agreeTerms === true, ...(regData.attribution ? { attribution: regData.attribution } : {}) } : { ...regData, ...(regData.attribution ? { attribution: regData.attribution } : {}) }),
       });
       const data = await res.json();
       if (data.success) {

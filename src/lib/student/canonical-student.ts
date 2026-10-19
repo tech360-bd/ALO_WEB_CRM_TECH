@@ -17,7 +17,7 @@
 
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { createRegistrationLead } from "@/lib/crm/registration-lead";
+import { createRegistrationLead, type RegistrationAttributionInput } from "@/lib/crm/registration-lead";
 import { Prisma } from "@prisma/client";
 
 const CANONICAL_STUDENT_REGEX = /^AE-(\d{4})(\d{6})$/;
@@ -150,6 +150,11 @@ export interface RegisterStudentParams {
   phone?: string;
   password: string;
   pendingVerification?: boolean;
+  /**
+   * Acquisition attribution captured on the public site, forwarded to the lead
+   * created alongside the account (Google Free Stack).
+   */
+  attribution?: RegistrationAttributionInput | null;
 }
 
 export interface RegisterStudentResult {
@@ -272,7 +277,8 @@ export async function registerStudentAtomically(
       // commits the acquisition record with its account, never best-effort.
       if (params.pendingVerification) {
         const crm = await createRegistrationLead(tx, { domain: 'user', userId: user.id,
-          studentId: studentRec.studentId, name: fullName, email, phone: params.phone || '' });
+          studentId: studentRec.studentId, name: fullName, email, phone: params.phone || '',
+          attribution: params.attribution ?? null });
         await tx.student.update({ where: { id: studentRec.id }, data: {
           leadId: crm.leadId, counselorId: crm.counselorId,
           journeyStage: crm.counselorId ? 'assigned' : 'lead_created',

@@ -1,3 +1,4 @@
+import { reportServerEvent } from '@/lib/analytics/server-conversions';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { getFormBReadiness } from '@/lib/application-readiness';
@@ -399,6 +400,23 @@ export async function POST(req: Request) {
     } catch (notifyError) {
       console.error('[applications] Form A notification failed:', notifyError);
     }
+
+    // Authoritative business conversion: an application record now exists.
+    // Distinct from the client-side `application_start`, which measures the
+    // visitor reaching the apply surface. Business reporting must use this
+    // event; the client event measures UX drop-off. See
+    // docs/GOOGLE-FREE-STACK.md §"Two layers of conversion events".
+    reportServerEvent({
+      event: 'application_started',
+      reference: applicationCode,
+      params: {
+        application_reference: applicationCode,
+        destination: (newApp as { country?: string }).country ?? undefined,
+        course_id: (newApp as { courseId?: string }).courseId ?? undefined,
+        university_id: (newApp as { universityId?: string }).universityId ?? undefined,
+        intake: (newApp as { intake?: string }).intake ?? undefined,
+      },
+    });
 
     return NextResponse.json({ success: true, data: newApp, application: newApp });
   } catch (e: any) {

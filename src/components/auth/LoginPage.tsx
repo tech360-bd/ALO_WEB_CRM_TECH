@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import {
   GraduationCap,
@@ -63,6 +64,16 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
     if (!email || !password) return;
     clearLoginError();
     await login(email, password);
+    // Measured after the attempt resolves, and only as a success/failure flag.
+    // No credential, email address or personal detail is ever sent — the event
+    // carries the portal type and the outcome, nothing else.
+    const state = usePortalStore.getState();
+    trackAnalyticsEvent('student_login', {
+      page_type: 'auth',
+      result: state.loginError ? 'failure' : 'success',
+      success: !state.loginError,
+      lead_source: activeView,
+    }, { source: 'login-page' });
   };
 
   const getErrorMessage = (): { message: string; variant: 'error' | 'warning' } | null => {

@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
+import { collectAttributionPayload, rememberEntryAttribution } from '@/lib/analytics/attribution-payload';
 import {
   GraduationCap,
   Eye,
@@ -121,7 +123,21 @@ export default function RegisterPage() {
       phone: phone.trim(),
       password,
       portalType: selectedPortal,
+      // Attribution the visitor arrived with, so a registration that turns into
+      // a lead carries the campaign that acquired it. Only UTM labels, the
+      // landing path, the referring origin and an opaque visitor token are
+      // sent — never the name, email, phone or password above.
+      attribution: rememberEntryAttribution('alo.attribution.register.v1') ?? collectAttributionPayload(),
     });
+
+    // Measured as an outcome flag only. No credential or personal detail is
+    // sent; `lead_source` is the portal type, which is public information.
+    trackAnalyticsEvent('student_registration', {
+      page_type: 'auth',
+      result: success ? 'success' : 'failure',
+      success: Boolean(success),
+      lead_source: selectedPortal,
+    }, { source: 'register-page' });
 
     if (usePortalStore.getState().currentView === 'verify-otp') {
       router.push('/verify-email');

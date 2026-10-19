@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { trackAnalyticsEvent } from '@/lib/analytics/client';
 import { buildPageContext, pageContextToEventParams } from '@/lib/analytics/page-context';
-import { pageViewEventsFor, type AnalyticsEventName } from '@/lib/analytics/events';
+import { extractDetailSlug, pageViewEventsFor, type AnalyticsEventName } from '@/lib/analytics/events';
 
 /**
  * Owns every `page_view` on the public site.
@@ -76,7 +76,22 @@ export default function AnalyticsPageView() {
       href: `${window.location.origin}${href}`,
       referrer: typeof document !== 'undefined' ? document.referrer : null,
     });
-    const params = pageContextToEventParams(pageContext);
+    const params: Record<string, string> = pageContextToEventParams(pageContext);
+
+    // Attach the entity identity for detail pages. A view of a course is only
+    // actionable if reporting can say WHICH course, and the slug is already
+    // public information — it is in the URL Google indexed.
+    const courseSlug = extractDetailSlug(pageContext.page_path, 'course');
+    if (courseSlug) params.course_slug = courseSlug;
+    const universitySlug = extractDetailSlug(pageContext.page_path, 'university');
+    if (universitySlug) params.university_slug = universitySlug;
+    const scholarshipSlug = extractDetailSlug(pageContext.page_path, 'scholarship');
+    if (scholarshipSlug) params.scholarship_slug = scholarshipSlug;
+    // A destination page IS the country dimension for reporting.
+    if (pageContext.page_type === 'country') {
+      const destination = decodeURIComponent(pageContext.page_path.split('/')[2] || '');
+      if (destination) params.destination = destination.slice(0, 120);
+    }
 
     if (!skipPageView) {
       trackAnalyticsEvent('page_view', params, { source: 'route' });

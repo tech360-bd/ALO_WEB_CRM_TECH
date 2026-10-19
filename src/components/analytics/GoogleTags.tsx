@@ -1,4 +1,3 @@
-import Script from 'next/script';
 import { getGoogleStackConfig, resolveTagLoader } from '@/lib/google/config';
 
 /**
@@ -145,30 +144,49 @@ export default function GoogleTags({ debugComment = false }: GoogleTagsProps) {
 
   return (
     <>
-      <Script id="alo-analytics-bootstrap" strategy="beforeInteractive" nonce={undefined}>
-        {bootstrap}
-      </Script>
+      {/* Plain script elements rather than next/script.
+
+          next/script's `beforeInteractive` is documented for the Pages Router's
+          _document and the linter warns about it here, while `afterInteractive`
+          injects during hydration — potentially after AnalyticsPageView's
+          effect has already pushed a page_view into a dataLayer whose consent
+          defaults have not been set yet. Rendering real <script> elements
+          inline guarantees the order the consent model depends on: defaults
+          first, then the loader, then the configuration, all during HTML
+          parsing and before React hydrates.
+
+          The site's CSP already permits inline scripts (script-src
+          'unsafe-inline', required by Next/Tailwind) and allowlists the loader
+          origin. There is deliberately no onError handler: a plain script that
+          fails to load simply does not execute, so the website is unaffected.
+          That is the required failure isolation, achieved without code. */}
+      <script
+        id="alo-analytics-bootstrap"
+        dangerouslySetInnerHTML={{ __html: bootstrap }}
+        suppressHydrationWarning
+      />
 
       {loader.loader === 'gtm' ? (
-        <Script id="alo-gtm-container" strategy="beforeInteractive">
-          {buildGtmScript(loader.id)}
-        </Script>
+        <script
+          id="alo-gtm-container"
+          dangerouslySetInnerHTML={{ __html: buildGtmScript(loader.id) }}
+          suppressHydrationWarning
+        />
       ) : (
         <>
-          <Script
+          <script
             id="alo-ga4-loader"
             src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(loader.id)}`}
-            strategy="afterInteractive"
+            async
             crossOrigin="anonymous"
-            onError={() => {
-              // Analytics must never break the website. Swallow the failure;
-              // the /api/google/status probe reports the real configuration
-              // state, and the browser console shows the network error.
-            }}
           />
-          <Script id="alo-ga4-config" strategy="afterInteractive">
-            {buildGa4ConfigScript(loader.id, config.consentMode)}
-          </Script>
+          <script
+            id="alo-ga4-config"
+            dangerouslySetInnerHTML={{
+              __html: buildGa4ConfigScript(loader.id, config.consentMode),
+            }}
+            suppressHydrationWarning
+          />
         </>
       )}
 
