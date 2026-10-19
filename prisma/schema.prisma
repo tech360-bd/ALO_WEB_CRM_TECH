@@ -11837,11 +11837,11 @@ model FeatureFlag {
   description    String             @db.Text
   enabled        Boolean            @default(false)
   rolloutPercent Int                @default(0)
-  allowRoles     String             @default("[]") @db.Text
-  allowUserIds   String             @default("[]") @db.Text
-  denyUserIds    String             @default("[]") @db.Text
+  allowRoles     String             @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  allowUserIds   String             @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  denyUserIds    String             @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   environment    String             @default("all")
-  config         String             @default("{}") @db.Text
+  config         String             @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   status         String             @default("ACTIVE")
   createdBy      String?
   updatedBy      String?
@@ -11859,11 +11859,11 @@ model FeatureFlagAudit {
   flagId     String
   flagKey    String
   action     String
-  before     String      @default("{}") @db.LongText
-  after      String      @default("{}") @db.LongText
+  before     String      @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  after      String      @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   actorId    String      @default("")
   actorEmail String      @default("")
-  reason     String      @default("") @db.Text
+  reason     String      @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt  DateTime    @default(now())
   flag       FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
 
@@ -11882,15 +11882,15 @@ model WebhookSubscription {
   id          String            @id @default(cuid())
   name        String
   targetUrl   String
-  secret      String            @default("") @db.Text
-  events      String            @default("[]") @db.Text
+  secret      String            @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  events      String            @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   active      Boolean           @default(true)
   environment String            @default("production")
   partnerId   String?
   branchId    String?
   maxRetries  Int               @default(5)
   timeoutMs   Int               @default(10000)
-  description String            @default("") @db.Text
+  description String            @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdBy   String?
   updatedBy   String?
   createdAt   DateTime          @default(now())
@@ -11947,12 +11947,12 @@ model ParentGuardian {
   occupation         String                                @default("")
   isPrimaryContact   Boolean                               @default(false)
   isFinancialSponsor Boolean                               @default(false)
-  communicationPrefs String                                @default("[]") @db.Text
-  notificationPrefs  String                                @default("[]") @db.Text
+  communicationPrefs String                                @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  notificationPrefs  String                                @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   accessLevel        String                                @default("LIMITED")
   portalEnabled      Boolean                               @default(false)
   status             String                                @default("ACTIVE")
-  notes              String                                @default("") @db.Text
+  notes              String                                @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdBy          String?
   updatedBy          String?
   createdAt          DateTime                              @default(now())
@@ -11997,7 +11997,7 @@ model ParentGuardianPaymentResponsibility {
   paidAmount    Float          @default(0)
   status        String         @default("PENDING")
   dueDate       DateTime?
-  notes         String         @default("") @db.Text
+  notes         String         @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   parent        ParentGuardian @relation(fields: [parentId], references: [id], onDelete: Cascade)
@@ -12021,7 +12021,7 @@ model UniversityPortalAccount {
   jobTitle     String                     @default("")
   role         String                     @default("UNIVERSITY_REPRESENTATIVE")
   status       String                     @default("INVITED")
-  permissions  String                     @default("[]") @db.Text
+  permissions  String                     @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   lastLoginAt  DateTime?
   invitedBy    String?
   createdAt    DateTime                   @default(now())
@@ -12039,7 +12039,7 @@ model UniversityPortalActivity {
   action       String
   entityType   String                  @default("")
   entityId     String                  @default("")
-  metadata     String                  @default("{}") @db.Text
+  metadata     String                  @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   createdAt    DateTime                @default(now())
   account      UniversityPortalAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
@@ -12058,11 +12058,11 @@ model ApplicationRiskAssessment {
   studentId     String   @default("")
   riskLevel     String   @default("GREEN")
   score         Int      @default(0)
-  factors       String   @default("[]") @db.LongText
-  missingItems  String   @default("[]") @db.LongText
+  factors       String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  missingItems  String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
   evaluatedBy   String   @default("SYSTEM")
   evaluatedById String?
-  metadata      String   @default("{}") @db.Text
+  metadata      String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   createdAt     DateTime @default(now())
 
   @@index([applicationId])
@@ -12081,9 +12081,9 @@ model StudentSuccessAssessment {
   studentId   String
   score       Int      @default(0)
   band        String   @default("NEEDS_SUPPORT")
-  components  String   @default("{}") @db.LongText
-  nextActions String   @default("[]") @db.LongText
-  disclaimer  String   @default("") @db.Text
+  components  String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  nextActions String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  disclaimer  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   evaluatedBy String   @default("SYSTEM")
   createdAt   DateTime @default(now())
 
@@ -12101,7 +12101,7 @@ model AttentionSnapshot {
   scopeId      String   @default("")
   generatedFor String   @default("")
   buckets      String   @db.LongText
-  totals       String   @default("{}") @db.Text
+  totals       String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   createdAt    DateTime @default(now())
 
   @@index([createdAt])
@@ -12135,7 +12135,7 @@ model OpportunityGraphEdge {
   targetId   String   @db.VarChar(64)
   relation   String   @db.VarChar(64)
   weight     Float    @default(0)
-  evidence   String   @default("{}") @db.Text
+  evidence   String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   computedBy String   @default("SYSTEM")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -12180,9 +12180,9 @@ model RegulatoryRuleVersion {
   /// Monotonic per ruleKey. Never reused, never renumbered.
   versionNumber Int     @default(1)
   /// The rule content as JSON. Shape is per ruleType and validated in the lib.
-  payload       String  @default("{}") @db.Text
+  payload       String  @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   /// Human-readable summary of what this version states.
-  summary       String  @default("") @db.Text
+  summary       String  @default(dbgenerated("(_utf8mb4'')")) @db.Text
 
   // ---- effective window (s106) ----
   effectiveFrom DateTime
@@ -12208,7 +12208,7 @@ model RegulatoryRuleVersion {
   approvedAt     DateTime?
   rejectionReason String   @default("")
   /// Free-text reason this version exists (what changed and why).
-  changeReason   String    @default("") @db.Text
+  changeReason   String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   /// The version this one replaced, if any.
   supersededById String?
 
@@ -12246,7 +12246,7 @@ model PolicyChangeAlert {
   /// Short title of the detected change.
   title       String
   /// What changed, in plain English, with the evidence quoted.
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   /// INFO | WARNING | URGENT | CRITICAL (s85 severity vocabulary)
   severity    String   @default("INFO")
   /// OFFICIAL_GOVERNMENT | OFFICIAL_UNIVERSITY | APPROVED_PARTNER | MONITORED_FEED
@@ -12255,10 +12255,10 @@ model PolicyChangeAlert {
   sourceName  String   @default("")
 
   // ---- impact analysis (s64: identify affected workflows/students) ----
-  affectedWorkflows      String @default("[]") @db.Text
-  affectedStudentIds     String @default("[]") @db.Text
-  affectedApplicationIds String @default("[]") @db.Text
-  affectedCountryIds     String @default("[]") @db.Text
+  affectedWorkflows      String @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  affectedStudentIds     String @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  affectedApplicationIds String @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  affectedCountryIds     String @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   /// Number of records the change touches, denormalised for dashboards.
   impactCount            Int    @default(0)
 
