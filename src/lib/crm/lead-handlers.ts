@@ -1,3 +1,4 @@
+import { reportServerEvent } from '@/lib/analytics/server-conversions';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
@@ -116,6 +117,20 @@ export async function updateLead(req: Request, auth: AuthContext) {
       return tx.marketingLead.findFirst({ where: scope });
     });
     if (!lead) return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
+    // `lead_qualified` — the first business conversion in the funnel
+    // (traffic -> lead -> QUALIFIED -> application -> enrolment). Emitted only
+    // on the transition into a qualified status, not on every update, so
+    // repeated edits to an already-qualified lead cannot inflate it.
+    const nextStatus = typeof (changes as { status?: unknown }).status === 'string'
+      ? String((changes as { status?: unknown }).status).toLowerCase()
+      : '';
+    if (nextStatus === 'qualified' || nextStatus === 'hot') {
+      reportServerEvent({
+        event: 'lead_qualified',
+        reference: lead.id,
+        params: { lead_reference: lead.id, lead_source: lead.source || undefined },
+      });
+    }
     return NextResponse.json({ success: true, data: lead, lead });
   } catch (error) {
     if (error instanceof LeadConflict) return NextResponse.json({ success: false, error: 'Lead changed or is terminal. Reload before updating.' }, { status: 409 });

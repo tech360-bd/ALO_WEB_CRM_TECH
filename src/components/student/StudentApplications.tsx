@@ -297,118 +297,16 @@ interface Application {
   createdAt: string;
 }
 
-/* ================================================================== */
-/*  MOCK DATA                                                          */
-/* ================================================================== */
-
-const MOCK_APPLICATIONS: Application[] = [
-  {
-    id: 'app-001',
-    applicationId: 'ALO-2025-00847',
-    studentId: 'STU-2025-0321',
-    university: 'University of Aberdeen',
-    universityLogo: '',
-    course: 'MSc International Business',
-    country: 'United Kingdom',
-    intake: 'Sep 2026',
-    status: 'Conditional Offer',
-    nextAction: 'Upload final degree transcript to meet conditional offer requirements',
-    deadline: '2025-08-15',
-    counselorNote: 'Great news! Conditional offer received. You need to submit your final semester transcript with a minimum CGPA of 3.2. The deadline for meeting conditions is Aug 15.',
-    timeline: [
-      { date: 'Jul 1, 2025', description: 'Application draft created', actor: 'You', icon: Clapperboard },
-      { date: 'Jul 5, 2025', description: 'Documents submitted for review', actor: 'You', icon: Upload },
-      { date: 'Jul 8, 2025', description: 'Documents verified and approved by counselor', actor: 'Sarah Mitchell (Counselor)', icon: CheckCircle2 },
-      { date: 'Jul 10, 2025', description: 'Application submitted to University of Aberdeen', actor: 'Sarah Mitchell (Counselor)', icon: Send },
-      { date: 'Jul 15, 2025', description: 'Application acknowledged by university', actor: 'System', icon: Info },
-      { date: 'Jul 22, 2025', description: 'Conditional offer received — Meet CGPA 3.2 requirement', actor: 'University of Aberdeen', icon: AlertTriangle },
-    ],
-    documents: [
-      { name: 'Passport Copy', status: 'Approved', type: 'Identity' },
-      { name: 'IELTS Certificate', status: 'Approved', type: 'English Test' },
-      { name: 'Bachelor Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Final Semester Transcript', status: 'Missing', type: 'Academic' },
-      { name: 'Statement of Purpose', status: 'Approved', type: 'Application' },
-      { name: 'CV / Resume', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 1', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 2', status: 'Approved', type: 'Application' },
-    ],
-    messages: [
-      { id: 'm1', sender: 'Sarah Mitchell', role: 'counselor', message: 'I\'ve submitted your application to Aberdeen. They typically respond with an acknowledgment within 5-7 business days.', date: 'Jul 10, 2025', unread: false },
-      { id: 'm2', sender: 'System', role: 'system', message: 'Your application has been acknowledged by University of Aberdeen. Reference: ABERD-2025-78432.', date: 'Jul 15, 2025', unread: false },
-      { id: 'm3', sender: 'Sarah Mitchell', role: 'counselor', message: 'Excellent news! You\'ve received a conditional offer. The condition is to achieve a minimum CGPA of 3.2 in your final semester. Please upload your final transcript as soon as it\'s available.', date: 'Jul 22, 2025', unread: true },
-    ],
-    createdAt: '2025-07-01',
-  },
-  {
-    id: 'app-002',
-    applicationId: 'ALO-2025-00852',
-    studentId: 'STU-2025-0321',
-    university: 'University of Leeds',
-    universityLogo: '',
-    course: 'MSc Data Science',
-    country: 'United Kingdom',
-    intake: 'Sep 2026',
-    status: 'Submitted to University',
-    nextAction: 'Awaiting university acknowledgment — typically 5-7 business days',
-    deadline: '2025-08-30',
-    counselorNote: 'Your application is strong. Leeds Data Science is competitive but your profile matches well. Expected response time is 4-6 weeks.',
-    timeline: [
-      { date: 'Jul 3, 2025', description: 'Application draft created', actor: 'You', icon: Clapperboard },
-      { date: 'Jul 7, 2025', description: 'Documents submitted for review', actor: 'You', icon: Upload },
-      { date: 'Jul 9, 2025', description: 'Documents verified and approved by counselor', actor: 'Sarah Mitchell (Counselor)', icon: CheckCircle2 },
-      { date: 'Jul 12, 2025', description: 'Application submitted to University of Leeds', actor: 'Sarah Mitchell (Counselor)', icon: Send },
-    ],
-    documents: [
-      { name: 'Passport Copy', status: 'Approved', type: 'Identity' },
-      { name: 'PTE Academic Certificate', status: 'Approved', type: 'English Test' },
-      { name: 'Bachelor Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Bachelor Certificate', status: 'Approved', type: 'Academic' },
-      { name: 'Statement of Purpose', status: 'Approved', type: 'Application' },
-      { name: 'CV / Resume', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 1', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 2', status: 'Approved', type: 'Application' },
-    ],
-    messages: [
-      { id: 'm4', sender: 'Sarah Mitchell', role: 'counselor', message: 'Application submitted to Leeds! Their data science program is highly regarded. I\'ll let you know as soon as we hear back.', date: 'Jul 12, 2025', unread: false },
-    ],
-    createdAt: '2025-07-03',
-  },
-  {
-    id: 'app-003',
-    applicationId: 'ALO-2025-00861',
-    studentId: 'STU-2025-0321',
-    university: 'University of Glasgow',
-    universityLogo: '',
-    course: 'MSc Computer Science',
-    country: 'United Kingdom',
-    intake: 'Jan 2027',
-    status: 'Document Review',
-    nextAction: 'Upload missing documents: HSC Certificate and SOP',
-    deadline: null,
-    counselorNote: 'We\'re still reviewing your documents. The HSC certificate and SOP need to be uploaded before we can proceed. Let me know if you need help with the SOP.',
-    timeline: [
-      { date: 'Jul 18, 2025', description: 'Application draft created', actor: 'You', icon: Clapperboard },
-      { date: 'Jul 20, 2025', description: 'Initial documents submitted for review', actor: 'You', icon: Upload },
-      { date: 'Jul 22, 2025', description: 'Document review in progress — 2 documents missing', actor: 'Sarah Mitchell (Counselor)', icon: FileText },
-    ],
-    documents: [
-      { name: 'Passport Copy', status: 'Approved', type: 'Identity' },
-      { name: 'IELTS Certificate', status: 'Approved', type: 'English Test' },
-      { name: 'SSC Certificate', status: 'Approved', type: 'Academic' },
-      { name: 'SSC Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'HSC Certificate', status: 'Missing', type: 'Academic' },
-      { name: 'HSC Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Bachelor Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Statement of Purpose', status: 'Missing', type: 'Application' },
-      { name: 'CV / Resume', status: 'Pending', type: 'Application' },
-    ],
-    messages: [
-      { id: 'm5', sender: 'Sarah Mitchell', role: 'counselor', message: 'Thanks for submitting the initial documents. I noticed we\'re still missing your HSC Certificate and the Statement of Purpose. The SOP is especially important for Glasgow CS program — they look for specific research interests.', date: 'Jul 22, 2025', unread: true },
-    ],
-    createdAt: '2025-07-18',
-  },
-];
+/* ------------------------------------------------------------------ */
+/*  NOTE ON THE REMOVED MOCK DATA                                     */
+/* ------------------------------------------------------------------ */
+/* A hard-coded MOCK_APPLICATIONS array used to live here and was used as a   */
+/* FALLBACK whenever the API returned an empty list or threw, because the     */
+/* catch block silently swallowed the error and fell through to the mock.     */
+/* A student with no applications, or one whose load failed, was therefore    */
+/* shown invented applications to real universities. That is prohibited by    */
+/* spec s92 and is misleading about the student own file, so the array was    */
+/* deleted and replaced with distinct empty and error states plus a retry.    */
 
 const FILTER_STATUSES: Array<ApplicationStatus | 'All'> = [
   'All',
@@ -1042,43 +940,75 @@ export default function StudentApplications() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [apiApps, setApiApps] = useState<Application[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadApplications() {
-      if (!token) { setLoading(false); return; }
+      setLoading(true);
+      setLoadError(null);
+      if (!token) {
+        // Without a session we cannot know what the student has applied to, so
+        // report that instead of showing invented applications (s92).
+        if (!cancelled) {
+          setApiApps([]);
+          setLoading(false);
+          setLoadError('You are not signed in, so applications could not be loaded.');
+        }
+        return;
+      }
       try {
         const res = await fetch('/api/student-portal/applications', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        const json = await res.json();
-        if (json.success && json.data && json.data.length > 0) {
-          const mapped = json.data.map((a: Record<string, unknown>) => ({
-            id: a.id as string,
-            applicationId: (a.applicationId as string) || (a.id as string).slice(0, 8).toUpperCase(),
-            studentId: (a.studentProfileId as string) || '',
-            university: (a.university as string) || 'Unknown University',
-            universityLogo: '',
-            course: (a.course as string) || 'Unknown Course',
-            country: (a.country as string) || 'United Kingdom',
-            intake: (a.intake as string) || 'Sep 2025',
-            status: (a.stage === 'conditional' ? 'Conditional Offer' as const : a.stage === 'submitted' ? 'Submitted to University' as const : a.stage === 'draft' ? 'Draft' as const : a.stage === 'offer' ? 'Unconditional Offer' as const : a.stage === 'rejected' ? 'Rejected' as const : 'Draft' as const),
-            nextAction: (a.nextAction as string) || '',
-            deadline: (a.deadline as string) || null,
-            counselorNote: (a.counselorNote as string) || null,
-            timeline: [],
-            documents: [],
-            messages: [],
-            createdAt: (a.createdAt as string) || new Date().toISOString(),
-          }));
-          setApiApps(mapped);
+        const json = await res.json().catch(() => null);
+        if (cancelled) return;
+        if (!res.ok || !json?.success) {
+          setApiApps([]);
+          setLoadError(json?.error || `Could not load applications (status ${res.status}).`);
+          setLoading(false);
+          return;
         }
-      } catch { /* fallback to mock */ }
-      setLoading(false);
+        const rows = Array.isArray(json.data) ? json.data : [];
+        const mapped = rows.map((a: Record<string, unknown>) => ({
+          id: a.id as string,
+          applicationId: (a.applicationId as string) || (a.id as string).slice(0, 8).toUpperCase(),
+          studentId: (a.studentProfileId as string) || '',
+          // No invented fallbacks. A missing university, country or intake is
+          // shown as unrecorded rather than defaulted to a plausible-looking
+          // value the student did not choose.
+          university: (a.university as string) || 'University not recorded',
+          universityLogo: '',
+          course: (a.course as string) || 'Course not recorded',
+          country: (a.country as string) || '',
+          intake: (a.intake as string) || '',
+          status: (a.stage === 'conditional' ? 'Conditional Offer' as const : a.stage === 'submitted' ? 'Submitted to University' as const : a.stage === 'draft' ? 'Draft' as const : a.stage === 'offer' ? 'Unconditional Offer' as const : a.stage === 'rejected' ? 'Rejected' as const : 'Draft' as const),
+          nextAction: (a.nextAction as string) || '',
+          deadline: (a.deadline as string) || null,
+          counselorNote: (a.counselorNote as string) || null,
+          timeline: [],
+          documents: [],
+          messages: [],
+          createdAt: (a.createdAt as string) || new Date().toISOString(),
+        }));
+        // An empty list is a truthful answer and is applied as-is.
+        setApiApps(mapped);
+      } catch (error: unknown) {
+        if (cancelled) return;
+        setApiApps([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not reach the application service.');
+      }
+      if (!cancelled) setLoading(false);
     }
     loadApplications();
-  }, [token]);
+    return () => { cancelled = true; };
+  }, [token, reloadKey]);
 
-  const applications = (apiApps && apiApps.length > 0) ? apiApps : MOCK_APPLICATIONS;
+  // Real data only. There is deliberately no mock fallback: this screen tells a
+  // student the status of their own applications, so fabricated rows would be
+  // misinformation about their file rather than placeholder styling (s92).
+  const applications = apiApps ?? [];
 
   const handleViewDetails = (app: Application) => {
     setSelectedApp(app);
@@ -1257,7 +1187,30 @@ export default function StudentApplications() {
       </Card>
 
       {/* Application List */}
-      {applications.length === 0 ? (
+      {loadError ? (
+        /* A failed load must not render as "Start your first application" (s91).
+           Telling a student they have no applications when the request failed
+           could stop them chasing a real deadline. */
+        <Card className="border-2 border-amber-200">
+          <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
+            <div className="flex items-center justify-center size-20 rounded-full bg-amber-50 mb-6">
+              <AlertTriangle className="size-10 text-amber-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
+              Applications could not be loaded
+            </h3>
+            <p className="text-sm text-[#0F172A]/60 max-w-md mb-2">{loadError}</p>
+            <p className="text-xs text-[#0F172A]/45 max-w-md mb-6 leading-relaxed">
+              This does not mean you have no applications. Retry, and contact your
+              counselor if it keeps failing.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => setReloadKey((key) => key + 1)}>
+              <RotateCcw className="size-3.5 mr-1.5" />
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
+      ) : applications.length === 0 ? (
         <EmptyState />
       ) : sorted.length === 0 ? (
         <Card className="border-dashed border-2 border-[#0F172A]/10">

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { CRON_JOBS, REQUIRED_ENABLED_JOB_IDS, verifyCronDefinitions } from '@/cron/cron-definitions';
+import { CRON_JOB_COUNT, CRON_JOBS, REQUIRED_ENABLED_JOB_IDS, verifyCronDefinitions } from '@/cron/cron-definitions';
 import { getRegisteredJob, JOB_REGISTRY, REQUIRED_JOB_KEYS, toRuntimeJob } from '@/lib/cron/job-registry';
 vi.mock('@/lib/cron-auth', () => ({ requireCron: vi.fn().mockResolvedValue(null) }));
 import { GET } from '@/app/api/cron/weekly-university-scan/route';
@@ -17,7 +17,10 @@ import { GET } from '@/app/api/cron/weekly-university-scan/route';
  */
 describe('scheduler certification', () => {
   it('enables only declarations that resolve to real work', () => {
-    expect(CRON_JOBS).toHaveLength(21);
+    // Derived from CRON_JOB_COUNT, not a literal: the meaningful invariant is the
+    // loop below (every enabled declaration resolves to real work). A hard-coded
+    // count breaks on every legitimate job addition without adding coverage.
+    expect(CRON_JOBS).toHaveLength(CRON_JOB_COUNT);
     for (const job of CRON_JOBS) {
       const entry = getRegisteredJob(job.id) ?? getRegisteredJob(job.route.replace('/api/cron/', ''));
       expect(entry, `${job.id} must resolve in the job registry`).toBeTruthy();
@@ -81,6 +84,37 @@ describe('scheduler certification', () => {
         }
       });
     expect(unresolved).toEqual([]);
+  });
+
+  it('resolves the outbound webhook dispatch job to real work', () => {
+    // Added with the s77 outbound webhook layer. It must be a genuine job with a
+    // handler, an enabled declaration, a registry entry and a served route —
+    // never a declaration that quietly does nothing.
+    const entry = getRegisteredJob('webhook-dispatch');
+    expect(entry, 'webhook-dispatch must be registered').toBeTruthy();
+    expect(entry!.disposition).toBe('job');
+    expect(typeof entry!.handler).toBe('function');
+
+    const declaration = CRON_JOBS.find((job) => job.id === 'webhook-dispatch');
+    expect(declaration, 'webhook-dispatch must be declared').toBeTruthy();
+    expect(declaration!.enabled).toBe(true);
+    expect(declaration!.cronExpression).toBe('*/5 * * * *');
+    expect(declaration!.handler).toBe('runWebhookDispatch');
+    expect(declaration!.route).toBe('/api/cron/webhook-dispatch');
+    // ALO Education runs every job in Asia/Dhaka.
+    expect(declaration!.timezone).toBe('Asia/Dhaka');
+    expect(declaration!.locking).toBe(true);
+
+    const vercel = JSON.parse(readFileSync('vercel.json', 'utf8')) as {
+      crons?: Array<{ path: string; schedule: string }>;
+    };
+    const declared = (vercel.crons ?? []).find((cron) => cron.path === '/api/cron/webhook-dispatch');
+    expect(declared, 'webhook-dispatch must be scheduled externally').toBeTruthy();
+    expect(declared!.schedule).toBe('*/5 * * * *');
+
+    expect(readFileSync('src/app/api/cron/webhook-dispatch/route.ts', 'utf8')).toContain(
+      'handleAuthorizedCronRequest',
+    );
   });
 
   it('does not fabricate a scan, evidence or completed run for authenticated callers', async () => {

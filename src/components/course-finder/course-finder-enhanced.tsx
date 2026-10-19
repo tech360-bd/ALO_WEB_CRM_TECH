@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
 import {
   Search, SlidersHorizontal, X, GraduationCap, Clock, DollarSign, Award,
   Globe, ExternalLink, BookmarkPlus, GitCompare, Send, Loader2,
@@ -1181,6 +1182,22 @@ export function CourseFinderEnhanced() {
       else if (activeTab === 'universities') setUniversities(data.universities || data.results || []);
       setTotalPages(data.totalPages || 1);
       setTotalResults(data.total || data.totalResults || 0);
+
+      // course_search / university_search. The search facets are reported but
+      // the raw keyword is NOT: a visitor can type anything into a search box,
+      // including their own name, and analytics must never receive personal
+      // data. The facets below already answer "what are people searching for".
+      trackAnalyticsEvent(
+        activeTab === 'universities' ? 'university_search' : 'course_search',
+        {
+          destination: filters.countries[0] || undefined,
+          study_level: filters.studyLevels[0] || undefined,
+          intake: filters.intakeYear || undefined,
+          items_count: Number(data.total || data.totalResults || 0),
+          search_term_category: filters.subjectArea || undefined,
+        },
+        { source: 'course-finder' },
+      );
 
       if (data.filters) {
         setFilterOptions((prev) => ({

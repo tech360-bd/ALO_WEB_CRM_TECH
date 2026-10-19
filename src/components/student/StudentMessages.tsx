@@ -31,6 +31,8 @@ import {
   MessageSquare,
   FileText,
   Filter,
+  AlertTriangle,
+  RotateCcw,
 } from 'lucide-react';
 
 /* ================================================================== */
@@ -79,168 +81,12 @@ type FilterType = 'all' | 'unread' | 'counselor' | 'application' | 'document' | 
 /*  MOCK DATA                                                          */
 /* ================================================================== */
 
-const MOCK_CONVERSATIONS: ConversationThread[] = [
-  {
-    id: 'thread-1',
-    name: 'Sarah Khan',
-    role: 'Counselor',
-    avatar: 'SK',
-    lastMessage: 'Great! I have received your attested certificates. The TB test is the next priority.',
-    lastTimestamp: '10:32 AM',
-    unreadCount: 2,
-    isOnline: true,
-    type: 'counselor',
-    messages: [
-      {
-        id: 'm1-1',
-        content: 'Hi Ahmed! I wanted to follow up on the documents you uploaded yesterday. The academic certificates look good but I noticed the English test certificate is the old IELTS format. We need to verify it meets UKVI requirements.',
-        timestamp: '9:15 AM',
-        direction: 'received',
-        source: 'whatsapp',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-      },
-      {
-        id: 'm1-2',
-        content: 'Hi Sarah, I checked and my IELTS is valid until Dec 2026. The score is overall 7.0 with no band below 6.5 which meets the UKVI requirement for my course.',
-        timestamp: '9:28 AM',
-        direction: 'sent',
-        source: 'portal',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-      },
-      {
-        id: 'm1-3',
-        content: 'Perfect, that meets the requirement. Could you also upload the attested copies of your BBA degree and transcripts? We need those for the visa application.',
-        timestamp: '9:45 AM',
-        direction: 'received',
-        source: 'whatsapp',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-        attachments: [
-          { id: 'a1', name: 'Document-Checklist-UK.pdf', size: '245 KB', type: 'pdf' },
-        ],
-      },
-      {
-        id: 'm1-4',
-        content: 'Just uploaded the attested copies. Please check.',
-        timestamp: '10:15 AM',
-        direction: 'sent',
-        source: 'portal',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-        attachments: [
-          { id: 'a2', name: 'BBA-Degree-Attested.pdf', size: '1.2 MB', type: 'pdf' },
-          { id: 'a3', name: 'BBA-Transcript-Attested.pdf', size: '890 KB', type: 'pdf' },
-        ],
-      },
-      {
-        id: 'm1-5',
-        content: 'Great! I have received your attested certificates. The TB test is the next priority. You need to book an appointment at a UKVI-approved clinic.',
-        timestamp: '10:32 AM',
-        direction: 'received',
-        source: 'whatsapp',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: false,
-      },
-      {
-        id: 'm1-6',
-        content: 'Note: Check if ATAS is required for this course. Student needs to apply 6 weeks before CAS. — Internal only, not visible to student.',
-        timestamp: '10:33 AM',
-        direction: 'received',
-        source: 'portal',
-        isStudentVisible: false,
-        isInternalNote: true,
-        isRead: true,
-      },
-    ],
-  },
-  {
-    id: 'thread-2',
-    name: 'Application: Aberdeen',
-    role: 'University of Aberdeen',
-    avatar: 'UA',
-    lastMessage: 'Your conditional offer has been updated. Please review the updated conditions.',
-    lastTimestamp: 'Yesterday',
-    unreadCount: 1,
-    isOnline: false,
-    type: 'application',
-    messages: [
-      {
-        id: 'm2-1',
-        content: '🎉 Good news! University of Aberdeen has issued a conditional offer for MSc International Business. Please review the offer letter and conditions.',
-        timestamp: '2:00 PM',
-        direction: 'received',
-        source: 'portal',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-        attachments: [
-          { id: 'a4', name: 'Conditional-Offer-Aberdeen.pdf', size: '320 KB', type: 'pdf' },
-        ],
-      },
-      {
-        id: 'm2-2',
-        content: 'Thank you! What are the conditions I need to meet?',
-        timestamp: '2:30 PM',
-        direction: 'sent',
-        source: 'portal',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-      },
-      {
-        id: 'm2-3',
-        content: '📋 System Notification: Your conditional offer has been updated. Conditions: (1) Submit final degree certificate, (2) IELTS 7.0 with no band below 6.5, (3) Pay £2,000 deposit by 15 Aug 2025.',
-        timestamp: '3:00 PM',
-        direction: 'system',
-        source: 'portal',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: false,
-      },
-    ],
-  },
-  {
-    id: 'thread-3',
-    name: 'AI Study Coach',
-    role: 'AI Assistant',
-    avatar: 'AI',
-    lastMessage: 'Based on your profile, you qualify for the Aberdeen Global Excellence Scholarship worth £5,000.',
-    lastTimestamp: '2 days ago',
-    unreadCount: 0,
-    isOnline: true,
-    type: 'ai',
-    messages: [
-      {
-        id: 'm3-1',
-        content: 'Hi! I\'m your AI Study Coach. Based on your profile and application to University of Aberdeen, I found 3 scholarship opportunities you may be eligible for:\n\n1. Aberdeen Global Excellence Scholarship — £5,000\n2. Chevening Scholarship — Full tuition + living\n3. Commonwealth Shared Scholarship — Full tuition\n\nWould you like me to help you prepare applications for any of these?',
-        timestamp: '11:00 AM',
-        direction: 'received',
-        source: 'ai',
-        isAiMessage: true,
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-      },
-      {
-        id: 'm3-2',
-        content: 'Yes! Can you tell me more about the Aberdeen Global Excellence Scholarship? What are the requirements?',
-        timestamp: '11:15 AM',
-        direction: 'sent',
-        source: 'portal',
-        isStudentVisible: true,
-        isInternalNote: false,
-        isRead: true,
-      },
-    ],
-  },
-];
+/* A hard-coded MOCK_CONVERSATIONS array of invented counselor threads used to */
+/* live here and was used as a FALLBACK whenever the API returned an empty list */
+/* or threw. A student with no messages, or one whose load failed, was shown a  */
+/* fabricated conversation with a named counselor. That is prohibited by spec   */
+/* s92, so the array was deleted and replaced with distinct empty and error     */
+/* states plus a retry.                                                        */
 
 const QUICK_QUESTIONS = [
   'What documents do I need?',
@@ -386,28 +232,67 @@ export default function StudentMessages() {
   const [loading, setLoading] = useState(true);
   const [apiUnread, setApiUnread] = useState(0);
   const [apiConversations, setApiConversations] = useState<ConversationThread[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load real messages from API
   useEffect(() => {
-    if (!token) { setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+
+    if (!token) {
+      // Without a session we cannot know what conversations exist, so report
+      // that instead of showing invented threads (s92).
+      if (!cancelled) {
+        setApiConversations([]);
+        setLoading(false);
+        setLoadError('You are not signed in, so messages could not be loaded.');
+      }
+      return;
+    }
+
     fetch('/api/student-portal/messages', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(r => r.json())
-      .then(j => {
-        if (j.success) {
-          if (j.unreadCount !== undefined) setApiUnread(j.unreadCount as number);
-          if (j.data && j.data.length > 0) {
-            setApiConversations(j.data as ConversationThread[]);
-          }
+      .then(async (r) => {
+        const j = await r.json().catch(() => null);
+        if (cancelled) return;
+        if (!r.ok || !j?.success) {
+          setApiConversations([]);
+          setLoadError(j?.error || `Could not load messages (status ${r.status}).`);
+          return;
         }
+        if (j.unreadCount !== undefined) setApiUnread(j.unreadCount as number);
+        const rows = Array.isArray(j.data) ? (j.data as ConversationThread[]) : [];
+        // An empty list is a truthful answer and is applied as-is.
+        setApiConversations(rows);
       })
-      .catch(() => { /* fallback to mock */ })
-      .finally(() => setLoading(false));
-  }, [token]);
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setApiConversations([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not reach the message service.');
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
 
-  const conversations = (apiConversations && apiConversations.length > 0) ? apiConversations : MOCK_CONVERSATIONS;
+    return () => { cancelled = true; };
+  }, [token, reloadKey]);
+
+  // Real data only. There is deliberately no mock fallback: this screen shows a
+  // student their own conversations with ALO staff, so invented threads and
+  // messages would be misinformation rather than placeholder styling (s92).
+  const conversations = apiConversations ?? [];
+
+  // The initial activeThreadId was a mock id, so with real data it matches
+  // nothing and the pane would render empty even when conversations exist.
+  // Resolve the selection against what was actually loaded.
+  useEffect(() => {
+    if (conversations.length === 0) return;
+    if (!conversations.some((thread) => thread.id === activeThreadId)) {
+      setActiveThreadId(conversations[0].id);
+    }
+  }, [conversations, activeThreadId]);
 
   const activeThread = conversations.find((t) => t.id === activeThreadId);
   const visibleMessages = activeThread?.messages.filter(
@@ -571,6 +456,50 @@ export default function StudentMessages() {
           {/* Conversation list */}
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-0.5">
+              {loadError ? (
+                /* A failed load must not render as an empty inbox (s91): that
+                   would tell a student no one has messaged them when we simply
+                   could not check. */
+                <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
+                  <AlertTriangle className="size-8 text-amber-500 mb-3" />
+                  <p className="text-sm font-semibold text-slate-800">
+                    Messages could not be loaded
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500 max-w-[220px]">{loadError}</p>
+                  <p className="mt-2 text-[11px] text-slate-400 max-w-[220px]">
+                    This does not mean you have no messages.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3"
+                    onClick={() => setReloadKey((key) => key + 1)}
+                  >
+                    <RotateCcw className="size-3.5 mr-1.5" />
+                    Try again
+                  </Button>
+                </div>
+              ) : loading ? (
+                <div className="space-y-2 p-2">
+                  {[0, 1, 2].map((row) => (
+                    <div key={row} className="h-16 animate-pulse rounded-lg bg-slate-100" />
+                  ))}
+                </div>
+              ) : filteredConversations.length === 0 ? (
+                <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
+                  <MessageSquare className="size-8 text-slate-300 mb-3" />
+                  <p className="text-sm font-medium text-slate-500">
+                    {conversations.length === 0
+                      ? 'No conversations yet'
+                      : 'No conversations match this filter'}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400 max-w-[220px]">
+                    {conversations.length === 0
+                      ? 'Messages from your counselor and the ALO team will appear here.'
+                      : 'Try a different filter or search term.'}
+                  </p>
+                </div>
+              ) : null}
               {filteredConversations.map((conv) => (
                 <button
                   key={conv.id}

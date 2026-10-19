@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Icon } from "./shared";
 import { COUNTRIES, LEAD_SOURCES } from "@/lib/alo-types";
+import { trackAnalyticsEvent } from "@/lib/analytics/client";
+import { collectAttributionPayload, rememberEntryAttribution } from "@/lib/analytics/attribution-payload";
 
 interface PublicLeadFormProps {
   sourceTag?: string; // e.g. "UK country page", "University of Manchester page"
@@ -36,16 +38,43 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
     budget: "",
     englishScore: "",
     notes: "",
-    consent: true,
+    // Unchecked by default. A pre-ticked consent box is not consent — the
+    // visitor has to make an affirmative choice for the record to mean
+    // anything. It was previously `true` here AND never sent to the API, so the
+    // checkbox was decorative while appearing to grant permission.
+    consent: false,
   });
   const [loading, setLoading] = React.useState(false);
   const [result, setResult] = React.useState<{ ok: boolean; leadId?: string; duplicate?: boolean; message: string } | null>(null);
+  /**
+   * The attribution the visitor ARRIVED with, captured once. An application or
+   * enquiry journey can move the visitor across SPA routes before they submit;
+   * the campaign that acquired them must not be replaced by the route they
+   * happened to end on.
+   */
+  const entryAttribution = React.useRef(rememberEntryAttribution());
+
+  // `lead_form_start` fires the first time the visitor engages with the form,
+  // not on mount — a rendered form nobody touched is not a started form.
+  const startReported = React.useRef(false);
+  const reportFormStart = React.useCallback(() => {
+    if (startReported.current) return;
+    startReported.current = true;
+    trackAnalyticsEvent('lead_form_start', {
+      form_id: 'public-lead-form',
+      lead_source: sourceTag || 'public_website',
+      destination: preferredCountry || undefined,
+    }, { source: 'public-lead-form' });
+  }, [sourceTag, preferredCountry]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.fullName || !form.phone) return;
     setLoading(true);
     setResult(null);
+    // Prefer the remembered entry attribution; fall back to the current page in
+    // case the visitor deep-linked straight into a later step.
+    const attribution = entryAttribution.current ?? collectAttributionPayload();
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -64,16 +93,49 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           budget: form.budget,
           englishScore: form.englishScore,
           notes: form.notes,
+          // Only the affirmative opt-in is transmitted. Contact details alone
+          // are not consent, and the server records nothing unless this is true.
+          consent: form.consent,
+          ...(attribution ?? {}),
         }),
       });
       const data = await res.json();
       if (data.error) {
         setResult({ ok: false, message: data.error });
+        // The failure is measured too: a form that silently loses submissions
+        // is invisible in GA4 unless the error is an event.
+        trackAnalyticsEvent('lead_form_submit', {
+          form_id: 'public-lead-form',
+          success: false,
+          error_code: 'api_error',
+        }, { source: 'public-lead-form' });
       } else {
         setResult({ ok: true, leadId: data.lead?.leadId, duplicate: data.duplicate, message: data.message });
+        // `lead_reference` is ALO's own opaque reference code (LEAD-2026-XXXXX),
+        // not a name or contact detail — this is the join that makes the
+        // campaign -> lead -> application funnel traceable in GA4.
+        trackAnalyticsEvent('lead_form_submit', {
+          form_id: 'public-lead-form',
+          success: true,
+          lead_source: sourceTag || 'public_website',
+          lead_reference: data.lead?.leadId || '',
+          destination: form.preferredCountry || undefined,
+        }, { source: 'public-lead-form' });
+        // Submitting this form is a request for a counselor, which is the
+        // business conversion the marketing team actually reports on.
+        trackAnalyticsEvent('counselor_request', {
+          form_id: 'public-lead-form',
+          lead_source: sourceTag || 'public_website',
+          destination: form.preferredCountry || undefined,
+        }, { source: 'public-lead-form' });
       }
     } catch {
       setResult({ ok: false, message: "Connection issue. Please try again or WhatsApp us at 01805020101." });
+      trackAnalyticsEvent('lead_form_submit', {
+        form_id: 'public-lead-form',
+        success: false,
+        error_code: 'network',
+      }, { source: 'public-lead-form' });
     } finally {
       setLoading(false);
     }
@@ -110,7 +172,13 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
         <h3 className="text-lg font-bold text-[#0057B8]">{title}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
       </div>
-      <form onSubmit={submit} className="space-y-4">
+      <form
+        onSubmit={submit}
+        onFocus={reportFormStart}
+        // Focus does not bubble in the DOM but React normalises onFocus to a
+        // bubbling focusin, so a single handler covers every field.
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Label className="text-xs font-semibold">Full Name <span className="text-[#E8501A]">*</span></Label>
@@ -170,9 +238,12 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
         </div>
         <label className="flex cursor-pointer items-start gap-2.5 text-xs text-muted-foreground">
           <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[#0057B8]/40 data-[state=checked]:bg-[#0057B8]" />
-          <span>I agree to be contacted by ALO Education via phone, WhatsApp, and email. My data is private, RBAC-protected, and audit-logged.</span>
+          <span>
+            I agree to be contacted by ALO Education via phone, WhatsApp, and email. My data is
+            private, RBAC-protected, and audit-logged. <span className="text-[#E8501A]">*</span>
+          </span>
         </label>
-        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+        <Button type="submit" disabled={loading || !form.fullName || !form.phone || !form.consent} className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
           {loading ? (
             <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting...</>
           ) : (

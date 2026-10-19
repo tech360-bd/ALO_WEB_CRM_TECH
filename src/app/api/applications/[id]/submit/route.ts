@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
 import { canViewB2B } from '@/lib/application-manager/service';
+import { reportServerEvent } from '@/lib/analytics/server-conversions';
 
 export const POST = withAuth(async (req, auth, { params }: any) => {
   const roles = auth.roles.map(r => r.toLowerCase());
@@ -102,6 +103,22 @@ export const POST = withAuth(async (req, auth, { params }: any) => {
       details: JSON.stringify({ submissionMethod: body.submissionMethod, submittedTo: body.submittedTo }),
       actorRole: auth.roles[0] || '',
       studentId: existing.studentId,
+    },
+  });
+
+  // Authoritative business conversion. Fired from the server because this is
+  // the moment the application actually became submitted — a staff member with
+  // the application_manager role committed it — not the moment a browser
+  // clicked a button. Fire-and-forget: it must never affect the response, and
+  // it reports NOT_CONFIGURED rather than a fake success when GA4 is absent.
+  // Only ALO's own opaque application code leaves the system.
+  reportServerEvent({
+    event: 'application_submitted',
+    reference: (updated as { applicationCode?: string }).applicationCode ?? existing.id,
+    params: {
+      application_reference: (updated as { applicationCode?: string }).applicationCode ?? '',
+      application_stage: (updated as { stage?: string }).stage ?? '',
+      lead_source: body.submissionMethod || 'UNIVERSITY_PORTAL',
     },
   });
 

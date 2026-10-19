@@ -21,6 +21,8 @@ import {
   Settings,
   Check,
   CheckCheck,
+  AlertTriangle,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -68,120 +70,16 @@ const TYPE_CONFIG: Record<
 };
 
 /* ================================================================== */
-/*  MOCK DATA                                                          */
+/*  NOTE ON THE REMOVED MOCK DATA                                     */
 /* ================================================================== */
-const INITIAL_NOTIFICATIONS: Notification[] = [
-  {
-    id: 'n1',
-    type: 'application',
-    title: 'Conditional offer received from University of Aberdeen',
-    description:
-      'Review your offer conditions and respond before the deadline.',
-    timeAgo: '2 hours ago',
-    isRead: false,
-    group: 'today',
-    navigateTo: 'student-applications',
-  },
-  {
-    id: 'n2',
-    type: 'document',
-    title: 'IELTS certificate expiring soon',
-    description:
-      'Your IELTS certificate expires in 30 days. Plan a retake.',
-    timeAgo: '5 hours ago',
-    isRead: false,
-    group: 'today',
-    navigateTo: 'student-documents',
-  },
-  {
-    id: 'n3',
-    type: 'document',
-    title: 'Document rejected: HSC Transcript',
-    description:
-      'Please upload a clear scan. Current image is blurry.',
-    timeAgo: '1 day ago',
-    isRead: false,
-    group: 'yesterday',
-    navigateTo: 'student-documents',
-  },
-  {
-    id: 'n4',
-    type: 'visa',
-    title: 'Visa checklist updated',
-    description:
-      'TB test certificate added to your checklist.',
-    timeAgo: '1 day ago',
-    isRead: true,
-    group: 'yesterday',
-    navigateTo: 'student-visa',
-  },
-  {
-    id: 'n5',
-    type: 'message',
-    title: 'New message from Sarah Khan',
-    description:
-      '"Hi Rahim, I\'ve reviewed your SOP draft..."',
-    timeAgo: '2 days ago',
-    isRead: true,
-    group: 'this-week',
-    navigateTo: 'student-messages',
-  },
-  {
-    id: 'n6',
-    type: 'scholarship',
-    title: 'Scholarship deadline approaching',
-    description:
-      'Chevening Scholarship deadline is Nov 5.',
-    timeAgo: '3 days ago',
-    isRead: true,
-    group: 'this-week',
-    navigateTo: 'student-scholarships',
-  },
-  {
-    id: 'n7',
-    type: 'visa',
-    title: 'Interview practice available',
-    description:
-      'Book your visa mock interview practice session.',
-    timeAgo: '3 days ago',
-    isRead: false,
-    group: 'this-week',
-    navigateTo: 'student-appointments',
-  },
-  {
-    id: 'n8',
-    type: 'application',
-    title: 'Application submitted to University of Leeds',
-    description:
-      'Your application has been submitted successfully.',
-    timeAgo: '5 days ago',
-    isRead: true,
-    group: 'this-week',
-    navigateTo: 'student-applications',
-  },
-  {
-    id: 'n9',
-    type: 'payment',
-    title: 'Payment receipt uploaded',
-    description:
-      'Your deposit payment receipt has been received.',
-    timeAgo: '1 week ago',
-    isRead: true,
-    group: 'earlier',
-    navigateTo: 'student-payments',
-  },
-  {
-    id: 'n10',
-    type: 'system',
-    title: 'Welcome to ALO Education',
-    description:
-      'Complete your profile to get personalized course recommendations.',
-    timeAgo: '2 weeks ago',
-    isRead: true,
-    group: 'earlier',
-    navigateTo: 'student-profile',
-  },
-];
+/* A hard-coded INITIAL_NOTIFICATIONS array of ten invented rows used to live  */
+/* here and was used as the component's INITIAL STATE. Because the fetch only   */
+/* replaced it when the API returned a non-empty list, every failure path - no   */
+/* token, network error, success:false, or a student who genuinely has no        */
+/* notifications - left fabricated items such as "Conditional offer received     */
+/* from University of Aberdeen" on a real student's screen. That is prohibited   */
+/* by spec s92 and is misinformation about the student's own file, so the list   */
+/* was deleted rather than left dormant where it could be reused.                */
 
 const GROUP_LABELS: Record<NotificationGroup, string> = {
   today: 'Today',
@@ -268,44 +166,80 @@ function NotificationCard({
 /* ================================================================== */
 export function StudentNotifications() {
   const { setView, token } = usePortalStore();
-  const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
+  // Never seed with fabricated notifications (spec s92). This panel tells a
+  // student about their OWN offers, documents and deadlines, so invented rows
+  // are misinformation, not placeholder styling. Start empty and distinguish
+  // three real states: not yet loaded, loaded-and-empty, and failed.
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [activeTab, setActiveTab] = useState('all');
 
   // Load notifications from API
   useEffect(() => {
-    if (!token) { setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+
+    if (!token) {
+      // Without a session we cannot know whether the student has notifications,
+      // so say that rather than showing an empty list or invented content.
+      if (!cancelled) {
+        setNotifications([]);
+        setLoading(false);
+        setLoadError('You are not signed in, so notifications could not be loaded.');
+      }
+      return;
+    }
+
     fetch('/api/student-portal/notifications', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(r => r.json())
-      .then(j => {
-        if (j.success && j.data && j.data.length > 0) {
-          const now = new Date();
-          const mapped = j.data.map((n: Record<string, unknown>) => {
-            const created = new Date(n.createdAt as string);
-            const diffDays = Math.floor((now.getTime() - created.getTime()) / 86400000);
-            let group: NotificationGroup = 'earlier';
-            if (diffDays === 0) group = 'today';
-            else if (diffDays === 1) group = 'yesterday';
-            else if (diffDays <= 7) group = 'this-week';
-            return {
-              id: n.id as string,
-              type: (['application','document','visa','message','deadline','scholarship','payment','system'].includes(n.type as string) ? n.type : 'system') as NotificationType,
-              title: (n.title as string) || 'Notification',
-              description: (n.message as string) || '',
-              timeAgo: diffDays === 0 ? 'Today' : diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`,
-              isRead: !!(n.isRead as boolean),
-              group,
-              navigateTo: 'student-dashboard',
-            };
-          });
-          setNotifications(mapped);
+      .then(async (r) => {
+        const j = await r.json().catch(() => null);
+        if (cancelled) return;
+        if (!r.ok || !j?.success) {
+          setNotifications([]);
+          setLoadError(j?.error || `Could not load notifications (status ${r.status}).`);
+          setLoading(false);
+          return;
         }
+        const rows = Array.isArray(j.data) ? j.data : [];
+        const now = new Date();
+        const mapped = rows.map((n: Record<string, unknown>) => {
+          const created = new Date(n.createdAt as string);
+          const diffDays = Number.isFinite(created.getTime())
+            ? Math.floor((now.getTime() - created.getTime()) / 86400000)
+            : 0;
+          let group: NotificationGroup = 'earlier';
+          if (diffDays === 0) group = 'today';
+          else if (diffDays === 1) group = 'yesterday';
+          else if (diffDays <= 7) group = 'this-week';
+          return {
+            id: n.id as string,
+            type: (['application','document','visa','message','deadline','scholarship','payment','system'].includes(n.type as string) ? n.type : 'system') as NotificationType,
+            title: (n.title as string) || 'Notification',
+            description: (n.message as string) || '',
+            timeAgo: diffDays === 0 ? 'Today' : diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`,
+            isRead: !!(n.isRead as boolean),
+            group,
+            navigateTo: 'student-dashboard',
+          };
+        });
+        // An empty list is a truthful answer and is applied as-is.
+        setNotifications(mapped);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, [token]);
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setNotifications([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not reach the notification service.');
+        setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [token, reloadKey]);
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.isRead).length,
@@ -420,7 +354,34 @@ export function StudentNotifications() {
 
         {/* Single content slot renders all groups */}
         <TabsContent value={activeTab} className="mt-4">
-          {filtered.length === 0 ? (
+          {loadError ? (
+            /* A failed load must not read as an empty inbox (s91). Claiming
+               "You're all caught up" here would tell a student they have no
+               offers, deadlines or document alerts when we simply could not
+               check. */
+            <Card className="border-2 border-amber-200">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <AlertTriangle className="size-12 text-amber-500 mb-3" />
+                <p className="text-sm font-medium text-slate-800">
+                  Notifications could not be loaded
+                </p>
+                <p className="text-xs text-slate-500 mt-1 max-w-sm">{loadError}</p>
+                <p className="text-xs text-slate-400 mt-2 max-w-sm">
+                  This does not mean you have no notifications. Retry, and contact
+                  your counselor if it keeps failing.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => setReloadKey((key) => key + 1)}
+                >
+                  <RefreshCw className="size-3.5 mr-1.5" />
+                  Try again
+                </Button>
+              </CardContent>
+            </Card>
+          ) : filtered.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <CheckCheck className="size-12 text-slate-300 mb-3" />

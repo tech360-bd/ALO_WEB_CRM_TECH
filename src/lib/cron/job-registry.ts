@@ -349,6 +349,23 @@ export const JOB_REGISTRY: RegisteredCronJob[] = [
     disposition: 'superseded',
     reason: 'implemented at /api/cron/email-outbox',
   },
+  {
+    // Outbound webhook fan-out (spec s77). Reports NOT_CONFIGURED rather than
+    // success when no active subscription exists, so a silent no-op can never
+    // be mistaken for working integration.
+    key: 'webhook-dispatch',
+    name: 'Outbound Webhook Dispatch',
+    description:
+      'Delivers queued canonical ALO events to active webhook subscriptions with HMAC signing, exponential retry and dead-lettering.',
+    schedule: FIVE_MINUTES,
+    timezone: 'Asia/Dhaka',
+    lockTtlSeconds: 280,
+    timeoutMs: 120_000,
+    aliases: ['webhooks', 'webhook-queue'],
+    disposition: 'job',
+    handler: createLazyHandler('runWebhookDispatch'),
+    handlerName: 'runWebhookDispatch',
+  },
 ];
 
 /** Job keys the platform must always expose. Asserted by the policy check. */

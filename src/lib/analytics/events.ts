@@ -1,0 +1,471 @@
+/**
+ * GA4 / GTM analytics event catalogue for ALO Education.
+ *
+ * This module is the single definition of what may be sent to Google Analytics.
+ * It exists for two reasons:
+ *
+ *   1. **A closed event vocabulary.** Only events declared in `ANALYTICS_EVENTS`
+ *      can be emitted. A typo'd or invented event name is rejected rather than
+ *      silently creating a junk dimension in the property.
+ *   2. **A hard privacy wall.** Personally identifying and sensitive student
+ *      data must never leave ALO's own database for an analytics vendor.
+ *      `scrubEventParams` drops forbidden keys and forbidden value shapes
+ *      *before* anything reaches `dataLayer`, and reports what it dropped so a
+ *      developer sees the mistake in the console instead of in a compliance
+ *      incident.
+ *
+ * The CRM keeps the sensitive record; analytics receives only an opaque,
+ * non-reversible internal reference where a join is genuinely needed.
+ */
+
+/** Deployment environments in which analytics tags are permitted. */
+export const ANALYTICS_EVENT_NAMES = [
+  // Navigation / measurement baseline
+  'page_view',
+  // Catalogue discovery
+  'course_search',
+  'course_view',
+  'university_search',
+  'university_view',
+  'scholarship_view',
+  // Lead funnel
+  'lead_form_start',
+  'lead_form_submit',
+  'counselor_request',
+  // Direct contact
+  'whatsapp_click',
+  'phone_click',
+  'email_click',
+  // Application funnel
+  'application_start',
+  'application_submit',
+  // Account
+  'student_registration',
+  'student_login',
+  // Service pages
+  'visa_page_view',
+  'ielts_page_view',
+  'english_test_start',
+  'english_test_complete',
+  // Business conversions (server-side Measurement Protocol)
+  'generate_lead',
+  'lead_qualified',
+  'application_started',
+  'application_submitted',
+  'enrollment_completed',
+] as const;
+
+export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
+
+/**
+ * Allowed parameter keys. Anything not in this list is dropped, because an
+ * open-ended parameter object is how PII leaks into a third-party analytics
+ * product in the first place.
+ */
+export const ALLOWED_EVENT_PARAMS = [
+  // Catalogue identity
+  'course_id',
+  'course_slug',
+  'university_id',
+  'university_slug',
+  'scholarship_id',
+  'scholarship_slug',
+  // Geography / intent
+  'country',
+  'destination',
+  'study_level',
+  'intake',
+  'english_test',
+  // Page context
+  'page_type',
+  'page_path',
+  'landing_page',
+  'lead_source',
+  'form_id',
+  'form_step',
+  // Campaign / attribution
+  'campaign',
+  'campaign_id',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+  'gclid',
+  'fbclid',
+  'referrer_domain',
+  'first_touch_source',
+  'last_touch_source',
+  // Opaque internal joins — reference codes only, never names or contacts
+  'lead_reference',
+  'application_reference',
+  'student_reference',
+  'visitor_id',
+  'session_id',
+  // Test / outcome
+  'test_type',
+  'test_result_band',
+  'score_band',
+  'result',
+  'success',
+  'error_code',
+  'value',
+  'currency',
+  'items_count',
+  'search_term_category',
+  'application_stage',
+  'enrollment_status',
+  'test_session_id',
+  'debug_mode',
+] as const;
+
+export type AllowedEventParam = (typeof ALLOWED_EVENT_PARAMS)[number];
+
+export type AnalyticsEventParams = Partial<Record<AllowedEventParam, string | number | boolean | null | undefined>>;
+
+/**
+ * Keys that must never be transmitted, matched case-insensitively and on
+ * substrings so that `studentPassportNumber` is caught as well as `passport`.
+ *
+ * Derived directly from the prohibition list: passport number, NID, passport
+ * scans, passwords, payment card data, private application documents, sensitive
+ * personal records — plus the contact identifiers GA4 policy itself forbids.
+ */
+export const FORBIDDEN_PARAM_PATTERNS: RegExp[] = [
+  /passport/i,
+  /\bnid\b/i,
+  /national[_-]?id/i,
+  /birth[_-]?certificate/i,
+  /password/i,
+  /passwd/i,
+  /secret/i,
+  /token/i,
+  /api[_-]?key/i,
+  // Card data. The narrower `card[_-]?number` spellings missed `credit_card`,
+  // `debit_card` and a bare `card` key, so the specification's explicit "never
+  // send card data" rule had a hole in it. No allowed parameter contains the
+  // substring "card", so the broad pattern costs nothing.
+  /card/i,
+  /credit/i,
+  /debit/i,
+  /\bcvv\b/i,
+  /\bcvc\b/i,
+  /expiry/i,
+  /iban/i,
+  // Unanchored for the same reason as `name`: `\bbank\b` does not match
+  // `bank_account` or `bank_statement`, because an underscore is a word
+  // character and so provides no boundary.
+  /bank/i,
+  /account[_-]?number/i,
+  /routing[_-]?number/i,
+  /payment/i,
+  /\bemail\b/i,
+  /\bphone\b/i,
+  /mobile/i,
+  // A word-boundary `\bname\b` does NOT match `mother_name` or `father_name`,
+  // because an underscore is a word character — so parent and guardian names
+  // were passing straight through. No allowed parameter contains the substring
+  // "name", so the unanchored pattern is safe and closes that hole.
+  /name/i,
+  /address/i,
+  /date[_-]?of[_-]?birth/i,
+  /\bdob\b/i,
+  /\bdocument\b/i,
+  // A CV or résumé is a private application document: it carries a name, an
+  // address, a date of birth, an employment history and often a photo. The
+  // specification forbids sending private application documents, and there was
+  // no pattern covering the two spellings a form field would actually use.
+  /\bcv\b/i,
+  /resume/i,
+  /curriculum/i,
+  /file[_-]?name/i,
+  /file[_-]?path/i,
+  /attachment/i,
+  /scan/i,
+  /\bcgpa\b/i,
+  /transcript/i,
+  /\bfee[_-]?amount\b/i,
+  /commission/i,
+  /salary/i,
+  /\bnote\b/i,
+  /internal[_-]?note/i,
+  /medical/i,
+  /disabilit/i,
+  /religion/i,
+  /\brace\b/i,
+  /political/i,
+  /biometric/i,
+  /fingerprint/i,
+  /ip[_-]?address/i,
+  /user[_-]?agent/i,
+];
+
+/**
+ * Value shapes that are rejected regardless of the key they arrive under,
+ * because a developer can always pick an innocent-looking key name.
+ */
+const FORBIDDEN_VALUE_PATTERNS: { pattern: RegExp; label: string }[] = [
+  { pattern: /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/, label: 'email address' },
+  // Bangladeshi mobile with or without country code, with separators.
+  { pattern: /(?:\+?88)?01[3-9][\d\s-]{8,9}$/, label: 'Bangladeshi mobile number' },
+  { pattern: /^\+?\d[\d\s()-]{9,17}$/, label: 'phone number' },
+  // Passport-style: 1-2 letters followed by 6-8 digits (BD passports are A/B + 7 digits).
+  { pattern: /^[A-Za-z]{1,2}\d{6,8}$/, label: 'passport / national id pattern' },
+  { pattern: /\b(?:\d[ -]?){13,19}\b/, label: 'payment card number pattern' },
+  { pattern: /^\d{10,17}$/, label: 'long numeric identifier (NID / card / passport)' },
+];
+
+export interface ScrubResult {
+  /** Parameters that survived screening and may be pushed to dataLayer. */
+  params: Record<string, string | number | boolean>;
+  /** Keys removed because they are not in the allowlist. */
+  droppedUnknownKeys: string[];
+  /** Keys removed because they matched a forbidden pattern. */
+  droppedForbiddenKeys: string[];
+  /** Keys kept but whose value was rejected as PII-shaped. */
+  droppedForbiddenValues: { key: string; label: string }[];
+  /** True when nothing was removed. */
+  clean: boolean;
+}
+
+function isPlainValue(value: unknown): value is string | number | boolean {
+  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+}
+
+/**
+ * True when a key must never be sent, whatever its value.
+ *
+ * The key is tested twice: as written, and with `_` / `-` replaced by spaces.
+ *
+ * That second pass is not cosmetic. Most patterns here are word-bounded
+ * (`\bemail\b`, `\bphone\b`, `\bdocument\b`), and in a regular expression an
+ * underscore IS a word character — so `\bemail\b` does not match
+ * `email_address`, and `\bphone\b` does not match `phone_number`. Testing only
+ * the raw key left exactly the compound spellings a developer is most likely to
+ * write unblocked. Separators are normalised to spaces so the word boundaries
+ * behave the way the patterns were written to expect.
+ *
+ * Testing both forms keeps the raw pass too, so a pattern that deliberately
+ * matches across a separator (`card[_-]?number`, `ip[_-]?address`) still works.
+ */
+export function isForbiddenKey(key: string): boolean {
+  if (!key) return false;
+  const separated = key.replace(/[_-]+/g, ' ');
+  return FORBIDDEN_PARAM_PATTERNS.some(
+    (pattern) => pattern.test(key) || pattern.test(separated),
+  );
+}
+
+/** Identify a PII-shaped value. Returns the human-readable reason, or null. */
+export function detectForbiddenValue(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (trimmed === '') return null;
+  // Long free text is never a legitimate analytics parameter.
+  if (trimmed.length > 200) return 'over-long free text';
+  for (const entry of FORBIDDEN_VALUE_PATTERNS) {
+    if (entry.pattern.test(trimmed)) return entry.label;
+  }
+  return null;
+}
+
+/**
+ * Screen an event's parameters against the allowlist and the PII patterns.
+ *
+ * Never throws: an analytics call must not be able to break a user-facing flow.
+ * Rejections are reported in the returned object so the caller can surface them
+ * during development.
+ */
+export function scrubEventParams(
+  eventName: AnalyticsEventName | string,
+  input: Record<string, unknown> | null | undefined,
+): ScrubResult {
+  const result: ScrubResult = {
+    params: {},
+    droppedUnknownKeys: [],
+    droppedForbiddenKeys: [],
+    droppedForbiddenValues: [],
+    clean: true,
+  };
+  if (!input) return result;
+
+  for (const [rawKey, rawValue] of Object.entries(input)) {
+    if (rawValue === null || rawValue === undefined || rawValue === '') continue;
+
+    if (isForbiddenKey(rawKey)) {
+      result.droppedForbiddenKeys.push(rawKey);
+      result.clean = false;
+      continue;
+    }
+    if (!isPlainValue(rawValue)) {
+      // Objects/arrays (e.g. an items array) are flattened away rather than
+      // JSON-serialised, because serialisation is how nested PII escapes.
+      result.droppedUnknownKeys.push(rawKey);
+      result.clean = false;
+      continue;
+    }
+    if (!(ALLOWED_EVENT_PARAMS as readonly string[]).includes(rawKey)) {
+      result.droppedUnknownKeys.push(rawKey);
+      result.clean = false;
+      continue;
+    }
+    const violation = detectForbiddenValue(rawValue);
+    if (violation) {
+      result.droppedForbiddenValues.push({ key: rawKey, label: violation });
+      result.clean = false;
+      continue;
+    }
+    // Normalise the key to snake_case-consistent allowlist spelling.
+    result.params[rawKey] = typeof rawValue === 'string' ? rawValue.slice(0, 200) : rawValue;
+  }
+
+  if (!result.clean && typeof console !== 'undefined' && process.env.NODE_ENV !== 'production') {
+    console.warn(
+      `[analytics] "${eventName}" had parameters removed before transmission:`,
+      {
+        unknownKeys: result.droppedUnknownKeys,
+        forbiddenKeys: result.droppedForbiddenKeys,
+        forbiddenValues: result.droppedForbiddenValues,
+      },
+    );
+  }
+  return result;
+}
+
+/** True when the name is part of the closed event vocabulary. */
+export function isAllowedEventName(name: string): name is AnalyticsEventName {
+  return (ANALYTICS_EVENT_NAMES as readonly string[]).includes(name);
+}
+
+/**
+ * Page-type classification used for the `page_type` parameter and for
+ * `visa_page_view` / `ielts_page_view` derivation. Kept explicit rather than
+ * guessed so reporting groups match ALO's own IA.
+ */
+export type PageType =
+  | 'home'
+  | 'course_list'
+  | 'course_detail'
+  | 'university_list'
+  | 'university_detail'
+  | 'country'
+  | 'visa'
+  | 'ielts'
+  | 'english_test'
+  | 'scholarship_list'
+  | 'scholarship_detail'
+  | 'blog'
+  | 'guide'
+  | 'contact'
+  | 'office'
+  | 'consultation'
+  | 'apply'
+  | 'auth'
+  | 'student_portal'
+  | 'partner_portal'
+  | 'staff_portal'
+  | 'admin'
+  | 'legal'
+  | 'other';
+
+/**
+ * Route table → page type.
+ *
+ * Derived from the real `src/app` tree, not from guesswork: course detail is
+ * `/course/[slug]` (singular), university detail is `/universities/[slug]`
+ * (plural), scholarship detail is `/scholarships/[slug]`, and country pages are
+ * `/destinations/[slug]` with their own sub-pages. Order matters — the first
+ * matching rule wins, so more specific patterns are listed first.
+ */
+const PAGE_TYPE_RULES: { pattern: RegExp; type: PageType }[] = [
+  { pattern: /^\/$/, type: 'home' },
+  // Detail pages before their list parents.
+  { pattern: /^\/course\/[^/]+/, type: 'course_detail' },
+  { pattern: /^\/universities\/[^/]+/, type: 'university_detail' },
+  { pattern: /^\/scholarships\/[^/]+/, type: 'scholarship_detail' },
+  { pattern: /^\/language-prep\/(?:ielts|ielts-ukvi)(?:\/|$)/, type: 'ielts' },
+  { pattern: /^\/destinations\/[^/]+/, type: 'country' },
+  // List / hub pages.
+  { pattern: /^\/(?:course-finder|courses|compare|eligibility-check)(?:\/|$)/, type: 'course_list' },
+  { pattern: /^\/universities$/, type: 'university_list' },
+  { pattern: /^\/scholarships(?:\/|$)/, type: 'scholarship_list' },
+  { pattern: /^\/(?:language-prep|english-test-prep|english-tests)(?:\/|$)/, type: 'english_test' },
+  { pattern: /^\/destinations?(?:\/|$)/, type: 'country' },
+  { pattern: /^\/visa(?:\/|$)/, type: 'visa' },
+  { pattern: /^\/blog(?:\/|$)/, type: 'blog' },
+  { pattern: /^\/guides?(?:\/|$)/, type: 'guide' },
+  { pattern: /^\/(?:contact|faqs)(?:\/|$)/, type: 'contact' },
+  { pattern: /^\/global-offices(?:\/|$)/, type: 'office' },
+  { pattern: /^\/book-consultation(?:\/|$)/, type: 'consultation' },
+  { pattern: /^\/apply(?:\/|$)/, type: 'apply' },
+  { pattern: /^\/(?:login|register|forgot-password|reset-password|verify-email)(?:\/|$)/, type: 'auth' },
+  // Portals. `/counselor`, `/super-admin`, `/dashboard` and
+  // `/application-manager` are STAFF surfaces, not public pages — they are
+  // classified separately so they can never be mistaken for marketing traffic.
+  { pattern: /^\/student(?:\/|$)/, type: 'student_portal' },
+  { pattern: /^\/parent-portal(?:\/|$)/, type: 'student_portal' },
+  { pattern: /^\/partner(?:\/|$)/, type: 'partner_portal' },
+  { pattern: /^\/(?:counselor|super-admin|dashboard|application-manager|review|team|hr|hrm|employee)(?:\/|$)/, type: 'staff_portal' },
+  { pattern: /^\/(?:admin|crm)(?:\/|$)/, type: 'admin' },
+  { pattern: /^\/(?:privacy-policy|terms|cookies|accessibility|code-of-conduct|communication-policy|lead-data-usage-policy|aqf-compliance)(?:\/|$)/, type: 'legal' },
+];
+
+/** Classify a pathname into ALO's page-type taxonomy. */
+export function detectPageType(pathname: string): PageType {
+  const path = (pathname || '/').split('?')[0].split('#')[0];
+  for (const rule of PAGE_TYPE_RULES) {
+    if (rule.pattern.test(path)) return rule.type;
+  }
+  return 'other';
+}
+
+/**
+ * Pull the detail slug out of a canonical detail path.
+ *
+ * Returns '' for anything that is not that kind of detail page, so a caller can
+ * never attach a `course_slug` to a university view.
+ */
+export function extractDetailSlug(pathname: string, kind: 'course' | 'university' | 'scholarship'): string {
+  const path = (pathname || '/').split('?')[0].split('#')[0];
+  const prefix = kind === 'university' || kind === 'scholarship' ? `/${kind === 'university' ? 'universities' : 'scholarships'}/` : '/course/';
+  if (!path.startsWith(prefix)) return '';
+  const rest = path.slice(prefix.length);
+  const slug = rest.split('/')[0] || '';
+  return decodeURIComponent(slug).slice(0, 200);
+}
+
+/**
+ * Events implied purely by the route a visitor landed on.
+ *
+ * Deriving these from the path rather than from each page component means no
+ * page can forget them and no page can emit them twice. The service-page events
+ * (`visa_page_view`, `ielts_page_view`) are matched on the path independently of
+ * `page_type`, because ALO's country pages carry their own visa guide at
+ * `/destinations/[slug]/visa-guide` — a destination by type, a visa page by
+ * intent, and both facts are useful.
+ */
+export function pageViewEventsFor(pathname: string): AnalyticsEventName[] {
+  const path = (pathname || '/').split('?')[0].split('#')[0];
+  const type = detectPageType(path);
+  const events: AnalyticsEventName[] = [];
+
+  if (type === 'visa' || /\/visa(?:-guide)?(?:\/|$)/.test(path)) events.push('visa_page_view');
+  if (type === 'ielts' || /ielts/.test(path) || type === 'english_test') events.push('ielts_page_view');
+  if (type === 'course_detail') events.push('course_view');
+  if (type === 'university_detail') events.push('university_view');
+  if (type === 'scholarship_detail') events.push('scholarship_view');
+
+  return events;
+}
+
+/** Extract only the referrer's origin — never a full referrer URL with query strings. */
+export function referrerDomain(referrer: string | null | undefined): string {
+  if (!referrer) return '';
+  try {
+    const url = new URL(referrer);
+    return url.hostname;
+  } catch {
+    // A bare hostname or an unparseable value contributes nothing safe.
+    return '';
+  }
+}

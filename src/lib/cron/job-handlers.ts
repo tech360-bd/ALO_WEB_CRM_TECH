@@ -734,3 +734,55 @@ export async function runIntakeDeadlineAlerts(ctx: JobHandlerContext): Promise<R
     notificationsCreated: notifications,
   };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Outbound webhook dispatch (spec s77, s89, s90)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Drain the outbound webhook queue.
+ *
+ * Idempotent by construction: `WebhookDelivery` has a UNIQUE
+ * (subscriptionId, eventId) pair, rows already DELIVERED or DEAD are skipped by
+ * `processDueDeliveries`, and the job runner holds a lease so a second worker
+ * cannot process the same queue concurrently.
+ *
+ * Honest reporting: when no subscription exists the job reports
+ * `configured: false` rather than claiming deliveries succeeded (spec s94).
+ */
+export async function runWebhookDispatch(ctx: JobHandlerContext): Promise<Record<string, unknown>> {
+  const { processDueDeliveries, deliveryStats } = await import('@/lib/webhooks');
+
+  const subscriptionCount = await db.webhookSubscription
+    .count({ where: { active: true } })
+    .catch(() => null);
+
+  if (subscriptionCount === null) {
+    return {
+      configured: false,
+      status: 'NOT_CONFIGURED',
+      reason: 'Webhook subscription table unreachable',
+    };
+  }
+  if (subscriptionCount === 0) {
+    return {
+      configured: false,
+      status: 'NOT_CONFIGURED',
+      reason: 'No active webhook subscriptions — no deliveries attempted',
+      processed: 0,
+    };
+  }
+
+  const limit = clampLimit(ctx.limit, 25, 200);
+  const result = await processDueDeliveries(limit, { now: ctx.now });
+  const stats = await deliveryStats(1).catch(() => null);
+
+  return {
+    configured: true,
+    status: 'OK',
+    activeSubscriptions: subscriptionCount,
+    batchLimit: limit,
+    ...result,
+    last24h: stats,
+  };
+}

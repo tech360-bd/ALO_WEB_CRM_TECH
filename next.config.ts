@@ -68,7 +68,25 @@ const nextConfig: NextConfig = {
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
           // Minimal CSP — allow self, inline styles/scripts needed for Next/Tailwind, block object
           // PWA: allow manifest, service worker, icons, blob for media
-          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.groq.com https://openrouter.ai; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'" },
+          //
+          // Google Free Stack (docs/GOOGLE-FREE-STACK.md) — the tag loader and
+          // the YouTube facade are the ONLY third-party origins added, and each
+          // is listed for the minimum directive it actually needs:
+          //   script-src  googletagmanager.com (GTM container + gtag.js) and
+          //               google-analytics.com (analytics.js shim / plugins).
+          //   connect-src the GA4 collect endpoints. Wildcards are scoped to
+          //               *.google-analytics.com and *.analytics.google.com so
+          //               regional collect hosts (region1…) are reachable
+          //               without opening all of google.com.
+          //   frame-src   youtube-nocookie.com first (privacy-enhanced embeds,
+          //               which is all ALO uses), youtube.com only as a
+          //               fallback for the rare video that refuses it.
+          //               www.google.com is present for the optional Maps
+          //               iframe embed, which ALO does not enable by default
+          //               because Maps Platform requires Cloud billing.
+          // Nothing here grants Google access to ALO's own API, and no
+          // credential or secret is referenced.
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.groq.com https://openrouter.ai https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com; frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://www.google.com; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'self'" },
         ],
       },
     ];

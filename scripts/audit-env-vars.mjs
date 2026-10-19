@@ -21,6 +21,12 @@
  *   REFERENCED_WITH_FALLBACK referenced with an inline `||` / `??` default
  *   REFERENCED               referenced, no inline default, no adjacent guard
  *
+ * References are detected three ways: `process.env.NAME`, destructured
+ * `const { NAME } = process.env`, and indirect reads through an injectable env
+ * record (`env.NAME`, `firstString(env, 'NAME')`). `referencedIndirectly`
+ * records which applied, so a reader can see why a reference is not a literal
+ * `process.env.NAME`.
+ *
  * Separately, `productionRequired` is a CURATED list: each entry carries a
  * human-verified reason. It is deliberately not inferred, because the
  * mechanical heuristic both over-reports (feature-scoped throws) and
@@ -72,7 +78,28 @@ const REF_RE = /process\.env\.([A-Z0-9_]+)|process\.env\[['"`]([A-Z0-9_]+)['"`]\
 // transport as UNUSED.
 const DESTRUCT_RE = /\{([^{}]+)\}\s*=\s*process\.env\b/g;
 
-/** name -> { files:Set, failClosed:bool, hasFallback:bool } */
+// Indirect reads. src/lib/google/config.ts takes an injectable
+// `env: NodeJS.ProcessEnv` record (so the whole Google stack can be unit
+// tested without mutating the real environment) and reads it two ways:
+//
+//   env.ANALYTICS_ALLOW_NON_PRODUCTION            -> property access
+//   firstString(env, 'NEXT_PUBLIC_GTM_ID', 'GTM_CONTAINER_ID')
+//                                                 -> all-caps string keys
+//
+// Neither is a literal `process.env.NAME`, so without these patterns the audit
+// reported 13 live variables as UNUSED -- including every GA4/GTM/YouTube
+// setting -- which contradicted docs/GOOGLE-FREE-STACK.md and would have told
+// an operator that configuring them does nothing.
+//
+// Both patterns require the receiving identifier to contain "env" (a bare
+// `env` included -- `[\w$]*` may be empty), so they
+// cannot pick up arbitrary all-caps string literals from unrelated code, and
+// they therefore cannot invent variables.
+const INDIRECT_PROP_RE = /\b[\w$]*[eE]nv[\w$]*\.([A-Z][A-Z0-9_]{2,})\b/g;
+const INDIRECT_KEYS_RE =
+  /\b[\w$]*[eE]nv[\w$]*\s*,\s*((?:['"][A-Z][A-Z0-9_]{2,}['"]\s*,?\s*)+)/g;
+
+/** name -> { files:Set, failClosed:bool, hasFallback:bool, indirect:bool } */
 const refs = new Map();
 
 for (const file of files) {
@@ -109,6 +136,38 @@ for (const file of files) {
       const window = lines.slice(lineIdx, lineIdx + 6).join('\n');
       if (new RegExp(`(throw new Error|process\\.exit\\()[^]{0,200}${key}`).test(window)) entry.failClosed = true;
       if (new RegExp(`${key}[^]{0,200}(throw new Error|process\\.exit\\()`).test(window)) entry.failClosed = true;
+    }
+  }
+}
+
+// Second pass: indirect reads. Run separately and only for names the direct
+// scan did NOT find, so every variable already detected through
+// `process.env` keeps the exact classification it had before. Re-scanning
+// known names here would let an unrelated `||` elsewhere in the file flip them
+// to REFERENCED_WITH_FALLBACK and silently corrupt curated results.
+for (const file of files) {
+  const text = readFileSync(file, 'utf8');
+  const rel = path.relative(ROOT, file);
+  const lines = text.split('\n');
+  const found = new Set();
+  for (const m of text.matchAll(INDIRECT_PROP_RE)) found.add(m[1]);
+  for (const m of text.matchAll(INDIRECT_KEYS_RE)) {
+    for (const q of m[1].matchAll(/['"]([A-Z][A-Z0-9_]{2,})['"]/g)) found.add(q[1]);
+  }
+  for (const name of found) {
+    const existing = refs.get(name);
+    if (existing && !existing.indirect) continue; // found directly: leave it exactly as it was
+    const entry =
+      existing ?? { files: new Set(), failClosed: false, hasFallback: false, indirect: true };
+    if (!existing) refs.set(name, entry);
+    entry.files.add(rel);
+    for (let i = 0; i < lines.length; i++) {
+      if (!lines[i].includes(name)) continue;
+      // Inline default judged on the reading line only.
+      if (/\|\||\?\?/.test(lines[i])) entry.hasFallback = true;
+      const window = lines.slice(i, i + 6).join('\n');
+      if (new RegExp(`(throw new Error|process\\.exit\\()[^]{0,200}${name}`).test(window)) entry.failClosed = true;
+      if (new RegExp(`${name}[^]{0,200}(throw new Error|process\\.exit\\()`).test(window)) entry.failClosed = true;
     }
   }
 }
@@ -164,6 +223,7 @@ const variables = names.map((name) => {
     name,
     classification: classify(name),
     referenced: Boolean(r),
+    referencedIndirectly: r ? Boolean(r.indirect) : false,
     referenceCount: r ? r.files.size : 0,
     failsClosedWhenMissing: r ? r.failClosed : false,
     hasInlineFallback: r ? r.hasFallback : false,
@@ -188,7 +248,8 @@ const publicSecretSuspects = variables
 
 const report = {
   generatedBy: 'scripts/audit-env-vars.mjs',
-  note: 'Application code is authoritative. A variable declared only in a template is UNUSED.',
+  note:
+    'Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.',
   filesScanned: files.length,
   summary,
   productionRequired: Object.keys(PRODUCTION_REQUIRED).sort(),

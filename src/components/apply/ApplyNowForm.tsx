@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { trackAnalyticsEvent } from '@/lib/analytics/client';
+import { collectAttributionPayload, rememberEntryAttribution } from '@/lib/analytics/attribution-payload';
 import Link from 'next/link';
 import {
   AlertTriangle,
@@ -160,6 +162,33 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
     if (authState === 'student') void loadReadiness();
   }, [authState, loadReadiness]);
 
+  /**
+   * Attribution the visitor arrived with, captured once. The apply journey can
+   * move them across routes before they submit; the acquiring campaign must not
+   * be replaced by wherever they ended up.
+   */
+  const entryAttribution = useRef(rememberEntryAttribution('alo.attribution.apply.v1'));
+
+  /** Course identity sent with every event — public catalogue data only. */
+  const courseParams = useMemo(
+    () => ({
+      course_id: course.courseId,
+      course_slug: course.courseSlug,
+      university_id: course.universityId,
+      destination: course.country || undefined,
+    }),
+    [course.courseId, course.courseSlug, course.universityId, course.country],
+  );
+
+  // `application_start` — the visitor reached the apply surface for a specific
+  // course. Fired once per mount, not per render.
+  useEffect(() => {
+    trackAnalyticsEvent('application_start', courseParams, { source: 'apply-now-form' });
+    // Deliberately mount-only: re-firing on a courseParams identity change
+    // would double-count a single visit, so courseParams is read here without
+    // being declared as a dependency.
+  }, []);
+
   const submitApplication = async () => {
     setSubmitting(true);
     setResult(null);
@@ -180,11 +209,20 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
+        const applicationCode = json.data?.applicationCode || json.application?.applicationCode || '';
         setResult({
           ok: true,
           message: 'Application draft created. Your counselor has been notified and will review it with you.',
-          applicationCode: json.data?.applicationCode || json.application?.applicationCode || '',
+          applicationCode,
         });
+        // `application_reference` is ALO's own application code — an opaque
+        // internal identifier, not a student name or contact detail.
+        trackAnalyticsEvent('application_submit', {
+          ...courseParams,
+          success: true,
+          application_reference: applicationCode,
+          intake: selectedIntake,
+        }, { source: 'apply-now-form' });
         return;
       }
       if (res.status === 422 && json.code === 'FORM_B_INCOMPLETE') {
@@ -193,8 +231,18 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
         return;
       }
       setResult({ ok: false, message: json.error || 'Application could not be created. Please try again.' });
+      trackAnalyticsEvent('application_submit', {
+        ...courseParams,
+        success: false,
+        error_code: json.code || 'api_error',
+      }, { source: 'apply-now-form' });
     } catch (error) {
       setResult({ ok: false, message: error instanceof Error ? error.message : 'Application could not be created.' });
+      trackAnalyticsEvent('application_submit', {
+        ...courseParams,
+        success: false,
+        error_code: 'network',
+      }, { source: 'apply-now-form' });
     } finally {
       setSubmitting(false);
     }
@@ -213,6 +261,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           preferredCountry: lead.destination,
           preferredLevel: lead.level,
           preferredSubject: course.subjectArea || course.courseTitle,
+          ...(entryAttribution.current ?? collectAttributionPayload() ?? {}),
           source: 'Apply Now — Form A',
           sourceSection: `apply:${course.courseSlug}`,
           leadType: 'application_intent',
@@ -227,9 +276,21 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
         throw new Error(json.error || 'We could not send your enquiry. Please try again.');
       }
       setLeadState('sent');
+      trackAnalyticsEvent('lead_form_submit', {
+        ...courseParams,
+        form_id: 'apply-now-form-a',
+        success: true,
+      }, { source: 'apply-now-form' });
+      trackAnalyticsEvent('counselor_request', courseParams, { source: 'apply-now-form' });
     } catch (error) {
       setLeadState('error');
       setLeadError(error instanceof Error ? error.message : 'We could not send your enquiry.');
+      trackAnalyticsEvent('lead_form_submit', {
+        ...courseParams,
+        form_id: 'apply-now-form-a',
+        success: false,
+        error_code: 'network',
+      }, { source: 'apply-now-form' });
     }
   };
 
