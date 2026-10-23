@@ -85,15 +85,15 @@ export default function StudentJourneyPage() {
               truthful value propositions only. */}
           <div className="flex flex-wrap justify-center gap-6 mt-12">
             <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm w-40">
-              <div className="text-3xl font-bold text-[#F37021] mb-2">End-to-End</div>
+              <div className="text-3xl font-bold text-[#E8501A] mb-2">End-to-End</div>
               <div className="text-sm text-[#64748B]">Application Support</div>
             </div>
             <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm w-40">
-              <div className="text-3xl font-bold text-[#F37021] mb-2">8+</div>
+              <div className="text-3xl font-bold text-[#E8501A] mb-2">8+</div>
               <div className="text-sm text-[#64748B]">Study Destinations</div>
             </div>
             <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm w-40">
-              <div className="text-3xl font-bold text-[#F37021] mb-2">Verified</div>
+              <div className="text-3xl font-bold text-[#E8501A] mb-2">Verified</div>
               <div className="text-sm text-[#64748B]">University Data</div>
             </div>
           </div>
@@ -121,19 +121,19 @@ export default function StudentJourneyPage() {
 
           <div className="max-w-5xl mx-auto space-y-12 md:space-y-0 relative">
             {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-1 bg-gradient-to-b from-[#0066CC] via-[#F37021] to-[#0066CC] -translate-x-1/2 rounded-full"></div>
+            <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-1 bg-gradient-to-b from-[#0057B8] via-[#E8501A] to-[#0057B8] -translate-x-1/2 rounded-full"></div>
 
             {phases.map((phase, index) => (
               <div key={phase.id} className={`flex flex-col md:flex-row items-center gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} relative md:py-12`}>
                 
                 {/* Center Node */}
-                <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white border-4 border-[#0066CC] items-center justify-center z-10 shadow-lg">
-                  <span className="text-xl font-bold text-[#F37021]">{index + 1}</span>
+                <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white border-4 border-[#0057B8] items-center justify-center z-10 shadow-lg">
+                  <span className="text-xl font-bold text-[#E8501A]">{index + 1}</span>
                 </div>
 
                 {/* Content Card */}
                 <div className="w-full md:w-1/2 flex flex-col items-center text-center md:items-start md:text-left p-6 md:p-8 bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-all relative z-10 group">
-                  <div className={`w-14 h-14 rounded-2xl bg-blue-50 text-[#0066CC] flex items-center justify-center mb-6 group-hover:bg-[#0066CC] group-hover:text-white transition-colors ${index % 2 === 0 ? 'md:self-end' : ''}`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-blue-50 text-[#0057B8] flex items-center justify-center mb-6 group-hover:bg-[#0057B8] group-hover:text-white transition-colors ${index % 2 === 0 ? 'md:self-end' : ''}`}>
                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={phase.icon}></path>
                     </svg>
@@ -142,7 +142,7 @@ export default function StudentJourneyPage() {
                   <div className={`w-full flex flex-col ${index % 2 === 0 ? 'md:items-end md:text-right' : ''}`}>
                     <div className="flex items-center gap-3 mb-2 flex-wrap justify-center md:justify-start">
                       <h3 className="text-2xl font-bold text-gray-900">{phase.title}</h3>
-                      <span className="bg-orange-50 text-[#F37021] text-xs font-bold px-3 py-1 rounded-full">
+                      <span className="bg-orange-50 text-[#E8501A] text-xs font-bold px-3 py-1 rounded-full">
                         {phase.timeline}
                       </span>
                     </div>
@@ -156,7 +156,7 @@ export default function StudentJourneyPage() {
                       ))}
                     </ul>
                     
-                    <div className={`bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-[#0066CC] leading-relaxed w-full ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                    <div className={`bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-[#0057B8] leading-relaxed w-full ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
                       <strong>ALO's Role:</strong> {phase.aloRole}
                     </div>
                   </div>
@@ -183,12 +183,12 @@ export default function StudentJourneyPage() {
               <div key={item} className="bg-gray-50 p-8 rounded-3xl border border-gray-100 relative">
                 <svg className="w-10 h-10 text-gray-300 absolute top-6 right-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 bg-[#0066CC] rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  <div className="w-14 h-14 bg-[#0057B8] rounded-full flex items-center justify-center text-white font-bold text-xl">
                     S
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900">Student Name {item}</h4>
-                    <p className="text-sm text-[#F37021]">University of Example, UK</p>
+                    <p className="text-sm text-[#E8501A]">University of Example, UK</p>
                   </div>
                 </div>
                 <p className="text-gray-600 italic">
@@ -201,7 +201,7 @@ export default function StudentJourneyPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-[#0066CC] text-white">
+      <section className="py-24 bg-[#0057B8] text-white">
         <div className="container mx-auto px-4 md:px-6 text-center max-w-3xl">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Take the First Step?</h2>
           <p className="text-xl text-blue-100 mb-10">

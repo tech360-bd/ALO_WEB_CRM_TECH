@@ -122,7 +122,7 @@ export function detectPriority(intent: string, text: string): string {
 }
 
 // ── Student ID generation (main webhook) ──
-// Sequence-allocated AE-YYYYNNNNN identifier (committed, never reused).
+// Sequence-allocated AE-YYYYNNNNNN identifier (committed, never reused).
 export async function generateStudentId(_db?: unknown): Promise<string> {
   return allocateIdentifierCommitted('AE');
 }

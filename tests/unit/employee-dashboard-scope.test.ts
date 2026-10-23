@@ -48,6 +48,7 @@ const counselorAuth = {
   userId: 'portal-user-id',
   userType: 'EMPLOYEE',
   roles: ['COUNSELOR'],
+  permissions: ['employee.dashboard.view'],
   actorUserId: 'portal-user-id',
   actorEmail: 'counselor@example.test',
   actorName: 'Test Counselor',
@@ -84,7 +85,7 @@ describe('employee dashboard authorization and data scope', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it('rejects a client-selected role the authenticated employee does not hold', async () => {
+  it('rejects a client-selected Super Admin dashboard role', async () => {
     mockAuthenticateRequest.mockResolvedValue(counselorAuth);
 
     const response = await GET(new NextRequest('https://alo.test/api/employee/dashboard?role=SUPER_ADMIN'));
@@ -92,6 +93,15 @@ describe('employee dashboard authorization and data scope', () => {
     expect(response.status).toBe(403);
     expect(mockDb.marketingLead.count).not.toHaveBeenCalled();
     expect(mockDb.student.findMany).not.toHaveBeenCalled();
+  });
+
+  it('fails closed when the authenticated context lacks dashboard permissions', async () => {
+    mockAuthenticateRequest.mockResolvedValue({ ...counselorAuth, permissions: undefined });
+
+    const response = await GET(new NextRequest('https://alo.test/api/employee/dashboard?role=COUNSELOR'));
+
+    expect(response.status).toBe(403);
+    expect(mockDb.marketingLead.count).not.toHaveBeenCalled();
   });
 
   it('uses only the authenticated counselor assignment IDs for lead, student, and application reads', async () => {

@@ -31,8 +31,7 @@ export function isCanonicalStudentCode(value: string): boolean {
 }
 
 /**
- * Find the highest existing AE-{year}XXXXXX code for the current year
- * and return the next sequential code.
+ * Allocate a unique, year-scoped AE student code through the shared transactional identifier service.
  */
 export async function generateCanonicalStudentCode(): Promise<string> {
   return allocateIdentifierCommitted('AE');

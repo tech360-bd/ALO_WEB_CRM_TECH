@@ -62,15 +62,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'An active employee record is required.' }, { status: 403 });
     }
 
-    const hasDashboardPermission = auth.permissions.includes('employee.dashboard.view')
-      || auth.permissions.includes('employee.dashboard.view_all');
+    const permissions = new Set(Array.isArray(auth.permissions) ? auth.permissions : []);
+    const hasDashboardPermission = permissions.has('employee.dashboard.view')
+      || permissions.has('employee.dashboard.view_all');
     if (!hasDashboardPermission) {
       return NextResponse.json({ success: false, error: 'The employee dashboard permission is not assigned to this account.' }, { status: 403 });
     }
-    const isAdmin = auth.permissions.includes('employee.dashboard.view_all');
+    const isAdmin = permissions.has('employee.dashboard.view_all');
 
     const url = new URL(request.url);
     const requestedRole = normalizeRole(url.searchParams.get('role') || '');
+    if (requestedRole && ADMIN_ROLES.has(requestedRole)) {
+      return NextResponse.json({ success: false, error: 'Super Admin dashboards are separate from employee dashboards.' }, { status: 403 });
+    }
     if (requestedRole && !DASHBOARD_ROLES.has(requestedRole)) {
       return NextResponse.json({ success: false, error: 'Unsupported dashboard role.' }, { status: 400 });
     }

@@ -88,7 +88,7 @@ export function PwaRegister() {
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-[9999] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl p-4 animate-in slide-in-from-bottom-4">
       <div className="flex gap-3">
-        <div className="h-12 w-12 rounded-xl bg-[#0066CC] flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+        <div className="h-12 w-12 rounded-xl bg-[#0057B8] flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
           ALO
         </div>
         <div className="flex-1 min-w-0">
@@ -99,7 +99,7 @@ export function PwaRegister() {
           <div className="flex gap-2 mt-3">
             <button
               onClick={handleInstall}
-              className="px-4 py-2 bg-[#0066CC] hover:bg-[#003D7A] text-white text-xs font-semibold rounded-lg transition-colors"
+              className="px-4 py-2 bg-[#0057B8] hover:bg-[#003F87] text-white text-xs font-semibold rounded-lg transition-colors"
             >
               Install App
             </button>

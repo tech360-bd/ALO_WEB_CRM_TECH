@@ -290,7 +290,8 @@ describe('full journey', () => {
     // 2. Verified inbound lead gets a canonical Student ID.
     const fake = createFakeDatabase();
     const studentId = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
-    expect(studentId).toMatch(/^AE-\d{4}\d{5}$/);
+    expect(studentId).toMatch(/^AE-\d{4}\d{6}$/);
+    expect(studentId).toBe('AE-2026000001');
 
     // 3. The attachment is screened, then written to private storage.
     const scan = await scanForMalware(CLEAN_PDF);

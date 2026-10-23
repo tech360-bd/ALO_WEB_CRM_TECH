@@ -20,9 +20,9 @@ export default function UserGuidePage() {
   return (
     <div className="min-h-screen bg-white pt-8 pb-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Badge className="bg-blue-50 text-[#0066CC] border border-blue-100 mb-4">HELP</Badge>
+        <Badge className="bg-blue-50 text-[#0057B8] border border-blue-100 mb-4">HELP</Badge>
         <h1 className="text-3xl font-bold text-[#0F172A] mb-2">User Guide</h1>
-        <p className="text-sm text-slate-600 mb-8 max-w-3xl">Choose your portal. Every feature is permission-controlled and audit-logged. Support 24/7 via AI Agent, WhatsApp AI <strong>01805020100</strong>, or <a href="https://www.facebook.com/aloeducation" className="text-[#0066CC] underline">Facebook</a> • Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" className="text-[#0066CC] underline">Maps</a></p>
+        <p className="text-sm text-slate-600 mb-8 max-w-3xl">Choose your portal. Every feature is permission-controlled and audit-logged. Support 24/7 via AI Agent, WhatsApp AI <strong>01805020100</strong>, or <a href="https://www.facebook.com/aloeducation" className="text-[#0057B8] underline">Facebook</a> • Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" className="text-[#0057B8] underline">Maps</a></p>
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {guides.map(g => {
@@ -30,8 +30,8 @@ export default function UserGuidePage() {
             return (
               <Card key={g.role} className="p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#0066CC] text-white flex items-center justify-center"><Icon className="h-5 w-5" /></div>
-                  <div><h2 className="font-bold text-[#0F172A]">{g.role}</h2><Link href={g.href} className="text-xs text-[#0066CC] underline">{g.href}</Link></div>
+                  <div className="h-10 w-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center"><Icon className="h-5 w-5" /></div>
+                  <div><h2 className="font-bold text-[#0F172A]">{g.role}</h2><Link href={g.href} className="text-xs text-[#0057B8] underline">{g.href}</Link></div>
                 </div>
                 <ol className="list-decimal list-inside space-y-1.5 text-sm text-slate-700">
                   {g.steps.map(s => <li key={s}>{s}</li>)}
@@ -42,7 +42,7 @@ export default function UserGuidePage() {
         </div>
 
         <Card className="p-6 sm:p-8 space-y-4">
-          <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><BookOpen className="h-5 w-5 text-[#0066CC]" /> Quick Tips</h2>
+          <h2 className="font-bold text-[#0F172A] flex items-center gap-2"><BookOpen className="h-5 w-5 text-[#0057B8]" /> Quick Tips</h2>
           <ul className="list-disc list-inside space-y-2 text-sm text-slate-700">
             <li><strong>Forgot password?</strong> Use Forgot password → OTP/email reset → session regenerated, audit logged.</li>
             <li><strong>Notifications:</strong> In-app + Email + WhatsApp — read/unread, preferences, retry, audit.</li>
@@ -51,8 +51,8 @@ export default function UserGuidePage() {
             <li><strong>Backup:</strong> Daily 01:00 via cron — database.sql.gz + application.tar.gz + uploads.tar.gz + manifest + SHA256, outside public_html.</li>
           </ul>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Link href="/book-consultation" className="inline-flex items-center justify-center bg-[#F37021] text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:brightness-110">Book Free Consultation</Link>
-            <Link href="/contact" className="inline-flex items-center justify-center border border-[#0066CC] text-[#0066CC] px-5 py-2.5 rounded-xl text-sm font-bold">Contact Support</Link>
+            <Link href="/book-consultation" className="inline-flex items-center justify-center bg-[#E8501A] text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:brightness-110">Book Free Consultation</Link>
+            <Link href="/contact" className="inline-flex items-center justify-center border border-[#0057B8] text-[#0057B8] px-5 py-2.5 rounded-xl text-sm font-bold">Contact Support</Link>
           </div>
         </Card>
 

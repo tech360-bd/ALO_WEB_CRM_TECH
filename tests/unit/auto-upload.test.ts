@@ -15,10 +15,14 @@ describe('canonical Student ID format', () => {
     expect(isCanonicalStudentCode('')).toBe(false);
   });
 
-  it('uses a current-year prefix and bounded collision retries in the canonical allocator', async () => {
+  it('uses the shared year-scoped allocator and bounds unique-key retries', async () => {
     const canonical = readFileSync('src/lib/student/canonical-student.ts', 'utf8');
-    expect(canonical).toContain('AE-${year}');
+    const allocator = readFileSync('src/lib/identity/student-id.ts', 'utf8');
+    expect(canonical).toContain("allocateIdentifierCommitted('AE')");
+    expect(canonical).toContain("allocateIdentifier(tx, 'AE')");
     expect(canonical).toContain('MAX_CODE_RETRIES');
+    expect(allocator).toContain("timeZone: BUSINESS_TIME_ZONE");
+    expect(allocator).toContain("scope === 'AE' ? 6 : 5");
   });
 });
 

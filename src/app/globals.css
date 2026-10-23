@@ -257,15 +257,15 @@
          bg-blue-600 / bg-orange-500 used across older components resolve to
          the exact master brand colours, so one token change re-skins every
          surface without a second competing palette. --- */
-  --color-blue-500: #3385DB;
-  --color-blue-600: #0066CC;
-  --color-blue-700: #0052A3;
-  --color-blue-800: #003D7A;
-  --color-orange-50: #FFF3EA;
-  --color-orange-100: #FFE7D6;
-  --color-orange-500: #F37021;
-  --color-orange-600: #D95D12;
-  --color-orange-700: #B64A0B;
+  --color-blue-500: #0284C7;
+  --color-blue-600: #0057B8;
+  --color-blue-700: #003F87;
+  --color-blue-800: #003F87;
+  --color-orange-50: #FFF1EA;
+  --color-orange-100: #FFE8DD;
+  --color-orange-500: #E8501A;
+  --color-orange-600: #C93D13;
+  --color-orange-700: #C93D13;
   --color-green-500: #10B981;
   --color-green-600: #10B981;
   --color-green-700: #047857;
@@ -278,25 +278,25 @@
   /* AI accents: legacy purple/violet/indigo classes resolve to the master
      Info blue family (#0284C7 / brand blue) — no unrelated purple palette. */
   --color-purple-50: #EFF6FF;
-  --color-purple-100: #E6F2FF;
-  --color-purple-200: #B3D9FF;
+  --color-purple-100: #EAF3FF;
+  --color-purple-200: #BFDBFE;
   --color-purple-300: #93C5FD;
   --color-purple-400: #0284C7;
   --color-purple-500: #0284C7;
-  --color-purple-600: #0066CC;
-  --color-purple-700: #003D7A;
-  --color-purple-800: #003D7A;
+  --color-purple-600: #0057B8;
+  --color-purple-700: #003F87;
+  --color-purple-800: #003F87;
   --color-violet-50: #EFF6FF;
-  --color-violet-100: #E6F2FF;
-  --color-violet-200: #B3D9FF;
+  --color-violet-100: #EAF3FF;
+  --color-violet-200: #BFDBFE;
   --color-violet-300: #93C5FD;
   --color-violet-400: #0284C7;
   --color-violet-500: #0284C7;
-  --color-violet-600: #0066CC;
-  --color-violet-700: #003D7A;
+  --color-violet-600: #0057B8;
+  --color-violet-700: #003F87;
   --color-indigo-500: #0284C7;
-  --color-indigo-600: #0066CC;
-  --color-indigo-700: #003D7A;
+  --color-indigo-600: #0057B8;
+  --color-indigo-700: #003F87;
 
   /* --- Typography scale (desktop) --- */
   --text-display: 3rem;
@@ -332,25 +332,25 @@
 
   /* Page & surface */
   --background: #F8FAFC;
-  --foreground: #000000;
+  --foreground: #0F172A;
   --card: #FFFFFF;
-  --card-foreground: #000000;
+  --card-foreground: #0F172A;
   --popover: #FFFFFF;
-  --popover-foreground: #000000;
+  --popover-foreground: #0F172A;
 
-  /* Primary (selected states, focus, links) — Education Blue #0066CC */
-  --primary: #0066CC;
+  /* Primary (selected states, focus, links) — Education Blue #0057B8 */
+  --primary: #0057B8;
   --primary-foreground: #FFFFFF;
 
   /* Secondary / muted surfaces */
   --secondary: #F1F5F9;
-  --secondary-foreground: #000000;
+  --secondary-foreground: #0F172A;
   --muted: #F1F5F9;
-  --muted-foreground: #555555;
+  --muted-foreground: #64748B;
 
   /* Accent (blue soft) */
-  --accent: #E6F2FF;
-  --accent-foreground: #003D7A;
+  --accent: #EAF3FF;
+  --accent-foreground: #003F87;
 
   /* Destructive */
   --destructive: #EF4444;
@@ -358,25 +358,25 @@
   /* Border & input */
   --border: #E2E8F0;
   --input: #CBD5E1;
-  --ring: #0066CC;
+  --ring: #0057B8;
 
   /* ── Brand ─────────────────────────────────────────────── */
   /* Neutral — text / structure */
-  --alo-navy: #000000;
-  --alo-navy-dark: #000000;
-  /* Blue — Education Blue #0066CC (navigation / information / links) */
-  --alo-brand: #0066CC;
-  --alo-brand-hover: #0052A3;
-  --alo-brand-deep: #003D7A;
-  --alo-brand-light: #E6F2FF;
-  --alo-brand-border: #B3D9FF;
-  /* Orange — ALO Orange #F37021 (primary action) */
-  --alo-cta: #F37021;
-  --alo-cta-hover: #D95D12;
-  --alo-cta-active: #B64A0B;
+  --alo-navy: #0F172A;
+  --alo-navy-dark: #0F172A;
+  /* Blue — Education Blue #0057B8 (navigation / information / links) */
+  --alo-brand: #0057B8;
+  --alo-brand-hover: #003F87;
+  --alo-brand-deep: #003F87;
+  --alo-brand-light: #EAF3FF;
+  --alo-brand-border: #BFDBFE;
+  /* Orange — ALO Orange #E8501A (primary action) */
+  --alo-cta: #E8501A;
+  --alo-cta-hover: #C93D13;
+  --alo-cta-active: #C93D13;
   --alo-cta-accent: #FFB347;
-  --alo-cta-light: #FFE7D6;
-  --alo-cta-soft: #FFF3EA;
+  --alo-cta-light: #FFE8DD;
+  --alo-cta-soft: #FFF1EA;
   /* Accent — #FFB347 (highlights, badges, focus accents) */
   --alo-accent: #FFB347;
   /* Green — success / WhatsApp */
@@ -411,38 +411,38 @@
   --crm-neutral-text: #475569;
   --crm-neutral-border: #E2E8F0;
   --alo-brand-pale: #F4F8FF;
-  --alo-body: #555555;
+  --alo-body: #334155;
   --alo-info: #0284C7;
   --alo-info-bg: #EFF6FF;
   --alo-info-text: #1D4ED8;
-  --alo-info-border: #B3D9FF;
+  --alo-info-border: #BFDBFE;
 
   /* Neutrals — brand Neutral #000 / #555 */
   --alo-page: #F8FAFC;
   --alo-surface-muted: #F1F5F9;
-  --alo-text: #000000;
-  --alo-text-secondary: #555555;
-  --alo-text-muted: #555555;
+  --alo-text: #0F172A;
+  --alo-text-secondary: #334155;
+  --alo-text-muted: #64748B;
   --alo-border: #E2E8F0;
   --alo-border-strong: #CBD5E1;
-  --alo-placeholder: #555555;
+  --alo-placeholder: #64748B;
 
   /* Charts — max five series, no rainbow */
-  --chart-1: #0066CC;
-  --chart-2: #F37021;
+  --chart-1: #0057B8;
+  --chart-2: #E8501A;
   --chart-3: #10B981;
   --chart-4: #0284C7;
   --chart-5: #F59E0B;
 
   /* Sidebar (CRM / portals) */
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #0066CC;
+  --sidebar-foreground: #0F172A;
+  --sidebar-primary: #0057B8;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E6F2FF;
-  --sidebar-accent-foreground: #003D7A;
+  --sidebar-accent: #EAF3FF;
+  --sidebar-accent-foreground: #003F87;
   --sidebar-border: #E2E8F0;
-  --sidebar-ring: #0066CC;
+  --sidebar-ring: #0057B8;
 }
 
 /* ============================================================
@@ -483,8 +483,8 @@
   --alo-brand-light: #10305A;
   --alo-brand-border: #1B4E8C;
   --alo-cta: #FF7A45;
-  --alo-cta-hover: #F37021;
-  --alo-cta-active: #D95D12;
+  --alo-cta-hover: #E8501A;
+  --alo-cta-active: #C93D13;
   --alo-cta-accent: #FFB347;
   --alo-cta-light: #431407;
   --alo-cta-soft: #2A1408;
@@ -521,7 +521,7 @@
   --alo-info: #38BDF8;
   --alo-info-bg: #0C2A4A;
   --alo-info-text: #7DD3FC;
-  --alo-info-border: #003D7A;
+  --alo-info-border: #003F87;
 
   /* Neutrals (dark) */
   --alo-page: #0F172A;
@@ -531,7 +531,7 @@
   --alo-text-muted: #94A3B8;
   --alo-border: #334155;
   --alo-border-strong: #475569;
-  --alo-placeholder: #94A3B8;
+  --alo-placeholder: #64748B;
 
   /* Charts (dark) */
   --chart-1: #5EA9F5;
@@ -581,8 +581,8 @@
 }
 
 ::selection {
-  background: #E6F2FF;
-  color: #003D7A;
+  background: #EAF3FF;
+  color: #003F87;
 }
 
 /* ============================================================

@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { EnglishExamBanner } from '@/components/website/EnglishExamCta';
 
-const C = { blue: '#0066CC', orange: '#F37021', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
+const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
 
 /* ═══════════════════════════════════════════════════════════════ TYPES ═══ */
 interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity?: string; heroIntake?: string; heroSubtitle?: string; }
@@ -32,9 +32,9 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 // These entries are visual destination choices only. Live availability,
 // current intakes and inventory counts come from the database API below.
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0066CC', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
   { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#0284C7', heroImage: '/images/cards/usa.png', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F37021', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/cards/australia.png', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
   { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/cards/new-zealand.png', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
   { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/cards/ireland.png', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
@@ -135,7 +135,7 @@ function HeroSection() {
 
           <h1 className="font-heading text-[34px] font-extrabold leading-[1.12] tracking-tight text-[#0F172A] md:text-[52px]" aria-live="polite">
             Unlock a world-class education in{' '}
-            <span className="text-[#0066CC]">{countryInPhrase}</span> with expert guidance
+            <span className="text-[#0057B8]">{countryInPhrase}</span> with expert guidance
           </h1>
 
           <p className="max-w-xl text-lg leading-relaxed text-[#334155]">
@@ -145,7 +145,7 @@ function HeroSection() {
           </p>
 
           <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-            <Button asChild size="lg" className="h-12 bg-[#F37021] px-6 font-heading text-[15px] font-semibold text-black shadow-card hover:bg-[#D95D12]">
+            <Button asChild size="lg" className="h-12 bg-[#E8501A] px-6 font-heading text-[15px] font-semibold text-white shadow-card hover:bg-[#C93D13]">
               <Link href="/book-consultation">
                 Book Free Counselling
                 <ArrowRight aria-hidden="true" />
@@ -168,10 +168,10 @@ function HeroSection() {
                   aria-selected={i === current}
                   aria-label={`Show ${s.name}`}
                   onClick={() => go(i)}
-                  className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC] focus-visible:ring-offset-2 ${
+                  className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
                     i === current
-                      ? 'border-[#0066CC] bg-[#E6F2FF] text-[#0066CC]'
-                      : 'border-[#E2E8F0] bg-white text-[#334155] hover:border-[#BFDBFE] hover:bg-[#F4F8FF] hover:text-[#0066CC]'
+                      ? 'border-[#0057B8] bg-[#EAF3FF] text-[#0057B8]'
+                      : 'border-[#E2E8F0] bg-white text-[#334155] hover:border-[#BFDBFE] hover:bg-[#F4F8FF] hover:text-[#0057B8]'
                   }`}
                 >
                   <span aria-hidden="true">{s.flag}</span>
@@ -206,9 +206,9 @@ function HeroSection() {
                     onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
                   />
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#E6F2FF]">
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#EAF3FF]">
                     <span className="text-7xl" aria-hidden="true">{slide.flag}</span>
-                    <span className="font-heading text-2xl font-bold text-[#0066CC]">{slide.name}</span>
+                    <span className="font-heading text-2xl font-bold text-[#0057B8]">{slide.name}</span>
                   </div>
                 )}
               </motion.div>
@@ -218,12 +218,12 @@ function HeroSection() {
           {/* Floating information card — real destination info only */}
           {slide.heroCity && (
             <div className="relative z-10 mx-4 -mt-6 flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-floating sm:mx-6">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E6F2FF]">
-                <MapPin className="h-5 w-5 text-[#0066CC]" aria-hidden="true" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EAF3FF]">
+                <MapPin className="h-5 w-5 text-[#0057B8]" aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <p className="font-heading text-sm font-bold text-[#0F172A]">{slide.heroCity}, {slide.name}</p>
-                <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[#0066CC] hover:underline">
+                <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[#0057B8] hover:underline">
                   Explore the {slide.name} destination guide
                 </Link>
               </div>
@@ -319,13 +319,13 @@ function CourseFinderSection() {
     URL.revokeObjectURL(url);
   }, [selectedCountry]);
 
-  const inputClass = 'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20';
+  const inputClass = 'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#0057B8] focus:ring-2 focus:ring-[#0057B8]/20';
 
   return (
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white" aria-labelledby="smart-course-finder-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-[#FFF3EA] text-[#F37021] border border-[#F37021]/25 mb-4">Smart Course Finder</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-[#FFF1EA] text-[#E8501A] border border-[#E8501A]/25 mb-4">Smart Course Finder</Badge></motion.div>
           <motion.h2 id="smart-course-finder-heading" variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search verified courses and universities — tuition fees, intakes, interview requirements and world rankings in one place.</motion.p>
         </motion.div>
@@ -343,7 +343,7 @@ function CourseFinderSection() {
                 aria-selected={tab === id}
                 onClick={() => setTab(id)}
                 className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 font-heading text-[13px] font-extrabold tracking-[0.08em] transition-colors sm:flex-none sm:px-8 ${
-                  tab === id ? 'bg-[#F37021] text-black shadow-sm' : 'bg-white text-[#0F172A] hover:bg-[#FFF3EA] hover:text-[#F37021]'
+                  tab === id ? 'bg-[#E8501A] text-white shadow-sm' : 'bg-white text-[#0F172A] hover:bg-[#FFF1EA] hover:text-[#E8501A]'
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
@@ -381,7 +381,7 @@ function CourseFinderSection() {
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-black bg-[#F37021] hover:bg-[#D95D12]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#E8501A] hover:bg-[#C93D13]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             ) : (
@@ -397,23 +397,23 @@ function CourseFinderSection() {
                   <datalist id="home-uf-universities">{facets.universities.map(u => <option key={u.name} value={u.name} />)}</datalist>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-black bg-[#F37021] hover:bg-[#D95D12]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#E8501A] hover:bg-[#C93D13]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             )}
 
             {/* Selected country's 7-step study guide — downloadable */}
             {selectedCountry && (
-              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[#FFB347]/50 bg-[#FFF3EA] p-4 sm:flex-row sm:items-center">
+              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[#FFB347]/50 bg-[#FFF1EA] p-4 sm:flex-row sm:items-center">
                 <p className="text-sm text-[#0F172A]">
                   <span className="font-heading font-bold">Planning to study in {selectedCountry.name}?</span>{' '}
                   <span className="text-[#555555]">Download the {selectedCountry.name} 7-step study guide — from free counseling to pre-departure.</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[#F37021] px-5 font-heading text-[13px] font-bold text-black hover:bg-[#D95D12]">
+                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[#E8501A] px-5 font-heading text-[13px] font-bold text-white hover:bg-[#C93D13]">
                     <Download className="mr-2 h-4 w-4" /> Download 7-Step Guide
                   </Button>
-                  <Button asChild variant="outline" className="h-12 rounded-xl border-[#0066CC] px-5 font-heading text-[13px] font-bold text-[#0066CC] hover:bg-[#E6F2FF]">
+                  <Button asChild variant="outline" className="h-12 rounded-xl border-[#0057B8] px-5 font-heading text-[13px] font-bold text-[#0057B8] hover:bg-[#EAF3FF]">
                     <Link href={destinationGuidePath(selectedCountry.slug)}>View {selectedCountry.name} Guide</Link>
                   </Button>
                 </div>
@@ -448,7 +448,7 @@ function DestinationsSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0066CC] border border-[#0066CC]/20 mb-4">Explore the World</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20 mb-4">Explore the World</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Popular Study Destinations</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
         </motion.div>
@@ -552,7 +552,7 @@ function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div variants={slideFromLeft} className="space-y-6">
-            <Badge className="bg-blue-50 text-[#0066CC] border border-[#0066CC]/20">About ALO Education</Badge>
+            <Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20">About ALO Education</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Who We Are</h2>
             <div className="space-y-4 text-[#64748B] leading-relaxed">
               <p>In February 2023, <strong style={{ color: C.text }}>Taslima Akter</strong> founded ALO Education with a vision to connect ambitious Bangladeshi students with world-class education opportunities abroad. Her personal experience navigating the complexities of international admissions inspired her to create a platform built on trust, transparency, and genuine care for every student&apos;s future.</p>
@@ -568,7 +568,7 @@ function AboutSection() {
                 'Safe cities and vibrant student life',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm font-medium" style={{ color: C.text }}>
-                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: '#F37021' }} aria-hidden="true" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: '#E8501A' }} aria-hidden="true" />
                   {item}
                 </li>
               ))}
@@ -610,7 +610,7 @@ function MissionVisionValues() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#F37021] border border-[#F37021]/20 mb-4">Our Purpose</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#E8501A] border border-[#E8501A]/20 mb-4">Our Purpose</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Our Commitment to Your Study-Abroad Dream</motion.h2>
         </motion.div>
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -19,7 +19,7 @@ const AdmissionRequirementsPage = () => {
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           <div className="p-6 sm:p-10">
-            <h2 className="text-2xl font-bold text-[#0066CC] mb-6">Undergraduate (BSc/BA/BEng)</h2>
+            <h2 className="text-2xl font-bold text-[#0057B8] mb-6">Undergraduate (BSc/BA/BEng)</h2>
             <div className="space-y-8">
               <div className="border-b border-gray-200 pb-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">United Kingdom 🇬🇧</h3>
@@ -50,7 +50,7 @@ const AdmissionRequirementsPage = () => {
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-[#0066CC] mt-12 mb-6">Postgraduate (MSc/MBA/MA)</h2>
+            <h2 className="text-2xl font-bold text-[#0057B8] mt-12 mb-6">Postgraduate (MSc/MBA/MA)</h2>
             <div className="space-y-8">
               <div className="border-b border-gray-200 pb-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">United Kingdom 🇬🇧 & Ireland 🇮🇪</h3>
@@ -74,14 +74,14 @@ const AdmissionRequirementsPage = () => {
           </div>
         </div>
 
-        <div className="mt-12 bg-[#0066CC] rounded-xl text-white text-center p-10">
+        <div className="mt-12 bg-[#0057B8] rounded-xl text-white text-center p-10">
           <h2 className="text-3xl font-bold mb-4">Are you eligible?</h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto">
             Find out if you meet the entry requirements for your dream university. Take our quick eligibility check today!
           </p>
           <Link
             href="/eligibility-check"
-            className="inline-block bg-[#F37021] hover:bg-orange-600 text-black font-bold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block bg-[#E8501A] hover:bg-orange-600 text-black font-bold py-3 px-8 rounded-lg transition-colors"
           >
             Check Eligibility
           </Link>

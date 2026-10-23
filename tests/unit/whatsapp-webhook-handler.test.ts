@@ -81,11 +81,11 @@ describe('Consolidated WhatsApp Webhook Handler — lossless', () => {
     expect(detectPriority('GENERAL', 'hello')).toBe('normal');
   });
 
-  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNNN', async () => {
+  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNNNN', async () => {
     allocateMock.mockClear();
     const id = await generateStudentId({});
     expect(allocateMock).toHaveBeenCalledWith('AE');
-    expect(id).toMatch(/^AE-\d{4}\d{5}$/);
+    expect(id).toMatch(/^AE-\d{4}\d{6}$/);
   });
 
   it('re-exports number-pool and AI helpers', async () => {

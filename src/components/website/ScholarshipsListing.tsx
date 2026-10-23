@@ -113,11 +113,11 @@ export default function ScholarshipsListing() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         {/* Hero — spec §14 exact copy */}
         <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[#F37021]/10 text-[#F37021] border-[#F37021]/20 text-xs mb-4">Verified Scholarships Only</Badge>
+          <Badge className="bg-[#E8501A]/10 text-[#E8501A] border-[#E8501A]/20 text-xs mb-4">Verified Scholarships Only</Badge>
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Find Scholarships for Your Study Abroad Journey</h1>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/eligibility-check"><Button className="bg-[#F37021] text-black hover:bg-[#D95D12] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function ScholarshipsListing() {
               ['International students', internationalOnly, setInternationalOnly],
             ].map(([label, val, set]: any) => (
               <label key={label} className="inline-flex items-center gap-1.5 cursor-pointer select-none min-h-[32px]">
-                <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} className="w-3.5 h-3.5 accent-[#0066CC]" />
+                <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} className="w-3.5 h-3.5 accent-[#0057B8]" />
                 <span className="text-gray-700">{label}</span>
               </label>
             ))}
@@ -163,10 +163,10 @@ export default function ScholarshipsListing() {
                 const st = computeScholarshipStatus(s);
                 const badge = SCHOLARSHIP_STATUS_BADGES[st];
                 return (
-                  <Card key={s.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#0066CC] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                  <Card key={s.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
-                        <Badge className="bg-[#F37021]/10 text-[#F37021] border-[#F37021]/20 text-[10px]">{s.scholarshipType ? String(s.scholarshipType).replace(/_/g, ' ') : (s.fundingType || 'Scholarship')}</Badge>
+                        <Badge className="bg-[#E8501A]/10 text-[#E8501A] border-[#E8501A]/20 text-[10px]">{s.scholarshipType ? String(s.scholarshipType).replace(/_/g, ' ') : (s.fundingType || 'Scholarship')}</Badge>
                         <Badge className={`text-[10px] border ${STATUS_CHIP[st]}`}>{badge.label}</Badge>
                       </div>
                       <h3 className="font-bold text-[#0F172A] mb-1.5 line-clamp-2">{s.name || s.scholarshipName}</h3>
@@ -175,12 +175,12 @@ export default function ScholarshipsListing() {
                       <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 space-y-1 text-xs">
                         <div className="flex justify-between gap-2"><span className="text-gray-500">Funding:</span><span className="font-bold text-[#0F172A] text-right">{s.fundingAmount || `${s.currency || ''} ${s.amount || ''}`.trim() || 'Funding varies. Check official scholarship terms.'}</span></div>
                         {s.fundingType && <div className="flex justify-between gap-2"><span className="text-gray-500">Funding type:</span><span className="font-medium text-right">{String(s.fundingType).replace(/_/g, ' ')}</span></div>}
-                        <div className="flex justify-between gap-2"><span className="text-gray-500">Deadline:</span><span className="font-semibold text-[#F37021] text-right">{s.deadline || (s.deadlineDate ? new Date(s.deadlineDate).toLocaleDateString() : 'See official source')}</span></div>
+                        <div className="flex justify-between gap-2"><span className="text-gray-500">Deadline:</span><span className="font-semibold text-[#E8501A] text-right">{s.deadline || (s.deadlineDate ? new Date(s.deadlineDate).toLocaleDateString() : 'See official source')}</span></div>
                         <p className="text-[10px] text-gray-500 pt-1 border-t border-[#E2E8F0] mt-1">Last verified: {s.lastVerifiedAt ? new Date(s.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • {s.verificationStatus || 'pending'}</p>
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#0066CC] text-white hover:bg-[#003D7A] h-12 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] h-12 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
                       <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[#E2E8F0] h-12 text-xs">Check Eligibility</Button></Link>
                     </div>
                   </Card>
@@ -191,12 +191,12 @@ export default function ScholarshipsListing() {
         )}
 
         {/* Final CTA — spec §24 */}
-        <Card className="p-8 bg-gradient-to-r from-[#0066CC] to-[#003D7A] rounded-3xl text-white text-center">
+        <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
           <p className="text-sm text-blue-100 mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/eligibility-check"><Button className="bg-[#F37021] text-black hover:bg-[#D95D12] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
-            <Link href="/course-finder"><Button className="bg-white text-[#0066CC] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </Card>

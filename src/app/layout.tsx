@@ -16,7 +16,7 @@ export const viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: "cover",
-  themeColor: "#0066CC",
+  themeColor: "#0057B8",
 };
 
 // Root metadata is generated at request/build time. Site-wide SEO
@@ -91,7 +91,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
       "apple-mobile-web-app-status-bar-style": "black-translucent",
-      "msapplication-TileColor": "#0066CC",
+      "msapplication-TileColor": "#0057B8",
       "msapplication-TileImage": "/icons/icon-144x144.png",
     },
   };

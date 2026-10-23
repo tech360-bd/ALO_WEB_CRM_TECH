@@ -82,8 +82,8 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /* ------------------------------------------------------------------ */
 /*  DECORATIVE CAP-ICON STRIP                                          */
 /*                                                                     */
-/*  Three ALO brand colours — Education Blue #0066CC, ALO Orange        */
-/*  #F37021 and Accent #FFB347 — drifting in opposite directions behind  */
+/*  Three ALO brand colours — Education Blue #0057B8, ALO Orange        */
+/*  #E8501A and Accent #FFB347 — drifting in opposite directions behind  */
 /*  the footer. Each row renders the same sequence of graduation caps    */
 /*  four times inside a `width: max-content` track and animates it by    */
 /*  exactly one sequence (-25%), so the loop is seamless and the strip   */
@@ -91,7 +91,7 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /*  aria-hidden and every animation stops for prefers-reduced-motion.    */
 /* ------------------------------------------------------------------ */
 
-const CAP_COLORS = ['#0066CC', '#F37021', '#FFB347'] as const;
+const CAP_COLORS = ['#0057B8', '#E8501A', '#FFB347'] as const;
 
 /** One sequence of caps. Rendered CAP_SEQUENCE_COPIES times per row. */
 const CAP_SEQUENCE = [
@@ -454,7 +454,7 @@ export default function PublicFooter() {
       {/* Decorative moving cap-icon strip — three ALO brand colours */}
       <GraduationCapStrip />
 
-      {/* Bottom bar — ALO Orange #F37021. Black text preserves strong contrast on the required brand orange. */}
+      {/* Bottom bar — ALO Orange #E8501A. Black text preserves strong contrast on the required brand orange. */}
       <div className="bg-alo-cta py-4 text-black">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs font-medium sm:flex-row sm:px-6 lg:px-8">
           <p className="font-heading font-bold tracking-wide">© {year} ALO Education. All rights reserved.</p>

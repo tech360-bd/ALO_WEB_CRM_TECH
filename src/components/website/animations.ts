@@ -7,8 +7,8 @@ import { Variants, Transition } from 'framer-motion';
 
 /* ── Brand Colors ──────────────────────────────────────────── */
 export const BRAND = {
-  blue: '#0066CC',      // Education Blue
-  orange: '#F37021',     // ALO Orange (primary CTA)
+  blue: '#0057B8',      // Education Blue
+  orange: '#E8501A',     // ALO Orange (primary CTA)
   sunshine: '#FFB347',   // Sunshine Accent
   text: '#0F172A',       // Neutral Dark
   textSoft: '#555555',  // Neutral Gray
@@ -19,7 +19,7 @@ export const BRAND = {
   warning: '#F59E0B',
   danger: '#EF4444',
   white: '#FFFFFF',
-  tagline: '#F37021',   // Italic orange for tagline
+  tagline: '#E8501A',   // Italic orange for tagline
 };
 
 /* ── Shared Transitions ─────────────────────────────────────── */
@@ -193,8 +193,8 @@ export const viewportRepeat = {
 
 /* ── Gradient helpers ───────────────────────────────────────── */
 export const gradients = {
-  blue: 'linear-gradient(135deg, #0066CC 0%, #003D7A 100%)',
-  orange: 'linear-gradient(135deg, #F37021 0%, #D95D12 100%)',
+  blue: 'linear-gradient(135deg, #0057B8 0%, #003F87 100%)',
+  orange: 'linear-gradient(135deg, #E8501A 0%, #C93D13 100%)',
   blueLight: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
   softBlue: 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',
   heroGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,87,184,0.08) 0%, transparent 70%)',

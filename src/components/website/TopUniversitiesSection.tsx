@@ -148,7 +148,7 @@ export default function TopUniversitiesSection() {
     <section aria-labelledby="top-universities-heading" className="bg-white py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
-          <span className="mb-4 inline-block rounded-full border border-[#0066CC]/20 bg-[#E6F2FF] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#0066CC]">
+          <span className="mb-4 inline-block rounded-full border border-[#0057B8]/20 bg-[#EAF3FF] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#0057B8]">
             Top Universities
           </span>
           <h2 id="top-universities-heading" className="font-heading text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl">
@@ -170,8 +170,8 @@ export default function TopUniversitiesSection() {
               onClick={() => setTab(t.id)}
               className={`rounded-full min-h-[48px] px-5 py-2.5 font-heading text-[13px] font-bold transition-colors ${
                 tab === t.id
-                  ? 'bg-[#F37021] text-black shadow-sm'
-                  : 'border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#0066CC] hover:text-[#0066CC]'
+                  ? 'bg-[#E8501A] text-black shadow-sm'
+                  : 'border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#0057B8] hover:text-[#0057B8]'
               }`}
             >
               {t.label}
@@ -188,11 +188,11 @@ export default function TopUniversitiesSection() {
         ) : universities.length === 0 ? (
           <p className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-8 text-center text-sm text-[#555555]">
             No published universities for {active.label} are in the catalogue yet.{' '}
-            <Link href="/course-finder" className="font-semibold text-[#0066CC] underline">
+            <Link href="/course-finder" className="font-semibold text-[#0057B8] underline">
               Search the Course Finder
             </Link>{' '}
             or{' '}
-            <Link href={`/destinations/${tab}`} className="font-semibold text-[#0066CC] underline">
+            <Link href={`/destinations/${tab}`} className="font-semibold text-[#0057B8] underline">
               view the {active.label} guide
             </Link>
             .
@@ -214,9 +214,9 @@ export default function TopUniversitiesSection() {
                     loading="lazy"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#003D7A]/70 via-transparent to-transparent" aria-hidden="true" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#003F87]/70 via-transparent to-transparent" aria-hidden="true" />
                   {/* University logo / monogram */}
-                  <div className="absolute bottom-3 left-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white font-heading text-sm font-extrabold text-[#0066CC] shadow-md" aria-hidden="true">
+                  <div className="absolute bottom-3 left-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white font-heading text-sm font-extrabold text-[#0057B8] shadow-md" aria-hidden="true">
                     {initials(uni.name)}
                   </div>
                   {uni.worldRanking ? (
@@ -229,12 +229,12 @@ export default function TopUniversitiesSection() {
 
                 <div className="flex flex-1 flex-col gap-2 p-5">
                   <h3 className="font-heading text-[15px] font-bold leading-snug text-[#0F172A]">
-                    <Link href={`/universities/${encodeURIComponent(uni.slug)}`} className="hover:text-[#0066CC]">
+                    <Link href={`/universities/${encodeURIComponent(uni.slug)}`} className="hover:text-[#0057B8]">
                       {uni.name}
                     </Link>
                   </h3>
                   <p className="flex items-center gap-1.5 text-xs text-[#555555]">
-                    <MapPin className="h-3.5 w-3.5 shrink-0 text-[#F37021]" aria-hidden="true" />
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-[#E8501A]" aria-hidden="true" />
                     {[uni.city, uni.country].filter(Boolean).join(', ') || 'Region / city not recorded'}
                   </p>
                   <p className="text-xs text-[#555555]">
@@ -242,7 +242,7 @@ export default function TopUniversitiesSection() {
                     {uni.worldRanking ? `World #${uni.worldRanking}` : 'Not recorded'}
                   </p>
                   <p className="flex items-center gap-1.5 text-xs text-[#555555]">
-                    <CalendarDays className="h-3.5 w-3.5 shrink-0 text-[#F37021]" aria-hidden="true" />
+                    <CalendarDays className="h-3.5 w-3.5 shrink-0 text-[#E8501A]" aria-hidden="true" />
                     <span>
                       <span className="font-semibold text-[#0F172A]">Next Intake:</span>{' '}
                       {nextIntakes[uni.slug] || 'See courses'}
@@ -256,14 +256,14 @@ export default function TopUniversitiesSection() {
                     <Link
                       href={`/universities/${encodeURIComponent(uni.slug)}`}
                       aria-label={`View University — ${uni.name}`}
-                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#F37021] font-heading text-[13px] font-bold text-black transition-colors hover:bg-[#D95D12]"
+                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] font-heading text-[13px] font-bold text-black transition-colors hover:bg-[#C93D13]"
                     >
                       View University
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                     <Link
                       href={`/universities/${encodeURIComponent(uni.slug)}`}
-                      className="mt-2 block text-center text-xs font-semibold text-[#0066CC] hover:underline"
+                      className="mt-2 block text-center text-xs font-semibold text-[#0057B8] hover:underline"
                     >
                       Learn More
                     </Link>
@@ -277,7 +277,7 @@ export default function TopUniversitiesSection() {
         <div className="mt-10 text-center">
           <Link
             href="/universities"
-            className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-[#0066CC] px-8 font-heading text-sm font-bold text-[#0066CC] transition-colors hover:bg-[#E6F2FF]"
+            className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-[#0057B8] px-8 font-heading text-sm font-bold text-[#0057B8] transition-colors hover:bg-[#EAF3FF]"
           >
             View All Universities
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

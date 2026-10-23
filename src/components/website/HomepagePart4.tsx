@@ -35,8 +35,8 @@ import {
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0066CC',
-  orange: '#F37021',
+  blue: '#0057B8',
+  orange: '#E8501A',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -86,23 +86,23 @@ const RESOURCES: ResourceItem[] = [
   { icon: BookOpen, title: 'Study Abroad Guide', href: '/resources/study-abroad-guide', color: C.blue },
   { icon: Search, title: 'University Search', href: '/resources/university-search', color: C.orange },
   { icon: ClipboardList, title: 'Application Checklist', href: '/resources/application-checklist', color: '#0284C7' },
-  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#003D7A' },
-  { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#003D7A' },
-  { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#003D7A' },
-  { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#003D7A' },
+  { icon: Languages, title: 'IELTS Preparation', href: '/language-prep/ielts', color: '#003F87' },
+  { icon: Award, title: 'Scholarship Finder', href: '/resources/scholarships', color: '#003F87' },
+  { icon: ShieldCheck, title: 'Visa Requirements', href: '/resources/visa-guide', color: '#003F87' },
+  { icon: PenTool, title: 'SOP Writing Tips', href: '/resources/sop-tips', color: '#003F87' },
   { icon: Clock, title: 'Intake Calendar', href: '/resources/intake-calendar', color: '#0284C7' },
   { icon: Globe, title: 'Country Comparison', href: '/resources/country-compare', color: C.blue },
   { icon: GraduationCap, title: 'Course Finder', href: '/resources/course-finder', color: C.orange },
   { icon: FileText, title: 'CV Templates', href: '/resources/cv-templates', color: '#0284C7' },
-  { icon: Target, title: 'Cost Calculator', href: '/resources/cost-calculator', color: '#003D7A' },
-  { icon: Users, title: 'Student Community', href: '/resources/community', color: '#003D7A' },
-  { icon: Zap, title: 'Pre-Departure Guide', href: '/resources/pre-departure', color: '#003D7A' },
-  { icon: BookMarked, title: 'Education Blog', href: '/resources/blog', color: '#003D7A' },
+  { icon: Target, title: 'Cost Calculator', href: '/resources/cost-calculator', color: '#003F87' },
+  { icon: Users, title: 'Student Community', href: '/resources/community', color: '#003F87' },
+  { icon: Zap, title: 'Pre-Departure Guide', href: '/resources/pre-departure', color: '#003F87' },
+  { icon: BookMarked, title: 'Education Blog', href: '/resources/blog', color: '#003F87' },
   { icon: Compass, title: 'Career Path Finder', href: '/resources/career-paths', color: '#0284C7' },
   { icon: CalendarCheck, title: 'Deadline Tracker', href: '/resources/deadlines', color: C.blue },
   { icon: Lightbulb, title: 'FAQ Library', href: '/resources/faqs', color: C.orange },
   { icon: HeadphonesIcon, title: 'Support Center', href: '/resources/support', color: '#0284C7' },
-  { icon: Heart, title: 'Mental Wellness Guide', href: '/resources/wellness', color: '#003D7A' },
+  { icon: Heart, title: 'Mental Wellness Guide', href: '/resources/wellness', color: '#003F87' },
   { icon: DollarSign, title: 'Financial Planning', href: '/resources/financial-planning', color: C.blue },
   { icon: Globe, title: 'Accommodation Guide', href: '/resources/accommodation', color: C.orange },
   { icon: ShieldCheck, title: 'Insurance Guide', href: '/resources/insurance', color: '#0284C7' },
@@ -116,7 +116,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Strategic Planning & Partnerships',
     bio: 'Founded ALO Education to make global education pathways clearer for Bangladeshi students.',
     initials: 'TA',
-    gradient: 'linear-gradient(135deg, #0066CC 0%, #0EA5E9 100%)',
+    gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
   },
   {
     name: 'Al Aminn',
@@ -124,7 +124,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Operations & Process Optimization',
     bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #F37021 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #E8501A 0%, #FFB347 100%)',
   },
   {
     name: 'Nusrat Jahan',
@@ -471,7 +471,7 @@ function TeamSection({ dbMembers }: { dbMembers?: Array<{ id: string; name: stri
         bio: m.bio,
         photo: m.photo,
         initials: m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-        gradient: 'linear-gradient(135deg, #0066CC 0%, #0EA5E9 100%)',
+        gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
       }))
     : TEAM_MEMBERS;
   return (
@@ -721,7 +721,7 @@ function FinalCtaSection() {
   }, [formData]);
 
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden bg-[#FFF3EA]">
+    <section className="py-16 md:py-20 relative overflow-hidden bg-[#FFF1EA]">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -754,7 +754,7 @@ function FinalCtaSection() {
               </Button>
               <Button
                 className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[#BFDBFE]"
-                style={{ color: "#0066CC" }}
+                style={{ color: "#0057B8" }}
                 asChild
               >
                 <Link href="/course-finder">
@@ -768,8 +768,8 @@ function FinalCtaSection() {
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#E6F2FF] flex items-center justify-center">
-                  <Phone className="h-4.5 w-4.5 text-[#0066CC]" />
+                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                  <Phone className="h-4.5 w-4.5 text-[#0057B8]" />
                 </div>
                 <div>
                   <p className="text-xs text-[#64748B]">Call / WhatsApp</p>
@@ -779,8 +779,8 @@ function FinalCtaSection() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#E6F2FF] flex items-center justify-center">
-                  <Mail className="h-4.5 w-4.5 text-[#0066CC]" />
+                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                  <Mail className="h-4.5 w-4.5 text-[#0057B8]" />
                 </div>
                 <div>
                   <p className="text-xs text-[#64748B]">Email Us</p>
@@ -790,8 +790,8 @@ function FinalCtaSection() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#E6F2FF] flex items-center justify-center">
-                  <MapPin className="h-4.5 w-4.5 text-[#0066CC]" />
+                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                  <MapPin className="h-4.5 w-4.5 text-[#0057B8]" />
                 </div>
                 <div>
                   <p className="text-xs text-[#64748B]">Visit Us</p>

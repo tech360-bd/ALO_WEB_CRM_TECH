@@ -121,14 +121,14 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 1. HERO SECTION */}
       {/* ============================================================ */}
-      <section className="bg-gradient-to-br from-[#0066CC] via-[#003D7A] to-[#003D7A] text-white pt-24 pb-20 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-[#0057B8] via-[#003F87] to-[#002d62] text-white pt-24 pb-20 relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             {/* LEFT HERO TEXT */}
             <div className="lg:col-span-7 space-y-6">
-              <Badge className="bg-[#F37021] text-black font-bold text-xs px-3.5 py-1.5 uppercase tracking-wider shadow-md">
+              <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3.5 py-1.5 uppercase tracking-wider shadow-md">
                 ALO LANGUAGE PREPARATION CENTRE
               </Badge>
 
@@ -146,7 +146,7 @@ export default function MasterLanguagePrepLandingView() {
 
               {/* QUICK HERO BUTTONS */}
               <div className="flex flex-wrap gap-4 pt-2">
-                <Button asChild className="bg-[#F37021] text-black hover:bg-[#D95D12] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
+                <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
                     Book Free Counselling <ArrowRight className="h-4 w-4" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">
@@ -183,7 +183,7 @@ export default function MasterLanguagePrepLandingView() {
             <div className="lg:col-span-5" id="book-counseling">
               <Card className="p-6 md:p-8 bg-white text-slate-900 shadow-2xl rounded-3xl border-0">
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-5 w-5 text-[#F37021]" />
+                  <Sparkles className="h-5 w-5 text-[#E8501A]" />
                   <h3 className="text-xl font-bold text-[#0F172A]">Book Free Test Consultation</h3>
                 </div>
                 <p className="text-xs text-slate-600 mb-6">
@@ -262,7 +262,7 @@ export default function MasterLanguagePrepLandingView() {
                     <Button
                       type="submit"
                       disabled={submittingLead}
-                      className="w-full bg-[#F37021] text-black hover:bg-[#D95D12] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
+                      className="w-full bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
                     >
                       {submittingLead ? 'Scheduling Session...' : 'Get Free Test Score Plan →'}
                     </Button>
@@ -283,7 +283,7 @@ export default function MasterLanguagePrepLandingView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-blue-100 text-[#0066CC] font-bold text-xs px-3 py-1 mb-3 uppercase">
+            <Badge className="bg-blue-100 text-[#0057B8] font-bold text-xs px-3 py-1 mb-3 uppercase">
               INTERACTIVE TEST FINDER
             </Badge>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
@@ -342,22 +342,22 @@ export default function MasterLanguagePrepLandingView() {
 
             <Button
               onClick={handleRecommendTest}
-              className="w-full bg-[#0066CC] text-white hover:bg-[#003D7A] font-bold text-sm h-12 rounded-xl shadow-md"
+              className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] font-bold text-sm h-12 rounded-xl shadow-md"
             >
               Analyze & Recommend Optimal Test →
             </Button>
 
             {recommendedResult && (
               <div className="mt-6 p-5 bg-blue-50 border border-blue-200 rounded-2xl text-xs space-y-2">
-                <div className="flex items-center gap-2 text-[#0066CC] font-bold text-sm">
+                <div className="flex items-center gap-2 text-[#0057B8] font-bold text-sm">
                   <CheckCircle2 className="h-5 w-5" /> Recommendation Output:
                 </div>
                 <p className="text-slate-800 leading-relaxed font-medium">{recommendedResult}</p>
                 <div className="pt-2 flex gap-3">
-                  <Button asChild size="sm" className="bg-[#0066CC] text-white text-xs h-12"><a href="/language-prep/ielts">
+                  <Button asChild size="sm" className="bg-[#0057B8] text-white text-xs h-12"><a href="/language-prep/ielts">
                       Explore IELTS
                     </a></Button>
-                  <Button asChild size="sm" variant="outline" className="text-xs h-12 border-[#0066CC] text-[#0066CC]"><a href="/language-prep/pte-academic">
+                  <Button asChild size="sm" variant="outline" className="text-xs h-12 border-[#0057B8] text-[#0057B8]"><a href="/language-prep/pte-academic">
                       Explore PTE
                     </a></Button>
                 </div>
@@ -376,7 +376,7 @@ export default function MasterLanguagePrepLandingView() {
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-6 space-y-4">
-              <Badge className="bg-orange-100 text-[#F37021] font-bold text-xs px-3 py-1 uppercase">
+              <Badge className="bg-orange-100 text-[#E8501A] font-bold text-xs px-3 py-1 uppercase">
                 ACADEMIC & IMMIGRATION READINESS
               </Badge>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A]">
@@ -395,22 +395,22 @@ export default function MasterLanguagePrepLandingView() {
 
             <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4">
               <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <Award className="h-8 w-8 text-[#0066CC] mb-3" />
+                <Award className="h-8 w-8 text-[#0057B8] mb-3" />
                 <h4 className="font-bold text-sm text-[#0F172A] mb-1">Meet Admission Criteria</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">Fulfill direct unconditional entry thresholds without pre-sessional English costs.</p>
               </Card>
               <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <ShieldCheck className="h-8 w-8 text-[#F37021] mb-3" />
+                <ShieldCheck className="h-8 w-8 text-[#E8501A] mb-3" />
                 <h4 className="font-bold text-sm text-[#0F172A] mb-1">Strengthen Visa Files</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">Satisfy official immigration credibility checks for UK, Australia, Canada, and USA.</p>
               </Card>
               <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <GraduationCap className="h-8 w-8 text-[#0066CC] mb-3" />
+                <GraduationCap className="h-8 w-8 text-[#0057B8] mb-3" />
                 <h4 className="font-bold text-sm text-[#0F172A] mb-1">Scholarship Eligibility</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">High test bands unlock university merit scholarships from £1,000 up to 50% tuition.</p>
               </Card>
               <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <Laptop className="h-8 w-8 text-[#F37021] mb-3" />
+                <Laptop className="h-8 w-8 text-[#E8501A] mb-3" />
                 <h4 className="font-bold text-sm text-[#0F172A] mb-1">Academic Success</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">Excel in international lectures, research dissertations, and oral seminar debates.</p>
               </Card>
@@ -428,7 +428,7 @@ export default function MasterLanguagePrepLandingView() {
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
             <div>
-              <Badge className="bg-blue-100 text-[#0066CC] font-bold text-xs px-3 py-1 mb-2 uppercase">
+              <Badge className="bg-blue-100 text-[#0057B8] font-bold text-xs px-3 py-1 mb-2 uppercase">
                 COMPLETE DIRECTORY
               </Badge>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A]">
@@ -444,18 +444,18 @@ export default function MasterLanguagePrepLandingView() {
             {tests.map((t) => (
               <Card
                 key={t.id}
-                className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0066CC] flex flex-col justify-between rounded-3xl"
+                className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between rounded-3xl"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <Badge className="bg-blue-50 text-[#0066CC] font-bold text-[11px]">
+                    <Badge className="bg-blue-50 text-[#0057B8] font-bold text-[11px]">
                       {t.logoBadge}
                     </Badge>
                     <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
                   </div>
 
                   <h3 className="text-xl font-bold text-[#0F172A] mb-1">{t.name}</h3>
-                  <p className="text-xs text-[#F37021] font-semibold mb-3">{t.officialOwner}</p>
+                  <p className="text-xs text-[#E8501A] font-semibold mb-3">{t.officialOwner}</p>
                   <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">
                     {t.overview.whatIsIt}
                   </p>
@@ -471,13 +471,13 @@ export default function MasterLanguagePrepLandingView() {
                     </div>
                     <div className="flex justify-between text-slate-700">
                       <span className="text-slate-500 font-medium">Target Score:</span>
-                      <span className="font-bold text-[#0066CC]">{t.expectedScore}</span>
+                      <span className="font-bold text-[#0057B8]">{t.expectedScore}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 flex gap-2">
-                  <Button asChild className="w-full bg-[#0066CC] text-white hover:bg-[#003D7A] text-xs font-bold h-12 rounded-xl"><a href={`/language-prep/${t.slug}`} className="flex-1">
+                  <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl"><a href={`/language-prep/${t.slug}`} className="flex-1">
                       Explore Modules & Plan →
                     </a></Button>
                 </div>
@@ -516,7 +516,7 @@ export default function MasterLanguagePrepLandingView() {
               <tbody className="divide-y divide-slate-100">
                 {tests.map((t) => (
                   <tr key={t.id} className="hover:bg-slate-50">
-                    <td className="p-3.5 font-bold text-[#0066CC]">
+                    <td className="p-3.5 font-bold text-[#0057B8]">
                       <a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a>
                     </td>
                     <td className="p-3.5 text-slate-700">{t.quickInfo.duration}</td>
@@ -540,7 +540,7 @@ export default function MasterLanguagePrepLandingView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-[#F37021] text-black font-bold text-xs px-3 py-1 mb-3 uppercase">
+            <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1 mb-3 uppercase">
               STRUCTURED SUCCESS METHOD
             </Badge>
             <h2 className="text-3xl font-extrabold text-[#0F172A]">8-Step English Preparation Roadmap</h2>
@@ -562,7 +562,7 @@ export default function MasterLanguagePrepLandingView() {
             ].map((s, idx) => (
               <Card key={idx} className="p-5 bg-white border-slate-200 rounded-2xl relative">
                 <span className="text-2xl font-black text-slate-200 absolute top-3 right-4">{s.step}</span>
-                <h4 className="font-bold text-sm text-[#0066CC] mb-1.5">{s.title}</h4>
+                <h4 className="font-bold text-sm text-[#0057B8] mb-1.5">{s.title}</h4>
                 <p className="text-slate-600 leading-relaxed">{s.desc}</p>
               </Card>
             ))}
@@ -593,7 +593,7 @@ export default function MasterLanguagePrepLandingView() {
                   className="w-full p-4 text-left font-bold text-sm text-[#0F172A] flex justify-between items-center"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={`h-4 w-4 text-[#0066CC] transition-transform ${openFaqIndex === idx ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 text-[#0057B8] transition-transform ${openFaqIndex === idx ? 'rotate-180' : ''}`} />
                 </button>
                 {openFaqIndex === idx && (
                   <div className="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-white">
@@ -610,7 +610,7 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 8. FINAL CTA BANNER */}
       {/* ============================================================ */}
-      <section className="py-16 bg-gradient-to-r from-[#0066CC] to-[#003D7A] text-white">
+      <section className="py-16 bg-gradient-to-r from-[#0057B8] to-[#003F87] text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Not Sure Which English Test You Need?
@@ -619,7 +619,7 @@ export default function MasterLanguagePrepLandingView() {
             Tell us your target destination, university and study intake. Our senior counselors evaluate your background and provide the fastest, most cost-effective preparation pathway.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <Button asChild className="bg-[#F37021] text-black hover:bg-[#D95D12] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
+            <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
                 Book Free Test Counselling →
               </a></Button>
             <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">

@@ -170,7 +170,7 @@ export default function YouTubeEmbed({
               className="absolute inset-0 size-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
             />
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex size-16 items-center justify-center rounded-full bg-[#F37021] shadow-lg transition-transform group-hover:scale-110">
+              <span className="flex size-16 items-center justify-center rounded-full bg-[#E8501A] shadow-lg transition-transform group-hover:scale-110">
                 <svg viewBox="0 0 24 24" className="ml-1 size-7 fill-white" aria-hidden="true">
                   <path d="M8 5v14l11-7z" />
                 </svg>

@@ -62,7 +62,7 @@ export default function ResourcesHubPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Hero — spec §26 exact copy */}
           <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm mb-8">
-            <Badge className="bg-[#0066CC]/10 text-[#0066CC] border-[#0066CC]/20 text-xs px-3 py-1 mb-4 uppercase">ALO Knowledge & Guidance Hub</Badge>
+            <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs px-3 py-1 mb-4 uppercase">ALO Knowledge & Guidance Hub</Badge>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Your Complete Study Abroad Knowledge Hub</h1>
             <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Practical, updated and student-friendly guidance for researching courses, universities, applications, scholarships, visas and life abroad.</p>
             <div className="flex gap-2 mt-4">
@@ -84,11 +84,11 @@ export default function ResourcesHubPage() {
               <select aria-label="Sort" value={sort} onChange={e => setSort(e.target.value as any)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 text-sm h-12"><option value="recent">Popular / Newest</option><option value="updated">Recently updated</option></select>
             </form>
             <div className="flex flex-wrap gap-2 mt-3" role="tablist" aria-label="Resource categories">
-              <button type="button" onClick={() => setActiveCategory(null)} className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors min-h-[32px] ${activeCategory === null ? 'bg-[#0066CC] text-white border-[#0066CC]' : 'bg-white text-gray-700 border-[#E2E8F0]'}`}>All</button>
+              <button type="button" onClick={() => setActiveCategory(null)} className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors min-h-[32px] ${activeCategory === null ? 'bg-[#0057B8] text-white border-[#0057B8]' : 'bg-white text-gray-700 border-[#E2E8F0]'}`}>All</button>
               {categories.map((cat) => {
                 const dbCat = categories.find((c: any) => c.slug === cat.slug);
                 return (
-                  <button key={cat.slug} type="button" onClick={() => setActiveCategory(activeCategory === cat.slug ? null : cat.slug)} className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors min-h-[32px] ${activeCategory === cat.slug ? 'bg-[#0066CC] text-white border-[#0066CC]' : 'bg-white text-gray-700 border-[#E2E8F0]'}`}>
+                  <button key={cat.slug} type="button" onClick={() => setActiveCategory(activeCategory === cat.slug ? null : cat.slug)} className={`text-[11px] px-3 py-1.5 rounded-full border transition-colors min-h-[32px] ${activeCategory === cat.slug ? 'bg-[#0057B8] text-white border-[#0057B8]' : 'bg-white text-gray-700 border-[#E2E8F0]'}`}>
                     {cat.name}{dbCat?.resourceCount ? ` (${dbCat.resourceCount})` : ''}
                   </button>
                 );
@@ -103,11 +103,11 @@ export default function ResourcesHubPage() {
               const dbCat = categories.find((c: any) => c.slug === cat.slug);
               return (
                 <Link key={cat.slug} href={`/resources/${cat.slug}`}>
-                  <Card className="p-4 h-full bg-white hover:shadow-md transition-all border-[#E2E8F0] hover:border-[#0066CC] rounded-2xl">
-                    <div className="h-10 w-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#0066CC] flex items-center justify-center mb-3"><Icon className="h-5 w-5" /></div>
+                  <Card className="p-4 h-full bg-white hover:shadow-md transition-all border-[#E2E8F0] hover:border-[#0057B8] rounded-2xl">
+                    <div className="h-10 w-10 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#0057B8] flex items-center justify-center mb-3"><Icon className="h-5 w-5" /></div>
                     <h3 className="text-sm font-bold text-[#0F172A]">{cat.name}</h3>
                     <p className="text-[11px] text-gray-600 mt-1 line-clamp-2">{cat.description}</p>
-                    <p className="text-[10px] text-[#0066CC] font-bold mt-2">{dbCat?.resourceCount ? `${dbCat.resourceCount} article${dbCat.resourceCount === 1 ? '' : 's'}` : 'Browse'}</p>
+                    <p className="text-[10px] text-[#0057B8] font-bold mt-2">{dbCat?.resourceCount ? `${dbCat.resourceCount} article${dbCat.resourceCount === 1 ? '' : 's'}` : 'Browse'}</p>
                   </Card>
                 </Link>
               );
@@ -124,10 +124,10 @@ export default function ResourcesHubPage() {
                 {sorted.map((b: any) => {
                   const catSlug = b.category?.slug || 'study-abroad-guides';
                   return (
-                    <Card key={b.id} className="p-5 bg-white border-[#E2E8F0] rounded-2xl hover:border-[#0066CC] hover:shadow-md transition-all flex flex-col justify-between">
+                    <Card key={b.id} className="p-5 bg-white border-[#E2E8F0] rounded-2xl hover:border-[#0057B8] hover:shadow-md transition-all flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-2">
-                          <Badge className="bg-[#0066CC]/10 text-[#0066CC] border-[#0066CC]/20 text-[10px] font-bold">{b.category?.name || 'Resource'}</Badge>
+                          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px] font-bold">{b.category?.name || 'Resource'}</Badge>
                           <span className="text-[10px] text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{b.readingTime || 5} min</span>
                         </div>
                         <h3 className="font-bold text-sm text-[#0F172A] mb-2 line-clamp-2">{b.title}</h3>
@@ -138,7 +138,7 @@ export default function ResourcesHubPage() {
                         </div>
                         <p className="text-[10px] text-gray-500 mb-3">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • {b.authorId ? 'ALO Editorial Team' : 'ALO Editorial Team'}</p>
                       </div>
-                      <Link href={`/resources/${catSlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#0066CC] text-white hover:bg-[#003D7A] text-xs font-bold h-12 rounded-xl">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href={`/resources/${catSlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
                     </Card>
                   );
                 })}
@@ -147,12 +147,12 @@ export default function ResourcesHubPage() {
           )}
 
           {/* Final CTA */}
-          <Card className="p-8 bg-gradient-to-r from-[#0066CC] to-[#003D7A] rounded-3xl text-white text-center">
+          <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
             <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
             <p className="text-sm text-blue-100 mb-6">Research first, act with confidence — ALO is your execution and support layer.</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/book-consultation"><Button className="bg-[#F37021] text-black hover:bg-[#D95D12] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
-              <Link href="/course-finder"><Button className="bg-white text-[#0066CC] hover:bg-blue-50 h-12 px-6 font-bold">Find Courses</Button></Link>
+              <Link href="/book-consultation"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+              <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Find Courses</Button></Link>
               <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
             </div>
           </Card>

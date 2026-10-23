@@ -61,15 +61,15 @@ export function buildCreativeSvg(content: CreativeContent, format: CreativeForma
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="ALO Education draft campaign creative">
 <title>${escapeXml(content.headline)}</title><desc>Draft marketing creative. Human review required before publication.</desc>
 <rect width="${w}" height="${h}" fill="#0F172A"/>
-<path d="M ${w - 330} 0 H ${w} V ${landscape ? 105 : 210} Z" fill="#0066CC"/>
+<path d="M ${w - 330} 0 H ${w} V ${landscape ? 105 : 210} Z" fill="#0057B8"/>
 <circle cx="${w}" cy="${h * 0.72}" r="${landscape ? 120 : 240}" fill="#172554"/>
 <g font-family="Arial, sans-serif">
 <text x="72" y="82" font-size="30" font-weight="700" fill="#FFFFFF">ALO EDUCATION</text>
-<rect x="72" y="104" width="52" height="5" rx="2" fill="#F37021"/>
+<rect x="72" y="104" width="52" height="5" rx="2" fill="#E8501A"/>
 ${textLines(lines, 72, start, headlineSize, '#FFFFFF', 700)}
 ${textLines(wrap(content.body, bodyColumns), 72, bodyStart, bodySize, '#CBD5E1', 400)}
-<rect x="72" y="${h - 195}" width="${Math.min(w - 144, Math.max(280, content.cta.length * 15 + 56))}" height="68" rx="12" fill="#F37021"/>
-<text x="100" y="${h - 152}" font-size="26" font-weight="700" fill="#000000">${escapeXml(content.cta)}</text>
+<rect x="72" y="${h - 195}" width="${Math.min(w - 144, Math.max(280, content.cta.length * 15 + 56))}" height="68" rx="12" fill="#E8501A"/>
+<text x="100" y="${h - 152}" font-size="26" font-weight="700" fill="#0F172A">${escapeXml(content.cta)}</text>
 <text x="72" y="${h - 85}" font-size="18" fill="#CBD5E1">${escapeXml(content.destination || 'Add a verified destination URL before publication')}</text>
 <text x="72" y="${h - 36}" font-size="16" letter-spacing="2" fill="#FDBA74">DRAFT · HUMAN REVIEW REQUIRED</text>
 </g></svg>`;

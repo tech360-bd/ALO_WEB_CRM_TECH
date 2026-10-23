@@ -7,8 +7,8 @@
  *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
  *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
  *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
- *   • CTA: "Book Free Counseling" (ALO Orange #F37021 button)
- *   • Education Blue #0066CC for navigation/links, #FFB347 accent, #000/#555
+ *   • CTA: "Book Free Counseling" (ALO Orange #E8501A button)
+ *   • Education Blue #0057B8 for navigation/links, #FFB347 accent, #000/#555
  *     neutral text — all values come from the design tokens in globals.css.
  *
  * The footer and this header are mounted once for the whole public site by

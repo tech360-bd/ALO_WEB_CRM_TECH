@@ -129,13 +129,13 @@ export default function AllCoursesListing() {
   useEffect(() => { void load(1); }, [load]);
 
   const selectClass =
-    'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC]/30';
+    'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] focus:border-[#0057B8] focus:outline-none focus:ring-2 focus:ring-[#0057B8]/30';
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="max-w-3xl">
-        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#F37021]">
+        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#E8501A]">
           <GraduationCap className="h-4 w-4" aria-hidden="true" /> Course Catalogue
         </p>
         <h1 className="mt-3 font-heading text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl">
@@ -145,7 +145,7 @@ export default function AllCoursesListing() {
           Browse every published course in the ALO Education catalogue. Fees and intakes are shown
           only where they have been verified against an official source — anything still being
           checked is labelled as pending verification. For multi-criteria matching, use the{' '}
-          <Link href="/course-finder" className="font-semibold text-[#0066CC] underline underline-offset-2">
+          <Link href="/course-finder" className="font-semibold text-[#0057B8] underline underline-offset-2">
             Course Finder
           </Link>.
         </p>
@@ -165,7 +165,7 @@ export default function AllCoursesListing() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search course or university…"
-            className="h-12 w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-sm text-[#0F172A] focus:border-[#0066CC] focus:outline-none focus:ring-2 focus:ring-[#0066CC]/30"
+            className="h-12 w-full rounded-xl border border-[#E2E8F0] bg-white pl-10 pr-3 text-sm text-[#0F172A] focus:border-[#0057B8] focus:outline-none focus:ring-2 focus:ring-[#0057B8]/30"
           />
         </label>
         <label className="block">
@@ -191,7 +191,7 @@ export default function AllCoursesListing() {
         </label>
         <button
           type="submit"
-          className="h-12 rounded-xl bg-[#0066CC] px-6 font-heading text-sm font-bold text-white transition-colors hover:bg-[#003D7A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC] focus-visible:ring-offset-2"
+          className="h-12 rounded-xl bg-[#0057B8] px-6 font-heading text-sm font-bold text-white transition-colors hover:bg-[#003F87] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2"
         >
           Search
         </button>
@@ -210,7 +210,7 @@ export default function AllCoursesListing() {
           <button
             type="button"
             onClick={() => void load(page)}
-            className="mt-4 h-11 rounded-xl bg-[#0066CC] px-5 text-sm font-bold text-white hover:bg-[#003D7A]"
+            className="mt-4 h-11 rounded-xl bg-[#0057B8] px-5 text-sm font-bold text-white hover:bg-[#003F87]"
           >
             Try again
           </button>
@@ -221,11 +221,11 @@ export default function AllCoursesListing() {
         <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="animate-pulse rounded-2xl border border-[#E2E8F0] bg-white p-5">
-              <div className="h-4 w-2/3 rounded bg-[#E6F2FF]" />
-              <div className="mt-3 h-3 w-1/2 rounded bg-[#E6F2FF]" />
-              <div className="mt-6 h-3 w-full rounded bg-[#E6F2FF]" />
-              <div className="mt-2 h-3 w-5/6 rounded bg-[#E6F2FF]" />
-              <div className="mt-6 h-10 w-full rounded-xl bg-[#E6F2FF]" />
+              <div className="h-4 w-2/3 rounded bg-[#EAF3FF]" />
+              <div className="mt-3 h-3 w-1/2 rounded bg-[#EAF3FF]" />
+              <div className="mt-6 h-3 w-full rounded bg-[#EAF3FF]" />
+              <div className="mt-2 h-3 w-5/6 rounded bg-[#EAF3FF]" />
+              <div className="mt-6 h-10 w-full rounded-xl bg-[#EAF3FF]" />
             </div>
           ))}
         </div>
@@ -233,7 +233,7 @@ export default function AllCoursesListing() {
 
       {!loading && !error && courses.length === 0 && (
         <div className="mt-4 rounded-2xl border border-[#E2E8F0] bg-white p-10 text-center">
-          <BookOpen className="mx-auto h-8 w-8 text-[#0066CC]" aria-hidden="true" />
+          <BookOpen className="mx-auto h-8 w-8 text-[#0057B8]" aria-hidden="true" />
           <p className="mt-3 font-semibold text-[#0F172A]">No courses match your search yet.</p>
           <p className="mx-auto mt-1 max-w-md text-sm text-[#64748B]">
             Try a broader subject or country — or tell us what you want to study and a counsellor
@@ -241,7 +241,7 @@ export default function AllCoursesListing() {
           </p>
           <Link
             href="/book-consultation"
-            className="mt-5 inline-flex h-11 items-center rounded-xl bg-[#F37021] px-5 font-heading text-sm font-bold text-black transition-colors hover:bg-[#D95D12]"
+            className="mt-5 inline-flex h-11 items-center rounded-xl bg-[#E8501A] px-5 font-heading text-sm font-bold text-black transition-colors hover:bg-[#C93D13]"
           >
             Book Free Counseling
           </Link>
@@ -259,18 +259,18 @@ export default function AllCoursesListing() {
                 key={course.id || course.courseId}
                 className="flex h-full flex-col rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#BFDBFE] hover:shadow-[0_12px_32px_-12px_rgba(0,87,184,0.25)]"
               >
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#F37021]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#E8501A]">
                   {course.subjectArea || 'Course'}
                 </p>
                 <h2 className="mt-2 font-heading text-[17px] font-bold leading-snug text-[#0F172A]">
-                  <Link href={`/course/${encodeURIComponent(course.slug || course.courseId)}`} className="hover:text-[#0066CC]">
+                  <Link href={`/course/${encodeURIComponent(course.slug || course.courseId)}`} className="hover:text-[#0057B8]">
                     {course.courseTitle}
                   </Link>
                 </h2>
                 <p className="mt-1.5 flex items-center gap-1.5 text-sm text-[#334155]">
-                  <Building2 className="h-4 w-4 shrink-0 text-[#0066CC]" aria-hidden="true" />
+                  <Building2 className="h-4 w-4 shrink-0 text-[#0057B8]" aria-hidden="true" />
                   {course.universitySlug ? (
-                    <Link href={`/universities/${encodeURIComponent(course.universitySlug)}`} className="font-medium hover:text-[#0066CC] hover:underline">
+                    <Link href={`/universities/${encodeURIComponent(course.universitySlug)}`} className="font-medium hover:text-[#0057B8] hover:underline">
                       {course.universityName}
                     </Link>
                   ) : (
@@ -308,7 +308,7 @@ export default function AllCoursesListing() {
                 {intakes.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {intakes.map((label) => (
-                      <span key={label} className="rounded-full bg-[#E6F2FF] px-2.5 py-1 text-[11px] font-semibold text-[#0066CC]">
+                      <span key={label} className="rounded-full bg-[#EAF3FF] px-2.5 py-1 text-[11px] font-semibold text-[#0057B8]">
                         {label}
                       </span>
                     ))}
@@ -326,13 +326,13 @@ export default function AllCoursesListing() {
                 <div className="mt-auto flex gap-2 pt-5">
                   <Link
                     href={`/course/${encodeURIComponent(course.slug || course.courseId)}`}
-                    className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-[#0066CC] px-4 font-heading text-[13px] font-bold text-white transition-colors hover:bg-[#003D7A]"
+                    className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-[#0057B8] px-4 font-heading text-[13px] font-bold text-white transition-colors hover:bg-[#003F87]"
                   >
                     View Course
                   </Link>
                   <Link
                     href={`/course-finder?subject=${encodeURIComponent(course.subjectArea || '')}`}
-                    className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-[#0066CC] px-4 font-heading text-[13px] font-bold text-[#0066CC] transition-colors hover:bg-[#E6F2FF]"
+                    className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-[#0057B8] px-4 font-heading text-[13px] font-bold text-[#0057B8] transition-colors hover:bg-[#EAF3FF]"
                   >
                     Compare
                   </Link>
@@ -350,7 +350,7 @@ export default function AllCoursesListing() {
             type="button"
             disabled={page <= 1}
             onClick={() => void load(page - 1)}
-            className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm font-semibold text-[#0066CC] disabled:opacity-40"
+            className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm font-semibold text-[#0057B8] disabled:opacity-40"
           >
             Previous
           </button>
@@ -359,7 +359,7 @@ export default function AllCoursesListing() {
             type="button"
             disabled={page >= pages}
             onClick={() => void load(page + 1)}
-            className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm font-semibold text-[#0066CC] disabled:opacity-40"
+            className="h-11 rounded-xl border border-[#E2E8F0] bg-white px-4 text-sm font-semibold text-[#0057B8] disabled:opacity-40"
           >
             Next
           </button>

@@ -36,9 +36,9 @@ export default function ComparisonView() {
       <section className="bg-white border-b border-[#E2E8F0] pt-10 pb-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6">
-            <a href="/" className="hover:text-[#0066CC]">Home</a><span>›</span>
-            <a href="/language-prep" className="hover:text-[#0066CC]">Language Prep</a><span>›</span>
-            <span className="text-[#0066CC] font-bold">Comparison</span>
+            <a href="/" className="hover:text-[#0057B8]">Home</a><span>›</span>
+            <a href="/language-prep" className="hover:text-[#0057B8]">Language Prep</a><span>›</span>
+            <span className="text-[#0057B8] font-bold">Comparison</span>
           </nav>
           <h1 className="text-4xl font-extrabold tracking-tight text-[#0F172A]">Compare English Tests</h1>
           <p className="text-sm text-slate-600 mt-3 max-w-3xl leading-relaxed">
@@ -72,7 +72,7 @@ export default function ComparisonView() {
                 key={t.slug}
                 onClick={() => toggleTest(t.slug)}
                 className={`px-4 py-2 rounded-full text-xs font-bold border transition ${
-                  selected.includes(t.slug) ? 'bg-[#0066CC] text-white border-[#0066CC]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#0066CC]'
+                  selected.includes(t.slug) ? 'bg-[#0057B8] text-white border-[#0057B8]' : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#0057B8]'
                 }`}
               >
                 {t.name} {selected.includes(t.slug) && '✓'}
@@ -83,7 +83,7 @@ export default function ComparisonView() {
 
         {loading ? (
           <div className="text-center py-20">
-            <div className="w-8 h-8 border-2 border-[#0066CC] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-slate-500">Loading comparison — database-driven...</p>
           </div>
         ) : (
@@ -107,9 +107,9 @@ export default function ComparisonView() {
                   {filtered.map((t: any) => (
                     <tr key={t.slug} className="hover:bg-[#F8FAFC]">
                       <td className="p-4">
-                        <a href={`/language-prep/${t.slug}`} className="font-bold text-[#0066CC] hover:underline">{t.name}</a>
+                        <a href={`/language-prep/${t.slug}`} className="font-bold text-[#0057B8] hover:underline">{t.name}</a>
                         <p className="text-[10px] text-slate-500 mt-1">{t.provider}</p>
-                        {t.isPopular && <Badge className="bg-[#F37021] text-black text-[9px] mt-1">Popular</Badge>}
+                        {t.isPopular && <Badge className="bg-[#E8501A] text-black text-[9px] mt-1">Popular</Badge>}
                       </td>
                       <td className="p-4 text-slate-700">{t.duration}</td>
                       <td className="p-4 text-slate-600">{t.format}</td>
@@ -129,8 +129,8 @@ export default function ComparisonView() {
               {filtered.map((t: any) => (
                 <Card key={t.slug} className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
                   <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-bold text-sm text-[#0066CC]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></h4>
-                    {t.isPopular && <Badge className="bg-[#F37021] text-black text-[9px]">Popular</Badge>}
+                    <h4 className="font-bold text-sm text-[#0057B8]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></h4>
+                    {t.isPopular && <Badge className="bg-[#E8501A] text-black text-[9px]">Popular</Badge>}
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-[11px]">
                     <div><span className="text-slate-500 block">Duration</span><span className="font-semibold">{t.duration}</span></div>
@@ -141,7 +141,7 @@ export default function ComparisonView() {
                     <div className="col-span-2"><span className="text-slate-500 block">Best For</span><span className="font-medium">{t.bestFor}</span></div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button asChild className="w-full bg-[#0066CC] hover:bg-[#003D7A] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
+                    <Button asChild className="w-full bg-[#0057B8] hover:bg-[#003F87] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
                     <Button asChild variant="outline" className="bg-white border-[#E2E8F0] h-9 rounded-xl text-xs"><a href={t.officialUrl} target="_blank">Official ↗</a></Button>
                   </div>
                 </Card>
@@ -157,7 +157,7 @@ export default function ComparisonView() {
                 {filtered.slice(0,3).map((t: any) => (
                   <div key={t.slug} className="p-3 rounded-xl bg-white border border-amber-100">
                     <p className="font-bold text-[#0F172A]">{t.name}</p>
-                    <p className="text-slate-500 mt-1">Source: {t.sourceUrl ? <a href={t.sourceUrl} target="_blank" className="text-[#0066CC] hover:underline">{t.sourceUrl}</a> : 'Check official provider'}</p>
+                    <p className="text-slate-500 mt-1">Source: {t.sourceUrl ? <a href={t.sourceUrl} target="_blank" className="text-[#0057B8] hover:underline">{t.sourceUrl}</a> : 'Check official provider'}</p>
                     <p className="text-slate-500">Last verified: {t.lastVerifiedAt || 'Information requires verification'}</p>
                   </div>
                 ))}
