@@ -10,8 +10,11 @@ export async function GET(request: NextRequest) {
       const search = searchParams.get('search') || '';
       const universityId = searchParams.get('universityId') || '';
       const courseId = searchParams.get('courseId') || '';
-      const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-      const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
+      const page = Number(searchParams.get('page') || '1');
+      const limit = Number(searchParams.get('limit') || '20');
+      if (!Number.isSafeInteger(page) || page < 1 || page > 100000 || !Number.isSafeInteger(limit) || limit < 1 || limit > 100 || search.length > 200) {
+        return NextResponse.json({ success: false, error: 'Invalid page, limit or search length' }, { status: 400 });
+      }
       const skip = (page - 1) * limit;
 
       const where: Record<string, unknown> = {};
@@ -55,12 +58,9 @@ export async function GET(request: NextRequest) {
       });
     } catch (error) {
       console.error('Scholarships API error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({ success: true, data: [], total: 0, page: 1, totalPages: 0 });
-      }
       return NextResponse.json({ success: false, error: 'Failed to load scholarships' }, { status: 500 });
     }
-  })(request);
+  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'EMPLOYEE'] })(request);
 }
 
 export async function POST(request: NextRequest) {

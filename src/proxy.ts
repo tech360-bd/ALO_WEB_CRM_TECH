@@ -28,6 +28,7 @@ const PUBLIC_ROUTES = [
   "/aqf-compliance",
   "/destinations",
   "/universities",
+  "/all-university-information",
   "/courses",
   // Canonical public course-detail hub (/course/[slug]). It was missing from
   // this list while the plural /courses and /course-finder were present, so

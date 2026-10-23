@@ -12,6 +12,7 @@ import CrmApplicationsPage from './pages/CrmApplicationsPage';
 import CrmDocumentsPage from './pages/CrmDocumentsPage';
 import CrmVisaPage from './pages/CrmVisaPage';
 import CrmCourseFinderPage from './pages/CrmCourseFinderPage';
+import InternationalDataCataloguePage from '@/components/crm/pages/InternationalDataCataloguePage';
 import CrmUniversitiesPage from './pages/CrmUniversitiesPage';
 import CrmScholarshipsPage from './pages/CrmScholarshipsPage';
 import CrmInboxPage from './pages/CrmInboxPage';
@@ -59,6 +60,7 @@ const crmViewMap: Partial<Record<PortalView, React.ComponentType>> = {
 
   // Course & University
   'crm-course-finder': CrmCourseFinderPage,
+  'crm-data-catalogue': InternationalDataCataloguePage,
   'crm-universities': CrmUniversitiesPage,
   'crm-scholarships': CrmScholarshipsPage,
 

@@ -101,6 +101,7 @@ const navGroups: NavGroup[] = [
   {
     title: 'Course & University',
     items: [
+      { icon: Database, label: 'International Data Catalogue', view: 'crm-data-catalogue' },
       { icon: Search, label: 'Course Finder', view: 'crm-course-finder' },
       { icon: Building2, label: 'Universities', view: 'crm-universities' },
       { icon: Award, label: 'Scholarships', view: 'crm-scholarships' },

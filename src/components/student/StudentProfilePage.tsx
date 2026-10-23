@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
+import { studentFormSections } from '@/lib/forms/student-form-adapter';
+import { isFormSectionComplete } from '@/lib/forms/form-section-validation';
+import { type FormSectionKey } from '@/lib/forms/application-form-schema';
+import { useStudentAuth } from '@/app/student/layout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -192,6 +195,7 @@ const DESTINATIONS = [
 ];
 
 const ACADEMIC_LEVELS = [
+  'SSC/O Level', 'HSC/A Level', 'Diploma', 'Bachelor', 'Master',
   'SSC/Grade 10',
   'HSC/Grade 12',
   'Bachelor 3yr',
@@ -204,6 +208,7 @@ const ACADEMIC_LEVELS = [
 const RESULT_TYPES = ['GPA', 'Percentage', 'Division'];
 
 const TEST_NAMES = [
+  'Kaplan', 'IELTS-UKVI', 'OIETC', 'Duolingo (DET)',
   'IELTS',
   'IELTS UKVI',
   'OIETC ELLT',
@@ -242,6 +247,7 @@ const VISA_TYPES = [
 const STUDY_LEVELS = [
   'Foundation',
   'Undergraduate',
+  'Postgraduate', 'MRes',
   'Pre-Master',
   'Masters',
   'PhD',
@@ -253,49 +259,6 @@ const STUDY_LEVELS = [
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-// ============================================================
-// MOCK DATA
-// ============================================================
-
-const MOCK_EDUCATIONS: EducationEntry[] = [
-  {
-    id: 'edu-1',
-    academicLevel: 'SSC/Grade 10',
-    institution: 'Dhaka Residential Model College',
-    groupSubject: 'Science',
-    resultType: 'GPA',
-    resultScore: '5.00',
-    duration: '2 Years',
-    startYear: '2017',
-    startMonth: 'January',
-    endYear: '2018',
-    endMonth: 'December',
-    countryOfStudy: 'Bangladesh',
-    cityOfStudy: 'Dhaka',
-    boardName: 'Dhaka Board',
-    primaryLanguage: 'English',
-    studyGap: 'no',
-  },
-  {
-    id: 'edu-2',
-    academicLevel: 'HSC/Grade 12',
-    institution: 'Notre Dame College, Dhaka',
-    groupSubject: 'Science',
-    resultType: 'GPA',
-    resultScore: '4.80',
-    duration: '2 Years',
-    startYear: '2019',
-    startMonth: 'January',
-    endYear: '2020',
-    endMonth: 'December',
-    countryOfStudy: 'Bangladesh',
-    cityOfStudy: 'Dhaka',
-    boardName: 'Dhaka Board',
-    primaryLanguage: 'English',
-    studyGap: 'no',
-  },
 ];
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -898,7 +861,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
   const set = (key: string, val: unknown) =>
     setForm((prev) => ({ ...prev, [key]: val }));
 
-  const educations: EducationEntry[] = (form.educations as EducationEntry[]) || MOCK_EDUCATIONS;
+  const educations: EducationEntry[] = (form.educations as EducationEntry[]) || [];
 
   // Spec B) "Highest Qualification dropdown selects default visible sections".
   // Choosing a level opens every level up to it (SSC → HSC → Bachelor …) as an
@@ -2280,216 +2243,63 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
   );
 }
 
+function RepeatableProfileSection({ form, setForm, arrayKey, label, Component }: {
+  form: Record<string, unknown>;
+  setForm: (fn: (prev: Record<string, unknown>) => Record<string, unknown>) => void;
+  arrayKey: string;
+  label: string;
+  Component: React.ComponentType<{ form: Record<string, unknown>; setForm: (fn: (prev: Record<string, unknown>) => Record<string, unknown>) => void }>;
+}) {
+  const scalarValues = (values: Record<string, unknown>) => Object.fromEntries(Object.entries(values).filter(([, value]) => value === null || typeof value !== 'object'));
+  const entries = Array.isArray(form[arrayKey]) ? form[arrayKey] as Record<string, unknown>[] : [scalarValues(form)];
+  return <div className="space-y-6">
+    {entries.map((entry, index) => <div key={index} className="space-y-3 rounded-xl border border-alo-border p-4">
+      <div className="flex items-center justify-between"><h3 className="font-bold">{label} {index + 1}</h3>
+        <Button type="button" variant="outline" onClick={() => setForm((prev) => ({ ...prev, [arrayKey]: entries.filter((_, i) => i !== index) }))}>Remove</Button>
+      </div>
+      <Component form={entry} setForm={(update) => setForm((prev) => {
+        const current = Array.isArray(prev[arrayKey]) ? prev[arrayKey] as Record<string, unknown>[] : [scalarValues(prev)];
+        const changed = update(current[index] || {});
+        return { ...prev, ...(index === 0 ? changed : {}), [arrayKey]: current.map((row, i) => i === index ? changed : row) };
+      })} />
+    </div>)}
+    <Button type="button" variant="outline" onClick={() => setForm((prev) => ({ ...prev, [arrayKey]: [...entries, {}] }))}><Plus className="mr-2 h-4 w-4" />Add another {label.toLowerCase()}</Button>
+  </div>;
+}
+
 // ============================================================
 // MAIN COMPONENT
 // ============================================================
 
 export default function StudentProfilePage() {
-  const { token } = usePortalStore();
+  const { token } = useStudentAuth();
 
   const [activeTab, setActiveTab] = useState<SectionKey>('lead');
   const [saving, setSaving] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
 
-  const [profileCompletion, setProfileCompletion] = useState(45);
+  const [profileCompletion, setProfileCompletion] = useState(0);
   // Reported by FormBDocumentsSection: { loaded, complete, pending, missing, rejected }
   const [documentsState, setDocumentsState] = useState({ loaded: false, complete: false, pending: 0, missing: 0, rejected: 0 });
-  const [form, setForm] = useState<Record<string, unknown>>({
-    // Lead
-    givenName: 'Rahim',
-    familyName: 'Hossain',
-    leadEmail: 'rahim.hossain@email.com',
-    countryCode: '+880',
-    mobile: '1712-345678',
-    nationality: 'Bangladeshi',
-    gender: 'Male',
-    preferredDestination: 'UK',
-    remarks: 'Interested in MSc Computer Science at UK universities. Strong academic background with SSC GPA 5.00 and HSC GPA 4.80.',
-    welcomeEmail: true,
-    // Personal
-    personalEmail: 'rahim.hossain@email.com',
-    personalPhone: '+880 1712-345678',
-    dateOfBirth: '2000-05-15',
-    personalNationality: 'Bangladeshi',
-    personalGender: 'Male',
-    maritalStatus: 'Single',
-    presentAddress: 'House 12, Road 5, Dhanmondi, Dhaka-1205',
-    permanentAddress: 'Village: Balia, Post: Balia, Savar, Dhaka',
-    sameAsPresent: false,
-    // Funding
-    fundingStatus: 'Self Funded',
-    sponsorType: 'Parents',
-    fundSources: ['Self-Funded', 'Loan Support'],
-    // Contact
-    primaryEmail: 'rahim.hossain@email.com',
-    altEmail: '',
-    contactPhone: '+880 1712-345678',
-    altPhone: '+880 1800-123456',
-    emergencyName: 'Abdul Hossain',
-    emergencyEmail: 'abdul.hossain@email.com',
-    emergencyPhone: '+880 1812-987654',
-    emergencyRelation: 'Parent',
-    // Education
-    educations: MOCK_EDUCATIONS,
-    // Passport
-    hasPassport: 'yes',
-    passportNumber: 'AB1234567',
-    passportIssuePlace: 'Dhaka',
-    passportIssueDate: '2021-03-10',
-    passportExpiry: '2031-03-09',
-    passportIssueCountry: 'Bangladesh',
-    cityOfBirth: 'Dhaka',
-    countryOfBirth: 'Bangladesh',
-    // English
-    englishTestStatus: 'Yes',
-    englishTestName: 'IELTS',
-    englishTestDate: '2024-09-15',
-    englishExpDate: '2026-09-14',
-    englishCertId: 'IELTS-24-BD-78901',
-    englishOverall: 7.0,
-    englishListening: 7.5,
-    englishSpeaking: 7.0,
-    englishWriting: 6.5,
-    englishReading: 7.5,
-    // Work
-    hasWorkExp: 'yes',
-    workExperiences: [
-      {
-        id: 'work-1',
-        companyName: 'TechVista Solutions Ltd.',
-        designation: 'Junior Software Developer',
-        startDate: '2021-07-01',
-        endDate: '2024-06-30',
-        currentlyWorking: false,
-        salaryMode: 'Bank Transfer',
-        jobRole: 'Full Stack Developer',
-      },
-    ],
-    // Reference
-    hasReferral: 'yes',
-    refName: 'Dr. Anwarul Islam',
-    refDesignation: 'Professor',
-    refDepartment: 'Computer Science & Engineering',
-    refOrganization: 'University of Dhaka',
-    refEmail: 'anwarul@du.ac.bd',
-    refPhone: '+880 1711-234567',
-    refAddress: 'Department of CSE, University of Dhaka, Dhaka-1000',
-    // Background
-    hasVisa: 'no',
-    hasVisaRefusal: 'no',
-    hasImmigration: 'no',
-    visas: [],
-    visaRefusals: [],
-    immigrations: [],
-    hasMedical: 'no',
-    hasCriminal: 'no',
-    // Admission
-    studyDestination: 'UK',
-    studyLevel: 'Masters',
-    instituteType: 'Russell Group University',
-    instituteName: 'University of Manchester',
-    studyArea: 'Computer Science',
-    programTitle: 'MSc Advanced Computer Science',
-    intake: 'September 2025',
-    enrollmentChoice: '1st',
-    applicationPathway: 'Direct',
-    pathwayProvider: '',
-    visaType: 'Student',
-  });
+  const [profileLoadError, setProfileLoadError] = useState(false);
+  const [form, setForm] = useState<Record<string, unknown>>({ educations: [], workExperiences: [] });
 
   // Load profile from API on mount
   useEffect(() => {
     async function loadProfile() {
-      if (!token) { setProfileLoading(false); return; }
       try {
         const res = await fetch('/api/student-portal/profile', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          credentials: 'include',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         const json = await res.json();
-        if (json.success && json.data) {
-          const p = json.data as Record<string, unknown>;
-          // Populate form fields from API profile data
-          const updates: Record<string, unknown> = {};
-          if (p.givenName) updates.givenName = p.givenName;
-          if (p.familyName) updates.familyName = p.familyName;
-          if (p.dateOfBirth) updates.dateOfBirth = p.dateOfBirth;
-          if (p.gender) { updates.personalGender = p.gender; updates.gender = p.gender; }
-          if (p.nationality) { updates.personalNationality = p.nationality; updates.nationality = p.nationality; }
-          if (p.city) updates.city = p.city;
-          if (p.presentAddress) updates.presentAddress = p.presentAddress;
-          if (p.permanentAddress) updates.permanentAddress = p.permanentAddress;
-          if (p.passportNumber) updates.passportNumber = p.passportNumber;
-          if (p.passportExpiry) updates.passportExpiry = p.passportExpiry;
-          if (p.passportIssuePlace) updates.passportIssuePlace = p.passportIssuePlace;
-          if (p.passportIssueDate) updates.passportIssueDate = p.passportIssueDate;
-          if (p.passportIssueCountry) updates.passportIssueCountry = p.passportIssueCountry;
-          if (p.cityOfBirth) updates.cityOfBirth = p.cityOfBirth;
-          if (p.countryOfBirth) updates.countryOfBirth = p.countryOfBirth;
-          if (p.preferredCountry) { updates.preferredDestination = p.preferredCountry; updates.studyDestination = p.preferredCountry; }
-          if (p.preferredIntake) updates.intake = p.preferredIntake;
-          if (p.preferredSubject) updates.studyArea = p.preferredSubject;
-          if (p.preferredLevel) updates.studyLevel = p.preferredLevel;
-          if (p.englishTestType) updates.englishTestName = p.englishTestType;
-          if (p.englishScore) updates.englishOverall = p.englishScore;
-          if (p.budget) updates.budget = p.budget;
-          if (p.altEmail) updates.altEmail = p.altEmail;
-          if (p.altPhone) updates.altPhone = p.altPhone;
-          if (p.emergencyName) updates.emergencyName = p.emergencyName;
-          if (p.emergencyEmail) updates.emergencyEmail = p.emergencyEmail;
-          if (p.emergencyPhone) updates.emergencyPhone = p.emergencyPhone;
-          if (p.emergencyRelation) updates.emergencyRelation = p.emergencyRelation;
-          if (p.maritalStatus) updates.maritalStatus = p.maritalStatus;
-          if (p.fundingStatus) updates.fundingStatus = p.fundingStatus;
-          if (p.sponsorType) updates.sponsorType = p.sponsorType;
-          if (p.fundSource) updates.fundSources = String(p.fundSource).split(',').map((s: string) => s.trim()).filter(Boolean);
-          if (p.fullName) { updates.givenName = (p.fullName as string).split(' ')[0] || p.givenName; updates.familyName = (p.fullName as string).split(' ').slice(1).join(' ') || p.familyName; }
-          if (p.profileCompletion !== undefined) setProfileCompletion(p.profileCompletion as number);
-          if (p.hasPassport !== undefined) updates.hasPassport = p.hasPassport ? 'yes' : 'no';
-          if (p.hasWorkExp !== undefined) updates.hasWorkExp = p.hasWorkExp ? 'yes' : 'no';
-          if (p.hasReferral !== undefined) updates.hasReferral = p.hasReferral ? 'yes' : 'no';
-          if (p.hasVisa !== undefined) updates.hasVisa = p.hasVisa ? 'yes' : 'no';
-          if (p.hasVisaRefusal !== undefined) updates.hasVisaRefusal = p.hasVisaRefusal ? 'yes' : 'no';
-          if (p.hasMedical !== undefined) updates.hasMedical = p.hasMedical ? 'yes' : 'no';
-          if (p.hasCriminal !== undefined) updates.hasCriminal = p.hasCriminal ? 'yes' : 'no';
-          // Handle related records
-          if (p.educations && Array.isArray(p.educations) && p.educations.length > 0) {
-            updates.educations = p.educations.map((e: Record<string, unknown>) => ({
-              id: (e.id as string) || `edu-${Date.now()}`,
-              academicLevel: e.academicLevel || '',
-              institution: e.institution || '',
-              groupSubject: e.groupSubject || '',
-              resultType: e.resultType || '',
-              resultScore: e.resultScore || '',
-              duration: e.duration || '',
-              startYear: e.startYear || '',
-              startMonth: e.startMonth || '',
-              endYear: e.endYear || '',
-              endMonth: e.endMonth || '',
-              countryOfStudy: e.countryOfStudy || '',
-              cityOfStudy: e.cityOfStudy || '',
-              boardName: e.boardName || '',
-              primaryLanguage: e.primaryLanguage || '',
-              studyGap: e.studyGap || '',
-            }));
-          }
-          if (p.workExperiences && Array.isArray(p.workExperiences) && p.workExperiences.length > 0) {
-            updates.workExperiences = p.workExperiences.map((w: Record<string, unknown>) => ({
-              id: (w.id as string) || `work-${Date.now()}`,
-              companyName: w.companyName || '',
-              designation: w.designation || '',
-              startDate: w.startDate || '',
-              endDate: w.endDate || '',
-              currentlyWorking: w.currentlyWorking || false,
-              salaryMode: w.salaryMode || '',
-              jobRole: w.jobRole || '',
-            }));
-          }
-          if (Object.keys(updates).length > 0) {
-            setForm(prev => ({ ...prev, ...updates }));
-          }
-        }
+        if (!res.ok || !json.success || !json.data) throw new Error('Profile unavailable');
+        setForm(json.data);
+        setProfileCompletion(Number(json.data.profileCompletion) || 0);
+        setProfileLoadError(false);
       } catch {
-        // Fallback to default mock data already in state
+        setProfileLoadError(true);
+        toast({ title: 'Profile could not be loaded', description: 'Reload before editing. No sample data has been filled in.', variant: 'destructive' });
       }
       setProfileLoading(false);
     }
@@ -2499,23 +2309,12 @@ export default function StudentProfilePage() {
   const activeIndex = SECTION_KEYS.indexOf(activeTab);
 
   const sectionComplete = useMemo(() => {
-    const checks: Record<SectionKey, boolean> = {
-      lead: !!(form.givenName && form.familyName && form.leadEmail),
-      personal: !!(form.dateOfBirth && form.personalGender && form.maritalStatus),
-      funding: !!(form.fundingStatus && form.sponsorType),
-      contact: !!(form.primaryEmail && form.contactPhone),
-      education: ((form.educations as EducationEntry[]) || []).length > 0,
-      passport: (form.hasPassport as string) === 'no' || !!(form.passportNumber),
-      english: (form.englishTestStatus as string) === 'no' || (form.englishTestStatus as string) === 'Planning For' || !!(form.englishOverall),
-      work: (form.hasWorkExp as string) === 'no' || ((form.workExperiences as WorkExpEntry[]) || []).length > 0,
-      reference: (form.hasReferral as string) === 'no' || !!(form.refName && form.refEmail),
-      background: (form.hasVisa as string) === 'no' && (form.hasVisaRefusal as string) === 'no' && (form.hasImmigration as string) === 'no' && (form.hasMedical as string) === 'no' && (form.hasCriminal as string) === 'no',
-      admission: !!(form.studyDestination && form.studyLevel && form.instituteName),
-      // Form B section E) — required documents uploaded AND no rejected file
-      // waiting on the student. The list itself is loaded by
-      // FormBDocumentsSection; until it has loaded we do not claim completion.
-      documents: documentsState.loaded && documentsState.complete,
-    };
+    const sections = studentFormSections(form);
+    const checks = Object.fromEntries(SECTION_KEYS.map((key) => [
+      key,
+      key === 'documents' ? documentsState.loaded && documentsState.complete
+        : isFormSectionComplete(key as FormSectionKey, sections[key]),
+    ])) as Record<SectionKey, boolean>;
     return checks;
   }, [form, documentsState]);
 
@@ -2530,6 +2329,7 @@ export default function StudentProfilePage() {
   }, [activeIndex]);
 
   const handleSave = useCallback(async () => {
+    if (profileLoading || profileLoadError) return;
     setSaving(true);
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -2552,7 +2352,7 @@ export default function StudentProfilePage() {
       toast({ title: 'Network error', description: 'Could not reach the server.', variant: 'destructive' });
     }
     setSaving(false);
-  }, [form, activeTab, token]);
+  }, [form, activeTab, token, profileLoading, profileLoadError]);
 
   const handleSaveAndContinue = useCallback(async () => {
     await handleSave();
@@ -2720,12 +2520,12 @@ export default function StudentProfilePage() {
                 {activeTab === 'contact' && <ContactSection form={form} setForm={setForm} />}
                 {activeTab === 'education' && <EducationSection form={form} setForm={setForm} />}
                 {activeTab === 'passport' && <PassportSection form={form} setForm={setForm} />}
-                {activeTab === 'english' && <EnglishSection form={form} setForm={setForm} />}
+                {activeTab === 'english' && <RepeatableProfileSection form={form} setForm={setForm} arrayKey="englishTests" label="English test" Component={EnglishSection} />}
                 {activeTab === 'work' && <WorkSection form={form} setForm={setForm} />}
                 {activeTab === 'reference' && <ReferenceSection form={form} setForm={setForm} />}
                 {activeTab === 'background' && <BackgroundSection form={form} setForm={setForm} token={token} />}
-                {activeTab === 'admission' && <AdmissionSection form={form} setForm={setForm} />}
-                {activeTab === 'documents' && <FormBDocumentsSection token={token} onSummaryChange={setDocumentsState} />}
+                {activeTab === 'admission' && <RepeatableProfileSection form={form} setForm={setForm} arrayKey="admissionPreferences" label="Admission preference" Component={AdmissionSection} />}
+                {activeTab === 'documents' && <FormBDocumentsSection formValues={form} token={token} onSummaryChange={setDocumentsState} />}
               </TabsContent>
             </Card>
           </div>
@@ -2759,7 +2559,7 @@ export default function StudentProfilePage() {
               type="button"
               variant="outline"
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || profileLoading || profileLoadError}
               className="border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
             >
               <Save className="size-4 mr-1" />
@@ -2769,7 +2569,7 @@ export default function StudentProfilePage() {
               <Button
                 type="button"
                 onClick={handleSaveAndContinue}
-                disabled={saving}
+                disabled={saving || profileLoading || profileLoadError}
                 className="bg-[var(--alo-cta-hover)] hover:bg-[#9a3412] text-white"
               >
                 Save &amp; Continue
@@ -2779,7 +2579,7 @@ export default function StudentProfilePage() {
               <Button
                 type="button"
                 onClick={handleSave}
-                disabled={saving}
+                disabled={saving || profileLoading || profileLoadError}
                 className="bg-[var(--alo-cta-hover)] hover:bg-[#9a3412] text-white"
               >
                 <Save className="size-4 mr-1" />

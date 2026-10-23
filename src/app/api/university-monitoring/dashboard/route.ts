@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicCourseWhere, publicUniversityWhere } from '@/lib/public-catalog';
 import { db } from "@/lib/db";
 import { requireMonitoringViewer } from "@/lib/university-monitoring-auth";
 
 // GET /api/university-monitoring/dashboard
 // Returns the Super Admin monitoring dashboard summary.
-// Public read (data is operational, not student PII) — RBAC enforced at the view layer.
+// Authenticated staff read; authorization is enforced server-side below.
 export async function GET(req: NextRequest) {
   // Staff-only: this endpoint exposes unapproved, unverified detected changes.
   const guard = await requireMonitoringViewer(req);
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
     db.dataChange.count({ where: { status: "APPROVED" } }),
     db.dataChange.count({ where: { status: "REJECTED" } }),
     db.approvalQueueItem.count({ where: { status: "PENDING", queueType: "MANUAL_REVIEW" } }),
-    db.approvalQueueItem.count({ where: { status: "PENDING", queueType: "RECHECK" } }),
+    db.approvalQueueItem.count({ where: { status: "RECHECK_REQUESTED", queueType: "RECHECK" } }),
     db.dataChange.count({ where: { status: "PENDING", impactLevel: "CRITICAL" } }),
     db.dataConflict.count({ where: { status: "PENDING" } }),
   ]);
@@ -56,11 +57,11 @@ export async function GET(req: NextRequest) {
 
   // 5. Entity counts (real DB state)
   const [totalUniversities, verifiedUniversities, unverifiedUniversities, totalCourses, verifiedCourses, totalFaculties] = await Promise.all([
-    db.universityPage.count(),
-    db.universityPage.count({ where: { verificationStatus: "VERIFIED" } }),
-    db.universityPage.count({ where: { verificationStatus: "UNVERIFIED" } }),
-    db.coursePage.count(),
-    db.coursePage.count({ where: { verificationStatus: "VERIFIED" } }),
+    db.crmUniversity.count(),
+    db.crmUniversity.count({ where: publicUniversityWhere() }),
+    db.crmUniversity.count({ where: { NOT: publicUniversityWhere() } }),
+    db.crmCourse.count(),
+    db.crmCourse.count({ where: publicCourseWhere() }),
     db.universityFaculty.count(),
   ]);
 
@@ -77,8 +78,8 @@ export async function GET(req: NextRequest) {
   });
 
   // 7. Degree-level distribution of courses
-  const coursesByLevel = await db.coursePage.groupBy({
-    by: ["level"],
+  const coursesByLevel = await db.crmCourse.groupBy({
+    by: ["studyLevel"],
     _count: { id: true },
   });
 
@@ -92,17 +93,18 @@ export async function GET(req: NextRequest) {
   // 9. Health status
   let health: "HEALTHY" | "RUNNING" | "NEEDS_REVIEW" | "ERROR" = "HEALTHY";
   if (job?.lastRunStatus === "FAILED") health = "ERROR";
-  else if (critical > 0 || conflicts > 0) health = "NEEDS_REVIEW";
-  else if (lastRun?.status === "RUNNING") health = "RUNNING";
+  else if (lastRun?.status === "RUNNING") health = job?.lockExpiresAt && job.lockExpiresAt < new Date() ? "ERROR" : "RUNNING";
+  else if (!job || !lastRun || !activeSources || !lastRun.sourcesChecked || lastRun.status === "PARTIAL" || critical > 0 || conflicts > 0 || needsReview > 0 || failedSourcesCount > 0) health = "NEEDS_REVIEW";
 
   // 10. Universities by country
-  const universitiesByCountry = await db.universityPage.groupBy({
-    by: ["countrySlug"],
+  const universitiesByCountry = await db.crmUniversity.groupBy({
+    by: ["country"],
     _count: { id: true },
     orderBy: { _count: { id: "desc" } },
   });
 
   return NextResponse.json({
+    evidenceNotice: 'Entity counters describe stored catalogue record statuses, not independently completed university catalogue research. Discovery candidates are never verified programmes.',
     job: job ? {
       jobId: job.jobId,
       name: job.name,
@@ -153,7 +155,7 @@ export async function GET(req: NextRequest) {
       byType: changesByType.map((c) => ({ type: c.changeType, count: c._count.id })),
       byImpact: changesByImpact.map((c) => ({ level: c.impactLevel, count: c._count.id })),
     },
-    coursesByLevel: coursesByLevel.map((c) => ({ level: c.level, count: c._count.id })),
-    universitiesByCountry: universitiesByCountry.map((c) => ({ country: c.countrySlug, count: c._count.id })),
+    coursesByLevel: coursesByLevel.map((c) => ({ level: c.studyLevel, count: c._count.id })),
+    universitiesByCountry: universitiesByCountry.map((c) => ({ country: c.country, count: c._count.id })),
   });
 }

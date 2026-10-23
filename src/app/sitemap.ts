@@ -68,6 +68,7 @@ async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
 const STATIC_PATHS: Array<[string, MetadataRoute.Sitemap[number]['changeFrequency'], number]> = [
   ['', 'daily', 1.0],
   ['/about', 'monthly', 0.6], ['/contact', 'monthly', 0.6],
+  ['/all-university-information', 'daily', 0.8],
   ['/universities', 'daily', 0.9], ['/course-finder', 'daily', 0.9],
   ['/destinations', 'weekly', 0.8], ['/scholarships', 'weekly', 0.8], ['/services', 'weekly', 0.8],
   ['/resources', 'weekly', 0.8], ['/blog', 'daily', 0.9], ['/guides', 'weekly', 0.8], ['/language-prep', 'weekly', 0.8],

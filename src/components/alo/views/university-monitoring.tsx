@@ -110,6 +110,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
   const [selectedChange, setSelectedChange] = React.useState<any | null>(null);
   const [actionNotes, setActionNotes] = React.useState("");
   const [acting, setActing] = React.useState(false);
+  const [catalogueReport, setCatalogueReport] = React.useState<any | null>(null);
+  const [catalogueLoading, setCatalogueLoading] = React.useState(false);
   const [canManageSources, setCanManageSources] = React.useState(false);
   const [sourceDialogOpen, setSourceDialogOpen] = React.useState(false);
   const [sourceSaving, setSourceSaving] = React.useState(false);
@@ -118,6 +120,18 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
     sourceName: '', sourceUrl: '', sourceType: 'official_university', entityType: 'UNIVERSITY',
     universitySlug: '', courseSlug: '', countrySlug: '', category: 'CATALOGUE',
   });
+
+  const viewCatalogue = async (sourceId: string) => {
+    setCatalogueLoading(true);
+    try {
+      const response = await fetch(`/api/university-monitoring/catalogue?sourceId=${encodeURIComponent(sourceId)}`, { credentials: 'include' });
+      const body = await response.json();
+      if (!response.ok || !body.success) throw new Error(body.error || 'Catalogue report unavailable');
+      setCatalogueReport(body);
+    } catch (error) {
+      toast({ title: 'Catalogue discovery', description: error instanceof Error ? error.message : 'Report unavailable', variant: 'destructive' });
+    } finally { setCatalogueLoading(false); }
+  };
 
   const fetchDashboard = React.useCallback(async () => {
     try {
@@ -759,6 +773,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                         {s.consecutiveFailures > 0 ? <span className="text-rose-600 font-semibold">{s.consecutiveFailures}</span> : <span className="text-[var(--alo-text-muted)]">0</span>}
                       </TableCell>
                       {canManageSources && <TableCell className="align-top">
+                        {s.category === 'CATALOGUE' && <Button size="sm" variant="outline" disabled={catalogueLoading} onClick={() => void viewCatalogue(s.id)}>Catalogue evidence</Button>}
                         <div className="flex min-w-32 flex-col gap-1.5">
                           {s.status !== 'RETIRED' && (s.status === 'ACTIVE' && s.monitoringEnabled
                             ? <Button size="sm" variant="outline" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'PAUSE')}>Pause</Button>
@@ -926,6 +941,25 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
               </DialogFooter>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={Boolean(catalogueReport)} onOpenChange={(open) => { if (!open) setCatalogueReport(null); }}>
+        <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+          <DialogHeader><DialogTitle>Official catalogue discovery evidence</DialogTitle></DialogHeader>
+          {catalogueReport && <div className="space-y-4 text-sm">
+            <p className="rounded-lg bg-amber-50 p-3 text-amber-900">{catalogueReport.safetyNotice}</p>
+            <p><strong>Status:</strong> {catalogueReport.report.status} · <strong>Catalogue verified:</strong> No</p>
+            <p>Fetched pages: {catalogueReport.report.visited?.length || 0} · Candidate links: {catalogueReport.report.discovered?.length || 0} · Queued pages: {catalogueReport.report.frontier?.length || 0} · Failed pages: {catalogueReport.report.failures?.length || 0}</p>
+            <h3 className="font-bold">Completeness blockers</h3>
+            <ul className="list-inside list-disc">{(catalogueReport.report.blockers || []).map((message: string) => <li key={message}>{message}</li>)}</ul>
+            <h3 className="font-bold">Special programme candidates—not verified programmes</h3>
+            <pre className="overflow-auto rounded bg-slate-50 p-3 text-xs">{JSON.stringify(catalogueReport.report.specialProgrammeCandidates, null, 2)}</pre>
+            <h3 className="font-bold">Discovered official-host links</h3>
+            <ul className="max-h-72 space-y-2 overflow-auto">{(catalogueReport.report.discovered || []).map((link: { url: string; label: string; kind: string }) => <li key={link.url}>
+              <Badge variant="outline" className="mr-2">{link.kind}</Badge>
+              <a href={link.url.startsWith('https://') ? link.url : undefined} target="_blank" rel="noopener noreferrer" className="break-all text-alo-brand underline">{link.label || link.url}</a>
+            </li>)}</ul>
+          </div>}
         </DialogContent>
       </Dialog>
     </div>

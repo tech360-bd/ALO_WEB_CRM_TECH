@@ -95,6 +95,7 @@ export async function GET(req: Request) {
     const monthNumbers = new Set<number>();
     for (const row of intakes) {
       const value = String(row.intakeMonth || '').trim().toLowerCase();
+      if (!value) continue;
       if (/^\d{1,2}$/.test(value)) {
         const month = Number(value);
         if (month >= 1 && month <= 12) monthNumbers.add(month);

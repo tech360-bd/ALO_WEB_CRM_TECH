@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { isPublicChromeRoute } from '@/components/website/public-chrome-policy';
 
 describe('isPublicChromeRoute', () => {
-  it.each(['/', '/book-consultation', '/student-journey', '/universities', '/visa-support'])(
+  it.each(['/', '/book-consultation', '/student-journey', '/universities', '/visa-support',
+    '/login', '/login/', '/portal/login', '/student/login', '/student/register',
+    '/register', '/forgot-password', '/reset-password', '/employee/login', '/partner/login'])(
     'keeps public chrome on %s',
     (path) => {
       expect(isPublicChromeRoute(path)).toBe(true);
@@ -10,14 +12,6 @@ describe('isPublicChromeRoute', () => {
   );
 
   it.each([
-    '/login',
-    '/login/',
-    '/portal/login',
-    '/student/login',
-    '/student/register',
-    '/register',
-    '/forgot-password',
-    '/reset-password',
     '/partner-admin/dashboard',
     '/crm',
     '/admin/marketing-automation',
