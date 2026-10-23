@@ -1,73 +1,107 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
+
+function canViewHrDashboard(auth: AuthContext): boolean {
+  const roles = new Set([auth.userType, ...auth.roles].map((role) => role.toLowerCase()));
+  return roles.has('super_admin') || roles.has('hr_manager') || roles.has('hr') || auth.permissions.includes('employee.hr.dashboard.view');
+}
+
+function canViewPayroll(auth: AuthContext): boolean {
+  const roles = new Set([auth.userType, ...auth.roles].map((role) => role.toLowerCase()));
+  return roles.has('super_admin') || auth.permissions.some((permission) => ['hp1', 'f1', 'employee.salary.view_all'].includes(permission));
+}
+
+function dhakaDate(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Dhaka', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+}
 
 export async function GET(req: NextRequest) {
+  const authResult = await authenticateRequest(req);
+  if (authResult instanceof NextResponse) return authResult;
+  const auth = authResult as AuthContext;
+  if (!canViewHrDashboard(auth)) return NextResponse.json({ success: false, error: 'HR dashboard permission required.' }, { status: 403 });
+  const roles = new Set([auth.userType, ...auth.roles].map((role) => role.toLowerCase()));
+  const isSuperAdmin = roles.has('super_admin');
+  const canSeePayroll = canViewPayroll(auth);
+  const canSeeSecurity = isSuperAdmin || auth.permissions.includes('ad2');
+  if (!isSuperAdmin) {
+    const employee = await db.employee.findUnique({ where: { userId: auth.userId }, select: { status: true } }).catch(() => null);
+    if (!employee || employee.status.toLowerCase() !== 'active') return NextResponse.json({ success: false, error: 'An active HR employee account is required.' }, { status: 403 });
+  }
+
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
+    const today = dhakaDate();
+    const month = today.slice(0, 7);
+    const [totalEmployees, activeEmployees, pendingActivation, pendingLeave, pendingDocs, payrollDraft, agreementsPending, attendanceToday, deviceTotal, unresolvedSecurity, auditLogs, payrollCost] = await Promise.all([
+      db.employee.count(),
+      db.employee.count({ where: { status: { in: ['active', 'ACTIVE'] } } }),
+      db.portalUser.count({ where: { userType: 'EMPLOYEE', status: 'pending_activation' } }),
+      db.employeeLeave.count({ where: { status: { in: ['PENDING', 'pending'] } } }),
+      db.employeeDocument.count({ where: { status: { in: ['pending', 'PENDING'] }, isDeleted: false } }),
+      canSeePayroll ? db.employeePayroll.count({ where: { status: { in: ['draft', 'review_pending', 'DRAFT', 'REVIEW_PENDING'] }, period: month } }) : Promise.resolve(null),
+      db.employeeAgreement.count({ where: { status: { in: ['pending', 'PENDING', 'review_pending', 'REVIEW_PENDING'] } } }),
+      db.employeeAttendance.findMany({ where: { date: today }, select: { status: true } }),
+      db.employeeDevice.count(),
+      canSeeSecurity ? db.employeeSecurityEvent.count({ where: { isResolved: false } }) : Promise.resolve(null),
+      canSeeSecurity ? db.employeeAuditLog.count() : Promise.resolve(null),
+      canSeePayroll ? db.employeePayroll.aggregate({ where: { period: month, status: { in: ['paid', 'PAID'] } }, _sum: { netSalary: true } }) : Promise.resolve(null),
+    ]);
 
-    const isHr = auth.roles.includes('hr_manager') || auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
-    if (!isHr) return NextResponse.json({ success: false, error: 'HR/Admin/Super Admin required' }, { status: 403 });
-
-    const totalEmployees = await db.portalUser.count({ where: { userType: 'EMPLOYEE' } }).catch(() => 0);
-    const activeEmployees = await db.portalUser.count({ where: { userType: 'EMPLOYEE', status: 'active' } }).catch(() => 0);
-    const pendingProfile = await db.portalUser.count({ where: { userType: 'EMPLOYEE', status: 'pending_activation' } }).catch(() => 0);
-    const pendingLeave = await (db as any).employeeLeave.count({ where: { status: 'pending' } }).catch(() => 0);
-    const pendingDocs = await db.employeeDocument.count({ where: { status: 'pending' } }).catch(() => 0);
-    const payrollDraft = await (db as any).employeePayroll.count({ where: { status: 'draft' } }).catch(() => 0);
-    const agreementsPending = await (db as any).employeeAgreement.count({ where: { status: 'active' } }).catch(() => 0);
-
-    const headcount = totalEmployees;
-    const attendanceRate = 92.5;
-    const latePercent = 5.2;
-    const absentPercent = 2.3;
-    const leavePercent = 8.1;
+    const attendance = {
+      recorded: attendanceToday.length,
+      present: attendanceToday.filter((record) => ['present', 'late'].includes(record.status.toLowerCase())).length,
+      late: attendanceToday.filter((record) => record.status.toLowerCase() === 'late').length,
+      absent: attendanceToday.filter((record) => record.status.toLowerCase() === 'absent').length,
+      onLeave: attendanceToday.filter((record) => record.status.toLowerCase() === 'leave').length,
+      attendanceRate: null,
+      rateNote: 'Not calculated: attendance rows do not establish a complete expected-workforce denominator.',
+    };
+    const auditNow = new Date();
+    await db.portalAuditLog.create({
+      data: {
+        actorUserId: auth.actorUserId,
+        action: 'EMPLOYEE_HR_DASHBOARD_VIEWED',
+        entityType: 'EmployeeHRDashboard',
+        entityId: auth.userId,
+        metadata: JSON.stringify({ effectiveUserId: auth.userId, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }),
+        ipAddress: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim().slice(0, 191) || '',
+        userAgent: req.headers.get('user-agent')?.slice(0, 191) || '',
+      },
+    });
 
     return NextResponse.json({
       success: true,
       hrDashboard: {
-        employeeDirectory: { totalEmployees, activeEmployees, pendingProfile },
+        employeeDirectory: { totalEmployees, activeEmployees, pendingActivation },
         employeeRequests: { pendingLeave, pendingDocs, payrollDraft, agreementsPending },
-        profileReview: { pendingProfile },
-        documents: { pendingDocs },
-        attendance: { attendanceRate, latePercent, absentPercent, leavePercent },
-        leave: { pendingLeave },
-        payroll: { payrollDraft },
-        agreements: { agreementsPending },
-        devices: { total: await (db as any).employeeDevice.count().catch(() => 0) },
-        security: { events: await (db as any).employeeSecurityEvent.count({ where: { isResolved: false } }).catch(() => 0) },
-        reports: { auditLogs: await (db as any).employeeAuditLog.count().catch(() => 0) },
+        profileReview: { pendingActivation },
+        documents: { pendingReview: pendingDocs },
+        attendance,
+        leave: { pending: pendingLeave },
+        payroll: { draft: payrollDraft, paidNetCost: payrollCost?._sum.netSalary ?? null, permitted: canSeePayroll },
+        agreements: { pending: agreementsPending },
+        devices: { total: deviceTotal },
+        security: { unresolvedEvents: unresolvedSecurity, permitted: canSeeSecurity },
+        reports: { auditLogs, permitted: canSeeSecurity },
         analytics: {
-          headcount,
-          attendanceRate,
-          latePercent,
-          absentPercent,
-          leavePercent,
-          payrollCost: 'Calculated from EmployeePayroll gross/net',
-          departmentCost: 'Grouped by department',
-          newJoiners: 'Last 30 days',
-          resignations: 'Last 30 days',
-          probationEmployees: 'Joining date < 6 months',
-          upcomingConfirmation: 'Probation ending',
-          birthdays: 'This month',
-          workAnniversaries: 'This month',
-          expiringContracts: 'Next 30 days',
-          missingDocuments: pendingDocs,
-        },
-        widgets: {
-          pendingLeave: 'HR widget — pending leave approvals',
-          payroll: 'HR widget — payroll draft/review/approved',
-          joining: 'HR widget — new joiners profile completion',
-          documentsMissing: 'HR widget — missing mandatory docs',
-          contracts: 'HR widget — expiring contracts',
-          employeeIssues: 'HR widget — security events, SLA breaches',
+          headcount: totalEmployees,
+          activeEmployees,
+          attendance,
+          newJoiners: null,
+          resignedEmployees: null,
+          probationEmployees: null,
+          upcomingConfirmation: null,
+          birthdays: null,
+          workAnniversaries: null,
+          expiringContracts: null,
+          missingMandatoryDocuments: null,
+          note: 'Unavailable fields are not fabricated; configure authoritative HR requirement and workforce calendars before reporting them.',
         },
       },
-      permissionNote: 'Salary visibility separately permission-controlled — canViewEmployeePrivateProfileEngine',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      audit: { recorded: auditNow.toISOString() },
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'HR dashboard data is temporarily unavailable.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
   }
 }

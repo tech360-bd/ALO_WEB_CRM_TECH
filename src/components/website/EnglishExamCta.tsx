@@ -9,7 +9,7 @@
  */
 
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import type { AriaRole, ReactNode } from 'react';
 import { ArrowRight, GraduationCap } from 'lucide-react';
 import { trackEnglishExamCtaClick } from '@/lib/analytics/cta-tracking';
 import {
@@ -38,16 +38,18 @@ export interface EnglishExamButtonProps {
   className?: string;
   children?: ReactNode;
   onNavigate?: () => void;
+  role?: AriaRole;
 }
 
 /** Plain same-tab anchor to the English Test Platform. Caller supplies styling. */
-export function EnglishExamButton({ location, label, className, children, onNavigate }: EnglishExamButtonProps) {
+export function EnglishExamButton({ location, label, className, children, onNavigate, role }: EnglishExamButtonProps) {
   return (
     <a
       href={ENGLISH_EXAM_PLATFORM_URL}
       onClick={makeClickHandler(location, onNavigate)}
       data-cta="english-exam"
       data-location={location}
+      role={role}
       className={className}
     >
       {children ?? label ?? COPY.en.button}
@@ -115,7 +117,7 @@ export function PrepVsExamSplit({
       </div>
 
       <div className="flex flex-col rounded-3xl border border-orange-200 bg-orange-50 p-6 shadow-sm">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E8501A] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
+        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E8501A] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
           <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
           {COPY.en.realExamLabel}
         </span>
@@ -124,7 +126,7 @@ export function PrepVsExamSplit({
         <p className="mt-2 text-xs text-slate-500">{COPY.en.leaving}</p>
         <EnglishExamButton
           location={location}
-          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[#E8501A] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#C93D13] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[#E8501A] px-5 py-3 text-sm font-bold text-black shadow-sm transition hover:bg-[#C93D13] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
         >
           {COPY.bn.button} · {COPY.en.button} <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </EnglishExamButton>
@@ -138,7 +140,7 @@ export function PrepVsExamSplit({
 export function EnglishExamCard({ location, testName }: { location: EnglishExamCtaLocation; testName?: string }) {
   return (
     <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8501A] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8501A] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-black">
         <GraduationCap className="h-3 w-3" aria-hidden="true" />
         {COPY.en.realExamLabel}
       </span>
@@ -148,7 +150,7 @@ export function EnglishExamCard({ location, testName }: { location: EnglishExamC
       <p className="mt-1 text-xs text-slate-600">{COPY.en.realExamBody}</p>
       <EnglishExamButton
         location={location}
-        className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#C93D13] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+        className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] px-4 py-3 text-sm font-bold text-black transition hover:bg-[#C93D13] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
       >
         {COPY.en.button} <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </EnglishExamButton>

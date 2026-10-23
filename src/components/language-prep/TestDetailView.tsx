@@ -147,7 +147,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               <div className="flex flex-wrap items-center gap-2.5">
                 <Badge className="bg-[#0057B8] text-white font-bold text-[11px] px-3 py-1">{test.name}</Badge>
                 {test.testType !== 'moi_guidance' && <Badge className="bg-white border border-[#E2E8F0] text-[#0F172A] font-semibold text-[11px]">{test.format}</Badge>}
-                {test.isPopular && <Badge className="bg-[#E8501A] text-white font-bold text-[11px]">Popular</Badge>}
+                {test.isPopular && <Badge className="bg-[#E8501A] text-black font-bold text-[11px]">Popular</Badge>}
                 {isMoi && <Badge className="bg-amber-50 text-amber-700 border-amber-200 font-bold text-[11px]">Guidance Resource — Not a test</Badge>}
               </div>
 
@@ -171,7 +171,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               )}
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button asChild className="bg-[#E8501A] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
+                <Button asChild className="bg-[#E8501A] hover:bg-[#d14315] text-black font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Book Free {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl"><a href="#assessment">
@@ -545,7 +545,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <Input placeholder="Current Score" value={leadForm.currentScore} onChange={e => setLeadForm({ ...leadForm, currentScore: e.target.value })} className="h-11 rounded-xl bg-white text-[#0F172A] border-0" />
                   <Input placeholder="Target Score" value={leadForm.targetScore} onChange={e => setLeadForm({ ...leadForm, targetScore: e.target.value })} className="h-11 rounded-xl bg-white text-[#0F172A] border-0" />
                   <div className="sm:col-span-2">
-                    <Button type="submit" className="w-full bg-[#E8501A] hover:bg-[#d14315] text-white font-bold h-12 rounded-xl">Book Free Counselling →</Button>
+                    <Button type="submit" className="w-full bg-[#E8501A] hover:bg-[#d14315] text-black font-bold h-12 rounded-xl">Book Free Counselling →</Button>
                   </div>
                 </form>
 
@@ -584,7 +584,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               <Card className="p-5 bg-gradient-to-br from-[#0057B8] to-[#003F87] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-blue-100 leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
-                <Button asChild className="w-full bg-[#E8501A] hover:bg-[#d14315] text-white font-bold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Free Counselling →</a></Button>
+                <Button asChild className="w-full bg-[#E8501A] hover:bg-[#d14315] text-black font-bold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Free Counselling →</a></Button>
                 <p className="text-[10px] text-blue-200 mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
               </Card>
 

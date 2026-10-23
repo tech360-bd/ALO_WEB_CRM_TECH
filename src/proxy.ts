@@ -12,6 +12,7 @@ const PUBLIC_ROUTES = [
   "/forgot-password",
   "/about",
   "/contact",
+  "/global-offices",
   "/privacy-policy",
   "/terms",
   "/cookies",

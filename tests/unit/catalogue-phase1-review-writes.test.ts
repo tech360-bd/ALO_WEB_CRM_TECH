@@ -4,8 +4,8 @@
  *
  * Mocked: `@/lib/db` (recording fakes), `@/lib/auth-middleware` (withAuth
  * reproduces the real requireUserTypes check), next-auth session and the
- * ai-action-executor (forced to throw so the inline fallback runs). These are
- * handler-logic tests, not MySQL or end-to-end proof.
+ * ai-action-executor (explicitly drives its supplied action-scoped callback).
+ * These are handler-logic tests, not MySQL or end-to-end proof.
  */
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
@@ -33,7 +33,7 @@ vi.mock('@/lib/auth-middleware', () => ({
 vi.mock('@/lib/db', () => ({ db: m.db }));
 vi.mock('next-auth', () => ({ getServerSession: (...a: unknown[]) => m.session(...a) }));
 vi.mock('@/lib/auth', () => ({ authOptions: {} }));
-vi.mock('@/lib/ai-action-executor', () => ({ executeAiAction: (...a: unknown[]) => m.executor(...a) }));
+vi.mock('@/lib/ai-action-executor', () => ({ executeAiAction: (...a: unknown[]) => m.executor(...a), approveAndExecute: (...a: unknown[]) => m.executor(...a) }));
 vi.mock('@/lib/university-monitoring-sync', () => ({ syncApprovedChange: vi.fn(async () => ({ ok: true })) }));
 
 import { NextRequest } from 'next/server';
@@ -84,6 +84,7 @@ function resetDb() {
       updateMany: m.rec('coursePage.updateMany', () => ({ count: 1 })),
     },
     aiCommandAction: { findUnique: vi.fn(), findMany: m.rec('aiCommandAction.findMany', () => []), update: m.rec('aiCommandAction.update', (a) => a.data) },
+    globalAiPause: { findFirst: m.rec('globalAiPause.findFirst', () => null) },
   });
 }
 
@@ -94,7 +95,7 @@ beforeEach(() => {
   m.session.mockReset();
   m.session.mockResolvedValue({ user: { id: 'u-admin', role: 'ADMIN' } });
   m.executor.mockReset();
-  m.executor.mockRejectedValue(new Error('primary executor failed'));
+  m.executor.mockRejectedValue(new Error('approval executor unavailable'));
   resetDb();
 });
 
@@ -171,14 +172,24 @@ describe('P0-A manual CrmCourse creation is never verification, publication or i
 });
 
 // ------------------------------------------------------------------ P0-B
-describe('P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary executor fails', () => {
+describe('P0-B /api/ai-command/execute DEPLOY_CONTENT through the guarded approval executor', () => {
   const approve = (payload: unknown, targetId: string | null = null, targetType = 'CoursePage') => {
     (m.db.aiCommandAction.findUnique as any).mockResolvedValue({ id: 'act1', actionType: 'DEPLOY_CONTENT', targetType, targetId, payload: JSON.stringify(payload), status: 'PENDING' });
-    return aiPATCH(json('/api/ai-command/execute', 'PATCH', { id: 'act1', decision: 'APPROVED', approvedBy: 'u-admin' }));
+    m.executor.mockImplementation(async (id: string, _approvedBy: string, callback: (approvedPayload: Record<string, unknown>) => Promise<unknown>) => {
+      try {
+        const result = await callback(payload as Record<string, unknown>);
+        m.calls.push({ op: 'aiCommandAction.update', args: { data: { status: 'EXECUTED' } } });
+        return { actionId: id, status: 'EXECUTED', riskLevel: 'HIGH', result };
+      } catch (error) {
+        m.calls.push({ op: 'aiCommandAction.update', args: { data: { status: 'FAILED' } } });
+        return { actionId: id, status: 'FAILED', riskLevel: 'HIGH', error: error instanceof Error ? error.message : 'failed' };
+      }
+    });
+    return aiPATCH(json('/api/ai-command/execute', 'PATCH', { id: 'act1', decision: 'APPROVED' }));
   };
   const actionStatus = () => m.calls.filter((c) => c.op === 'aiCommandAction.update').map((c) => c.args.data.status).filter(Boolean);
 
-  it('creates an UNVERIFIED DRAFT with only supplied values, and it is not publicly visible', async () => {
+  it('executes the scoped callback into an UNVERIFIED DRAFT with only supplied values, not publicly visible', async () => {
     const res = await approve({ name: 'MSc Data', slug: 'msc-data-ai', universitySlug: 'uni-a', countrySlug: 'nz', tuition: 'NZD 40000' });
     expect(m.executor).toHaveBeenCalled();
     expect(res.status).toBe(200);
@@ -192,7 +203,7 @@ describe('P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary 
 
   it('refuses to create without the identifying fields instead of inventing them', async () => {
     const res = await approve({ name: 'MSc Data' });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(503);
     expect(m.calls.some((c) => c.op === 'coursePage.create')).toBe(false);
     expect(actionStatus()).toContain('FAILED');
   });
@@ -221,9 +232,17 @@ describe('P0-B /api/ai-command/execute DEPLOY_CONTENT fallback when the primary 
 
   it('an unsupported target fails instead of reporting a fake deployment', async () => {
     const res = await approve({ title: 'x' }, null, 'UniversityPage');
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(503);
     expect(actionStatus()).toContain('FAILED');
     expect(writes().filter((w) => !w.op.startsWith('aiCommandAction'))).toHaveLength(0);
+  });
+
+  it('does not execute an inline fallback when the approval executor outcome is uncertain', async () => {
+    (m.db.aiCommandAction.findUnique as any).mockResolvedValue({ id: 'act1', actionType: 'DEPLOY_CONTENT', targetType: 'CoursePage', targetId: null, payload: JSON.stringify({ name: 'MSc Data', slug: 'msc-data-ai', universitySlug: 'uni-a', countrySlug: 'nz' }), status: 'PENDING' });
+    m.executor.mockRejectedValue(new Error('executor outcome uncertain'));
+    const res = await aiPATCH(json('/api/ai-command/execute', 'PATCH', { id: 'act1', decision: 'APPROVED' }));
+    expect(res.status).toBe(503);
+    expect(m.calls.some((c) => c.op === 'coursePage.create')).toBe(false);
   });
 
   it('GET (lists payloads) now requires an ADMIN/SUPER_ADMIN session', async () => {

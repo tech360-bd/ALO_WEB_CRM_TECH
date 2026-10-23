@@ -21,12 +21,12 @@ import DashboardCommunicationWidget from '@/components/communication/DashboardCo
 
 export default function VisaOfficerDashboard() {
   const router = useRouter();
-  const { user, token, setView } = usePortalStore();
+  const { user, token } = usePortalStore();
 
   const [loading, setLoading] = useState(true);
   const [metricsLoading, setMetricsLoading] = useState(true);
   const [cases, setCases] = useState<any[]>([]);
-  const [metrics, setMetrics] = useState<any>({ totalAssigned: 0, highRiskCount: 0, interviewQueueCount: 0, docsPendingCount: 0, avgReadiness: 0 });
+  const [metrics, setMetrics] = useState<any>({ totalAssigned: 0, highRiskCount: 0, interviewQueueCount: 0, docsPendingCount: 0 });
   const [search, setSearch] = useState('');
   const [filterCountry, setFilterCountry] = useState('ALL');
   const [filterRisk, setFilterRisk] = useState('ALL');
@@ -72,12 +72,11 @@ export default function VisaOfficerDashboard() {
     loadDashboardData();
   }, [loadDashboardData]);
 
-  // -driven metrics — no fake fallback numbers per spec
+  // Metrics are loaded from the assigned-case API; no synthetic readiness score is displayed.
   const totalAssigned = metrics.totalAssigned;
-  const highRiskCount = metrics.highRiskCount;
+  const highRiskCount = metrics.highRiskCount ?? null;
   const interviewQueueCount = metrics.interviewQueueCount;
   const docsPendingCount = metrics.docsPendingCount;
-  const avgReadiness = metrics.avgReadiness;
 
   const filteredCases = cases.filter(c => {
     if (filterCountry !== 'ALL' && c.destinationCountry !== filterCountry) return false;
@@ -101,37 +100,22 @@ export default function VisaOfficerDashboard() {
       return;
     }
     try {
-      const res = await fetch(`/api/visa/interviews/${selectedCase.id || selectedCase.caseCode}/student-feedback`, {
+      const res = await fetch(`/api/visa/cases/${encodeURIComponent(selectedCase.id)}/student-feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ feedback: feedbackText, caseId: selectedCase.id }),
+        body: JSON.stringify({ supportiveText: feedbackText, nextSteps: '', missingDocs: [], practiceTips: '', approved: true }),
       });
-      if (res.ok) {
-        toast.success(`Student-safe feedback sent to ${selectedCase.studentName} — saved to Student Portal/Timeline/Notifications/Messages`);
-      } else {
-        // Fallback to notes API for student-safe feedback
-        const notesRes = await fetch('/api/visa/notes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({
-            caseId: selectedCase.id,
-            studentId: selectedCase.studentId,
-            content: feedbackText,
-            visibility: 'student_safe_feedback',
-            noteType: 'student_feedback',
-          }),
-        });
-        if (notesRes.ok) {
-          toast.success(`Student-safe feedback sent to ${selectedCase.studentName} — approved before sending`);
-        } else {
-          toast.error('Failed to send feedback');
-        }
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        toast.error(json.error || 'Feedback could not be published.');
+        return;
       }
+      toast.success(`Approved preparation feedback published to ${selectedCase.studentName}'s portal. No external message was sent.`);
+      setStudentFeedbackModalOpen(false);
+      setFeedbackText('');
     } catch {
-      toast.error('Failed to send feedback');
+      toast.error('Feedback could not be published.');
     }
-    setStudentFeedbackModalOpen(false);
-    setFeedbackText('');
   };
 
   const handleAddNote = async () => {
@@ -145,7 +129,6 @@ export default function VisaOfficerDashboard() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           caseId: selectedCase.id,
-          studentId: selectedCase.studentId,
           content: officerNote,
           visibility: noteVisibility,
           noteType: 'officer_note',
@@ -188,25 +171,25 @@ export default function VisaOfficerDashboard() {
           <p className="text-xs text-slate-500 flex flex-wrap items-center gap-3">
             <span>📅 Interview Queue: <strong className="text-slate-700">{interviewQueueCount}</strong></span>
             <span>•</span>
-            <span>🚨 High-Risk Cases: <strong className="text-rose-600">{highRiskCount}</strong></span>
+            <span>🚨 High-Risk Cases: <strong className="text-rose-600">{highRiskCount ?? 'Restricted'}</strong></span>
             <span>•</span>
             <span>📁 Pending Docs: <strong className="text-amber-600">{docsPendingCount}</strong></span>
             <span>•</span>
-            <span>📊 Avg Readiness: <strong className="text-indigo-600">{avgReadiness}%</strong></span>
+            <span>🧑‍⚕️ Human follow-up: <strong className="text-indigo-600">{metrics.interviewsNeedingHumanFollowUp ?? '—'}</strong></span>
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => setView('employee-visa-cases')}>
+          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => router.push('/employee/visa-cases')}>
             <Eye className="w-3.5 h-3.5 mr-1" /> View Visa Cases
           </Button>
-          <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => setView('employee-visa-interviews')}>
+          <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => router.push('/employee/visa-interviews')}>
             <Play className="w-3.5 h-3.5 mr-1" /> Start Interview
           </Button>
           <Button variant="outline" size="sm" className="h-8 text-xs" onClick={loadDashboardData}>
             <RefreshCw className="w-3.5 h-3.5 mr-1" /> Refresh
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => setView('employee-visa-reports')}>
+          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => router.push('/employee/visa-reports')}>
             <Download className="w-3.5 h-3.5 mr-1" /> Export Reports
           </Button>
         </div>
@@ -240,7 +223,7 @@ export default function VisaOfficerDashboard() {
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500">High-Risk Students</p>
-              <p className="text-2xl font-bold text-rose-600 mt-1">{metricsLoading ? '...' : highRiskCount}</p>
+              <p className="text-2xl font-bold text-rose-600 mt-1">{metricsLoading ? '...' : (highRiskCount ?? 'Restricted')}</p>
               <p className="text-[11px] text-rose-500 mt-0.5">Requires senior review</p>
             </div>
             <div className="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><ShieldAlert className="w-5 h-5" /></div>
@@ -261,9 +244,9 @@ export default function VisaOfficerDashboard() {
         <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500">Average Readiness</p>
-              <p className="text-2xl font-bold text-indigo-600 mt-1">{metricsLoading ? '...' : `${avgReadiness}%`}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">From visaCase readinessScore avg</p>
+              <p className="text-xs font-medium text-slate-500">Human Follow-up</p>
+              <p className="text-2xl font-bold text-indigo-600 mt-1">{metricsLoading ? '...' : (metrics.interviewsNeedingHumanFollowUp ?? '—')}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">Recorded officer follow-up state</p>
             </div>
             <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><Award className="w-5 h-5" /></div>
           </CardContent>
@@ -272,9 +255,9 @@ export default function VisaOfficerDashboard() {
         <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500">Funding Risk</p>
-              <p className="text-2xl font-bold text-amber-600 mt-1">{cases.filter(c => c.fundingRisk === 'high').length}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">Real filter — no fake</p>
+              <p className="text-xs font-medium text-slate-500">Funding Reviews Pending</p>
+              <p className="text-2xl font-bold text-amber-600 mt-1">{metrics.financialReview?.fundingReviewsPendingHumanReview ?? '—'}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">Recorded internal reviews</p>
             </div>
             <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div>
           </CardContent>
@@ -284,8 +267,8 @@ export default function VisaOfficerDashboard() {
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500">Refusal History</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{cases.filter(c => c.hasRefusal).length}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">From visaCase data</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{metrics.refusalHistory?.casesWithPriorRefusal ?? '—'}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">Recorded restricted review count</p>
             </div>
             <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><XCircle className="w-5 h-5" /></div>
           </CardContent>
@@ -295,8 +278,8 @@ export default function VisaOfficerDashboard() {
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500">Counselor Handover</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{cases.filter(c => c.currentStage === 'Feedback Sent').length}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">Real stage filter</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">{metrics.counselorHandover?.pendingActions ?? '—'}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">Open tasks assigned for handover</p>
             </div>
             <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><PhoneCall className="w-5 h-5" /></div>
           </CardContent>
@@ -310,19 +293,25 @@ export default function VisaOfficerDashboard() {
             <CardHeader className="pb-3 border-b border-slate-100">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-bold">Visa Case Pipeline Stages</CardTitle>
-                <Badge variant="outline" className="text-[10px]">16 Stages</Badge>
+                <Badge variant="outline" className="text-[10px]">{cases.length} assigned cases</Badge>
               </div>
             </CardHeader>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 overflow-x-auto pb-2">
-                {[
-                  'NOT_STARTED','CHECKLIST_CREATED','DOCUMENTS_REQUESTED','DOCUMENTS_UPLOADED','DOCUMENTS_UNDER_REVIEW',
-                  'MISSING_DOCUMENTS','AI_INTERVIEW_PENDING','AI_INTERVIEW_COMPLETED','OFFICER_REVIEW_PENDING',
-                  'OFFICER_FEEDBACK_SENT','READY_FOR_VISA_APPLICATION','VISA_SUBMITTED','DECISION_PENDING','APPROVED','REFUSED','CLOSED'
-                ].map((st, idx) => (
-                  <div key={st} className="shrink-0 bg-slate-100/80 border px-3 py-1.5 rounded-lg text-center min-w-[110px]">
-                    <span className="text-[10px] font-bold text-indigo-600 block">Stage {idx + 1}</span>
-                    <span className="text-[10px] font-semibold text-slate-800 line-clamp-1">{st.replace(/_/g,' ')}</span>
+                {Object.entries(cases.reduce((counts: Record<string, number>, item) => {
+                  const stage = String(item.currentStage || 'not_started');
+                  counts[stage] = (counts[stage] || 0) + 1;
+                  return counts;
+                }, {})).length === 0 ? (
+                  <p className="text-xs text-slate-500">No pipeline cases in the assigned scope.</p>
+                ) : Object.entries(cases.reduce((counts: Record<string, number>, item) => {
+                  const stage = String(item.currentStage || 'not_started');
+                  counts[stage] = (counts[stage] || 0) + 1;
+                  return counts;
+                }, {})).map(([stage, count]) => (
+                  <div key={stage} className="shrink-0 bg-slate-100/80 border px-3 py-1.5 rounded-lg text-center min-w-[110px]">
+                    <span className="text-[10px] font-bold text-indigo-600 block">{count} case{count === 1 ? '' : 's'}</span>
+                    <span className="text-[10px] font-semibold text-slate-800 line-clamp-1">{stage.replace(/_/g, ' ')}</span>
                   </div>
                 ))}
               </div>
@@ -343,9 +332,9 @@ export default function VisaOfficerDashboard() {
                 <select value={filterCountry} onChange={e => setFilterCountry(e.target.value)} className="h-8 text-xs border rounded px-2 bg-white">
                   <option value="ALL">All Countries</option><option value="UK">UK</option><option value="USA">USA</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="Germany">Germany</option>
                 </select>
-                <select value={filterRisk} onChange={e => setFilterRisk(e.target.value)} className="h-8 text-xs border rounded px-2 bg-white">
+                {cases.some(item => item.riskLevel) && <select value={filterRisk} onChange={e => setFilterRisk(e.target.value)} className="h-8 text-xs border rounded px-2 bg-white">
                   <option value="ALL">All Risk</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option>
-                </select>
+                </select>}
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -356,14 +345,13 @@ export default function VisaOfficerDashboard() {
                     <TableHead className="text-xs">Destination</TableHead>
                     <TableHead className="text-xs">University & Course</TableHead>
                     <TableHead className="text-xs">Stage</TableHead>
-                    <TableHead className="text-xs">Readiness</TableHead>
-                    <TableHead className="text-xs">Risk</TableHead>
+                                        <TableHead className="text-xs">Risk</TableHead>
                     <TableHead className="text-xs text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredCases.length === 0 ? (
-                    <TableRow><TableCell colSpan={7} className="text-center py-8 text-xs text-slate-500">{loading ? 'Loading...' : 'No assigned visa cases — proper empty state, no fake numbers — real database'}</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={6} className="text-center py-8 text-xs text-slate-500">{loading ? 'Loading...' : 'No assigned visa cases — proper empty state, no fake numbers — real database'}</TableCell></TableRow>
                   ) : (
                     filteredCases.map(item => (
                       <TableRow key={item.id} className="hover:bg-slate-50/80">
@@ -371,11 +359,10 @@ export default function VisaOfficerDashboard() {
                         <TableCell><div className="flex items-center gap-1 text-xs"><Globe className="w-3.5 h-3.5 text-indigo-600" />{item.destinationCountry}</div></TableCell>
                         <TableCell><div><span className="text-xs font-medium block truncate max-w-[160px]">{item.university}</span><span className="text-[10px] text-slate-500 truncate max-w-[160px] block">{item.course}</span></div></TableCell>
                         <TableCell><Badge variant="outline" className="text-[10px] bg-indigo-50 text-indigo-700 border-indigo-200">{item.currentStage}</Badge></TableCell>
-                        <TableCell><div className="flex items-center gap-2"><div className="w-12 bg-slate-200 h-1.5 rounded-full overflow-hidden"><div className="bg-indigo-600 h-full rounded-full" style={{ width: `${item.readinessScore || 0}%` }} /></div><span className="text-xs font-bold">{item.readinessScore || 0}%</span></div></TableCell>
-                        <TableCell><Badge className={`text-[10px] px-2 py-0.5 border ${item.riskLevel === 'high' || item.riskLevel === 'critical' ? 'bg-rose-50 text-rose-700 border-rose-200' : item.riskLevel === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>{item.riskLevel ? item.riskLevel.toUpperCase() : 'LOW'}</Badge></TableCell>
+                        <TableCell><Badge className={`text-[10px] px-2 py-0.5 border ${['high', 'critical'].includes(String(item.riskLevel).toLowerCase()) ? 'bg-rose-50 text-rose-700 border-rose-200' : item.riskLevel === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : item.riskLevel === 'low' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>{item.riskLevel ? String(item.riskLevel).replaceAll('_', ' ').toUpperCase() : 'RESTRICTED / NOT ASSESSED'}</Badge></TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-indigo-600 hover:bg-indigo-50" onClick={() => { setSelectedCase(item); setView('employee-visa-interviews'); }}><Play className="w-3.5 h-3.5 mr-1" /> Interview</Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-indigo-600 hover:bg-indigo-50" onClick={() => { setSelectedCase(item); router.push(`/employee/visa-interviews/${encodeURIComponent(item.id)}`); }}><Play className="w-3.5 h-3.5 mr-1" /> Interview</Button>
                             <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setSelectedCase(item); setStudentFeedbackModalOpen(true); }}><Send className="w-3.5 h-3.5 mr-1" /> Feedback</Button>
                           </div>
                         </TableCell>
@@ -394,14 +381,16 @@ export default function VisaOfficerDashboard() {
               <div className="flex items-center gap-2"><ShieldAlert className="w-4 h-4 text-rose-600" /><CardTitle className="text-sm font-bold text-rose-900">Risk Flags — Real Data</CardTitle></div>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
-              {cases.filter(c => c.riskLevel === 'high' || c.riskLevel === 'critical').length === 0 ? (
+              {highRiskCount === null ? (
+                <div className="text-xs text-slate-500 p-3 text-center border-dashed border rounded-lg">Risk details are restricted for this account.</div>
+              ) : cases.filter(c => c.riskLevel === 'high' || c.riskLevel === 'critical').length === 0 ? (
                 <div className="text-xs text-slate-500 p-3 text-center border-dashed border rounded-lg">No high-risk cases — empty state — no fake</div>
               ) : (
                 cases.filter(c => c.riskLevel === 'high' || c.riskLevel === 'critical').slice(0,3).map(c => (
                   <div key={c.id} className="p-3 bg-rose-50/50 border border-rose-100 rounded-lg text-xs space-y-1">
                     <div className="flex items-center justify-between font-bold text-rose-900"><span>{c.studentName}</span><Badge className="bg-rose-600 text-white text-[9px]">{c.riskLevel?.toUpperCase()}</Badge></div>
                     <p className="text-slate-600">ID: {c.studentId} • {c.destinationCountry}</p>
-                    <p className="text-[11px] text-slate-500">Stage: {c.currentStage} • Readiness: {c.readinessScore}%</p>
+                    <p className="text-[11px] text-slate-500">Stage: {c.currentStage}</p>
                   </div>
                 ))
               )}
@@ -418,7 +407,6 @@ export default function VisaOfficerDashboard() {
                     <option value="visa_team_only">VISA_TEAM_ONLY</option>
                     <option value="counselor_visible">COUNSELOR_VISIBLE</option>
                     <option value="application_team_visible">APPLICATION_TEAM_VISIBLE</option>
-                    <option value="student_safe_feedback">STUDENT_SAFE_FEEDBACK</option>
                     <option value="super_admin_only">SUPER_ADMIN_ONLY</option>
                   </select>
                 </div>
@@ -434,16 +422,16 @@ export default function VisaOfficerDashboard() {
       {studentFeedbackModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <Card className="bg-white max-w-lg w-full rounded-xl shadow-xl border">
-            <CardHeader className="pb-3 border-b"><CardTitle className="text-sm font-bold">Generate Student-Safe Feedback — Officer Must Approve Before Sending</CardTitle><CardDescription className="text-xs">Supportive/clear/professional/actionable — never include internal risk labels/confidential comments/staff criticism/unsupported claims/visa guarantees — save to Student Portal/Timeline/Notifications/Messages</CardDescription></CardHeader>
+            <CardHeader className="pb-3 border-b"><CardTitle className="text-sm font-bold">Review Student-Safe Feedback Before Publishing</CardTitle><CardDescription className="text-xs">Portal-only delivery. Keep the wording supportive and factual; no external message will be sent.</CardDescription></CardHeader>
             <CardContent className="p-4 space-y-4">
               <div className="p-3 bg-indigo-50/60 border border-indigo-100 rounded-lg text-xs space-y-1">
-                <span className="font-semibold text-indigo-900 block">AI Suggested Supportive Wording — labeled:</span>
-                <p className="text-indigo-800 italic">Common Question: "You need more practice explaining why you chose this course and how your sponsor will support your study. Please upload your updated bank statement and practice the funding section again." — Official Requirement: Bank statement 28-day rule — AI-generated Practice Question</p>
+                <span className="font-semibold text-indigo-900 block">Officer-authored guidance — no AI draft or official-source claim:</span>
+                <p className="text-indigo-800">Write only case-specific, verified, student-safe preparation guidance. Do not include internal risk labels, medical or criminal information, unsupported requirements, or visa guarantees.</p>
               </div>
               <Textarea placeholder="Edit student-safe guidance — supportive/clear/professional/actionable" value={feedbackText} onChange={e => setFeedbackText(e.target.value)} className="min-h-[100px] text-xs" />
               <div className="flex items-center justify-end gap-2">
                 <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => setStudentFeedbackModalOpen(false)}>Cancel</Button>
-                <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSendFeedback}>Approve & Send to Student — Timeline/Portal</Button>
+                <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSendFeedback}>Approve & Publish to Student Portal</Button>
               </div>
             </CardContent>
           </Card>

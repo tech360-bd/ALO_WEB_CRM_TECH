@@ -651,38 +651,27 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "save_draft",
           platform: selected.platform,
           conversationId: selected.conversationId,
           senderId: selected.senderId,
-          messageText: useAiDraft ? "[AI Draft] " + (selected.messages.find((m) => m.aiDraftReply)?.aiDraftReply || "Thank you for reaching out to ALO Education. A counselor will assist you shortly.") : text,
-          employeeId: CURRENT_EMPLOYEE_ID,
+          messageText: useAiDraft ? (selected.messages.find((m) => m.aiDraftReply)?.aiDraftReply || "Thank you for reaching out to ALO Education. A counselor will assist you shortly.") : text,
           aiDraftUsed: useAiDraft,
         }),
       });
       const json = await res.json();
-      if (json.success) {
-        toast({
-          title: useAiDraft ? "AI draft sent" : "Reply sent",
-          description: useAiDraft ? "AI-generated reply delivered and logged to CRM timeline." : "Your reply was delivered and logged to CRM timeline.",
-        });
-        setReplyText("");
-        onDataChanged();
-      } else {
-        throw new Error("Send failed");
-      }
-    } catch {
-      toast({ title: "Failed to send", description: "Please try again.", variant: "destructive" });
+      if (!res.ok || !json.success || json.sent) throw new Error(json.error || "Unable to save draft.");
+      toast({
+        title: useAiDraft ? "AI draft saved" : "Reply draft saved",
+        description: "Saved for Marketing Manager review. No message was sent.",
+      });
+      setReplyText("");
+      onDataChanged();
+    } catch (error) {
+      toast({ title: "Draft not saved", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
     } finally {
       setSending(false);
     }
-  };
-
-  const humanHandoff = () => {
-    if (!selected) return;
-    toast({
-      title: "Transferred to human queue",
-      description: `${selected.senderName} (${selected.platform}) flagged for counselor takeover. AI replies paused for this conversation.`,
-    });
   };
 
   return (
@@ -842,7 +831,7 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
                         disabled={sending}
                         className="h-10 flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
                       >
-                        <Icon name="Send" className="size-4" /> Send Reply
+                        <Icon name="FileText" className="size-4" /> Save Reply Draft
                       </Button>
                       <Button
                         onClick={() => sendReply(true)}
@@ -850,14 +839,7 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
                         variant="outline"
                         className="h-10 border-[#0057B8]/30 text-[#0057B8]"
                       >
-                        <Icon name="Sparkles" className="size-4" /> Use AI Draft
-                      </Button>
-                      <Button
-                        onClick={humanHandoff}
-                        variant="outline"
-                        className="h-10 border-[#E2E8F0] text-slate-600"
-                      >
-                        <Icon name="UserHandBlock" className="size-4" /> Human Handoff
+                        <Icon name="Sparkles" className="size-4" /> Save AI Draft
                       </Button>
                     </div>
                     <p className="mt-2 text-[10px] text-muted-foreground">
@@ -1261,22 +1243,22 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
     try {
       const res = await fetch("/api/marketing/auto-pipeline", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ idea: autoIdea, imageUrl: autoImageUrl || undefined, title: autoIdea.slice(0,60) || "ALO Campaign", platforms: ["FACEBOOK","INSTAGRAM","LINKEDIN","BLOG"], sizes: ["SQUARE","PORTRAIT","LANDSCAPE","STORY"] })});
       const j = await res.json();
-      if (j.success) { toast({ title: "Auto-Pipeline done!", description: `${j.posts?.length||0} posts + ${j.assets?.length||0} images + Blog ${j.summary?.blogIncluded? "✓":"—"} — এখন Approve করুন` }); onDataChanged(); setAutoIdea(""); setAutoImageUrl(""); }
-      else throw new Error(j.error);
+      if (res.ok && j.success && !j.published) { toast({ title: "Drafts created", description: `${j.posts?.length||0} campaign drafts and ${j.assets?.length||0} image prompts saved. No images were rendered, no blog was published, and no post was scheduled or sent.` }); onDataChanged(); setAutoIdea(""); setAutoImageUrl(""); }
+      else throw new Error(j.error || "Draft generation failed.");
     } catch(e:any){ toast({ title:"Pipeline failed", description:e.message, variant:"destructive"});} finally { setAutoRunning(false); }
   };
   return (
     <div className="space-y-4">
-      {/* One-click Idea/Image → Content+Image+Video+Blog+All platforms */}
+      {/* Content drafts and prompts only; image generation/publishing remain unconfigured. */}
       <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-gradient-to-br from-[#fff7f0] to-white">
         <CardContent className="pt-5 space-y-3">
-          <div className="flex items-center gap-2"><div className="size-8 rounded-lg bg-[#E8501A] text-white flex items-center justify-center"><Icon name="Sparkles" className="size-4"/></div><div><p className="font-bold text-[#E8501A] text-sm">একটি আইডিয়া / একটি ইমেজ → সবকিছু অটো (One-Click)</p><p className="text-[11px] text-muted-foreground">Idea লিখুন বা Company image URL দিন — কন্টেন্ট + 4 সাইজ ইমেজ (SQUARE/PORTRAIT/LANDSCAPE/STORY) + Blog/Article + 7 প্ল্যাটফর্মে CampaignPost + Calendar + Google/FB লিড পাইপলাইন — Brand Kit (logo/address/phone/WhatsApp) auto-overlay</p></div></div>
+          <div className="flex items-center gap-2"><div className="size-8 rounded-lg bg-[#E8501A] text-white flex items-center justify-center"><Icon name="Sparkles" className="size-4"/></div><div><p className="font-bold text-[#E8501A] text-sm">Content Drafts & Image Prompts</p><p className="text-[11px] text-muted-foreground">Create internal campaign drafts and size-specific prompts. Image rendering, blog publication, calendar scheduling, lead capture and social delivery are not connected.</p></div></div>
           <div className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
-            <div className="space-y-1.5"><Label>আইডিয়া (text) *</Label><Input value={autoIdea} onChange={e=> setAutoIdea(e.target.value)} placeholder="যেমন: UK September intake — 5 scholarships without IELTS"/></div>
-            <div className="space-y-1.5"><Label>অথবা Company Image URL</Label><Input value={autoImageUrl} onChange={e=> setAutoImageUrl(e.target.value)} placeholder="https://cdn.alo-education.com/campus.jpg"/></div>
-            <div className="flex items-end"><Button className="h-11 bg-[#E8501A] text-white w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Generating...":"Auto Generate & Publish Plan"}</Button></div>
+            <div className="space-y-1.5"><Label>Idea / verified update *</Label><Input value={autoIdea} onChange={e=> setAutoIdea(e.target.value)} placeholder="Use an ALO-approved or official-source update; review claims before submission"/></div>
+            <div className="space-y-1.5"><Label>Optional source image URL (HTTPS)</Label><Input value={autoImageUrl} onChange={e=> setAutoImageUrl(e.target.value)} placeholder="https://approved-cdn.example/brand-image.jpg"/></div>
+            <div className="flex items-end"><Button className="h-11 bg-[#E8501A] text-white w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Creating drafts...":"Create Drafts & Prompts"}</Button></div>
           </div>
-          <p className="text-[11px] text-muted-foreground">৯০ দিনে Top-3: প্রতিদিন এই বাটনে 1 Idea → 3-4 Post (Blog সহ) — 90 দিনে 90 Blog + 400+ social asset = Google indexing + internal link wheel auto.</p>
+          <p className="text-[11px] text-muted-foreground">Every generated item remains an internal draft. A Marketing Manager must review and approve it; no automatic indexing, posting, outreach, or lead assignment is claimed.</p>
         </CardContent>
       </Card>
       {/* Mini stats */}
@@ -1759,8 +1741,103 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
 
 function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null; onDataChanged: () => void }) {
   const { toast } = useToast();
-  const [aiOn, setAiOn] = React.useState(true);
-  const [afterHours, setAfterHours] = React.useState(true);
+  const [aiOn, setAiOn] = React.useState(false);
+  const [afterHours, setAfterHours] = React.useState(false);
+  const [officeSchedule, setOfficeSchedule] = React.useState<Array<{ dayOfWeek: number; startTime: string; endTime: string; isWorkDay: boolean; afterHoursAiAuto: boolean }>>([]);
+  const [safetyLoading, setSafetyLoading] = React.useState(true);
+  const [hoursLoading, setHoursLoading] = React.useState(true);
+  const [canManageSafety, setCanManageSafety] = React.useState(false);
+  const [canManageOfficeHours, setCanManageOfficeHours] = React.useState(false);
+  const [safetySaving, setSafetySaving] = React.useState(false);
+  const [hoursSaving, setHoursSaving] = React.useState(false);
+
+  React.useEffect(() => {
+    let active = true;
+    void Promise.all([
+      fetch('/api/ai-safety/status', { cache: 'no-store', credentials: 'include' }).then(async (response) => {
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(payload?.error || `AI safety status unavailable (HTTP ${response.status})`);
+        if (typeof payload?.globalAiPaused !== 'boolean') throw new Error('AI safety response is missing the global pause state.');
+        if (active) {
+          setAiOn(!payload.globalAiPaused);
+          setCanManageSafety(payload.canManageGlobalPause === true);
+        }
+      }).catch((error) => {
+        if (active) toast({ title: 'AI safety status unavailable', description: error instanceof Error ? error.message : 'AI safety controls are not available.', variant: 'destructive' });
+      }).finally(() => { if (active) setSafetyLoading(false); }),
+      fetch('/api/crm/ucc/office-hours', { cache: 'no-store', credentials: 'include' }).then(async (response) => {
+        const payload = await response.json().catch(() => null);
+        if (!response.ok || !payload?.success) throw new Error(payload?.error || `Office-hours status unavailable (HTTP ${response.status})`);
+        const rows = Array.isArray(payload.officeHours) ? payload.officeHours : [];
+        const byDay = new Map<number, any>(rows.filter((day: any) => Number.isInteger(day?.dayOfWeek) && day.dayOfWeek >= 0 && day.dayOfWeek <= 6).map((day: any) => [day.dayOfWeek, day]));
+        const schedule = Array.from({ length: 7 }, (_, dayOfWeek) => {
+          const day = byDay.get(dayOfWeek);
+          return {
+            dayOfWeek,
+            startTime: typeof day?.startTime === 'string' ? day.startTime : '09:00',
+            endTime: typeof day?.endTime === 'string' ? day.endTime : '18:00',
+            isWorkDay: day ? day.isWorkDay === true : [0, 1, 2, 3, 4, 6].includes(dayOfWeek),
+            afterHoursAiAuto: day ? day.afterHoursAiAuto !== false : true,
+          };
+        });
+        if (active) {
+          setOfficeSchedule(schedule);
+          setCanManageOfficeHours(payload.canManageOfficeHours === true);
+          const workingDays = schedule.filter((day) => day.isWorkDay);
+          setAfterHours(workingDays.length > 0 && workingDays.every((day) => day.afterHoursAiAuto));
+        }
+      }).catch((error) => {
+        if (active) toast({ title: 'Office-hours status unavailable', description: error instanceof Error ? error.message : 'Update the schedule in CRM settings.', variant: 'destructive' });
+      }).finally(() => { if (active) setHoursLoading(false); }),
+    ]);
+    return () => { active = false; };
+  }, [toast]);
+
+  const toggleGlobalAi = async (enabled: boolean) => {
+    setSafetySaving(true);
+    try {
+      const response = await fetch(enabled ? '/api/ai-safety/resume' : '/api/ai-safety/pause', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(enabled ? { scope: 'GLOBAL' } : { scope: 'GLOBAL', reason: 'Paused from AI Reply Manager' }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.success === false) throw new Error(payload?.error || `AI safety update denied (HTTP ${response.status})`);
+      setAiOn(enabled);
+      toast({ title: enabled ? 'Global AI execution resumed' : 'Global AI execution paused', description: 'The server-side safety gate was updated and audited.' });
+    } catch (error) {
+      toast({ title: 'AI safety setting was not changed', description: error instanceof Error ? error.message : 'The server rejected this change.', variant: 'destructive' });
+    } finally {
+      setSafetySaving(false);
+    }
+  };
+
+  const toggleAfterHoursDraft = async (enabled: boolean) => {
+    if (officeSchedule.length !== 7) {
+      toast({ title: 'Office-hours schedule unavailable', description: 'Load the persisted seven-day schedule before changing this setting.', variant: 'destructive' });
+      return;
+    }
+    setHoursSaving(true);
+    const nextSchedule = officeSchedule.map((day) => ({ ...day, afterHoursAiAuto: enabled }));
+    try {
+      const response = await fetch('/api/crm/ucc/office-hours', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ schedule: nextSchedule }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success) throw new Error(payload?.error || `Office-hours update denied (HTTP ${response.status})`);
+      setOfficeSchedule(nextSchedule);
+      setAfterHours(enabled);
+      toast({ title: enabled ? 'After-hours reply drafts enabled' : 'After-hours reply drafts disabled', description: 'The persisted schedule was updated. This does not send a customer message.' });
+    } catch (error) {
+      toast({ title: 'After-hours setting was not changed', description: error instanceof Error ? error.message : 'The server rejected this change.', variant: 'destructive' });
+    } finally {
+      setHoursSaving(false);
+    }
+  };
 
   // Messages with AI draft needing approval
   const draftQueue = React.useMemo(() => {
@@ -1785,54 +1862,47 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
     { trigger: "Price / Fee / খরচ", reply: "Our consultation is FREE for students. Application and visa fees depend on the country and university. Shall I connect you with a counselor?" },
   ];
 
-  const approveDraft = async (conv: Conversation, msg: InboxMessage) => {
+  const approveDraft = async (msg: InboxMessage) => {
     setSaving(true);
     try {
       const res = await fetch("/api/marketing/social-inbox", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          platform: conv.platform,
-          conversationId: conv.conversationId,
-          senderId: conv.senderId,
-          messageText: msg.aiDraftReply,
-          employeeId: CURRENT_EMPLOYEE_ID,
-          aiDraftUsed: true,
-        }),
+        body: JSON.stringify({ action: "approve_draft", messageId: msg.id }),
       });
       const json = await res.json();
-      if (json.success) {
-        toast({ title: "AI draft approved & sent", description: "Reply delivered to student and logged to CRM timeline." });
-        onDataChanged();
-      }
-    } catch {
-      toast({ title: "Failed to send", variant: "destructive" });
+      if (!res.ok || !json.success || json.sent) throw new Error(json.error || "Unable to approve draft.");
+      toast({ title: "Draft approved internally", description: "This records manager review only. No message was sent." });
+      onDataChanged();
+    } catch (error) {
+      toast({ title: "Draft approval failed", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
   };
   const [saving, setSaving] = React.useState(false);
 
-  const editDraft = (conv: Conversation, msg: InboxMessage) => {
-    toast({ title: "Edit AI draft", description: `Opening editor for ${conv.senderName}. Draft: "${msg.aiDraftReply?.slice(0, 60)}..."` });
+  const rejectDraft = async (msg: InboxMessage) => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/marketing/social-inbox", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reject_draft", messageId: msg.id }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success || json.sent) throw new Error(json.error || "Unable to reject draft.");
+      toast({ title: "Draft rejected", description: "The draft was removed. No message was sent." });
+      onDataChanged();
+    } catch (error) {
+      toast({ title: "Draft rejection failed", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const rejectDraft = (conv: Conversation) => {
-    toast({ title: "Draft rejected", description: `AI draft for ${conv.senderName} discarded. Conversation moved to human handoff queue.` });
-  };
-
-  const assignCounselor = (conv: Conversation) => {
-    toast({ title: "Assigned to counselor", description: `${conv.senderName} (${conv.platform}) assigned to next available counselor. SLA clock reset.` });
-  };
-
-  // Human handoff queue (mock — conversations where AI flagged complex/angry/payment)
-  const handoffQueue = React.useMemo(() => {
-    if (!data?.conversations) return [];
-    return data.conversations.filter((c) => c.aiHandled).slice(0, 4).map((c, idx) => ({
-      conv: c,
-      reason: ["Complex visa question", "Student expressed frustration", "Payment / refund inquiry", "Visa refusal case"][idx % 4],
-    }));
-  }, [data]);
+  // These are AI-processed threads, not a routed/assigned handoff queue.
+  const handoffQueue = React.useMemo(() => data?.conversations?.filter((conversation) => conversation.aiHandled).slice(0, 4) || [], [data]);
 
   return (
     <div className="space-y-4">
@@ -1842,10 +1912,10 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-[#0057B8]">AI Auto-Reply</p>
-                <p className="text-xs text-muted-foreground">Master switch for all AI replies</p>
+                <p className="text-sm font-bold text-[#0057B8]">Global AI Safety Gate</p>
+                <p className="text-xs text-muted-foreground">Pauses or resumes server-side AI action execution; not a provider or messaging switch.</p>
               </div>
-              <Switch checked={aiOn} onCheckedChange={(v) => { setAiOn(v); toast({ title: v ? "AI replies enabled" : "AI replies disabled", description: v ? "AI will draft replies for review." : "All replies require manual drafting." }); }} />
+              <Switch checked={aiOn} onCheckedChange={(value) => void toggleGlobalAi(value)} disabled={safetyLoading || safetySaving || !canManageSafety} aria-label="Resume or pause global AI execution" />
             </div>
           </CardContent>
         </Card>
@@ -1853,18 +1923,18 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-[#0057B8]">After-Hours Auto-Reply</p>
-                <p className="text-xs text-muted-foreground">Auto-respond outside office hours</p>
+                <p className="text-sm font-bold text-[#0057B8]">After-Hours Reply Draft</p>
+                <p className="text-xs text-muted-foreground">Controls the persisted after-hours acknowledgement draft; sending remains separate.</p>
               </div>
-              <Switch checked={afterHours} onCheckedChange={(v) => { setAfterHours(v); toast({ title: v ? "After-hours AI on" : "After-hours AI off", description: v ? "AI handles first response 6PM-9AM." : "Messages will queue until office hours." }); }} />
+              <Switch checked={afterHours} onCheckedChange={(value) => void toggleAfterHoursDraft(value)} disabled={hoursLoading || hoursSaving || !canManageOfficeHours} aria-label="Enable or disable after-hours acknowledgement drafts" />
             </div>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
           <CardContent className="pt-6">
             <p className="text-sm font-bold text-[#0057B8]">Office Hours</p>
-            <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">9:00 AM — 6:00 PM</p>
-            <p className="text-xs text-muted-foreground">Sunday–Friday (Bangladesh time)</p>
+            <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">09:00–18:00</p>
+            <p className="text-xs text-muted-foreground">Saturday–Thursday · Asia/Dhaka · Friday closed</p>
           </CardContent>
         </Card>
       </div>
@@ -1918,14 +1988,11 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
                   </div>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => approveDraft(conv, msg)}>
-                    <Icon name="Check" className="size-3" /> Approve & Send
+                  <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => approveDraft(msg)}>
+                    <Icon name="Check" className="size-3" /> Approve Draft Only
                   </Button>
-                  <Button size="sm" variant="outline" className="h-8 border-[#0057B8]/30 text-[#0057B8]" onClick={() => editDraft(conv, msg)}>
-                    <Icon name="Pencil" className="size-3" /> Edit & Send
-                  </Button>
-                  <Button size="sm" variant="outline" className="h-8 border-red-300 text-red-600" onClick={() => rejectDraft(conv)}>
-                    <Icon name="X" className="size-3" /> Reject
+                  <Button size="sm" variant="outline" className="h-8 border-red-300 text-red-600" disabled={saving} onClick={() => rejectDraft(msg)}>
+                    <Icon name="X" className="size-3" /> Reject Draft
                   </Button>
                 </div>
               </div>
@@ -1934,31 +2001,26 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
         )}
       </SectionCard>
 
-      {/* Human handoff queue */}
+      {/* AI processed threads, not a mock human-handoff queue */}
       <SectionCard
-        title="Human Handoff Queue"
+        title="AI-processed Conversations"
         icon="UserHandBlock"
-        description="Conversations flagged for human takeover (complex, angry, payment, visa refusal, complaint, emergency)"
-        action={<Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">{handoffQueue.length} flagged</Badge>}
+        description="These threads were processed by the intake assistant. Assignment and human handoff are managed in the canonical UCC inbox."
+        action={<Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100">{handoffQueue.length} shown</Badge>}
       >
         {handoffQueue.length === 0 ? (
-          <EmptyState icon="CheckCircle2" title="No handoffs pending" description="AI will escalate conversations here when it detects complex or sensitive intent." />
+          <EmptyState icon="CheckCircle2" title="No AI-processed threads" description="No intake-assistant conversations are present in this inbox view." />
         ) : (
           <div className="space-y-2">
-            {handoffQueue.map(({ conv, reason }) => (
-              <div key={conv.conversationId} className="flex flex-col gap-2 rounded-xl border-2 border-[#E2E8F0] bg-white p-3 sm:flex-row sm:items-center">
-                <div className="flex flex-1 items-center gap-3">
-                  <div className={cn("flex size-9 items-center justify-center rounded-lg", PLATFORM_COLOR[conv.platform] || "bg-slate-100")}>
-                    <Icon name={PLATFORM_ICON[conv.platform] || "Inbox"} className="size-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{conv.senderName}</p>
-                    <p className="text-[11px] text-muted-foreground">{conv.platform} · {reason}</p>
-                  </div>
+            {handoffQueue.map((conv) => (
+              <div key={conv.conversationId} className="flex items-center gap-3 rounded-xl border-2 border-[#E2E8F0] bg-white p-3">
+                <div className={cn("flex size-9 items-center justify-center rounded-lg", PLATFORM_COLOR[conv.platform] || "bg-slate-100")}>
+                  <Icon name={PLATFORM_ICON[conv.platform] || "Inbox"} className="size-4" />
                 </div>
-                <Button size="sm" className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => assignCounselor(conv)}>
-                  <Icon name="UserCheck" className="size-3" /> Assign to Counselor
-                </Button>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{conv.senderName}</p>
+                  <p className="text-[11px] text-muted-foreground">{conv.platform} · assignment not inferred</p>
+                </div>
               </div>
             ))}
           </div>
@@ -2129,7 +2191,6 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
 // ============================================================
 
 function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
-  const { toast } = useToast();
   const optedIn = outreach.filter((o) => o.consentStatus === "OPTED_IN").length;
   const optedOut = outreach.filter((o) => o.consentStatus === "OPTED_OUT").length;
 
@@ -2165,15 +2226,11 @@ function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
       <SectionCard
         title="Outreach Records"
         icon="Megaphone"
-        description="All lead outreach with source, channel, and consent tracking"
-        action={
-          <Button size="sm" variant="outline" className="h-9 border-[#0057B8]/30 text-[#0057B8]" onClick={() => toast({ title: "Add outreach", description: "Use the CRM to add new outreach records with consent capture." })}>
-            <Icon name="Plus" className="size-3.5" /> Add Outreach
-          </Button>
-        }
+        description="Manager-only unsent outreach drafts linked to the consent ledger; records do not prove delivery."
+        action={<Badge variant="outline" className="border-amber-300 text-amber-800">Provider sending unavailable</Badge>}
       >
         {outreach.length === 0 ? (
-          <EmptyState icon="Megaphone" title="No outreach records" description="Outreach records will appear here when leads are contacted via WhatsApp, email, SMS, or phone." />
+          <EmptyState icon="Megaphone" title="No outreach drafts" description="No draft records are available. Outreach cannot be sent from this dashboard." />
         ) : (
           <div className="overflow-x-auto">
             <Table>
@@ -2222,7 +2279,7 @@ function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
       <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
         <Icon name="ShieldCheck" className="mt-0.5 size-4 shrink-0 text-[#E8501A]" />
         <p className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-[#E8501A]">Compliance:</span> Use only official/legal data sources. Respect opt-in, unsubscribe, block, and STOP commands. Do not spam. Save source, consent status, channel, and outreach history for every contact. Violations are audit-logged.
+          <span className="font-semibold text-[#E8501A]">Compliance:</span> Only an active, channel-specific OPTED_IN consent record permits an outreach draft. Drafts are never sent here. STOP, unsubscribe and block events must be recorded from a verified provider/webhook; this dashboard cannot create or claim opt-outs on a contact’s behalf.
         </p>
       </div>
     </div>
@@ -2237,32 +2294,18 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
   const { toast } = useToast();
   const [addOpen, setAddOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
-  const [form, setForm] = React.useState({ userId: "", accessLevel: "LIMITED" });
-  const [perms, setPerms] = React.useState<Record<string, boolean>>({
-    social_inbox: true,
-    campaign_posts: true,
-    keyword_triggers: false,
-    brand_assets: false,
-    ai_reply: true,
-    n8n_workflows: false,
-    lead_outreach: true,
-  });
+  const [form, setForm] = React.useState({ userId: "" });
 
   const access = data?.access || [];
-  const managers = access.filter((a) => a.accessLevel === "FULL" && a.status === "ACTIVE");
   const limited = access.filter((a) => a.accessLevel === "LIMITED" && a.status === "ACTIVE");
   const maxApproved = data?.maxApprovedUsers ?? 3;
   const approvedCount = data?.approvedUserCount ?? 0;
   const slotsRemaining = Math.max(0, maxApproved - approvedCount);
-
   const permLabels: Record<string, string> = {
-    social_inbox: "Social Inbox (reply)",
-    campaign_posts: "Campaign Posts (create)",
-    keyword_triggers: "Keyword Triggers (edit)",
-    brand_assets: "Brand Assets (upload)",
-    ai_reply: "AI Reply Manager (approve drafts)",
-    n8n_workflows: "n8n Workflows (toggle/trigger)",
-    lead_outreach: "Lead Outreach (record)",
+    "marketing.inbox.assigned.read": "Read assigned inbox conversations",
+    "marketing.inbox.assigned.reply": "Draft replies for assigned conversations",
+    "marketing.posts.draft": "Create draft posts",
+    "marketing.posts.submit": "Submit posts for manager approval",
   };
 
   const addUser = async () => {
@@ -2277,16 +2320,14 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: form.userId,
-          accessLevel: form.accessLevel,
-          approvedBy: CURRENT_EMPLOYEE_ID,
-          permissions: Object.keys(perms).filter((k) => perms[k]),
+          accessLevel: "LIMITED",
         }),
       });
       const json = await res.json();
       if (json.access) {
         toast({ title: "Access granted", description: json.message });
         setAddOpen(false);
-        setForm({ userId: "", accessLevel: "LIMITED" });
+        setForm({ userId: "" });
         onDataChanged();
       } else {
         throw new Error(json.error);
@@ -2301,11 +2342,13 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
 
   const revoke = async (a: MarketingUserAccess) => {
     try {
-      await fetch("/api/marketing/user-access", {
+      const res = await fetch("/api/marketing/user-access", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: a.id, status: "REVOKED" }),
       });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Unable to revoke access.");
       toast({ title: "Access revoked", description: `${a.user.name} can no longer access marketing tools.` });
       onDataChanged();
     } catch {
@@ -2318,9 +2361,9 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
           <CardContent className="py-4">
-            <p className="text-[11px] font-medium uppercase text-muted-foreground">Marketing Manager</p>
-            <p className="mt-1 text-2xl font-bold text-[#0057B8]">{managers.length}</p>
-            <p className="text-[11px] text-muted-foreground">Full access</p>
+            <p className="text-[11px] font-medium uppercase text-muted-foreground">Manager Control</p>
+            <p className="mt-1 text-sm font-bold text-[#0057B8]">Role-based</p>
+            <p className="text-[11px] text-muted-foreground">Granted outside this screen</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[#E2E8F0]">
@@ -2343,28 +2386,6 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
           </CardContent>
         </Card>
       </div>
-
-      {/* Manager card */}
-      <SectionCard title="Marketing Manager" icon="Crown" description="Full access to all marketing automation features">
-        {managers.length === 0 ? (
-          <EmptyState icon="Crown" title="No marketing manager assigned" description="Assign a Marketing Manager with FULL access to oversee all marketing operations." />
-        ) : (
-          <div className="space-y-2">
-            {managers.map((m) => (
-              <div key={m.id} className="flex items-center gap-3 rounded-xl border-2 border-[#0057B8]/20 bg-[#e8f0fb] p-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-[#0057B8] text-white">
-                  <Icon name="Crown" className="size-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-foreground">{m.user.name}</p>
-                  <p className="text-[11px] text-muted-foreground">{m.user.email} · {m.user.role}</p>
-                </div>
-                <Badge className="bg-[#0057B8] text-white hover:bg-[#0057B8]">FULL ACCESS</Badge>
-              </div>
-            ))}
-          </div>
-        )}
-      </SectionCard>
 
       {/* Approved users */}
       <SectionCard
@@ -2390,27 +2411,11 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
                   <Label htmlFor="userId">User ID *</Label>
                   <Input id="userId" placeholder="e.g., emp-john-001" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} />
                 </div>
-                <div className="space-y-1.5">
-                  <Label>Access Level</Label>
-                  <Select value={form.accessLevel} onValueChange={(v) => setForm({ ...form, accessLevel: v })}>
-                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="LIMITED">LIMITED (approved user)</SelectItem>
-                      <SelectItem value="FULL">FULL (manager — use with caution)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2 rounded-xl bg-[#F8FAFC] p-3">
-                  <p className="text-xs font-semibold text-[#0057B8]">Permissions</p>
-                  {Object.keys(permLabels).map((key) => (
-                    <label key={key} className="flex items-center gap-2 text-sm">
-                      <Checkbox
-                        checked={perms[key]}
-                        onCheckedChange={(v) => setPerms({ ...perms, [key]: v === true })}
-                      />
-                      {permLabels[key]}
-                    </label>
-                  ))}
+                <div className="rounded-xl bg-[#F8FAFC] p-3 text-sm">
+                  <p className="font-semibold text-[#0057B8]">LIMITED access only</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Approved users can work only with assigned inbox conversations and prepare content for manager approval. They cannot approve or publish posts, manage channel credentials, change access, or control automations.
+                  </p>
                 </div>
               </div>
               <DialogFooter>
@@ -2444,7 +2449,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {userPerms.length === 0 ? (
-                        <span className="text-[11px] text-muted-foreground">No specific permissions granted.</span>
+                        <span className="text-[11px] text-muted-foreground">Assigned inbox access and content drafts for approval.</span>
                       ) : (
                         userPerms.map((p) => (
                           <Badge key={p} variant="outline" className="border-[#E2E8F0] text-[10px]">
@@ -2467,7 +2472,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
       <div className="flex items-start gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
         <Icon name="Lock" className="mt-0.5 size-4 shrink-0 text-[#0057B8]" />
         <p className="text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-[#0057B8]">Access policy:</span> Maximum 3 approved marketing users can use official social media tools. Other employees cannot access company official Facebook, Instagram, Messenger, or social campaign controls. Marketing Manager and Super Admin can approve, edit permissions, or revoke access at any time.
+          <span className="font-semibold text-[#0057B8]">Access policy:</span> A maximum of three active limited Marketing users may use assigned inbox and draft workflows. Posts, replies, and campaigns require server-side manager approval before any official provider action. Manager rights come from the server-managed Marketing Manager role; Super Admin retains full control. Other staff cannot use official social controls.
         </p>
       </div>
     </div>
@@ -2540,19 +2545,20 @@ function LibraryRepostTab() {
   React.useEffect(()=> { load(); }, [load]);
   const repost = async (post:any, target:string)=>{
     try {
-      const r = await fetch("/api/marketing/repost", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ postId: post.id, targetPlatform: target, employeeId: CURRENT_EMPLOYEE_ID })});
+      const r = await fetch("/api/marketing/repost", { method:"POST", headers:{ "Content-Type":"application/json"}, body: JSON.stringify({ postId: post.id, targetPlatform: target })});
       const j = await r.json();
-      if (j.success) toast({ title:"Reposted!", description: `${post.title} → your ${target} official page (brand retained)` });
-      else throw new Error(j.error);
+      if (!r.ok || !j.success || j.published) throw new Error(j.error || "Draft was not created.");
+      toast({ title:"Draft created", description: `${post.title} → ${target}. Manager approval is required; nothing was published.` });
+      load();
     } catch (e:any){ toast({ title:"Repost failed", description:e.message, variant:"destructive"}); }
   };
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="Library" className="size-5"/> Marketing Library — Counselor Repost Hub</h2><p className="text-xs text-muted-foreground">Approved image/video/post — কাউন্সেলর বা যেকোনো এমপ্লয়ি এখানে দেখে নিজের অফিসিয়াল সোশ্যালে 1-click পোস্ট করতে পারবে। Brand Kit (logo/address/phone/WhatsApp) auto-retained।</p></div>
+        <div><h2 className="text-lg font-bold text-[#0057B8] flex items-center gap-2"><Icon name="Library" className="size-5"/> Approved Content Library</h2><p className="text-xs text-muted-foreground">Approved content can be copied into a new draft for review. This workspace does not publish to personal or company channels.</p></div>
         <div className="flex items-center gap-2"><Input placeholder="Search library..." value={q} onChange={e=> setQ(e.target.value)} className="h-9 w-48"/><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3"/> Refresh</Button></div>
       </div>
-      {loading ? <LoadingGrid count={3}/> : posts.length===0 ? <EmptyState icon="Library" title="No approved posts yet" description="Marketing Manager approved করলে এখানে দেখা যাবে — তখন Counselor 1-click repost করতে পারবে।"/> : (
+      {loading ? <LoadingGrid count={3}/> : posts.length===0 ? <EmptyState icon="Library" title="No approved posts yet" description="Approved content will appear here for creating reviewed drafts."/> : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {posts.map((p:any)=>(
             <Card key={p.id} className="rounded-2xl border-2 border-[#E2E8F0] overflow-hidden">
@@ -2562,7 +2568,7 @@ function LibraryRepostTab() {
                 <p className="text-xs text-muted-foreground line-clamp-2">{p.caption?.slice(0,120)}</p>
                 <div className="flex flex-wrap gap-1.5 pt-2">
                   {["FACEBOOK","INSTAGRAM","LINKEDIN"].map(pl=>(
-                    <Button key={pl} size="sm" className="h-8 bg-[#0057B8] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Repost to {pl}</Button>
+                    <Button key={pl} size="sm" className="h-8 bg-[#0057B8] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Create {pl} Draft</Button>
                   ))}
                 </div>
                 <p className="text-[10px] text-muted-foreground">Brand: {p.brandAssetApplied? "✓ Applied":"—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
@@ -2841,11 +2847,11 @@ function WhatsAppCard() {
               <Icon name="Clock" className="size-4 text-[#0057B8]" />
               <p className="text-xs font-semibold text-[#0057B8]">Office Hours</p>
             </div>
-            <p className="mt-2 text-sm font-bold text-foreground">9 AM – 6 PM</p>
-            <p className="text-[11px] text-muted-foreground">Employee handles chat</p>
+            <p className="mt-2 text-sm font-bold text-foreground">09:00–18:00</p>
+            <p className="text-[11px] text-muted-foreground">Saturday–Thursday · Asia/Dhaka · Friday closed</p>
             <div className="mt-2 border-t border-[#E2E8F0] pt-2">
-              <p className="text-[11px] text-muted-foreground">After hours (6 PM – 9 AM):</p>
-              <p className="text-[11px] font-semibold text-[#E8501A]">AI handles first response</p>
+              <p className="text-[11px] text-muted-foreground">Outside configured office hours:</p>
+              <p className="text-[11px] font-semibold text-[#E8501A]">Reply draft and human follow-up queue only; no automatic send implied</p>
             </div>
           </div>
 

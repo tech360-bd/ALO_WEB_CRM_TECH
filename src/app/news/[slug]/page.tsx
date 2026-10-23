@@ -96,7 +96,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
             Speak with an expert ALO counselor to select the right university, prepare your application, and navigate visa requirements smoothly.
           </p>
           <Link href="/book-consultation">
-            <Button className="h-12 px-8 bg-[#E8501A] hover:bg-[#C93D13] text-white rounded-xl font-bold">
+            <Button className="h-12 px-8 bg-[#E8501A] hover:bg-[#C93D13] text-black rounded-xl font-bold">
               Book Free Consultation
             </Button>
           </Link>

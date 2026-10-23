@@ -72,7 +72,7 @@ const CONTACT_INFO = [
 ];
 
 const HOURS = [
-  { day: "Saturday – Thursday", time: "10:00 AM – 7:00 PM (BST)" },
+  { day: "Saturday – Thursday", time: "9:00 AM – 6:00 PM (Asia/Dhaka)" },
   { day: "Friday", time: "Closed" },
   { day: "Public Holidays", time: "By appointment only" },
 ];

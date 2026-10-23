@@ -203,7 +203,7 @@ export default function MasterCountryDestinationView({
                 </Link>
                 <a
                   href="#lead-form"
-                  className="h-12 px-7 bg-[#E8501A] hover:bg-[#C93D13] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-md"
+                  className="h-12 px-7 bg-[#E8501A] hover:bg-[#C93D13] text-black font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-md"
                 >
                   Check Eligibility
                 </a>
@@ -817,7 +817,7 @@ export default function MasterCountryDestinationView({
               <button
                 type="submit"
                 disabled={submittingLead}
-                className="w-full h-12 bg-[#E8501A] hover:bg-[#C93D13] text-white font-bold text-sm rounded-xl transition shadow-md"
+                className="w-full h-12 bg-[#E8501A] hover:bg-[#C93D13] text-black font-bold text-sm rounded-xl transition shadow-md"
               >
                 {submittingLead ? 'Submitting...' : 'Submit Free Application Inquiry'}
               </button>

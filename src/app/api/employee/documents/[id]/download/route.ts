@@ -19,7 +19,7 @@ const MIME_BY_EXTENSION: Record<string, string> = {
 };
 
 const ALLOWED_MIME = new Set(Object.values(MIME_BY_EXTENSION));
-const HR_ROLES = new Set(['SUPER_ADMIN', 'ADMIN', 'HR_MANAGER']);
+const HR_ROLES = new Set(['SUPER_ADMIN', 'HR', 'HR_MANAGER']);
 
 function inferMime(fileName: string): string | null {
   const extension = fileName.split('.').pop()?.toLowerCase() || '';
@@ -79,11 +79,15 @@ export async function GET(
       );
     }
 
-    const roles = new Set(
-      [auth.userType, ...auth.roles].map((role) => role.toUpperCase()),
-    );
-
-    const isOwner = auth.userId === document.employeeId;
+    const roles = new Set([auth.userType, ...auth.roles].map((role) => role.toUpperCase()));
+    const isSuperAdmin = roles.has('SUPER_ADMIN');
+    const actorEmployee = isSuperAdmin ? null : await db.employee.findUnique({ where: { userId: auth.userId }, select: { id: true, userId: true, employeeId: true, status: true } });
+    if (!isSuperAdmin && (!actorEmployee || actorEmployee.status.toLowerCase() !== 'active')) {
+      return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
+    }
+    const actorHrProfile = actorEmployee ? await db.employeeHR.findUnique({ where: { userId: auth.userId }, select: { employeeId: true } }) : null;
+    const ownerIdentifiers = new Set([auth.userId, actorEmployee?.id, actorEmployee?.employeeId, actorHrProfile?.employeeId].filter((value): value is string => Boolean(value)));
+    const isOwner = ownerIdentifiers.has(document.employeeId);
     const isHr = [...roles].some((role) => HR_ROLES.has(role));
 
     if (!isOwner && !isHr) {

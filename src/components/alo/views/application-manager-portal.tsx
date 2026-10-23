@@ -1604,7 +1604,7 @@ function B2BProvidersTab({
       const res = await fetch("/api/app-manager/b2b-providers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, createdBy: "app-manager-portal" }),
+        body: JSON.stringify(form),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || "Create failed");

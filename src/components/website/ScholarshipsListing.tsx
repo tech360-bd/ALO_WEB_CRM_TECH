@@ -117,7 +117,7 @@ export default function ScholarshipsListing() {
           <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Find Scholarships for Your Study Abroad Journey</h1>
           <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-white hover:bg-[#C84012] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function ScholarshipsListing() {
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
           <p className="text-sm text-blue-100 mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-white hover:bg-[#C84012] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Book Free Consultation</Button></Link>
           </div>

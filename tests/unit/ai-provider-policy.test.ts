@@ -13,7 +13,7 @@ const completion = (text = '{"keywords":["one","two","three"]}') => new Response
 const originalConfig = structuredClone(DEPARTMENT_MODEL_CONFIGS.seo);
 beforeEach(() => {
   vi.resetAllMocks();
-  for (const key of ['LOCAL_AI_URL', 'LOCAL_AI_MODEL', 'LOCAL_AI_API_KEY', 'GROQ_API_KEY', 'OPENROUTER_API_KEY', 'ZAI_API_KEY']) vi.stubEnv(key, '');
+  for (const key of ['LOCAL_AI_URL', 'LOCAL_AI_MODEL', 'LOCAL_AI_API_KEY', 'GROQ_API_KEY', 'OPENROUTER_API_KEY', 'ZAI_API_KEY', 'PAID_AI_API_ALLOWED']) vi.stubEnv(key, '');
   vi.stubGlobal('fetch', fetchMock);
   vi.mocked(db.crmAuditLog.create).mockResolvedValue({});
   vi.mocked(groqGuard.acquire).mockResolvedValue({ allowed: true });
@@ -22,7 +22,8 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); DEPARTMENT_MODEL_CONFIGS.seo = structuredClone(originalConfig); });
 
 describe('provider adapter and gateway policy (stubbed HTTP, not live provider verification)', () => {
-  it('pins OpenRouter even when Groq is configured', async () => {
+  it('pins OpenRouter only after explicit cloud billing approval, even when Groq is configured', async () => {
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true');
     vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); vi.stubEnv('OPENROUTER_API_KEY', 'dummy-router');
     fetchMock.mockResolvedValue(completion('hello'));
     const result = await generateText({ prompt: 'hello', provider: 'openrouter', model: 'explicit-model' });
@@ -30,6 +31,28 @@ describe('provider adapter and gateway policy (stubbed HTTP, not live provider v
     expect(String(fetchMock.mock.calls[0][0])).toBe('https://openrouter.ai/api/v1/chat/completions');
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
+  it('blocks native cloud adapters before HTTP when cloud billing approval is unset', async () => {
+    vi.stubEnv('OPENROUTER_API_KEY', 'dummy-router');
+    await expect(generateText({ prompt: 'test', provider: 'openrouter', model: 'potentially-paid-model' })).rejects.toThrow(/disabled by default/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it('does not route to a native cloud key merely because credentials exist', async () => {
+    vi.stubEnv('GROQ_API_KEY', 'dummy-groq');
+    await expect(routeModel({ taskType: 'COURSE_MATCH' })).rejects.toThrow(/PAID_AI_API_ALLOWED=true/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it('blocks catalogued cloud providers until explicit approval too', async () => {
+    vi.stubEnv('GEMINI_API_KEY', 'dummy-gemini');
+    await expect(generateText({ prompt: 'test', provider: 'gemini' })).rejects.toThrow(/disabled by default/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it('keeps local text inference available while cloud approval is unset', async () => {
+    vi.stubEnv('LOCAL_AI_URL', 'http://127.0.0.1:11434'); vi.stubEnv('LOCAL_AI_MODEL', 'private-model');
+    fetchMock.mockResolvedValue(completion('local answer'));
+    await expect(generateText({ prompt: 'test', provider: 'local' })).resolves.toMatchObject({ provider: 'local', text: 'local answer' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('does not cloud-fallback from local, including legacy adapter calls', async () => {
     vi.stubEnv('LOCAL_AI_URL', 'http://127.0.0.1:11434'); vi.stubEnv('LOCAL_AI_MODEL', 'private-model'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq');
     fetchMock.mockRejectedValue(new Error('offline'));
@@ -44,16 +67,16 @@ describe('provider adapter and gateway policy (stubbed HTTP, not live provider v
     expect(await routeModel({ taskType: 'KYC', modelHint: 'cloud-model' })).toMatchObject({ provider: 'local', model: 'private-model' });
   });
   it('rejects empty completion output', async () => {
-    vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); fetchMock.mockResolvedValue(completion(' '));
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); fetchMock.mockResolvedValue(completion(' '));
     await expect(generateText({ provider: 'groq', prompt: 'test' })).rejects.toThrow();
   });
   it('rejects explicit provider without its own credential before any request', async () => {
-    vi.stubEnv('GROQ_API_KEY', 'dummy-groq');
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq');
     await expect(generateText({ provider: 'openrouter', prompt: 'test' })).rejects.toThrow(/not configured/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
   it('department allowFallback=false prevents actual second HTTP call on failure', async () => {
-    vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); vi.stubEnv('OPENROUTER_API_KEY', 'dummy-router');
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); vi.stubEnv('OPENROUTER_API_KEY', 'dummy-router');
     fetchMock.mockResolvedValue(new Response('private upstream error', { status: 503 }));
     await expect(aiGateway({ prompt: 'test', department: 'seo' })).rejects.toThrow(/no permitted fallback/);
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -65,7 +88,7 @@ describe('provider adapter and gateway policy (stubbed HTTP, not live provider v
     expect(fetchMock).not.toHaveBeenCalled();
   });
   it('only uses explicit fallback pair, acquires its guard, and records actual identity', async () => {
-    vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); vi.stubEnv('OPENROUTER_API_KEY', 'dummy-router');
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); vi.stubEnv('OPENROUTER_API_KEY', 'dummy-router');
     DEPARTMENT_MODEL_CONFIGS.seo.primary.allowFallback = true;
     DEPARTMENT_MODEL_CONFIGS.seo.primary.fallback = { provider: 'openrouter', model: 'approved-model', reason: 'operator-approved' };
     fetchMock.mockResolvedValueOnce(new Response('', { status: 503 })).mockResolvedValueOnce(completion());
@@ -98,11 +121,11 @@ describe('provider adapter and gateway policy (stubbed HTTP, not live provider v
     expect(fetchMock).not.toHaveBeenCalled();
   });
   it('validates JSON shape instead of accepting any parseable object', async () => {
-    vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); fetchMock.mockResolvedValue(completion('{"keywords":42}'));
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); fetchMock.mockResolvedValue(completion('{"keywords":42}'));
     await expect(aiGateway({ prompt: 'test', department: 'seo', requireJson: true, jsonSchema: { type: 'object', properties: { keywords: { type: 'array', items: { type: 'string' } } }, required: ['keywords'] } })).rejects.toThrow(/JSON schema/);
   });
   it('classification refuses unknown labels instead of returning first label', async () => {
-    vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); fetchMock.mockResolvedValue(completion('{"label":"invented","confidence":"HIGH"}'));
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true'); vi.stubEnv('GROQ_API_KEY', 'dummy-groq'); fetchMock.mockResolvedValue(completion('{"label":"invented","confidence":"HIGH"}'));
     await expect(classify('text', ['SUPPORT', 'SALES'])).rejects.toThrow(/JSON schema/);
   });
   it('local private gateway success has truthful provider/model and no raw prompt in audit', async () => {

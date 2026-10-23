@@ -37,7 +37,7 @@ export default function BlogPage() {
                 key={category} 
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   category === 'All' 
-                    ? 'bg-[#E8501A] text-white' 
+                    ? 'bg-[#E8501A] text-black'
                     : 'bg-white text-gray-700 hover:bg-gray-200 border border-gray-200'
                 }`}
               >

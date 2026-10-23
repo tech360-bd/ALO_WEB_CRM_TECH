@@ -1,128 +1,165 @@
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { withAuth, logAuditAction } from '@/lib/auth-middleware';
-import { canViewB2B } from '@/lib/application-manager/service';
+import { withAuth } from '@/lib/auth-middleware';
+import { canViewB2B, canManageB2B, canViewB2BCommission, stripB2BFields } from '@/lib/application-manager/service';
+import { ApplicationStageTransitionError, transitionApplicationStage } from '@/lib/application-manager/stage-transition';
 import { reportServerEvent } from '@/lib/analytics/server-conversions';
 
+const submissionMethods = ['DIRECT_UNIVERSITY_PORTAL', 'EMAIL', 'UNIVERSITY_REPRESENTATIVE', 'B2B_INBOUND', 'B2B_OUTBOUND', 'PARTNER_SUBMISSION', 'MANUAL'] as const;
+const bodySchema = z.object({
+  submissionMethod: z.enum(submissionMethods).default('DIRECT_UNIVERSITY_PORTAL'),
+  reason: z.string().trim().min(3).max(180),
+  submittedTo: z.string().trim().max(191).optional(),
+  acknowledgementNumber: z.string().trim().max(191).optional(),
+  note: z.string().trim().max(1000).optional(),
+  submittedDate: z.string().trim().max(100).optional(),
+  portalReference: z.string().trim().max(191).optional(),
+  universityApplicationId: z.string().trim().max(191).optional(),
+  expectedResponseDate: z.string().trim().max(100).optional(),
+  feeStatus: z.string().trim().max(80).optional(),
+  b2bProviderId: z.string().trim().max(191).optional(),
+  b2bReference: z.string().trim().max(191).optional(),
+}).strict();
+
 export const POST = withAuth(async (req, auth, { params }: any) => {
-  const roles = auth.roles.map(r => r.toLowerCase());
-  const canSubmit = roles.includes('super_admin') || roles.includes('application_manager') || roles.includes('application_team') || auth.permissions.includes('application.submit');
-  if (!canSubmit) return NextResponse.json({ success: false, error: 'Forbidden: submit requires application_manager role' }, { status: 403 });
+  const roles = auth.roles.map((role) => role.toLowerCase());
+  const isPartner = Boolean(auth.partnerId || auth.userType.toLowerCase() === 'partner' || roles.some((role) => role.startsWith('partner')));
+  if (isPartner) return NextResponse.json({ success: false, error: 'Only ALO application staff may record a university submission.' }, { status: 403 });
 
-  const body = await req.json();
-  const validMethods = ['DIRECT_UNIVERSITY_PORTAL', 'EMAIL', 'UNIVERSITY_REPRESENTATIVE', 'B2B_INBOUND', 'B2B_OUTBOUND', 'PARTNER_SUBMISSION', 'MANUAL'];
-  if (body.submissionMethod && !validMethods.includes(body.submissionMethod)) {
-    return NextResponse.json({ success: false, error: `Invalid submissionMethod. Must be one of ${validMethods.join(', ')}` }, { status: 400 });
+  const canSubmit = ['super_admin', 'application_manager', 'application_team'].some((role) => roles.includes(role)) || auth.permissions.includes('application.submit');
+  if (!canSubmit) return NextResponse.json({ success: false, error: 'Forbidden: application.submit permission required' }, { status: 403 });
+
+  const parsed = bodySchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid submission request', details: parsed.error.flatten() }, { status: 400 });
+  const body = parsed.data;
+  const isB2bSubmission = body.submissionMethod === 'B2B_INBOUND' || body.submissionMethod === 'B2B_OUTBOUND';
+  if (isB2bSubmission && !canManageB2B(auth.roles, auth.permissions)) {
+    return NextResponse.json({ success: false, error: 'Forbidden: B2B submission requires application.manage_b2b permission.' }, { status: 403 });
+  }
+  if (isB2bSubmission && !body.b2bProviderId) {
+    return NextResponse.json({ success: false, error: 'b2bProviderId is required for a B2B submission.' }, { status: 400 });
   }
 
-  const existing = await db.application.findUnique({ where: { id: params.id } });
-  if (!existing) return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
+  const newStage = isB2bSubmission ? 'SUBMITTED_TO_B2B' : 'SUBMITTED_TO_UNIVERSITY';
+  try {
+    const updated = await db.$transaction(async (tx) => {
+      const existing = await tx.application.findUnique({ where: { id: params.id } });
+      if (!existing) throw new ApplicationStageTransitionError('NOT_FOUND', 'Application not found.');
+      if ((existing.isB2b || existing.isB2bConfidential || String(existing.applicationSource || '').toUpperCase().startsWith('B2B_')) && !canViewB2B(auth.roles, auth.permissions)) {
+        throw Object.assign(new Error('B2B application access requires explicit permission.'), { code: 'B2B_PERMISSION_REQUIRED' });
+      }
+      if (isB2bSubmission) {
+        const provider = await tx.b2bProvider.findFirst({
+          where: { id: body.b2bProviderId!, status: { in: ['ACTIVE', 'active', 'APPROVED', 'approved'] } },
+          select: { id: true },
+        });
+        if (!provider) throw Object.assign(new Error('B2B provider is not active or approved.'), { code: 'PROVIDER_UNAVAILABLE' });
+      }
 
-  // If B2B submission, check permission
-  if ((body.submissionMethod === 'B2B_INBOUND' || body.submissionMethod === 'B2B_OUTBOUND') && !canViewB2B(auth.roles, auth.permissions)) {
-    return NextResponse.json({ success: false, error: 'Forbidden: B2B submission requires application.view_b2b permission' }, { status: 403 });
-  }
-
-  // Update application stage to submitted
-  const newStage = body.submissionMethod === 'B2B_INBOUND' || body.submissionMethod === 'B2B_OUTBOUND' ? 'SUBMITTED_TO_B2B' : 'SUBMITTED_TO_UNIVERSITY';
-
-  const updated = await db.application.update({
-    where: { id: params.id },
-    data: {
-      stage: newStage,
-      safeStatus: 'SUBMITTED',
-      updatedBy: auth.userId,
-    },
-  });
-
-  // Create status log with submission details
-  await db.applicationStatusLog.create({
-    data: {
-      applicationId: params.id,
-      oldStatus: existing.stage,
-      newStatus: newStage,
-      safeStatus: 'SUBMITTED',
-      changedBy: auth.userId,
-      visibility: (body.submissionMethod === 'B2B_INBOUND' || body.submissionMethod === 'B2B_OUTBOUND') ? 'B2B_CONFIDENTIAL' : 'public_safe',
-      note: `Submitted via ${body.submissionMethod || 'UNIVERSITY_PORTAL'}${body.submittedTo ? ` to ${body.submittedTo}` : ''}${body.acknowledgementNumber ? ` Ack: ${body.acknowledgementNumber}` : ''}. ${body.note || ''}`,
-    },
-  });
-
-  // Create comment for submission
-  await db.applicationComment.create({
-    data: {
-      applicationId: params.id,
-      userId: auth.userId,
-      role: auth.roles[0] || 'APPLICATION_TEAM',
-      commentType: body.submissionMethod?.startsWith('B2B') ? 'B2B_CONFIDENTIAL' : 'APPLICATION_TEAM_INTERNAL',
-      visibility: body.submissionMethod?.startsWith('B2B') ? 'B2B_CONFIDENTIAL' : 'internal',
-      commentText: `Application submitted via ${body.submissionMethod || 'UNIVERSITY_PORTAL'} to ${body.submittedTo || 'University'} on ${body.submittedDate || new Date().toISOString()}. Portal Ref: ${body.portalReference || 'N/A'} Uni App ID: ${body.universityApplicationId || 'N/A'} Expected Response: ${body.expectedResponseDate || 'N/A'} Fee: ${body.feeStatus || 'PENDING'}`,
-      isB2bConfidential: body.submissionMethod?.startsWith('B2B') || false,
-    },
-  });
-
-  // If B2B, create or update B2bApplication
-  if ((body.submissionMethod === 'B2B_INBOUND' || body.submissionMethod === 'B2B_OUTBOUND') && body.b2bProviderId) {
-    const existingB2b = await db.b2bApplication.findFirst({ where: { applicationId: params.id, b2bProviderId: body.b2bProviderId } });
-    if (existingB2b) {
-      await db.b2bApplication.update({
-        where: { id: existingB2b.id },
-        data: {
-          b2bStatus: 'SUBMITTED',
-          submissionRoute: body.submissionMethod,
-          b2bReference: body.b2bReference || existingB2b.b2bReference,
-          portalReference: body.portalReference || existingB2b.portalReference,
-          universityApplicationId: body.universityApplicationId || existingB2b.universityApplicationId,
-          lastFollowupAt: new Date(),
-        },
+      const transition = await transitionApplicationStage(tx, {
+        applicationId: params.id,
+        toStage: newStage,
+        actorId: auth.userId,
+        reason: body.reason,
+        visibility: isB2bSubmission ? 'B2B_CONFIDENTIAL' : 'public_safe',
       });
-    } else {
-      await db.b2bApplication.create({
+      const application = await tx.application.update({ where: { id: params.id }, data: { updatedBy: auth.userId } });
+
+      const detailText = [
+        `Application submitted via ${body.submissionMethod} to ${body.submittedTo || 'University'}.`,
+        body.acknowledgementNumber ? `Acknowledgement: ${body.acknowledgementNumber}.` : '',
+        body.portalReference ? `Portal reference: ${body.portalReference}.` : '',
+        body.universityApplicationId ? `University application ID: ${body.universityApplicationId}.` : '',
+        body.expectedResponseDate ? `Expected response: ${body.expectedResponseDate}.` : '',
+        body.feeStatus ? `Fee status: ${body.feeStatus}.` : '',
+        body.note || '',
+      ].filter(Boolean).join(' ');
+
+      await tx.applicationComment.create({
         data: {
           applicationId: params.id,
-          b2bProviderId: body.b2bProviderId,
-          b2bType: body.submissionMethod as any,
-          b2bReference: body.b2bReference || '',
-          submissionRoute: body.submissionMethod,
-          b2bStatus: 'SUBMITTED',
-          portalReference: body.portalReference || '',
-          universityApplicationId: body.universityApplicationId || '',
-          createdBy: auth.userId,
+          userId: auth.userId,
+          role: auth.roles[0] || 'APPLICATION_TEAM',
+          commentType: isB2bSubmission ? 'B2B_CONFIDENTIAL' : 'APPLICATION_TEAM_INTERNAL',
+          visibility: isB2bSubmission ? 'B2B_CONFIDENTIAL' : 'internal',
+          commentText: detailText,
+          isB2bConfidential: isB2bSubmission,
         },
       });
+
+      if (isB2bSubmission && body.b2bProviderId) {
+        const existingB2b = await tx.b2bApplication.findFirst({ where: { applicationId: params.id, b2bProviderId: body.b2bProviderId } });
+        if (existingB2b) {
+          await tx.b2bApplication.update({
+            where: { id: existingB2b.id },
+            data: {
+              b2bStatus: 'SUBMITTED',
+              submissionRoute: body.submissionMethod,
+              b2bReference: body.b2bReference || existingB2b.b2bReference,
+              portalReference: body.portalReference || existingB2b.portalReference,
+              universityApplicationId: body.universityApplicationId || existingB2b.universityApplicationId,
+              lastFollowupAt: new Date(),
+            },
+          });
+        } else {
+          await tx.b2bApplication.create({
+            data: {
+              applicationId: params.id,
+              b2bProviderId: body.b2bProviderId,
+              b2bType: body.submissionMethod,
+              b2bReference: body.b2bReference || '',
+              submissionRoute: body.submissionMethod,
+              b2bStatus: 'SUBMITTED',
+              portalReference: body.portalReference || '',
+              universityApplicationId: body.universityApplicationId || '',
+              createdBy: auth.userId,
+            },
+          });
+        }
+      }
+
+      await tx.auditLog.create({
+        data: {
+          userId: auth.userId,
+          action: 'SUBMIT_APPLICATION',
+          resource: 'Application',
+          resourceId: params.id,
+          details: JSON.stringify({ submissionMethod: body.submissionMethod, submittedTo: body.submittedTo, reason: body.reason, oldStage: transition.previousStage, newStage: transition.stage }),
+          actorRole: auth.roles[0] || '',
+          studentId: existing.studentId,
+          beforeValue: JSON.stringify({ stage: transition.previousStage }),
+          afterValue: JSON.stringify({ stage: transition.stage, safeStatus: application.safeStatus }),
+        },
+      });
+      return application;
+    });
+
+    // Authoritative business conversion is emitted only after the DB transaction
+    // commits. The analytics adapter reports NOT_CONFIGURED instead of inventing
+    // delivery/success when no provider is configured.
+    reportServerEvent({
+      event: 'application_submitted',
+      reference: updated.applicationCode || updated.id,
+      params: {
+        application_reference: updated.applicationCode || '',
+        application_stage: updated.stage,
+        lead_source: body.submissionMethod,
+      },
+    });
+
+    const safeUpdated = stripB2BFields(updated as any, canViewB2B(auth.roles, auth.permissions), canViewB2BCommission(auth.roles, auth.permissions));
+    return NextResponse.json({ success: true, data: safeUpdated, application: safeUpdated, message: `Application submitted via ${body.submissionMethod}` });
+  } catch (error: any) {
+    if (error?.code === 'B2B_PERMISSION_REQUIRED') return NextResponse.json({ success: false, error: error.message }, { status: 403 });
+    if (error?.code === 'PROVIDER_UNAVAILABLE') return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    if (error instanceof ApplicationStageTransitionError) {
+      const status = error.code === 'NOT_FOUND' ? 404 : error.code === 'INVALID_REASON' ? 400 : ['CONCURRENT_UPDATE', 'DOCUMENTS_NOT_READY'].includes(error.code) ? 409 : 422;
+      return NextResponse.json({ success: false, error: error.message, code: error.code }, { status });
     }
+    console.error('[application-submit] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to submit application.' }, { status: 500 });
   }
-
-  await logAuditAction(auth, 'SUBMIT_APPLICATION', 'Application', params.id, body);
-  await db.auditLog.create({
-    data: {
-      userId: auth.userId,
-      action: 'SUBMIT_APPLICATION',
-      resource: 'Application',
-      resourceId: params.id,
-      details: JSON.stringify({ submissionMethod: body.submissionMethod, submittedTo: body.submittedTo }),
-      actorRole: auth.roles[0] || '',
-      studentId: existing.studentId,
-    },
-  });
-
-  // Authoritative business conversion. Fired from the server because this is
-  // the moment the application actually became submitted — a staff member with
-  // the application_manager role committed it — not the moment a browser
-  // clicked a button. Fire-and-forget: it must never affect the response, and
-  // it reports NOT_CONFIGURED rather than a fake success when GA4 is absent.
-  // Only ALO's own opaque application code leaves the system.
-  reportServerEvent({
-    event: 'application_submitted',
-    reference: (updated as { applicationCode?: string }).applicationCode ?? existing.id,
-    params: {
-      application_reference: (updated as { applicationCode?: string }).applicationCode ?? '',
-      application_stage: (updated as { stage?: string }).stage ?? '',
-      lead_source: body.submissionMethod || 'UNIVERSITY_PORTAL',
-    },
-  });
-
-  return NextResponse.json({ success: true, data: updated, application: updated, message: `Application submitted via ${body.submissionMethod || 'UNIVERSITY_PORTAL'}` });
 });
 
 export const PATCH = POST;

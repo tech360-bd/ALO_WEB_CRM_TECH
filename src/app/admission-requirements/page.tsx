@@ -81,7 +81,7 @@ const AdmissionRequirementsPage = () => {
           </p>
           <Link
             href="/eligibility-check"
-            className="inline-block bg-[#E8501A] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block bg-[#E8501A] hover:bg-orange-600 text-black font-bold py-3 px-8 rounded-lg transition-colors"
           >
             Check Eligibility
           </Link>

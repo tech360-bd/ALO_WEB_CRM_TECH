@@ -71,7 +71,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
                 Needs Manual Verification — information may have changed. Please verify the latest requirements on the official source before applying; do not treat this scholarship as currently open.
               </p>
             )}
-            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-white hover:bg-[#C84012] h-12 px-6 font-bold">Check Eligibility</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-6 font-bold">Check Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Consultation</Button></Link>
             <Link href="/scholarships"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Find All Scholarships</Button></Link>
           </div>
@@ -178,7 +178,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
               <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
               <p className="text-sm text-blue-100 mb-6">Check eligibility, find matching courses, or talk through your scholarship strategy with a counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-white hover:bg-[#C84012] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
+                <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
                 <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6 font-bold">Book Free Consultation</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
@@ -186,7 +186,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
             </Card>
           </div>
           <div className="space-y-6">
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/eligibility-check" className="block"><Button className="w-full bg-[#E8501A] text-white h-12">Check Eligibility</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Book Consultation</Button></Link><Link href="/scholarships" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Find All Scholarships</Button></Link></div></Card>
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/eligibility-check" className="block"><Button className="w-full bg-[#E8501A] text-black h-12">Check Eligibility</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Book Consultation</Button></Link><Link href="/scholarships" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Find All Scholarships</Button></Link></div></Card>
             <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Source & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[#0057B8] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'}</p><p><strong>Status:</strong> <Badge className={`${scholarship.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{scholarship.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'}</p></div></Card>
           </div>
         </div>

@@ -7,6 +7,8 @@ import { mutationOriginAllowed } from '@/lib/request-origin';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
+import { ApplicationStageTransitionError, transitionApplicationStage } from '@/lib/application-manager/stage-transition';
+import { syncStudentDocumentReadiness } from '@/lib/application-manager/document-readiness';
 
 export async function GET(request: Request) {
   try {
@@ -252,8 +254,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: false, error: 'Invalid module' }, { status: 400 });
   } catch (e: any) {
-    console.error('[admin.crm.command-center GET]', e);
-    return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    console.error('[admin.crm.command-center GET]', e instanceof Error ? e.name : 'UnknownError');
+    return NextResponse.json({ success: false, error: 'CRM command center data is temporarily unavailable.' }, { status: 503 });
   }
 }
 
@@ -275,18 +277,76 @@ export async function POST(request: Request) {
       case 'assign_lead':
         return NextResponse.json({ success: false, code: 'ASSIGNMENT_MAPPING_UNVERIFIED', error: 'Assignment is unavailable until lead and counselor identity namespaces are verified.' }, { status: 409 });
       case 'update_application_stage': {
-        const { applicationId, stage, note } = data;
-        if (!applicationId || !stage) return NextResponse.json({ success: false, error: 'applicationId and stage required' }, { status: 400 });
-        const app = await db.application.update({ where: { id: applicationId }, data: { stage, notes: note || '', updatedBy: auth.userId } });
-        await db.applicationStatusLog.create({ data: { applicationId, newStatus: stage, safeStatus: stage, changedBy: auth.name || auth.userId || '', note: note || '' } }).catch(()=>{});
-        return NextResponse.json({ success: true, data: app });
+        if (!data || typeof data.applicationId !== 'string' || typeof data.stage !== 'string') {
+          return NextResponse.json({ success: false, error: 'applicationId and stage are required.' }, { status: 400 });
+        }
+        const reason = typeof data.note === 'string' ? data.note.trim() : '';
+        try {
+          const result = await db.$transaction(async (tx) => {
+            const transition = await transitionApplicationStage(tx, {
+              applicationId: data.applicationId,
+              toStage: data.stage,
+              actorId: auth.userId,
+              reason,
+            });
+            await tx.auditLog.create({
+              data: {
+                userId: auth.userId,
+                action: 'ADMIN_CRM_APPLICATION_STAGE_TRANSITION',
+                resource: 'Application',
+                resourceId: data.applicationId,
+                details: JSON.stringify({ oldStage: transition.previousStage, newStage: transition.stage, reason }),
+                actorRole: auth.roles[0] || auth.userType,
+                studentId: transition.application.studentId,
+              },
+            });
+            return transition.application;
+          });
+          return NextResponse.json({ success: true, data: result });
+        } catch (error) {
+          if (error instanceof ApplicationStageTransitionError) {
+            const status = error.code === 'NOT_FOUND' ? 404 : error.code === 'INVALID_REASON' ? 400 : error.code === 'CONCURRENT_UPDATE' || error.code === 'DOCUMENTS_NOT_READY' ? 409 : 422;
+            return NextResponse.json({ success: false, code: error.code, error: error.message }, { status });
+          }
+          throw error;
+        }
       }
       case 'verify_document': {
-        const { documentId, status, reviewerNote } = data;
-        if (!documentId || !status) return NextResponse.json({ success: false, error: 'documentId and status required' }, { status: 400 });
-        const doc = await db.studentDocument.update({ where: { id: documentId }, data: { status, reviewerNote: reviewerNote || '', reviewedBy: auth.userId, reviewedAt: new Date() } });
-        await db.documentAudit.create({ data: { documentId, studentId: doc.studentId, actorId: auth.userId, actorName: auth.name, action: status, previousStatus: '', newStatus: status, note: reviewerNote || '' } }).catch(()=>{});
-        return NextResponse.json({ success: true, data: doc });
+        if (!data || typeof data.documentId !== 'string' || typeof data.status !== 'string') {
+          return NextResponse.json({ success: false, error: 'documentId and status are required.' }, { status: 400 });
+        }
+        const statusMap: Record<string, { student: string; application: 'VERIFIED' | 'REJECTED' | 'REQUEST_AGAIN' | 'UNDER_REVIEW' | 'UPLOADED' }> = {
+          VERIFIED: { student: 'approved', application: 'VERIFIED' },
+          APPROVED: { student: 'approved', application: 'VERIFIED' },
+          REJECTED: { student: 'rejected', application: 'REJECTED' },
+          REQUEST_AGAIN: { student: 'needs_update', application: 'REQUEST_AGAIN' },
+          NEEDS_UPDATE: { student: 'needs_update', application: 'REQUEST_AGAIN' },
+          UNDER_REVIEW: { student: 'pending_review', application: 'UNDER_REVIEW' },
+          UPLOADED: { student: 'pending_review', application: 'UPLOADED' },
+        };
+        const decision = statusMap[data.status.toUpperCase()];
+        if (!decision) return NextResponse.json({ success: false, error: 'Unsupported document review status.' }, { status: 400 });
+        const reviewerNote = typeof data.reviewerNote === 'string' ? data.reviewerNote.trim().slice(0, 1000) : '';
+        const doc = await db.$transaction(async (tx) => {
+          const existing = await tx.studentDocument.findUnique({ where: { id: data.documentId } });
+          if (!existing || existing.isArchived) throw new Error('DOCUMENT_NOT_FOUND');
+          const changed = await tx.studentDocument.updateMany({
+            where: { id: existing.id, status: existing.status, isArchived: false },
+            data: { status: decision.student, reviewerNote, reviewedBy: auth.userId, reviewedAt: new Date() },
+          });
+          if (changed.count !== 1) throw new Error('DOCUMENT_CHANGED');
+          const updated = await tx.studentDocument.findUnique({ where: { id: existing.id } });
+          if (!updated) throw new Error('DOCUMENT_NOT_FOUND');
+          await tx.documentAudit.create({
+            data: { documentId: existing.id, studentId: existing.studentId, actorId: auth.userId, actorName: auth.name, actorRole: auth.roles[0] || '', action: decision.application, previousStatus: existing.status, newStatus: decision.student, note: reviewerNote },
+          });
+          await syncStudentDocumentReadiness(tx, existing.id, decision.application, { reviewerId: auth.userId, reviewerNote });
+          await tx.auditLog.create({
+            data: { userId: auth.userId, action: 'ADMIN_CRM_VERIFY_DOCUMENT', resource: 'StudentDocument', resourceId: existing.id, details: JSON.stringify({ status: decision.application, reviewerNote }), actorRole: auth.roles[0] || auth.userType, studentId: existing.studentId },
+          });
+          return updated;
+        });
+        return NextResponse.json({ success: true, data: doc, message: 'Document review saved and application readiness synchronized.' });
       }
       case 'update_visa_case': {
         const { caseId, updates } = data;
@@ -304,7 +364,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: false, error: `Unknown action ${action}` }, { status: 400 });
     }
   } catch (e: any) {
-    console.error('[admin.crm.command-center POST]', e);
-    return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    console.error('[admin.crm.command-center POST]', e instanceof Error ? e.name : 'UnknownError');
+    return NextResponse.json({ success: false, error: 'CRM command could not be completed.' }, { status: 503 });
   }
 }

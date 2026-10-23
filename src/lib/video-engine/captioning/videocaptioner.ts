@@ -177,6 +177,14 @@ export async function refineSubtitlesWithLLM(
     // Return as-is if LLM not configured
     return segments;
   }
+  let localEndpoint = false;
+  try {
+    const host = new URL(llmApiUrl).hostname;
+    localEndpoint = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+  } catch {
+    return segments;
+  }
+  if (!localEndpoint && process.env.PAID_AI_API_ALLOWED !== 'true') return segments;
 
   // Build prompt similar to VideoCaptioner
   const prompt = `

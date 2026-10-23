@@ -44,9 +44,10 @@ export async function GET(request: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
     const actorRoles = new Set([auth.userType, ...auth.roles].map(normalizeRole));
-    const isAdmin = [...actorRoles].some((role) => ADMIN_ROLES.has(role));
-
-    if (['STUDENT', 'PARTNER'].includes(normalizeRole(auth.userType)) && !isAdmin) {
+    if ([...actorRoles].some((role) => ADMIN_ROLES.has(role))) {
+      return NextResponse.json({ success: false, error: 'Super Admin dashboards are separate from employee dashboards.' }, { status: 403 });
+    }
+    if (['STUDENT', 'PARTNER'].includes(normalizeRole(auth.userType))) {
       return NextResponse.json({ success: false, error: 'Employee dashboard access is not permitted.' }, { status: 403 });
     }
 
@@ -57,24 +58,35 @@ export async function GET(request: NextRequest) {
         branch: true, destinationFocus: true,
       },
     });
-    if (!isAdmin && (!employee || employee.status.toLowerCase() !== 'active')) {
+    if (!employee || employee.status.toLowerCase() !== 'active') {
       return NextResponse.json({ success: false, error: 'An active employee record is required.' }, { status: 403 });
     }
 
+    const permissions = new Set(Array.isArray(auth.permissions) ? auth.permissions : []);
+    const hasDashboardPermission = permissions.has('employee.dashboard.view')
+      || permissions.has('employee.dashboard.view_all');
+    if (!hasDashboardPermission) {
+      return NextResponse.json({ success: false, error: 'The employee dashboard permission is not assigned to this account.' }, { status: 403 });
+    }
+    const isAdmin = permissions.has('employee.dashboard.view_all');
+
     const url = new URL(request.url);
     const requestedRole = normalizeRole(url.searchParams.get('role') || '');
-    if (requestedRole && !DASHBOARD_ROLES.has(requestedRole) && !ADMIN_ROLES.has(requestedRole)) {
+    if (requestedRole && ADMIN_ROLES.has(requestedRole)) {
+      return NextResponse.json({ success: false, error: 'Super Admin dashboards are separate from employee dashboards.' }, { status: 403 });
+    }
+    if (requestedRole && !DASHBOARD_ROLES.has(requestedRole)) {
       return NextResponse.json({ success: false, error: 'Unsupported dashboard role.' }, { status: 400 });
     }
-    if (requestedRole && !isAdmin && !actorRoles.has(requestedRole) && normalizeRole(employee?.role || '') !== requestedRole) {
+    const employeeRole = normalizeRole(employee.role || '');
+    if (requestedRole && requestedRole !== employeeRole && !actorRoles.has(requestedRole)) {
       return NextResponse.json({ success: false, error: 'The requested dashboard role is not assigned to this account.' }, { status: 403 });
     }
 
-    const employeeRole = normalizeRole(employee?.role || '');
     const userRole = requestedRole || (DASHBOARD_ROLES.has(employeeRole)
       ? employeeRole
-      : [...actorRoles].find((role) => DASHBOARD_ROLES.has(role)) || (isAdmin ? 'ADMIN' : ''));
-    if (!userRole || (!isAdmin && !DASHBOARD_ROLES.has(userRole))) {
+      : [...actorRoles].find((role) => DASHBOARD_ROLES.has(role)) || '');
+    if (!userRole || !DASHBOARD_ROLES.has(userRole)) {
       return NextResponse.json({ success: false, error: 'No authorized employee dashboard role is assigned.' }, { status: 403 });
     }
 
@@ -108,7 +120,10 @@ export async function GET(request: NextRequest) {
     let leadWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
     let studentWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
     let applicationWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
-    let visaCaseWhere: any = isAdmin ? {} : { counselorId: { in: scopeIds } };
+    // Visa cases are private to assigned Visa officers; a counselorId match is
+    // not sufficient authorization to reveal even a count.
+    let visaCaseWhere: any = isAdmin ? {} : EMPTY_SCOPE;
+    const canViewVisaModule = isAdmin || ['VISA_OFFICER', 'VISA_INTERVIEW_OFFICER'].includes(userRole);
     const threadWhere: any = { assignedToId: { in: ownIds }, status: { notIn: ['closed', 'CLOSED'] } };
 
     if (!isAdmin && ['APPLICATION_TEAM', 'APPLICATION_MANAGER'].includes(userRole)) {
@@ -136,7 +151,7 @@ export async function GET(request: NextRequest) {
       visaCaseWhere = EMPTY_SCOPE;
     }
 
-    if (!isAdmin && !canViewUccB2B(auth) && ['APPLICATION_TEAM', 'APPLICATION_MANAGER', 'COUNSELOR', 'SENIOR_COUNSELOR'].includes(userRole)) {
+    if (!canViewUccB2B(auth) && ['APPLICATION_TEAM', 'APPLICATION_MANAGER', 'COUNSELOR', 'SENIOR_COUNSELOR'].includes(userRole)) {
       applicationWhere = { AND: [applicationWhere, { isB2bConfidential: false }] };
     }
 
@@ -165,7 +180,7 @@ export async function GET(request: NextRequest) {
       db.application.count({ where: { ...applicationWhere, stage: { notIn: ['enrolled', 'cancelled', 'rejected', 'ENROLLED', 'CANCELLED', 'REJECTED'] } } }),
       db.application.count({ where: { ...applicationWhere, safeStatus: { in: ['SUBMITTED', 'submitted'] } } }),
       db.application.count({ where: { ...applicationWhere, offerStatus: { in: ['CONDITIONAL_OFFER', 'UNCONDITIONAL_OFFER', 'conditional_offer', 'unconditional_offer'] } } }),
-      db.visaCase.count({ where: visaCaseWhere }),
+      canViewVisaModule ? db.visaCase.count({ where: visaCaseWhere }) : Promise.resolve(null),
       db.counselorTask.count({ where: { employeeId: { in: ownIds }, status: { in: ['pending', 'PENDING', 'in_progress', 'IN_PROGRESS'] } } }),
       db.portalNotification.count({ where: { userId: auth.userId, isRead: false } }),
       db.hrmNotification.count({ where: { recipientId: { in: ownIds }, isRead: false } }),
@@ -364,11 +379,11 @@ export async function GET(request: NextRequest) {
         entityId: auth.userId,
         ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || '',
         userAgent: request.headers.get('user-agent') || '',
-        metadata: JSON.stringify({ effectiveUserId: auth.userId, role: userRole }),
+        metadata: JSON.stringify({ effectiveUserId: auth.userId, role: userRole, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole, expiresAt: auth.actingAsExpiresAt?.toISOString() } : {}) }),
       },
     });
 
-    return NextResponse.json({ success: true, userRole, userId: auth.userId, branch: employee?.branch || null, country: destinationCountries[0] || null, metrics });
+    return NextResponse.json({ success: true, userRole, userId: auth.userId, userName: auth.name, branch: employee.branch || null, country: destinationCountries[0] || null, actingAs: auth.actingAsSessionId ? { sessionId: auth.actingAsSessionId, role: auth.actingAsRole, expiresAt: auth.actingAsExpiresAt?.toISOString() || null, realActor: auth.actorName } : null, metrics });
   } catch {
     return NextResponse.json({ success: false, error: 'Employee dashboard data is temporarily unavailable.' }, { status: 503 });
   }

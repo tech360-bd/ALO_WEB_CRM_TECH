@@ -69,6 +69,8 @@ function createFakeDatabase() {
   const makeTx = () => {
     let connectionLastInsertId = 0;
     return {
+      student: { findUnique: async () => null },
+      portalStudentProfile: { findUnique: async () => null },
       $executeRaw: async (strings: TemplateStringsArray, ...values: unknown[]) => {
         const sql = strings.join('?');
         if (sql.includes('ON DUPLICATE KEY UPDATE')) {
@@ -158,10 +160,10 @@ describe('inbound WhatsApp → Student ID', () => {
     );
 
     expect(new Set(ids).size).toBe(25);
-    expect(ids[0]).toBe('AE-202600001');
-    expect(ids[24]).toBe('AE-202600025');
-    // Every ID matches the canonical AE-YYYY + 5-digit format.
-    for (const id of ids) expect(id).toMatch(/^AE-\d{4}\d{5}$/);
+    expect(ids[0]).toBe('AE-2026000001');
+    expect(ids[24]).toBe('AE-2026000025');
+    // New IDs use the canonical AE-YYYY + 6-digit format.
+    for (const id of ids) expect(id).toMatch(/^AE-\d{4}\d{6}$/);
   });
 
   it('releases the number when the surrounding business transaction rolls back', async () => {
@@ -174,7 +176,7 @@ describe('inbound WhatsApp → Student ID', () => {
     ).rejects.toThrow('lead insert failed');
 
     const next = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
-    expect(next).toBe('AE-202600001');
+    expect(next).toBe('AE-2026000001');
   });
 });
 
@@ -288,7 +290,8 @@ describe('full journey', () => {
     // 2. Verified inbound lead gets a canonical Student ID.
     const fake = createFakeDatabase();
     const studentId = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
-    expect(studentId).toMatch(/^AE-\d{4}\d{5}$/);
+    expect(studentId).toMatch(/^AE-\d{4}\d{6}$/);
+    expect(studentId).toBe('AE-2026000001');
 
     // 3. The attachment is screened, then written to private storage.
     const scan = await scanForMalware(CLEAN_PDF);

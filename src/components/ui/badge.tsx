@@ -36,7 +36,7 @@ const badgeVariants = cva(
         muted:
           "bg-muted text-muted-foreground border border-transparent",
         /* Compatibility aliases used by legacy CRM views. */
-        /* Information (Master §13): #EFF6FF bg · #003F87 text · #BFDBFE border */
+        /* Information: pale-blue background, deep brand-blue text, light-blue border. */
         info:
           "bg-alo-info-bg text-alo-info-text border border-alo-info-border",
         blue:

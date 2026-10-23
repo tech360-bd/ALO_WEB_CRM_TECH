@@ -1,54 +1,60 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateStudentRequest } from '@/lib/student-auth';
+
+const schema = z.object({
+  interviewType: z.enum(['embassy_mock', 'credibility', 'pre_cas', 'university', 'sponsor', 'study_gap', 'refusal', 'english', 'final_readiness']).default('embassy_mock'),
+  caseId: z.string().trim().max(191).optional(),
+  language: z.enum(['english', 'bangla', 'banglish']).default('english'),
+  difficulty: z.enum(['basic', 'standard', 'strict', 'high_risk_review']).default('standard'),
+}).strict();
 
 export async function POST(req: Request) {
   try {
     const auth = await authenticateStudentRequest(req);
     if (auth instanceof NextResponse) return auth;
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid interview practice request.', details: parsed.error.flatten() }, { status: 400 });
 
-    const body = await req.json();
-    const { interviewType, caseId, studentId } = body;
-
-    const validTypes = ['embassy_mock','credibility','pre_cas','university','sponsor','study_gap','refusal','english','final_readiness'];
-    if (interviewType && !validTypes.includes(interviewType)) {
-      return NextResponse.json({ success: false, error: `Invalid interview type — allowed Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness — 9 types` }, { status: 400 });
+    if (parsed.data.caseId) {
+      const visaCase = await db.visaCase.findFirst({ where: { id: parsed.data.caseId, studentId: auth.studentId }, select: { id: true } });
+      if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found for this student.' }, { status: 404 });
     }
-
-    // Check practice cooldown — 3 days after package store attempts improvement
-    const recentSessions = await db.aiInterviewSession.findMany({
-      where: { studentId: auth.studentId, createdAt: { gte: new Date(Date.now() - 3*24*60*60*1000) } },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    }).catch(() => []);
-
-    const session = await db.aiInterviewSession.create({
-      data: {
-        studentId: auth.studentId,
-        caseId: caseId || null,
-        interviewType: interviewType || 'embassy_mock',
-        status: 'in_progress',
-        startedAt: new Date(),
-      } as any,
+    const recentSessions = await db.aiInterviewSession.count({
+      where: { studentId: auth.studentId, createdAt: { gte: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) } },
     });
 
-    await db.timelineEvent.create({
-      data: {
-        studentId: auth.studentId,
-        stage: 'VISA_AI_INTERVIEW_STARTED',
-        title: `AI interview started — type ${interviewType || 'embassy_mock'} — session ${session.id} — student ${auth.studentId}`,
-        description: `AI interview 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness one Q at a time detect incomplete/contradictions/memorized/weak — understand Bangladeshi English/Banglish/broken/pauses evaluate meaning/clarity/consistency/relevance/confidence not accent — Practice 3 days after package store attempts improvement — reuse existing video/voice store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording`,
-      },
-    }).catch(() => {});
+    const session = await db.$transaction(async (tx) => {
+      const created = await tx.aiInterviewSession.create({
+        data: {
+          studentId: auth.studentId,
+          caseId: parsed.data.caseId || '',
+          interviewType: parsed.data.interviewType,
+          status: 'in_progress',
+          riskLevel: 'human_review_required',
+          transcript: JSON.stringify({ language: parsed.data.language, difficulty: parsed.data.difficulty, answers: [] }),
+        },
+        select: { id: true, interviewType: true, status: true, startedAt: true, createdAt: true },
+      });
+      await tx.studentEvent.create({
+        data: { studentId: auth.studentId, eventType: 'VISA_AI_INTERVIEW_STARTED', payload: JSON.stringify({ sessionId: created.id, caseId: parsed.data.caseId || null, interviewType: parsed.data.interviewType }) },
+      });
+      await tx.timelineEvent.create({
+        data: { studentId: auth.studentId, stage: 'VISA_AI_INTERVIEW_STARTED', title: 'Visa interview practice started.', description: 'Practice session only. No embassy representation, visa decision, or automated readiness score is provided.', actor: auth.studentId },
+      });
+      return created;
+    });
 
     return NextResponse.json({
       success: true,
       sessionId: session.id,
       session,
-      recentSessions: recentSessions.length,
-      note: 'AI interview 9 types one Q at a time detect incomplete/contradictions/memorized/weak — understand Bangladeshi English/Banglish/broken/pauses — Practice 3 days after package store attempts improvement — video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording — AI safety never guarantee approval/success/pretend embassy/confidential/invent requirements/refusal/university/policy/speculation as fact/automatically final decision must show uncertainty/cite source/flag manual verification/recommend human review',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+      recentSessions,
+      assessmentStatus: 'human_review_required',
+      note: 'A saved practice session is available. Automated AI assessment is not enabled; do not treat practice as an embassy interview, official guidance, eligibility result, or visa guarantee.',
+    }, { status: 201, headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Interview practice session could not be started.' }, { status: 503 });
   }
 }

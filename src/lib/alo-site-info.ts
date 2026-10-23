@@ -30,7 +30,7 @@ export const ALO_CONTACT = {
   whatsappDisplay: '+8801805020101',
   email: 'info@aloeducation.com',
   emailHref: 'mailto:info@aloeducation.com',
-  officeHours: 'Sat–Thu: 10:00 AM – 6:00 PM (Asia/Dhaka)',
+  officeHours: 'Sat–Thu: 9:00 AM – 6:00 PM (Asia/Dhaka)',
 } as const;
 
 /**

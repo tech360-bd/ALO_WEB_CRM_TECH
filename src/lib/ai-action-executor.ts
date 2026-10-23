@@ -12,7 +12,7 @@
  *        - LOW + autoApprove → execute immediately.
  *        - MEDIUM+ → PENDING (awaiting human approval).
  *   4. `approveAndExecute` for human-in-the-loop approval.
- *   5. `retryFailedAction` for explicit retries (max 3, then PERMANENTLY_FAILED).
+ *   5. Failed/uncertain outcomes require reconciliation; generic replay is disabled.
  *
  * Each execution writes an AuditLog with structured JSON details.
  *
@@ -43,7 +43,7 @@ export interface AiActionParams {
 
 export interface AiActionResult {
   actionId: string;
-  status: "EXECUTED" | "PENDING" | "FAILED" | "PERMANENTLY_FAILED" | "SKIPPED_PAUSED" | "CACHED";
+  status: "EXECUTED" | "PENDING" | "APPROVED" | "EXECUTING" | "REJECTED" | "FAILED" | "PERMANENTLY_FAILED" | "SKIPPED_PAUSED" | "CACHED";
   riskLevel: RiskLevel;
   result?: Record<string, unknown>;
   error?: string;
@@ -125,6 +125,22 @@ export function computePayloadHash(payload: Record<string, unknown>): string {
   return crypto.createHash("sha256").update(stable, "utf8").digest("hex");
 }
 
+function actionMatchesParams(existing: any, params: AiActionParams): boolean {
+  if (
+    existing.actionType !== params.actionType ||
+    existing.targetType !== params.targetType ||
+    (existing.targetId ?? null) !== (params.targetId ?? null) ||
+    existing.requestedBy !== params.requestedBy
+  ) return false;
+  try {
+    const savedPayload = JSON.parse(existing.payload || "{}");
+    return Boolean(savedPayload && typeof savedPayload === "object" && !Array.isArray(savedPayload))
+      && computePayloadHash(savedPayload) === computePayloadHash(params.payload);
+  } catch {
+    return false;
+  }
+}
+
 function sortKeys(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sortKeys);
   if (value && typeof value === "object") {
@@ -144,8 +160,8 @@ function sortKeys(value: unknown): unknown {
  *   1. Global AI pause check → return SKIPPED_PAUSED.
  *   2. IdempotencyKey lookup:
  *        - EXECUTED  → cached return.
- *        - FAILED    → retry (if retryCount < 3).
- *        - PENDING   → return as-is (still awaiting approval).
+ *        - FAILED    → return failure without running the executor again.
+ *        - PENDING   → return as-is (still awaiting approval or execution).
  *   3. Create AiCommandAction row (P2002 race-safe).
  *   4. If risk === LOW && autoApprove → execute now.
  *      If risk >= MEDIUM → leave as PENDING (human must approve).
@@ -171,6 +187,15 @@ export async function executeAiAction(params: AiActionParams): Promise<AiActionR
   }).catch(() => null);
 
   if (existing) {
+    if (!actionMatchesParams(existing, params)) {
+      return {
+        actionId: existing.id,
+        status: "FAILED",
+        riskLevel: existing.riskLevel as RiskLevel,
+        error: "IDEMPOTENCY_KEY_REUSED: this key is bound to a different actor or action payload.",
+        retryCount: existing.retryCount,
+      };
+    }
     if (existing.status === "EXECUTED") {
       return {
         actionId: existing.id,
@@ -190,22 +215,19 @@ export async function executeAiAction(params: AiActionParams): Promise<AiActionR
       };
     }
     if (existing.status === "FAILED") {
-      // Retry path — only if retryCount < 3
-      if (existing.retryCount >= 3) {
-        await db.aiCommandAction.update({
-          where: { id: existing.id },
-          data: { status: "PERMANENTLY_FAILED" },
-        }).catch(() => {});
-        return {
-          actionId: existing.id,
-          status: "PERMANENTLY_FAILED",
-          riskLevel: existing.riskLevel as RiskLevel,
-          error: existing.lastError ?? "Max retries exceeded",
-          retryCount: existing.retryCount,
-        };
-      }
-      // Fall through to retry by reusing the existing record
-      return await retryAndExecute(existing.id, params);
+      // A thrown executor may have completed an external side effect before
+      // failing to report it. Replaying here could duplicate that operation.
+      // Require reconciliation and a separately authorized, action-specific
+      // retry path instead of silently invoking the executor again.
+      return {
+        actionId: existing.id,
+        status: "FAILED",
+        riskLevel: existing.riskLevel as RiskLevel,
+        error: existing.lastError
+          ? `${existing.lastError}. Execution outcome may be uncertain; reconcile before any retry.`
+          : "Previous execution failed or is uncertain; reconcile before any retry.",
+        retryCount: existing.retryCount,
+      };
     }
     // PERMANENTLY_FAILED or other
     return {
@@ -246,14 +268,17 @@ export async function executeAiAction(params: AiActionParams): Promise<AiActionR
       // Raced — another process created it. Fetch + return cached.
       const raced = await db.aiCommandAction.findUnique({
         where: { idempotencyKey: params.idempotencyKey },
-      });
+      }).catch(() => null);
       if (raced) {
+        if (!actionMatchesParams(raced, params)) {
+          return { actionId: raced.id, status: "FAILED", riskLevel: raced.riskLevel as RiskLevel, error: "IDEMPOTENCY_KEY_REUSED: this key is bound to a different actor or action payload.", retryCount: raced.retryCount };
+        }
         return {
           actionId: raced.id,
           status: raced.status === "EXECUTED" ? "CACHED" : (raced.status as AiActionResult["status"]),
           riskLevel: raced.riskLevel as RiskLevel,
           result: safeParseJson(raced.result),
-          cached: true,
+          cached: raced.status === "EXECUTED",
           retryCount: raced.retryCount,
         };
       }
@@ -275,7 +300,43 @@ export async function executeAiAction(params: AiActionParams): Promise<AiActionR
     };
   }
 
-  // 6) Execute
+  // 6) Claim auto-execution durably before any side effect. The same status
+  // gate is used by the human approval path, preventing a concurrent approval
+  // request from racing a low-risk automatic executor.
+  let claimed = false;
+  try {
+    claimed = await db.$transaction(async (tx) => {
+      const update = await tx.aiCommandAction.updateMany({
+        where: { id: actionId, status: "PENDING", executedAt: null },
+        data: { status: "EXECUTING" },
+      });
+      if (update.count !== 1) return false;
+      await tx.auditLog.create({
+        data: {
+          action: "AI_ACTION",
+          resource: "AiCommandAction",
+          resourceId: actionId,
+          details: JSON.stringify({ action: "AUTO_EXECUTION_CLAIMED", actionType: params.actionType, riskLevel, requestedBy: params.requestedBy }),
+        },
+      });
+      return true;
+    });
+  } catch (error) {
+    console.error(`[ai-action-executor] auto-execution claim failed for ${actionId}:`, error instanceof Error ? error.name : "UnknownError");
+    return { actionId, status: "PENDING", riskLevel, retryCount: 0, error: "Execution claim could not be durably recorded; no action was executed." };
+  }
+  if (!claimed) {
+    const current = await db.aiCommandAction.findUnique({ where: { id: actionId } }).catch(() => null);
+    return {
+      actionId,
+      status: current?.status === "EXECUTED" ? "CACHED" : (current?.status as AiActionResult["status"] || "PENDING"),
+      riskLevel: (current?.riskLevel || riskLevel) as RiskLevel,
+      result: safeParseJson(current?.result),
+      cached: current?.status === "EXECUTED",
+      retryCount: current?.retryCount ?? 0,
+      error: current?.status === "EXECUTING" ? "Another worker owns this action; inspect its durable status." : undefined,
+    };
+  }
   return await runExecution(actionId, params);
 }
 
@@ -291,57 +352,72 @@ async function runExecution(
   let errorMessage: string | undefined;
 
   try {
-    if (typeof params.executor !== "function") {
-      throw new Error("No executor provided");
-    }
+    if (typeof params.executor !== "function") throw new Error("No executor provided");
     resultData = await params.executor(params.payload);
     success = true;
   } catch (err: any) {
     errorMessage = err?.message ?? String(err);
-    console.error(`[ai-action-executor] execution failed for ${actionId}:`, err);
+    console.error(`[ai-action-executor] execution failed for ${actionId}:`, err instanceof Error ? err.name : "UnknownError");
   }
   const durationMs = Date.now() - start;
 
-  // Update AiCommandAction row
+  // Completion and its audit are one transaction. If persistence is uncertain
+  // after a side effect, keep the row in EXECUTING so no generic retry can replay it.
   try {
-    await db.aiCommandAction.update({
-      where: { id: actionId },
-      data: {
-        status: success ? "EXECUTED" : "FAILED",
-        result: resultData ? JSON.stringify(resultData) : null,
-        lastError: errorMessage,
-        executedAt: success ? new Date() : null,
-      },
+    const committed = await db.$transaction(async (tx) => {
+      const update = await tx.aiCommandAction.updateMany({
+        where: { id: actionId, status: "EXECUTING", executedAt: null },
+        data: {
+          status: success ? "EXECUTED" : "FAILED",
+          result: resultData ? JSON.stringify(resultData) : null,
+          lastError: errorMessage ?? null,
+          executedAt: success ? new Date() : null,
+        },
+      });
+      if (update.count !== 1) return false;
+      await tx.auditLog.create({
+        data: {
+          action: "AI_ACTION",
+          resource: "AiCommandAction",
+          resourceId: actionId,
+          details: JSON.stringify({
+            actionType: params.actionType,
+            targetType: params.targetType,
+            targetId: params.targetId,
+            requestedBy: params.requestedBy,
+            aiAgentId: params.aiAgentId,
+            trigger: params.trigger,
+            actor: params.actor,
+            idempotencyKey: params.idempotencyKey,
+            success,
+            errorMessage,
+            durationMs,
+            result: resultData ?? null,
+          }),
+        },
+      });
+      return true;
     });
+    if (!committed) {
+      const current = await db.aiCommandAction.findUnique({ where: { id: actionId } }).catch(() => null);
+      return {
+        actionId,
+        status: current?.status === "EXECUTED" ? "CACHED" : (current?.status as AiActionResult["status"] || "EXECUTING"),
+        riskLevel: (current?.riskLevel || assessRisk(params.actionType, params.payload)) as RiskLevel,
+        result: safeParseJson(current?.result),
+        cached: current?.status === "EXECUTED",
+        retryCount: current?.retryCount ?? 0,
+        error: "Execution result could not be claimed for completion; inspect the durable action state before retrying.",
+      };
+    }
   } catch (err) {
-    console.error(`[ai-action-executor] failed to update row ${actionId}:`, err);
-  }
-
-  // AuditLog with structured JSON
-  try {
-    await db.auditLog.create({
-      data: {
-        action: "AI_ACTION",
-        resource: "AiCommandAction",
-        resourceId: actionId,
-        details: JSON.stringify({
-          actionType: params.actionType,
-          targetType: params.targetType,
-          targetId: params.targetId,
-          requestedBy: params.requestedBy,
-          aiAgentId: params.aiAgentId,
-          trigger: params.trigger,
-          actor: params.actor,
-          idempotencyKey: params.idempotencyKey,
-          success,
-          errorMessage,
-          durationMs,
-          result: resultData ?? null,
-        }),
-      },
-    });
-  } catch (err) {
-    console.error(`[ai-action-executor] failed to write audit log for ${actionId}:`, err);
+    console.error(`[ai-action-executor] completion commit failed for ${actionId}:`, err instanceof Error ? err.name : "UnknownError");
+    return {
+      actionId,
+      status: "EXECUTING",
+      riskLevel: assessRisk(params.actionType, params.payload),
+      error: "Execution outcome is uncertain and the action remains claimed. Inspect and reconcile before retrying.",
+    };
   }
 
   return {
@@ -354,64 +430,16 @@ async function runExecution(
   };
 }
 
-// ─── Internal: retry path ───────────────────────────────────────
-
-async function retryAndExecute(
-  actionId: string,
-  params: AiActionParams
-): Promise<AiActionResult> {
-  // Bump retry count
-  let nextRetryCount = 1;
-  try {
-    const updated = await db.aiCommandAction.update({
-      where: { id: actionId },
-      data: {
-        retryCount: { increment: 1 },
-        status: "PENDING",
-        lastError: null,
-      },
-    });
-    nextRetryCount = updated.retryCount;
-  } catch (err) {
-    console.error(`[ai-action-executor] retry bump failed for ${actionId}:`, err);
-  }
-
-  if (nextRetryCount > 3) {
-    try {
-      await db.aiCommandAction.update({
-        where: { id: actionId },
-        data: { status: "PERMANENTLY_FAILED" },
-      });
-    } catch (err) {
-      console.error(`[ai-action-executor] permanent-fail mark failed for ${actionId}:`, err);
-    }
-    return {
-      actionId,
-      status: "PERMANENTLY_FAILED",
-      riskLevel: "LOW",
-      error: "Max retries exceeded",
-      retryCount: nextRetryCount,
-    };
-  }
-
-  return await runExecution(actionId, params);
-}
-
 // ─── Public: explicit retry ─────────────────────────────────────
 
 /**
- * Explicitly retry a FAILED action. Max 3 attempts; on the 4th
- * failure the action becomes PERMANENTLY_FAILED.
+ * Compatibility inspector for callers of the old retry API. It is intentionally
+ * read-only: a generic executor failure may have followed a successful side effect.
  */
 export async function retryFailedAction(actionId: string): Promise<AiActionResult> {
   const action = await db.aiCommandAction.findUnique({ where: { id: actionId } });
   if (!action) {
-    return {
-      actionId,
-      status: "FAILED",
-      riskLevel: "LOW",
-      error: "Action not found",
-    };
+    return { actionId, status: "FAILED", riskLevel: "LOW", error: "Action not found" };
   }
   if (action.status === "EXECUTED") {
     return {
@@ -423,66 +451,21 @@ export async function retryFailedAction(actionId: string): Promise<AiActionResul
       retryCount: action.retryCount,
     };
   }
-  if (action.status === "PERMANENTLY_FAILED" || action.retryCount >= 3) {
-    try {
-      await db.aiCommandAction.update({
-        where: { id: actionId },
-        data: { status: "PERMANENTLY_FAILED" },
-      });
-    } catch (err) {
-      console.error(`[ai-action-executor] permanent mark failed for ${actionId}:`, err);
-    }
+  if (action.status === "PENDING" || action.status === "APPROVED" || action.status === "EXECUTING") {
     return {
       actionId,
-      status: "PERMANENTLY_FAILED",
+      status: action.status,
       riskLevel: action.riskLevel as RiskLevel,
-      error: action.lastError ?? "Max retries exceeded",
       retryCount: action.retryCount,
+      error: action.status === "EXECUTING" ? "Another worker owns this action; inspect its durable status." : undefined,
     };
   }
-
-  // Bump retryCount + execute (no executor available — caller must re-supply
-  // via executeAiAction; here we only retry the DB-side bookkeeping and
-  // return PENDING for the caller to drive).
-  const nextRetryCount = action.retryCount + 1;
-  try {
-    await db.aiCommandAction.update({
-      where: { id: actionId },
-      data: {
-        retryCount: nextRetryCount,
-        status: "PENDING",
-        lastError: null,
-      },
-    });
-  } catch (err) {
-    console.error(`[ai-action-executor] retry bump failed for ${actionId}:`, err);
-  }
-
-  // AuditLog
-  try {
-    await db.auditLog.create({
-      data: {
-        action: "AI_ACTION",
-        resource: "AiCommandAction",
-        resourceId: actionId,
-        details: JSON.stringify({
-          action: "RETRY_REQUESTED",
-          retryCount: nextRetryCount,
-          actionType: action.actionType,
-          targetType: action.targetType,
-        }),
-      },
-    });
-  } catch (err) {
-    console.error(`[ai-action-executor] retry audit log failed for ${actionId}:`, err);
-  }
-
   return {
     actionId,
-    status: "PENDING",
+    status: action.status as AiActionResult["status"],
     riskLevel: action.riskLevel as RiskLevel,
-    retryCount: nextRetryCount,
-    error: "Retry queued — re-supply executor via executeAiAction to run",
+    error: "Automatic retry is disabled because a failed executor may have completed a side effect. Reconcile the action before creating a replacement.",
+    retryCount: action.retryCount,
   };
 }
 
@@ -498,12 +481,7 @@ export async function approveAndExecute(
 ): Promise<AiActionResult> {
   const action = await db.aiCommandAction.findUnique({ where: { id: actionId } });
   if (!action) {
-    return {
-      actionId,
-      status: "FAILED",
-      riskLevel: "LOW",
-      error: "Action not found",
-    };
+    return { actionId, status: "FAILED", riskLevel: "HIGH", error: "Action not found" };
   }
   if (action.status === "EXECUTED") {
     return {
@@ -515,71 +493,89 @@ export async function approveAndExecute(
       retryCount: action.retryCount,
     };
   }
-
-  // Mark approved
-  try {
-    await db.aiCommandAction.update({
-      where: { id: actionId },
-      data: {
-        approvedBy,
-        approvedAt: new Date(),
-        status: "PENDING", // still pending until execution completes
-      },
-    });
-  } catch (err) {
-    console.error(`[ai-action-executor] approve mark failed for ${actionId}:`, err);
+  if (action.status !== "PENDING" && action.status !== "APPROVED") {
+    return {
+      actionId,
+      status: action.status === "EXECUTING" ? "EXECUTING" : action.status === "REJECTED" ? "REJECTED" : "FAILED",
+      riskLevel: action.riskLevel as RiskLevel,
+      retryCount: action.retryCount,
+      error: action.status === "EXECUTING"
+        ? "Another worker already claimed this action; inspect the action record before retrying."
+        : `Action is not awaiting approval (current status: ${action.status}).`,
+    };
   }
 
-  // AuditLog for approval
+  // Claim the action and persist the human approval audit atomically. A single
+  // compare-and-set winner may run the callback; concurrent/replayed requests
+  // cannot execute the same non-idempotent action twice.
+  let claimed = false;
   try {
-    await db.auditLog.create({
-      data: {
-        userId: approvedBy,
-        action: "AI_ACTION",
-        resource: "AiCommandAction",
-        resourceId: actionId,
-        details: JSON.stringify({
-          action: "APPROVED_FOR_EXECUTION",
-          approvedBy,
-          actionType: action.actionType,
-          riskLevel: action.riskLevel,
-        }),
-      },
+    claimed = await db.$transaction(async (tx) => {
+      const result = await tx.aiCommandAction.updateMany({
+        where: { id: actionId, status: action.status, executedAt: null },
+        data: { approvedBy, approvedAt: new Date(), status: "EXECUTING" },
+      });
+      if (result.count !== 1) return false;
+      await tx.auditLog.create({
+        data: {
+          userId: approvedBy,
+          action: "AI_ACTION",
+          resource: "AiCommandAction",
+          resourceId: actionId,
+          details: JSON.stringify({ action: "APPROVED_FOR_EXECUTION", approvedBy, actionType: action.actionType, riskLevel: action.riskLevel }),
+        },
+      });
+      return true;
     });
-  } catch (err) {
-    console.error(`[ai-action-executor] approve audit log failed for ${actionId}:`, err);
+  } catch (error) {
+    console.error(`[ai-action-executor] approval claim failed for ${actionId}:`, error instanceof Error ? error.name : "UnknownError");
+    return { actionId, status: "FAILED", riskLevel: action.riskLevel as RiskLevel, retryCount: action.retryCount, error: "Approval could not be durably recorded; no action was executed." };
   }
 
-  // If executor provided, run now
-  if (typeof executor === "function") {
-    let payload: Record<string, unknown> = {};
-    try {
-      payload = action.payload ? JSON.parse(action.payload) : {};
-    } catch {
-      payload = {};
+  if (!claimed) {
+    const current = await db.aiCommandAction.findUnique({ where: { id: actionId } });
+    if (current?.status === "EXECUTED") {
+      return { actionId, status: "CACHED", riskLevel: current.riskLevel as RiskLevel, result: safeParseJson(current.result), cached: true, retryCount: current.retryCount };
     }
-    return await runExecution(actionId, {
-      actionType: action.actionType,
-      targetType: action.targetType,
-      targetId: action.targetId,
-      requestedBy: approvedBy,
-      aiAgentId: action.aiAgentId,
-      trigger: action.trigger ?? undefined,
-      actor: action.actor ?? undefined,
-      idempotencyKey: action.idempotencyKey ?? `approve-${actionId}`,
-      payload,
-      autoApprove: true,
-      executor,
-    });
+    return {
+      actionId,
+      status: current?.status === "EXECUTING" ? "EXECUTING" : current?.status === "REJECTED" ? "REJECTED" : "FAILED",
+      riskLevel: (current?.riskLevel || action.riskLevel) as RiskLevel,
+      retryCount: current?.retryCount ?? action.retryCount,
+      error: `Action could not be claimed for approval (current status: ${current?.status || "missing"}).`,
+    };
   }
 
-  // No executor — leave as approved-but-awaiting-external-execution
-  return {
-    actionId,
-    status: "PENDING",
-    riskLevel: action.riskLevel as RiskLevel,
-    retryCount: action.retryCount,
-  };
+  // No executor means no side effect. Restore the approval queue state using a
+  // compare-and-set so a later, authorized request may supply the handler.
+  if (typeof executor !== "function") {
+    await db.aiCommandAction.updateMany({
+      where: { id: actionId, status: "EXECUTING", approvedBy },
+      data: { status: "APPROVED" },
+    });
+    return { actionId, status: "APPROVED", riskLevel: action.riskLevel as RiskLevel, retryCount: action.retryCount };
+  }
+
+  let payload: Record<string, unknown> = {};
+  try {
+    payload = action.payload ? JSON.parse(action.payload) : {};
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) payload = {};
+  } catch {
+    payload = {};
+  }
+  return await runExecution(actionId, {
+    actionType: action.actionType,
+    targetType: action.targetType,
+    targetId: action.targetId,
+    requestedBy: action.requestedBy,
+    aiAgentId: action.aiAgentId,
+    trigger: action.trigger ?? undefined,
+    actor: action.actor ?? undefined,
+    idempotencyKey: action.idempotencyKey ?? `approve-${actionId}`,
+    payload,
+    autoApprove: true,
+    executor,
+  });
 }
 
 // ─── JSON helpers ───────────────────────────────────────────────

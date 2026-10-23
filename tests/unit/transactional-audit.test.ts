@@ -2,12 +2,29 @@ import { describe, expect, it, vi } from 'vitest';
 import { writePortalAudit, writeHrmAudit } from '@/lib/transactional-audit';
 import type { AuthContext } from '@/lib/auth-middleware';
 import type { Prisma } from '@prisma/client';
-const auth = { userId: 'subject', actorUserId: 'actor', roles: ['SUPER_ADMIN'], userType: 'SUPER_ADMIN' } as AuthContext;
+const auth = {
+  userId: 'subject', actorUserId: 'actor', roles: ['COUNSELOR'], userType: 'EMPLOYEE',
+  actingAsSessionId: 'session-1', actingAsRole: 'COUNSELOR',
+  actingAsExpiresAt: new Date('2026-10-23T13:00:00.000Z'),
+} as AuthContext;
 describe('transaction-bound audit writers', () => {
   it('preserves actor, full payload and request context', async () => {
     const create = vi.fn().mockResolvedValue({});
     await writePortalAudit({ portalAuditLog: { create } } as unknown as Prisma.TransactionClient, auth, 'UPDATE', 'Employee', 'e', { detail: 'x'.repeat(1000) }, new Request('https://example.com', { headers: { 'user-agent': 'test-client' } }));
-    expect(create).toHaveBeenCalledWith({ data: expect.objectContaining({ actorUserId: 'actor', userAgent: 'test-client', metadata: JSON.stringify({ detail: 'x'.repeat(1000), actingAsUser: 'subject' }) }) });
+    expect(create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        actorUserId: 'actor',
+        userAgent: 'test-client',
+        metadata: JSON.stringify({
+          detail: 'x'.repeat(1000),
+          realActorUserId: 'actor',
+          actingAsUser: 'subject',
+          actingAsRole: 'COUNSELOR',
+          actingAsSessionId: 'session-1',
+          actingAsExpiresAt: '2026-10-23T13:00:00.000Z',
+        }),
+      }),
+    });
   });
   it('propagates persistence failure instead of logging success', async () => {
     const tx = { portalAuditLog: { create: vi.fn().mockRejectedValue(new Error('db failed')) } };

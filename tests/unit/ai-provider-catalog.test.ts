@@ -41,6 +41,7 @@ const TOUCHED_ENV = [
   'G4F_GROQ_API_KEY',
   // Native adapters, so routeModel cannot pick one behind the catalog's back
   'GROQ_API_KEY',
+  'PAID_AI_API_ALLOWED',
   'OPENROUTER_API_KEY',
   'ZAI_API_KEY',
   'LOCAL_AI_URL',
@@ -171,6 +172,14 @@ describe('endpoint safety', () => {
 });
 
 describe('resolveFreeProvider', () => {
+  beforeEach(() => { process.env.PAID_AI_API_ALLOWED = 'true'; });
+
+  it('fails closed when cloud inference approval is not configured', () => {
+    delete process.env.PAID_AI_API_ALLOWED;
+    process.env.GEMINI_API_KEY = 'test-key-not-real';
+    expect(() => resolveFreeProvider('gemini')).toThrow(/disabled by default/);
+  });
+
   it('refuses an unknown provider rather than silently picking another', () => {
     expect(() => resolveFreeProvider('openai')).toThrow(/Unknown AI provider "openai"/);
   });
@@ -255,8 +264,16 @@ describe('listProviderStatus is safe to expose to an admin UI', () => {
     const status = listProviderStatus();
     const cerebras = status.find((s) => s.slug === 'cerebras')!;
     expect(cerebras.configured).toBe(true);
-    expect(cerebras.blocker).toBeNull();
+    expect(cerebras.blocker).toMatch(/PAID_AI_API_ALLOWED=true/);
     expect(JSON.stringify(status)).not.toContain('secret-value');
+  });
+
+  it('clears the cloud-disabled blocker only after explicit owner approval', () => {
+    process.env.CEREBRAS_API_KEY = 'test-key-not-real';
+    process.env.PAID_AI_API_ALLOWED = 'true';
+    const cerebras = listProviderStatus().find((s) => s.slug === 'cerebras')!;
+    expect(cerebras.configured).toBe(true);
+    expect(cerebras.blocker).toBeNull();
   });
 
   it('marks an unconfigured provider with the exact remediation', () => {
@@ -274,6 +291,7 @@ describe('listProviderStatus is safe to expose to an admin UI', () => {
 
 describe('implicit routing never selects a provider the owner did not approve', () => {
   beforeEach(() => {
+    process.env.PAID_AI_API_ALLOWED = 'true';
     for (const key of ['GEMINI_API_KEY', 'DEEPSEEK_API_KEY', 'POLLINATIONS_API_KEY', 'G4F_GROQ_API_KEY']) {
       delete process.env[key];
     }

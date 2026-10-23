@@ -29,14 +29,19 @@ export async function routeModel(opts: { taskType?: string; department?: string;
   if (process.env.LOCAL_AI_URL && process.env.LOCAL_AI_MODEL) {
     return { provider: 'local', model: opts.modelHint || process.env.LOCAL_AI_MODEL, reason: 'configured_local' };
   }
+  // Do not infer billing safety from key presence or an unverified free-tier
+  // claim. Cloud selection requires explicit owner approval.
+  if (process.env.PAID_AI_API_ALLOWED !== 'true') {
+    throw new Error('Cloud AI is disabled by default; owner approval requires PAID_AI_API_ALLOWED=true');
+  }
   if (process.env.GROQ_API_KEY) return {
     provider: 'groq', model: opts.modelHint || (COMPLEX_TASKS.has(task) ? process.env.GROQ_MODEL_LARGE || process.env.AI_DEFAULT_MODEL || 'llama-3.3-70b-versatile' : process.env.GROQ_MODEL_FAST || process.env.AI_FAST_MODEL || 'llama-3.1-8b-instant'), reason: 'configured_groq',
   };
   if (process.env.OPENROUTER_API_KEY) return { provider: 'openrouter', model: opts.modelHint || process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct', reason: 'configured_openrouter' };
   if (process.env.ZAI_API_KEY) return { provider: 'zai', model: opts.modelHint || 'glm-4-flash', reason: 'configured_zai' };
-  // No native adapter is configured. Prefer a catalogued free tier over failing,
-  // so the system keeps working without ever reaching a paid API. Only official
-  // providers with a recurring free tier are eligible for implicit selection.
+  // Cloud approval is required above. With that approval, prefer a configured
+  // catalogued provider; the catalog's free-tier labels are descriptive, not a
+  // guarantee against usage limits or billing.
   const catalogued = firstConfiguredFreeProvider();
   if (catalogued) {
     return { provider: catalogued.slug, model: opts.modelHint || catalogued.defaultModel, reason: `catalog:${catalogued.slug}` };

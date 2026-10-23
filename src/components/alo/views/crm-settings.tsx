@@ -16,6 +16,15 @@ import {
 import { Icon, PageHeader, SectionCard } from "@/components/alo/shared";
 import { useToast } from "@/hooks/use-toast";
 
+const OFFICE_DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DEFAULT_OFFICE_DAYS = OFFICE_DAY_NAMES.map((_, dayOfWeek) => ({
+  dayOfWeek,
+  startTime: '09:00',
+  endTime: '18:00',
+  isWorkDay: [0, 1, 2, 3, 4, 6].includes(dayOfWeek),
+  afterHoursAiAuto: true,
+}));
+
 export function CrmSettings() {
   const { toast } = useToast();
 
@@ -27,11 +36,13 @@ export function CrmSettings() {
   });
 
   const [officeHours, setOfficeHours] = React.useState({
-    enabled: true,
-    start: "09:00",
-    end: "18:00",
-    weekendOff: true,
-    timeZone: "Asia/Dhaka",
+    days: DEFAULT_OFFICE_DAYS,
+    timeZone: 'Asia/Dhaka',
+    canManage: false,
+    legacyReview: false,
+    scheduleConflict: false,
+    loading: true,
+    saving: false,
   });
 
   const [scoring, setScoring] = React.useState({
@@ -61,6 +72,77 @@ export function CrmSettings() {
     aiAssist: true,
     requireHumanApproval: true,
   });
+
+  React.useEffect(() => {
+    let active = true;
+    const loadOfficeHours = async () => {
+      try {
+        const response = await fetch('/api/crm/ucc/office-hours', { cache: 'no-store', credentials: 'include' });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok || !payload?.success) throw new Error(payload?.error || `Office hours unavailable (HTTP ${response.status})`);
+        const rows = Array.isArray(payload.officeHours) ? payload.officeHours : [];
+        const byDay = new Map<number, (typeof DEFAULT_OFFICE_DAYS)[number]>();
+        for (const row of rows) {
+          if (Number.isInteger(row?.dayOfWeek) && row.dayOfWeek >= 0 && row.dayOfWeek <= 6) {
+            byDay.set(row.dayOfWeek, {
+              dayOfWeek: row.dayOfWeek,
+              startTime: typeof row.startTime === 'string' ? row.startTime : '09:00',
+              endTime: typeof row.endTime === 'string' ? row.endTime : '18:00',
+              isWorkDay: row.isWorkDay === true,
+              afterHoursAiAuto: row.afterHoursAiAuto !== false,
+            });
+          }
+        }
+        if (active) setOfficeHours((current) => ({
+          ...current,
+          days: DEFAULT_OFFICE_DAYS.map((day) => byDay.get(day.dayOfWeek) || day),
+          timeZone: typeof payload.timezone === 'string' ? payload.timezone : 'Asia/Dhaka',
+          canManage: payload.canManageOfficeHours === true,
+          legacyReview: payload.legacyDefaultReviewRequired === true,
+          scheduleConflict: payload.scheduleConflict === true,
+          loading: false,
+        }));
+      } catch (error) {
+        if (active) {
+          setOfficeHours((current) => ({ ...current, loading: false }));
+          toast({ title: 'Office-hours schedule could not be loaded', description: error instanceof Error ? error.message : 'Try again later.', variant: 'destructive' });
+        }
+      }
+    };
+    void loadOfficeHours();
+    return () => { active = false; };
+  }, [toast]);
+
+  const updateOfficeDay = (dayOfWeek: number, patch: Partial<(typeof DEFAULT_OFFICE_DAYS)[number]>) => {
+    setOfficeHours((current) => ({
+      ...current,
+      days: current.days.map((day) => day.dayOfWeek === dayOfWeek ? { ...day, ...patch } : day),
+    }));
+  };
+
+  const saveOfficeHours = async () => {
+    if (!officeHours.days.some((day) => day.isWorkDay)) {
+      toast({ title: 'A business day is required', description: 'Keep at least one day open so SLA deadlines can be scheduled safely.', variant: 'destructive' });
+      return;
+    }
+    setOfficeHours((current) => ({ ...current, saving: true }));
+    try {
+      const response = await fetch('/api/crm/ucc/office-hours', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ schedule: officeHours.days.map(({ dayOfWeek, startTime, endTime, isWorkDay, afterHoursAiAuto }) => ({ dayOfWeek, startTime, endTime, isWorkDay, afterHoursAiAuto })) }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success) throw new Error(payload?.error || `Office hours could not be saved (HTTP ${response.status})`);
+      setOfficeHours((current) => ({ ...current, legacyReview: false, scheduleConflict: false }));
+      toast({ title: 'Office-hours schedule saved', description: `${officeHours.timeZone} · persisted schedule updated; no messages were sent.` });
+    } catch (error) {
+      toast({ title: 'Office-hours schedule was not saved', description: error instanceof Error ? error.message : 'Try again later.', variant: 'destructive' });
+    } finally {
+      setOfficeHours((current) => ({ ...current, saving: false }));
+    }
+  };
 
   const handleSave = (section: string) => {
     toast({
@@ -142,71 +224,79 @@ export function CrmSettings() {
         {/* Office Hours */}
         <SectionCard
           title="Office Hours"
-          description="Define business hours for SLA calculations"
+          description="Persist the Asia/Dhaka schedule used for follow-up and business-time SLA calculations"
           icon="Clock"
           action={
             <Button
               size="sm"
               className="bg-[#0057B8] text-white hover:bg-[#003F87]"
-              onClick={() => handleSave("Office Hours")}
+              onClick={() => void saveOfficeHours()}
+              disabled={officeHours.loading || officeHours.saving || !officeHours.canManage}
             >
-              Save
+              {officeHours.saving ? 'Saving…' : 'Save'}
             </Button>
           }
         >
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm">Enable office hours</Label>
-              <Switch
-                checked={officeHours.enabled}
-                onCheckedChange={(v) => setOfficeHours({ ...officeHours, enabled: v })}
-              />
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#0057B8]">
+              <span><Icon name="Info" className="mr-1 inline size-3.5" />Default: Saturday–Thursday, 09:00–18:00; Friday closed.</span>
+              <Badge variant="outline">{officeHours.timeZone}</Badge>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-[#5A7299]">Start Time</Label>
-                <Input
-                  type="time"
-                  value={officeHours.start}
-                  onChange={(e) => setOfficeHours({ ...officeHours, start: e.target.value })}
-                  className="mt-1"
-                />
+            {officeHours.scheduleConflict && (
+              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+                Stored weekday rows conflict. Automatic after-hours acknowledgements remain disabled until an authorized administrator reviews and saves the schedule. Saving updates existing weekday rows in place; no schedule records are deleted.
+              </p>
+            )}
+            {officeHours.legacyReview && (
+              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+                The saved schedule matches the previous 10:00–19:00 default. It has not been changed automatically; review the intended hours and save to adopt the current 09:00–18:00 fallback.
+              </p>
+            )}
+            {officeHours.loading ? (
+              <p className="py-4 text-sm text-[#5A7299]">Loading the persisted office-hours schedule…</p>
+            ) : (
+              <div className="space-y-2">
+                {officeHours.days.map((day) => (
+                  <div key={day.dayOfWeek} className="grid grid-cols-[1fr_auto_1fr_1fr_auto] items-center gap-2 rounded-lg border border-[#E2E8F0] p-2">
+                    <Label className="text-xs font-medium">{OFFICE_DAY_NAMES[day.dayOfWeek]}</Label>
+                    <Switch
+                      checked={day.isWorkDay}
+                      onCheckedChange={(isWorkDay) => updateOfficeDay(day.dayOfWeek, { isWorkDay })}
+                      disabled={officeHours.saving || !officeHours.canManage}
+                      aria-label={`${OFFICE_DAY_NAMES[day.dayOfWeek]} is a business day`}
+                    />
+                    <Input
+                      type="time"
+                      value={day.startTime}
+                      onChange={(event) => updateOfficeDay(day.dayOfWeek, { startTime: event.target.value })}
+                      disabled={!day.isWorkDay || officeHours.saving || !officeHours.canManage}
+                      aria-label={`${OFFICE_DAY_NAMES[day.dayOfWeek]} opening time`}
+                    />
+                    <Input
+                      type="time"
+                      value={day.endTime}
+                      onChange={(event) => updateOfficeDay(day.dayOfWeek, { endTime: event.target.value })}
+                      disabled={!day.isWorkDay || officeHours.saving || !officeHours.canManage}
+                      aria-label={`${OFFICE_DAY_NAMES[day.dayOfWeek]} closing time`}
+                    />
+                    <Switch
+                      checked={day.afterHoursAiAuto}
+                      onCheckedChange={(afterHoursAiAuto) => updateOfficeDay(day.dayOfWeek, { afterHoursAiAuto })}
+                      disabled={officeHours.saving || !officeHours.canManage}
+                      aria-label={`${OFFICE_DAY_NAMES[day.dayOfWeek]} after-hours reply draft enabled`}
+                    />
+                  </div>
+                ))}
+                <div className="grid grid-cols-[1fr_auto_1fr_1fr_auto] gap-2 px-2 text-[10px] text-[#5A7299]">
+                  <span />
+                  <span>Open</span>
+                  <span>Start</span>
+                  <span>End</span>
+                  <span>Reply draft</span>
+                </div>
               </div>
-              <div>
-                <Label className="text-xs text-[#5A7299]">End Time</Label>
-                <Input
-                  type="time"
-                  value={officeHours.end}
-                  onChange={(e) => setOfficeHours({ ...officeHours, end: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-            </div>
-            <div>
-              <Label className="text-xs text-[#5A7299]">Time Zone</Label>
-              <Select
-                value={officeHours.timeZone}
-                onValueChange={(v) => setOfficeHours({ ...officeHours, timeZone: v })}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Asia/Dhaka">Asia/Dhaka (GMT+6)</SelectItem>
-                  <SelectItem value="Asia/Kolkata">Asia/Kolkata (GMT+5:30)</SelectItem>
-                  <SelectItem value="Asia/Dubai">Asia/Dubai (GMT+4)</SelectItem>
-                  <SelectItem value="Europe/London">Europe/London (GMT+0)</SelectItem>
-                  <SelectItem value="America/New_York">America/New_York (GMT-5)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center justify-between">
-              <Label className="text-sm">Weekends off</Label>
-              <Switch
-                checked={officeHours.weekendOff}
-                onCheckedChange={(v) => setOfficeHours({ ...officeHours, weekendOff: v })}
-              />
-            </div>
+            )}
+            <p className="text-[11px] text-[#5A7299]">After-hours reply drafts are not sent automatically by this settings screen. Human review and provider configuration remain separate.</p>
           </div>
         </SectionCard>
 

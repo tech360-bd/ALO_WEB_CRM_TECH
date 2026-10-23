@@ -3,14 +3,14 @@
 import ZAI from 'z-ai-web-dev-sdk';
 import { z } from 'zod';
 import { getProviderDefinition } from '@/lib/ai-providers/catalog';
-import { resolveFreeProvider, toChatCompletionsUrl } from '@/lib/ai-providers/resolve';
+import { assertCloudInferenceAllowed, resolveFreeProvider, toChatCompletionsUrl } from '@/lib/ai-providers/resolve';
 
 /** Providers with a hand-written adapter below. */
 export type NativeTextProvider = 'groq' | 'openrouter' | 'zai' | 'local';
 
 /**
- * Any catalogued free-tier slug can also be requested. Resolution, free-tier
- * enforcement and endpoint validation happen in resolveFreeProvider, so an
+ * Any catalogued provider slug can also be requested. Resolution, explicit
+ * cloud-approval enforcement and endpoint validation happen in resolveFreeProvider, so an
  * unknown or unconfigured slug throws instead of silently reaching a paid API.
  */
 export type TextProvider = NativeTextProvider | string;
@@ -85,6 +85,7 @@ async function getZaiClient(): Promise<ZAI | null> {
 
 /** Return a configured ZAI client or fail explicitly; never return a fake client. */
 export async function getZai(): Promise<ZAI> {
+  assertCloudInferenceAllowed('zai');
   const client = await getZaiClient();
   if (!client) {
     throw new Error('ZAI is not configured or could not be initialized. Set ZAI_API_KEY.');
@@ -99,6 +100,7 @@ const completionSchema = z.object({
 
 /** One provider, one request. Private/local requests never transit a cloud fallback. */
 async function requestText(provider: TextProvider, options: GenerateTextOptions): Promise<GenerateTextResult> {
+  if (provider !== 'local') assertCloudInferenceAllowed(provider);
   const messages: Array<{ role: 'system' | 'user'; content: string }> = [];
   if (options.systemPrompt) messages.push({ role: 'system', content: options.systemPrompt });
   messages.push({ role: 'user', content: options.prompt });
@@ -115,8 +117,8 @@ async function requestText(provider: TextProvider, options: GenerateTextOptions)
   // Catalogued free-tier providers are resolved into the same { key, url, model }
   // shape as the native adapters, so they flow through the identical request,
   // validation and response-parsing code below rather than a second copy of it.
-  // resolveFreeProvider enforces free-only, HTTPS, and no-credentials-in-URL, and
-  // throws for an unknown, unconfigured or blocked slug.
+  // resolveFreeProvider enforces explicit cloud approval, HTTPS, and no-credentials-in-URL,
+  // and throws for an unknown, unconfigured or blocked slug.
   const resolvedCatalog = isNative ? null : resolveFreeProvider(provider, options.model);
   const config = isNative
     ? defaults[provider as NativeTextProvider]

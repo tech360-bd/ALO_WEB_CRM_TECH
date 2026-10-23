@@ -20,6 +20,7 @@ import {
 import { usePortalStore } from '@/lib/stores/portal-store';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
+import { ALO_CONTACT } from '@/lib/alo-site-info';
 
 // ============================================================
 // SHARED PUBLIC SHELL
@@ -369,7 +370,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         <p className="text-blue-100 mb-5">
           Fees and visa rules change. A counselor confirms the current requirements for your case.
         </p>
-        <Button asChild className="bg-[#E8501A] text-white hover:brightness-110">
+        <Button asChild className="bg-[#E8501A] text-black hover:brightness-110">
           <a href="/book-consultation">Book Free Consultation</a>
         </Button>
       </div>
@@ -615,7 +616,7 @@ export function PublicServicesPage() {
       <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
-        <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
+        <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
             Book Free Consultation
           </a></Button>
       </div>
@@ -939,14 +940,18 @@ export function PublicContactPage() {
         <Card className="p-8">
           <Phone className="h-8 w-8 text-[#0057B8] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Phone</h3>
-          <p className="text-2xl font-bold text-[#0057B8] mb-1">+88 01805020101-10</p>
-          <p className="text-sm text-slate-600">Sat-Thu: 10 AM - 6 PM</p>
+          <a href={ALO_CONTACT.mobileHref} className="mb-1 block text-2xl font-bold text-[#0057B8]">
+            {ALO_CONTACT.mobileDisplay}
+          </a>
+          <p className="text-sm text-slate-600">{ALO_CONTACT.officeHours}</p>
         </Card>
         <Card className="p-8">
           <Mail className="h-8 w-8 text-[#E8501A] mb-4" />
           <h3 className="font-bold text-[#0F172A] mb-2">Email</h3>
-          <p className="text-2xl font-bold text-[#E8501A] mb-1">info@aloeducation.com</p>
-          <p className="text-sm text-slate-600">Available 24/7</p>
+          <a href={ALO_CONTACT.emailHref} className="mb-1 block break-all text-2xl font-bold text-[#E8501A]">
+            {ALO_CONTACT.email}
+          </a>
+          <p className="text-sm text-slate-600">Email us anytime</p>
         </Card>
       </div>
 
@@ -955,12 +960,16 @@ export function PublicContactPage() {
           <MapPin className="h-8 w-8 text-[#0057B8] shrink-0" />
           <div>
             <h3 className="font-bold text-[#0F172A] mb-2">Bangladesh Office</h3>
-            <p className="text-slate-700 leading-relaxed">
-              Barek Mansion-02 (5th Floor)<br />
-              58/9 Box Culvert Road, Panthapath<br />
-              Dhaka-1205, Bangladesh
-            </p>
-            <p className="text-sm text-slate-500 mt-3">Hours: Sat-Thu: 10 AM - 6 PM</p>
+            <p className="text-slate-700 leading-relaxed">{ALO_CONTACT.address}</p>
+            <p className="text-sm text-slate-500 mt-3">Hours: {ALO_CONTACT.officeHours}</p>
+            <a
+              href={ALO_CONTACT.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-block text-sm font-semibold text-[#0057B8] underline underline-offset-2"
+            >
+              Open in Google Maps
+            </a>
           </div>
         </div>
       </Card>
@@ -970,8 +979,10 @@ export function PublicContactPage() {
           <Phone className="h-8 w-8 text-[#25D366] shrink-0" />
           <div className="flex-1">
             <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
-            <p className="text-sm text-green-800 mb-4">Quick response on WhatsApp</p>
-            <Button asChild className="bg-[#25D366] text-white hover:brightness-110"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
+            <p className="text-sm text-green-800 mb-4">
+              Quick response on WhatsApp: {ALO_CONTACT.whatsappDisplay}
+            </p>
+            <Button asChild className="bg-[#25D366] text-white hover:brightness-110"><a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer">
                 Chat Now
               </a></Button>
           </div>
@@ -1023,11 +1034,11 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
       title: 'Communication Policy',
       badge: 'LEGAL',
       sections: [
-        { h: 'Channels', p: 'We contact you only on channels you consented to: WhatsApp (01805020100), SMS, Email, Phone, Portal messages. Facebook/Instagram only if you messaged our page.' },
-        { h: 'Consent & Opt-out', p: 'Consent captured at lead creation. Reply STOP on WhatsApp/SMS, Unsubscribe in email, or toggle in portal. Opt-out honored within 24h; transactional CAS/visa messages may still be sent where legally required.' },
-        { h: 'SLA & After-hours', p: 'Counselor 30 min → Branch Manager 30m → CEO +20m → Urgent +10m. After-hours 18:00-10:00 Asia/Dhaka queues with one acknowledgement, no duplicate.' },
-        { h: 'Templates & AI drafts', p: 'Templates versioned in CommunicationTemplate, require approval if requiresApproval. AI drafts are AI → human approval → send with riskLevel.' },
-        { h: 'Recording & B2B', p: 'Calls may be recorded with consent (CallLog). Recordings stored privately outside public_html. Partner isolation server-enforced by partner_id.' },
+        { h: 'Channels', p: 'We may respond through the contact channel you choose and provide, where that channel is configured and available. Use the authenticated Student Portal for account-specific information. Never share passwords, OTPs, bank/card credentials, or private documents in a public chat.' },
+        { h: 'Consent & Opt-out', p: 'Choose whether to receive non-essential outreach where preference controls are provided. Use STOP on a supported messaging channel, unsubscribe from email, or contact ALO to change preferences. Do not rely on a message channel for urgent account or safety matters.' },
+        { h: 'SLA & After-hours', p: 'Response targets follow the configured Asia/Dhaka business schedule (default Saturday–Thursday 09:00–18:00; Friday closed). An after-hours acknowledgement can be sent only when the persisted schedule enables it and a linked follow-up task is queued; generated replies remain drafts for human review.' },
+        { h: 'Templates & AI drafts', p: 'Generated intake and staff replies are drafts for human review. The only social-channel automatic reply is a fixed after-hours acknowledgement, enabled by the persisted schedule and sent only after a linked follow-up is queued.' },
+        { h: 'Private information', p: 'Keep identity, financial, and application documents in authenticated portal workflows. Access depends on the user role and organization scope; do not send sensitive files through a public chat.' },
       ],
     },
     'lead-data': {
@@ -1057,7 +1068,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
       badge: 'ACCESSIBILITY',
       sections: [
         { h: 'Commitment', p: 'We aim for WCAG 2.1 AA across https://aloeducation.com — semantic HTML, landmarks, skip links, heading hierarchy.' },
-        { h: 'Visual', p: 'Contrast ≥4.5:1 (#0057B8/#E8501A on white), alt text, aria-hidden decorative, zoom 200% without horizontal scroll.' },
+        { h: 'Visual', p: 'Check text contrast at 4.5:1: use #0057B8 for blue text and pair #E8501A fills with black text; include alt text and support 200% zoom.' },
         { h: 'Keyboard & Screen Reader', p: 'All interactive elements via Tab/Enter/Space, visible focus ring, associated label + aria-describedby errors, NVDA/JAWS conventions.' },
         { h: 'Limitations', p: 'Third-party embeds (Maps/Facebook) may not be fully AA — we provide text address, WhatsApp 01805020100, phone fallbacks.' },
         { h: 'Feedback', p: 'Email info@aloeducation.com with URL + issue. Acknowledge within 2 working days, fix prioritized, review every 6 months.' },
@@ -1114,7 +1125,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
           <h3 className="font-bold text-[#0057B8] text-base">Comprehensive Test Preparation Directory</h3>
           <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
-        <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
+        <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
             View All Test Prep →
           </a></Button>
       </div>
@@ -1303,7 +1314,7 @@ export function PublicVisaReadinessPage() {
           Fees, processing times and document rules change and differ by nationality. A counselor checks the current
           requirements for your case against the official source.
         </p>
-        <Button asChild className="bg-[#E8501A] text-white hover:brightness-110">
+        <Button asChild className="bg-[#E8501A] text-black hover:brightness-110">
           <a href="/book-consultation">Book Visa Consultation</a>
         </Button>
       </Card>
@@ -1363,7 +1374,7 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
-              <Button asChild className="w-full bg-[#E8501A] text-white hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
+              <Button asChild className="w-full bg-[#E8501A] text-black hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
                   Check Your Eligibility
                 </a></Button>
               <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[#0057B8] text-[#0057B8] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
@@ -1396,7 +1407,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <Button asChild className="bg-[#E8501A] text-white text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
+          <Button asChild className="bg-[#E8501A] text-black text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
         </div>
       </Card>
     </PublicShell>

@@ -78,7 +78,7 @@ export default function NewsListingPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="h-12 px-8 bg-[#E8501A] hover:bg-[#C93D13] text-white rounded-xl font-bold shrink-0 shadow-md">
+              <Button type="submit" className="h-12 px-8 bg-[#E8501A] hover:bg-[#C93D13] text-black rounded-xl font-bold shrink-0 shadow-md">
                 Subscribe
               </Button>
             </form>

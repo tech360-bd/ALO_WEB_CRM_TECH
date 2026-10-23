@@ -123,7 +123,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[0.95] text-[#0F172A]">Study in {countryData.name} from Bangladesh</h1>
               <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-2xl">{countryData.heroSubtitle} {countryData.overview}</p>
               <div className="flex flex-wrap gap-3 pt-2">
-                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
+                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#E8501A] text-black hover:bg-[#C93D13] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] h-12 px-8 font-semibold rounded-xl">Check Eligibility</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] text-[#0057B8] hover:bg-blue-50 h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
               </div>
@@ -675,7 +675,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <p className="text-sm text-gray-600">Check eligibility, find courses, book free consultation, WhatsApp 01805020101 — lead form creates CRM lead, sets source_country_page, saves country interest, assigns counselor if routing rules exist, creates timeline event, triggers configured communication workflow, never expose internal CRM information.</p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <Link href="/eligibility-check"><Button className="bg-[#0057B8] text-white hover:bg-[#003F87] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
-              <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
+              <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[#E8501A] text-black hover:bg-[#C93D13] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
               <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[#E2E8F0] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
               <Button asChild variant="outline" className="bg-[#25D366]/10 border-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white h-12 px-8 font-bold rounded-xl"><a href="https://wa.me/8801805020101" target="_blank">WhatsApp 01805020101</a></Button>
             </div>
@@ -701,7 +701,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <div className="sm:col-span-2"><label className="font-semibold">English Score</label><input value={leadForm.englishScore} onChange={e=>setLeadForm({...leadForm, englishScore:e.target.value})} className="w-full mt-1 p-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-sm h-11" placeholder="6.5" /></div>
                 <div className="sm:col-span-2"><label className="font-semibold">Message</label><textarea value={leadForm.message} onChange={e=>setLeadForm({...leadForm, message:e.target.value})} className="w-full mt-1 p-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-sm min-h-[80px]" placeholder="Tell us about your study plans for Study in COUNTRY..." /></div>
               </div>
-              <Button type="submit" disabled={submittingLead} className="w-full bg-[#E8501A] text-white hover:bg-[#C93D13] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting — Creating CRM Lead...' : 'Submit — Create CRM Lead + Timeline + Workflow'}</Button>
+              <Button type="submit" disabled={submittingLead} className="w-full bg-[#E8501A] text-black hover:bg-[#C93D13] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting — Creating CRM Lead...' : 'Submit — Create CRM Lead + Timeline + Workflow'}</Button>
               <p className="text-[11px] text-gray-500 text-center">On submit: Create CRM lead, Set source_country_page = {countryData.slug}, Save country interest = {countryData.name}, Assign counselor if routing rules exist, Create timeline event, Trigger configured communication workflow, Never expose internal CRM information.</p>
             </form>
           )}

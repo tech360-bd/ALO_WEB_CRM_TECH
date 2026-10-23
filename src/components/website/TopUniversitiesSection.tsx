@@ -170,7 +170,7 @@ export default function TopUniversitiesSection() {
               onClick={() => setTab(t.id)}
               className={`rounded-full min-h-[48px] px-5 py-2.5 font-heading text-[13px] font-bold transition-colors ${
                 tab === t.id
-                  ? 'bg-[#E8501A] text-white shadow-sm'
+                  ? 'bg-[#E8501A] text-black shadow-sm'
                   : 'border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#0057B8] hover:text-[#0057B8]'
               }`}
             >
@@ -256,7 +256,7 @@ export default function TopUniversitiesSection() {
                     <Link
                       href={`/universities/${encodeURIComponent(uni.slug)}`}
                       aria-label={`View University — ${uni.name}`}
-                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] font-heading text-[13px] font-bold text-white transition-colors hover:bg-[#C93D13]"
+                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] font-heading text-[13px] font-bold text-black transition-colors hover:bg-[#C93D13]"
                     >
                       View University
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />

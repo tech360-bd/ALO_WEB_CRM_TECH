@@ -7,6 +7,7 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { allocateIdentifierCommitted } from '@/lib/identity/student-id';
 
 export interface StudentAuthContext {
   studentId: string;     // DB id (cuid)
@@ -22,18 +23,7 @@ export interface StudentAuthContext {
 // Generate a unique AE-YYYYXXXXXX student code
 // ============================================================
 export async function generateStudentCode(): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `AE-${year}`;
-
-  // Count students this year to get sequential number
-  const count = await db.student.count({
-    where: {
-      studentId: { startsWith: prefix },
-    },
-  });
-
-  const sequential = String(count + 1).padStart(6, '0');
-  return `${prefix}${sequential}`;
+  return allocateIdentifierCommitted('AE');
 }
 
 // ============================================================

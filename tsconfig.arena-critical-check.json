@@ -1,0 +1,50 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": "/tmp/alo-arena-critical-check.tsbuildinfo"
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/app/api/admin/ai/student-intake/route.ts",
+    "src/app/api/ai/student-intake/route.ts",
+    "src/app/api/crm/ucc/office-hours/route.ts",
+    "src/app/api/whatsapp/ai-intent/route.ts",
+    "src/lib/ai-agents/student-intake-agent.ts",
+    "src/lib/ai-agents/intake-session.ts",
+    "src/lib/ai-whatsapp-engine.ts",
+    "src/lib/communication/after-hours.ts",
+    "src/lib/communication/business-hours.ts",
+    "src/lib/communication/business-hours-store.ts",
+    "src/lib/communication/unified-engine.ts",
+    "src/components/ai/WebChatWidget.tsx",
+    "src/components/admin/StudentIntakeControlPanel.tsx",
+    "src/components/alo/views/crm-settings.tsx",
+    "src/app/api/applications/[id]/route.ts",
+    "src/app/api/applications/[id]/status/route.ts",
+    "src/app/api/applications/[id]/submit/route.ts",
+    "src/app/api/applications/[id]/offer/route.ts",
+    "src/app/api/applications/[id]/cas-i20-coe/route.ts",
+    "src/app/api/applications/[id]/visa-handover/route.ts",
+    "src/app/api/application-documents/[id]/approve/route.ts",
+    "src/app/api/application-documents/[id]/reject/route.ts",
+    "src/app/api/application-documents/[id]/request-again/route.ts",
+    "src/app/api/visa/documents/[id]/approve/route.ts",
+    "src/app/api/visa/documents/[id]/reject/route.ts",
+    "src/app/api/visa/documents/[id]/needs-update/route.ts",
+    "src/app/api/student/applications/create-draft/route.ts",
+    "src/app/api/student/documents/route.ts",
+    "src/lib/ai-workforce/gateway.ts",
+    "src/lib/ai-workforce/runtimes.ts",
+    "src/lib/application-manager/service.ts",
+    "src/lib/application-manager/stage-transition.ts",
+    "src/lib/application-manager/document-readiness.ts",
+    "src/lib/application-manager/private-document-link.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "prisma",
+    "scripts",
+    ".next"
+  ]
+}

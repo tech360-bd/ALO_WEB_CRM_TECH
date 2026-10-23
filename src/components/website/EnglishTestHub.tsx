@@ -152,7 +152,7 @@ export default function EnglishTestHub() {
             lede="Compare format, scoring, duration and acceptance for IELTS, IELTS UKVI, PTE Academic, TOEFL iBT, Duolingo, OET, LanguageCert, Oxford ELLT, OIETC, GRE, GMAT, SAT and more — then see what each destination actually requires."
           />
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
               <Link href="/language-prep/comparison">
                 Compare Tests <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Link>
@@ -273,7 +273,7 @@ export default function EnglishTestHub() {
             destination and profile and we will confirm exactly which test and score you need before you book anything.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
               <Link href="/eligibility-check">Check My Eligibility</Link>
             </Button>
             <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">

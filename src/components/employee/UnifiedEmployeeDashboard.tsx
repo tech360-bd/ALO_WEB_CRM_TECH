@@ -12,6 +12,7 @@ import {
   GraduationCap,
   FileText,
   ShieldCheck,
+  ShieldAlert,
   DollarSign,
   Megaphone,
   Briefcase,
@@ -33,7 +34,6 @@ import {
   Inbox,
   Filter,
   Eye,
-  ShieldAlert,
   Loader2,
   RefreshCw,
   PhoneCall,
@@ -48,14 +48,6 @@ import DashboardCommunicationWidget from '@/components/communication/DashboardCo
 function displayMetric(value: number | string | null | undefined): number | string {
   return value == null || value === '' ? '—' : value;
 }
-
-const DASHBOARD_ROLE_NAMES = new Set([
-  'COUNSELOR', 'SENIOR_COUNSELOR', 'APPLICATION_TEAM', 'APPLICATION_MANAGER',
-  'VISA_OFFICER', 'VISA_INTERVIEW_OFFICER', 'FINANCE', 'MARKETING',
-  'MARKETING_MANAGER', 'HR_MANAGER', 'BRANCH_MANAGER', 'COUNTRY_MANAGER',
-  'OFFICE_MANAGER', 'FRONT_DESK', 'SUPPORT_STAFF', 'PARTNER_MANAGER',
-  'CEO', 'DIRECTOR', 'ADMIN', 'SUPER_ADMIN',
-]);
 
 function normalizeDashboardRole(value: string): string {
   return value.trim().replace(/[\s-]+/g, '_').toUpperCase();
@@ -73,24 +65,6 @@ export default function UnifiedEmployeeDashboard({
   const router = useRouter();
   const { user, logout } = usePortalStore();
   const [resolvedRole, setResolvedRole] = useState('');
-
-  const roleCandidates: unknown[] = [
-    forcedRole,
-    ...((user?.roles || []).map((role: any) => typeof role === 'string' ? role : role?.name || role?.role || '')),
-    (user as any)?.role,
-  ];
-  const requestedRole = roleCandidates
-    .filter((role): role is string => typeof role === 'string')
-    .map(normalizeDashboardRole)
-    .find((role) => DASHBOARD_ROLE_NAMES.has(role)) || '';
-  const activeRole = requestedRole || normalizeDashboardRole(resolvedRole);
-  const canCreateLead = ['SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'SENIOR_COUNSELOR', 'MARKETING', 'MARKETING_MANAGER', 'FRONT_DESK', 'BRANCH_MANAGER', 'OFFICE_MANAGER'].includes(activeRole);
-  const userName = user?.name || 'Authorized Officer';
-  const designation = (user as any)?.designation || activeRole.replace(/_/g, ' ');
-  const branch = (user as any)?.branch || 'Branch not assigned';
-  const country = (user as any)?.country || 'Country not assigned';
-
-  const [actingAsState, setActingAsState] = useState<{ isActing: boolean; originalAdmin?: string } | null>(null);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,6 +72,16 @@ export default function UnifiedEmployeeDashboard({
   const [isOffline, setIsOffline] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Route props may select a dashboard view, but the API is the source of
+  // the effective role and enforces that the employee is actually assigned it.
+  const requestedRole = forcedRole ? normalizeDashboardRole(forcedRole) : '';
+  const activeRole = requestedRole || normalizeDashboardRole(resolvedRole);
+  const canCreateLead = ['COUNSELOR', 'SENIOR_COUNSELOR', 'MARKETING', 'MARKETING_MANAGER', 'FRONT_DESK', 'BRANCH_MANAGER', 'OFFICE_MANAGER'].includes(activeRole);
+  const userName = data?.userName || 'Employee';
+  const designation = activeRole ? activeRole.replace(/_/g, ' ') : 'Employee';
+  const branch = data?.branch || 'Branch not assigned';
+  const country = data?.country || 'Country not assigned';
 
   // Quick Lead / Task modal state
   const [showLeadModal, setShowLeadModal] = useState(false);
@@ -131,7 +115,7 @@ export default function UnifiedEmployeeDashboard({
       }
       if (json.success) {
         if (typeof json.userRole === 'string') setResolvedRole(json.userRole);
-        setData(json.metrics);
+        setData({ ...json.metrics, userName: json.userName, branch: json.branch, country: json.country, actingAs: json.actingAs });
       } else {
         setError(json.error || 'Failed to load metrics');
       }
@@ -144,31 +128,21 @@ export default function UnifiedEmployeeDashboard({
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const actingAdmin = localStorage.getItem('alo_acting_as_admin');
-      if (actingAdmin) {
-        setActingAsState({ isActing: true, originalAdmin: actingAdmin });
-      }
-      const handleOnline = () => { setIsOffline(false); fetchDashboardData(); };
-      const handleOffline = () => setIsOffline(true);
-      window.addEventListener('online', handleOnline);
-      window.addEventListener('offline', handleOffline);
-      setIsOffline(!navigator.onLine);
+    if (typeof window === 'undefined') {
       fetchDashboardData();
-      return () => {
-        window.removeEventListener('online', handleOnline);
-        window.removeEventListener('offline', handleOffline);
-      };
+      return;
     }
+    const handleOnline = () => { setIsOffline(false); fetchDashboardData(); };
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    setIsOffline(!navigator.onLine);
     fetchDashboardData();
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, [requestedRole]);
-
-  const handleStopActingAs = () => {
-    localStorage.removeItem('alo_acting_as_admin');
-    setActingAsState(null);
-    toast.success('Acting-As session ended. Returning to Super Admin.');
-    router.replace('/admin/employees');
-  };
 
   const handleCreateLead = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -202,38 +176,6 @@ export default function UnifiedEmployeeDashboard({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
-      {/* 1. Super Admin Acting-As Alert Banner */}
-      {actingAsState?.isActing && (
-        <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-md z-50">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <ShieldAlert className="w-5 h-5 text-amber-200 animate-pulse" />
-            <span>
-              SUPER ADMIN ACTING AS: <span className="underline decoration-wavy">{userName}</span> ({activeRole})
-            </span>
-            <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Audit Logging Active</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs h-7"
-              onClick={() => {
-                router.push('/admin/access-control-center');
-              }}
-            >
-              View Acting-As Audit
-            </Button>
-            <Button
-              size="sm"
-              className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold h-7 shadow"
-              onClick={handleStopActingAs}
-            >
-              Stop Acting-As
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* 2. Top Header Shell */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 sm:px-6 py-3 shadow-sm flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">

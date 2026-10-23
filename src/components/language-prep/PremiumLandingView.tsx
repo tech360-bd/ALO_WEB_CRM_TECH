@@ -172,7 +172,7 @@ export default function PremiumLanguagePrepLandingView() {
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button asChild className="bg-[#E8501A] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
+                <Button asChild className="bg-[#E8501A] hover:bg-[#d14315] text-black font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Book Free Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="border-[#E2E8F0] text-[#0F172A] hover:bg-slate-50 font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
@@ -564,7 +564,7 @@ export default function PremiumLanguagePrepLandingView() {
               <Card key={t.id} className="p-5 bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-[#0057B8]/20 transition-all rounded-3xl flex flex-col justify-between h-full group">
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-3">
-                    <Badge className={`${t.isPopular ? 'bg-[#E8501A] text-white' : 'bg-blue-50 text-[#0057B8] border-blue-100'} font-bold text-[10px] px-2.5 py-1`}>
+                    <Badge className={`${t.isPopular ? 'bg-[#E8501A] text-black' : 'bg-blue-50 text-[#0057B8] border-blue-100'} font-bold text-[10px] px-2.5 py-1`}>
                       {t.isPopular ? 'Popular' : t.testType === 'moi_guidance' ? 'Guidance' : t.testType === 'academic' ? 'Academic Test' : 'English Test'}
                     </Badge>
                     <span className="text-[10px] font-medium text-slate-500 bg-slate-50 px-2 py-1 rounded-full border border-slate-100">{t.durationDisplay}</span>
@@ -901,7 +901,7 @@ export default function PremiumLanguagePrepLandingView() {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <a href="#book-counselling" className="inline-flex min-h-11 items-center rounded-xl bg-[#E8501A] px-6 py-3 text-sm font-bold text-white hover:bg-[#C93D13]">Book free counselling</a>
+            <a href="#book-counselling" className="inline-flex min-h-11 items-center rounded-xl bg-[#E8501A] px-6 py-3 text-sm font-bold text-black hover:bg-[#C93D13]">Book free counselling</a>
           </div>
         </div>
       </section>
@@ -946,7 +946,7 @@ export default function PremiumLanguagePrepLandingView() {
                 Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <Button asChild className="bg-[#E8501A] hover:bg-[#d14315] text-white font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Book Free Counselling →</a></Button>
+                <Button asChild className="bg-[#E8501A] hover:bg-[#d14315] text-black font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Book Free Counselling →</a></Button>
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">Find My Test</a></Button>
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
                     <MessageSquare className="w-4 h-4" /> Chat with Counselor

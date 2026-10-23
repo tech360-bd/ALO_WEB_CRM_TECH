@@ -50,11 +50,11 @@ export default function ServiceDetailHub({ slug }: Props) {
 
         {/* 1. Hero */}
         <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl p-8 md:p-12 text-white shadow-xl">
-          <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">ALO Comprehensive Service</Badge>
+          <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1 mb-4 uppercase">ALO Comprehensive Service</Badge>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">{service.heroTitle || title}</h1>
           <p className="text-base md:text-lg text-blue-100 max-w-3xl leading-relaxed">{service.heroSubtitle || service.shortDescription || service.longDescription?.substring(0, 200) || ''}</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/book-consultation"><Button className="bg-[#E8501A] text-white hover:bg-[#C84012] h-12 px-6 font-bold">Book Free Consultation</Button></Link>
+            <Link href="/book-consultation"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-6 font-bold">Book Free Consultation</Button></Link>
             {(service.hasStartApplication || slug.includes('application') || slug.includes('course')) && (
               <Link href="/register"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Start Application</Button></Link>
             )}
@@ -216,7 +216,7 @@ export default function ServiceDetailHub({ slug }: Props) {
               <h3 className="text-2xl font-bold mb-2">Ready to Take the Next Step?</h3>
               <p className="text-sm text-blue-100 mb-6">Consultation is free — move from information to eligibility to application with an ALO counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/book-consultation"><Button className="bg-[#E8501A] text-white hover:bg-[#C84012] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
                 <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Start Course Finder</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
@@ -227,7 +227,7 @@ export default function ServiceDetailHub({ slug }: Props) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/book-consultation" className="block"><Button className="w-full bg-[#E8501A] text-white h-12">Book Consultation</Button></Link><Link href="/contact" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Contact Counselor</Button></Link><Link href="/course-finder" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Find Courses</Button></Link></div></Card>
+            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/book-consultation" className="block"><Button className="w-full bg-[#E8501A] text-black h-12">Book Consultation</Button></Link><Link href="/contact" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Contact Counselor</Button></Link><Link href="/course-finder" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Find Courses</Button></Link></div></Card>
             <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Source:</strong> {service.sourceUrl ? <a href={service.sourceUrl} target="_blank" className="text-[#0057B8] underline break-all">{service.sourceUrl}</a> : 'ALO Editorial'}</p><p><strong>Status:</strong> <Badge className={`${service.verificationStatus === 'VERIFIED' || service.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{service.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {service.lastVerifiedAt ? new Date(service.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
           </div>
         </div>

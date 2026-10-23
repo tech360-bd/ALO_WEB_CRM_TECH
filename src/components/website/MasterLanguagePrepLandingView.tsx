@@ -128,7 +128,7 @@ export default function MasterLanguagePrepLandingView() {
             
             {/* LEFT HERO TEXT */}
             <div className="lg:col-span-7 space-y-6">
-              <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3.5 py-1.5 uppercase tracking-wider shadow-md">
+              <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3.5 py-1.5 uppercase tracking-wider shadow-md">
                 ALO LANGUAGE PREPARATION CENTRE
               </Badge>
 
@@ -146,7 +146,7 @@ export default function MasterLanguagePrepLandingView() {
 
               {/* QUICK HERO BUTTONS */}
               <div className="flex flex-wrap gap-4 pt-2">
-                <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
+                <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
                     Book Free Counselling <ArrowRight className="h-4 w-4" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">
@@ -262,7 +262,7 @@ export default function MasterLanguagePrepLandingView() {
                     <Button
                       type="submit"
                       disabled={submittingLead}
-                      className="w-full bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
+                      className="w-full bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
                     >
                       {submittingLead ? 'Scheduling Session...' : 'Get Free Test Score Plan →'}
                     </Button>
@@ -540,7 +540,7 @@ export default function MasterLanguagePrepLandingView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-3 uppercase">
+            <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1 mb-3 uppercase">
               STRUCTURED SUCCESS METHOD
             </Badge>
             <h2 className="text-3xl font-extrabold text-[#0F172A]">8-Step English Preparation Roadmap</h2>
@@ -619,7 +619,7 @@ export default function MasterLanguagePrepLandingView() {
             Tell us your target destination, university and study intake. Our senior counselors evaluate your background and provide the fastest, most cost-effective preparation pathway.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
+            <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
                 Book Free Test Counselling →
               </a></Button>
             <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">

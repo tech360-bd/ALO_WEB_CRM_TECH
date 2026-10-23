@@ -54,7 +54,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="container mx-auto px-4 md:px-6 pb-12">
             <div className="max-w-4xl mx-auto">
               <div className="mb-4">
-                <span className="inline-block bg-[#E8501A] text-white text-sm font-semibold px-4 py-1 rounded-full">
+                <span className="inline-block bg-[#E8501A] text-black text-sm font-semibold px-4 py-1 rounded-full">
                   {post.category}
                 </span>
               </div>
@@ -165,7 +165,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <p className="text-blue-100 mb-8 text-sm relative z-10">
                   Get personalized guidance from our expert counselors to turn your dream into reality.
                 </p>
-                <Link href="/book-consultation" className="inline-block w-full bg-[#E8501A] hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition-colors relative z-10">
+                <Link href="/book-consultation" className="inline-block w-full bg-[#E8501A] hover:bg-orange-600 text-black font-bold py-3 px-6 rounded-xl transition-colors relative z-10">
                   Book Free Consultation
                 </Link>
               </div>

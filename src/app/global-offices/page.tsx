@@ -117,7 +117,7 @@ export default function GlobalOfficesPage() {
             </ul>
             <Link
               href="/book-consultation"
-              className="mt-6 inline-flex h-12 items-center rounded-xl bg-[#E8501A] px-6 font-heading text-sm font-bold text-white transition-colors hover:bg-[#C93D13]"
+              className="mt-6 inline-flex h-12 items-center rounded-xl bg-[#E8501A] px-6 font-heading text-sm font-bold text-black transition-colors hover:bg-[#C93D13]"
             >
               Book Free Counseling
             </Link>

@@ -51,7 +51,7 @@ export default function UserGuidePage() {
             <li><strong>Backup:</strong> Daily 01:00 via cron — database.sql.gz + application.tar.gz + uploads.tar.gz + manifest + SHA256, outside public_html.</li>
           </ul>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Link href="/book-consultation" className="inline-flex items-center justify-center bg-[#E8501A] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:brightness-110">Book Free Consultation</Link>
+            <Link href="/book-consultation" className="inline-flex items-center justify-center bg-[#E8501A] text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:brightness-110">Book Free Consultation</Link>
             <Link href="/contact" className="inline-flex items-center justify-center border border-[#0057B8] text-[#0057B8] px-5 py-2.5 rounded-xl text-sm font-bold">Contact Support</Link>
           </div>
         </Card>

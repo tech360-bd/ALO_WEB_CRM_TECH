@@ -165,7 +165,8 @@ describe("§176 step 22-27 — outbound reply, drafts, tasks, audit", () => {
   });
   it("(26) audits recorded for match decisions, rejections, sends", () => {
     expect(src(RESOLVE)).toContain("CONTACT_MATCH_RESOLVED");
-    expect(src(REJECT)).toContain("logAuditAction");
+    expect(src(REJECT)).toContain("tx.auditLog.create");
+    expect(src(REJECT)).toContain("tx.documentAudit.create");
     expect(src(REPLY)).toContain("ATTACHMENT_SENT");
   });
   it("(27) §175 no fabricated content: honest errors for unconfigured providers and unsupported media", () => {

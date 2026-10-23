@@ -1,102 +1,160 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { withAuth, AuthContext } from "@/lib/auth-middleware";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { AuthContext } from '@/lib/auth-middleware';
+import { isMarketingManager, withMarketingAccess } from '@/lib/marketing/access';
 
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-// GET — campaign posts
-export const GET = withAuth(async (req: Request, _auth: AuthContext) => {
-  const status = new URL(req.url).searchParams.get("status");
-  const platform = new URL(req.url).searchParams.get("platform");
-  const where: any = {};
+function readText(value: unknown, max: number, required = false): string | undefined | null {
+  if (value === undefined || value === null || value === '') return required ? null : undefined;
+  if (typeof value !== 'string' || value.trim().length > max) return null;
+  const result = value.trim();
+  return required && !result ? null : result;
+}
+
+// GET — managers see all posts; approved limited users see only drafts they created.
+export const GET = withMarketingAccess(async (req: Request, auth: AuthContext) => {
+  const params = new URL(req.url).searchParams;
+  const status = params.get('status');
+  const platform = params.get('platform');
+  const where: Record<string, unknown> = {};
+  if (!isMarketingManager(auth)) where.createdBy = auth.userId;
   if (status) where.approvalStatus = status;
   if (platform) where.platform = platform;
 
-  const posts = await db.campaignPost.findMany({ where, orderBy: { createdAt: "desc" } });
+  try {
+    const posts = await db.campaignPost.findMany({ where, orderBy: { createdAt: 'desc' }, take: 100 });
+    const logo = await db.brandAsset.findFirst({ where: { assetType: 'LOGO', isActive: true }, select: { value: true, name: true } });
+    return NextResponse.json({
+      posts,
+      logoExists: !!logo,
+      logo: logo ? { fileUrl: logo.value, name: logo.name } : null,
+      summary: {
+        total: posts.length,
+        draft: posts.filter((post) => post.approvalStatus === 'DRAFT').length,
+        pendingApproval: posts.filter((post) => post.approvalStatus === 'PENDING_APPROVAL').length,
+        approved: posts.filter((post) => post.approvalStatus === 'APPROVED').length,
+        published: posts.filter((post) => post.approvalStatus === 'PUBLISHED').length,
+        rejected: posts.filter((post) => post.approvalStatus === 'REJECTED').length,
+      },
+    });
+  } catch (error) {
+    console.error('[marketing.campaign-posts] list failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to load campaign posts.' }, { status: 500 });
+  }
+}, 'draft-post');
 
-  // Check brand asset (logo) exists
-  const logo = await db.brandAsset.findFirst({ where: { assetType: "LOGO", isActive: true } });
-
-  return NextResponse.json({
-    posts,
-    logoExists: !!logo,
-    logo: logo ? { fileUrl: logo.value, name: logo.name } : null,
-    summary: {
-      total: posts.length,
-      draft: posts.filter((p) => p.approvalStatus === "DRAFT").length,
-      pendingApproval: posts.filter((p) => p.approvalStatus === "PENDING_APPROVAL").length,
-      approved: posts.filter((p) => p.approvalStatus === "APPROVED").length,
-      published: posts.filter((p) => p.approvalStatus === "PUBLISHED").length,
-      rejected: posts.filter((p) => p.approvalStatus === "REJECTED").length,
-    },
-  } as any);
-}, MARKETING_AUTH);
-
-// POST — create campaign post (AI-generated or manual)
-export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
-  const body = await req.json();
-  const { title, category, platform, caption, hashtags, ctaText, ctaUrl, videoScript, reelCaption, landingLink, campaignObjective, platformSize, createdBy } = body;
-
-  // Check brand asset
-  const logo = await db.brandAsset.findFirst({ where: { assetType: "LOGO", isActive: true } });
-  if (!logo) {
-    return NextResponse.json({ error: "ALO logo is missing. Please upload the logo before creating posts.", logoMissing: true }, { status: 400 });
+// POST — create content only as an unapproved draft; creator identity comes from authentication.
+export const POST = withMarketingAccess(async (req: Request, auth: AuthContext) => {
+  const body = await req.json().catch(() => null) as Record<string, unknown> | null;
+  if (!body) return NextResponse.json({ success: false, error: 'Invalid JSON body.' }, { status: 400 });
+  const title = readText(body.title, 200, true);
+  const category = readText(body.category, 100, true);
+  const platform = readText(body.platform, 40, true);
+  const caption = readText(body.caption, 10000);
+  const ctaText = readText(body.ctaText, 300);
+  const ctaUrl = readText(body.ctaUrl, 2000);
+  const videoScript = readText(body.videoScript, 10000);
+  const reelCaption = readText(body.reelCaption, 10000);
+  const landingLink = readText(body.landingLink, 2000);
+  const campaignObjective = readText(body.campaignObjective, 500);
+  const platformSize = readText(body.platformSize, 100);
+  if ([title, category, platform].includes(null)) {
+    return NextResponse.json({ success: false, error: 'title, category and platform are required and must be valid text.' }, { status: 400 });
+  }
+  if (platform && !['FACEBOOK', 'INSTAGRAM', 'WHATSAPP', 'LINKEDIN', 'TIKTOK', 'EMAIL', 'SMS'].includes(platform.toUpperCase())) {
+    return NextResponse.json({ success: false, error: 'Unsupported marketing platform.' }, { status: 400 });
+  }
+  if ([caption, ctaText, ctaUrl, videoScript, reelCaption, landingLink, campaignObjective, platformSize].includes(null)) {
+    return NextResponse.json({ success: false, error: 'One or more draft fields are invalid or too long.' }, { status: 400 });
+  }
+  if (ctaUrl && !/^https:\/\//i.test(ctaUrl)) {
+    return NextResponse.json({ success: false, error: 'CTA links must use HTTPS.' }, { status: 400 });
+  }
+  if (landingLink && !/^https:\/\//i.test(landingLink)) {
+    return NextResponse.json({ success: false, error: 'Landing links must use HTTPS.' }, { status: 400 });
+  }
+  const hashtags = body.hashtags === undefined ? [] : body.hashtags;
+  if (!Array.isArray(hashtags) || hashtags.length > 30 || hashtags.some((tag) => typeof tag !== 'string' || tag.length > 80)) {
+    return NextResponse.json({ success: false, error: 'hashtags must be a list of up to 30 short strings.' }, { status: 400 });
   }
 
-  const post = await db.campaignPost.create({
-    data: {
-      title, category, platform,
-      caption, hashtags: JSON.stringify(hashtags || []),
-      ctaText, ctaUrl,
-      videoScript, reelCaption,
-      landingLink, campaignObjective, platformSize,
-      approvalStatus: "DRAFT",
-      createdBy,
-      brandAssetApplied: true,
-    },
-  });
-
-  await db.auditLog.create({
-    data: { action: "DATA_IMPORT", resource: "CampaignPost", resourceId: post.id, details: JSON.stringify({ title, platform, category }) },
-  });
-
-  return NextResponse.json({ post, message: "Campaign post created as draft. Submit for approval to publish." } as any);
-}, MARKETING_AUTH);
-
-// PATCH — approve/reject/schedule/publish post
-export const PATCH = withAuth(async (req: Request, _auth: AuthContext) => {
-  const body = await req.json();
-  const { id, action, approvedBy, rejectionReason, scheduledAt, publishedUrl } = body;
-
-  if (action === "submit_approval") {
-    const post = await db.campaignPost.update({ where: { id }, data: { approvalStatus: "PENDING_APPROVAL" } });
-    return NextResponse.json({ post, message: "Post submitted for Marketing Manager approval." });
+  try {
+    const logo = await db.brandAsset.findFirst({ where: { assetType: 'LOGO', isActive: true } });
+    if (!logo) return NextResponse.json({ success: false, error: 'ALO logo is missing. Upload the approved brand asset before creating posts.' }, { status: 400 });
+    const post = await db.campaignPost.create({
+      data: {
+        title: title!, category: category!, platform: platform!.toUpperCase(),
+        caption: caption ?? null, hashtags: JSON.stringify(hashtags.map((tag: string) => tag.trim())),
+        ctaText: ctaText ?? null, ctaUrl: ctaUrl ?? null,
+        videoScript: videoScript ?? null, reelCaption: reelCaption ?? null,
+        landingLink: landingLink ?? null, campaignObjective: campaignObjective ?? null,
+        platformSize: platformSize ?? null, approvalStatus: 'DRAFT',
+        createdBy: auth.userId, brandAssetApplied: true,
+      },
+    });
+    await db.auditLog.create({
+      data: { userId: auth.userId, action: 'DATA_IMPORT', resource: 'CampaignPost', resourceId: post.id, details: JSON.stringify({ action: 'draft_created', platform: post.platform, category: post.category }) },
+    });
+    return NextResponse.json({ success: true, post, message: 'Draft created. Submit it for Marketing Manager approval; no post has been published.' }, { status: 201 });
+  } catch (error) {
+    console.error('[marketing.campaign-posts] create failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to create campaign draft.' }, { status: 500 });
   }
+}, 'draft-post');
 
-  if (action === "approve") {
-    const post = await db.campaignPost.update({ where: { id }, data: { approvalStatus: "APPROVED", approvedBy, approvedAt: new Date() } });
-    await db.auditLog.create({ data: { userId: approvedBy, action: "PUBLIC_PUBLISH", resource: "CampaignPost", resourceId: id, details: JSON.stringify({ action: "approved" }) } });
-    return NextResponse.json({ post, message: "Post approved. Ready to schedule or publish." });
+// PATCH — limited users can submit their own drafts; only a Marketing Manager/Super Admin can decide approval.
+export const PATCH = withMarketingAccess(async (req: Request, auth: AuthContext) => {
+  const body = await req.json().catch(() => null) as Record<string, unknown> | null;
+  if (!body || typeof body.id !== 'string' || !body.id.trim() || typeof body.action !== 'string') {
+    return NextResponse.json({ success: false, error: 'id and action are required.' }, { status: 400 });
   }
+  const id = body.id.trim();
+  const action = body.action;
+  const manager = isMarketingManager(auth);
+  try {
+    const current = await db.campaignPost.findUnique({ where: { id } });
+    if (!current) return NextResponse.json({ success: false, error: 'Campaign post not found.' }, { status: 404 });
+    if (!manager && current.createdBy !== auth.userId) return NextResponse.json({ success: false, error: 'You may only submit your own draft.' }, { status: 403 });
 
-  if (action === "reject") {
-    const post = await db.campaignPost.update({ where: { id }, data: { approvalStatus: "REJECTED", rejectionReason, approvedBy } });
-    await db.auditLog.create({ data: { userId: approvedBy, action: "PUBLIC_PUBLISH", resource: "CampaignPost", resourceId: id, details: JSON.stringify({ action: "rejected", reason: rejectionReason }) } });
-    return NextResponse.json({ post, message: "Post rejected." });
+    if (action === 'submit_approval') {
+      if (current.approvalStatus !== 'DRAFT') return NextResponse.json({ success: false, error: 'Only a draft can be submitted for approval.' }, { status: 409 });
+      const changed = await db.campaignPost.updateMany({ where: { id, approvalStatus: 'DRAFT', createdBy: current.createdBy }, data: { approvalStatus: 'PENDING_APPROVAL' } });
+      if (!changed.count) return NextResponse.json({ success: false, error: 'Draft changed before submission; reload and retry.' }, { status: 409 });
+      const post = await db.campaignPost.findUnique({ where: { id } });
+      await db.auditLog.create({ data: { userId: auth.userId, action: 'DATA_IMPORT', resource: 'CampaignPost', resourceId: id, details: JSON.stringify({ action: 'submitted_for_approval' }) } });
+      return NextResponse.json({ success: true, post, message: 'Submitted for manager approval. It is not published.' });
+    }
+
+    if (action === 'approve' || action === 'reject') {
+      if (!manager) return NextResponse.json({ success: false, error: 'Marketing Manager or Super Admin approval is required.' }, { status: 403 });
+      if (current.approvalStatus !== 'PENDING_APPROVAL') return NextResponse.json({ success: false, error: 'Only a pending post can be approved or rejected.' }, { status: 409 });
+      const rejectionReason = readText(body.rejectionReason, 2000) ?? '';
+      const data = action === 'approve'
+        ? { approvalStatus: 'APPROVED', approvedBy: auth.userId, approvedAt: new Date(), rejectionReason: null }
+        : { approvalStatus: 'REJECTED', approvedBy: auth.userId, approvedAt: null, rejectionReason };
+      const changed = await db.campaignPost.updateMany({ where: { id, approvalStatus: 'PENDING_APPROVAL' }, data });
+      if (!changed.count) return NextResponse.json({ success: false, error: 'Post status changed before review; reload and retry.' }, { status: 409 });
+      const post = await db.campaignPost.findUnique({ where: { id } });
+      await db.auditLog.create({ data: { userId: auth.userId, action: 'PUBLIC_PUBLISH', resource: 'CampaignPost', resourceId: id, details: JSON.stringify({ action: action === 'approve' ? 'approved' : 'rejected', reason: action === 'reject' ? rejectionReason : undefined }) } });
+      return NextResponse.json({ success: true, post, message: action === 'approve' ? 'Approved by the authenticated manager. No social post has been published.' : 'Post rejected.' });
+    }
+
+    if (action === 'schedule' || action === 'publish') {
+      if (!manager) return NextResponse.json({ success: false, error: 'Manager approval is required.' }, { status: 403 });
+      return NextResponse.json({
+        success: false,
+        deliveryStatus: 'NOT_CONFIGURED',
+        error: action === 'schedule'
+          ? 'No verified publishing scheduler is configured. The post remains unchanged.'
+          : 'No verified official provider delivery is configured. The post remains approved and was not published.',
+      }, { status: 503 });
+    }
+
+    return NextResponse.json({ success: false, error: 'Unknown action.' }, { status: 400 });
+  } catch (error) {
+    console.error('[marketing.campaign-posts] action failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to update campaign post.' }, { status: 500 });
   }
-
-  if (action === "schedule") {
-    const post = await db.campaignPost.update({ where: { id }, data: { approvalStatus: "SCHEDULED", scheduledAt } });
-    return NextResponse.json({ post, message: "Post scheduled." });
-  }
-
-  if (action === "publish") {
-    const post = await db.campaignPost.update({ where: { id }, data: { approvalStatus: "PUBLISHED", publishedAt: new Date(), publishedUrl: publishedUrl || `https://${body.platform || "facebook"}.com/post-${id}` } });
-    await db.auditLog.create({ data: { userId: approvedBy, action: "PUBLIC_PUBLISH", resource: "CampaignPost", resourceId: id, details: JSON.stringify({ action: "published", url: post.publishedUrl }) } });
-    return NextResponse.json({ post, message: "Post published to social media." });
-  }
-
-  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
-}, MARKETING_AUTH);
+}, 'draft-post');

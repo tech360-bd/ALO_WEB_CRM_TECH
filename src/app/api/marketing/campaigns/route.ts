@@ -2,15 +2,12 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { createAuditLog } from '@/lib/marketing/audit';
 import { generateText } from '@/lib/ai';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from '@/lib/auth-middleware';
+import { isMarketingManager, withMarketingAccess } from '@/lib/marketing/access';
 
 // ─── GET: List campaigns with filters and pagination ───────────────────────────
 
-export const GET = withAuth(async (request: Request, _auth: AuthContext) => {
+export const GET = withMarketingAccess(async (request: Request, auth: AuthContext) => {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || undefined;
@@ -21,6 +18,7 @@ export const GET = withAuth(async (request: Request, _auth: AuthContext) => {
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
+    if (!isMarketingManager(auth)) where.createdById = auth.userId;
     if (status) where.status = status;
     if (platform) where.platform = platform;
     if (search) {
@@ -57,11 +55,11 @@ export const GET = withAuth(async (request: Request, _auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'draft-post');
 
 // ─── POST: Create campaign or generate AI content ─────────────────────────────
 
-export const POST = withAuth(async (request: Request, auth: AuthContext) => {
+export const POST = withMarketingAccess(async (request: Request, auth: AuthContext) => {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || '';
@@ -88,7 +86,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'draft-post');
 
 // ─── Create Campaign ──────────────────────────────────────────────────────────
 
@@ -118,26 +116,33 @@ async function handleCreate(body: CreateCampaignInput, auth: AuthContext) {
     endDate,
   } = body;
 
-  if (!name || !goal) {
-    return NextResponse.json(
-      { error: 'name and goal are required' },
-      { status: 400 }
-    );
+  if (typeof name !== 'string' || !name.trim() || name.trim().length > 200 || typeof goal !== 'string' || !goal.trim() || goal.trim().length > 2000) {
+    return NextResponse.json({ success: false, error: 'name and goal are required and must be valid text.' }, { status: 400 });
+  }
+  if (typeof budget !== 'number' || !Number.isFinite(budget) || budget < 0 || budget > 100000000) {
+    return NextResponse.json({ success: false, error: 'budget must be a non-negative number within the allowed range.' }, { status: 400 });
+  }
+  const cleanPlatform = typeof platform === 'string' && ['facebook', 'instagram', 'whatsapp', 'linkedin', 'tiktok', 'email', 'sms'].includes(platform.toLowerCase()) ? platform.toLowerCase() : null;
+  if (!cleanPlatform) return NextResponse.json({ success: false, error: 'Unsupported campaign platform.' }, { status: 400 });
+  const start = startDate ? new Date(startDate) : null;
+  const end = endDate ? new Date(endDate) : null;
+  if ((start && Number.isNaN(start.getTime())) || (end && Number.isNaN(end.getTime())) || (start && end && end <= start)) {
+    return NextResponse.json({ success: false, error: 'Campaign dates are invalid or out of order.' }, { status: 400 });
   }
 
   const createdById = auth.userId;
 
   const campaign = await db.marketingCampaign.create({
     data: {
-      name,
-      goal,
-      platform,
-      strategy,
-      targetCountry,
-      targetCourse,
+      name: name.trim(),
+      goal: goal.trim(),
+      platform: cleanPlatform,
+      strategy: typeof strategy === 'string' ? strategy.slice(0, 5000) : '',
+      targetCountry: typeof targetCountry === 'string' ? targetCountry.slice(0, 120) : '',
+      targetCourse: typeof targetCourse === 'string' ? targetCourse.slice(0, 200) : '',
       budget,
-      startDate: startDate ? new Date(startDate) : null,
-      endDate: endDate ? new Date(endDate) : null,
+      startDate: start,
+      endDate: end,
       createdById,
     },
   });
@@ -180,6 +185,12 @@ async function handleGenerate(body: GenerateCampaignInput, auth: AuthContext) {
       { error: 'Campaign not found' },
       { status: 404 }
     );
+  }
+  if (!isMarketingManager(auth) && campaign.createdById !== auth.userId) {
+    return NextResponse.json({ success: false, error: 'You may only generate content for your own campaign.' }, { status: 403 });
+  }
+  if (!['draft', 'review'].includes(campaign.status.toLowerCase())) {
+    return NextResponse.json({ success: false, error: 'Content can only be generated for a draft or review campaign.' }, { status: 409 });
   }
 
   const prompt = `You are an expert education marketing copywriter for ALO Education, a study abroad consultancy based in Bangladesh.

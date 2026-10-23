@@ -2,15 +2,12 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { createAuditLog } from '@/lib/marketing/audit';
 import { generateText } from '@/lib/ai';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from '@/lib/auth-middleware';
+import { withMarketingAccess } from '@/lib/marketing/access';
 
 // ─── POST: Generate content ideas or generate content ─────────────────────────
 
-export const POST = withAuth(async (request: Request, auth: AuthContext) => {
+export const POST = withMarketingAccess(async (request: Request, auth: AuthContext) => {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || '';
@@ -37,7 +34,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'draft-post');
 
 // ─── Generate Content Ideas ───────────────────────────────────────────────────
 

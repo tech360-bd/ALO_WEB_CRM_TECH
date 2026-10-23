@@ -645,7 +645,7 @@ model Application {
   b2bType              String?   @default("") // B2B_INBOUND, B2B_OUTBOUND
   b2bProviderId        String?   @default("")
   // Pipeline
-  stage                String    @default("APPLICATION_DRAFT") // APPLICATION_DRAFT, PROFILE_REVIEW, DOCUMENT_REVIEW, READY_TO_SUBMIT, SUBMITTED_TO_ALO_APPLICATION_TEAM, SUBMITTED_TO_B2B, SUBMITTED_TO_UNIVERSITY, ACKNOWLEDGEMENT_RECEIVED, DECISION_PENDING, MORE_DOCUMENTS_REQUESTED, INTERVIEW_REQUIRED, CONDITIONAL_OFFER, UNCONDITIONAL_OFFER, REJECTED, DEFERRED, WITHDRAWN, DEPOSIT_PENDING, DEPOSIT_PAID, CAS_PENDING, CAS_RECEIVED, I20_PENDING, I20_RECEIVED, COE_PENDING, COE_RECEIVED, VISA_HANDOVER_READY, VISA_FILE_CREATED, CLOSED
+  stage                String    @default("APPLICATION_DRAFT") // APPLICATION_DRAFT → PROFILE/DOCUMENT_REVIEW → READY_TO_SUBMIT → SUBMITTED → OFFER → CAS/I20/COE → VISA_* → PRE_DEPARTURE → ENROLLED/CLOSED; transitions are enforced in the application-manager service
   safeStatus           String    @default("DRAFT") // DRAFT, UNDER_REVIEW, DOCUMENTS_REQUIRED, SUBMITTED, DECISION_PENDING, OFFER_RECEIVED, REJECTED, DEFERRED, VISA_PREPARATION
   reviewStatus         String    @default("PENDING") // PENDING, APPROVED, REJECTED, NEEDS_MORE_INFO
   documentStatus       String    @default("PENDING") // PENDING, COMPLETE, INCOMPLETE, UNDER_REVIEW, VERIFIED
@@ -1077,6 +1077,7 @@ model ImportBatch {
 model ImportStagingStudent {
   id                 String   @id @default(cuid())
   batchId            String
+  rowNumber          Int      @default(0)
   oldCrmId           String   @default("")
   studentName        String
   phone              String   @default("")
@@ -1089,9 +1090,9 @@ model ImportStagingStudent {
   universityInterest String   @default("")
   applicationStatus  String   @default("new")
   counselorName      String   @default("")
-  documentsJson      String   @default("[]")
-  notesJson          String   @default("[]")
-  communicationJson  String   @default("[]")
+  documentsJson      String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  notesJson          String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  communicationJson  String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
   paymentStatus      String   @default("none")
   visaStatus         String   @default("none")
   createdDate        String   @default("")
@@ -1099,10 +1100,13 @@ model ImportStagingStudent {
   matchedStudentId   String   @default("")
   duplicateRiskLevel String   @default("none")
   status             String   @default("staging")
-  errorDetails       String   @default("")
+  errorDetails       String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   createdAt          DateTime @default(now())
 
   batch ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([oldCrmId, status])
 }
 
 model UniversityUpdateRequest {
@@ -2875,6 +2879,8 @@ model PortalUser {
   studentProfile  PortalStudentProfile?
   employeeProfile EmployeeProfile?
   partnerProfile  PartnerProfile?
+
+  @@index([phone])
 }
 
 model PortalSession {
@@ -3065,6 +3071,10 @@ model PortalStudentProfile {
   englishTests    StudentEnglishTestRecord[]
   visaRefusals    StudentVisaRefusal[]
   referrals       StudentReferral[]
+
+  @@index([passportNumber])
+  @@index([altPhone])
+  @@index([fullName])
 }
 
 // ==========================================
@@ -3204,7 +3214,7 @@ model PortalTimelineEvent {
   studentProfileId String
   channel          String   @default("portal")
   messageType      String   @default("info")
-  content          String   @default("")
+  content          String   @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   senderName       String   @default("")
   senderType       String   @default("system")
   visibility       String   @default("student_visible")
@@ -8679,7 +8689,7 @@ model ImportError {
   rowNumber    Int
   fieldName    String?
   errorMessage String
-  rawData      String?
+  rawData      String?     @db.LongText
   createdAt    DateTime    @default(now())
 
   @@index([batchId])
@@ -11794,7 +11804,7 @@ model EmailEvent {
   @@index([type, createdAt])
 }
 
-// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNN, AEP-, EMP-).
+// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNNN, AEP-/EMP-YYYYNNNNN).
 // Rows are advanced inside the allocating transaction (see src/lib/identity/student-id.ts).
 // Numbers are never reused: a rolled-back transaction also rolls back its increment,
 // and a committed number is never handed out again.

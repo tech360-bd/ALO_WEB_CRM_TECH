@@ -1,13 +1,13 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2496,
+  "filesScanned": 2519,
   "summary": {
-    "UNUSED": 109,
-    "REFERENCED_WITH_FALLBACK": 151,
-    "REFERENCED_FAIL_CLOSED": 17,
+    "UNUSED": 110,
+    "REFERENCED_WITH_FALLBACK": 154,
+    "REFERENCED_FAIL_CLOSED": 20,
     "REFERENCED": 118,
-    "PUBLIC": 13
+    "PUBLIC": 12
   },
   "productionRequired": [
     "DATABASE_URL",
@@ -349,6 +349,81 @@
       ]
     },
     {
+      "name": "ALO_BUSINESS_CLOSE_TIME",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_HOLIDAYS",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_OPEN_TIME",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_TIMEZONE",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_WORKING_DAYS",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
       "name": "ALO_COMPLAINT_WHATSAPP_NUMBER",
       "classification": "UNUSED",
       "referenced": false,
@@ -465,6 +540,22 @@
     },
     {
       "name": "ALO_EMPLOYEE_WHATSAPP_START",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "ALO_ENABLE_OPTIONAL_CLOUD_AI",
       "classification": "UNUSED",
       "referenced": false,
       "referencedIndirectly": false,
@@ -2002,21 +2093,6 @@
       ]
     },
     {
-      "name": "FACEBOOK_ACCESS_TOKEN",
-      "classification": "REFERENCED_WITH_FALLBACK",
-      "referenced": true,
-      "referencedIndirectly": false,
-      "referenceCount": 1,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": true,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [],
-      "sampleReferences": [
-        "src/app/api/crm/communications/social-inbox/route.ts"
-      ]
-    },
-    {
       "name": "FACEBOOK_APP_ID",
       "classification": "REFERENCED",
       "referenced": true,
@@ -3244,10 +3320,10 @@
     },
     {
       "name": "INSTAGRAM_ACCESS_TOKEN",
-      "classification": "REFERENCED",
-      "referenced": true,
+      "classification": "UNUSED",
+      "referenced": false,
       "referencedIndirectly": false,
-      "referenceCount": 1,
+      "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3256,9 +3332,7 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": [
-        "src/app/api/crm/communications/social-inbox/route.ts"
-      ]
+      "sampleReferences": []
     },
     {
       "name": "INSTAGRAM_APP_ID",
@@ -3291,6 +3365,21 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "INTAKE_SESSION_SECRET",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/ai-agents/intake-session.ts"
+      ]
     },
     {
       "name": "INTERNLM_API_KEY",
@@ -4162,7 +4251,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 8,
+      "referenceCount": 11,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -4173,8 +4262,8 @@
       ],
       "sampleReferences": [
         "src/app/api/crm/ucc/oauth/callback/route.ts",
-        "src/app/api/portal-auth/login/route.ts",
-        "src/app/api/portal-auth/logout/route.ts"
+        "src/app/api/employee/acting-as/route.ts",
+        "src/app/api/portal-auth/acting-as/start/route.ts"
       ]
     },
     {
@@ -4327,21 +4416,6 @@
       ],
       "sampleReferences": [
         "src/lib/seo/ga4.ts"
-      ]
-    },
-    {
-      "name": "NEXT_PUBLIC_FB_CONNECTED",
-      "classification": "PUBLIC",
-      "referenced": true,
-      "referencedIndirectly": false,
-      "referenceCount": 1,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [],
-      "sampleReferences": [
-        "src/app/crm/communications/social-inbox/page.tsx"
       ]
     },
     {
@@ -4518,7 +4592,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 30,
+      "referenceCount": 33,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -4715,6 +4789,26 @@
       "sampleReferences": [
         "src/lib/auth/email-otp.ts",
         "src/lib/communication/otp-engine.ts"
+      ]
+    },
+    {
+      "name": "PAID_AI_API_ALLOWED",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 7,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/ai-providers/route.ts",
+        "src/lib/ai-providers/resolve.ts",
+        "src/lib/ai-workforce/gateway.ts"
       ]
     },
     {
@@ -5386,18 +5480,20 @@
     },
     {
       "name": "SESSION_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/ai-agents/intake-session.ts"
+      ]
     },
     {
       "name": "SILICONFLOW_API_KEY",
@@ -6662,12 +6758,12 @@
     },
     {
       "name": "ZAI_API_KEY",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 5,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": true,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -6676,8 +6772,8 @@
       ],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
-        "src/app/api/chat/route.ts",
-        "src/app/api/workforce/metrics/route.ts"
+        "src/app/api/workforce/metrics/route.ts",
+        "src/lib/ai.ts"
       ]
     }
   ]

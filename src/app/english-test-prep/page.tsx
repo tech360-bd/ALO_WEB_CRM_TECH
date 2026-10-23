@@ -25,7 +25,7 @@ export default function TestPrepDirectoryPage() {
           
           {/* HERO BANNER */}
           <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl p-8 md:p-12 text-white mb-12 shadow-xl">
-            <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">
+            <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1 mb-4 uppercase">
               ALO LANGUAGE PREPARATION CENTRE
             </Badge>
             <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">

@@ -470,7 +470,7 @@ export default function PublicNavbar() {
               className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent"
             >
               <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-              Senior Counselor Al Aminn: {ALO_CONTACT.whatsappDisplay}
+              Call: {ALO_CONTACT.mobileDisplay}
             </a>
           </div>
           <LanguageToggle compact onDark />
@@ -497,17 +497,17 @@ export default function PublicNavbar() {
           <DesktopLink href="/course-finder" label={t('nav.courseFinder')} />
           <DesktopLink href="/services" label={t('nav.services')} />
           <DesktopLink href="/language-prep" label={t('nav.languagePrep')} />
-          <EnglishExamButton
-            location="navbar"
-            label={t('nav.englishTest')}
-            className={`${MENU_ITEM_BASE} text-alo-body hover:bg-alo-brand-light hover:text-alo-brand`}
-          />
-
           <DropdownTrigger label={t('nav.resources')} id="header-resources" {...triggerProps('resources')}>
             <div className="grid w-[440px] grid-cols-2 gap-x-4 gap-y-0.5">
               {RESOURCE_ITEMS.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
+              <EnglishExamButton
+                location="navbar"
+                label={t('nav.englishTest')}
+                role="menuitem"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand focus-visible:bg-alo-brand-light focus-visible:text-alo-brand focus-visible:outline-none"
+              />
             </div>
           </DropdownTrigger>
 
@@ -543,7 +543,7 @@ export default function PublicNavbar() {
           <Button
             asChild
             size="lg"
-            className="hidden shrink-0 bg-alo-cta px-5 font-heading text-[14px] font-bold text-white shadow-sm transition-all hover:bg-alo-cta-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex"
+            className="hidden shrink-0 bg-alo-cta px-5 font-heading text-[14px] font-bold text-black shadow-sm transition-all hover:bg-alo-cta-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex"
           >
             <Link href="/book-consultation">{t('cta.bookConsultation')}</Link>
           </Button>
@@ -583,17 +583,16 @@ export default function PublicNavbar() {
                       <MobileLink href="/course-finder" label={t('nav.courseFinder')} onClick={closeMobile} />
                       <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
                       <MobileLink href="/language-prep" label={t('nav.languagePrep')} onClick={closeMobile} />
-                      <EnglishExamButton
-                        location="mobile_navbar"
-                        label={t('nav.englishTest')}
-                        onNavigate={closeMobile}
-                        className="flex min-h-[44px] items-center rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand"
-                      />
-
                       <MobileAccordionSection value="resources" label={t('nav.resources')}>
                         {RESOURCE_ITEMS.map((item) => (
                           <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
                         ))}
+                        <EnglishExamButton
+                          location="mobile_navbar"
+                          label={t('nav.englishTest')}
+                          onNavigate={closeMobile}
+                          className="flex min-h-[44px] items-center rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand"
+                        />
                       </MobileAccordionSection>
 
                       <MobileAccordionSection value="portal" label={t('nav.portal')}>
@@ -620,7 +619,7 @@ export default function PublicNavbar() {
                       <Button
                         asChild
                         size="lg"
-                        className="w-full bg-alo-cta font-heading text-[14px] font-bold text-white shadow-sm transition-all hover:bg-alo-cta-hover"
+                        className="w-full bg-alo-cta font-heading text-[14px] font-bold text-black shadow-sm transition-all hover:bg-alo-cta-hover"
                       >
                         <Link href="/book-consultation" onClick={closeMobile}>
                           {t('cta.bookConsultation')}
@@ -638,8 +637,13 @@ export default function PublicNavbar() {
                           Maps
                         </a>{' '}
                         •{' '}
-                        <a href={ALO_CONTACT.mobileHref} className="text-alo-brand underline">
-                          Al Aminn {ALO_CONTACT.whatsappDisplay}
+                        <a
+                          href={ALO_CONTACT.whatsappHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-alo-brand underline"
+                        >
+                          WhatsApp: {ALO_CONTACT.whatsappDisplay}
                         </a>
                       </p>
                     </div>

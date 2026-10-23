@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import UnifiedEmployeeDashboard from '@/components/employee/UnifiedEmployeeDashboard';
 
-const ROLE_REDIRECT: Record<string,string> = {
+const ROLE_REDIRECT: Record<string, string> = {
   COUNSELOR: '/employee/counselor-dashboard',
   SENIOR_COUNSELOR: '/employee/senior-counselor-dashboard',
   APPLICATION_TEAM: '/employee/application-dashboard',
@@ -25,17 +24,36 @@ const ROLE_REDIRECT: Record<string,string> = {
 };
 
 export default function EmployeeDashboardPage() {
-  const user = usePortalStore(s=>s.user);
   const router = useRouter();
-  useEffect(()=>{
-    if(!user) return;
-    const roles = (user as any)?.roles || [];
-    const firstRole = typeof roles[0]==='string' ? roles[0] : roles[0]?.name;
-    const key = String(firstRole||'COUNSELOR').toUpperCase();
-    const target = ROLE_REDIRECT[key];
-    if(target && window.location.pathname === '/employee/dashboard'){
-      router.replace(target);
-    }
-  },[user]);
-  return <UnifiedEmployeeDashboard />;
+  const [role, setRole] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/employee/dashboard', { cache: 'no-store' })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload?.success || typeof payload.userRole !== 'string') {
+          throw new Error(payload?.error || `Dashboard access denied (HTTP ${response.status}).`);
+        }
+        if (cancelled) return;
+        const serverRole = payload.userRole.trim().replace(/[\s-]+/g, '_').toUpperCase();
+        const target = ROLE_REDIRECT[serverRole];
+        if (target) {
+          router.replace(target);
+          return;
+        }
+        setRole(serverRole);
+      })
+      .catch((cause) => {
+        if (!cancelled) setError(cause instanceof Error ? cause.message : 'Dashboard could not be loaded.');
+      });
+    return () => { cancelled = true; };
+  }, [router]);
+
+  if (error) {
+    return <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">{error}</div>;
+  }
+  if (!role) return <div className="p-6 text-sm text-slate-500" aria-live="polite">Loading authorized employee dashboard…</div>;
+  return <UnifiedEmployeeDashboard forcedRole={role} />;
 }

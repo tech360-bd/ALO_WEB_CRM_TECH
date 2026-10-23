@@ -1,6 +1,6 @@
 # Site-wide footer (every page) — brand specification
 
-Status: implemented 2026-10-13. Single source of truth for the public footer.
+Status: implemented; public-brand palette/link alignment updated 2026-10-19. Single source of truth for the public footer.
 
 ## 1. What the footer contains
 
@@ -8,13 +8,13 @@ Status: implemented 2026-10-13. Single source of truth for the public footer.
 | ----- | ------- |
 | Brand | Logo + **ALO Education** wordmark + tagline *Your Dream – Our Commitment* |
 | Social | Official accounts, fixed order **Facebook → Instagram → LinkedIn → YouTube** |
-| Contact | Location (Google share link) · WhatsApp `+8801805020101` · Mobile `+88 01805 020101-10` · Email `info@aloeducation.com` · Address |
+| Contact | Location (Google share link) · WhatsApp `+8801805020101` · Mobile `+8801805020101-10` · Email `info@aloeducation.com` · Address |
 | Destinations | UK · Australia · Canada · Ireland · New Zealand · USA · Dubai (exact order) |
 | Quick Links | Course Finder · Services · Language Prep · Scholarships |
-| Company | About Us · Contact Us · Code of Conduct · Student Complaint Policy · AQF Compliance |
+| Company | About Us · Contact Us · Global Offices · Code of Conduct · Student Complaint Policy · AQF Compliance |
 | CTA | **Book Free Counseling** (ALO Orange) → `/book-consultation` |
 | Decorative strip | Graduation-cap icons in three ALO brand colours (`#0066CC`, `#F37021`, `#FFB347`), always moving (paused for `prefers-reduced-motion`) |
-| Bottom bar | ALO Orange bar: **© ALO Education. All rights reserved.** + legal links (black text on #F37021 — white would be 2.94:1 and fail WCAG AA) |
+| Bottom bar | ALO Orange bar: **© ALO Education. All rights reserved.** + legal links (black text on `#F37021`; white text is 2.94:1, black is 7.15:1) |
 
 No B2B / partner-recruitment content is published in the footer (`Become A Partner`,
 `Partner Portal`, `Partner Login`, `B2B` none of them appear), and a Playwright
@@ -35,7 +35,7 @@ authenticated shell (`/student`, `/partner`, `/employee`, `/portal`, `/admin`,
 `src/lib/alo-site-info.ts` now holds the address, mobile range, WhatsApp link,
 email, Google location link, the ordered `ALO_SOCIALS` list and the policy page
 paths. Values were verified against the live site (`aloeducation.com/contact`,
-fetched 2026-10-13): phone `+88 01805020101-10`, `info@aloeducation.com`,
+fetched 2026-10-13): mobile range `+8801805020101-10`, `info@aloeducation.com`,
 Barek Mansion-02 (5th Floor), 58/9 Box Culvert Road, Panthapath, Dhaka-1205,
 `wa.me/8801805020101`.
 
@@ -63,10 +63,11 @@ Official account links (used verbatim from the existing codebase records, see
 > If any handle above is not the account ALO Education wants publicised, change
 > it in `src/lib/alo-site-info.ts` — the footer, header and contact page follow.
 
-## 4. New pages created for the footer links
+## 4. Required company pages and footer routes
 
 | Route | File | Purpose |
 | ----- | ---- | ------- |
+| `/global-offices` | `src/app/global-offices/page.tsx` | Existing Dhaka office and destinations information; now included in the required Company links and anonymous route allowlist |
 | `/code-of-conduct` | `src/app/code-of-conduct/page.tsx` | Six conduct standards, written-fee transparency, no-guarantee rule, document integrity, confidentiality, "what we will never do", escalation |
 | `/student-complaint-policy` | `src/app/student-complaint-policy/page.tsx` | How to complain (WhatsApp/email/phone), acknowledgement within 2 working days, written outcome within 10, appeal to the CEO within 20/15, records for 3 years, direct-to-university route |
 | `/aqf-compliance` | `src/app/aqf-compliance/page.tsx` | UK **Agent Quality Framework** (British Council + UK universities) standards ALO works to, what ALO does *not* claim, plus the **Australian Qualifications Framework** explanation (levels 7–10 table, CRICOS + aqf.edu.au links) for Australia-bound students |
@@ -80,36 +81,34 @@ verification.
 Routing wiring (required — both lists previously omitted these paths, so the
 pages would have 307-redirected anonymous visitors to `/login`):
 
-* `src/proxy.ts` → `PUBLIC_ROUTES` gained `/code-of-conduct`,
+* `src/proxy.ts` → `PUBLIC_ROUTES` gained `/global-offices`, `/code-of-conduct`,
   `/student-complaint-policy`, `/aqf-compliance`, and later `/guides` (the
   published editorial guides index, already advertised in `sitemap.ts`, was
   still being redirected to `/login`)
 * `src/app/sitemap.ts` → static entries added (monthly, priority 0.3)
 
-## 5. Verification performed
+## 5. Verification performed (current palette/link alignment, 2026-10-19)
 
 | Check | Result |
 | ----- | ------ |
-| `npx eslint` on every touched file | clean |
-| `npx tsc --noEmit` on a scoped project (footer, header, layout, new pages, `alo-site-info`, ui, i18n, proxy) | clean |
-| `GET /` + 8 public routes on a live dev server | 200, `#alo-public-footer` present on each |
-| Rendered footer HTML | socials in order Facebook → Instagram → LinkedIn → YouTube; Destinations/Quick Links/Company in exact order; contact links `share.google/...`, `wa.me/8801805020101`, `tel:+8801805020101`, `mailto:info@aloeducation.com` |
-| `GET /code-of-conduct`, `/student-complaint-policy`, `/aqf-compliance` | 200 (no `/login` redirect), header + footer rendered |
-| Cap strip | 3 colour rows (`#0066CC`, `#F37021`, `#FFB347`), 52 caps per row, seamless `-25%` marquee (one sequence × 4 copies) so the strip is never empty at any width; `animation-iteration-count: infinite`; reduced-motion stops it |
-| `GET /guides` | was 307 → `/login`; now 200 with header + footer (added to `PUBLIC_ROUTES` — it was the only sitemap route still missing) |
+| Targeted ESLint on public chrome, public components, public routes and tests | passed |
+| Scoped TypeScript check on public header/footer, contact page, language-prep components, global offices, and UI controls (excluding the root server layout) | passed |
+| Root-layout-inclusive TypeScript check | blocked because `npm ci --ignore-scripts` leaves the generated Prisma client absent (`@prisma/client` exports `Prisma`/`PrismaClient` missing); no public-source diagnostic was reported |
+| `npx vitest run tests/unit/english-exam-cta.test.ts` | 21 passed |
+| `npx playwright test tests/e2e/public-header.spec.ts tests/e2e/public-footer.spec.ts --list` | 24 tests parsed; browser execution not run because this sandbox has no Playwright browser binary |
+| `git diff --check` | passed |
+| Footer contracts | required links are pinned in the requested order; CMS can append safe same-origin internal links without replacing required entries |
+| Cap strip | 3 colour rows (`#0066CC`, `#F37021`, `#FFB347`), 52 caps per row, seamless `-25%` marquee (one sequence × 4 copies), infinite animation, reduced-motion respected |
 | Bottom bar | ALO Orange `#F37021` background, black text, `© <year> ALO Education. All rights reserved.` |
-| `tests/e2e/public-footer.spec.ts` | added — columns/order, social order + hrefs, every column link resolves < 400, contact details, cap strip colours, no B2B text, footer scope |
 
-Sandbox limits: no MySQL/Prisma query engine and no browser binaries, so
-`next build` and the Playwright suite run in CI, not here (same note as
-`docs/HEADER-PRELOGIN-SPEC.md`).
+No live customer communications were sent. Browser-level checks remain to be run
+in an environment with the Playwright browser installed.
 
 ## 6. Still open
 
 * The homepage "Become A Partner / Partner Login" recruitment section
   (`HomepagePart3`) is **not** part of the footer and was left untouched; say the
   word and it can be removed too.
-* CMS override: `/admin/website-cms` footer items still take precedence over the
-  compiled column defaults. If published footer items exist in the database,
-  they will replace the Destinations / Quick Links / Company lists above —
-  clear them to keep the brand-exact lists.
+* CMS footer items are additive only: the required lists remain first, in the
+  specified order. Published CMS items may append safe same-origin internal
+  links; external/unsafe links and duplicates of required entries are ignored.

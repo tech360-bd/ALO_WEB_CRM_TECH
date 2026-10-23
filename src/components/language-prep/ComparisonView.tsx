@@ -109,7 +109,7 @@ export default function ComparisonView() {
                       <td className="p-4">
                         <a href={`/language-prep/${t.slug}`} className="font-bold text-[#0057B8] hover:underline">{t.name}</a>
                         <p className="text-[10px] text-slate-500 mt-1">{t.provider}</p>
-                        {t.isPopular && <Badge className="bg-[#E8501A] text-white text-[9px] mt-1">Popular</Badge>}
+                        {t.isPopular && <Badge className="bg-[#E8501A] text-black text-[9px] mt-1">Popular</Badge>}
                       </td>
                       <td className="p-4 text-slate-700">{t.duration}</td>
                       <td className="p-4 text-slate-600">{t.format}</td>
@@ -130,7 +130,7 @@ export default function ComparisonView() {
                 <Card key={t.slug} className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
                   <div className="flex items-start justify-between mb-3">
                     <h4 className="font-bold text-sm text-[#0057B8]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></h4>
-                    {t.isPopular && <Badge className="bg-[#E8501A] text-white text-[9px]">Popular</Badge>}
+                    {t.isPopular && <Badge className="bg-[#E8501A] text-black text-[9px]">Popular</Badge>}
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-[11px]">
                     <div><span className="text-slate-500 block">Duration</span><span className="font-semibold">{t.duration}</span></div>

@@ -259,7 +259,7 @@ export default function AiCvHelper() {
           <Eye className="mr-2 h-4 w-4" aria-hidden="true" />
           {showPreview ? 'Hide Preview' : 'Preview CV'}
         </Button>
-        <Button onClick={exportCv} className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+        <Button onClick={exportCv} className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
           <Download className="mr-2 h-4 w-4" aria-hidden="true" />
           Export CV
         </Button>

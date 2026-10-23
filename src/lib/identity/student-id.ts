@@ -1,7 +1,7 @@
 /**
  * Canonical identifier allocation (student AE-, partner AEP-, employee EMP-).
  *
- * Format: `<SCOPE>-<YEAR><5-digit sequence>`, e.g. AE-202600001.
+ * Format: `AE-<YEAR><6-digit sequence>` for students; partner/employee scopes retain the established 5-digit sequence.
  *
  * Guarantees (MySQL):
  * - The sequence row is advanced with one atomic UPDATE. `LAST_INSERT_ID(expr)` returns the new
@@ -10,7 +10,7 @@
  *   released before anything was committed, so it is never visible outside the transaction.
  * - Numbers are never reused once committed. Gaps can appear (e.g. a rolled-back business
  *   operation after commit of a separate allocation); gaps are acceptable, reuse is not.
- * - Years follow the business calendar (Asia/Dhaka). Each year restarts at 00001.
+ * - Years follow the business calendar (Asia/Dhaka). Each year restarts at 000001 for AE and 00001 for other scopes.
  * - Sequence overflow (> 99999 in one year) fails closed.
  *
  * Note: concurrency behaviour depends on MySQL row locking. It is verified only by the
@@ -45,7 +45,8 @@ export function formatIdentifier(scope: IdScope, year: number, sequence: number)
   if (!Number.isInteger(sequence) || sequence < 1 || sequence > MAX_SEQUENCE) {
     throw new IdentifierAllocationError('Identifier sequence exhausted for this year.');
   }
-  return `${scope}-${year}${String(sequence).padStart(5, '0')}`;
+  const width = scope === 'AE' ? 6 : 5;
+  return `${scope}-${year}${String(sequence).padStart(width, '0')}`;
 }
 
 /**
@@ -65,15 +66,26 @@ export async function allocateIdentifier(
     VALUES (${key}, ${scope}, ${year}, 0, NOW(3))
     ON DUPLICATE KEY UPDATE id = id`;
 
-  // Atomic increment. The row lock is held until the transaction ends.
-  const updated = await tx.$executeRaw`UPDATE StudentIdSequence
-    SET lastValue = LAST_INSERT_ID(lastValue + 1), updatedAt = NOW(3)
-    WHERE id = ${key}`;
-  if (updated !== 1) throw new IdentifierAllocationError('Sequence row unavailable.');
-
-  const rows = await tx.$queryRaw<Array<{ value: bigint | number }>>`SELECT LAST_INSERT_ID() AS value`;
-  const sequence = Number(rows[0]?.value);
-  return formatIdentifier(scope, year, sequence);
+  // A legacy ID generator exists in the older Student table. Skip any code
+  // already present in either live student table before returning it. All new
+  // AE allocations use this locked sequence, so concurrent imports/registers
+  // cannot collide with one another.
+  for (let attempt = 0; attempt < MAX_SEQUENCE; attempt++) {
+    const updated = await tx.$executeRaw`UPDATE StudentIdSequence
+      SET lastValue = LAST_INSERT_ID(lastValue + 1), updatedAt = NOW(3)
+      WHERE id = ${key}`;
+    if (updated !== 1) throw new IdentifierAllocationError('Sequence row unavailable.');
+    const rows = await tx.$queryRaw<Array<{ value: bigint | number }>>`SELECT LAST_INSERT_ID() AS value`;
+    const sequence = Number(rows[0]?.value);
+    const identifier = formatIdentifier(scope, year, sequence);
+    if (scope !== 'AE') return identifier;
+    const [legacyStudent, portalStudent] = await Promise.all([
+      tx.student.findUnique({ where: { studentId: identifier }, select: { id: true } }),
+      tx.portalStudentProfile.findUnique({ where: { studentId: identifier }, select: { id: true } }),
+    ]);
+    if (!legacyStudent && !portalStudent) return identifier;
+  }
+  throw new IdentifierAllocationError('No unused student identifier remains in this sequence.');
 }
 
 /**

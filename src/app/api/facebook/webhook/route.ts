@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 import { createLeadWithReference } from '@/lib/lead-reference';
 import { decryptStoredToken } from "@/lib/social/token-encryption";
+import { handleAfterHoursMessage } from '@/lib/communication/after-hours';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -216,7 +217,9 @@ export async function POST(req: NextRequest) {
       }).catch(() => {});
     }
 
-    // Handle Messenger page messages (website/Facebook chat share same intake brain — sequential)
+    // Handle Messenger page messages. Generated replies remain human-review
+    // drafts. Only a configured, pre-approved after-hours acknowledgement may
+    // be sent, and only after the linked follow-up task is durably queued.
     const messengerReplies: any[] = [];
     if (body.object === 'page') {
       const { handleIntakeMessage } = await import('@/lib/ai-agents/student-intake-agent');
@@ -229,31 +232,90 @@ export async function POST(req: NextRequest) {
           const mediaType = attachments[0]?.type === 'image' ? 'image' : attachments[0]?.type === 'file' ? 'document' : attachments[0]?.type === 'audio' ? 'voice' : null;
           const fileName = attachments[0]?.payload?.url?.split('/').pop();
           if (!senderId || (!text && !mediaType)) continue;
-          // Idempotency: skip duplicate mid
           const mid = ev?.message?.mid;
           if (mid) {
-            const dup = await db.webhookEvent.findUnique({ where: { provider_eventId: { provider: 'FACEBOOK', eventId: mid } } }).catch(()=> null) as any;
+            const dup = await db.webhookEvent.findUnique({ where: { provider_eventId: { provider: 'FACEBOOK', eventId: mid } } }).catch(() => null) as any;
             if (dup?.processed) { messengerReplies.push({ mid, idempotent: true }); continue; }
           }
           try {
             const intake = await handleIntakeMessage({ channel: 'facebook', senderId, text: text || `[${mediaType}]`, mediaType: mediaType as any, mediaInfo: { fileName: fileName as string, mime: attachments[0]?.payload?.mime_type } });
-            // Persist inbound/outbound to SocialInbox + Ucc
-            await db.socialInboxMessage.create({ data: { platform: 'FACEBOOK', direction: 'INBOUND', senderId, messageText: text || `[${mediaType}]`, conversationId: `fb-${senderId}`, aiHandled: false } as any }).catch(()=>{});
-            await db.socialInboxMessage.create({ data: { platform: 'FACEBOOK', direction: 'OUTBOUND', senderName: 'ALO AI', recipientId: senderId, messageText: intake.reply, conversationId: `fb-${senderId}`, aiHandled: true } as any }).catch(()=>{});
-            // Send via Graph if token present (best-effort)
+            const previous = await db.socialInboxMessage.findFirst({
+              where: { platform: 'FACEBOOK', senderId },
+              orderBy: { createdAt: 'desc' },
+              select: { leadId: true, studentId: true },
+            }).catch(() => null);
+            const linkedLeadId = previous?.leadId || null;
+            const linkedStudentId = previous?.studentId || null;
+            const conversationId = `fb-${senderId}`;
+            const inbound = await db.socialInboxMessage.create({
+              data: {
+                platform: 'FACEBOOK', direction: 'INBOUND', senderId,
+                messageText: text || `[${mediaType}]`, conversationId,
+                leadId: linkedLeadId || undefined,
+                studentId: linkedStudentId || undefined,
+                aiHandled: true, aiDraftReply: intake.reply.slice(0, 5000), humanApproved: false,
+              } as any,
+            });
+
+            let autoReplySent = false;
             try {
-              const integ = await db.facebookIntegration.findFirst({ where: { pageId: String((entry as any).id) } });
-              const token = decryptStoredToken(integ?.pageAccessToken) || process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
-              if (token && intake.reply) {
-                await fetch(`https://graph.facebook.com/v18.0/me/messages?access_token=${encodeURIComponent(token)}`, {
-                  method: 'POST', headers: { 'Content-Type':'application/json' },
-                  body: JSON.stringify({ recipient: { id: senderId }, message: { text: intake.reply.slice(0, 1900) } })
-                }).catch(()=>{});
+              const afterHours = await handleAfterHoursMessage({
+                channel: 'facebook_messenger',
+                message: text || `[${mediaType}]`,
+                leadId: linkedLeadId || undefined,
+                studentId: linkedStudentId || undefined,
+              });
+              if (afterHours.autoReply && afterHours.followUpQueued) {
+                const outbound = await db.socialInboxMessage.create({
+                  data: {
+                    platform: 'FACEBOOK', direction: 'OUTBOUND', senderName: 'ALO Education',
+                    recipientId: senderId, messageText: afterHours.autoReply,
+                    conversationId, leadId: linkedLeadId || undefined,
+                    studentId: linkedStudentId || undefined,
+                    aiHandled: false, humanApproved: false,
+                    messageMediaMetadata: JSON.stringify({ deliveryStatus: 'PENDING', source: 'approved_after_hours_template', automationApproved: true }),
+                  } as any,
+                }).catch(() => null);
+                if (outbound?.id) {
+                  const integration = await db.facebookIntegration.findFirst({ where: { pageId: String((entry as any).id) } });
+                  const token = decryptStoredToken(integration?.pageAccessToken) || process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
+                  if (token) {
+                    const response = await fetch(`https://graph.facebook.com/v18.0/me/messages?access_token=${encodeURIComponent(token)}`, {
+                      method: 'POST', headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ recipient: { id: senderId }, message: { text: afterHours.autoReply.slice(0, 1900) } }),
+                    }).catch(() => null);
+                    const result = response?.ok ? await response.json().catch(() => null) : null;
+                    if (response?.ok && result?.message_id) {
+                      autoReplySent = true;
+                      await db.socialInboxMessage.update({
+                        where: { id: outbound.id },
+                        data: {
+                          externalId: String(result.message_id), sentAt: new Date(),
+                          messageMediaMetadata: JSON.stringify({ deliveryStatus: 'SENT', source: 'approved_after_hours_template', automationApproved: true }),
+                        },
+                      }).catch(() => {});
+                    } else {
+                      await db.socialInboxMessage.update({
+                        where: { id: outbound.id },
+                        data: { messageMediaMetadata: JSON.stringify({ deliveryStatus: 'FAILED', source: 'approved_after_hours_template', automationApproved: true }) },
+                      }).catch(() => {});
+                    }
+                  } else {
+                    await db.socialInboxMessage.update({
+                      where: { id: outbound.id },
+                      data: { messageMediaMetadata: JSON.stringify({ deliveryStatus: 'NOT_CONFIGURED', source: 'approved_after_hours_template', automationApproved: true }) },
+                    }).catch(() => {});
+                  }
+                }
               }
-            } catch {}
-            if (mid) await db.webhookEvent.create({ data: { provider: 'FACEBOOK', eventId: mid, eventType: 'MESSAGING', payload: JSON.stringify(ev), signature, verified: signatureValid, processed: true, processedAt: new Date() } as any }).catch(()=>{});
-            messengerReplies.push({ senderId, mid, state: intake.context.state, replyLen: intake.reply.length });
-          } catch (e: any) { messengerReplies.push({ senderId, error: e.message }); }
+            } catch (error) {
+              console.error('[facebook.webhook] after-hours automation failed closed', { error: error instanceof Error ? error.name : 'UnknownError' });
+            }
+            if (mid) await db.webhookEvent.create({ data: { provider: 'FACEBOOK', eventId: mid, eventType: 'MESSAGING', payload: JSON.stringify(ev), signature, verified: signatureValid, processed: true, processedAt: new Date() } as any }).catch(() => {});
+            messengerReplies.push({ mid: mid || null, state: intake.context.state, aiDraftSaved: Boolean(inbound?.id), autoReplySent });
+          } catch {
+            messengerReplies.push({ mid: mid || null, error: 'processing_failed' });
+          }
         }
       }
     }

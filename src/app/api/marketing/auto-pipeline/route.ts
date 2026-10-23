@@ -1,41 +1,69 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { withAuth, AuthContext } from "@/lib/auth-middleware";
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from "@/lib/auth-middleware";
+import { withMarketingAccess } from "@/lib/marketing/access";
 import { getBrandKit, SIZE_MATRIX } from "@/lib/marketing/brand-kit";
 import { generateBrandedImage } from "@/lib/marketing/image-generator";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// One-click: Idea or Image URL -> Content + Image (per size) + Video + CampaignPost x platforms + SEO Blog + Calendar
-// Body: { idea?: string, imageUrl?: string, title?: string, category?: string, platforms?: string[], sizes?: string[], autoPublishBlog?: boolean, scheduleAt?: string }
-// Platforms default: ["FACEBOOK","INSTAGRAM","LINKEDIN","BLOG"]
-// Sizes default: ["SQUARE","PORTRAIT","LANDSCAPE","STORY"]
+// Draft-generation workflow only: it does not render images, schedule content, publish a blog, or send messages.
+// Body: { idea?: string, imageUrl?: string, title?: string, category?: string, platforms?: string[], sizes?: string[], createBlogDraft?: boolean }
 
-export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
-  const body = await req.json().catch(()=> ({}));
-  const idea: string = (body.idea || body.keyword || body.title || "").toString().trim();
-  const imageUrl: string | undefined = body.imageUrl || body.sourceImageUrl;
-  const title = (body.title || idea.slice(0, 60) || "ALO Campaign").toString();
-  const category = body.category || "CONSULTATION_OFFER";
-  const platforms: string[] = Array.isArray(body.platforms) && body.platforms.length ? body.platforms : ["FACEBOOK","INSTAGRAM","LINKEDIN","BLOG"];
-  const sizes: string[] = Array.isArray(body.sizes) && body.sizes.length ? body.sizes : ["SQUARE","PORTRAIT","LANDSCAPE","STORY"];
-  const autoPublishBlog = body.autoPublishBlog !== false; // default true
-  const createdBy = body.createdBy || "marketing-manager-auto-pipeline";
-  const campaignObjective = body.campaignObjective || "LEAD_GEN";
+export const POST = withMarketingAccess(async (req: Request, auth: AuthContext) => {
+  const body = await req.json().catch(() => null) as Record<string, unknown> | null;
+  if (!body) return NextResponse.json({ success: false, error: 'Invalid JSON body.' }, { status: 400 });
+  const idea = typeof body.idea === 'string' ? body.idea.trim().slice(0, 1500) : typeof body.keyword === 'string' ? body.keyword.trim().slice(0, 1500) : '';
+  const imageUrlValue = typeof body.imageUrl === 'string' ? body.imageUrl.trim() : typeof body.sourceImageUrl === 'string' ? body.sourceImageUrl.trim() : '';
+  let imageUrl: string | undefined;
+  if (imageUrlValue) {
+    try {
+      const parsed = new URL(imageUrlValue);
+      if (parsed.protocol !== 'https:' || parsed.username || parsed.password) return NextResponse.json({ success: false, error: 'Source image URLs must use HTTPS.' }, { status: 400 });
+      imageUrl = parsed.toString();
+    } catch { return NextResponse.json({ success: false, error: 'Invalid source image URL.' }, { status: 400 }); }
+  }
+  const title = (typeof body.title === 'string' ? body.title.trim() : '').slice(0, 160) || idea.slice(0, 60) || 'ALO Campaign Draft';
+  const category = (typeof body.category === 'string' ? body.category.trim() : 'CONSULTATION_OFFER').slice(0, 80);
+  const supportedPlatforms = new Set(['FACEBOOK', 'INSTAGRAM', 'LINKEDIN', 'TIKTOK', 'WHATSAPP_STATUS', 'BLOG']);
+  const supportedSizes = new Set(Object.keys(SIZE_MATRIX));
+  const requestedPlatforms = Array.isArray(body.platforms) ? body.platforms : ['FACEBOOK', 'INSTAGRAM', 'LINKEDIN', 'BLOG'];
+  const requestedSizes = Array.isArray(body.sizes) ? body.sizes : ['SQUARE', 'PORTRAIT', 'LANDSCAPE', 'STORY'];
+  const platforms = [...new Set(requestedPlatforms.filter((value): value is string => typeof value === 'string').map((value) => value.trim().toUpperCase()))];
+  const sizes = [...new Set(requestedSizes.filter((value): value is string => typeof value === 'string').map((value) => value.trim().toUpperCase()))];
+  if (platforms.length < 1 || platforms.length > 4 || platforms.some((platform) => !supportedPlatforms.has(platform)) || sizes.length < 1 || sizes.length > 5 || sizes.some((size) => !supportedSizes.has(size))) {
+    return NextResponse.json({ success: false, error: 'Use up to four supported platforms and five supported image sizes.' }, { status: 400 });
+  }
+  const createBlogDraft = body.createBlogDraft === true;
+  const createdBy = auth.userId;
+  const campaignObjective = typeof body.campaignObjective === 'string' ? body.campaignObjective.slice(0, 120) : 'LEAD_GEN';
+  const country = typeof body.country === 'string' ? body.country.slice(0, 120) : '';
+  const course = typeof body.course === 'string' ? body.course.slice(0, 160) : '';
+  const language = typeof body.language === 'string' ? body.language.slice(0, 40) : 'english';
+  const audienceType = typeof body.audienceType === 'string' ? body.audienceType.slice(0, 160) : '';
+  const funnelStage = typeof body.funnelStage === 'string' ? body.funnelStage.slice(0, 80) : 'awareness';
+  const caption = typeof body.caption === 'string' ? body.caption.trim().slice(0, 10000) : '';
+  const rawHashtags = body.hashtags === undefined ? ['StudyAbroad', 'ALOEducation', 'Scholarship'] : body.hashtags;
+  if (!Array.isArray(rawHashtags) || rawHashtags.length > 30 || rawHashtags.some((tag) => typeof tag !== 'string' || tag.length > 80)) return NextResponse.json({ success: false, error: 'hashtags must contain at most 30 short text tags.' }, { status: 400 });
+  const hashtags = rawHashtags.map((tag: string) => tag.trim());
+  const ctaText = typeof body.ctaText === 'string' ? body.ctaText.slice(0, 300) : 'Book Free Consultation';
+  const ctaUrl = typeof body.ctaUrl === 'string' ? body.ctaUrl.trim() : '';
+  if (ctaUrl) {
+    try { if (new URL(ctaUrl).protocol !== 'https:') throw new Error('https required'); }
+    catch { return NextResponse.json({ success: false, error: 'CTA links must use HTTPS.' }, { status: 400 }); }
+  }
+  const videoScript = typeof body.videoScript === 'string' ? body.videoScript.slice(0, 10000) : '';
+  const reelCaption = typeof body.reelCaption === 'string' ? body.reelCaption.slice(0, 10000) : '';
 
-  if (!idea && !imageUrl) return NextResponse.json({ error: "idea (text) or imageUrl required — share one idea or one company image" }, { status: 400 });
+  if (!idea && !imageUrl) return NextResponse.json({ success: false, error: 'Provide an idea or HTTPS source image URL.' }, { status: 400 });
 
   const brandKit = await getBrandKit();
   if (!brandKit.logoUrl) {
     // allow but warn — still proceeds with placeholder overlay text
   }
 
-  const results: any = { title, category, platforms, sizes, brandKitApplied: true };
+  const results: any = { title, category, platforms, sizes, brandKitApplied: false, imageGeneration: 'NOT_CONFIGURED — prompts only; no image file was generated' };
 
   // 1) Create MarketingContentIdea (for audit + SEO pipeline)
   let contentIdea: any = null;
@@ -43,12 +71,12 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
     contentIdea = await db.marketingContentIdea.create({
       data: {
         keyword: idea || "image-campaign",
-        country: body.country || "",
-        course: body.course || "",
-        language: body.language || "english",
-        platform: platforms[0] || "facebook",
-        audienceType: body.audienceType || "",
-        funnelStage: body.funnelStage || "awareness",
+        country,
+        course,
+        language,
+        platform: platforms[0] || "FACEBOOK",
+        audienceType,
+        funnelStage,
         ideaType: imageUrl ? "image" : "post",
         title,
         description: idea || `Campaign from image ${imageUrl}`,
@@ -60,40 +88,21 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
     results.contentIdea = contentIdea;
   } catch (e: any) { results.contentIdeaError = e.message; }
 
-  // 2) Generate branded image per size (placeholder until provider key set, but already brand-aware)
+  // 2) Prepare image prompts only. The placeholder generator returns a public stock URL, not an ALO asset, so it is never persisted or presented as generated.
   const assets: any[] = [];
   for (const sz of sizes) {
-    const gen = await generateBrandedImage({ title, ideaOrCaption: idea || title, category, size: sz as any, platform: platforms[0] || "FACEBOOK", brandKit });
-    try {
-      const asset = await db.marketingAsset.create({
-        data: {
-          name: `${title} — ${sz}`,
-          type: "image",
-          url: gen.imageUrl,
-          thumbnail: gen.imageUrl,
-          platform: (SIZE_MATRIX[sz as keyof typeof SIZE_MATRIX]?.platforms[0] || platforms[0] || "facebook").toLowerCase(),
-          category: "generated",
-          tags: JSON.stringify([category, sz, "auto-pipeline", "brand-applied"]),
-          status: "active",
-          createdById: createdBy,
-        }
-      });
-      assets.push({ size: sz, w: gen.w, h: gen.h, assetId: asset.id, imageUrl: gen.imageUrl, prompt: gen.prompt });
-    } catch (e: any) {
-      assets.push({ size: sz, error: e.message, imageUrl: gen.imageUrl, prompt: gen.prompt });
-    }
+    const gen = await generateBrandedImage({ title, ideaOrCaption: caption || idea || title, category, size: sz, platform: platforms[0] || 'FACEBOOK', brandKit });
+    assets.push({ size: sz, w: gen.w, h: gen.h, assetId: null, imageUrl: null, generated: false, prompt: gen.prompt, status: 'PROMPT_ONLY' });
   }
   results.assets = assets;
 
   // 3) Create CampaignPost per platform x size (approval DRAFT — brand already applied)
   const posts: any[] = [];
-  const masterCaption = body.caption || `${idea || title}\n\n📍 ${brandKit.address}\n☎ ${brandKit.phone} | WhatsApp: ${brandKit.whatsapp}\n🌐 ${brandKit.website}\n\n#StudyAbroad #ALOEducation`;
-  const hashtags = body.hashtags || ["StudyAbroad","ALOEducation","Scholarship"];
+  const masterCaption = caption || `${idea || title}${brandKit.website ? `\n\n${brandKit.website}` : ''}`;
   for (const plat of platforms) {
     for (const sz of sizes) {
       // For BLOG we only need one size (LANDSCAPE) — skip extra sizes to avoid spam
       if (plat === "BLOG" && sz !== "LANDSCAPE" && sz !== "SQUARE") continue;
-      const sizeAsset = assets.find(a => a.size === sz);
       const platSize = plat === "BLOG" ? "LANDSCAPE" : sz;
       try {
         const post = await db.campaignPost.create({
@@ -103,44 +112,26 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
             platform: plat,
             caption: masterCaption,
             hashtags: JSON.stringify(hashtags),
-            ctaText: body.ctaText || "Book Free Consultation",
-            ctaUrl: body.ctaUrl || `${brandKit.website}/consult`,
-            videoScript: body.videoScript || "",
-            reelCaption: body.reelCaption || masterCaption.slice(0, 120),
+            ctaText: ctaText || null,
+            ctaUrl: ctaUrl || null,
+            videoScript,
+            reelCaption: reelCaption || masterCaption.slice(0, 120),
             // if model has landingLink use it, else ignore
             campaignObjective,
             platformSize: platSize,
             approvalStatus: "DRAFT",
             createdBy,
-            brandAssetApplied: true,
+            brandAssetApplied: false,
           } as any
         });
-        posts.push({ id: post.id, platform: plat, size: platSize, status: post.approvalStatus, assetUrl: sizeAsset?.imageUrl || imageUrl || null });
+        posts.push({ id: post.id, platform: plat, size: platSize, status: post.approvalStatus, assetUrl: null, sourceImageUrl: imageUrl || null });
 
-        // 4) Calendar auto-schedule (next 3 slots 9/14/19 Dhaka)
-        const schedBase = body.scheduleAt ? new Date(body.scheduleAt) : new Date();
-        // stagger by platform index
-        const offsetH = (platforms.indexOf(plat) * 2) % 12;
-        const scheduledAt = new Date(schedBase.getTime() + offsetH * 3600_000);
-        try {
-          await db.marketingCalendar.create({
-            data: {
-              title: post.title,
-              description: masterCaption.slice(0, 200),
-              platform: plat.toLowerCase(),
-              campaignId: null,
-              contentId: post.id,
-              status: "scheduled",
-              scheduledAt,
-              createdById: createdBy,
-            }
-          }).catch(()=>{});
-        } catch {}
+        // No scheduler is configured; calendar records are intentionally not created.
 
-        // 5) If BLOG, also create BlogPost for SEO (so top-3 plan starts indexing)
-        if (plat === "BLOG" && autoPublishBlog) {
+        // 5) If explicitly requested, create a private blog draft. Nothing is published or indexed.
+        if (plat === "BLOG" && createBlogDraft) {
           const slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60)}-${Date.now().toString(36)}`;
-          const blogBody = `# ${title}\n\n${idea || masterCaption}\n\n**ALO Education** — ${brandKit.address}  \nPhone: ${brandKit.phone} | WhatsApp: ${brandKit.whatsapp} | ${brandKit.website}\n\n## Why ALO?\n- Free counseling for Bangladeshi students\n- University & scholarship matching\n- Visa guidance (no false guarantees)\n\n## FAQs\n**Q: Cost to start?** A: Free initial consultation.\n**Q: IELTS required?** A: Depends on country/course — we guide.\n\n*Brand verified: logo ${brandKit.logoUrl ? 'applied' : 'pending'}*`;
+          const blogBody = `# ${title}\n\n${idea || masterCaption}\n\n**ALO Education** — ${brandKit.address}  \nPhone: ${brandKit.phone} | WhatsApp: ${brandKit.whatsapp} | ${brandKit.website}\n\n## Why ALO?\n- Free counseling for Bangladeshi students\n- University & scholarship matching\n- Visa guidance (no false guarantees)\n\n## FAQs\n**Q: Cost to start?** A: Free initial consultation.\n**Q: IELTS required?** A: Depends on country/course — we guide.\n\n*Draft only — brand and factual claims require manager review before publication.*`;
           try {
             await db.blogPost.create({
               data: {
@@ -148,7 +139,7 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
                 slug,
                 excerpt: masterCaption.slice(0, 160),
                 content: blogBody,
-                coverImage: sizeAsset?.imageUrl || imageUrl || null,
+                coverImage: null,
                 status: "DRAFT",
                 authorId: createdBy,
                 publishedAt: null,
@@ -184,30 +175,24 @@ export const POST = withAuth(async (req: Request, _auth: AuthContext) => {
   }
   results.posts = posts;
 
-  // 6) Audit
-  try {
-    await db.auditLog.create({ data: { action: "DATA_IMPORT" as any, resource: "AutoPipeline", resourceId: (contentIdea as any)?.id || title, details: JSON.stringify({ title, platforms, sizes, postCount: posts.length }) } }).catch(()=>{});
-    await db.marketingAuditLog.create({ data: { userId: createdBy, userName: createdBy, role: "MARKETING_MANAGER", action: "auto-pipeline.create", resource: "CampaignPost", resourceId: (posts[0] as any)?.id || "", details: JSON.stringify({ title, platforms, sizes }) } }).catch(()=>{});
-  } catch {}
+  // 6) Audit. The actor comes from the authenticated session, never the request body.
+  await db.auditLog.create({ data: { userId: auth.userId, action: 'DATA_IMPORT', resource: 'AutoPipeline', resourceId: contentIdea?.id || title, details: JSON.stringify({ title, platforms, sizes, postCount: posts.length, assetFilesGenerated: false, scheduled: false }) } }).catch(() => {});
+  await db.marketingAuditLog.create({ data: { userId: auth.userId, userName: auth.name || auth.userId, role: auth.roles[0] || auth.userType, action: 'auto-pipeline.draft-created', resource: 'CampaignPost', resourceId: posts[0]?.id || '', details: JSON.stringify({ title, platforms, sizes }) } }).catch(() => {});
 
-  // 7) Auto lead hint — every published post will auto-create lead via keyword-triggers + Google webhook — return leadSources ready
-  results.leadSources = {
-    googleLocation: "POST /api/marketing/webhooks/google-business — send {placeId, review, rating} → MarketingLead source=GOOGLE_MAPS",
-    facebook: "Already wired — comments/DM auto lead via keyword-triggers",
-    nextAction: "Approve posts (Campaign Posts tab) → Publish — leads auto-collect and assign counselor"
-  };
-  results.summary = { idea: idea || imageUrl, assets: assets.length, posts: posts.length, blogIncluded: platforms.includes("BLOG") };
+  results.leadSources = { status: 'NOT_CONFIGURED', message: 'No automatic lead capture or outbound follow-up is claimed by this draft-generation action.' };
+  results.scheduler = 'NOT_CONFIGURED — no calendar rows or provider jobs were created';
+  results.summary = { idea: idea || 'Source image provided', imagePrompts: assets.length, posts: posts.length, blogDraftRequested: createBlogDraft && platforms.includes('BLOG') };
 
-  return NextResponse.json({ success: true, ...results } as any, { status: 201 });
-}, MARKETING_AUTH);
+  return NextResponse.json({ success: true, sent: false, published: false, ...results }, { status: 201 });
+}, 'manager');
 
-export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
+export const GET = withMarketingAccess(async (_req: Request, _auth: AuthContext) => {
   const kit = await getBrandKit();
   return NextResponse.json({
     success: true,
-    hint: "POST { idea | imageUrl, title?, category?, platforms?: string[], sizes?: string[], autoPublishBlog?: boolean } — one idea or one image → content+image+video+blog+posts+calendar+leads",
+    hint: 'POST an idea or HTTPS image URL to create internal content drafts and image prompts only. Nothing is rendered, scheduled, published, or sent.',
     brandKit: { hasLogo: !!kit.logoUrl, address: kit.address, phone: kit.phone, whatsapp: kit.whatsapp, website: kit.website },
-    sizes: Object.entries(SIZE_MATRIX).map(([k,v])=> ({ key:k, ...v })),
-    platforms: ["FACEBOOK","INSTAGRAM","LINKEDIN","TIKTOK","YOUTUBE","WHATSAPP_STATUS","BLOG"]
-  } as any);
-}, MARKETING_AUTH);
+    sizes: Object.entries(SIZE_MATRIX).map(([key, value]) => ({ key, ...value })),
+    platforms: ['FACEBOOK', 'INSTAGRAM', 'LINKEDIN', 'TIKTOK', 'WHATSAPP_STATUS', 'BLOG'],
+  });
+}, 'workspace');

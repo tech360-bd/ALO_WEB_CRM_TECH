@@ -1,41 +1,43 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission } from '@/lib/visa/access';
+
+const schema = z.object({ visaOfficerId: z.string().trim().min(1).max(191), reason: z.string().trim().min(3).max(180) }).strict();
 
 export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('ADMIN');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Case assignment requires super_admin/admin/visa_officer — visa.dashboard.view cases.assign permission — bulk perm-controlled' }, { status: 403 });
-
     const id = context?.params?.id;
-    const body = await req.json();
-    const { visaOfficerId, visaOfficerName, counselorId, counselorName, applicationOfficerId, reason } = body;
+    if (typeof id !== 'string' || !id) return NextResponse.json({ success: false, error: 'Case ID required.' }, { status: 400 });
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Visa officer ID and assignment reason required.', details: parsed.error.flatten() }, { status: 400 });
 
     const existing = await db.visaCase.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ success: false, error: 'Case not found' }, { status: 404 });
+    if (!existing) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.cases.assign', existing)) {
+      return NextResponse.json({ success: false, error: 'visa.cases.assign permission required.' }, { status: 403 });
+    }
 
-    const updateData: any = {};
-    if (visaOfficerId !== undefined) updateData.visaOfficerId = visaOfficerId;
-    if (visaOfficerName !== undefined) updateData.visaOfficerName = visaOfficerName;
-    if (counselorId !== undefined) updateData.counselorId = counselorId;
-    if (counselorName !== undefined) updateData.counselorName = counselorName;
-    if (applicationOfficerId !== undefined) updateData.applicationOfficerId = applicationOfficerId;
+    const employee = await db.employee.findUnique({ where: { userId: parsed.data.visaOfficerId }, select: { userId: true, name: true, role: true, status: true } });
+    const officerRole = String(employee?.role || '').toLowerCase();
+    if (!employee || employee.status?.toLowerCase() !== 'active' || !['visa_officer', 'visa_interview_officer', 'visa_team'].includes(officerRole)) {
+      return NextResponse.json({ success: false, error: 'Target must be an active Visa Officer, Visa Interview Officer, or Visa Team member.' }, { status: 400 });
+    }
 
-    const updated = await db.visaCase.update({ where: { id }, data: updateData });
-
-    await logAuditAction(auth, 'VISA_CASE_ASSIGNED', 'VisaCase', id, { before: existing, after: updateData, reason, studentId: existing.studentId });
-    await db.timelineEvent.create({
-      data: {
-        studentId: existing.studentId,
-        stage: 'VISA_CASE_ASSIGNED',
-        title: `Visa case assigned to ${visaOfficerName || visaOfficerId || 'officer'} by ${auth.name} — reason ${reason || 'assignment'}`,
-        description: `Case ${existing.caseCode} assigned — owner/priority/deadline/status/createdBy/caseId/studentId — overdue appears in dashboard`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: updated, note: 'Assigned table filters bulk perm-controlled — owner/priority/deadline/status/createdBy/caseId/studentId' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Assignment failed' }, { status: 500 });
+    const updated = await db.$transaction(async (tx) => {
+      const result = await tx.visaCase.update({ where: { id }, data: { visaOfficerId: employee.userId, visaOfficerName: employee.name, lastUpdated: new Date() } });
+      await tx.portalAuditLog.create({
+        data: { actorUserId: auth.actorUserId, action: 'VISA_CASE_ASSIGNED', entityType: 'VisaCase', entityId: id, metadata: JSON.stringify({ studentId: existing.studentId, before: { visaOfficerId: existing.visaOfficerId }, after: { visaOfficerId: employee.userId }, reason: parsed.data.reason }), ipAddress: '', userAgent: '' },
+      });
+      await tx.timelineEvent.create({
+        data: { studentId: existing.studentId, stage: 'VISA_CASE_ASSIGNED', title: 'Visa officer assignment updated.', description: 'Case ownership changed by an authorized administrator; audit record created.', actor: auth.actorUserId },
+      });
+      return result;
+    });
+    return NextResponse.json({ success: true, data: { id: updated.id, caseCode: updated.caseCode, visaOfficerId: updated.visaOfficerId, visaOfficerName: updated.visaOfficerName, updatedAt: updated.updatedAt, lastUpdated: updated.lastUpdated } }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    console.error('[visa-case-assign] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to assign visa officer.' }, { status: 500 });
   }
 });

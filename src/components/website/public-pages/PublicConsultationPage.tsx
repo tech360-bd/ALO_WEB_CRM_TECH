@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, Clock, User, Mail, Phone, Globe, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { ALO_CONTACT } from '@/lib/alo-site-info';
 
 const SERVICE_OPTIONS = [
   'General Consultation',
@@ -347,7 +348,7 @@ export default function PublicConsultationPage() {
                   <Button
                     type="submit"
                     disabled={submitting}
-                    className="w-full h-12 bg-[#E8501A] text-white font-semibold rounded-xl hover:brightness-110 transition-all"
+                    className="w-full h-12 bg-[#E8501A] text-black font-semibold rounded-xl hover:brightness-110 transition-all"
                   >
                     {submitting ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
@@ -369,23 +370,27 @@ export default function PublicConsultationPage() {
                   <div className="space-y-3 text-sm">
                     <div>
                       <p className="text-blue-100 text-xs">Phone</p>
-                      <p className="font-semibold">+88 01805020101-10</p>
+                      <a href={ALO_CONTACT.mobileHref} className="font-semibold">{ALO_CONTACT.mobileDisplay}</a>
                     </div>
                     <div>
                       <p className="text-blue-100 text-xs">Email</p>
-                      <p className="font-semibold">info@aloeducation.com</p>
+                      <a href={ALO_CONTACT.emailHref} className="font-semibold">{ALO_CONTACT.email}</a>
                     </div>
                     <div>
                       <p className="text-blue-100 text-xs">Hours</p>
-                      <p className="font-semibold">Sat-Thu: 10 AM - 6 PM</p>
+                      <p className="font-semibold">{ALO_CONTACT.officeHours}</p>
                     </div>
                     <div>
                       <p className="text-blue-100 text-xs">Address</p>
-                      <p className="font-semibold text-xs leading-relaxed">
-                        Barek Mansion-02 (5th Floor)<br />
-                        58/9 Box Culvert Road, Panthapath<br />
-                        Dhaka-1205, Bangladesh
-                      </p>
+                      <p className="font-semibold text-xs leading-relaxed">{ALO_CONTACT.address}</p>
+                      <a
+                        href={ALO_CONTACT.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-block text-xs font-semibold underline underline-offset-2"
+                      >
+                        Open in Google Maps
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -395,7 +400,7 @@ export default function PublicConsultationPage() {
                   <p className="text-sm text-green-800 mb-3">Quick response on WhatsApp</p>
                   <Button asChild className="w-full bg-[#25D366] text-white hover:brightness-110">
                     <a
-                      href="https://wa.me/8801805020101?text=I%20want%20to%20book%20a%20consultation"
+                      href={`${ALO_CONTACT.whatsappHref}?text=I%20want%20to%20book%20a%20consultation`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

@@ -162,7 +162,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
                 Let our experts help you achieve your study abroad dreams just like {story.name.split(' ')[0]}.
               </p>
               <Link href="/eligibility-check">
-                <Button className="w-full bg-[#E8501A] hover:bg-[#C93D13] text-white">
+                <Button className="w-full bg-[#E8501A] hover:bg-[#C93D13] text-black">
                   Check Your Eligibility
                 </Button>
               </Link>

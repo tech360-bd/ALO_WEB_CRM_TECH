@@ -96,7 +96,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
             <div className="grid lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-7 space-y-6">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1.5 uppercase shadow-md">
+                  <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1.5 uppercase shadow-md">
                     {test.logoBadge}
                   </Badge>
                   <span className="text-xs text-blue-100 font-medium bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
@@ -118,7 +118,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-2">
-                  <Button asChild className="bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-sm px-7 py-3.5 shadow-lg rounded-xl"><a href="#crm-lead-form">
+                  <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm px-7 py-3.5 shadow-lg rounded-xl"><a href="#crm-lead-form">
                       Book Free Counseling
                     </a></Button>
                   <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm px-6 py-3.5 rounded-xl"><a href="#crm-lead-form">
@@ -405,7 +405,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                   <Card className="p-7 bg-slate-50 border border-slate-200">
                     <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
                       <h3 className="text-xl font-bold text-[#0F172A]">{test.moduleDetails[activeModuleTab].moduleName}</h3>
-                      <Badge className="bg-[#E8501A] text-white text-xs">{test.moduleDetails[activeModuleTab].timeLimit}</Badge>
+                      <Badge className="bg-[#E8501A] text-black text-xs">{test.moduleDetails[activeModuleTab].timeLimit}</Badge>
                     </div>
 
                     <p className="text-xs text-slate-700 mb-6 leading-relaxed">
@@ -521,7 +521,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-12 items-center">
               <div className="lg:col-span-7 space-y-6">
-                <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1">ALO CRM SCORE PLANNER</Badge>
+                <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1">ALO CRM SCORE PLANNER</Badge>
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
                   Get Free Test Preparation & Score Planning Support
                 </h2>
@@ -625,7 +625,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                       <Button
                         disabled={submitting}
                         type="submit"
-                        className="w-full bg-[#E8501A] text-white hover:bg-[#C93D13] font-bold text-xs py-3 rounded-xl shadow-md mt-2"
+                        className="w-full bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-xs py-3 rounded-xl shadow-md mt-2"
                       >
                         {submitting ? 'Connecting to CRM...' : 'Submit Lead & Get Custom Plan →'}
                       </Button>

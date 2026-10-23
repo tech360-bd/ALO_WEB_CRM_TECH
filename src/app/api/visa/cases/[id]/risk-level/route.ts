@@ -1,44 +1,58 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission } from '@/lib/visa/access';
 
-const VALID_RISK = ['low','medium','high','critical','LOW','MEDIUM','HIGH','CRITICAL','HUMAN_REVIEW_REQUIRED'];
+const schema = z.object({
+  riskLevel: z.enum(['low', 'medium', 'high', 'critical', 'human_review_required']),
+  reason: z.string().trim().min(3).max(500),
+}).strict();
 
 export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Risk update requires visa officer — risk.view/update' }, { status: 403 });
-
     const id = context?.params?.id;
-    const { riskLevel, reason } = await req.json();
-
-    if (!VALID_RISK.includes(riskLevel)) {
-      return NextResponse.json({ success: false, error: `Invalid risk — allowed LOW/MEDIUM/HIGH/CRITICAL/HUMAN_REVIEW_REQUIRED — explain what is strong/weak/missing/next action/responsible/deadline — do not expose internal sensitive risk details to students` }, { status: 400 });
-    }
-
+    if (typeof id !== 'string' || !id) return NextResponse.json({ success: false, error: 'Case ID required.' }, { status: 400 });
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Valid risk level and reason required.', details: parsed.error.flatten() }, { status: 400 });
     const existing = await db.visaCase.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ success: false, error: 'Case not found' }, { status: 404 });
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isSuper && existing.visaOfficerId && existing.visaOfficerId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Cannot update risk of unassigned case — IDOR blocked' }, { status: 403 });
+    if (!existing) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.risk.update', existing)) {
+      return NextResponse.json({ success: false, error: 'Assigned case and visa.risk.update permission required.' }, { status: 403 });
     }
 
-    const updated = await db.visaCase.update({ where: { id }, data: { riskLevel: riskLevel.toLowerCase() } });
-
-    await logAuditAction(auth, 'VISA_RISK_UPDATE', 'VisaCase', id, { before: { riskLevel: existing.riskLevel }, after: { riskLevel }, reason, studentId: existing.studentId });
-    await db.timelineEvent.create({
-      data: {
-        studentId: existing.studentId,
-        stage: 'VISA_RISK_UPDATED',
-        title: `Risk updated to ${riskLevel} by ${auth.name} — reason ${reason || 'assessment'}`,
-        description: `Risk ${existing.riskLevel} → ${riskLevel} — explain what is strong/weak/missing/next action/responsible/deadline — do not expose internal sensitive risk details to students`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: updated, note: 'Risk LOW/MEDIUM/HIGH/CRITICAL/HUMAN_REVIEW_REQUIRED — explain strong/weak/missing/next action/responsible/deadline — do not expose internal sensitive risk details to students' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Update failed' }, { status: 500 });
+    const updated = await db.$transaction(async (tx) => {
+      const result = await tx.visaCase.update({ where: { id }, data: { riskLevel: parsed.data.riskLevel, lastUpdated: new Date() } });
+      await tx.visaRiskAssessment.upsert({
+        where: { caseId: id },
+        create: {
+          caseId: id,
+          studentId: existing.studentId,
+          fundingRisk: 'not_assessed',
+          studyGapRisk: 'not_assessed',
+          refusalRisk: 'not_assessed',
+          sensitiveRisk: 'not_assessed',
+          overallRiskLevel: parsed.data.riskLevel,
+          officerVerdict: 'reviewed',
+          humanReviewRequired: ['high', 'critical', 'human_review_required'].includes(parsed.data.riskLevel),
+        },
+        update: {
+          overallRiskLevel: parsed.data.riskLevel,
+          officerVerdict: 'reviewed',
+          humanReviewRequired: ['high', 'critical', 'human_review_required'].includes(parsed.data.riskLevel),
+        },
+      });
+      await tx.portalAuditLog.create({
+        data: { actorUserId: auth.actorUserId, action: 'VISA_RISK_UPDATE', entityType: 'VisaCase', entityId: id, metadata: JSON.stringify({ studentId: existing.studentId, before: { riskLevel: existing.riskLevel }, after: { riskLevel: parsed.data.riskLevel }, reason: parsed.data.reason }), ipAddress: '', userAgent: '' },
+      });
+      await tx.timelineEvent.create({
+        data: { studentId: existing.studentId, stage: 'VISA_RISK_UPDATED', title: 'Internal visa risk assessment updated.', description: `Internal assessment changed to ${parsed.data.riskLevel}; human review remains required.`, actor: auth.actorUserId },
+      });
+      return result;
+    });
+    return NextResponse.json({ success: true, data: updated, note: 'Internal workflow risk label only; not a visa decision.' }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    console.error('[visa-risk] update failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to update visa risk.' }, { status: 500 });
   }
 });

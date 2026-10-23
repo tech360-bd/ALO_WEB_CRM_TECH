@@ -1,91 +1,138 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission, isVisaSuperAdmin } from '@/lib/visa/access';
+
+const ASSIGNEES = ['student', 'visa_officer', 'counselor', 'application_officer'] as const;
+const updateSchema = z.object({
+  status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']).optional(),
+  title: z.string().trim().min(1).max(191).optional(),
+  description: z.string().trim().max(2000).optional(),
+  assignee: z.enum(ASSIGNEES).optional(),
+  dueDate: z.string().trim().max(40).nullable().optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
+}).strict();
+
+function resolveAssignee(visaCase: any, studentId: string, assignee: (typeof ASSIGNEES)[number]) {
+  const id = assignee === 'student'
+    ? studentId
+    : assignee === 'visa_officer'
+      ? visaCase.visaOfficerId
+      : assignee === 'counselor'
+        ? visaCase.counselorId
+        : visaCase.applicationOfficerId;
+  return typeof id === 'string' && id.trim() ? id : null;
+}
+
+function auditData(auth: AuthContext, action: string, entityId: string, caseId: string, studentId: string, metadata: Record<string, unknown>) {
+  return {
+    actorUserId: auth.actorUserId,
+    action,
+    entityType: 'VisaTask',
+    entityId,
+    metadata: JSON.stringify({ caseId, studentId, ...metadata }),
+    ipAddress: '',
+    userAgent: '',
+  };
+}
+
+type ScopedTaskResult =
+  | { ok: false; response: NextResponse }
+  | { ok: true; task: NonNullable<Awaited<ReturnType<typeof db.visaTask.findUnique>>>; visaCase: NonNullable<Awaited<ReturnType<typeof db.visaCase.findUnique>>> };
+
+async function loadScopedTask(auth: AuthContext, taskId: unknown): Promise<ScopedTaskResult> {
+  if (typeof taskId !== 'string' || !taskId.trim()) return { ok: false, response: NextResponse.json({ success: false, error: 'Task ID required.' }, { status: 400 }) };
+  const task = await db.visaTask.findUnique({ where: { id: taskId } });
+  if (!task || !task.caseId) return { ok: false, response: NextResponse.json({ success: false, error: 'Visa task not found.' }, { status: 404 }) };
+  const visaCase = await db.visaCase.findUnique({ where: { id: task.caseId } });
+  if (!visaCase || visaCase.studentId !== task.studentId) return { ok: false, response: NextResponse.json({ success: false, error: 'Visa task not found.' }, { status: 404 }) };
+  if (!canManageVisaPermission(auth, 'visa.tasks.view', visaCase)) return { ok: false, response: NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.view permission required.' }, { status: 403 }) };
+  return { ok: true, task, visaCase };
+}
+
+export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
+  try {
+    const result = await loadScopedTask(auth, context?.params?.id);
+    if (!result.ok) return result.response;
+    const { task, visaCase } = result;
+    await db.portalAuditLog.create({
+      data: auditData(auth, 'VISA_TASK_VIEW', task.id, visaCase.id, visaCase.studentId, { status: task.status }),
+    });
+    return NextResponse.json({ success: true, data: task }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Visa task could not be audited or loaded.' }, { status: 503 });
+  }
+});
 
 export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Task update requires visa officer — tasks.update' }, { status: 403 });
-
-    const id = context?.params?.id;
-    const existing = await db.visaTask.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ success: false, error: 'Task not found' }, { status: 404 });
-
-    if (existing.caseId) {
-      const visaCase = await db.visaCase.findUnique({ where: { id: existing.caseId } });
-      const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-      if (!isSuper && visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot update task for unassigned case — IDOR blocked' }, { status: 403 });
-      }
+    const result = await loadScopedTask(auth, context?.params?.id);
+    if (!result.ok) return result.response;
+    const { task, visaCase } = result;
+    if (!canManageVisaPermission(auth, 'visa.tasks.update', visaCase)) {
+      return NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.update permission required.' }, { status: 403 });
+    }
+    const parsed = updateSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success || Object.keys(parsed.data || {}).length === 0) {
+      return NextResponse.json({ success: false, error: 'Invalid task update.', details: parsed.success ? undefined : parsed.error.flatten() }, { status: 400 });
     }
 
-    const body = await req.json();
-    const { status, title, description, assignedTo, dueDate, priority, owner } = body;
+    const { assignee, dueDate: dueDateInput, ...fields } = parsed.data;
+    const update: Record<string, any> = { ...fields };
+    if (assignee) {
+      const assignedTo = resolveAssignee(visaCase, visaCase.studentId, assignee);
+      if (!assignedTo) return NextResponse.json({ success: false, error: 'The selected owner is not assigned to this case.' }, { status: 400 });
+      update.assignedTo = assignedTo;
+    }
+    if (dueDateInput !== undefined) {
+      const dueDate = dueDateInput ? new Date(dueDateInput) : null;
+      if (dueDate && Number.isNaN(dueDate.getTime())) return NextResponse.json({ success: false, error: 'A valid task due date is required.' }, { status: 400 });
+      update.dueDate = dueDate;
+    }
 
-    const dataToUpdate: any = {};
-    if (status !== undefined) dataToUpdate.status = status;
-    if (title !== undefined) dataToUpdate.title = title;
-    if (description !== undefined) dataToUpdate.description = description;
-    if (assignedTo !== undefined) dataToUpdate.assignedTo = assignedTo;
-    if (owner !== undefined) dataToUpdate.assignedTo = owner;
-    if (dueDate !== undefined) dataToUpdate.dueDate = dueDate ? new Date(dueDate) : null;
-    if (priority !== undefined) dataToUpdate.priority = priority;
-
-    const updated = await db.visaTask.update({ where: { id }, data: dataToUpdate });
-
-    await logAuditAction(auth, 'VISA_TASK_UPDATE', 'VisaTask', id, { before: existing, after: dataToUpdate, studentId: existing.studentId });
-    await db.timelineEvent.create({
-      data: {
-        studentId: existing.studentId,
-        stage: 'VISA_TASK_UPDATED',
-        title: `Task updated: ${title || existing.title} — status ${status || existing.status} — by ${auth.name}`,
-        description: `Task system — owner/priority/deadline/status/createdBy/caseId/studentId — overdue appears in dashboard`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Update failed' }, { status: 500 });
+    const updated = await db.$transaction(async (tx) => {
+      const saved = await tx.visaTask.update({ where: { id: task.id }, data: update });
+      await tx.portalAuditLog.create({
+        data: auditData(auth, 'VISA_TASK_UPDATE', task.id, visaCase.id, visaCase.studentId, {
+          changedFields: Object.keys(parsed.data),
+          before: { status: task.status, priority: task.priority, dueDate: task.dueDate },
+          after: { status: saved.status, priority: saved.priority, dueDate: saved.dueDate },
+          descriptionLength: typeof parsed.data.description === 'string' ? parsed.data.description.length : undefined,
+        }),
+      });
+      await tx.timelineEvent.create({
+        data: {
+          studentId: visaCase.studentId,
+          stage: 'VISA_TASK_UPDATED',
+          title: 'A visa case task was updated.',
+          description: 'Task details remain in the authorized visa case workspace.',
+          actor: auth.actorUserId,
+        },
+      });
+      return saved;
+    });
+    return NextResponse.json({ success: true, data: updated }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Visa task could not be updated; any audit failure rolled back.' }, { status: 503 });
   }
 });
 
-export const GET = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
+export const DELETE = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
   try {
-    const id = context?.params?.id;
-    const task = await db.visaTask.findUnique({ where: { id } });
-    if (!task) return NextResponse.json({ success: false, error: 'Task not found' }, { status: 404 });
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isSuper && isVisa && task.caseId) {
-      const visaCase = await db.visaCase.findUnique({ where: { id: task.caseId } });
-      if (visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot view task for unassigned case — IDOR blocked' }, { status: 403 });
-      }
-    }
-
-    await logAuditAction(auth, 'VISA_TASK_VIEW', 'VisaTask', id, { studentId: task.studentId });
-
-    return NextResponse.json({ success: true, data: task });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
-  }
-});
-
-export const DELETE = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
-  try {
-    // No-deletion versioning soft delete only — do not permanently delete
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Task delete requires super_admin — no-deletion versioning soft delete only — do not permanently delete submitted visa documents — use replacement/version history' }, { status: 403 });
-
-    const id = context?.params?.id;
-    const updated = await db.visaTask.update({ where: { id }, data: { status: 'archived', archivedAt: new Date() } as any });
-
-    await logAuditAction(auth, 'VISA_TASK_SOFT_DELETE', 'VisaTask', id, { status: 'archived' });
-
-    return NextResponse.json({ success: true, data: updated, note: 'Soft delete only — no-deletion versioning — do not permanently delete' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    if (!isVisaSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Only SUPER_ADMIN may archive a task.' }, { status: 403 });
+    const result = await loadScopedTask(auth, context?.params?.id);
+    if (!result.ok) return result.response;
+    const { task, visaCase } = result;
+    const archived = await db.$transaction(async (tx) => {
+      const saved = await tx.visaTask.update({ where: { id: task.id }, data: { status: 'cancelled', archivedAt: new Date() } });
+      await tx.portalAuditLog.create({
+        data: auditData(auth, 'VISA_TASK_ARCHIVE', task.id, visaCase.id, visaCase.studentId, { previousStatus: task.status }),
+      });
+      return saved;
+    });
+    return NextResponse.json({ success: true, data: archived }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Visa task could not be archived; any audit failure rolled back.' }, { status: 503 });
   }
 });
