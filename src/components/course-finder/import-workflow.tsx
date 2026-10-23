@@ -588,9 +588,9 @@ export function ImportWorkflow() {
                       <XCircle className="size-3" /> Blocked
                     </div>
                   </Card>
-                  <Card className="p-4 border-orange-200 bg-orange-50">
-                    <div className="text-2xl font-bold text-orange-700">{validationResult.duplicates}</div>
-                    <div className="text-xs text-orange-600 mt-1">Duplicates</div>
+                  <Card className="p-4 border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]">
+                    <div className="text-2xl font-bold text-[var(--alo-cta-active)]">{validationResult.duplicates}</div>
+                    <div className="text-xs text-[var(--alo-cta-active)] mt-1">Duplicates</div>
                   </Card>
                   <Card className="p-4 border-[var(--alo-border)]">
                     <div className="text-2xl font-bold text-[var(--alo-body)]">{validationResult.unknownUniversity}</div>

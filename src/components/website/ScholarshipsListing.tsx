@@ -29,7 +29,7 @@ const AMOUNT_BANDS = [
 const STATUS_CHIP: Record<string, string> = {
   OPEN: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   CLOSING_SOON: 'bg-amber-50 text-amber-700 border-amber-200',
-  UPCOMING: 'bg-blue-50 text-blue-700 border-blue-200',
+  UPCOMING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   CLOSED: 'bg-red-50 text-red-700 border-red-200',
   NEEDS_VERIFICATION: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
@@ -112,10 +112,10 @@ export default function ScholarshipsListing() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         {/* Hero — spec §14 exact copy */}
-        <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[var(--alo-cta)]/10 text-[var(--alo-cta)] border-[var(--alo-cta)]/20 text-xs mb-4">Verified Scholarships Only</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] tracking-tight mb-4">Find Scholarships for Your Study Abroad Journey</h1>
-          <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
+        <div className="border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] rounded-[20px] p-6 md:p-10">
+          <Badge className="bg-card text-[var(--alo-cta-active)] border-[var(--alo-border)] text-[11px] uppercase tracking-[0.07em] font-semibold mb-4">Verified Scholarships Only</Badge>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">Find Scholarships for Your Study Abroad Journey</h1>
+          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
           <div className="flex flex-wrap gap-3 mt-6">
             <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Book Free Consultation</Button></Link>
@@ -180,8 +180,8 @@ export default function ScholarshipsListing() {
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
-                      <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[var(--alo-border)] h-12 text-xs">Check Eligibility</Button></Link>
+                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[var(--alo-border)] h-12 ">Check Eligibility</Button></Link>
                     </div>
                   </Card>
                 );
@@ -193,10 +193,10 @@ export default function ScholarshipsListing() {
         {/* Final CTA — spec §24 */}
         <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
-          <p className="text-sm text-blue-100 mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
+          <p className="text-sm text-[var(--alo-brand-pale)] mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
-            <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+            <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Matching Courses</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </Card>

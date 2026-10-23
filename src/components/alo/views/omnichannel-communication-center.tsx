@@ -210,7 +210,7 @@ const ACCOUNT_STATUS_COLORS: Record<string, string> = {
   DISCONNECTED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border)]",
   EXPIRED: "bg-amber-100 text-amber-700 border border-amber-200",
   PERMISSION_ERROR: "bg-rose-100 text-rose-700 border border-rose-200",
-  RECONNECT_REQUIRED: "bg-orange-100 text-orange-700 border border-orange-200",
+  RECONNECT_REQUIRED: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border border-[var(--alo-cta)]/25",
 };
 
 const ACCOUNT_STATUS_LABELS: Record<string, string> = {
@@ -227,14 +227,14 @@ const PLATFORM_META: Record<
   { label: string; icon: string; color: string; bg: string; text: string }
 > = {
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#10B981", bg: "bg-green-50", text: "text-green-700" },
-  FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-blue-50", text: "text-blue-700" },
+  FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
   INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-pink-50", text: "text-pink-700" },
   GMAIL: { label: "Gmail", icon: "Mail", color: "#0284C7", bg: "bg-violet-50", text: "text-violet-700" },
   OUTLOOK: { label: "Outlook", icon: "Mail", color: "#0057B8", bg: "bg-[var(--alo-info-bg)]", text: "text-[var(--alo-brand)]" },
   SMS_GATEWAY: { label: "SMS Gateway", icon: "MessageSquare", color: "#047857", bg: "bg-emerald-50", text: "text-emerald-700" },
-  CALL_CENTER: { label: "Call Center", icon: "Phone", color: "#C93D13", bg: "bg-orange-50", text: "text-orange-700" },
+  CALL_CENTER: { label: "Call Center", icon: "Phone", color: "#C93D13", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta-active)]" },
   TELEGRAM: { label: "Telegram", icon: "Send", color: "#0088cc", bg: "bg-sky-50", text: "text-sky-700" },
-  LINKEDIN: { label: "LinkedIn", icon: "Linkedin", color: "#0a66c2", bg: "bg-blue-50", text: "text-blue-700" },
+  LINKEDIN: { label: "LinkedIn", icon: "Linkedin", color: "#0a66c2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
   TWITTER: { label: "Twitter / X", icon: "Twitter", color: "#0f172a", bg: "bg-[var(--alo-surface-muted)]", text: "text-[var(--alo-body)]" },
 };
 
@@ -243,30 +243,30 @@ const CHANNEL_META: Record<
   { label: string; icon: string; bg: string; text: string; dot: string }
 > = {
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
-  FACEBOOK: { label: "Facebook", icon: "Facebook", bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
+  FACEBOOK: { label: "Facebook", icon: "Facebook", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]", dot: "bg-blue-500" },
   INSTAGRAM: { label: "Instagram", icon: "Instagram", bg: "bg-pink-50", text: "text-pink-700", dot: "bg-pink-500" },
   EMAIL: { label: "Email", icon: "Mail", bg: "bg-violet-50", text: "text-violet-700", dot: "bg-violet-500" },
   SMS: { label: "SMS", icon: "MessageSquare", bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  PHONE: { label: "Phone", icon: "Phone", bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
+  PHONE: { label: "Phone", icon: "Phone", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta-active)]", dot: "bg-[var(--alo-cta)]" },
   CRM: { label: "CRM", icon: "Activity", bg: "bg-[var(--alo-surface-muted)]", text: "text-[var(--alo-body)]", dot: "bg-slate-500" },
   MESSENGER: { label: "Messenger", icon: "Send", bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
 };
 
 const CALL_TYPE_COLORS: Record<string, string> = {
-  INCOMING: "bg-blue-100 text-blue-700",
+  INCOMING: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   OUTGOING: "bg-emerald-100 text-emerald-700",
   MISSED: "bg-rose-100 text-rose-700",
 };
 
 const DELIVERY_COLORS: Record<string, string> = {
-  SENT: "bg-blue-100 text-blue-700",
+  SENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   DELIVERED: "bg-emerald-100 text-emerald-700",
   FAILED: "bg-rose-100 text-rose-700",
   PENDING: "bg-amber-100 text-amber-700",
 };
 
 const FOLDER_COLORS: Record<string, string> = {
-  INBOX: "bg-blue-100 text-blue-700",
+  INBOX: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   SENT: "bg-emerald-100 text-emerald-700",
   DRAFT: "bg-amber-100 text-amber-700",
   ARCHIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
@@ -274,18 +274,18 @@ const FOLDER_COLORS: Record<string, string> = {
 
 const PRIORITY_COLORS: Record<string, string> = {
   URGENT: "bg-rose-100 text-rose-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  NORMAL: "bg-blue-100 text-blue-700",
+  HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  COMMUNICATION: "bg-blue-100 text-blue-700",
+  COMMUNICATION: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   DOCUMENT: "bg-violet-100 text-violet-700",
   DEADLINE: "bg-rose-100 text-rose-700",
   APPLICATION: "bg-emerald-100 text-emerald-700",
   PAYMENT: "bg-amber-100 text-amber-700",
-  VISA: "bg-orange-100 text-orange-700",
+  VISA: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   SYSTEM: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   MARKETING: "bg-pink-100 text-pink-700",
 };
@@ -301,7 +301,7 @@ const REVIEW_STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
-  IN_REVIEW: "bg-blue-100 text-blue-700",
+  IN_REVIEW: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const DOC_TYPES_27 = [
@@ -663,7 +663,7 @@ export function OmnichannelCommunicationCenter() {
       <SectionCard
         title="Document Version & Deletion Rules"
         icon="FileLock2"
-        className="border-[var(--alo-cta-hover)]/30 bg-orange-50/40"
+        className="border-[var(--alo-cta-hover)]/30 bg-[var(--alo-cta-soft)]/40"
       >
         <p className="body-text text-[var(--alo-text)]">
           Each document type supports maximum <strong>2 versions</strong>. Students, partners,
@@ -792,11 +792,11 @@ function ConnectedAccountsTab({
                     </Button>
                     {!isDisconnected && (
                       <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-9 border-rose-200 text-rose-700 hover:bg-rose-50"
-                        disabled={busyId === acc.id}
-                        onClick={() => void handleAction(acc)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-200 text-rose-700 hover:bg-rose-50"
+ disabled={busyId === acc.id}
+ onClick={() => void handleAction(acc)}
                         title="Clears local credentials only; no provider-side revocation is performed"
                       >
                         <Icon name="Unplug" className="size-3.5 mr-1.5" />
@@ -945,14 +945,14 @@ function ConnectAccountDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
-            className="h-11 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
-            disabled={submitting}
-            onClick={submit}
-          >
+ className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
+ disabled={submitting}
+ onClick={submit}
+ >
             {submitting ? (
               <>
                 <Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Connecting…
@@ -1022,10 +1022,10 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
         description="This view merges available local CRM records. External channels, live ingestion, and synchronization are not verified; it does not represent every interaction."
         action={
           <Button
-            variant="outline"
-            className="h-11 border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
-            onClick={exportFiltered}
-          >
+ variant="outline"
+ className=" border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ onClick={exportFiltered}
+ >
             <Icon name="Download" className="size-4 mr-2" />
             Export Timeline
           </Button>
@@ -1327,8 +1327,8 @@ function LogCallDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" disabled={submitting} onClick={submit}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" disabled={submitting} onClick={submit}>
             {submitting ? (
               <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Saving…</>
             ) : (
@@ -1375,9 +1375,9 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
             </SelectContent>
           </Select>
           <Button
-            variant="outline"
-            className="h-11 border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
-            onClick={() => toast({ title: "Email sync started", description: "Checking for new messages…" })}
+ variant="outline"
+ className=" border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ onClick={() => toast({ title: "Email sync started", description: "Checking for new messages…" })}
           >
             <Icon name="RefreshCw" className="size-4 mr-2" />
             Sync Email
@@ -1420,7 +1420,7 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
                       {e.isRead ? (
                         <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-muted)]">Read</Badge>
                       ) : (
-                        <Badge className="bg-blue-100 text-blue-700">Unread</Badge>
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">Unread</Badge>
                       )}
                     </TableCell>
                     <TableCell>
@@ -1491,7 +1491,7 @@ function SmsTab({ sms }: { sms: SmsLog[] }) {
                       <Badge
                         className={cn(
                           s.direction === "OUTBOUND"
-                            ? "bg-blue-100 text-blue-700"
+                            ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"
                             : "bg-emerald-100 text-emerald-700"
                         )}
                       >
@@ -1617,11 +1617,11 @@ function NotificationsTab({
             </SelectContent>
           </Select>
           <Button
-            variant="outline"
-            className="h-11 border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
-            disabled={busy}
-            onClick={markAllRead}
-          >
+ variant="outline"
+ className=" border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ disabled={busy}
+ onClick={markAllRead}
+ >
             <Icon name="CheckCheck" className="size-4 mr-2" />
             Mark All Read
           </Button>
@@ -1661,10 +1661,10 @@ function NotificationsTab({
                     </p>
                   </div>
                   <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
-                    onClick={() => markOne(n.id, n.isRead)}
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ onClick={() => markOne(n.id, n.isRead)}
                   >
                     {n.isRead ? "Mark unread" : "Mark read"}
                   </Button>
@@ -1773,7 +1773,7 @@ function ConsentTab({
         </SectionCard>
       )}
 
-      <div className="rounded-xl border border-[var(--alo-cta-hover)]/30 bg-orange-50/40 px-4 py-3">
+      <div className="rounded-xl border border-[var(--alo-cta-hover)]/30 bg-[var(--alo-cta-soft)]/40 px-4 py-3">
         <div className="flex items-start gap-2.5">
           <Icon name="ShieldAlert" className="size-4 mt-0.5 text-[var(--alo-cta-hover)] shrink-0" />
           <p className="body-text text-[var(--alo-text)]">
@@ -1898,8 +1898,8 @@ function UpdateConsentDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" disabled={submitting} onClick={submit}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" disabled={submitting} onClick={submit}>
             {submitting ? (
               <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Saving…</>
             ) : (
@@ -2213,14 +2213,14 @@ function RunClassificationDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={reset}>
+          <Button variant="outline" className="" onClick={reset}>
             Close
           </Button>
           <Button
-            className="h-11 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
-            disabled={submitting}
-            onClick={submit}
-          >
+ className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
+ disabled={submitting}
+ onClick={submit}
+ >
             {submitting ? (
               <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Classifying…</>
             ) : (

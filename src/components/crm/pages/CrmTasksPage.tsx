@@ -40,7 +40,7 @@ const statusColors: Record<TaskStatus, string> = {
 
 const priorityColors: Record<TaskPriority, string> = {
   'High': 'bg-red-100 text-red-700',
-  'Normal': 'bg-blue-100 text-blue-700',
+  'Normal': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   'Low': 'bg-green-100 text-green-700',
 };
 

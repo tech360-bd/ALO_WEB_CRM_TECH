@@ -210,10 +210,10 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
       <Separator />
       <div className="p-3">
         <Button
-          variant="ghost"
-          className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 h-10"
-          onClick={logout}
-        >
+ variant="ghost"
+ className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 "
+ onClick={logout}
+ >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
@@ -232,7 +232,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
           </div>
           <div className="flex items-center gap-2">
             {actingAsError && <span role="alert" className="text-xs font-semibold">{actingAsError}</span>}
-            <Button size="sm" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
+            <Button size="sm" className="bg-white text-[var(--alo-cta-active)] hover:bg-white/90 font-bold shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
           </div>
         </div>
       )}
@@ -262,7 +262,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
               {designation}
             </Badge>
             <span className="hidden lg:inline text-xs text-[var(--alo-text-muted)]">{branch || 'Branch scope not assigned'}{country ? ` • ${country}` : ''}</span>
-            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full font-medium">{taskCount == null ? '—' : taskCount} open tasks</span>
+            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] px-2 py-1 rounded-full font-medium">{taskCount == null ? '—' : taskCount} open tasks</span>
           </div>
         </div>
         <div className="flex items-center gap-2">

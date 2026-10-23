@@ -180,16 +180,16 @@ export default function VisaOfficerDashboard() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => router.push('/employee/visa-cases')}>
+          <Button variant="outline" size="sm" className=" " onClick={() => router.push('/employee/visa-cases')}>
             <Eye className="w-3.5 h-3.5 mr-1" /> View Visa Cases
           </Button>
-          <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => router.push('/employee/visa-interviews')}>
+          <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => router.push('/employee/visa-interviews')}>
             <Play className="w-3.5 h-3.5 mr-1" /> Start Interview
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={loadDashboardData}>
+          <Button variant="outline" size="sm" className=" " onClick={loadDashboardData}>
             <RefreshCw className="w-3.5 h-3.5 mr-1" /> Refresh
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => router.push('/employee/visa-reports')}>
+          <Button variant="outline" size="sm" className=" " onClick={() => router.push('/employee/visa-reports')}>
             <Download className="w-3.5 h-3.5 mr-1" /> Export Reports
           </Button>
         </div>
@@ -237,7 +237,7 @@ export default function VisaOfficerDashboard() {
               <p className="text-2xl font-bold text-[var(--alo-text)] mt-1">{metricsLoading ? '...' : docsPendingCount}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">Real count — no fake</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><FileCheck className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><FileCheck className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -362,8 +362,8 @@ export default function VisaOfficerDashboard() {
                         <TableCell><Badge className={`text-[11px] px-2 py-0.5 border ${['high', 'critical'].includes(String(item.riskLevel).toLowerCase()) ? 'bg-rose-50 text-rose-700 border-rose-200' : item.riskLevel === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : item.riskLevel === 'low' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'}`}>{item.riskLevel ? String(item.riskLevel).replaceAll('_', ' ').toUpperCase() : 'RESTRICTED / NOT ASSESSED'}</Badge></TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-indigo-600 hover:bg-indigo-50" onClick={() => { setSelectedCase(item); router.push(`/employee/visa-interviews/${encodeURIComponent(item.id)}`); }}><Play className="w-3.5 h-3.5 mr-1" /> Interview</Button>
-                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setSelectedCase(item); setStudentFeedbackModalOpen(true); }}><Send className="w-3.5 h-3.5 mr-1" /> Feedback</Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-indigo-600 hover:bg-indigo-50" onClick={() => { setSelectedCase(item); router.push(`/employee/visa-interviews/${encodeURIComponent(item.id)}`); }}><Play className="w-3.5 h-3.5 mr-1" /> Interview</Button>
+                            <Button size="sm" variant="ghost" className="h-7 " onClick={() => { setSelectedCase(item); setStudentFeedbackModalOpen(true); }}><Send className="w-3.5 h-3.5 mr-1" /> Feedback</Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -430,8 +430,8 @@ export default function VisaOfficerDashboard() {
               </div>
               <Textarea placeholder="Edit student-safe guidance — supportive/clear/professional/actionable" value={feedbackText} onChange={e => setFeedbackText(e.target.value)} className="min-h-[100px] text-xs" />
               <div className="flex items-center justify-end gap-2">
-                <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => setStudentFeedbackModalOpen(false)}>Cancel</Button>
-                <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSendFeedback}>Approve & Publish to Student Portal</Button>
+                <Button variant="outline" size="sm" className=" " onClick={() => setStudentFeedbackModalOpen(false)}>Cancel</Button>
+                <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSendFeedback}>Approve & Publish to Student Portal</Button>
               </div>
             </CardContent>
           </Card>

@@ -100,7 +100,7 @@ export default function HrDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Users className="w-4 h-4 text-alo-brand" /> Employee Directory
                 </CardTitle>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className=" text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">

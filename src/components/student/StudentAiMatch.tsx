@@ -68,7 +68,7 @@ interface MatchedCourse {
 
 const VERIFICATION_META: Record<string, { label: string; className: string; icon: React.ElementType }> = {
   VERIFIED: { label: 'Verified', className: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  OFFICIAL_SOURCE_FOUND: { label: 'Official source found', className: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
+  OFFICIAL_SOURCE_FOUND: { label: 'Official source found', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: CheckCircle2 },
   NEEDS_REVIEW: { label: 'Needs review', className: 'bg-amber-100 text-amber-700', icon: Info },
   PARTIAL: { label: 'Partially verified', className: 'bg-amber-100 text-amber-700', icon: Info },
   UNVERIFIED: { label: 'Unverified', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', icon: AlertTriangle },
@@ -186,7 +186,7 @@ function CourseCard({ course }: { course: MatchedCourse }) {
             href={course.officialUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--alo-brand)] hover:text-[var(--alo-brand)]"
           >
             Official source<ArrowUpRight className="size-3.5" />
           </a>
@@ -289,9 +289,9 @@ export default function StudentAiMatch() {
                 </SelectContent>
               </Select>
               <Button
-                variant="secondary"
-                className="h-10 rounded-lg"
-                onClick={() => void loadCourses()}
+ variant="secondary"
+ className=" rounded-lg"
+ onClick={() => void loadCourses()}
                 disabled={loading}
               >
                 <RefreshCw className={`size-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
@@ -317,9 +317,9 @@ export default function StudentAiMatch() {
           </Badge>
         </div>
 
-        <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-blue-100 bg-blue-50/60 p-3">
-          <Info className="size-4 shrink-0 text-blue-600 mt-0.5" />
-          <p className="text-xs text-blue-900 leading-relaxed">
+        <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 p-3">
+          <Info className="size-4 shrink-0 text-[var(--alo-brand)] mt-0.5" />
+          <p className="text-xs text-[var(--alo-brand-deep)] leading-relaxed">
             This list shows catalogue records, not a prediction of your chances. Admission decisions are
             made by the university and visa decisions by the issuing government, so no approval or
             acceptance percentage is shown. Use the Eligibility Check for a rule-based assessment of your
@@ -331,7 +331,7 @@ export default function StudentAiMatch() {
           <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 mb-6">
             <p className="text-sm font-semibold text-[var(--alo-text)]">Course matches are unavailable</p>
             <p className="text-xs text-[var(--alo-body)] mt-0.5">{loadError}</p>
-            <Button size="sm" variant="outline" className="mt-3 h-8" onClick={() => void loadCourses()}>
+            <Button size="sm" variant="outline" className="mt-3 " onClick={() => void loadCourses()}>
               Try again
             </Button>
           </div>

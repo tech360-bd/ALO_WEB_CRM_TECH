@@ -368,7 +368,7 @@ export default function StudentMigrationCenter() {
                           <td className="p-3">
                             <Badge className={
                               b.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                              b.status === 'approved' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                              b.status === 'approved' ? 'bg-blue-500/20 text-blue-400 border-[var(--alo-brand)]/30' :
                               b.status === 'ready_for_review' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
                               'bg-gray-500/20 text-[var(--alo-text-muted)] border-gray-500/30'
                             }>
@@ -392,7 +392,7 @@ export default function StudentMigrationCenter() {
                                   size="sm"
                                   onClick={() => handleApproveBatch(b.id)}
                                   disabled={processing}
-                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                  className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                                 >
                                   <Check className="w-3.5 h-3.5 mr-1" />
                                   Approve
@@ -481,8 +481,8 @@ export default function StudentMigrationCenter() {
                 </div>
               </div>
 
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-xs text-blue-300 space-y-1">
-                <p className="font-semibold text-blue-200">Automated Pipeline Safeguards:</p>
+              <div className="bg-blue-500/10 border border-[var(--alo-brand)]/20 rounded-xl p-4 text-xs text-blue-300 space-y-1">
+                <p className="font-semibold text-[var(--alo-brand-pale)]">Automated Pipeline Safeguards:</p>
                 <p>1. Data is placed into staging table first — never touches live database immediately.</p>
                 <p>2. Duplicate detector matches against phone, email, WhatsApp, and passport.</p>
                 <p>3. Super Admin approval is required before live AE-YYYY student code assignment.</p>
@@ -526,7 +526,7 @@ export default function StudentMigrationCenter() {
                   <Button
                     onClick={() => handleApproveBatch(selectedBatch.id)}
                     disabled={processing}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                   >
                     <Check className="w-4 h-4 mr-1.5" /> Approve Batch
                   </Button>

@@ -143,10 +143,10 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 0,
   },
   'Submitted to ALO': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Send,
     progressValue: 8,
   },
@@ -159,18 +159,18 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 15,
   },
   'Submitted to University': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Send,
     progressValue: 23,
   },
   'Application Acknowledged': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: CheckCircle2,
     progressValue: 31,
   },
@@ -191,18 +191,18 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 54,
   },
   'Deposit Pending': {
-    color: 'bg-orange-50 text-orange-700 border-orange-200',
-    bgColor: 'bg-orange-50',
-    borderColor: 'border-orange-200',
-    textColor: 'text-orange-700',
+    color: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25',
+    bgColor: 'bg-[var(--alo-cta-soft)]',
+    borderColor: 'border-[var(--alo-cta)]/25',
+    textColor: 'text-[var(--alo-cta-active)]',
     icon: CreditCard,
     progressValue: 62,
   },
   'CAS/I-20/COE Processing': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Stamp,
     progressValue: 69,
   },
@@ -215,10 +215,10 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 77,
   },
   'Visa Submitted': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Send,
     progressValue: 85,
   },
@@ -390,7 +390,7 @@ function CountdownBadge({ deadline }: { deadline: string | null }) {
   if (days < 0) colorClass = 'bg-red-50 text-red-600 border-red-200';
   else if (days <= 7) colorClass = 'bg-red-50 text-red-600 border-red-200';
   else if (days <= 14) colorClass = 'bg-amber-50 text-amber-600 border-amber-200';
-  else colorClass = 'bg-blue-50 text-blue-600 border-blue-200';
+  else colorClass = 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]';
 
   return (
     <span
@@ -551,9 +551,9 @@ function ApplicationCard({
 
         {/* Counselor Note */}
         {application.counselorNote && (
-          <div className="flex items-start gap-2 rounded-lg bg-blue-50/50 border border-blue-100 px-3 py-2">
-            <MessageSquare className="size-4 text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-xs text-blue-800 leading-relaxed">
+          <div className="flex items-start gap-2 rounded-lg bg-[var(--alo-brand-pale)]/50 border border-[var(--alo-border)] px-3 py-2">
+            <MessageSquare className="size-4 text-[var(--alo-brand)] shrink-0 mt-0.5" />
+            <p className="text-xs text-[var(--alo-brand-deep)] leading-relaxed">
               <span className="font-semibold">Counselor note: </span>
               {application.counselorNote}
             </p>
@@ -661,7 +661,7 @@ function ApplicationTableRow({
         <CountdownBadge deadline={application.deadline} />
       </TableCell>
       <TableCell>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[var(--alo-cta-hover)] hover:text-[var(--alo-cta-hover)] hover:bg-orange-50">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[var(--alo-cta-hover)] hover:text-[var(--alo-cta-hover)] hover:bg-[var(--alo-cta-soft)]">
           <Eye className="size-3.5" />
           <span className="sr-only sm:not-sr-only">View</span>
         </Button>
@@ -690,7 +690,7 @@ function ApplicationDetailDialog({
   const docStatusColor = (s: string) => {
     switch (s) {
       case 'Approved': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-      case 'Pending': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'Pending': return 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]';
       case 'Rejected': return 'text-red-600 bg-red-50 border-red-200';
       case 'Missing': return 'text-amber-600 bg-amber-50 border-amber-200';
       default: return 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]';
@@ -767,9 +767,9 @@ function ApplicationDetailDialog({
             {application.counselorNote && (
               <div>
                 <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-2">Counselor Note</h4>
-                <div className="flex items-start gap-2.5 rounded-lg bg-blue-50/50 border border-blue-100 px-4 py-3">
-                  <MessageSquare className="size-4 text-blue-500 shrink-0 mt-0.5" />
-                  <p className="text-sm text-blue-800 leading-relaxed">{application.counselorNote}</p>
+                <div className="flex items-start gap-2.5 rounded-lg bg-[var(--alo-brand-pale)]/50 border border-[var(--alo-border)] px-4 py-3">
+                  <MessageSquare className="size-4 text-[var(--alo-brand)] shrink-0 mt-0.5" />
+                  <p className="text-sm text-[var(--alo-brand-deep)] leading-relaxed">{application.counselorNote}</p>
                 </div>
               </div>
             )}
@@ -871,7 +871,7 @@ function ApplicationDetailDialog({
                   key={msg.id}
                   className={cn(
                     'rounded-lg border px-4 py-3',
-                    msg.role === 'student' && 'bg-blue-50/40 border-blue-100 ml-8',
+                    msg.role === 'student' && 'bg-[var(--alo-brand-pale)]/40 border-[var(--alo-border)] ml-8',
                     msg.role === 'counselor' && 'bg-white border-border/60 mr-8',
                     msg.role === 'system' && 'bg-[var(--alo-page)] border-[var(--alo-border)] mx-4',
                     msg.unread && 'ring-1 ring-[var(--alo-cta-hover)]/20'
@@ -907,7 +907,7 @@ function EmptyState() {
   return (
     <Card className="border-dashed border-2 border-[var(--alo-text)]/10 bg-[var(--alo-text)]/[0.01]">
       <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
-        <div className="flex items-center justify-center size-20 rounded-full bg-orange-50 mb-6">
+        <div className="flex items-center justify-center size-20 rounded-full bg-[var(--alo-cta-soft)] mb-6">
           <GraduationCap className="size-10 text-[var(--alo-cta-hover)]/70" />
         </div>
         <h3 className="text-xl font-semibold text-[var(--alo-text)] mb-2">

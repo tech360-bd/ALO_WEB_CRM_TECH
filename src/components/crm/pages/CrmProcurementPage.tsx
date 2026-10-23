@@ -23,21 +23,21 @@ function money(cents: number | undefined | null): string {
 
 const statusBadge = (status: string): string => ({
   DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  SUBMITTED: 'bg-blue-100 text-blue-700',
+  SUBMITTED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   PENDING_APPROVAL: 'bg-yellow-100 text-yellow-700',
   APPROVED: 'bg-emerald-100 text-emerald-700',
   REJECTED: 'bg-red-100 text-red-700',
   CONVERTED: 'bg-purple-100 text-purple-700',
-  SENT: 'bg-blue-100 text-blue-700',
-  PARTIALLY_RECEIVED: 'bg-orange-100 text-orange-700',
+  SENT: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  PARTIALLY_RECEIVED: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   RECEIVED: 'bg-emerald-100 text-emerald-700',
   CANCELLED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   MATCHED: 'bg-emerald-100 text-emerald-700',
   PAID: 'bg-emerald-100 text-emerald-700',
-  PARTIALLY_PAID: 'bg-orange-100 text-orange-700',
+  PARTIALLY_PAID: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   DISPUTED: 'bg-red-100 text-red-700',
   IN_USE: 'bg-emerald-100 text-emerald-700',
-  IN_STORAGE: 'bg-blue-100 text-blue-700',
+  IN_STORAGE: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   MAINTENANCE: 'bg-yellow-100 text-yellow-700',
   RETIRED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   DISPOSED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
@@ -124,8 +124,8 @@ export default function CrmProcurementPage() {
         </Card>
       )}
       {actionError && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-4 text-sm text-orange-700">{actionError}</CardContent>
+        <Card className="border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]">
+          <CardContent className="pt-4 text-sm text-[var(--alo-cta-active)]">{actionError}</CardContent>
         </Card>
       )}
 

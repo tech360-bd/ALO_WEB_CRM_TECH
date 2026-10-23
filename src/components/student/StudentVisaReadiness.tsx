@@ -90,7 +90,7 @@ export default function StudentVisaReadiness() {
           title="Visa Readiness"
           description="How prepared your visa file is, based on your documents, finances and interview preparation."
           action={
-            <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+            <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
               <Link href="/student/visa/checklist">View Full Checklist</Link>
             </Button>
           }
@@ -106,7 +106,7 @@ export default function StudentVisaReadiness() {
               title="No visa file yet"
               description="Your visa checklist is created once your application reaches the visa stage. Your counselor can start it earlier if you ask."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/applications">View Applications</Link>
                 </Button>
               }
@@ -197,7 +197,7 @@ export default function StudentVisaReadiness() {
                 <ol className="divide-y divide-[var(--alo-border)]">
                   {recommendations.map((rec, index) => (
                     <li key={`${rec}-${index}`} className="flex gap-3 px-5 py-3">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--alo-brand)] text-[11px] font-bold text-white">
                         {index + 1}
                       </span>
                       <span className="text-[13px] leading-relaxed text-[var(--alo-body)]">{rec}</span>

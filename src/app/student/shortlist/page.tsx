@@ -29,7 +29,7 @@ export default function StudentShortlistPage() {
         </div>
 
         {loading ? <div className="grid sm:grid-cols-2 gap-4">{[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-white border border-[var(--alo-border)] rounded-2xl animate-pulse" />)}</div> : shortlist.length === 0 ? (
-          <Card className="p-12 bg-white border-[var(--alo-border)] rounded-2xl text-center"><BookmarkPlus className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">No saved courses yet.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-11">Find Courses</Button></Link></Card>
+          <Card className="p-12 bg-white border-[var(--alo-border)] rounded-2xl text-center"><BookmarkPlus className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">No saved courses yet.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[var(--alo-brand)] text-white ">Find Courses</Button></Link></Card>
         ) : (
           <div className="grid sm:grid-cols-2 gap-4">
             {shortlist.map((c: any) => (
@@ -37,9 +37,9 @@ export default function StudentShortlistPage() {
                 <h3 className="font-bold text-sm">{c.courseName || c.courseTitle}</h3>
                 <p className="text-xs text-[var(--alo-text-muted)]">{c.universityName} • {c.country} • {c.tuitionFee ? `${c.tuitionFee}` : 'Check tuition'}</p>
                 <div className="flex gap-2 mt-3">
-                  <Link href="/student/compare"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9 text-xs"><GitCompare className="w-3 h-3 mr-1" />Compare</Button></Link>
-                  <Link href={`/student/apply/${c.courseId || c.id}`}><Button size="sm" className="bg-[var(--alo-cta)] text-black h-9 text-xs"><Send className="w-3 h-3 mr-1" />Apply</Button></Link>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] h-9 text-xs"><Trash2 className="w-3 h-3 mr-1" />Remove</Button>
+                  <Link href="/student/compare"><Button size="sm" variant="outline" className="border-[var(--alo-border)] "><GitCompare className="w-3 h-3 mr-1" />Compare</Button></Link>
+                  <Link href={`/student/apply/${c.courseId || c.id}`}><Button size="sm" className="bg-[var(--alo-cta)] text-black "><Send className="w-3 h-3 mr-1" />Apply</Button></Link>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] "><Trash2 className="w-3 h-3 mr-1" />Remove</Button>
                 </div>
               </Card>
             ))}

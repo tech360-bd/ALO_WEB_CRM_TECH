@@ -101,16 +101,16 @@ export default function StudentSop() {
           description="Draft your SOPs here and get structure feedback before your counselor reviews them."
           action={
             <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/ai/sop-helper">
                   <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />
                   Open SOP Helper
                 </Link>
               </Button>
               <Button
-                type="button"
-                className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                onClick={() => setCreating((value) => !value)}
+ type="button"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ onClick={() => setCreating((value) => !value)}
               >
                 {creating ? 'Cancel' : 'New Draft'}
               </Button>
@@ -177,17 +177,17 @@ export default function StudentSop() {
               )}
               <div className="flex gap-2">
                 <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                >
+ type="submit"
+ disabled={submitting}
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                   {submitting ? 'Saving…' : 'Save Draft'}
                 </Button>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
-                  onClick={() => setCreating(false)}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={() => setCreating(false)}
                 >
                   Cancel
                 </Button>
@@ -204,13 +204,13 @@ export default function StudentSop() {
               action={
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
-                    type="button"
-                    className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                    onClick={() => setCreating(true)}
+ type="button"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ onClick={() => setCreating(true)}
                   >
                     Create Blank Draft
                   </Button>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/ai/sop-helper">Use SOP Helper</Link>
                   </Button>
                 </div>
@@ -233,7 +233,7 @@ export default function StudentSop() {
                     <button
                       type="button"
                       className={`w-full px-5 py-3 text-left transition-colors hover:bg-[var(--alo-page)] ${
-                        selected?.id === draft.id ? 'bg-blue-50' : ''
+                        selected?.id === draft.id ? 'bg-[var(--alo-brand-pale)]' : ''
                       }`}
                       onClick={() => setSelectedId(draft.id)}
                     >

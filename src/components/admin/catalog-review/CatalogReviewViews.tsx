@@ -59,7 +59,7 @@ function PageHeader({ title, intro, links }: { title: string; intro: string; lin
       <p className="text-sm text-[var(--alo-body)] max-w-3xl">{intro}</p>
       {links && (
         <nav aria-label="Related catalogue screens" className="flex flex-wrap gap-3 text-sm">
-          {links.map((l) => <Link key={l.href} href={l.href} className="text-blue-700 underline">{l.label}</Link>)}
+          {links.map((l) => <Link key={l.href} href={l.href} className="text-[var(--alo-brand)] underline">{l.label}</Link>)}
         </nav>
       )}
     </div>
@@ -222,7 +222,7 @@ export function ChangeApprovalView() {
                       <td className="p-2 font-mono text-xs">{p.fieldName}{p.fieldName.startsWith('intake_new:') && <div className="text-amber-700 font-sans">Creates a new intake (unverified)</div>}</td>
                       <td className="p-2 text-[var(--alo-body)]">{p.oldValue || <span className="text-[var(--alo-text-muted)]">(blank)</span>}</td>
                       <td className="p-2 text-emerald-800 font-medium">{p.newValue}</td>
-                      <td className="p-2 text-xs">{p.evidenceUrl ? <a className="text-blue-700 underline break-all" href={p.evidenceUrl} target="_blank" rel="noopener noreferrer">{p.evidenceUrl}</a> : <span className="text-red-700">No evidence URL</span>}</td>
+                      <td className="p-2 text-xs">{p.evidenceUrl ? <a className="text-[var(--alo-brand)] underline break-all" href={p.evidenceUrl} target="_blank" rel="noopener noreferrer">{p.evidenceUrl}</a> : <span className="text-red-700">No evidence URL</span>}</td>
                       <td className="p-2 text-xs">{PROPOSAL_STATUS_LABELS[p.status] ?? p.status}{p.reviewedBy && <div className="text-[var(--alo-text-muted)]">by {p.reviewedBy}</div>}{needsReapproval(p) && <div className="text-amber-700 font-medium">Re-approval required: {p.approvalFingerprint === 'mismatch' ? 'the proposal changed after approval' : 'no valid approval fingerprint'}. It cannot be applied until approved again.</div>}</td>
                       <td className="p-2 space-x-1 whitespace-nowrap">
                         {(['pending_approval', 'pending', 'apply_failed'].includes(p.status) || needsReapproval(p)) && (
@@ -231,7 +231,7 @@ export function ChangeApprovalView() {
                             <Button size="sm" variant="outline" disabled={busy} onClick={() => void review(p.id, 'reject')}>Reject</Button>
                           </>
                         )}
-                        <Link className="text-xs text-blue-700 underline" href={`/admin/change-approval/history?requestId=${encodeURIComponent(p.id)}`}>History</Link>
+                        <Link className="text-xs text-[var(--alo-brand)] underline" href={`/admin/change-approval/history?requestId=${encodeURIComponent(p.id)}`}>History</Link>
                       </td>
                     </tr>
                   ))}
@@ -298,7 +298,7 @@ export function ChangeHistoryView({ requestId }: { requestId?: string }) {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       <PageHeader title="Apply results & audit history" intro="Every review, apply, stale re-queue and failure, from the audit log. Previous and approved values are recorded with the evidence URL and the approval hash." links={NAV.filter((n) => n.href !== '/admin/change-approval/history')} />
-      {requestId && <p className="text-sm text-[var(--alo-body)]">Showing proposal <span className="font-mono">{requestId}</span>. <Link href="/admin/change-approval/history" className="text-blue-700 underline">Show all</Link></p>}
+      {requestId && <p className="text-sm text-[var(--alo-body)]">Showing proposal <span className="font-mono">{requestId}</span>. <Link href="/admin/change-approval/history" className="text-[var(--alo-brand)] underline">Show all</Link></p>}
       <div className="flex items-center gap-2">
         <label htmlFor="history-action" className="text-sm text-[var(--alo-body)]">Action</label>
         <select id="history-action" className="border border-[var(--alo-border-strong)] rounded-lg px-2 py-1 text-sm" value={action} onChange={(e) => setAction(e.target.value)}>

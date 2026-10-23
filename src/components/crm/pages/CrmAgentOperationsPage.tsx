@@ -92,7 +92,7 @@ interface LoadState {
 const STATUS_CLS: Record<string, string> = {
   EXECUTED: 'bg-green-100 text-green-700 border-green-200',
   APPROVED: 'bg-sky-100 text-sky-700 border-sky-200',
-  EXECUTING: 'bg-blue-100 text-blue-700 border-blue-200',
+  EXECUTING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   REJECTED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
   FAILED: 'bg-red-100 text-red-700 border-red-200',

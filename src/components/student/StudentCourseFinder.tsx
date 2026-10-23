@@ -75,7 +75,7 @@ const EMPTY_PROFILE: Profile = {
 
 const LABEL_STYLE: Record<string, string> = {
   Eligible: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'Likely Eligible': 'bg-blue-50 text-blue-700 border-blue-100',
+  'Likely Eligible': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   'Need Review': 'bg-amber-50 text-amber-700 border-amber-200',
   'Not Eligible': 'bg-red-50 text-red-700 border-red-200',
   'Missing Information': 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]',
@@ -202,7 +202,7 @@ export default function StudentCourseFinder() {
         </p>
 
         {!hasProfile && (
-          <p className="mt-4 flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+          <p className="mt-4 flex items-start gap-2 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-3 text-xs text-[var(--alo-brand-deep)]">
             <Info className="mt-0.5 size-4 shrink-0" />
             Enter at least your qualification, GPA or English score to see eligibility labels. Until
             then every course is shown as <strong className="font-semibold">Missing Information</strong>{' '}
@@ -441,23 +441,23 @@ export default function StudentCourseFinder() {
 
                   <div className="mt-4 space-y-2">
                     <Link href={`/student/course/${courseId}`} className="block">
-                      <Button className="h-11 w-full bg-[var(--alo-brand)] text-xs font-bold text-white">
+                      <Button className=" w-full bg-[var(--alo-brand)] font-bold text-white">
                         View course + eligibility
                       </Button>
                     </Link>
                     <div className="grid grid-cols-3 gap-2">
-                      <Button variant="outline" size="sm" className="h-9 border-[var(--alo-border)] text-[11px]">
+                      <Button variant="outline" size="sm" className=" border-[var(--alo-border)] text-[11px]">
                         <BookmarkPlus className="mr-1 size-3" />
                         Save
                       </Button>
                       <Link href="/student/compare">
-                        <Button variant="outline" size="sm" className="h-9 w-full border-[var(--alo-border)] text-[11px]">
+                        <Button variant="outline" size="sm" className=" w-full border-[var(--alo-border)] text-[11px]">
                           <GitCompare className="mr-1 size-3" />
                           Compare
                         </Button>
                       </Link>
                       <Link href={`/student/apply/${courseId}`}>
-                        <Button variant="outline" size="sm" className="h-9 w-full border-[var(--alo-border)] text-[11px]">
+                        <Button variant="outline" size="sm" className=" w-full border-[var(--alo-border)] text-[11px]">
                           <Send className="mr-1 size-3" />
                           Apply
                         </Button>

@@ -76,23 +76,23 @@ const dateRanges: DateRange[] = [
 ];
 
 const kpiData: KpiCard[] = [
-  { label: 'Total Leads', value: '2,847', change: '+12.5%', trend: 'up', icon: Users, color: 'text-blue-600 bg-blue-100' },
+  { label: 'Total Leads', value: '2,847', change: '+12.5%', trend: 'up', icon: Users, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
   { label: 'Conversion Rate', value: '34.2%', change: '+2.1%', trend: 'up', icon: Target, color: 'text-green-600 bg-green-100' },
-  { label: 'Active Students', value: '1,256', change: '+8.3%', trend: 'up', icon: GraduationCap, color: 'text-orange-600 bg-orange-100' },
+  { label: 'Active Students', value: '1,256', change: '+8.3%', trend: 'up', icon: GraduationCap, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)]' },
   { label: 'Revenue', value: '$1,234,567', change: '+15.7%', trend: 'up', icon: DollarSign, color: 'text-purple-600 bg-purple-100' },
 ];
 
 const leadSources: LeadSource[] = [
-  { name: 'Website', count: 892, percentage: 31.3, color: 'bg-blue-600' },
+  { name: 'Website', count: 892, percentage: 31.3, color: 'bg-[var(--alo-brand)]' },
   { name: 'Social Media', count: 645, percentage: 22.7, color: 'bg-pink-500' },
   { name: 'Referrals', count: 534, percentage: 18.8, color: 'bg-green-500' },
-  { name: 'Events/Fairs', count: 398, percentage: 14.0, color: 'bg-orange-500' },
+  { name: 'Events/Fairs', count: 398, percentage: 14.0, color: 'bg-[var(--alo-cta)]' },
   { name: 'Walk-in', count: 234, percentage: 8.2, color: 'bg-purple-500' },
   { name: 'WhatsApp', count: 144, percentage: 5.1, color: 'bg-emerald-500' },
 ];
 
 const countryData: CountryData[] = [
-  { country: 'United Kingdom', flag: '🇬🇧', students: 856, percentage: 42.3, color: 'bg-blue-600' },
+  { country: 'United Kingdom', flag: '🇬🇧', students: 856, percentage: 42.3, color: 'bg-[var(--alo-brand)]' },
   { country: 'Australia', flag: '🇦🇺', students: 324, percentage: 16.0, color: 'bg-yellow-500' },
   { country: 'Canada', flag: '🇨🇦', students: 278, percentage: 13.7, color: 'bg-red-500' },
   { country: 'USA', flag: '🇺🇸', students: 234, percentage: 11.6, color: 'bg-blue-500' },
@@ -128,9 +128,9 @@ const topUniversities: UniversityRow[] = [
 ];
 
 const funnelStages: FunnelStage[] = [
-  { label: 'Inquiry', count: 2847, percentage: 100, color: 'bg-blue-600' },
+  { label: 'Inquiry', count: 2847, percentage: 100, color: 'bg-[var(--alo-brand)]' },
   { label: 'Consultation', count: 2134, percentage: 75, color: 'bg-blue-500' },
-  { label: 'Application', count: 1567, percentage: 55, color: 'bg-orange-500' },
+  { label: 'Application', count: 1567, percentage: 55, color: 'bg-[var(--alo-cta)]' },
   { label: 'Offer Received', count: 1123, percentage: 39.4, color: 'bg-yellow-500' },
   { label: 'Visa Approved', count: 974, percentage: 34.2, color: 'bg-green-500' },
   { label: 'Enrolled', count: 856, percentage: 30.1, color: 'bg-emerald-600' },
@@ -157,7 +157,7 @@ export default function CrmAnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600 rounded-lg">
+          <div className="p-2 bg-[var(--alo-brand)] rounded-lg">
             <BarChart3 className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -184,7 +184,7 @@ export default function CrmAnalyticsPage() {
                   <button
                     key={dr.value}
                     onClick={() => { setDateRange(dr.value); setShowDateDropdown(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--alo-page)] transition-colors ${dateRange === dr.value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-[var(--alo-body)]'}`}
+                    className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--alo-page)] transition-colors ${dateRange === dr.value ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] font-medium' : 'text-[var(--alo-body)]'}`}
                   >
                     {dr.label}
                   </button>
@@ -227,7 +227,7 @@ export default function CrmAnalyticsPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-blue-600" />
+                <TrendingUp className="h-4 w-4 text-[var(--alo-brand)]" />
                 Lead Sources
               </CardTitle>
               <Badge variant="secondary" className="text-xs">{totalLeadCount} total</Badge>
@@ -263,7 +263,7 @@ export default function CrmAnalyticsPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Globe className="h-4 w-4 text-blue-600" />
+                <Globe className="h-4 w-4 text-[var(--alo-brand)]" />
                 Country Distribution
               </CardTitle>
               <Badge variant="secondary" className="text-xs">2,024 students</Badge>
@@ -312,12 +312,12 @@ export default function CrmAnalyticsPage() {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <Activity className="h-4 w-4 text-blue-600" />
+              <Activity className="h-4 w-4 text-[var(--alo-brand)]" />
               Monthly Trends
             </CardTitle>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-blue-600" />
+                <span className="w-3 h-3 rounded-full bg-[var(--alo-brand)]" />
                 <span className="text-xs text-[var(--alo-text-muted)]">Leads</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -325,7 +325,7 @@ export default function CrmAnalyticsPage() {
                 <span className="text-xs text-[var(--alo-text-muted)]">Conversions</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-orange-500" />
+                <span className="w-3 h-3 rounded-full bg-[var(--alo-cta)]" />
                 <span className="text-xs text-[var(--alo-text-muted)]">Revenue</span>
               </div>
             </div>
@@ -358,13 +358,13 @@ export default function CrmAnalyticsPage() {
                       <div className="w-full flex gap-0.5 items-end h-44" style={{ justifyContent: 'center' }}>
                         {/* Revenue bar (orange) */}
                         <div
-                          className="w-2.5 bg-orange-500 rounded-t transition-all duration-500 opacity-80 hover:opacity-100 cursor-pointer"
+                          className="w-2.5 bg-[var(--alo-cta)] rounded-t transition-all duration-500 opacity-80 hover:opacity-100 cursor-pointer"
                           style={{ height: `${(trend.revenue / maxRevenue) * 100}%` }}
                           title={`${trend.month}: ${formatRevenue(trend.revenue)}`}
                         />
                         {/* Leads bar (blue) */}
                         <div
-                          className="w-2.5 bg-blue-600 rounded-t transition-all duration-500 opacity-80 hover:opacity-100 cursor-pointer"
+                          className="w-2.5 bg-[var(--alo-brand)] rounded-t transition-all duration-500 opacity-80 hover:opacity-100 cursor-pointer"
                           style={{ height: `${(trend.leads / maxLeads) * 100}%` }}
                           title={`${trend.month}: ${trend.leads} leads`}
                         />
@@ -391,7 +391,7 @@ export default function CrmAnalyticsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <School className="h-4 w-4 text-blue-600" />
+              <School className="h-4 w-4 text-[var(--alo-brand)]" />
               <CardTitle className="text-sm font-semibold">Top Universities</CardTitle>
             </div>
           </CardHeader>
@@ -412,7 +412,7 @@ export default function CrmAnalyticsPage() {
                   {topUniversities.map(uni => (
                     <tr key={uni.rank} className="border-b hover:bg-[var(--alo-page)]/50 transition-colors">
                       <td className="text-center px-3 py-2.5">
-                        <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold ${uni.rank <= 3 ? 'bg-blue-600 text-white' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
+                        <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold ${uni.rank <= 3 ? 'bg-[var(--alo-brand)] text-white' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
                           {uni.rank}
                         </span>
                       </td>
@@ -426,7 +426,7 @@ export default function CrmAnalyticsPage() {
                         <div className="flex items-center justify-center gap-1.5">
                           <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                             <div
-                              className={`h-full rounded-full ${uni.acceptanceRate >= 80 ? 'bg-green-500' : uni.acceptanceRate >= 70 ? 'bg-yellow-500' : 'bg-orange-500'}`}
+                              className={`h-full rounded-full ${uni.acceptanceRate >= 80 ? 'bg-green-500' : uni.acceptanceRate >= 70 ? 'bg-yellow-500' : 'bg-[var(--alo-cta)]'}`}
                               style={{ width: `${uni.acceptanceRate}%` }}
                             />
                           </div>
@@ -445,7 +445,7 @@ export default function CrmAnalyticsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-blue-600" />
+              <Target className="h-4 w-4 text-[var(--alo-brand)]" />
               <CardTitle className="text-sm font-semibold">Conversion Funnel</CardTitle>
             </div>
           </CardHeader>
@@ -479,12 +479,12 @@ export default function CrmAnalyticsPage() {
             {/* Funnel Summary */}
             <Separator className="my-4" />
             <div className="grid grid-cols-3 gap-3">
-              <div className="text-center p-2 bg-blue-50 rounded-lg">
-                <p className="text-lg font-bold text-blue-700">3.3x</p>
+              <div className="text-center p-2 bg-[var(--alo-brand-pale)] rounded-lg">
+                <p className="text-lg font-bold text-[var(--alo-brand)]">3.3x</p>
                 <p className="text-[11px] text-[var(--alo-text-muted)]">Inquiry to Application</p>
               </div>
-              <div className="text-center p-2 bg-orange-50 rounded-lg">
-                <p className="text-lg font-bold text-orange-700">71.7%</p>
+              <div className="text-center p-2 bg-[var(--alo-cta-soft)] rounded-lg">
+                <p className="text-lg font-bold text-[var(--alo-cta-active)]">71.7%</p>
                 <p className="text-[11px] text-[var(--alo-text-muted)]">Application to Offer</p>
               </div>
               <div className="text-center p-2 bg-green-50 rounded-lg">

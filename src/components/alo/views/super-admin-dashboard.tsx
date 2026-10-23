@@ -263,7 +263,7 @@ const AUDIT_ACTION_COLORS: Record<string, string> = {
   DOC_APPROVE: "bg-emerald-100 text-emerald-700",
   DOC_REJECT: "bg-rose-100 text-rose-700",
   APP_STATUS_CHANGE: "bg-violet-100 text-violet-700",
-  VISA_STATUS_CHANGE: "bg-orange-100 text-orange-700",
+  VISA_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   MOCK_CREDIT_CHANGE: "bg-amber-100 text-amber-700",
   PAYMENT_UPDATE: "bg-emerald-100 text-emerald-700",
   COMMISSION_APPROVE: "bg-emerald-100 text-emerald-700",
@@ -272,7 +272,7 @@ const AUDIT_ACTION_COLORS: Record<string, string> = {
   PERMISSION_CHANGE: "bg-rose-100 text-rose-700",
   AI_ACTION: "bg-violet-100 text-violet-700",
   MESSAGE_ACTION: "bg-sky-100 text-sky-700",
-  DATA_IMPORT: "bg-blue-100 text-blue-700",
+  DATA_IMPORT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   PUBLIC_PUBLISH: "bg-emerald-100 text-emerald-700",
 };
 
@@ -1065,7 +1065,7 @@ export function SuperAdminDashboard({
                 <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-[var(--alo-brand)]">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                         <Icon name="FileCheck2" className="size-4" />
                       </div>
                       <div>
@@ -1073,7 +1073,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Bulk + CSV pipelines</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-blue-100 text-[var(--alo-brand)] hover:bg-blue-100">0</Badge>
+                    <Badge className="border-0 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">0</Badge>
                   </div>
                   <Button
                     variant="outline"

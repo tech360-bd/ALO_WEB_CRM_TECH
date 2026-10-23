@@ -159,13 +159,13 @@ function ActivityTypeIcon({ type }: { type: SeoActivity['type'] }) {
     case 'published':
       return <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />;
     case 'updated':
-      return <RefreshCw className="w-3.5 h-3.5 text-blue-500" />;
+      return <RefreshCw className="w-3.5 h-3.5 text-[var(--alo-brand)]" />;
     case 'keyword':
       return <Target className="w-3.5 h-3.5 text-purple-500" />;
     case 'technical':
       return <Wrench className="w-3.5 h-3.5 text-amber-500" />;
     case 'link':
-      return <Zap className="w-3.5 h-3.5 text-orange-500" />;
+      return <Zap className="w-3.5 h-3.5 text-[var(--alo-cta)]" />;
     default:
       return <Activity className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />;
   }
@@ -174,10 +174,10 @@ function ActivityTypeIcon({ type }: { type: SeoActivity['type'] }) {
 function ActivityTypeBadge({ type }: { type: SeoActivity['type'] }) {
   const map: Record<string, string> = {
     published: 'bg-emerald-100 text-emerald-700',
-    updated: 'bg-blue-100 text-blue-700',
+    updated: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
     keyword: 'bg-purple-100 text-purple-700',
     technical: 'bg-amber-100 text-amber-700',
-    link: 'bg-orange-100 text-orange-700',
+    link: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   };
   const labels: Record<string, string> = {
     published: 'Published',
@@ -241,7 +241,7 @@ function ContentPipelineBlock({ label, count, color, icon: Icon }: { label: stri
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function CrmSeoGrowthDashboard() {
- return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Growth Dashboard</h1><p role="status">Measured growth and attribution are not verified. Hard-coded traffic, conversion and revenue figures are not operational evidence.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Growth Dashboard</h1><p role="status">Measured growth and attribution are not verified. Hard-coded traffic, conversion and revenue figures are not operational evidence.</p><a href="/crm/seo-manager" className="text-[var(--alo-brand)] underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
 }
 /** Historical design fixture; not an operational dashboard. */
 function LegacyUnverifiedCrmSeoGrowthDashboard() {
@@ -474,7 +474,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                           }`}
                           variant="outline"
                           style={{
-                            backgroundColor: item.pass ? '#ecfdf5' : '#fffbeb',
+                            backgroundColor: item.pass ? '#ecfdf5' : 'var(--alo-warning-soft)',
                             color: item.pass ? '#047857' : '#b45309',
                             borderColor: item.pass ? '#a7f3d0' : '#fde68a',
                           }}
@@ -567,7 +567,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                                   kw.position <= 3
                                     ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
                                     : kw.position <= 10
-                                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-100'
+                                    ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]'
                                     : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]'
                                 }`}
                                 variant="outline"
@@ -672,7 +672,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                     ].map((item, i) => {
                       const statusMap: Record<string, { bg: string; text: string }> = {
                         published: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
-                        in_review: { bg: 'bg-blue-100', text: 'text-blue-700' },
+                        in_review: { bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
                         draft: { bg: 'bg-amber-100', text: 'text-amber-700' },
                         scheduled: { bg: 'bg-purple-100', text: 'text-purple-700' },
                       };

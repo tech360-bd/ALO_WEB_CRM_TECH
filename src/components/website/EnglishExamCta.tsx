@@ -70,7 +70,7 @@ export function EnglishExamBanner({ location = 'homepage_banner' }: { location?:
           <p className="mt-1 text-sm font-medium text-emerald-50 sm:text-base">{COPY.en.question}</p>
           <p className="mt-3 text-sm leading-relaxed text-emerald-50">{COPY.bn.promotion}</p>
           <p className="mt-1 text-xs leading-relaxed text-emerald-100">{COPY.en.promotion}</p>
-          <Link href="/student/english-test" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">Open student English-test page →</Link>
+          <Link href="/student/english-test" className="mt-2 inline-flex min- items-center text-sm font-semibold underline underline-offset-4">Open student English-test page →</Link>
           <p className="mt-2 text-xs text-emerald-100">{COPY.en.leaving}</p>
         </div>
         <EnglishExamButton
@@ -103,20 +103,20 @@ export function PrepVsExamSplit({
   return (
     <section aria-label="Preparation and real exam" className="grid gap-4 md:grid-cols-2">
       <div className="flex flex-col rounded-3xl border border-[var(--alo-border)] bg-white p-6 shadow-sm">
-        <span className="inline-flex w-fit items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-brand)]">
+        <span className="inline-flex w-fit items-center rounded-full bg-[var(--alo-brand-pale)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-brand)]">
           {COPY.en.preparationLabel}
         </span>
         <h3 className="mt-3 text-lg font-bold text-[var(--alo-text)]">{prepTitle}</h3>
         <p className="mt-2 text-sm leading-relaxed text-[var(--alo-body)]">{COPY.en.preparationBody}</p>
         <Link
-          href={prepHref}
-          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 pt-4 text-sm font-semibold text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]"
-        >
+ href={prepHref}
+ className="mt-auto inline-flex min- w-fit items-center gap-2 pt-4 text-sm font-semibold text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]"
+ >
           {prepCta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
 
-      <div className="flex flex-col rounded-3xl border border-orange-200 bg-orange-50 p-6 shadow-sm">
+      <div className="flex flex-col rounded-3xl border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] p-6 shadow-sm">
         <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
           <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
           {COPY.en.realExamLabel}
@@ -139,7 +139,7 @@ export function PrepVsExamSplit({
 
 export function EnglishExamCard({ location, testName }: { location: EnglishExamCtaLocation; testName?: string }) {
   return (
-    <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5">
+    <div className="rounded-2xl border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] p-5">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
         <GraduationCap className="h-3 w-3" aria-hidden="true" />
         {COPY.en.realExamLabel}

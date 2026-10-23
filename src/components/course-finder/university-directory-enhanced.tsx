@@ -606,36 +606,36 @@ function UniversityCard({
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-2">
           <Button
-            size="sm"
-            className="h-8 text-xs text-white col-span-1"
-            style={{ backgroundColor: ALO_BLUE }}
-            onClick={() => onViewUniversity(uni.slug)}
+ size="sm"
+ className=" text-white col-span-1"
+ style={{ backgroundColor: ALO_BLUE }}
+ onClick={() => onViewUniversity(uni.slug)}
           >
             View University
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs col-span-1"
-            onClick={() => onViewCourses(uni.slug)}
+ variant="outline"
+ size="sm"
+ className=" col-span-1"
+ onClick={() => onViewCourses(uni.slug)}
           >
             <BookOpen className="size-3 mr-1" />
             View Courses
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs col-span-1"
-            onClick={() => onCompare(uni)}
+ variant="outline"
+ size="sm"
+ className=" col-span-1"
+ onClick={() => onCompare(uni)}
           >
             <GitCompareArrows className="size-3 mr-1" />
             Compare
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs col-span-1 text-[var(--alo-cta)] border-[var(--alo-cta)]/30 hover:bg-[var(--alo-cta)]/5"
-            onClick={() => onAskCounsellor(uni.name)}
+ variant="outline"
+ size="sm"
+ className=" col-span-1 text-[var(--alo-cta)] border-[var(--alo-cta)]/30 hover:bg-[var(--alo-cta)]/5"
+ onClick={() => onAskCounsellor(uni.name)}
           >
             <MessageCircle className="size-3 mr-1" />
             Ask Counsellor
@@ -1007,10 +1007,10 @@ export function UniversityDirectoryEnhanced() {
               </div>
             </div>
             <Button
-              onClick={handleHeroSearch}
-              className="text-white h-10 w-full sm:w-auto"
-              style={{ backgroundColor: ALO_ORANGE }}
-            >
+ onClick={handleHeroSearch}
+ className="text-white w-full sm:w-auto"
+ style={{ backgroundColor: ALO_ORANGE }}
+ >
               <Search className="size-4 mr-2" />
               Search Universities
             </Button>
@@ -1104,11 +1104,11 @@ export function UniversityDirectoryEnhanced() {
                     Filters
                   </h3>
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 text-xs text-[var(--alo-text-muted)] hover:text-[var(--alo-cta)]"
-                    onClick={handleResetFilters}
-                  >
+ variant="ghost"
+ size="sm"
+ className="h-7 text-[var(--alo-text-muted)] hover:text-[var(--alo-cta)]"
+ onClick={handleResetFilters}
+ >
                     Clear All
                   </Button>
                 </div>

@@ -46,16 +46,16 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
-          <Link href="/destinations" className="hover:text-blue-600">Destinations</Link>
+          <Link href="/destinations" className="hover:text-[var(--alo-brand)]">Destinations</Link>
           <span>/</span>
-          <Link href={`/destinations/${countryData.slug}`} className="hover:text-blue-600">{countryData.name}</Link>
+          <Link href={`/destinations/${countryData.slug}`} className="hover:text-[var(--alo-brand)]">{countryData.name}</Link>
           <span>/</span>
           <span className="text-[var(--alo-text)] font-semibold">Courses</span>
         </div>
 
         {/* Header Hero */}
         <div className="bg-white rounded-3xl p-8 border border-[var(--alo-border)] shadow-sm space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs font-bold rounded-full">
             <span>{countryData.flag}</span> Degree Programs
           </div>
           <h1 className="text-3xl font-extrabold text-[var(--alo-text)]">
@@ -75,11 +75,11 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
             return (
               <div
                 key={course.id}
-                className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 flex flex-col justify-between hover:border-blue-500 hover:shadow-md transition space-y-4"
+                className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 flex flex-col justify-between hover:border-[var(--alo-brand)] hover:shadow-md transition space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full">
+                    <span className="text-xs font-bold px-2.5 py-1 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-full">
                       {course.qualification || 'Degree'}
                     </span>
                     <span className="text-xs text-[var(--alo-text-muted)] font-medium">
@@ -122,7 +122,7 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
                   <span className="text-[11px] text-[var(--alo-text-muted)]">Intake: {primaryIntake?.intakeMonth || 'Sept / Jan'}</span>
                   <Link
                     href={`/eligibility-check?courseId=${course.id}`}
-                    className="text-xs bg-[var(--alo-brand)] hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
+                    className="text-xs bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
                   >
                     Check Eligibility <ArrowRight className="w-3 h-3" />
                   </Link>

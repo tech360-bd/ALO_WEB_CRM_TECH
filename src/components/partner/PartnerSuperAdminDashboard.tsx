@@ -157,21 +157,21 @@ export default function PartnerSuperAdminDashboard() {
 
         <div className="flex flex-wrap items-center gap-2">
           <Button
-            size="sm"
-            className="h-8 bg-indigo-600 text-xs text-white hover:bg-indigo-700"
-            onClick={() => setView('partner-admin-marketing-studio')}
+ size="sm"
+ className=" bg-indigo-600 text-white hover:bg-indigo-700"
+ onClick={() => setView('partner-admin-marketing-studio')}
           >
             <Sparkles className="mr-1 h-3.5 w-3.5" /> Open Marketing Studio
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 border-[var(--alo-border-strong)] text-xs text-[var(--alo-body)]"
-            onClick={() => setView('partner-admin-users')}
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-border-strong)] text-[var(--alo-body)]"
+ onClick={() => setView('partner-admin-users')}
           >
             <Plus className="mr-1 h-3.5 w-3.5" /> Request extra seats
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => void load()}>
+          <Button variant="outline" size="sm" className=" " onClick={() => void load()}>
             <RefreshCw className={`mr-1 h-3.5 w-3.5 ${state.loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -282,9 +282,9 @@ export default function PartnerSuperAdminDashboard() {
 
                   <div className="flex justify-end">
                     <Button
-                      size="sm"
-                      className="h-8 bg-indigo-600 text-xs text-white hover:bg-indigo-700"
-                      onClick={() => setView('partner-admin-marketing-studio')}
+ size="sm"
+ className=" bg-indigo-600 text-white hover:bg-indigo-700"
+ onClick={() => setView('partner-admin-marketing-studio')}
                     >
                       Generate campaign
                     </Button>

@@ -11,7 +11,7 @@ export default function PartnerProgramDetailPage() {
   const [course, setCourse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   useEffect(()=>{ fetch(`/api/courses/${encodeURIComponent(id)}`).then(r=>r.json()).then(d=>setCourse(d.data||d.course)).catch(()=>{}).finally(()=>setLoading(false)); },[id]);
-  if(loading) return <div className="p-12 pt-24 text-center text-[var(--alo-text-muted)]">Loading Program Detail — DB-driven...</div>;
+  if(loading) return <div className="p-12 pt-24 text-center text-[var(--alo-text-muted)]">Loading programme details…</div>;
   if(!course) return <div className="p-8 pt-24 text-center">Program not found.</div>;
   return (
     <div className="min-h-screen bg-[var(--alo-page)] pt-20 pb-16">

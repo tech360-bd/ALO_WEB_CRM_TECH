@@ -92,7 +92,7 @@ export default function InboxPage() {
                 <div
                   key={c.id}
                   onClick={() => setActiveThreadId(c.id)}
-                  className={`p-4 cursor-pointer transition-colors hover:bg-[var(--alo-page)] ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[var(--alo-brand)]' : 'border-l-4 border-transparent'}`}
+                  className={`p-4 cursor-pointer transition-colors hover:bg-[var(--alo-page)] ${activeThreadId === c.id ? 'bg-[var(--alo-brand-pale)]/50 border-l-4 border-[var(--alo-brand)]' : 'border-l-4 border-transparent'}`}
                 >
                   <div className="flex justify-between items-start mb-1">
                     <span className="font-semibold text-[var(--alo-text)] capitalize flex items-center gap-2">
@@ -134,7 +134,7 @@ export default function InboxPage() {
                 <div key={m.id} className={`flex ${m.direction === 'outbound' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[var(--alo-brand)] text-white rounded-tr-none shadow-sm' : 'bg-white border border-[var(--alo-border)] text-[var(--alo-text)] rounded-tl-none shadow-sm'}`}>
                     <p className="text-sm whitespace-pre-wrap">{m.content}</p>
-                    <div className={`text-xs mt-1 text-right ${m.direction === 'outbound' ? 'text-blue-200' : 'text-[var(--alo-text-muted)]'}`}>
+                    <div className={`text-xs mt-1 text-right ${m.direction === 'outbound' ? 'text-[var(--alo-brand-pale)]' : 'text-[var(--alo-text-muted)]'}`}>
                       {new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   </div>

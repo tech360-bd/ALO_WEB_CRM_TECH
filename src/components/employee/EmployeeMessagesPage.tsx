@@ -292,7 +292,7 @@ export default function EmployeeMessagesPage() {
                         {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
                       </p>
                       {thread.unreadCount && thread.unreadCount > 0 ? (
-                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[11px]">
+                        <Badge variant="outline" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">
                           {thread.unreadCount}
                         </Badge>
                       ) : null}

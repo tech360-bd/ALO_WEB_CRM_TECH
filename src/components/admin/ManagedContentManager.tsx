@@ -224,7 +224,7 @@ export function ManagedContentManager() {
                   ) : "—"}
                 </td>
                 <td className="px-4 py-2.5 text-right space-x-1 whitespace-nowrap">
-                  <button onClick={() => openEdit(item)} className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">Edit</button>
+                  <button onClick={() => openEdit(item)} className="px-2.5 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-lg text-xs font-medium">Edit</button>
                   {item.status === "published" ? (
                     <button onClick={() => post({ action: "unpublish", id: item.id }, "Unpublished (back to draft)")} disabled={busy} className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-xs font-medium">Unpublish</button>
                   ) : (
@@ -289,7 +289,7 @@ export function ManagedContentManager() {
                     </div>
                     <div className="text-xs text-[var(--alo-text-muted)] mt-1">{new Date(rev.createdAt).toLocaleString()} · by {rev.createdBy?.slice(0, 18)}</div>
                   </div>
-                  <button onClick={() => rollback(rev.id)} disabled={busy} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 disabled:opacity-50 text-blue-700 rounded-lg text-xs font-semibold whitespace-nowrap">Rollback here</button>
+                  <button onClick={() => rollback(rev.id)} disabled={busy} className="px-3 py-1.5 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] disabled:opacity-50 text-[var(--alo-brand)] rounded-lg text-xs font-semibold whitespace-nowrap">Rollback here</button>
                 </div>
               ))}
             </div>

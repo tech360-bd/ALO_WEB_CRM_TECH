@@ -72,7 +72,7 @@ export default function StudentApplyPage() {
             {result && (
               <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
                 {result.success ? <><CheckCircle2 className="w-4 h-4 inline mr-1" />Application draft created: {result.data?.applicationCode || result.data?.id} — linked student_id/course_id/university_id/intake_id, document checklist created, timeline entry created, counselor notified.</> : <><AlertTriangle className="w-4 h-4 inline mr-1" />{result.error || 'Failed'}</>}
-                {result.success && <Link href="/student/applications" className="block mt-3"><Button className="bg-[var(--alo-brand)] text-white h-11 w-full">View My Applications</Button></Link>}
+                {result.success && <Link href="/student/applications" className="block mt-3"><Button className="bg-[var(--alo-brand)] text-white w-full">View My Applications</Button></Link>}
               </div>
             )}
           </Card>

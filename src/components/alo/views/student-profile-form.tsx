@@ -376,13 +376,13 @@ function RepeatableCard({
           <p className="text-xs font-bold text-foreground">{title}</p>
         </div>
         <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-7 px-2 text-xs text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
-          disabled={!canRemove}
-          onClick={onRemove}
-        >
+ type="button"
+ variant="ghost"
+ size="sm"
+ className="h-7 px-2 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
+ disabled={!canRemove}
+ onClick={onRemove}
+ >
           <Icon name="Trash2" className="size-3.5" />
           Remove
         </Button>
@@ -878,9 +878,9 @@ export function StudentProfileForm() {
             </div>
           </div>
           <Button
-            variant="outline"
-            className="border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/10 h-9"
-            onClick={() => toast({ title: "AI autofill started", description: "Suggesting values based on your profile history." })}
+ variant="outline"
+ className="border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/10 "
+ onClick={() => toast({ title: "AI autofill started", description: "Suggesting values based on your profile history." })}
           >
             <Icon name="Wand2" className="size-4" />
             Auto-fill with AI
@@ -1060,11 +1060,11 @@ export function StudentProfileForm() {
               description="All academic qualifications from SSC to highest degree"
               action={
                 <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9"
-                  onClick={() => addList("education", emptyEdu)}
+ type="button"
+ variant="outline"
+ size="sm"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => addList("education", emptyEdu)}
                 >
                   <Icon name="Plus" className="size-4" />
                   Add Education
@@ -1176,10 +1176,10 @@ export function StudentProfileForm() {
                   </div>
                 </div>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/10 h-9"
-                  onClick={() => toast({ title: "Mock test reserved", description: "Your free slot is reserved — check the English Test page." })}
+ type="button"
+ variant="outline"
+ className="border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/10 "
+ onClick={() => toast({ title: "Mock test reserved", description: "Your free slot is reserved — check the English Test page." })}
                 >
                   <Icon name="Sparkles" className="size-4" />
                   Claim Free Mock
@@ -1208,7 +1208,7 @@ export function StudentProfileForm() {
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Test Scores</p>
-                    <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9" onClick={() => addList("englishTests", emptyEnglish)}>
+                    <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => addList("englishTests", emptyEnglish)}>
                       <Icon name="Plus" className="size-4" />
                       Add Test Score
                     </Button>
@@ -1331,7 +1331,7 @@ export function StudentProfileForm() {
               description="Relevant work experience strengthens your application"
               action={
                 form.hasWorkExperience ? (
-                  <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9" onClick={() => addList("workExperience", emptyWork)}>
+                  <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => addList("workExperience", emptyWork)}>
                     <Icon name="Plus" className="size-4" />
                     Add Experience
                   </Button>
@@ -1472,7 +1472,7 @@ export function StudentProfileForm() {
               icon="Users"
               description="Academic or professional referees for your application"
               action={
-                <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9" onClick={() => addList("recommendations", emptyRef)}>
+                <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => addList("recommendations", emptyRef)}>
                   <Icon name="Plus" className="size-4" />
                   Add Referee
                 </Button>
@@ -1523,7 +1523,7 @@ export function StudentProfileForm() {
               description="Previous visa applications, refusals, and background checks"
               action={
                 form.hasPreviousVisa ? (
-                  <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9" onClick={() => addList("visaHistory", emptyVisa)}>
+                  <Button type="button" variant="outline" size="sm" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => addList("visaHistory", emptyVisa)}>
                     <Icon name="Plus" className="size-4" />
                     Add Visa Record
                   </Button>
@@ -1549,7 +1549,7 @@ export function StudentProfileForm() {
               {form.hasPreviousVisa && (
                 <div className="mt-4 space-y-3">
                   {form.visaHistory.length === 0 ? (
-                    <EmptyState icon="Plane" title="No visa records added" description="Add each previous visa application, including refusals." action={<Button type="button" size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-9" onClick={() => addList("visaHistory", emptyVisa)}><Icon name="Plus" className="size-4" />Add Visa Record</Button>} />
+                    <EmptyState icon="Plane" title="No visa records added" description="Add each previous visa application, including refusals." action={<Button type="button" size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black " onClick={() => addList("visaHistory", emptyVisa)}><Icon name="Plus" className="size-4" />Add Visa Record</Button>} />
                   ) : (
                     form.visaHistory.map((v, idx) => (
                       <RepeatableCard key={v.id} index={idx} title={`Visa Record #${idx + 1}`} canRemove={form.visaHistory.length > 0} onRemove={() => removeList("visaHistory", v.id)}>
@@ -1689,10 +1689,10 @@ export function StudentProfileForm() {
           <div className="flex flex-col gap-3 rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-white/80 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <Button
-                variant="outline"
-                className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-11"
-                onClick={handleSaveDraft}
-              >
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={handleSaveDraft}
+ >
                 <Icon name="Save" className="size-4" />
                 Save Draft
               </Button>
@@ -1703,18 +1703,18 @@ export function StudentProfileForm() {
             </div>
             <div className="flex items-center gap-2">
               <Button
-                variant="ghost"
-                className="h-11 text-muted-foreground hover:bg-muted"
-                onClick={handleBack}
-                disabled={step === 1}
-              >
+ variant="ghost"
+ className=" text-muted-foreground hover:bg-muted"
+ onClick={handleBack}
+ disabled={step === 1}
+ >
                 <Icon name="ArrowLeft" className="size-4" />
                 Back
               </Button>
               <Button
-                className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-11 px-6"
-                onClick={handleNext}
-              >
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black px-6"
+ onClick={handleNext}
+ >
                 {step === 4 ? (
                   <>
                     <Icon name="CheckCircle2" className="size-4" />

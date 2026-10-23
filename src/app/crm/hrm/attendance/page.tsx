@@ -48,8 +48,8 @@ export default function HrmAttendancePage() {
                   ['Present', data?.summary?.present ?? 0, 'bg-emerald-50 text-emerald-700'],
                   ['Late', data?.summary?.late ?? 0, 'bg-amber-50 text-amber-700'],
                   ['Absent', data?.summary?.absent ?? 0, 'bg-red-50 text-red-700'],
-                  ['Half Day', data?.summary?.halfDay ?? 0, 'bg-orange-50 text-orange-700'],
-                  ['Holiday', data?.summary?.holiday ?? 0, 'bg-blue-50 text-blue-700'],
+                  ['Half Day', data?.summary?.halfDay ?? 0, 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'],
+                  ['Holiday', data?.summary?.holiday ?? 0, 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'],
                   ['Leave', data?.summary?.leave ?? 0, 'bg-purple-50 text-purple-700'],
                   ['Hours', data?.summary?.totalHours ?? 0, 'bg-[var(--alo-page)] text-[var(--alo-body)]'],
                 ].map(([label,val,cls])=> (
@@ -79,7 +79,7 @@ export default function HrmAttendancePage() {
                 </table>
               </div>
 
-              <Card className="bg-orange-50 border-orange-100">
+              <Card className="bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25">
                 <CardContent className="p-3 text-xs text-[var(--alo-body)]">
                   <p className="font-bold text-[var(--alo-cta)]">Attendance Calendar</p>
                   <p className="mt-1">Calendar view via <code className="bg-white px-1 rounded">?view=calendar&month=YYYY-MM</code> — includes holidays & weekends (Friday). Working hours: 9:00–18:00 Asia/Dhaka, late threshold 15 min, half-day &lt;4h.</p>

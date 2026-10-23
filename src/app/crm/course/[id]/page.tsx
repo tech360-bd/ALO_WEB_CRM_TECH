@@ -26,7 +26,7 @@ export default function CrmCourseDetailPage() {
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Data Quality</p><p className="font-medium">{course.dataQualityScore ? `${course.dataQualityScore}/100` : 'Needs Review — calculate internal quality score'}</p></div>
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Commission</p><p className="font-medium">Where authorized — backend protected, public API never returns commission</p></div>
           </div>
-          <Link href="/crm/course-finder"><Button variant="outline" className="mt-6 border-[var(--alo-border)] h-11">Back to CRM Course Finder</Button></Link>
+          <Link href="/crm/course-finder"><Button variant="outline" className="mt-6 border-[var(--alo-border)] ">Back to CRM Course Finder</Button></Link>
         </Card>
       </div>
     </div>

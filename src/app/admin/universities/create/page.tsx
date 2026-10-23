@@ -83,14 +83,14 @@ export default function AdminCreateUniversityPage() {
     <main className="min-h-screen bg-[var(--alo-page)] px-4 pb-16 pt-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <header className="rounded-3xl border border-[var(--alo-border)] bg-white p-6 shadow-sm sm:p-8">
-          <Badge className="mb-3 border-blue-200 bg-blue-50 text-blue-800">University research workflow</Badge>
+          <Badge className="mb-3 border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]">University research workflow</Badge>
           <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Add a university</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--alo-body)]">
             Save a sourced research draft for review. The server generates its university ID; this form never publishes or marks facts verified.
           </p>
           <ol className="mt-6 grid gap-2 sm:grid-cols-3" aria-label="University creation steps">
             {STEPS.map((step, index) => (
-              <li key={step} aria-current={activeStep === index ? 'step' : undefined} className={`rounded-xl border px-3 py-2 text-sm ${activeStep === index ? 'border-blue-300 bg-blue-50 font-semibold text-blue-900' : index < activeStep ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}`}>
+              <li key={step} aria-current={activeStep === index ? 'step' : undefined} className={`rounded-xl border px-3 py-2 text-sm ${activeStep === index ? 'border-blue-300 bg-[var(--alo-brand-pale)] font-semibold text-[var(--alo-brand-deep)]' : index < activeStep ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}`}>
                 <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-white text-xs font-bold">{index + 1}</span>{step}
               </li>
             ))}

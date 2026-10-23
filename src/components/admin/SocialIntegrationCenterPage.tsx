@@ -128,14 +128,14 @@ export default function SocialIntegrationCenterPage() {
   const getProviderIcon = (provider: string) => {
     switch (provider) {
       case 'whatsapp': return <MessageSquare className="w-6 h-6 text-emerald-500" />;
-      case 'facebook_page': return <Facebook className="w-6 h-6 text-blue-600" />;
+      case 'facebook_page': return <Facebook className="w-6 h-6 text-[var(--alo-brand)]" />;
       case 'instagram': return <Instagram className="w-6 h-6 text-pink-600" />;
       case 'google_analytics': return <BarChart className="w-6 h-6 text-amber-500" />;
       case 'google_search_console': return <Search className="w-6 h-6 text-indigo-500" />;
       case 'youtube': return <Video className="w-6 h-6 text-red-600" />;
       case 'telegram': return <Send className="w-6 h-6 text-sky-500" />;
       case 'smtp_email': return <Mail className="w-6 h-6 text-purple-600" />;
-      case 'sms_provider': return <Phone className="w-6 h-6 text-orange-500" />;
+      case 'sms_provider': return <Phone className="w-6 h-6 text-[var(--alo-cta)]" />;
       default: return <Share2 className="w-6 h-6 text-[var(--alo-body)]" />;
     }
   };
@@ -148,7 +148,7 @@ export default function SocialIntegrationCenterPage() {
           <div className="flex items-center gap-2">
             <Share2 className="w-7 h-7 text-[var(--alo-brand)]" />
             <h1 className="text-2xl font-bold">ALO Social Integration Center</h1>
-            <span className="bg-blue-100 text-[var(--alo-brand)] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+            <span className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] dark:bg-[var(--alo-brand-deep)]/40 dark:text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-[var(--alo-border)] dark:border-blue-800">
               OAuth 2.0 Official Platform
             </span>
           </div>
@@ -255,7 +255,7 @@ export default function SocialIntegrationCenterPage() {
                   ) : (
                     <button
                       onClick={() => handleStartOAuthWizard(item)}
-                      className="w-full py-2 bg-[var(--alo-brand)] hover:bg-blue-700 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition"
+                      className="w-full py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition"
                     >
                       <PlusCircle className="w-4 h-4" /> Connect via OAuth 2.0
                     </button>
@@ -273,7 +273,7 @@ export default function SocialIntegrationCenterPage() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[var(--alo-border)] dark:border-slate-700 space-y-6">
             <div className="flex justify-between items-center border-b border-[var(--alo-border)] dark:border-slate-700 pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                <div className="p-2 bg-[var(--alo-brand-pale)] dark:bg-[var(--alo-brand-deep)]/30 rounded-lg">
                   {getProviderIcon(selectedProvider.provider)}
                 </div>
                 <div>
@@ -293,7 +293,7 @@ export default function SocialIntegrationCenterPage() {
 
             {wizardStep === 1 && (
               <div className="space-y-4 text-sm">
-                <div className="p-4 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-xl space-y-2">
+                <div className="p-4 bg-[var(--alo-brand-pale)] dark:bg-blue-950/40 border border-[var(--alo-border)] dark:border-blue-800 rounded-xl space-y-2">
                   <div className="flex items-center gap-2 font-semibold text-[var(--alo-brand)] dark:text-blue-300">
                     <Shield className="w-4 h-4" /> Official Integration Guarantee
                   </div>
@@ -317,7 +317,7 @@ export default function SocialIntegrationCenterPage() {
 
                 <button
                   onClick={() => setWizardStep(2)}
-                  className="w-full py-2.5 bg-[var(--alo-brand)] hover:bg-blue-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2 text-sm transition"
+                  className="w-full py-2.5 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-semibold rounded-lg flex items-center justify-center gap-2 text-sm transition"
                 >
                   <ExternalLink className="w-4 h-4" /> Authenticate on {selectedProvider.name}
                 </button>

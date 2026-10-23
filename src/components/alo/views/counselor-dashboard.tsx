@@ -181,7 +181,7 @@ const APPT_TYPE_LABELS: Record<string, string> = {
 const SLA_STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
   UNREAD: "bg-amber-100 text-amber-700",
-  ESCALATED_40: "bg-orange-100 text-orange-700",
+  ESCALATED_40: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   ESCALATED_50: "bg-rose-100 text-rose-700",
   RESPONDED: "bg-emerald-100 text-emerald-700",
   AI_HANDLED: "bg-violet-100 text-violet-700",
@@ -200,13 +200,13 @@ const SLA_STATUS_LABELS: Record<string, string> = {
 
 const CHANNEL_COLORS: Record<string, string> = {
   WHATSAPP: "bg-emerald-100 text-emerald-700",
-  SMS: "bg-blue-100 text-blue-700",
+  SMS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   EMAIL: "bg-violet-100 text-violet-700",
-  FACEBOOK: "bg-blue-100 text-blue-700",
+  FACEBOOK: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   INSTAGRAM: "bg-pink-100 text-pink-700",
   MESSENGER: "bg-sky-100 text-sky-700",
   WEBSITE_CHAT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PORTAL: "bg-orange-100 text-orange-700",
+  PORTAL: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const CHANNEL_LABELS: Record<string, string> = {
@@ -782,9 +782,9 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               )}
 
               <Button
-                variant="outline"
-                className="h-10 w-full rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                onClick={() =>
+ variant="outline"
+ className=" w-full rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                   toast({
                     title: "HR profile",
                     description: "Full HR profile (payslips, increments, bonus history) is available in the HR self-service portal.",

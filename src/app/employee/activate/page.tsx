@@ -11,7 +11,7 @@ export default function EmployeeActivationPage() {
     <main className="min-h-screen bg-[var(--alo-page)] px-4 py-12">
       <div className="mx-auto max-w-lg">
         <div className="mb-8 text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">ALO Education</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--alo-brand)]">ALO Education</p>
           <h1 className="mt-3 text-3xl font-bold text-[var(--alo-text)]">Activate your account</h1>
           <p className="mt-2 text-[var(--alo-body)]">Create a password to finish setting up your employee access.</p>
         </div>

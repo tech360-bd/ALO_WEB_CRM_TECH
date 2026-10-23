@@ -104,8 +104,8 @@ function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
 
         {/* Enquire */}
         <Button
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-9 text-sm mt-1"
-          onClick={() => toast.success(`Enquiry sent for "${scholarship.scholarshipName}"`)}
+ className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm mt-1"
+ onClick={() => toast.success(`Enquiry sent for "${scholarship.scholarshipName}"`)}
         >
           <Send className="size-4 mr-1.5" />
           Enquire

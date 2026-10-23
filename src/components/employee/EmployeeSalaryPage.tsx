@@ -89,7 +89,7 @@ export default function EmployeeSalaryPage() {
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2"><TrendingUp className="w-5 h-5 text-blue-600" /></div>
+            <div className="flex items-center justify-between mb-2"><TrendingUp className="w-5 h-5 text-[var(--alo-brand)]" /></div>
             <p className="text-2xl font-bold text-alo-text">{formatTaka(gross)}</p>
             <p className="text-xs text-alo-text-muted mt-0.5">Gross Pay</p>
           </CardContent>
@@ -164,7 +164,7 @@ export default function EmployeeSalaryPage() {
                     <td className="py-2.5 px-3"><Badge variant="success" className="text-[11px]">{p.status}</Badge></td>
                     <td className="py-2.5 px-3 text-alo-text-muted text-xs">{p.paidOn}</td>
                     <td className="py-2.5 px-3">
-                      <Button variant="ghost" size="sm" className="h-7 text-xs text-alo-brand" disabled={downloading === p.id} onClick={() => handleDownloadPdf(p)}>
+                      <Button variant="ghost" size="sm" className="h-7 text-alo-brand" disabled={downloading === p.id} onClick={() => handleDownloadPdf(p)}>
                         {downloading === p.id ? 'Generating...' : <><Download className="w-3 h-3 mr-1" /> PDF</>}
                       </Button>
                     </td>

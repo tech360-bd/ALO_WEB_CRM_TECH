@@ -116,10 +116,10 @@ export default function PartnerLoginPage() {
             </div>
 
             <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-11 bg-[var(--alo-brand)] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
-            >
+ type="submit"
+ disabled={loading}
+ className="w-full bg-[var(--alo-brand)] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
+ >
               {loading ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" /> Signing In...

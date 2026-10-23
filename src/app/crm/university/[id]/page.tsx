@@ -26,7 +26,7 @@ export default function CrmUniversityDetailPage() {
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Commission</p><p className="font-medium">Where authorized — backend protected</p></div>
             <div className="bg-amber-50 border-amber-200 rounded-xl p-3"><p className="text-amber-800 font-semibold">Warnings</p><p className="text-amber-700">Duplicate warning, Verification warning, Missing source warning, Expired data warning</p></div>
           </div>
-          <Link href="/crm/universities"><Button variant="outline" className="mt-6 border-[var(--alo-border)] h-11">Back to CRM Universities</Button></Link>
+          <Link href="/crm/universities"><Button variant="outline" className="mt-6 border-[var(--alo-border)] ">Back to CRM Universities</Button></Link>
         </Card>
       </div>
     </div>

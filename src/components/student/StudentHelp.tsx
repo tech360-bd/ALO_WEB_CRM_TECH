@@ -138,7 +138,7 @@ export default function StudentHelp() {
 
         <PortalCard className="mb-5">
           <PortalSectionTitle>
-            <LifeBuoy className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />
+            <LifeBuoy className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />
             What do you need help with?
           </PortalSectionTitle>
           <ul className="divide-y divide-[var(--alo-border)]">
@@ -181,7 +181,7 @@ export default function StudentHelp() {
                   The fastest route is a message on your file, because your counselor can see your applications and
                   documents.
                 </p>
-                <Button asChild className="mt-3 h-9 w-full rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500">
+                <Button asChild className="mt-3 w-full rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                   <Link href="/student/messages">
                     <MessageSquare className="mr-2 h-4 w-4" aria-hidden="true" />
                     Message Your Counselor
@@ -193,7 +193,7 @@ export default function StudentHelp() {
                 </p>
                 <a
                   href="mailto:info@aloeducation.com"
-                  className="mt-1.5 flex items-center gap-2 text-[13px] font-semibold text-alo-blue hover:underline"
+                  className="mt-1.5 flex items-center gap-2 text-[13px] font-semibold text-alo-brand hover:underline"
                 >
                   <Mail className="h-4 w-4" aria-hidden="true" />
                   info@aloeducation.com

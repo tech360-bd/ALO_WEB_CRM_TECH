@@ -10,7 +10,7 @@ import { Loader2, Search, FileText, Globe, BarChart3, Wrench, Link2, Sparkles } 
 import { Textarea } from '@/components/ui/textarea';
 
 export default function SEOBlogManagerView() {
- return <div className="space-y-6"><SeoEvidencePanel mode="keywords"/><SeoEvidencePanel mode="technical"/><Link href="/crm/seo-manager" className="inline-block rounded border p-3 text-blue-700">Open existing SEO draft and approval workbench</Link><p className="text-sm">AI generation requires a configured provider and human factual review. No provider test has been performed.</p></div>;
+ return <div className="space-y-6"><SeoEvidencePanel mode="keywords"/><SeoEvidencePanel mode="technical"/><Link href="/crm/seo-manager" className="inline-block rounded border p-3 text-[var(--alo-brand)]">Open existing SEO draft and approval workbench</Link><p className="text-sm">AI generation requires a configured provider and human factual review. No provider test has been performed.</p></div>;
 }
 /** Historical mock-only presentation. No fallback AI call or fake success is used. */
 function LegacyUnverifiedSEOBlogManagerView() {
@@ -59,7 +59,7 @@ function LegacyUnverifiedSEOBlogManagerView() {
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Link2 className="w-3 h-3" />Internal Linking</p><p className="text-[var(--alo-body)] mt-1">Recommend links to /destinations/uk, /course-finder, /scholarships, /language-prep/ielts</p></div>
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Wrench className="w-3 h-3" />Technical SEO</p><p className="text-[var(--alo-body)] mt-1">Title ≤60, description ≤160, structured data (FAQ, Article, Breadcrumb), sitemap.</p></div>
               </div>
-              <Button variant="outline" className="h-9 text-xs"><FileText className="w-4 h-4 mr-2" />Generate Blog Draft</Button>
+              <Button variant="outline" className=" "><FileText className="w-4 h-4 mr-2" />Generate Blog Draft</Button>
             </CardContent>
           </Card>
         </div>

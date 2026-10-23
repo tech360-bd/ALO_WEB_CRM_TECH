@@ -15,7 +15,7 @@ const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-700',
   failed: 'bg-red-100 text-red-700',
   refunded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  partial: 'bg-orange-100 text-orange-700',
+  partial: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
 };
 
 export default function CrmFinancePage() {

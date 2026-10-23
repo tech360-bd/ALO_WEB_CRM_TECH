@@ -79,9 +79,9 @@ const NODE_STYLE: Record<string, string> = {
   COURSE: 'bg-violet-100 text-violet-800',
   COUNTRY: 'bg-emerald-100 text-emerald-800',
   SCHOLARSHIP: 'bg-amber-100 text-amber-800',
-  APPLICATION: 'bg-blue-100 text-blue-800',
+  APPLICATION: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   VISA: 'bg-cyan-100 text-cyan-800',
-  PARTNER: 'bg-orange-100 text-orange-800',
+  PARTNER: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   COUNSELOR: 'bg-slate-200 text-[var(--alo-body)]',
   COMMISSION: 'bg-teal-100 text-teal-800',
 };

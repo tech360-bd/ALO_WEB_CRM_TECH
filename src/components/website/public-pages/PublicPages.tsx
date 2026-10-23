@@ -14,13 +14,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import {
   ArrowLeft, Search, MapPin, GraduationCap, Award, Users, Building2,
   Phone, Mail, Clock, FileText, Shield, Globe, BookOpen, Star,
-  CheckCircle2, Target, Eye, Heart,
+  CheckCircle2, Target, Eye, Heart, SlidersHorizontal, X,
 } from 'lucide-react';
 
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { EmptyState, ErrorState, LoadingGrid } from '@/components/alo/ui';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
 import { ALO_CONTACT } from '@/lib/alo-site-info';
+import Image from 'next/image';
+import { PublicHero } from '@/components/website/PublicHero';
+import { destinationCardImage } from '@/components/website/ImageMapping';
 
 // ============================================================
 // SHARED PUBLIC SHELL
@@ -33,56 +37,39 @@ const HERO_ACCENTS: Record<string, { dot: string; text: string; ring: string }> 
 /**
  * Shared inner-page shell — Master §08 Variant E.
  *
- * Every public sub-page (course finder, destinations, universities,
- * scholarships, services, about, team, FAQs, contact, legal, resources…)
- * renders through this one component, so the inner-page hero is defined once:
- * a pale-blue band, a back link, a 11px uppercase eyebrow with a status dot,
- * a 30–42px Montserrat H1 and a 15–16px body deck capped at 62ch. No dark
- * panel, no photograph overlay, no per-page hero copy invented here.
+ * Every public sub-page that renders through this module (course finder,
+ * destinations, universities, scholarships, services, about, team, FAQs,
+ * contact, legal, resources…) shares one hero definition. The band itself
+ * lives in `components/website/PublicHero.tsx` so route-level pages that have
+ * their own <main> can reuse the exact same hero.
  */
-function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }: {
+function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8', heroSlot }: {
   title: string;
   subtitle?: string;
   badge?: string;
   children: React.ReactNode;
   heroColor?: string;
+  /** Hero Variant B (finder) / C (destination tiles): rendered inside the band. */
+  heroSlot?: React.ReactNode;
 }) {
   const setView = usePortalStore((s) => s.setView);
-  const accent = HERO_ACCENTS[heroColor] ?? HERO_ACCENTS['#0057B8'];
-  const reduceMotion = useReducedMotion();
   return (
     <div className="min-h-screen bg-card">
-      <section className="border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)]">
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pb-14 lg:pt-8">
+      <PublicHero
+        title={title}
+        subtitle={subtitle}
+        badge={badge}
+        accent={heroColor === '#E8501A' ? 'cta' : 'brand'}
+        slot={heroSlot}
+        above={
           <button
             onClick={() => setView('website')}
-            className="mb-7 inline-flex items-center gap-1.5 rounded-[10px] text-[13px] font-semibold text-[var(--alo-text-muted)] transition-colors hover:text-[var(--alo-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-1.5 rounded-[10px] text-[13px] font-semibold text-[var(--alo-text-muted)] transition-colors hover:text-[var(--alo-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to home
           </button>
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.22, 0.61, 0.36, 1] }}
-            className="max-w-3xl"
-          >
-            {badge && (
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-secondary)] ring-1 ring-inset ring-[var(--alo-border)]">
-                <span className={`size-1.5 rounded-full ${accent.dot}`} aria-hidden="true" />
-                <span className={accent.text}>{badge}</span>
-              </span>
-            )}
-            <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px]">
-              {title}
-            </h1>
-            {subtitle && (
-              <p className="mt-4 max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">
-                {subtitle}
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </section>
+        }
+      />
       <main className="pb-20 pt-8 lg:pt-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {children}
@@ -132,71 +119,106 @@ export function PublicCourseFinderPage() {
   const currencySymbol = (code?: string) =>
     ({ GBP: '£', USD: '$', EUR: '€', AUD: 'A$', CAD: 'C$', NZD: 'NZ$' } as Record<string, string>)[code || ''] || (code ? `${code} ` : '');
 
+  const hasFilters = Boolean(filters.search || filters.country || filters.level || filters.subject);
+  const resetFilters = () => setFilters({ country: '', level: '', subject: '', search: '' });
+
+  // Hero Variant B — the finder itself is the hero. Search, country and study
+  // level live in the band and drive the same `filters` state as before, so
+  // there is one source of truth and no duplicated query logic.
+  const finderHero = (
+    <div className="rounded-[16px] border border-[var(--alo-border)] bg-card p-3 shadow-[var(--alo-shadow-sm)] sm:p-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_200px_190px_auto]">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--alo-text-muted)]" aria-hidden="true" />
+          <Input
+            value={filters.search}
+            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            placeholder="Course, subject or university"
+            aria-label="Search courses"
+            className="h-12 pl-11"
+          />
+        </div>
+        <Select value={filters.country || 'all'} onValueChange={(v) => setFilters({ ...filters, country: v === 'all' ? '' : v })}>
+          <SelectTrigger className="h-12" aria-label="Country"><SelectValue placeholder="All countries" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All countries</SelectItem>
+            {['United Kingdom', 'United States', 'Canada', 'Australia', 'Ireland', 'New Zealand', 'Germany'].map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={filters.level || 'all'} onValueChange={(v) => setFilters({ ...filters, level: v === 'all' ? '' : v })}>
+          <SelectTrigger className="h-12" aria-label="Study level"><SelectValue placeholder="All levels" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All levels</SelectItem>
+            {['Foundation', 'Bachelor', 'Master', 'PhD', 'Diploma'].map((l) => (
+              <SelectItem key={l} value={l}>{l}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button type="button" className="h-12" onClick={() => setFilters({ ...filters })}>
+          <Search className="h-4 w-4" aria-hidden="true" /> Search
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <PublicShell
       title="Course Finder"
       badge="SEARCH COURSES"
       subtitle="Find the perfect course from top universities across the UK, USA, Canada, Australia, Ireland, New Zealand and Europe."
+      heroSlot={finderHero}
     >
       <div className="grid lg:grid-cols-4 gap-6">
         <Card className="p-5 lg:col-span-1 h-fit">
           <h3 className="font-semibold text-[var(--alo-text)] mb-4 flex items-center gap-2">
-            <Search className="h-4 w-4 text-[var(--alo-brand)]" /> Filters
+            <SlidersHorizontal className="h-4 w-4 text-[var(--alo-brand)]" /> Refine
           </h3>
           <div className="space-y-4">
             <div>
-              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Search</Label>
-              <Input
-                value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                placeholder="Course name..."
-                className="h-10"
-              />
-            </div>
-            <div>
-              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Country</Label>
-              <Select value={filters.country} onValueChange={(v) => setFilters({ ...filters, country: v === 'all' ? '' : v })}>
-                <SelectTrigger className="h-10"><SelectValue placeholder="All countries" /></SelectTrigger>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Subject area</Label>
+              <Select value={filters.subject} onValueChange={(v) => setFilters({ ...filters, subject: v === 'all' ? '' : v })}>
+                <SelectTrigger className="h-12"><SelectValue placeholder="All subjects" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All countries</SelectItem>
-                  {['United Kingdom', 'United States', 'Canada', 'Australia', 'Ireland', 'New Zealand', 'Germany'].map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  <SelectItem value="all">All subjects</SelectItem>
+                  {['Business & Management', 'Computer Science & IT', 'Engineering', 'Health & Medicine', 'Law', 'Social Sciences'].map((sub) => (
+                    <SelectItem key={sub} value={sub}>{sub}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Study Level</Label>
-              <Select value={filters.level} onValueChange={(v) => setFilters({ ...filters, level: v === 'all' ? '' : v })}>
-                <SelectTrigger className="h-10"><SelectValue placeholder="All levels" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All levels</SelectItem>
-                  {['Foundation', 'Bachelor', 'Master', 'PhD', 'Diploma'].map((l) => (
-                    <SelectItem key={l} value={l}>{l}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {hasFilters && (
+              <Button variant="outline" className="w-full" onClick={resetFilters}>
+                <X className="h-4 w-4" aria-hidden="true" /> Clear all filters
+              </Button>
+            )}
+            <div className="rounded-[12px] bg-[var(--alo-page)] p-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-muted)]">Not sure what fits?</p>
+              <p className="mt-1.5 text-[13px] leading-5 text-[var(--alo-body)]">A counselor can shortlist courses against your grades, budget and intake.</p>
+              <Button asChild variant="brand-outline" className="mt-3 w-full">
+                <a href="/book-consultation">Book a free consultation</a>
+              </Button>
             </div>
           </div>
         </Card>
 
         <div className="lg:col-span-3">
           {loading ? (
-            <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading courses...</div>
+            <LoadingGrid count={4} />
           ) : error ? (
-            <div className="text-center py-20" role="alert">
-              <Search className="h-12 w-12 mx-auto mb-3 text-red-300" />
-              <p className="text-[var(--alo-body)] font-medium mb-1">Something went wrong</p>
-              <p className="text-sm text-[var(--alo-text-muted)] mb-4">{error}</p>
-              <Button variant="outline" size="sm" onClick={() => setFilters({ ...filters })}>
-                Try again
-              </Button>
-            </div>
+            <ErrorState
+              title="We could not load courses"
+              description="The course search did not respond. Please try again."
+              onRetry={() => setFilters({ ...filters })}
+            />
           ) : courses.length === 0 ? (
-            <div className="text-center py-20 text-[var(--alo-text-muted)]">
-              <Search className="h-12 w-12 mx-auto mb-3 text-[var(--alo-placeholder)]" />
-              No courses found. Try adjusting your filters.
-            </div>
+            <EmptyState
+              icon="Search"
+              title="No courses match these filters"
+              description="Try a broader subject, a different country, or clear the filters to see every published course."
+              action={hasFilters ? <Button variant="outline" onClick={resetFilters}>Clear all filters</Button> : undefined}
+            />
           ) : (
             <>
               <p className="text-sm text-[var(--alo-text-muted)] mb-4">{courses.length} courses found</p>
@@ -210,7 +232,7 @@ export function PublicCourseFinderPage() {
                   >
                     <Card className="p-5 hover:shadow-md transition-shadow h-full">
                       <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary" className="bg-blue-50 text-[var(--alo-brand)]">
+                        <Badge variant="secondary" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                           {c.studyLevel || c.programLevel || c.level || 'Course'}
                         </Badge>
                         {(c.yearlyTuition || c.tuitionFee) > 0 && (
@@ -267,21 +289,70 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
   const data = slug ? COUNTRY_DESTINATIONS[slug] : null;
 
   if (!data) {
+    // Hero Variant C — destination-led: the tiles carry the choice, so the hero
+    // is visual rather than a headline block.
+    const destinationStrip = (
+      <ul className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2 alo-scrollbar sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-4 lg:gap-4">
+        {all.map((country) => (
+          <li key={country.slug} className="w-[210px] shrink-0 snap-start sm:w-auto">
+            <a
+              href={`/destinations/${country.slug}`}
+              className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-[var(--alo-border)] bg-card transition-shadow hover:shadow-[var(--alo-shadow-md)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
+            >
+              <span className="relative block aspect-[16/10] overflow-hidden bg-[var(--alo-page)]">
+                <Image
+                  src={destinationCardImage(country.slug)}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 220px, 45vw"
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                />
+              </span>
+              <span className="flex items-center justify-between gap-2 px-3 py-2.5">
+                <span className="text-[13px] font-semibold text-[var(--alo-text)]">{country.name}</span>
+                <ArrowLeft className="h-3.5 w-3.5 rotate-180 text-[var(--alo-brand)]" aria-hidden="true" />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    );
+
     return (
-      <PublicShell title="Destinations" subtitle="Choose your study destination">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {all.map((country) => (
-            <Card key={country.slug} className="p-6 hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold text-[var(--alo-text)] mb-1">{country.name}</h3>
-              <p className="text-sm text-[var(--alo-body)] mb-3 line-clamp-3">{country.whyStudySummary}</p>
-              <p className="text-xs text-[var(--alo-text-muted)] mb-3">
-                {country.lastVerifiedAt ? `Verified ${country.lastVerifiedAt}` : 'Verification date not recorded'}
-              </p>
-              <a
-                href={`/destinations/${country.slug}`}
-                className="text-xs text-[var(--alo-brand)] font-semibold hover:underline"
-              >
-                View {country.name} guide
+      <PublicShell
+        title="Study destinations"
+        badge="DESTINATIONS"
+        subtitle="Choose your study destination"
+        heroSlot={destinationStrip}
+      >
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {all.map((country, index) => (
+            <Card
+              key={country.slug}
+              className={`overflow-hidden transition-shadow hover:shadow-[var(--alo-shadow-md)] ${
+                index === 0 ? 'sm:col-span-2 lg:col-span-1 lg:row-span-2' : ''
+              }`}
+            >
+              <a href={`/destinations/${country.slug}`} className="group flex h-full flex-col focus-visible:outline-none">
+                <span className={`relative block overflow-hidden bg-[var(--alo-page)] ${index === 0 ? 'aspect-[16/9]' : 'aspect-[16/7]'}`}>
+                  <Image
+                    src={destinationCardImage(country.slug)}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 400px, 100vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                </span>
+                <span className="flex flex-1 flex-col p-5">
+                  <h3 className="card-title mb-1">{country.name}</h3>
+                  <p className="mb-3 line-clamp-3 text-[13px] leading-6 text-[var(--alo-body)]">{country.whyStudySummary}</p>
+                  <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-muted)]">
+                    {country.lastVerifiedAt ? `Verified ${country.lastVerifiedAt}` : 'Verification date not recorded'}
+                  </p>
+                  <span className="mt-auto text-[13px] font-semibold text-[var(--alo-brand)] group-hover:underline">
+                    View {country.name} guide
+                  </span>
+                </span>
               </a>
             </Card>
           ))}
@@ -392,7 +463,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
 
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to study in {data.name}?</h3>
-        <p className="text-blue-100 mb-5">
+        <p className="text-[var(--alo-brand-pale)] mb-5">
           Fees and visa rules change. A counselor confirms the current requirements for your case.
         </p>
         <Button asChild className="bg-[var(--alo-cta)] text-black hover:brightness-110">
@@ -452,23 +523,23 @@ export function PublicUniversitiesPage() {
       </Card>
 
       {loading ? (
-        <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading universities...</div>
+        <LoadingGrid count={6} />
       ) : error ? (
-        <div className="text-center py-20" role="alert">
-          <Building2 className="h-12 w-12 mx-auto mb-3 text-red-300" />
-          <p className="text-[var(--alo-body)] font-medium mb-1">Something went wrong</p>
-          <p className="text-sm text-[var(--alo-text-muted)] mb-4">{error}</p>
-          <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
-            Try again
-          </Button>
-        </div>
+        <ErrorState
+          title="We could not load universities"
+          description="The university list did not respond. Please try again."
+          onRetry={() => setReloadKey((k) => k + 1)}
+        />
       ) : universities.length === 0 ? (
-        <div className="text-center py-20 text-[var(--alo-text-muted)]">
-          <Building2 className="h-12 w-12 mx-auto mb-3 text-[var(--alo-placeholder)]" />
-          {search
-            ? `No universities match “${search}”. Try a different search.`
-            : 'No universities are published yet. Verified partner universities will appear here as soon as their official data is loaded.'}
-        </div>
+        <EmptyState
+          icon="Building2"
+          title={search ? `No universities match “${search}”` : 'No universities published yet'}
+          description={
+            search
+              ? 'Try a different name or clear the search to see every published university.'
+              : 'Verified partner universities appear here as soon as their official data is published.'
+          }
+        />
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {universities.map((u: any, i) => (
@@ -477,12 +548,12 @@ export function PublicUniversitiesPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: '#0057B8' }}
+                    style={{ backgroundColor: 'var(--alo-brand)' }}
                   >
                     {u.name?.[0] || 'U'}
                   </div>
                   {u.worldRanking && (
-                    <Badge variant="secondary" className="bg-orange-50 text-[var(--alo-cta)]">
+                    <Badge variant="secondary" className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                       Rank #{u.worldRanking}
                     </Badge>
                   )}
@@ -539,7 +610,7 @@ export function PublicScholarshipsPage() {
       heroColor="#E8501A"
     >
       {loading ? (
-        <div className="text-center py-20 text-[var(--alo-text-muted)] font-medium">Loading verified global scholarships...</div>
+        <LoadingGrid count={6} />
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayData.map((s: any, i: number) => {
@@ -549,7 +620,7 @@ export function PublicScholarshipsPage() {
                 <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-[var(--alo-border)] hover:border-[var(--alo-brand)]">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <Badge className="bg-orange-50 text-[var(--alo-cta)] border-orange-200 font-semibold text-[11px]">
+                      <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border-[var(--alo-cta)]/25 font-semibold text-[11px]">
                         {s.coverageType || 'Merit Scholarship'}
                       </Badge>
                       <span className="text-xs font-semibold text-[var(--alo-text-muted)]">
@@ -566,7 +637,7 @@ export function PublicScholarshipsPage() {
                       Award: {s.awardAmount || s.amount || 'Varies by degree'}
                     </div>
                     <div className="flex gap-2">
-                      <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
+                      <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
                           View Full Details & Apply →
                         </a></Button>
                     </div>
@@ -629,7 +700,7 @@ export function PublicServicesPage() {
               </div>
 
               <div className="p-6 pt-0">
-                <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
+                <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
                     Explore Full Service Details & Process →
                   </a></Button>
               </div>
@@ -640,8 +711,8 @@ export function PublicServicesPage() {
 
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
-        <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
-        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
+        <p className="text-[var(--alo-brand-pale)] mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
+        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
             Book Free Consultation
           </a></Button>
       </div>
@@ -736,7 +807,7 @@ export function PublicAboutPage() {
         </h2>
       </div>
       <div className="grid md:grid-cols-2 gap-6 mb-12">
-        <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-blue-100">
+        <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-[var(--alo-border)]">
           <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--alo-brand)]">
             <Target className="h-6 w-6 text-white" aria-hidden="true" />
           </span>
@@ -754,7 +825,7 @@ export function PublicAboutPage() {
             </p>
           </div>
         </Card>
-        <Card className="p-8 bg-gradient-to-br from-orange-50 to-white border-orange-100">
+        <Card className="p-8 bg-gradient-to-br from-orange-50 to-white border-[var(--alo-cta)]/25">
           <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--alo-cta)]">
             <Eye className="h-6 w-6 text-white" aria-hidden="true" />
           </span>
@@ -817,7 +888,7 @@ export function PublicSuccessStoriesPage() {
       heroColor="#E8501A"
     >
       {loading ? (
-        <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading stories...</div>
+        <LoadingGrid count={4} />
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {data.map((s: any, i) => (
@@ -930,7 +1001,7 @@ export function PublicFaqsPage() {
       subtitle="Find answers to common questions about studying abroad with ALO Education."
     >
       {loading ? (
-        <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading FAQs...</div>
+        <div className="mx-auto max-w-3xl space-y-3">{Array.from({ length: 5 }).map((_, i) => (<div key={i} className="h-14 animate-pulse rounded-[12px] border border-[var(--alo-border)] bg-[var(--alo-surface-muted)]" />))}</div>
       ) : (
         <Card className="p-6 max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="w-full">
@@ -1108,7 +1179,7 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
           {content.sections.map((s, i) => (
             <div key={i}>
               <h3 className="font-bold text-[var(--alo-text)] mb-2 flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-blue-50 text-[var(--alo-brand)] text-xs font-bold flex items-center justify-center">
+                <span className="h-6 w-6 rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs font-bold flex items-center justify-center">
                   {i + 1}
                 </span>
                 {s.h}
@@ -1145,12 +1216,12 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
       subtitle="Prepare for English proficiency and admission tests with ALO Education's certified test coaches, score planners, and direct CRM integration."
       heroColor="#0057B8"
     >
-      <div className="flex justify-between items-center mb-8 bg-blue-50 p-4 rounded-2xl border border-blue-100">
+      <div className="flex justify-between items-center mb-8 bg-[var(--alo-brand-pale)] p-4 rounded-2xl border border-[var(--alo-border)]">
         <div>
           <h3 className="font-bold text-[var(--alo-brand)] text-base">Comprehensive Test Preparation Directory</h3>
           <p className="text-xs text-[var(--alo-body)]">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
-        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
+        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
             View All Test Prep →
           </a></Button>
       </div>
@@ -1160,7 +1231,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
           <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-[var(--alo-border)] hover:border-[var(--alo-brand)] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge className="bg-orange-50 text-[var(--alo-cta)] font-semibold text-[11px]">
+                <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] font-semibold text-[11px]">
                   {t.logoBadge}
                 </Badge>
                 <span className="text-xs font-semibold text-[var(--alo-text-muted)]">{t.quickInfo.duration}</span>
@@ -1179,7 +1250,7 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
                 <span className="text-[var(--alo-text-muted)] font-medium">Target Score:</span>
                 <span className="font-bold text-[var(--alo-brand)]">{t.expectedScore}</span>
               </div>
-              <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
+              <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
                   Explore Full Test Prep & Modules →
                 </a></Button>
             </div>
@@ -1217,7 +1288,7 @@ export function PublicResourcesPage() {
           const Icon = r.icon;
           return (
             <Card key={i} className="p-6 hover:shadow-md transition-shadow">
-              <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
+              <div className="h-12 w-12 rounded-xl bg-[var(--alo-brand-pale)] flex items-center justify-center mb-4">
                 <Icon className="h-6 w-6 text-[var(--alo-brand)]" />
               </div>
               <h3 className="font-bold text-[var(--alo-text)] mb-2">{r.title}</h3>
@@ -1335,7 +1406,7 @@ export function PublicVisaReadinessPage() {
 
       <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
-        <p className="text-blue-100 mb-5">
+        <p className="text-[var(--alo-brand-pale)] mb-5">
           Fees, processing times and document rules change and differ by nationality. A counselor checks the current
           requirements for your case against the official source.
         </p>
@@ -1399,10 +1470,10 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
-              <Button asChild className="w-full bg-[var(--alo-cta)] text-black hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
+              <Button asChild className="w-full bg-[var(--alo-cta)] text-black hover:brightness-110 py-2.5"><a href="/eligibility-check" className="block w-full">
                   Check Your Eligibility
                 </a></Button>
-              <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
+              <Button asChild variant="outline" className="w-full py-2.5 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"><a href="/book-consultation" className="block w-full">
                   Talk to ALO Counselor
                 </a></Button>
             </div>
@@ -1432,7 +1503,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <Button asChild className="bg-[var(--alo-cta)] text-black text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
+          <Button asChild className="bg-[var(--alo-cta)] text-black "><a href="/course-finder">Add Courses to Compare</a></Button>
         </div>
       </Card>
     </PublicShell>

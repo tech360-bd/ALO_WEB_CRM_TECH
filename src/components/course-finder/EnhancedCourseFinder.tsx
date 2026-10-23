@@ -227,7 +227,7 @@ export default function EnhancedCourseFinder() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-6">
         <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-6 md:p-12 shadow-sm">
           <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs mb-4">Verified, source-linked courses</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] tracking-tight mb-4">Find Your Course</h1>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4">Find Your Course</h1>
           <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">
             Search verified course records across our partner destinations. Only courses with a published, verified record and a source link are listed. Where a fee, intake, or requirement is not recorded, the course page says so.
           </p>
@@ -438,10 +438,10 @@ export default function EnhancedCourseFinder() {
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         <Link href={`/course/${encodeURIComponent(c.slug || c.courseId)}`} className="block col-span-1">
-                          <Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 text-xs font-bold">View course</Button>
+                          <Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 font-bold">View course</Button>
                         </Link>
                         <Link href="/eligibility-check" className="block col-span-1">
-                          <Button variant="outline" className="w-full h-12 text-xs border-[var(--alo-border)]">Check eligibility</Button>
+                          <Button variant="outline" className="w-full h-12 border-[var(--alo-border)]">Check eligibility</Button>
                         </Link>
                         <CompareToggle id={c.slug || c.courseId} title={c.courseTitle} />
                       </div>
@@ -477,12 +477,12 @@ function CompareToggle({ id, title }: { id: string; title: string }) {
   return (
     <div className="col-span-2 flex items-center justify-between gap-2 text-xs">
       <Button
-        type="button"
-        variant="outline"
-        className="h-11 px-4 text-xs border-[var(--alo-border)]"
-        aria-pressed={inList}
-        aria-label={inList ? `Remove ${title} from comparison` : `Add ${title} to comparison`}
-        onClick={() => {
+ type="button"
+ variant="outline"
+ className=" px-4 border-[var(--alo-border)]"
+ aria-pressed={inList}
+ aria-label={inList ? `Remove ${title} from comparison` : `Add ${title} to comparison`}
+ onClick={() => {
           const next = toggleCompare(id);
           if (next === null) { setFull(true); return; }
           setFull(false);

@@ -141,8 +141,8 @@ export default function ComparisonView() {
                     <div className="col-span-2"><span className="text-[var(--alo-text-muted)] block">Best For</span><span className="font-medium">{t.bestFor}</span></div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
-                    <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] h-9 rounded-xl text-xs"><a href={t.officialUrl} target="_blank">Official ↗</a></Button>
+                    <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
+                    <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] rounded-xl "><a href={t.officialUrl} target="_blank">Official ↗</a></Button>
                   </div>
                 </Card>
               ))}

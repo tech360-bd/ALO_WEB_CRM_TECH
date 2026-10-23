@@ -236,7 +236,7 @@ export default function ParentPortalPage() {
       </div>
 
       {/* Access level is stated openly, not silently enforced */}
-      <Card className="rounded-2xl border-2 border-blue-200 bg-blue-50/50">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50">
         <CardContent className="flex items-start gap-3 pt-5 pb-5">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-[var(--alo-brand)]" />
           <div>

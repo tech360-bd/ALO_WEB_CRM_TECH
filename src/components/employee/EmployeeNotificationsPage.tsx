@@ -33,7 +33,7 @@ interface LoadState {
 // Icons keyed by the `type` the record actually carries. Anything the
 // platform has not emitted falls through to a neutral bell.
 const TYPE_ICONS: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
-  task: { icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-100' },
+  task: { icon: CheckCircle, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   message: { icon: Mail, color: 'text-emerald-600', bg: 'bg-emerald-100' },
   application: { icon: FileText, color: 'text-purple-600', bg: 'bg-purple-100' },
   deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-100' },
@@ -265,7 +265,7 @@ export default function EmployeeNotificationsPage() {
                               {notification.type || 'info'}
                             </Badge>
                             {!notification.isRead ? (
-                              <Badge className="bg-blue-100 text-blue-700 text-[11px]">Unread</Badge>
+                              <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">Unread</Badge>
                             ) : null}
                           </div>
 

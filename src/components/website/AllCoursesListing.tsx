@@ -240,9 +240,9 @@ export default function AllCoursesListing() {
             will check availability against official university sources.
           </p>
           <Link
-            href="/book-consultation"
-            className="mt-5 inline-flex h-11 items-center rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-sm font-bold text-black transition-colors hover:bg-[var(--alo-cta-hover)]"
-          >
+ href="/book-consultation"
+ className="mt-5 inline-flex items-center rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-sm font-bold text-black transition-colors hover:bg-[var(--alo-cta-hover)]"
+ >
             Book Free Counseling
           </Link>
         </div>
@@ -325,15 +325,15 @@ export default function AllCoursesListing() {
 
                 <div className="mt-auto flex gap-2 pt-5">
                   <Link
-                    href={`/course/${encodeURIComponent(course.slug || course.courseId)}`}
-                    className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-[var(--alo-brand)] px-4 font-heading text-[13px] font-bold text-white transition-colors hover:bg-[var(--alo-brand-hover)]"
-                  >
+ href={`/course/${encodeURIComponent(course.slug || course.courseId)}`}
+ className="inline-flex flex-1 items-center justify-center rounded-xl bg-[var(--alo-brand)] px-4 font-heading text-[13px] font-bold text-white transition-colors hover:bg-[var(--alo-brand-hover)]"
+ >
                     View Course
                   </Link>
                   <Link
-                    href={`/course-finder?subject=${encodeURIComponent(course.subjectArea || '')}`}
-                    className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-[var(--alo-brand)] px-4 font-heading text-[13px] font-bold text-[var(--alo-brand)] transition-colors hover:bg-[var(--alo-brand-light)]"
-                  >
+ href={`/course-finder?subject=${encodeURIComponent(course.subjectArea || '')}`}
+ className="inline-flex flex-1 items-center justify-center rounded-xl border border-[var(--alo-brand)] px-4 font-heading text-[13px] font-bold text-[var(--alo-brand)] transition-colors hover:bg-[var(--alo-brand-light)]"
+ >
                     Compare
                   </Link>
                 </div>

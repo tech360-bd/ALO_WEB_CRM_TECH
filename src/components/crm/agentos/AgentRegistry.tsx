@@ -82,7 +82,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
   idle:        { label: "Idle",        color: "text-[var(--alo-text-muted)]",    bgClass: "bg-[var(--alo-page)]",     icon: <Clock className="w-3.5 h-3.5" /> },
   paused:      { label: "Paused",      color: "text-amber-600",   bgClass: "bg-amber-50",    icon: <Pause className="w-3.5 h-3.5" /> },
   error:       { label: "Error",       color: "text-red-600",     bgClass: "bg-red-50",      icon: <AlertTriangle className="w-3.5 h-3.5" /> },
-  maintenance: { label: "Maintenance", color: "text-blue-600",    bgClass: "bg-blue-50",     icon: <Wrench className="w-3.5 h-3.5" /> },
+  maintenance: { label: "Maintenance", color: "text-[var(--alo-brand)]",    bgClass: "bg-[var(--alo-brand-pale)]",     icon: <Wrench className="w-3.5 h-3.5" /> },
 };
 
 const healthConfig: Record<string, { label: string; dotColor: string; barColor: string }> = {
@@ -207,7 +207,7 @@ export default function AgentRegistry() {
             <StatCard icon={<Activity className="w-4 h-4" />} label="Active" value={stats.activeAgents} sub={`${((stats.activeAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-emerald-600" />
             <StatCard icon={<HeartPulse className="w-4 h-4" />} label="Healthy" value={stats.healthyAgents} sub={`${((stats.healthyAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-emerald-600" />
             <StatCard icon={<AlertOctagon className="w-4 h-4" />} label="Errors" value={stats.errorAgents} sub="24h window" color={stats.errorAgents > 0 ? "text-red-600" : "text-[var(--alo-text-muted)]"} />
-            <StatCard icon={<Zap className="w-4 h-4" />} label="Tasks Today" value={stats.totalTasksToday} sub={`Avg ${(stats.avgSuccessRate * 100).toFixed(1)}% success`} color="text-blue-600" />
+            <StatCard icon={<Zap className="w-4 h-4" />} label="Tasks Today" value={stats.totalTasksToday} sub={`Avg ${(stats.avgSuccessRate * 100).toFixed(1)}% success`} color="text-[var(--alo-brand)]" />
             <StatCard icon={<UserCheck className="w-4 h-4" />} label="Approval Queue" value={stats.approvalQueueDepth} sub="pending items" color="text-amber-600" />
           </div>
         )}
@@ -284,7 +284,7 @@ export default function AgentRegistry() {
                 </SelectContent>
               </Select>
               {(search || filterDept !== "all" || filterStatus !== "all" || filterHealth !== "all") && (
-                <Button variant="ghost" size="sm" className="h-9 text-xs" onClick={() => { setSearch(""); setFilterDept("all"); setFilterStatus("all"); setFilterHealth("all"); }}>
+                <Button variant="ghost" size="sm" className=" " onClick={() => { setSearch(""); setFilterDept("all"); setFilterStatus("all"); setFilterHealth("all"); }}>
                   <Filter className="w-3 h-3 mr-1" /> Clear
                 </Button>
               )}
@@ -496,13 +496,13 @@ export default function AgentRegistry() {
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8" disabled={pagination.page <= 1} onClick={() => setPage(pagination.page - 1)}>
+                  <Button variant="outline" size="icon" className="size-12 " disabled={pagination.page <= 1} onClick={() => setPage(pagination.page - 1)}>
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                   <span className="text-xs text-[var(--alo-body)] px-2">
                     {pagination.page} / {pagination.totalPages}
                   </span>
-                  <Button variant="outline" size="icon" className="h-8 w-8" disabled={pagination.page >= pagination.totalPages} onClick={() => setPage(pagination.page + 1)}>
+                  <Button variant="outline" size="icon" className="size-12 " disabled={pagination.page >= pagination.totalPages} onClick={() => setPage(pagination.page + 1)}>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>

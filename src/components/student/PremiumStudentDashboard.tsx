@@ -201,10 +201,10 @@ export default function PremiumStudentDashboard() {
             </div>
             <div className="flex items-center gap-2">
               <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Next: {nextAction?.text || 'Complete profile'}</Badge>
-              <Link href="/student/messages"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9"><MessageSquare className="w-4 h-4 mr-1" />Messages</Button></Link>
-              <Link href="/student/notifications"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9">Notifications</Button></Link>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] h-9">Help</Button>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] h-9">Logout</Button>
+              <Link href="/student/messages"><Button size="sm" variant="outline" className="border-[var(--alo-border)] "><MessageSquare className="w-4 h-4 mr-1" />Messages</Button></Link>
+              <Link href="/student/notifications"><Button size="sm" variant="outline" className="border-[var(--alo-border)] ">Notifications</Button></Link>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] ">Help</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] ">Logout</Button>
             </div>
           </div>
           <Progress value={profileCompletion} className="h-2 mt-4" />
@@ -218,12 +218,12 @@ export default function PremiumStudentDashboard() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-3"><Sparkles className="w-5 h-5 text-[var(--alo-cta-accent)]" /><Badge className="bg-white/20 text-white border-white/30 text-[11px] font-bold">YOUR NEXT BEST ACTION — Calculated from your live data</Badge></div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{nextAction?.text || 'Complete Your Profile'}</h2>
-              <p className="text-sm text-blue-100 mt-2 max-w-2xl leading-relaxed">{nextAction?.reason || 'AI determines this from real database information: application stage, missing documents, deadlines, payments, English score, interview readiness, visa checklist, counselor tasks.'}</p>
-              <p className="text-[11px] text-blue-200 mt-3">Examples: Complete profile, Upload passport/transcript/English certificate, Review university options, Compare courses, Apply to selected course, Sign application form, Upload bank statement, Pay application fee, Review offer, Pay deposit, Complete CAS questionnaire, Practice credibility interview, Upload visa documents, Book biometric appointment, Complete final visa review — AI calculates from.</p>
+              <p className="text-sm text-[var(--alo-brand-pale)] mt-2 max-w-2xl leading-relaxed">{nextAction?.reason || 'AI determines this from real database information: application stage, missing documents, deadlines, payments, English score, interview readiness, visa checklist, counselor tasks.'}</p>
+              <p className="text-[11px] text-[var(--alo-brand-pale)] mt-3">Examples: Complete profile, Upload passport/transcript/English certificate, Review university options, Compare courses, Apply to selected course, Sign application form, Upload bank statement, Pay application fee, Review offer, Pay deposit, Complete CAS questionnaire, Practice credibility interview, Upload visa documents, Book biometric appointment, Complete final visa review — AI calculates from.</p>
             </div>
             <div className="flex flex-col gap-3 shrink-0">
               <Link href={nextAction?.actionUrl || '/student/profile'}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-md">{nextAction?.cta || 'Continue'} →</Button></Link>
-              <Link href="/student/help"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-11 rounded-xl text-xs">Ask ALO AI — What should I do now?</Button></Link>
+              <Link href="/student/help"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 rounded-xl ">Ask ALO AI — What should I do now?</Button></Link>
             </div>
           </div>
         </Card>
@@ -264,7 +264,7 @@ export default function PremiumStudentDashboard() {
                   <Progress value={profileCompletion} className="h-2 mb-3" />
                   <p className="text-xs text-[var(--alo-body)]">Completion: {profileCompletion}% • Missing: {profile?.studyGap ? 'Study gap explanation' : 'Check profile'} • AI recommendation: Complete missing info for better course matching</p>
                 </div>
-                <Link href="/student/profile" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Profile — My Journey</Button></Link>
+                <Link href="/student/profile" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Profile — My Journey</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -282,7 +282,7 @@ export default function PremiumStudentDashboard() {
                     </div>
                   )}
                 </div>
-                <Link href="/student/applications" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Applications — My Applications</Button></Link>
+                <Link href="/student/applications" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Applications — My Applications</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -299,7 +299,7 @@ export default function PremiumStudentDashboard() {
                     </div>
                   )}
                 </div>
-                <Link href="/student/documents" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Documents — My Documents</Button></Link>
+                <Link href="/student/documents" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Documents — My Documents</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -308,7 +308,7 @@ export default function PremiumStudentDashboard() {
                   <p className="text-xs text-[var(--alo-body)]">Latest score, mock credits, weak skill, recommended practice — ALO full students receive 3 free full mocks — track remaining/used/paid credits, mock history, latest result, weak areas — DB-driven.</p>
                   <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">English Test-only students receive separate limited dashboard and must not gain admission/visa access unless upgraded — RBAC enforced.</p>
                 </div>
-                <Link href="/student/english-test" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View English Tests — My Tests</Button></Link>
+                <Link href="/student/english-test" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View English Tests — My Tests</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -316,7 +316,7 @@ export default function PremiumStudentDashboard() {
                   <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Users className="w-4 h-4 text-[var(--alo-brand)]" />AI Interview</h4>
                   <p className="text-xs text-[var(--alo-body)]">Readiness score, last practice, risk level, next recommendation — interview types credibility/visa/pre-CAS/scholarship/sponsor/study-gap/general English speaking — AI asks one question at a time dynamically follow up — scores communication/confidence/course knowledge/university knowledge/country knowledge/financial/sponsor/study-gap/future plan/visa risk/overall readiness — results READY/NEEDS_PRACTICE/HIGH_RISK/HUMAN_REVIEW_REQUIRED — save result to Student Portal/CRM timeline/Counselor dashboard/Visa Officer dashboard.</p>
                 </div>
-                <Link href="/student/ai-interview" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">Practice Interview — My Interviews</Button></Link>
+                <Link href="/student/ai-interview" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">Practice Interview — My Interviews</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -325,7 +325,7 @@ export default function PremiumStudentDashboard() {
                   <p className="text-xs text-[var(--alo-body)]">Readiness %, missing items, risk flags, next action — visa checklist financial documents sponsor documents CAS passport medical/TB if required visa forms biometrics appointment visa application decision — CAS bank statement sponsor documents visa status TB/medical biometric decision refusal history and AI risk/readiness — DB-driven.</p>
                   <p className="text-[11px] text-amber-700 mt-2 bg-amber-50 border border-amber-200 rounded-xl p-2">AI must never guarantee visa approval — never show Visa guaranteed — use Current readiness assessment indicates areas that should be reviewed before submission.</p>
                 </div>
-                <Link href="/student/visa" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Visa — My Visa</Button></Link>
+                <Link href="/student/visa" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Visa — My Visa</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -333,7 +333,7 @@ export default function PremiumStudentDashboard() {
                   <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[var(--alo-brand)]" />Messages — Unified Communication Center</h4>
                   <p className="text-xs text-[var(--alo-body)]">One unified conversation — WhatsApp/SMS/Website Chat/Messenger/Instagram/Email/Portal Message — do not manually switch between histories — every message connects to student_id/lead_id/application_id/conversation_id/channel/sender/sender_role/timestamp/status — same student record and timeline for AI/Counselor/Application Team/English Trainer/Visa Officer.</p>
                 </div>
-                <Link href="/student/messages" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Messages — My Messages</Button></Link>
+                <Link href="/student/messages" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Messages — My Messages</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -341,7 +341,7 @@ export default function PremiumStudentDashboard() {
                   <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><CalendarDays className="w-4 h-4 text-[var(--alo-brand)]" />Appointment</h4>
                   <p className="text-xs text-[var(--alo-body)]">Next appointment, counselor, date/time, meeting link.</p>
                 </div>
-                <Link href="/student/appointments" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Appointments — My Appointments</Button></Link>
+                <Link href="/student/appointments" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Appointments — My Appointments</Button></Link>
               </Card>
 
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm h-full flex flex-col justify-between">
@@ -349,7 +349,7 @@ export default function PremiumStudentDashboard() {
                   <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-[var(--alo-brand)]" />Payment</h4>
                   <p className="text-xs text-[var(--alo-body)]">Outstanding amount, payment status, invoice — application fee/university deposit/ALO service payment/mock test payment/other approved fees — each payment invoice/amount/currency/status/deadline/receipt/transaction reference — never claim fee is current without verified source data.</p>
                 </div>
-                <Link href="/student/payments" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] h-11 text-xs">View Payments — My Payments</Button></Link>
+                <Link href="/student/payments" className="block mt-4"><Button variant="outline" className="w-full border-[var(--alo-border)] ">View Payments — My Payments</Button></Link>
               </Card>
             </div>
 
@@ -437,9 +437,9 @@ export default function PremiumStudentDashboard() {
               <div className="bg-white border border-[var(--alo-border)] rounded-xl p-3 mt-3 text-xs">
                 <p className="font-bold">Your Referral Code: AEFR-{profile?.studentId?.substring(0,6) || 'XXXXXX'}</p>
                 <div className="flex gap-2 mt-2">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-whatsapp)] text-white h-8 text-[11px]">Share WhatsApp</Button>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] h-8 text-[11px]">Copy Link</Button>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] h-8 text-[11px]">Messenger</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-whatsapp)] text-white text-[11px]">Share WhatsApp</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]">Copy Link</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]">Messenger</Button>
                 </div>
               </div>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Referrals: sent/pending/qualified/successful/available reward/offers — Marketing can configure offers from backend — not CRM administration, student-facing.</p>

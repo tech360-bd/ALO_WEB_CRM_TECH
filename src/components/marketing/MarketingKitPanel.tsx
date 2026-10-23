@@ -129,12 +129,12 @@ function CopyButton({
   const isCopied = copied === id;
   return (
     <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      className="h-8 rounded-lg text-xs"
-      aria-label={label ? `${isCopied ? 'Copied' : 'Copy'} ${label}` : undefined}
-      onClick={() => onCopy(text, id)}
+ type="button"
+ variant="outline"
+ size="sm"
+ className=" rounded-lg "
+ aria-label={label ? `${isCopied ? 'Copied' : 'Copy'} ${label}` : undefined}
+ onClick={() => onCopy(text, id)}
     >
       {isCopied ? <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" /> : <Clipboard className="h-3.5 w-3.5" aria-hidden="true" />}
       {isCopied ? 'Copied' : 'Copy'}
@@ -234,12 +234,12 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             {kits.length} campaign {kits.length === 1 ? 'kit' : 'kits'} · {EMAIL_SEQUENCES.length} sequences · {LEAD_MAGNETS.length} magnets
           </span>
           <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-9 rounded-lg text-xs"
-            aria-label="Download the full marketing library as Markdown"
-            onClick={() => downloadText('alo-marketing-kit-library.md', libraryAsMarkdown)}
+ type="button"
+ variant="outline"
+ size="sm"
+ className=" rounded-lg "
+ aria-label="Download the full marketing library as Markdown"
+ onClick={() => downloadText('alo-marketing-kit-library.md', libraryAsMarkdown)}
           >
             <Download className="h-3.5 w-3.5" aria-hidden="true" />
             Download full library
@@ -321,11 +321,11 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               <div className="flex gap-2">
                 <CopyButton id={`kit-${kit.id}`} label={`${kit.name} campaign kit`} text={kitAsText} copied={copied} onCopy={copyText} />
                 <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-8 rounded-lg text-xs"
-                  onClick={() => downloadText(`${kit.id}-marketing-kit.md`, kitAsText)}
+ type="button"
+ variant="outline"
+ size="sm"
+ className=" rounded-lg "
+ onClick={() => downloadText(`${kit.id}-marketing-kit.md`, kitAsText)}
                 >
                   <Download className="h-3.5 w-3.5" aria-hidden="true" />
                   Download
@@ -441,11 +441,11 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             <div className="flex gap-2 pt-2">
               <CopyButton id={`sequence-${sequence.id}`} label={`${sequence.name} email sequence`} text={sequenceAsText} copied={copied} onCopy={copyText} />
               <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-8 rounded-lg text-xs"
-                onClick={() => downloadText(`${sequence.id}-sequence.md`, sequenceAsText)}
+ type="button"
+ variant="outline"
+ size="sm"
+ className=" rounded-lg "
+ onClick={() => downloadText(`${sequence.id}-sequence.md`, sequenceAsText)}
               >
                 <Download className="h-3.5 w-3.5" />
                 Download

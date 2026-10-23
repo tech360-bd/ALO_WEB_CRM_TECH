@@ -31,7 +31,7 @@ export default function BrandAssetsPostCreatorView() {
   useEffect(() => { const controller = new AbortController(); void load(controller.signal); return () => controller.abort(); }, []);
   return <div className="space-y-6">
     <header>
-      <h1 className="flex items-center gap-2 text-2xl font-bold"><Palette aria-hidden="true" className="h-7 w-7 text-orange-600" />Brand Assets & Post Creator</h1>
+      <h1 className="flex items-center gap-2 text-2xl font-bold"><Palette aria-hidden="true" className="h-7 w-7 text-[var(--alo-cta-active)]" />Brand Assets & Post Creator</h1>
       <p className="mt-2 text-sm text-[var(--alo-body)]">Create original ALO campaign drafts and download real visual assets. No automatic AI, approval, scheduling or publishing is performed here.</p>
     </header>
     <section aria-labelledby="brand-assets-title" aria-busy={status === 'loading'} className="rounded-2xl border bg-white p-4">
@@ -44,9 +44,9 @@ export default function BrandAssetsPostCreatorView() {
           : assets.length ? <ul className="mt-3 grid gap-2 sm:grid-cols-2">{assets.map((asset) => <li key={asset.id} className="rounded-lg border p-3 text-sm"><span className="font-medium">{asset.name}</span><span className="ml-2 text-xs text-[var(--alo-text-muted)]">{asset.assetType}</span></li>)}</ul>
             : <p className="mt-3 text-sm text-[var(--alo-text-muted)]">No active brand assets are stored yet. Draft layouts use ALO typography and colors, not an invented logo or phone number.</p>}
       <p className="mt-3 text-xs text-[var(--alo-text-muted)]">Stored assets are not automatically imprinted into these local templates. Verify logos, contact details and destination links before publishing.</p>
-      <Link href="/admin/marketing-automation" className="mt-2 inline-block text-sm font-medium text-blue-700 underline focus-visible:outline-2">Manage brand settings and provider readiness</Link>
+      <Link href="/admin/marketing-automation" className="mt-2 inline-block text-sm font-medium text-[var(--alo-brand)] underline focus-visible:outline-2">Manage brand settings and provider readiness</Link>
     </section>
-    <Link href="/crm/diagram-studio" className="inline-block text-sm font-medium text-blue-700 underline">Open Diagram Studio — five types, SVG, PNG and clipboard</Link>
+    <Link href="/crm/diagram-studio" className="inline-block text-sm font-medium text-[var(--alo-brand)] underline">Open Diagram Studio — five types, SVG, PNG and clipboard</Link>
     <MarketingKitPanel />
   </div>;
 }

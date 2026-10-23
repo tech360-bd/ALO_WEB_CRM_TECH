@@ -246,7 +246,7 @@ const PROVIDER_TYPE_COLORS: Record<string, string> = {
   COUNTRY_SPECIFIC: "bg-violet-100 text-violet-700",
   UNIVERSITY_REPRESENTATIVE: "bg-sky-100 text-sky-700",
   PATHWAY_PROVIDER: "bg-amber-100 text-amber-700",
-  AGGREGATOR: "bg-orange-100 text-orange-700",
+  AGGREGATOR: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   SUB_AGENT: "bg-emerald-100 text-emerald-700",
   DIRECT_UNIVERSITY: "bg-teal-100 text-teal-700",
 };
@@ -258,25 +258,25 @@ const B2B_STATUS_META: Record<string, { label: string; cls: string }> = {
   DECISION_PENDING: { label: "Decision Pending", cls: "bg-amber-100 text-amber-700" },
   OFFERED: { label: "Offered", cls: "bg-emerald-100 text-emerald-700" },
   REJECTED: { label: "Rejected", cls: "bg-rose-100 text-rose-700" },
-  COMMISSION_DUE: { label: "Commission Due", cls: "bg-orange-100 text-orange-700" },
+  COMMISSION_DUE: { label: "Commission Due", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   COMMISSION_PAID: { label: "Commission Paid", cls: "bg-teal-100 text-teal-700" },
 };
 
 const B2B_TYPE_META: Record<string, { label: string; cls: string; icon: string }> = {
   INBOUND: { label: "INBOUND", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
-  OUTBOUND: { label: "OUTBOUND", cls: "bg-orange-100 text-orange-700", icon: "ArrowUpFromLine" },
+  OUTBOUND: { label: "OUTBOUND", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]", icon: "ArrowUpFromLine" },
 };
 
 const SOURCE_META: Record<string, { label: string; cls: string; icon: string }> = {
   DIRECT: { label: "Direct", cls: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]", icon: "FileText" },
   PARTNER: { label: "Partner", cls: "bg-violet-100 text-violet-700", icon: "Handshake" },
   B2B_INBOUND: { label: "B2B Inbound", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
-  B2B_OUTBOUND: { label: "B2B Outbound", cls: "bg-orange-100 text-orange-700", icon: "ArrowUpFromLine" },
+  B2B_OUTBOUND: { label: "B2B Outbound", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]", icon: "ArrowUpFromLine" },
 };
 
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
   URGENT: { label: "Urgent", cls: "bg-rose-100 text-rose-700" },
-  HIGH: { label: "High", cls: "bg-orange-100 text-orange-700" },
+  HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
   LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
@@ -300,15 +300,15 @@ const COMMENT_CHANNEL_CLS: Record<string, string> = {
   B2B_CONFIDENTIAL: "bg-rose-100 text-rose-700",
   UNIVERSITY: "bg-teal-100 text-teal-700",
   FINANCE: "bg-amber-100 text-amber-700",
-  VISA_HANDOVER: "bg-orange-100 text-orange-700",
+  VISA_HANDOVER: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const DEADLINE_TYPE_META: Record<string, { label: string; cls: string }> = {
   APPLICATION: { label: "Application", cls: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" },
   DOCUMENT: { label: "Document", cls: "bg-amber-100 text-amber-700" },
   OFFER_CONDITION: { label: "Offer Condition", cls: "bg-violet-100 text-violet-700" },
-  DEPOSIT: { label: "Deposit", cls: "bg-orange-100 text-orange-700" },
-  CAS_I20_COE: { label: "CAS / I-20 / COE", cls: "bg-orange-100 text-orange-700" },
+  DEPOSIT: { label: "Deposit", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
+  CAS_I20_COE: { label: "CAS / I-20 / COE", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   B2B_FOLLOWUP: { label: "B2B Follow-up", cls: "bg-rose-100 text-rose-700" },
   UNIVERSITY_FOLLOWUP: { label: "University Follow-up", cls: "bg-sky-100 text-sky-700" },
 };
@@ -510,11 +510,11 @@ export function ApplicationManagerPortal() {
               </Select>
             </div>
             <Button
-              variant="outline"
-              className="h-9 rounded-xl"
-              onClick={fetchDashboard}
-              disabled={loading}
-            >
+ variant="outline"
+ className=" rounded-xl"
+ onClick={fetchDashboard}
+ disabled={loading}
+ >
               <Icon name="RefreshCw" className={`mr-1.5 size-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
@@ -557,7 +557,7 @@ export function ApplicationManagerPortal() {
           title="Dashboard unavailable"
           description="Could not load dashboard data. Please retry."
           action={
-            <Button className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={fetchDashboard}>
+            <Button className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={fetchDashboard}>
               <Icon name="RefreshCw" className="mr-1.5 size-4" /> Retry
             </Button>
           }
@@ -951,9 +951,9 @@ function DashboardTab({
           icon="ListTodo"
           action={
             <Button
-              size="sm"
-              className="h-9 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-              onClick={() => toast({ title: "Create Task", description: "Open the Tasks tab to create a new task with assignment & priority." })}
+ size="sm"
+ className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ onClick={() => toast({ title: "Create Task", description: "Open the Tasks tab to create a new task with assignment & priority." })}
             >
               <Icon name="Plus" className="mr-1 size-4" /> New Task
             </Button>
@@ -1363,7 +1363,7 @@ function B2BApplicationsTab({
         title="B2B Applications"
         icon="Lock"
         action={
-          <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
+          <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Create B2B Application
           </Button>
         }
@@ -1423,10 +1423,10 @@ function B2BApplicationsTab({
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 rounded-lg"
-                          onClick={() => {
+ size="sm"
+ variant="outline"
+ className=" rounded-lg"
+ onClick={() => {
                             setUpdateTarget(b);
                             setUpdateStatus(b.b2bStatus);
                           }}
@@ -1522,8 +1522,8 @@ function B2BApplicationsTab({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleCreate}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleCreate}>
               {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Lock" className="mr-1.5 size-4" />}
               Create Confidential Entry
             </Button>
@@ -1554,8 +1554,8 @@ function B2BApplicationsTab({
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setUpdateTarget(null)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleUpdateStatus}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setUpdateTarget(null)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleUpdateStatus}>
               {saving && <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" />} Update Status
             </Button>
           </DialogFooter>
@@ -1640,7 +1640,7 @@ function B2BProvidersTab({
         description="Confidential provider directory — credentials & commission rules encrypted"
         icon="Building2"
         action={
-          <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
+          <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Add Provider
           </Button>
         }
@@ -1783,8 +1783,8 @@ function B2BProvidersTab({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleCreate}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleCreate}>
               {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Lock" className="mr-1.5 size-4" />}
               Add Confidential Provider
             </Button>
@@ -2036,10 +2036,10 @@ function CommentsTab({
                   </label>
                 )}
                 <Button
-                  className="ml-auto h-9 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                  disabled={saving || !newComment.trim()}
-                  onClick={handleAdd}
-                >
+ className="ml-auto rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={saving || !newComment.trim()}
+ onClick={handleAdd}
+ >
                   {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Send" className="mr-1.5 size-4" />}
                   Post Comment
                 </Button>
@@ -2213,7 +2213,7 @@ function TasksTab({
         description="Track tasks across applications with assignment & priority"
         icon="ListTodo"
         action={
-          <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
+          <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Create Task
           </Button>
         }
@@ -2321,8 +2321,8 @@ function TasksTab({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={handleCreate}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={handleCreate}>
               <Icon name="Plus" className="mr-1.5 size-4" /> Create Task
             </Button>
           </DialogFooter>

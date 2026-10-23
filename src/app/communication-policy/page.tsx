@@ -12,7 +12,7 @@ export default function CommunicationPolicyPage() {
   return (
     <div className="min-h-screen bg-white pt-8 pb-20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Badge className="bg-blue-50 text-[var(--alo-brand)] border border-blue-100 mb-4">LEGAL</Badge>
+        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] mb-4">LEGAL</Badge>
         <h1 className="text-3xl font-bold text-[var(--alo-text)] mb-2">Communication Policy</h1>
         <p className="text-sm text-[var(--alo-text-muted)] mb-8">Last updated: 15 Sep 2026 • Effective for https://aloeducation.com • Contact: info@aloeducation.com / 01805020101</p>
 

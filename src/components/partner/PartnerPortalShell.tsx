@@ -261,10 +261,10 @@ export default function PartnerPortalShell({ children }: { children: React.React
       <Separator />
       <div className="p-3">
         <Button
-          variant="ghost"
-          className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 h-10"
-          onClick={handleLogout}
-        >
+ variant="ghost"
+ className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 "
+ onClick={handleLogout}
+ >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>

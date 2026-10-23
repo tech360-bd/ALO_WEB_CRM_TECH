@@ -130,7 +130,7 @@ export default function ManualLeadPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <header className="mb-6">
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-[var(--alo-brand)]">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] px-3 py-1 text-xs font-semibold text-[var(--alo-brand)]">
           <UserPlus className="size-3.5" /> FORM C — MANUAL LEAD ADD
         </span>
         <h1 className="mt-3 text-2xl font-bold text-[var(--alo-text)]">Add a lead and complete counseling</h1>

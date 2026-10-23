@@ -55,7 +55,7 @@ interface AppRow {
 
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
   URGENT: { label: "Urgent", cls: "bg-red-100 text-red-700" },
-  HIGH: { label: "High", cls: "bg-orange-100 text-orange-700" },
+  HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
   LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
@@ -505,10 +505,10 @@ export function ApplicationsView() {
               Cancel
             </Button>
             <Button
-              onClick={submitUpdate}
-              disabled={saving || (updateTarget?.stage === newStage)}
-              className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-            >
+ onClick={submitUpdate}
+ disabled={saving || (updateTarget?.stage === newStage)}
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ >
               {saving ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />

@@ -259,7 +259,7 @@ export function InternationalOfficerDashboard() {
         title="International Officer Dashboard"
         subtitle="Manage university research activities, partnership communications (emails & agreements), contact details, and business strategy — best methods & locations for rapidly establishing university partnerships."
         icon="Globe"
-        action={<Button onClick={fetchDashboard} variant="outline" className="h-10"><Icon name="RefreshCw" className="size-4" />Refresh</Button>}
+        action={<Button onClick={fetchDashboard} variant="outline" className=""><Icon name="RefreshCw" className="size-4" />Refresh</Button>}
       />
 
       {/* Metrics */}
@@ -309,7 +309,7 @@ export function InternationalOfficerDashboard() {
                 {COUNTRIES.map((c) => (
                   <div key={c.slug} className="flex items-center justify-between rounded-xl border border-[var(--alo-border)] bg-white p-3">
                     <div className="flex items-center gap-2">
-                      <div className="size-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-xs">{c.slug.toUpperCase().slice(0,2)}</div>
+                      <div className="size-8 rounded-lg bg-[var(--alo-brand-pale)] flex items-center justify-center text-[var(--alo-brand)] font-bold text-xs">{c.slug.toUpperCase().slice(0,2)}</div>
                       <div><p className="font-medium text-sm text-[var(--alo-text)]">{c.label}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.region} • {c.universities} universities</p></div>
                     </div>
                     <Badge variant="outline" className={cn("text-[11px]", c.priority==="High" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200")}>{c.priority}</Badge>
@@ -386,7 +386,7 @@ export function InternationalOfficerDashboard() {
               <div className="space-y-2">
                 {communications.map((c) => (
                   <div key={c.id} className="rounded-xl border p-3 bg-white">
-                    <div className="flex justify-between gap-2"><div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.contactName} • {c.contactEmail} • {c.communicationType} • {c.direction}</p><p className="text-xs text-[var(--alo-body)] mt-1 line-clamp-2">{c.body.slice(0,200)}</p></div><Badge variant="outline" className={cn("h-fit text-[11px]", c.status==="SENT" ? "bg-emerald-50 text-emerald-700" : c.status==="REPLIED" ? "bg-blue-50 text-blue-700" : "bg-[var(--alo-page)]")}>{c.status}</Badge></div>
+                    <div className="flex justify-between gap-2"><div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.contactName} • {c.contactEmail} • {c.communicationType} • {c.direction}</p><p className="text-xs text-[var(--alo-body)] mt-1 line-clamp-2">{c.body.slice(0,200)}</p></div><Badge variant="outline" className={cn("h-fit text-[11px]", c.status==="SENT" ? "bg-emerald-50 text-emerald-700" : c.status==="REPLIED" ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-page)]")}>{c.status}</Badge></div>
                   </div>
                 ))}
               </div>
@@ -450,7 +450,7 @@ export function InternationalOfficerDashboard() {
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {strategies.map((s) => (
-                  <Card key={s.id} className="rounded-xl border"><CardContent className="pt-4 space-y-3"><div className="flex justify-between"><p className="font-bold text-sm">{s.title}</p><Badge variant="outline" className="text-[11px]">{s.status}</Badge></div><p className="text-xs text-[var(--alo-text-muted)]">{s.countrySlug} • {s.region} • {s.strategyType}</p><p className="text-sm text-[var(--alo-body)]">{s.description}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"><div className="rounded-lg border p-2 bg-amber-50/50"><p className="font-semibold">Best Methods</p><p className="mt-1 whitespace-pre-wrap">{s.bestMethods.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-blue-50/50"><p className="font-semibold">Best Locations</p><p className="mt-1 whitespace-pre-wrap">{s.bestLocations.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-emerald-50/50"><p className="font-semibold">Contact Strategy</p><p className="mt-1 whitespace-pre-wrap">{s.contactStrategy.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-violet-50/50"><p className="font-semibold">Research Leverage & Expansion</p><p className="mt-1 whitespace-pre-wrap">{(s.researchLeverage + "\n" + s.businessExpansion).slice(0,500)}</p></div></div></CardContent></Card>
+                  <Card key={s.id} className="rounded-xl border"><CardContent className="pt-4 space-y-3"><div className="flex justify-between"><p className="font-bold text-sm">{s.title}</p><Badge variant="outline" className="text-[11px]">{s.status}</Badge></div><p className="text-xs text-[var(--alo-text-muted)]">{s.countrySlug} • {s.region} • {s.strategyType}</p><p className="text-sm text-[var(--alo-body)]">{s.description}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"><div className="rounded-lg border p-2 bg-amber-50/50"><p className="font-semibold">Best Methods</p><p className="mt-1 whitespace-pre-wrap">{s.bestMethods.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-[var(--alo-brand-pale)]/50"><p className="font-semibold">Best Locations</p><p className="mt-1 whitespace-pre-wrap">{s.bestLocations.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-emerald-50/50"><p className="font-semibold">Contact Strategy</p><p className="mt-1 whitespace-pre-wrap">{s.contactStrategy.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-violet-50/50"><p className="font-semibold">Research Leverage & Expansion</p><p className="mt-1 whitespace-pre-wrap">{(s.researchLeverage + "\n" + s.businessExpansion).slice(0,500)}</p></div></div></CardContent></Card>
                 ))}
               </div>
             )}

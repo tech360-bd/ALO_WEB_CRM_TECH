@@ -44,7 +44,7 @@ function SortableCard({ item, onOpen, canMove, moving, onMove, stages }: { item:
       <div className="flex items-start gap-2">
         <button type="button" disabled={!canMove || moving} aria-label={`Move ${item.title}`} title={canMove ? "Drag to a column; keyboard users can use the stage selector" : "Stage editing is unavailable in this view"} {...attributes} {...listeners} className="mt-1 rounded text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] focus-visible:outline-2 focus-visible:outline-blue-600 disabled:opacity-50"><GripVertical className="w-3.5 h-3.5"/></button>
         <div className="flex-1 min-w-0">
-          <button type="button" disabled={!onOpen} onClick={()=> onOpen?.(item.id)} className="block max-w-full truncate text-left text-sm font-semibold text-blue-700 focus-visible:outline-2 focus-visible:outline-blue-600 disabled:text-[var(--alo-body)]">{item.title}</button>
+          <button type="button" disabled={!onOpen} onClick={()=> onOpen?.(item.id)} className="block max-w-full truncate text-left text-sm font-semibold text-[var(--alo-brand)] focus-visible:outline-2 focus-visible:outline-blue-600 disabled:text-[var(--alo-body)]">{item.title}</button>
           {item.subtitle && <p className="text-xs text-[var(--alo-text-muted)] truncate">{item.subtitle}</p>}
           <div className="flex gap-1 mt-1 flex-wrap">
             <Badge variant="outline" className="text-[11px]">{item.stage}</Badge>
@@ -61,7 +61,7 @@ function SortableCard({ item, onOpen, canMove, moving, onMove, stages }: { item:
 
 function StageColumn({ stage, children }: { stage: string; children: React.ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({ id: stage, data: { stage } });
-  return <div ref={setNodeRef} className={`min-w-[220px] rounded-xl border p-2 ${isOver ? 'border-blue-500 bg-blue-50' : 'bg-[var(--alo-page)]'}`}>{children}</div>;
+  return <div ref={setNodeRef} className={`min-w-[220px] rounded-xl border p-2 ${isOver ? 'border-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' : 'bg-[var(--alo-page)]'}`}>{children}</div>;
 }
 
 export default function KanbanPipeline({ items: initial, onStageChange, onOpen, stages = STAGES, moveTargets }: { moveTargets?: (item: KanbanItem) => readonly string[]; stages?: readonly string[]; items: KanbanItem[]; onStageChange?: (id:string, newStage:string)=>Promise<void>|void; onOpen?: (id:string)=>void }){
@@ -135,7 +135,7 @@ export default function KanbanPipeline({ items: initial, onStageChange, onOpen, 
         <div className="flex items-center gap-1">
           <Eye className="w-4 h-4 text-[var(--alo-text-muted)]"/>
           <span className="text-xs font-bold">Views</span>
-          {views.filter(v=> v.pinned).map(v=> <Button key={v.id} size="sm" variant={activeView===v.id?'default':'outline'} className="h-7 text-xs" onClick={()=> applyView(v.id)}><Pin className="w-3 h-3 mr-1"/>{v.name}</Button>)}
+          {views.filter(v=> v.pinned).map(v=> <Button key={v.id} size="sm" variant={activeView===v.id?'default':'outline'} className="h-7 " onClick={()=> applyView(v.id)}><Pin className="w-3 h-3 mr-1"/>{v.name}</Button>)}
           <Select value={activeView||''} onValueChange={applyView}><SelectTrigger className="h-7 w-[160px] text-xs"><SelectValue placeholder="Saved views"/></SelectTrigger><SelectContent>{views.map(v=> <SelectItem key={v.id} value={v.id}>{v.name}{v.isPublic?' (public)':''}</SelectItem>)}</SelectContent></Select>
           <Button size="sm" variant="outline" className="h-7" onClick={saveView}><Plus className="w-3 h-3 mr-1"/>Save view</Button>
         </div>

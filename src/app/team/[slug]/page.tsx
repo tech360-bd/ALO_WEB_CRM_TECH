@@ -79,7 +79,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {member.specializations.map((spec) => (
-                      <Badge key={spec} variant="secondary" className="bg-blue-50 text-[var(--alo-brand)]">
+                      <Badge key={spec} variant="secondary" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                         {spec}
                       </Badge>
                     ))}
@@ -92,7 +92,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ slu
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {member.universitiesExpertise.map((uni) => (
-                      <Badge key={uni} variant="secondary" className="bg-orange-50 text-[var(--alo-cta)]">
+                      <Badge key={uni} variant="secondary" className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                         {uni}
                       </Badge>
                     ))}

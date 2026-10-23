@@ -85,34 +85,34 @@ export default function AccessControlCenterPage() {
       {/* Tabs Bar */}
       <div className="flex items-center gap-2 border-b border-[var(--alo-border)] pb-2">
         <Button
-          variant={activeTab === 'employees' ? 'brand' : 'ghost'}
-          size="sm"
-          className="text-xs"
-          onClick={() => setActiveTab('employees')}
+ variant={activeTab === 'employees' ? 'brand' : 'ghost'}
+ size="sm"
+ className=""
+ onClick={() => setActiveTab('employees')}
         >
           <Users className="w-3.5 h-3.5 mr-1" /> ALO Employee Roles &amp; Privacy
         </Button>
         <Button
-          variant={activeTab === 'packages' ? 'brand' : 'ghost'}
-          size="sm"
-          className="text-xs"
-          onClick={() => setActiveTab('packages')}
+ variant={activeTab === 'packages' ? 'brand' : 'ghost'}
+ size="sm"
+ className=""
+ onClick={() => setActiveTab('packages')}
         >
           <Package className="w-3.5 h-3.5 mr-1" /> B2B Partner Packages
         </Button>
         <Button
-          variant={activeTab === 'quotas' ? 'brand' : 'ghost'}
-          size="sm"
-          className="text-xs"
-          onClick={() => setActiveTab('quotas')}
+ variant={activeTab === 'quotas' ? 'brand' : 'ghost'}
+ size="sm"
+ className=""
+ onClick={() => setActiveTab('quotas')}
         >
           <Sliders className="w-3.5 h-3.5 mr-1" /> Quotas &amp; Seat Requests
         </Button>
         <Button
-          variant={activeTab === 'audit' ? 'brand' : 'ghost'}
-          size="sm"
-          className="text-xs"
-          onClick={() => setActiveTab('audit')}
+ variant={activeTab === 'audit' ? 'brand' : 'ghost'}
+ size="sm"
+ className=""
+ onClick={() => setActiveTab('audit')}
         >
           <Key className="w-3.5 h-3.5 mr-1" /> Audit &amp; Privacy Rules
         </Button>
@@ -231,7 +231,7 @@ export default function AccessControlCenterPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         {req.status === 'pending' && (
-                          <Button size="sm" className="h-7 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => handleApproveQuotaRequest(req.id)}>
+                          <Button size="sm" className="h-7 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => handleApproveQuotaRequest(req.id)}>
                             Approve Request
                           </Button>
                         )}

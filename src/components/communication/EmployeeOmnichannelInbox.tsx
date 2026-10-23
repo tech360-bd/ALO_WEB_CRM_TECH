@@ -22,7 +22,7 @@ import {
 // ─────────────────────────────────────────────────────────────
 const CHANNEL_ICONS: Record<string, React.ReactNode> = {
   whatsapp: <Zap className="w-3.5 h-3.5 text-emerald-500" />,
-  facebook: <Facebook className="w-3.5 h-3.5 text-blue-600" />,
+  facebook: <Facebook className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
   instagram: <Instagram className="w-3.5 h-3.5 text-pink-500" />,
   email: <Mail className="w-3.5 h-3.5 text-amber-500" />,
   live_chat: <Globe className="w-3.5 h-3.5 text-blue-400" />,
@@ -342,7 +342,7 @@ export default function EmployeeOmnichannelInbox() {
                 onClick={() => selectConversation(conv)}
                 className={`w-full text-left px-4 py-3 border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-all ${
                   selectedConv?.id === conv.id
-                    ? 'bg-blue-50 border-l-2 border-l-[#0057B8]'
+                    ? 'bg-[var(--alo-brand-pale)] border-l-2 border-l-[#0057B8]'
                     : 'border-l-2 border-l-transparent'
                 }`}
               >
@@ -601,7 +601,7 @@ export default function EmployeeOmnichannelInbox() {
                 <button
                   onClick={sendMessage}
                   disabled={(!messageInput.trim() && !selectedFile) || sending}
-                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[var(--alo-brand)] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
+                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] disabled:opacity-40 text-white transition shadow-sm"
                 >
                   {sending ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

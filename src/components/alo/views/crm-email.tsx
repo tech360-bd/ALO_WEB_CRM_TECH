@@ -164,7 +164,7 @@ export function CrmEmail() {
                           <p>{m.body}</p>
                           <p
                             className={`mt-1 text-[11px] ${
-                              m.direction === "OUTBOUND" ? "text-blue-100" : "text-[var(--alo-text-muted)]"
+                              m.direction === "OUTBOUND" ? "text-[var(--alo-brand-pale)]" : "text-[var(--alo-text-muted)]"
                             }`}
                           >
                             {new Date(m.receivedAt).toLocaleString("en-GB")}

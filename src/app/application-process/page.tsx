@@ -102,7 +102,7 @@ export default function ApplicationProcessPage() {
         <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl relative z-10">
           <span className="inline-block bg-[var(--alo-cta)] text-black text-sm font-bold px-4 py-1.5 rounded-full mb-6 tracking-wide">YOUR PATHWAY TO SUCCESS</span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">International Study Application Process</h1>
-          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-[var(--alo-brand-pale)] max-w-2xl mx-auto">
             A transparent, step-by-step roadmap to guide you from your first consultation to your first day on campus.
           </p>
         </div>
@@ -136,7 +136,7 @@ export default function ApplicationProcessPage() {
                 <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[var(--alo-border)] hover:shadow-lg transition-shadow">
                   <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
                     <h3 className="text-xl font-bold text-[var(--alo-text)]">{step.title}</h3>
-                    <span className="bg-orange-50 text-[var(--alo-cta)] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
                       {step.timeframe}
                     </span>
                   </div>
@@ -196,11 +196,11 @@ export default function ApplicationProcessPage() {
         
         <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Start Your Application?</h2>
-          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--alo-brand-pale)] mb-10 max-w-2xl mx-auto">
             Join thousands of successful students who have realized their study abroad dreams with ALO Education.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/book-consultation" className="bg-[var(--alo-cta)] hover:bg-orange-600 text-black font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
+            <Link href="/book-consultation" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
               Book a Free Session
             </Link>
             <Link href="/contact" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-8 rounded-xl text-lg transition-colors">

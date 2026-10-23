@@ -145,17 +145,17 @@ export default function EnquiryForm({
 
   return (
     <form onSubmit={submit} className={`rounded-2xl border border-alo-brand-border bg-white p-6 ${className}`}>
-      <h3 className="flex items-center gap-2 text-base font-bold text-alo-text-heading">
+      <h3 className="flex items-center gap-2 text-base font-bold text-alo-text">
         <MessageSquare className="h-4 w-4 text-alo-cta" /> {copy.heading}
       </h3>
       <p className="mt-1 text-sm text-alo-text-muted">{copy.blurb}</p>
-      <p className="mt-3 rounded-lg border border-alo-brand-border bg-alo-brand-light px-3 py-2 text-xs text-alo-text-body">
+      <p className="mt-3 rounded-lg border border-alo-brand-border bg-alo-brand-light px-3 py-2 text-xs text-alo-body">
         <span className="font-semibold">{copy.subjectLabel}:</span> {context.subject}
         {context.institution ? ` · ${context.institution}` : ''}
       </p>
 
       <div className={`mt-4 grid gap-3 ${compact ? '' : 'sm:grid-cols-2'}`}>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Full name *
           <input
             required
@@ -164,7 +164,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Email *
           <input
             required
@@ -174,7 +174,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Phone / WhatsApp *
           <input
             required
@@ -184,7 +184,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Preferred destination
           <select
             value={form.destination}
@@ -197,7 +197,7 @@ export default function EnquiryForm({
             ))}
           </select>
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Course level
           <select
             value={form.level}
@@ -210,7 +210,7 @@ export default function EnquiryForm({
             ))}
           </select>
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Intended intake
           <input
             value={form.intake}
@@ -219,7 +219,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className={`text-xs font-semibold text-alo-text-heading ${compact ? '' : 'sm:col-span-2'}`}>
+        <label className={`text-xs font-semibold text-alo-text ${compact ? '' : 'sm:col-span-2'}`}>
           Your question
           <textarea
             rows={3}

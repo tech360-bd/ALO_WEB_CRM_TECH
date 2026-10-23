@@ -44,10 +44,10 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         </Link>
 
         <div className="mb-8">
-          <Badge variant="outline" className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 bg-orange-50 mb-4 px-3 py-1">
+          <Badge variant="outline" className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)] mb-4 px-3 py-1">
             {article.category}
           </Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] mb-4 leading-tight">
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4 leading-tight">
             {article.title}
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--alo-text-muted)]">

@@ -103,7 +103,7 @@ interface AppTeamResponse {
 // ---------- Maps ----------
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
   URGENT: { label: "Urgent", cls: "bg-red-100 text-red-700" },
-  HIGH: { label: "High", cls: "bg-orange-100 text-orange-700" },
+  HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
   LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
@@ -778,9 +778,9 @@ export function ApplicationTeamDashboard() {
               Cancel
             </Button>
             <Button
-              onClick={submitReject}
-              className="h-10 bg-red-600 text-white hover:bg-red-600/90"
-            >
+ onClick={submitReject}
+ className=" bg-red-600 text-white hover:bg-red-600/90"
+ >
               <Icon name="X" className="size-4" />
               Reject document
             </Button>

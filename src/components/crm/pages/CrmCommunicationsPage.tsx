@@ -204,7 +204,7 @@ export default function CrmCommunicationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-orange-600 rounded-lg">
+          <div className="p-2 bg-[var(--alo-cta-hover)] rounded-lg">
             <Megaphone className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -216,7 +216,7 @@ export default function CrmCommunicationsPage() {
           <Button size="sm" variant="outline" onClick={() => { void loadTemplates(); void loadRecipients(); }}>
             <RefreshCw className="h-4 w-4 mr-1" />Refresh
           </Button>
-          <Button size="sm" onClick={() => setShowBlast(!showBlast)} className="bg-orange-600 hover:bg-orange-700">
+          <Button size="sm" onClick={() => setShowBlast(!showBlast)} className="bg-[var(--alo-cta-hover)] hover:bg-orange-700">
             <Megaphone className="h-4 w-4 mr-1" />Compose
           </Button>
         </div>
@@ -270,7 +270,7 @@ export default function CrmCommunicationsPage() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-orange-600" />Message Templates
+                  <FileText className="h-4 w-4 text-[var(--alo-cta-active)]" />Message Templates
                 </CardTitle>
                 <Badge variant="muted" className="text-[11px]">{filteredTemplates.length} shown</Badge>
               </div>
@@ -280,7 +280,7 @@ export default function CrmCommunicationsPage() {
                 <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
                   <p className="font-semibold">Templates are unavailable</p>
                   <p className="text-muted-foreground">{templatesError}</p>
-                  <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadTemplates()}>
+                  <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadTemplates()}>
                     Try again
                   </Button>
                 </div>
@@ -297,7 +297,7 @@ export default function CrmCommunicationsPage() {
               ) : (
                 <div className="space-y-2">
                   {filteredTemplates.map((template) => (
-                    <div key={template.id} className="p-3 rounded-lg border border-[var(--alo-border)] hover:border-orange-200 transition-colors">
+                    <div key={template.id} className="p-3 rounded-lg border border-[var(--alo-border)] hover:border-[var(--alo-cta)]/25 transition-colors">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-1.5">
@@ -313,7 +313,7 @@ export default function CrmCommunicationsPage() {
                             <p className="text-[11px] text-[var(--alo-text-muted)] font-mono mt-0.5">{template.templateCode}</p>
                           )}
                         </div>
-                        <Button size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => handleApplyTemplate(template)}>
+                        <Button size="sm" variant="outline" className="h-7 shrink-0" onClick={() => handleApplyTemplate(template)}>
                           Use
                         </Button>
                       </div>
@@ -330,11 +330,11 @@ export default function CrmCommunicationsPage() {
 
       {/* Compose */}
       {showBlast && (
-        <Card className="shadow-lg border-orange-200">
+        <Card className="shadow-lg border-[var(--alo-cta)]/25">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
-                <ChannelIcon className="h-4 w-4 text-orange-600" />Compose {channelMeta.label} Message
+                <ChannelIcon className="h-4 w-4 text-[var(--alo-cta-active)]" />Compose {channelMeta.label} Message
               </CardTitle>
               <Button variant="ghost" size="sm" onClick={() => setShowBlast(false)}>Close</Button>
             </div>
@@ -386,9 +386,9 @@ export default function CrmCommunicationsPage() {
               )}
             </div>
 
-            <div className="flex items-start gap-2 rounded-md bg-blue-50/70 border border-blue-100 p-2.5">
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-blue-600 mt-0.5" />
-              <p className="text-[11px] text-blue-900 leading-relaxed">
+            <div className="flex items-start gap-2 rounded-md bg-[var(--alo-brand-pale)]/70 border border-[var(--alo-border)] p-2.5">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[var(--alo-brand)] mt-0.5" />
+              <p className="text-[11px] text-[var(--alo-brand-deep)] leading-relaxed">
                 Email campaigns are validated against stored consent and then require approval before any
                 message leaves the system. This action does not send.
               </p>
@@ -396,7 +396,7 @@ export default function CrmCommunicationsPage() {
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowBlast(false)} disabled={sending}>Cancel</Button>
-              <Button onClick={() => void handleSendBlast()} disabled={sending} className="bg-orange-600 hover:bg-orange-700">
+              <Button onClick={() => void handleSendBlast()} disabled={sending} className="bg-[var(--alo-cta-hover)] hover:bg-orange-700">
                 <Send className="h-4 w-4 mr-1" />
                 {sending ? 'Validating…' : activeChannel === 'email' ? 'Validate campaign' : 'Continue'}
               </Button>

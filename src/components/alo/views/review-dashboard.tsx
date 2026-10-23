@@ -18,7 +18,7 @@ const MODERATION_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
-  NEEDS_REVIEW: "bg-orange-100 text-orange-700",
+  NEEDS_REVIEW: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const PUBLICATION_COLORS: Record<string, string> = {
@@ -146,7 +146,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-[var(--alo-body)]">Website Reviews</span>
-              <Badge className="bg-blue-50 text-blue-700">{s.published}</Badge>
+              <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{s.published}</Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[var(--alo-body)]">Google Clicks</span>
@@ -154,7 +154,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[var(--alo-body)]">Facebook Clicks</span>
-              <Badge className="bg-blue-50 text-blue-700">{s.facebookClicks}</Badge>
+              <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{s.facebookClicks}</Badge>
             </div>
             <div className="rounded-lg bg-amber-50 border border-amber-200 p-2 text-xs text-amber-700 mt-2">
               <Icon name="Info" className="h-3 w-3 inline mr-1" />
@@ -222,7 +222,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                       <TableCell className="align-top">
                         <div className="flex flex-col gap-0.5">
                           {r.consentPublish && <Badge className="bg-emerald-50 text-emerald-700 text-xs">Website</Badge>}
-                          {r.consentMarketing && <Badge className="bg-blue-50 text-blue-700 text-xs">Marketing</Badge>}
+                          {r.consentMarketing && <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs">Marketing</Badge>}
                           {r.consentShowName && <Badge className="bg-violet-50 text-violet-700 text-xs">Name</Badge>}
                           {!r.consentPublish && !r.consentMarketing && <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] text-xs">Internal only</Badge>}
                         </div>
@@ -235,8 +235,8 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                       <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{timeAgo(r.createdAt)}</TableCell>
                       <TableCell className="align-top text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
-                          <Button size="sm" variant="outline" className="h-7 px-2 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(r.id, "PUBLISH")} disabled={acting || !r.consentPublish}>Publish</Button>
-                          <Button size="sm" variant="outline" className="h-7 px-2 text-xs border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(r.id, "REJECT")} disabled={acting}>Reject</Button>
+                          <Button size="sm" variant="outline" className="h-7 px-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(r.id, "PUBLISH")} disabled={acting || !r.consentPublish}>Publish</Button>
+                          <Button size="sm" variant="outline" className="h-7 px-2 border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(r.id, "REJECT")} disabled={acting}>Reject</Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -341,7 +341,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               <Label className="text-xs">Facebook Recommendation URL (optional)</Label>
               <Input className="h-10" value={inviteForm.facebookRecommendUrl} onChange={(e) => setInviteForm({ ...inviteForm, facebookRecommendUrl: e.target.value })} placeholder="https://facebook.com/aloeducation/reviews" />
             </div>
-            <div className="rounded-lg bg-blue-50 p-2 text-xs text-[var(--alo-body)]">
+            <div className="rounded-lg bg-[var(--alo-brand-pale)] p-2 text-xs text-[var(--alo-body)]">
               <Icon name="Info" className="h-3 w-3 inline mr-1 text-[var(--alo-brand)]" />
               The student will receive a unique link. They submit the review themselves — we never post on their behalf.
             </div>

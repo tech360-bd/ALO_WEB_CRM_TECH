@@ -478,16 +478,16 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                       {/* Actions */}
                       <div className="mt-auto flex gap-2 pt-4">
                         <Button
-                          variant="outline"
-                          className="flex-1 h-10 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                          onClick={() => handleCheckEligibility(s)}
+ variant="outline"
+ className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleCheckEligibility(s)}
                         >
                           <Icon name="ClipboardCheck" className="size-4" />
                           Check Eligibility
                         </Button>
                         <Button
-                          className="flex-1 h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-                          onClick={() => handleApply(s)}
+ className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={() => handleApply(s)}
                         >
                           <Icon name="Send" className="size-4" />
                           Apply Now

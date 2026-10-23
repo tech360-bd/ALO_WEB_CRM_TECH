@@ -49,7 +49,7 @@ function channelMeta(value: string) {
 }
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
-  open: { label: 'Open', className: 'bg-blue-100 text-blue-700' },
+  open: { label: 'Open', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
   escalated: { label: 'Escalated', className: 'bg-red-100 text-red-700' },
   resolved: { label: 'Resolved', className: 'bg-green-100 text-green-700' },
   closed: { label: 'Closed', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
@@ -195,7 +195,7 @@ export default function CrmInboxPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600 rounded-lg">
+          <div className="p-2 bg-[var(--alo-brand)] rounded-lg">
             <Inbox className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -238,7 +238,7 @@ export default function CrmInboxPage() {
               <div>
                 <p className="text-sm font-semibold text-[var(--alo-text)]">Inbox is unavailable</p>
                 <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{loadError}</p>
-                <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadThreads()}>
+                <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadThreads()}>
                   Try again
                 </Button>
               </div>
@@ -275,12 +275,12 @@ export default function CrmInboxPage() {
                   <button
                     key={thread.id}
                     onClick={() => handleSelect(thread)}
-                    className={`w-full text-left p-3 border-b hover:bg-[var(--alo-page)] transition-colors ${isSelected ? 'bg-blue-50/70 border-l-2 border-l-blue-600' : ''}`}
+                    className={`w-full text-left p-3 border-b hover:bg-[var(--alo-page)] transition-colors ${isSelected ? 'bg-[var(--alo-brand-pale)]/70 border-l-2 border-l-blue-600' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          {thread.unreadCount > 0 && <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" aria-label="unread" />}
+                          {thread.unreadCount > 0 && <span className="w-2 h-2 rounded-full bg-[var(--alo-brand)] shrink-0" aria-label="unread" />}
                           <span className={`text-sm truncate ${thread.unreadCount > 0 ? 'font-semibold text-[var(--alo-text)]' : 'font-medium text-[var(--alo-body)]'}`}>
                             {thread.subject || thread.threadCode || 'Untitled thread'}
                           </span>
@@ -368,7 +368,7 @@ export default function CrmInboxPage() {
                       size="sm"
                       onClick={() => void handleReply()}
                       disabled={sending || !replyText.trim()}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]"
                     >
                       <Reply className="h-3.5 w-3.5 mr-1" />
                       {sending ? 'Sending…' : 'Send reply'}

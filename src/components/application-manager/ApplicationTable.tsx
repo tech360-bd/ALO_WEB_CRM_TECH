@@ -160,8 +160,8 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
               <option value="move_to_visa">Move to Visa</option>
               <option value="create_task">Create Task</option>
             </select>
-            <Button size="sm" variant="outline" className="border-[var(--alo-border)] text-xs" onClick={handleBulk} disabled={selected.length === 0 || bulkAction === 'none'}><CheckSquare className="w-3 h-3 mr-1" />Apply</Button>
-            <Button size="sm" variant="outline" className="border-[var(--alo-border)] text-xs" onClick={() => setSelected([])}>Clear</Button>
+            <Button size="sm" variant="outline" className="border-[var(--alo-border)] " onClick={handleBulk} disabled={selected.length === 0 || bulkAction === 'none'}><CheckSquare className="w-3 h-3 mr-1" />Apply</Button>
+            <Button size="sm" variant="outline" className="border-[var(--alo-border)] " onClick={() => setSelected([])}>Clear</Button>
           </div>
         </CardContent>
       </Card>

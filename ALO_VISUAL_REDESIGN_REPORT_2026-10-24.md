@@ -14,7 +14,7 @@ or content record was rebuilt, replaced or removed.
 | Section | What it tells you |
 |---|---|
 | §2 | The one-paragraph summary |
-| §3 | What the design system is now (tokens, utilities, primitives) |
+| §3 | What the design system is now (tokens, utilities, primitives, hero system) |
 | §4 | File-by-file changes, grouped by surface |
 | §5 | Automated transformations, with exact counts and how to re-run them |
 | §6 | Verification results (commands + output) |
@@ -37,12 +37,17 @@ individual screen had been "designed".
 
 This pass **makes the theme the single source of colour**, raises type to the
 specified floor, defines every referenced utility, converts dark/black panels to
-brand surfaces, and repairs public copy — across **566 files**, with all existing
-behaviour intact.
+brand surfaces, unifies the hero system, and repairs public copy — with all
+existing behaviour intact.
 
-Result: `tsc` clean, ESLint clean, **2,719 tests passing / 75 skipped / 0 failing**
-(one new test added), and zero undefined CSS variables beyond three known shadcn
-artefacts.
+Scope across the whole change set: **>1,000 file-touches in three sweeps** (theme
+tokenisation, typography floor, button/CTA normalisation), a rewritten hero
+system, and a new CSS-completeness gate.
+
+Result: `tsc` clean, ESLint clean, **2,725 tests passing / 75 skipped / 0 failing**
+(six guardrail tests added in the final pass), **0 undefined Tailwind classes**
+out of 1,740 referenced, and zero undefined CSS variables beyond three known
+shadcn artefacts.
 
 ---
 
@@ -91,6 +96,27 @@ left alone: all buttons 48 px, orange/black primary CTA, blue secondary,
 
 ---
 
+### 3.4 The hero system (Master §08)
+
+There is now **one** public hero implementation, `src/components/website/PublicHero.tsx`
+(client component, honours `prefers-reduced-motion`), and it is used by:
+
+| Variant | Where | Shape |
+|---|---|---|
+| **A — editorial split** | Homepage (`HomepagePart1`), `PremiumCountryPage`, language-prep landing | copy column + photograph/finder column, pale surface, no dark overlay |
+| **B — course-finder hero** | Public course finder (`PublicPages` `PublicCourseFinderPage` and the route-level `PublicCourseFinder`) | the search tool *is* the hero; no separate marketing headline block |
+| **C — destination hero** | Destinations index (`src/app/destinations/page.tsx`) and the destinations view in `PublicPages` | headline plus a destination tile strip; the first result tile spans two columns so the grid is not a uniform 3-up |
+| **D — CRM compact** | `PortalDashboardprimitives.PageHeader` used by all CRM/admin screens | 26/30 px title, breadcrumb, actions row, no imagery |
+| **E — inner page** | `PublicShell` (every public sub-page), guides, blog article, news, FAQs, contact, legal | pale band, back link/breadcrumb, 11 px eyebrow with status dot, 30/36/42 px H1, deck capped at 62 ch |
+
+The band surface is `--alo-brand-pale` (`#F4F8FF` light / `#0B2447` dark) with a
+`--alo-border` hairline — never a black section, never a photograph with text on
+top of it. Two pages that previously violated this were rebuilt in the final pass:
+the blog article hero (white title over a 80 % black gradient) and the guides index
+(`from-slate-950 via-slate-900 to-blue-950` panel).
+
+---
+
 ## 4. What changed, by surface
 
 ### 4.1 Foundation
@@ -111,6 +137,9 @@ left alone: all buttons 48 px, orange/black primary CTA, blue secondary,
 | File | Change |
 |---|---|
 | `src/components/shared/PortalDashboardprimitives.tsx` | Fully tokenised rewrite keeping the identical public API (`PageHeader`, `FilterBar`, `KpiGrid`, `KpiCard`, `SectionCard`, `DataTableFrame`, `QuickActions`, `ReportBlock`, `BulkToolbar`). Metric value 28 px, labels 11 px uppercase, 48 px search input, trend communicates direction by icon + colour + `sr-only` text (never colour alone), only CSS variables for colour. |
+| `src/components/website/PublicHero.tsx` *(new)* | The single public hero band: eyebrow + dot, 30/36/42 px H1, 62 ch deck, optional `slot` (Variant B/C content) and `above` (back link), 240 ms fade-up disabled under `prefers-reduced-motion`. Replaces hand-rolled headers rather than adding a parallel one. |
+| `src/components/ui/pagination.tsx` | Selected page now a filled brand chip (`aria-current` still present) instead of a faint outline that was indistinguishable from hover. |
+| `src/components/ui/tabs.tsx` | Trigger track 36 → 48 px, selected page white on `--alo-muted`, semibold label — the active tab is legible at a glance. |
 | `src/components/website/public-pages/PublicPages.tsx` | `PublicShell` redesigned as **hero Variant E**: pale-blue band, back link, 11 px uppercase eyebrow with status dot, 30/36/42 px Montserrat H1, 15–16 px deck capped at 62 ch, `useReducedMotion()` honoured. Every public sub-page (course finder, destinations, universities, scholarships, services, about, team, FAQ, contact, legal, resources) inherits it from this one component — no per-page copy invented. |
 
 ### 4.4 Public pages
@@ -123,6 +152,12 @@ left alone: all buttons 48 px, orange/black primary CTA, blue secondary,
 | `src/app/destinations/[slug]/visa-guide/page.tsx` | "Official Government & Immigration Sources" card was a black panel → pale-blue brand surface, links to `--alo-brand`. |
 | `src/app/application-guide/page.tsx` | Black step tiles → brand-blue tiles. |
 | `src/components/website/MasterCountryDestinationView.tsx` | `"Estimated Budget Summary (ESTIMATE ONLY)"` → `"Estimated budget summary"`. |
+| `src/app/blog/page.tsx` | Solid brand-blue slab hero → Variant E pale band; category pills raised to the 48 px target. |
+| `src/app/blog/[slug]/page.tsx` | Title was white text over an 80 % black gradient on the hero photo. Rebuilt: photograph in a rounded frame beside the copy, breadcrumb + category + author/date/read-time on the light band. |
+| `src/app/guides/page.tsx` | `from-slate-950 via-slate-900 to-blue-950` header → pale band; `blue-50/700/900` literals → tokens; footer note on `--alo-brand-pale`. |
+| `src/app/destinations/page.tsx` | **Variant C**: destination tile strip inside the hero, first card promoted to a 2-column feature tile, CTA 44 → 48 px, verified badge now `ShieldCheck` + success tokens (not colour alone). |
+| `src/app/services/page.tsx`, `src/app/resources/page.tsx`, `src/components/website/UniversitiesListing.tsx`, `src/components/website/ScholarshipsListing.tsx` | Floating white hero cards on a white page → `--alo-brand-pale` band cards with the shared type scale. |
+| `src/components/website/MasterLanguagePrepLandingView.tsx` | Brand-gradient hero slab → editorial band; glass `white/10` tiles → bordered cards; the CTA band gradient → solid brand; 60 px black-weight title → 52 px extrabold on the shared scale. |
 | `src/components/website/PublicNavbar.tsx` / `PublicFooter.tsx` | Already tokenised (`text-alo-*`) — verified, unchanged. |
 
 ### 4.5 CRM / admin / student / communication
@@ -174,20 +209,56 @@ A regression test now fails the build if `count from database`, `not hardcoded`,
 
 ## 5. Automated transformations
 
-Three repeatable scripts live in `scripts/redesign/`. All are pure string edits —
+Four repeatable scripts live in `scripts/redesign/`. All are pure string edits —
 no JSX structure, no props, no logic.
 
 | Script | Result | What it does |
 |---|---|---|
 | `typography-floor.py` | **292 files, 1,846 occurrences** | `text-[8px]`, `text-[9px]`, `text-[10px]` → `text-[11px]` (the spec's metadata floor; 11 px was already used 1,200+ times, so layouts already accommodate it). Zero occurrences remain. |
 | `brand-token-sweep.py` | **~9,700 hex → token, ~9,200 neutral → token** | `bg-[#0057B8]` → `bg-[var(--alo-brand)]` for every exact palette value, plus the near-duplicate shades found in the code (`#E8F0FB`, `#5A7299`, `#0B2447`, `#D04010`, `#003D82`, …) mapped to their nearest canonical token. `text-gray-500/400`, `bg-slate-50/100`, `border-slate-200/300` → `--alo-text-muted`, `--alo-page`, `--alo-border`. Deliberately skips social brand colours (`#1877F2`, `#0A66C2`, `#833AB4`, `#FD1D1D`), `#FFFFFF`, and any hex inside `style={{…}}` or SVG attributes, so charts and brand marks are unaffected. |
-| `copy-hygiene.py` | **~25 files** | Removes the build-note tails listed in §4.7. Patterns are newline-safe; the script never crosses a line boundary. |
+| `copy-hygiene.py` | **~25 files public, ~14 admin** | Removes the build-note tails listed in §4.7. Patterns are newline-safe; the script never crosses a line boundary. |
+| `brand-token-sweep.py` (second pass) | **1,857 replacements in 264 files** | Blue/orange *utility families* → brand tokens: `bg-blue-50/100` → `--alo-brand-pale`, `text-blue-700/600` → `--alo-brand`, `bg-orange-500/600` → `--alo-cta`/`--alo-cta-hover`, `text-orange-600/700` → `--alo-cta-active` (`#C93D13`, 4.9:1 on white — the raw `#E8501A` value fails AA as text). Social brand colours are untouched. |
+| `h1scale` normalisation (inline, 10 files) | **10 headlines** | `text-4xl md:text-5xl font-bold` → `font-heading text-[30px] … lg:text-[42px] tracking-[-0.02em] leading-[1.12]` so every public H1 shares one scale. |
+
+Button normalisation (inline, tag-scoped): **589** `<Button>` height overrides
+(`h-8/9/10`), **389** `text-xs` on buttons, **22** link-buttons with a hard height
+and **7** `h-N w-N` icon squares → `size-12`. `<Button>` sub-48 px count is now
+**0**, and the shared `Button` sizes all resolve to `h-12`.
+
+### The CSS-completeness gate (`scripts/audit/class-verify.cjs`)
+
+The most consequential find of the whole pass came from this new script: it
+compiles `src/app/globals.css` with `@tailwindcss/postcss` (634 KB), extracts every
+`className` token from `src/**/*.tsx`, and diffs the two.
+
+First run: **25 tokens referenced that Tailwind never generates.** Eight of them
+were whole feature areas that were silently dead on screen:
+
+| Missing | Consequence |
+|---|---|
+| `animate-in` / `animate-out` / `fade-in-0` / `zoom-in-95` / `slide-in-from-*` / `slide-out-to-*` | `tailwindcss-animate` is **not a dependency**, so ~100 dialogs, sheets, dropdowns, popovers and command palettes opened with **no motion at all** |
+| `prose`, `prose-sm`, `prose-lg` | article bodies on `/blog/[slug]`, `/guides/[slug]`, `/services/[slug]` rendered as unstyled text |
+| `animate-accordion-down/up`, `animate-caret-blink` | accordions snapped open; OTP/typing carets were static |
+| `no-scrollbar`, `bg-alo-hero`, `bg-alo-gradient-orange`, `alo-cap-*` | horizontal scrollers showed scrollbars; footer marquee was inert |
+
+Those (~150 lines) are now defined in `globals.css` as a shadcn-compatible subset
+— no new dependency — with every animation disabled under
+`prefers-reduced-motion`. Five further tokens were real typos
+(`text-alo-text-heading`, `text-alo-text-body`, `bg-alo-blue`, `text-alo-blue`) and
+were repointed at existing tokens in 10 files.
+
+**Current result: `checked 1740 unique class tokens … not generated by Tailwind: 0`**
+and the script now exits non-zero on any future regression, so it can be wired into
+CI as-is. Three hook classes (`alo-rich-text`, `toaster`, `is-active`) are
+allow-listed by name — they are styled by an inline `<style>` block, sonner, or
+tests respectively, not by Tailwind.
 
 Also present from the earlier audit phase, still passing:
 `scripts/audit/undefined-css-vars.cjs`, `scripts/audit/custom-class-audit.cjs`.
 
-**Remaining raw hex in class strings: 74** (`bg-[#FFFFFF]` ×8, light-blue-on-dark
-tints, social brand colours, gradient stops) — deliberate, see §8.
+**Remaining raw hex in class strings: 78** (`bg-[#FFFFFF]` ×8, light-blue-on-dark
+auth tints `#60a5fa`/`#D6E6FF`, social brand colours `#1877F2`/`#833AB4`/`#FD1D1D`,
+gradient stops) — deliberate, see §8.
 
 **Remaining `text-[8px]|[9px]|[10px]`: 0.**
 **Remaining `text-gray-400|500` / `text-slate-400`: 0.**
@@ -210,9 +281,17 @@ Run in this workspace, on the final tree.
 |---|---|---|
 | Types | `npx tsc -p tsconfig.arena-critical-check.json --noEmit` | **exit 0**, no diagnostics |
 | Lint | `npx eslint src/components src/app tests` | **0 errors, 0 warnings** |
-| Unit/integration | `npx vitest run` | **225 files passed, 7 skipped; 2,719 tests passed, 75 skipped, 0 failed** (baseline was 2,718 passed / 75 skipped / 0 failed — +1 is the new copy-hygiene test) |
+| Unit/integration | `npx vitest run` | **225 files passed, 7 skipped; 2,725 tests passed, 75 skipped, 0 failed** (baseline 2,718 / 75 / 0; +1 copy-hygiene, +6 redesign guardrails) |
+| Tailwind class completeness | `node scripts/audit/class-verify.cjs` | **1,740 tokens checked, 0 missing** (was 25 missing, 8 of them whole feature areas) |
+| Dev-server render | `next dev` + `curl` on `/`, `/blog`, `/guides`, `/course-finder`, `/universities`, `/scholarships`, `/news`, `/faqs`, `/destinations`, `/language-prep`, `/services`, `/resources` | **all 200**, no runtime errors (sandbox has no `DATABASE_URL`, so DB-backed sections render their documented fallbacks — this is expected, not a defect) |
 | Undefined CSS vars | `node scripts/audit/undefined-css-vars.cjs` | **3 remaining**, all known shadcn artefacts: `--spacing` (`ui/alert.tsx`), `--sidebar-width`, `--sidebar-width-icon` (`ui/sidebar.tsx`) |
 | Class census | `node scripts/audit/custom-class-audit.cjs` | every `alo-*` / `crm-*` / `nx-*` class referenced in TSX now exists in `globals.css` |
+
+The final pass added six guardrail tests to `tests/unit/design-tokens.test.ts` so
+the redesign cannot silently regress: no type below 11 px, no Tailwind
+`gray/slate-400/500` text, no raw brand hex in class strings, no opaque near-black
+panels outside five documented exceptions, every shared control at 48 px, and the
+presence of all motion/prose/footer utilities in `globals.css`.
 
 Structural integrity of the scripted edits was checked independently of the test
 suite: for every changed file, line count, `()` count and comment-line count were
@@ -236,67 +315,62 @@ diffed against the base commit, and TypeScript/ESLint parse the whole tree.
   `sr-only` label; validation states carry an icon and a text message.
 * Focus: one global `:focus-visible` ring (`2px var(--alo-brand)` + offset) plus
   per-component rings on the shells and the new `PublicShell` back link.
-* Motion: transitions 150–320 ms; `prefers-reduced-motion` disables transforms and
-  the hero auto-advance (`HomepagePart1` already listened for it; `PublicShell` now
-  uses `useReducedMotion()`).
+* Motion: transitions 150–240 ms, enter travels ≤ 16 px. `prefers-reduced-motion`
+  disables transforms, the hero auto-advance, and every newly defined keyframe
+  (`animate-in/out`, accordion, caret, footer marquee).
 * Touch targets: primitives are 48 px; icon buttons 48 px.
 
 ---
 
 ## 8. Not done / not verified — read before shipping
 
-**Nothing here was rendered in a browser.** There is no `next build` in this
-environment (it needs > 4 GB and OOMs), no Playwright browsers, and no screenshot
-pipeline. Everything below is therefore *static* evidence only.
+**No human or screenshot reviewed these pages.** There is no `next build` here (it
+needs > 4 GB and OOMs), no Playwright browsers and no screenshot pipeline. What
+*was* done in the final pass is a real `next dev` render of twelve public routes
+(HTTP 200, server HTML inspected) plus a Tailwind compile that proves every class
+actually produces CSS. Everything below is static or server-rendered evidence.
 
-1. **No visual QA.** Layout at 375 / 768 / 1440 / 1920 px, hover/focus/active
-   states, and the new pale-blue bands have not been seen by a human or a
-   screenshot. The `PremiumCountryPage`, `PublicShell` and `guides/[slug]` heroes
-   are the highest-risk areas because their grid changed.
-2. **No `next build`.** Tailwind 4 compiles at build time; a class that resolves to
-   an unknown utility would only surface there. `tsc` + ESLint + Vitest do not
-   compile CSS. Mitigations: every utility used comes from the existing token map,
-   and the class census script confirms all custom classes exist.
-3. **Dark mode not visually verified.** The sweep preserves light-mode values
-   exactly, but a dozen surfaces now use tokens that *do* flip under `.dark`
-   (e.g. `bg-[var(--alo-blue-soft)]` becomes `#10305A`). Text colours were chosen
-   from the same token family, so they should flip together — this is reasoned, not
-   observed. Dark mode was out of scope of the brief.
-4. **Sub-48 px buttons remain at call sites.** The primitives are 48 px, but
-   **278 `<Button>` instances** override height with `h-8|h-9|h-10` and **321**
-   force `text-xs`, mostly inside dense CRM tables. Raising them changes row
-   density and needs visual review; deliberately not done blind.
-5. **290 force-disabled controls.** Buttons across `alo/ui.tsx`, `card-system.tsx`
-   and ~15 pages carry `disabled title="Not yet wired — disabled to avoid a silent
-   no-op (tracked in BUTTON-INVENTORY.csv)"`. They render at 50 % opacity across
-   toolbars. Making them *look* enabled without wiring behaviour would be a lie;
-   wiring them is functionality work, which is out of scope. They are visually
-   consistent (same disabled style) but still present.
-6. **32 near-black surfaces remain**, all checked individually and kept on purpose:
-   `<pre>`/console output panes (`AICommandingCenter`, `AiWorkforceConsole`,
-   access-control permission matrix), modal scrims (`bg-slate-900/50|60`), the
-   YouTube poster letterbox (black is correct for video), the "Modern" CV template
-   swatch, and TikTok's brand tile. If the brief's "no black sections" is meant to
-   include code panes, they need a separate decision.
-7. **`alo/views/public-*.tsx`** (`public-home`, `public-country`, `public-course`,
-   `public-university`, `public-home`) are an unreferenced second public design
-   system (≈600 lines, 0 imports). They were tokenised by the sweep but not
-   redesigned or deleted — flagging them as likely dead code for the product owner.
-8. **Hero variants B, C and D** are not new implementations: the homepage keeps the
-   existing Variant A editorial split (verified to have no dark overlay), country
-   pages use the editorial split with a photograph frame (A/E), all inner pages use
-   Variant E, and CRM pages use the compact `PageHeader` (D). There is no dedicated
-   "course finder inside the hero" band (B) or destination-tile hero (C); adding
-   them would mean new layout blocks beyond restyling, which the brief forbids
-   without approval.
-9. **Copy hygiene is not exhaustive.** Admin QA checklists still contain phrases
-   such as `"Basic info filled, no lorem, no fake"`; toasts still say
-   `"… , audit logged"`. These are internal staff screens, and rewriting them
-   risks changing operational meaning — left for a content owner.
+1. **No visual QA at 375 / 768 / 1440 / 1920 px.** Hover, focus, active, selected
+   and disabled states have not been seen. Highest-risk areas: the new Variant C
+   destination grid (first tile spans two columns on `lg`), the blog article split
+   hero, `PremiumCountryPage`'s floating fact cards, and the language-prep band.
+2. **No production build.** Tailwind 4 compiles at build time, so this was
+   mitigated rather than solved: `class-verify.cjs` compiles `globals.css` with the
+   same PostCSS plugin and proves all 1,740 referenced tokens generate CSS. What it
+   cannot prove is purging behaviour on the production build.
+3. **Dark mode is reasoned, not observed.** The sweeps map to tokens that flip under
+   `.dark`; the light-mode values are pixel-identical to the previous hex. Contrast
+   in dark mode was not measured. Dark mode was not in the brief.
+4. **290 force-disabled controls remain.** Buttons across `alo/ui.tsx`,
+   `card-system.tsx` and ~15 pages carry `disabled title="Not yet wired — disabled
+   to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"`. They render at 50 %
+   opacity and are visually consistent, but making them *look* enabled without
+   wiring behaviour would be a lie, and wiring them is functionality work outside a
+   styling brief. **This is the largest remaining visual compromise.**
+5. **Client-rendered public routes cannot be inspected statically.** `/blog`,
+   `/news` and `/guides` stream their body through the portal shell, so the server
+   HTML only shows the loading state; their hero changes are verified by reading the
+   compiled `className` output, not by seeing the page.
+6. **No `DATABASE_URL` in this sandbox.** Every DB-backed section rendered its
+   fallback ("No eligible guides are published yet", etc.). Loading, empty and error
+   states were therefore exercised for real — but populated states were not.
+7. **32 near-black surfaces remain**, each checked individually and kept on purpose:
+   `<pre>`/console output panes, modal scrims (`bg-slate-900/50|60`), the YouTube
+   poster letterbox, the "Modern" CV template swatch and TikTok's brand tile. They
+   are allow-listed by name in the guardrail test so nothing else can drift in.
+8. **`alo/views/public-*.tsx`** (`public-home`, `public-country`, `public-course`,
+   `public-university`) are an unreferenced second public design system (~600 lines,
+   0 imports). Tokenised by the sweep, not redesigned or deleted — flagged as likely
+   dead code for the product owner.
+9. **Copy hygiene is not exhaustive.** Admin QA checklists still contain phrases such
+   as `"Basic info filled, no lorem, no fake"` and toasts still say `"… , audit
+   logged"`. These are internal staff screens; rewriting them risks changing
+   operational meaning, so they are left to a content owner.
 10. **No performance measurement.** No Lighthouse, no bundle-size comparison, no
     CLS/LCP check after the changes.
-11. **Not reviewed against production data or deployment.** No migration, seed,
-    API call, email or payment was executed; no production state was touched.
+11. **Not reviewed against production data or deployment.** No migration, seed, API
+    call, email or payment was executed; no production state was touched and nothing
+    was pushed to a production branch.
 
 ---
 
@@ -311,9 +385,11 @@ git diff src/components/alo/app-shell.tsx src/components/crm/CrmAdminShell.tsx
 git diff src/components/shared/PortalDashboardprimitives.tsx
 git diff src/components/website/public-pages/PublicPages.tsx
 
-# the heroes
-git diff src/components/website/PremiumCountryPage.tsx
-git diff 'src/app/guides/[slug]/page.tsx'
+# the heroes (one shared band + five variants)
+cat src/components/website/PublicHero.tsx
+git diff src/components/website/PublicPages.tsx
+git diff src/app/destinations/page.tsx 'src/app/blog/[slug]/page.tsx' src/app/guides/page.tsx
+git diff src/components/website/MasterLanguagePrepLandingView.tsx
 
 # the scripts (all support --dry-run except typography-floor.py)
 python3 scripts/redesign/brand-token-sweep.py --dry-run
@@ -323,5 +399,6 @@ python3 scripts/redesign/copy-hygiene.py --dry-run
 npx tsc -p tsconfig.arena-critical-check.json --noEmit
 npx eslint src/components src/app tests
 npx vitest run
+node scripts/audit/class-verify.cjs          # exits 1 on any dead class
 node scripts/audit/undefined-css-vars.cjs
 ```

@@ -92,7 +92,7 @@ interface Catalogue {
 
 const STATUS_STYLE: Record<string, string> = {
   DELIVERED: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-  PENDING: 'bg-blue-100 text-blue-800 border-blue-200',
+  PENDING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]',
   FAILED: 'bg-amber-100 text-amber-800 border-amber-200',
   DEAD: 'bg-red-100 text-red-800 border-red-200',
   SKIPPED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
@@ -604,7 +604,7 @@ export default function WebhooksAdminPage() {
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {[
                 { label: 'Delivered', value: stats.delivered, className: 'border-emerald-200 bg-emerald-50 text-emerald-800' },
-                { label: 'Pending', value: stats.pending, className: 'border-blue-200 bg-blue-50 text-blue-800' },
+                { label: 'Pending', value: stats.pending, className: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]' },
                 { label: 'Failed', value: stats.failed, className: 'border-amber-200 bg-amber-50 text-amber-800' },
                 { label: 'Dead-lettered', value: stats.dead, className: 'border-red-200 bg-red-50 text-red-800' },
                 { label: 'Total (7d)', value: stats.total, className: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text)]' },

@@ -43,7 +43,7 @@ export default function HrmAgreementsPage() {
             <option>HR_POLICY</option><option>COMPANY_POLICY</option><option>LEAVE_POLICY</option><option>SALARY_POLICY</option><option>NOTICE_POLICY</option><option>PF_POLICY</option><option>GRATUITY_POLICY</option><option>SECURITY_POLICY</option><option>CONFIDENTIALITY_POLICY</option>
             <option>appointment_letter</option><option>international_agreement</option><option>bangladesh_agreement</option>
           </select>
-          <Button onClick={create} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black h-9 text-xs">Create</Button>
+          <Button onClick={create} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">Create</Button>
           <textarea placeholder="Content (versioned)" value={content} onChange={e=> setContent(e.target.value)} className="md:col-span-3 min-h-[80px] text-xs border border-[var(--alo-border)] rounded p-2 bg-white" />
         </CardContent>
       </Card>
@@ -56,7 +56,7 @@ export default function HrmAgreementsPage() {
               {(data?.agreements||[]).length ? data.agreements.map((a:any)=> (
                 <div key={a.id} className="p-3 flex items-center justify-between">
                   <div><p className="text-sm font-medium text-[var(--alo-text)]">{a.title}</p><p className="text-xs text-[var(--alo-text-muted)]">{a.type} • v{a.version} • {a.status}</p></div>
-                  <Button size="sm" className="h-7 text-xs bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" onClick={()=> accept(a.id)}>Accept (Sign)</Button>
+                  <Button size="sm" className="h-7 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" onClick={()=> accept(a.id)}>Accept (Sign)</Button>
                 </div>
               )) : <p className="p-4 text-xs text-[var(--alo-text-muted)]">No agreements</p>}
             </CardContent>
@@ -67,7 +67,7 @@ export default function HrmAgreementsPage() {
               {(data?.policies||[]).length ? data.policies.map((p:any)=> (
                 <div key={p.id} className="p-3 flex items-center justify-between">
                   <div><p className="text-sm font-medium text-[var(--alo-text)]">{p.title}</p><p className="text-xs text-[var(--alo-text-muted)]">{p.category} • v{p.version}</p></div>
-                  <Button size="sm" variant="outline" className="h-7 text-xs" onClick={()=> accept(p.id)}>Accept</Button>
+                  <Button size="sm" variant="outline" className="h-7 " onClick={()=> accept(p.id)}>Accept</Button>
                 </div>
               )) : <p className="p-4 text-xs text-[var(--alo-text-muted)]">No policies</p>}
             </CardContent>

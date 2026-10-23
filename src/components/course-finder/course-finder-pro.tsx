@@ -144,7 +144,7 @@ function NotesPanel({ course, canView }: { course: Course; canView: boolean }) {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-xs text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-7">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-7">
           <StickyNote className="size-3.5 mr-1.5" />
           Internal Notes
           {open ? <ChevronUp className="size-3 ml-auto" /> : <ChevronDown className="size-3 ml-auto" />}
@@ -272,7 +272,7 @@ function ProCourseCard({
         {canViewCommission && (
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-xs text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-7 -mt-1">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-7 -mt-1">
                 <DollarSign className="size-3.5 mr-1.5" />
                 Commission Details
                 <ChevronDown className="size-3 ml-auto" />
@@ -290,26 +290,26 @@ function ProCourseCard({
         {/* Pro Actions */}
         <div className="flex gap-2 pt-1">
           <Button
-            size="sm"
-            className="flex-1 h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => onShortlist(course)}
+ size="sm"
+ className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+ onClick={() => onShortlist(course)}
           >
             <ListPlus className="size-3 mr-1" />
             Shortlist
           </Button>
           <Button
-            size="sm"
-            className="flex-1 h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => onApply(course)}
+ size="sm"
+ className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+ onClick={() => onApply(course)}
           >
             <FilePlus2 className="size-3 mr-1" />
             Apply
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={() => {
+ variant="outline"
+ size="sm"
+ className=" "
+ onClick={() => {
               if (course.sourceUrl) window.open(course.sourceUrl, '_blank');
             }}
             disabled={!course.sourceUrl}
@@ -439,7 +439,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm text-[var(--alo-text)]">Filters</h3>
-        <Button variant="ghost" size="sm" onClick={handleResetFilters} className="text-xs text-[var(--alo-text-muted)] h-7">
+        <Button variant="ghost" size="sm" onClick={handleResetFilters} className=" text-[var(--alo-text-muted)] h-7">
           Reset
         </Button>
       </div>
@@ -619,11 +619,11 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           {/* Pro Action Bar */}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
-              size="sm"
-              variant="outline"
-              className="border-slate-600 text-[var(--alo-placeholder)] hover:bg-slate-800 hover:text-white h-8"
-              onClick={handleExport}
-            >
+ size="sm"
+ variant="outline"
+ className="border-slate-600 text-[var(--alo-placeholder)] hover:bg-slate-800 hover:text-white "
+ onClick={handleExport}
+ >
               <Download className="size-3.5 mr-1.5" />
               Export Results
             </Button>

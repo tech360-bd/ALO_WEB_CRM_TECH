@@ -89,7 +89,7 @@ const LEVEL_COLORS: Record<string, string> = {
   Foundation: "bg-sky-100 text-sky-700",
   Bachelor: "bg-emerald-100 text-emerald-700",
   Masters: "bg-violet-100 text-violet-700",
-  MBA: "bg-orange-100 text-orange-700",
+  MBA: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   PhD: "bg-rose-100 text-rose-700",
   "Postgraduate Diploma": "bg-amber-100 text-amber-700",
   "Pre-Masters": "bg-teal-100 text-teal-700",
@@ -387,10 +387,10 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                     Search
                   </Button>
                   <Button
-                    onClick={clearFilters}
-                    variant="ghost"
-                    className="h-11 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                  >
+ onClick={clearFilters}
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ >
                     <Icon name="RotateCcw" className="size-4" />
                     Reset
                   </Button>
@@ -793,10 +793,10 @@ function CourseCard({
             View Details
           </Button>
           <Button
-            onClick={onApply}
-            className="h-10 flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-            size="sm"
-          >
+ onClick={onApply}
+ className=" flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ size="sm"
+ >
             <Icon name="Send" className="size-4" />
             Apply Now
           </Button>

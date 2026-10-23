@@ -80,7 +80,7 @@ export default function StudentTasks() {
           title="My Tasks"
           description="Everything outstanding across your applications, with deadlines and priority."
           action={
-            <Button variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={reload}>
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={reload}>
               <Filter className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               Refresh
             </Button>
@@ -136,10 +136,10 @@ export default function StudentTasks() {
               }
               action={
                 <>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/student/applications">View Applications</Link>
                   </Button>
-                  <Button asChild className="h-9 rounded-button bg-orange-600 px-4 text-[13px] font-semibold text-white hover:bg-orange-700">
+                  <Button asChild className=" rounded-button bg-[var(--alo-cta-hover)] px-4 text-[13px] font-semibold text-white hover:bg-orange-700">
                     <Link href="/student/messages">Message My Counselor</Link>
                   </Button>
                 </>
@@ -158,7 +158,7 @@ export default function StudentTasks() {
                     <Icon
                       className={cn(
                         'mt-0.5 h-5 w-5 shrink-0',
-                        task.status === 'COMPLETED' ? 'text-emerald-600' : task.status === 'IN_PROGRESS' ? 'text-blue-600' : 'text-[var(--alo-text-muted)]',
+                        task.status === 'COMPLETED' ? 'text-emerald-600' : task.status === 'IN_PROGRESS' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text-muted)]',
                       )}
                       aria-hidden="true"
                     />
@@ -208,7 +208,7 @@ export default function StudentTasks() {
 
 function SummaryTile({ label, value, tone }: { label: string; value: number; tone: 'neutral' | 'info' | 'success' | 'danger' }) {
   const toneClass =
-    tone === 'danger' ? 'text-red-600' : tone === 'success' ? 'text-emerald-600' : tone === 'info' ? 'text-blue-600' : 'text-[var(--alo-text)]';
+    tone === 'danger' ? 'text-red-600' : tone === 'success' ? 'text-emerald-600' : tone === 'info' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]';
   return (
     <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>

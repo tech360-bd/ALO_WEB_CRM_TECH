@@ -52,7 +52,7 @@ export default function SocialInboxPage() {
         <p className="text-xs text-[var(--alo-text-muted)]">Assigned Facebook/Instagram inbox records. Reply actions save a draft for review only; no official provider send or comment moderation is configured here. Lead records retain consent=false until opt-in is verified.</p>
       </div>
 
-      {notice && <div role="status" className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900">{notice}</div>}
+      {notice && <div role="status" className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] px-3 py-2 text-xs text-[var(--alo-brand-deep)]">{notice}</div>}
       <Card className="border border-[var(--alo-border)]"><CardHeader className="pb-2"><CardTitle className="text-sm">Social Inbox ({items.length}) — CRM assignment scope only; provider delivery unverified</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {items.length === 0 ? <div className="text-xs text-[var(--alo-text-muted)] py-8 text-center">No assigned social messages. Only conversations assigned in ALO are visible to ordinary staff.</div> :

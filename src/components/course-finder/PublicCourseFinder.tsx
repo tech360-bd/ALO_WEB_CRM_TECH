@@ -402,11 +402,15 @@ export default function PublicCourseFinder() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <header className="mb-6 text-center">
-        <h1 className="font-heading text-3xl font-extrabold tracking-tight text-alo-text sm:text-4xl">
+      <header className="mb-6 rounded-[20px] border border-alo-border bg-alo-brand-pale p-6 sm:p-8">
+        <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-alo-text-secondary ring-1 ring-inset ring-alo-border">
+          <span className="size-1.5 rounded-full bg-alo-brand" aria-hidden="true" />
+          <span className="text-alo-brand">Search courses</span>
+        </span>
+        <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-alo-text sm:text-[36px] lg:text-[40px]">
           Course Finder
         </h1>
-        <p className="mx-auto mt-2 max-w-2xl text-sm text-alo-text-secondary">
+        <p className="mt-3 max-w-[62ch] text-[15px] leading-7 text-alo-body">
           Search verified published courses and universities. Every result links to a page that exists —
           fees, intakes and deadlines are shown only where the institution publishes them.
         </p>
@@ -792,11 +796,11 @@ export default function PublicCourseFinder() {
             {pages > 1 && (
               <div className="mt-4 flex items-center justify-center gap-2">
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-10"
-                  disabled={page <= 1 || loading}
-                  onClick={() => void runCourseSearch(page - 1)}
+ type="button"
+ variant="outline"
+ className=""
+ disabled={page <= 1 || loading}
+ onClick={() => void runCourseSearch(page - 1)}
                 >
                   <ChevronLeft className="h-4 w-4" /> Previous
                 </Button>
@@ -804,10 +808,10 @@ export default function PublicCourseFinder() {
                   Page {page} / {pages}
                 </span>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-10"
-                  disabled={page >= pages || loading}
+ type="button"
+ variant="outline"
+ className=""
+ disabled={page >= pages || loading}
                   onClick={() => void runCourseSearch(page + 1)}
                 >
                   Next <ChevronRight className="h-4 w-4" />

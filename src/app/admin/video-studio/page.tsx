@@ -121,7 +121,7 @@ export default function VideoStudioPage() {
   if (loading) {
     return (
       <div className="p-12 text-center text-[var(--alo-text-muted)]">
-        <RefreshCw className="w-8 h-8 animate-spin mx-auto text-blue-600 mb-3" />
+        <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[var(--alo-brand)] mb-3" />
         <p className="text-sm font-semibold">Loading Video Studio — 34 repos audit...</p>
       </div>
     );
@@ -146,7 +146,7 @@ export default function VideoStudioPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={fetchData} variant="outline" className="text-xs rounded-xl">
+          <Button onClick={fetchData} variant="outline" className=" rounded-xl">
             <RefreshCw className="w-4 h-4 mr-1.5" /> Refresh
           </Button>
           <Button onClick={() => window.open('/docs/VIDEO_ECOSYSTEM_AUDIT.md', '_blank')} className="bg-[var(--alo-brand)] text-white text-[13px] rounded-[10px] hover:bg-[var(--alo-brand-hover)]">
@@ -160,7 +160,7 @@ export default function VideoStudioPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Total Repos</span>
-            <p className="text-2xl font-extrabold text-blue-600">{stats.total}</p>
+            <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{stats.total}</p>
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">P0 Critical</span>
@@ -184,7 +184,7 @@ export default function VideoStudioPage() {
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Automation</span>
-            <p className="text-2xl font-extrabold text-orange-600">{stats.categories?.content_automation + stats.categories?.automation}</p>
+            <p className="text-2xl font-extrabold text-[var(--alo-cta-active)]">{stats.categories?.content_automation + stats.categories?.automation}</p>
           </Card>
         </div>
       )}
@@ -219,7 +219,7 @@ export default function VideoStudioPage() {
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="p-6 bg-white border rounded-2xl lg:col-span-2 space-y-4">
-            <h2 className="text-base font-bold flex items-center gap-2"><BarChart3 className="w-5 h-5 text-blue-600" /> Provider Health (34 repos)</h2>
+            <h2 className="text-base font-bold flex items-center gap-2"><BarChart3 className="w-5 h-5 text-[var(--alo-brand)]" /> Provider Health (34 repos)</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs max-h-[600px] overflow-y-auto">
               {Object.values(health).map((p: any) => (
                 <div key={p.id} className={`p-3 border rounded-xl ${statusColor(p.status)}`}>
@@ -258,7 +258,7 @@ export default function VideoStudioPage() {
       {/* Remotion */}
       {activeTab === 'remotion' && (
         <Card className="p-6 bg-white border rounded-2xl space-y-6">
-          <h2 className="text-base font-bold flex items-center gap-2"><Layers className="w-5 h-5 text-blue-600" /> Remotion — Programmatic Video with React (remotion-dev/remotion)</h2>
+          <h2 className="text-base font-bold flex items-center gap-2"><Layers className="w-5 h-5 text-[var(--alo-brand)]" /> Remotion — Programmatic Video with React (remotion-dev/remotion)</h2>
           <p className="text-xs text-[var(--alo-body)]">Create videos programmatically with React. Frame = React component. Real-time preview, SSR via Lambda, versioned templates. More controllable than direct AI video gen.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -395,7 +395,7 @@ export default function VideoStudioPage() {
                     <div className="font-bold text-sm flex items-center gap-2">
                       {r.name}
                       <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${r.integration.priority === 'P0' ? 'bg-red-100 text-red-700' : r.integration.priority === 'P1' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-[var(--alo-body)]'}`}>{r.integration.priority}</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[11px] ${r.integration.status === 'integrated' ? 'bg-emerald-100 text-emerald-700' : r.integration.status === 'adapter_ready' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200'}`}>{r.integration.status}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] ${r.integration.status === 'integrated' ? 'bg-emerald-100 text-emerald-700' : r.integration.status === 'adapter_ready' ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' : 'bg-slate-200'}`}>{r.integration.status}</span>
                     </div>
                     <div className="mt-1 text-[var(--alo-body)]">{r.description.slice(0, 200)}...</div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
@@ -403,7 +403,7 @@ export default function VideoStudioPage() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-1 shrink-0">
-                    <a href={r.url.replace('.git','')} target="_blank" className="px-3 py-1.5 bg-slate-900 text-white rounded-xl flex items-center gap-1.5 text-[11px] font-bold">
+                    <a href={r.url.replace('.git','')} target="_blank" className="px-3 py-1.5 bg-[var(--alo-brand)] text-white rounded-xl flex items-center gap-1.5 text-[11px] font-bold">
                       <Github className="w-3.5 h-3.5" /> GitHub <ExternalLink className="w-3 h-3" />
                     </a>
                     <span className="text-[11px] text-[var(--alo-text-muted)] text-center">{r.license.slice(0, 20)}</span>
@@ -433,7 +433,7 @@ export default function VideoStudioPage() {
           </p>
           <div className="mt-6 flex justify-center gap-2">
             <Button onClick={() => setActiveTab('overview')} variant="outline" className="text-xs rounded-xl">Back to Overview</Button>
-            <Button onClick={fetchData} className="text-xs bg-[var(--alo-brand)] text-white rounded-xl"><RefreshCw className="w-4 h-4 mr-1.5" /> Refresh Health</Button>
+            <Button onClick={fetchData} className=" bg-[var(--alo-brand)] text-white rounded-xl"><RefreshCw className="w-4 h-4 mr-1.5" /> Refresh Health</Button>
           </div>
         </Card>
       )}

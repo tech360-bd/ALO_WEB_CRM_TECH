@@ -154,7 +154,7 @@ const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
 const ATTENDANCE_STATUS_COLORS: Record<string, string> = {
   PRESENT: "bg-emerald-100 text-emerald-700",
   LATE: "bg-amber-100 text-amber-700",
-  LEAVE: "bg-blue-100 text-blue-700",
+  LEAVE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   ABSENT: "bg-red-100 text-red-700",
   HALF_DAY: "bg-violet-100 text-violet-700",
   HOLIDAY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
@@ -255,9 +255,9 @@ function PrivateAmount({
             </p>
             <div className="mt-3 flex gap-2">
               <Button
-                variant="outline"
-                className="flex-1 h-9"
-                onClick={() => {
+ variant="outline"
+ className="flex-1 "
+ onClick={() => {
                   setShowPin(false);
                   setPin("");
                 }}
@@ -265,9 +265,9 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                disabled={pin.length < 4}
-                onClick={() => {
+ className="flex-1 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={pin.length < 4}
+ onClick={() => {
                   reveal(id);
                   setShowPin(false);
                   setPin("");

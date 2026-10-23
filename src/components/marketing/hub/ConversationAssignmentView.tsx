@@ -433,11 +433,11 @@ const MOCK_RULES: AutoAssignRule[] = [
 const CHANNEL_ICON = (ch: string) => {
   switch (ch) {
     case 'whatsapp': return { icon: MessageCircle, className: 'text-green-600', bg: 'bg-green-100' };
-    case 'email': return { icon: Mail, className: 'text-blue-600', bg: 'bg-blue-100' };
+    case 'email': return { icon: Mail, className: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' };
     case 'phone': return { icon: Phone, className: 'text-purple-600', bg: 'bg-purple-100' };
     case 'live_chat': return { icon: Globe, className: 'text-teal-600', bg: 'bg-teal-100' };
     case 'instagram': return { icon: MessageSquare, className: 'text-pink-600', bg: 'bg-pink-100' };
-    case 'sms': return { icon: Volume2, className: 'text-orange-600', bg: 'bg-orange-100' };
+    case 'sms': return { icon: Volume2, className: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' };
     default: return { icon: MessageSquare, className: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-surface-muted)]' };
   }
 };

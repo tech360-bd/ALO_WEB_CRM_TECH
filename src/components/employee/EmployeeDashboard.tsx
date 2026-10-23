@@ -66,7 +66,7 @@ function channelIcon(channel: string) {
     </span>
   ) : (
     <span className="inline-flex items-center gap-1 text-[11px] text-alo-text-secondary">
-      <MessageSquare className="w-3 h-3 text-blue-500" /> Facebook
+      <MessageSquare className="w-3 h-3 text-[var(--alo-brand)]" /> Facebook
     </span>
   );
 }
@@ -180,7 +180,7 @@ export default function EmployeeDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">SLA Status</CardTitle>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className=" text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -208,7 +208,7 @@ export default function EmployeeDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text">Recent Tasks</CardTitle>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className=" text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -218,7 +218,7 @@ export default function EmployeeDashboard() {
                 ) : taskData.map((task, i) => (
                   <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: task.priority === 'high' ? '#EF4444' : task.priority === 'medium' ? '#92400E' : '#059669' }} />
+                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: task.priority === 'high' ? 'var(--alo-error)' : task.priority === 'medium' ? '#92400E' : '#059669' }} />
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-alo-text truncate">{task.title}</p>
                         <div className="flex items-center gap-2 mt-0.5">

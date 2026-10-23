@@ -10,7 +10,7 @@ import { CheckCircle2, Users, Clock, Star, TrendingUp, Award, BarChart3, Message
 
 const mockKpis = [
   { label: 'Tasks Completed', value: '47/50', change: '+5 this month', icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', pct: 94 },
-  { label: 'Student Conversions', value: '12', change: '+3 this month', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', pct: 80 },
+  { label: 'Student Conversions', value: '12', change: '+3 this month', icon: Users, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', pct: 80 },
   { label: 'Avg Response Time', value: '2.4 hrs', change: '-0.3 hrs improved', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', pct: 85 },
   { label: 'Client Satisfaction', value: '4.6/5', change: '+0.2 this quarter', icon: Star, color: 'text-purple-600', bg: 'bg-purple-50', pct: 92 },
 ];

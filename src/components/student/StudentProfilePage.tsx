@@ -1278,7 +1278,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
           </FormField>
         </div>
       ) : (
-        <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
+        <Card className="border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] rounded-xl p-6">
           <div className="flex items-start gap-3">
             <AlertCircle className="size-5 text-[var(--alo-brand)] mt-0.5 shrink-0" />
             <div>
@@ -1531,7 +1531,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
       )}
 
       {testStatus === 'No' && (
-        <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
+        <Card className="border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] rounded-xl p-6">
           <div className="flex items-start gap-3">
             <AlertCircle className="size-5 text-[var(--alo-brand)] mt-0.5 shrink-0" />
             <div>
@@ -2602,7 +2602,7 @@ export default function StudentProfilePage() {
               <span className="text-[var(--alo-text-muted)]">Profile Completion</span>
               <Badge
                 className="text-white text-xs px-2.5 py-0.5"
-                style={{ backgroundColor: profileCompletion >= 80 ? '#10B981' : profileCompletion >= 50 ? '#C93D13' : '#64748b' }}
+                style={{ backgroundColor: profileCompletion >= 80 ? 'var(--alo-success)' : profileCompletion >= 50 ? 'var(--alo-cta-hover)' : 'var(--alo-text-muted)' }}
               >
                 {profileCompletion}%
               </Badge>
@@ -2738,7 +2738,7 @@ export default function StudentProfilePage() {
           <p className="text-sm text-[var(--alo-text-muted)] hidden sm:block">
             Section <span className="font-semibold text-[var(--alo-text)]">{activeIndex + 1}</span> of <span className="font-semibold text-[var(--alo-text)]">11</span>
             <span className="mx-2 text-[var(--alo-placeholder)]">|</span>
-            Profile <span className="font-semibold" style={{ color: profileCompletion >= 80 ? '#10B981' : '#C93D13' }}>{profileCompletion}%</span> complete
+            Profile <span className="font-semibold" style={{ color: profileCompletion >= 80 ? 'var(--alo-success)' : 'var(--alo-cta-hover)' }}>{profileCompletion}%</span> complete
           </p>
           <p className="text-sm text-[var(--alo-text-muted)] sm:hidden">
             {activeIndex + 1}/11 — {profileCompletion}%

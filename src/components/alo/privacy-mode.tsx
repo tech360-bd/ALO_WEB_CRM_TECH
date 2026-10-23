@@ -130,11 +130,11 @@ export function SensitiveField({ id, label, value, type = "text", mono }: { id: 
             />
             <p className="mt-2 text-[11px] text-muted-foreground">This action will be audit-logged as <code className="font-mono">sensitive_data_revealed</code>.</p>
             <div className="mt-3 flex gap-2">
-              <Button variant="outline" className="flex-1 h-9" onClick={() => { setShowPinPrompt(false); setPin(""); }}>Cancel</Button>
+              <Button variant="outline" className="flex-1 " onClick={() => { setShowPinPrompt(false); setPin(""); }}>Cancel</Button>
               <Button
-                className="flex-1 h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                disabled={pin.length < 4}
-                onClick={() => { reveal(id); setShowPinPrompt(false); setPin(""); }}
+ className="flex-1 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={pin.length < 4}
+ onClick={() => { reveal(id); setShowPinPrompt(false); setPin(""); }}
               >
                 Reveal
               </Button>

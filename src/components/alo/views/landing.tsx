@@ -473,7 +473,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                       <Icon name="LayoutDashboard" className="size-4" />
                       Open Student Dashboard
                     </Button>
-                    <Button onClick={resetForm} variant="ghost" className="h-11">
+                    <Button onClick={resetForm} variant="ghost" className="">
                       Submit another lead
                     </Button>
                   </div>

@@ -64,7 +64,7 @@ export default function CounselorLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[var(--alo-page)] p-4">
       <Card className="w-full max-w-md border-[var(--alo-border)] bg-white shadow-xl">
         <CardHeader className="pb-2 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]">
             <Headset className="h-6 w-6" aria-hidden="true" />
           </div>
           <CardTitle className="text-2xl font-bold text-[var(--alo-text)]">Counselor Workspace</CardTitle>
@@ -123,7 +123,7 @@ export default function CounselorLoginPage() {
               </div>
             </div>
 
-            <Button type="submit" disabled={loading} className="h-11 w-full rounded-button bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700">
+            <Button type="submit" disabled={loading} className=" w-full rounded-button bg-[var(--alo-brand)] text-sm font-semibold text-white hover:bg-[var(--alo-brand-hover)]">
               {loading ? 'Signing in…' : 'Sign In to Counselor Workspace'}
               {!loading && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
             </Button>

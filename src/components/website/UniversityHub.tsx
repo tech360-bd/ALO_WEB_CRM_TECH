@@ -118,7 +118,7 @@ export default function UniversityHub({ slug }: Props) {
             </Badge>
             {uni.worldRanking > 0 && <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)] text-xs">World ranking recorded: #{uni.worldRanking}</Badge>}
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] tracking-tight mb-3">{name}</h1>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-3">{name}</h1>
           <p className="text-lg text-[var(--alo-body)] flex items-center gap-2 mb-6"><MapPin className="w-5 h-5 text-[var(--alo-cta)]" />{city}, {country} {uni.founded ? `• Established ${uni.founded}` : ''}</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Apply Through ALO</Button></Link>
@@ -265,7 +265,7 @@ export default function UniversityHub({ slug }: Props) {
             {/* Generic guidance is explicitly distinguished from institution requirements. */}
             <Card className="p-6 md:p-8 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
               <h2 className="text-xl font-bold text-[var(--alo-text)] mb-3 flex items-center gap-2"><FileText className="w-5 h-6 text-[var(--alo-brand)]" />Application information and evidence gaps</h2>
-              <p className="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-3 text-xs leading-5 text-blue-900">This university profile does not contain a verified universal document checklist or application deadline. Course-level requirements and dates differ and are shown only when present in a source-linked record.</p>
+              <p className="mb-4 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-3 text-xs leading-5 text-[var(--alo-brand-deep)]">This university profile does not contain a verified universal document checklist or application deadline. Course-level requirements and dates differ and are shown only when present in a source-linked record.</p>
               <div className="grid md:grid-cols-3 gap-6 text-sm">
                 <div><h4 className="font-semibold mb-2">Required documents</h4><p className="text-xs leading-5 text-[var(--alo-body)]">Not recorded at university level. Confirm the current list with the specific course and official admissions source.</p></div>
                 <div><h4 className="font-semibold mb-2">General planning steps</h4><ol className="space-y-1.5 text-xs list-decimal list-inside text-[var(--alo-body)]"><li>Review the linked official source.</li><li>Check the verified course-level record.</li><li>Confirm deadlines, documents and submission route with the institution.</li><li>Submit using the route specified by the official source.</li></ol></div>
@@ -303,10 +303,10 @@ export default function UniversityHub({ slug }: Props) {
 
             <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Apply to {name} Through ALO</h3>
-              <p className="text-sm text-blue-100 mb-6 max-w-2xl mx-auto">Book free consultation, check eligibility, save course, compare, ask counselor — move from information → eligibility → course selection → consultation → application</p>
+              <p className="text-sm text-[var(--alo-brand-pale)] mb-6 max-w-2xl mx-auto">Book free consultation, check eligibility, save course, compare, ask counselor — move from information → eligibility → course selection → consultation → application</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check Eligibility</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
                 <Link href={`/course-finder?university=${uni.universityId}`}><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-8">View All Courses</Button></Link>
               </div>
             </Card>

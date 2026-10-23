@@ -83,7 +83,7 @@ function StatusBadge({ status }: { status: string }) {
       : status === 'paused' || status === 'cancelled'
         ? 'bg-amber-50 text-amber-700'
         : status === 'sending' || status === 'queued'
-          ? 'bg-blue-50 text-blue-700'
+          ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
           : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   return <Badge className={tone}>{status}</Badge>;
 }
@@ -328,7 +328,7 @@ export default function EmailMarketingView() {
                   </thead>
                   <tbody>
                     {campaigns.map((row) => (
-                      <tr key={row.id} className={`border-t ${selectedId === row.id ? 'bg-orange-50' : ''}`}>
+                      <tr key={row.id} className={`border-t ${selectedId === row.id ? 'bg-[var(--alo-cta-soft)]' : ''}`}>
                         <td className="py-1.5 pr-2">
                           {row.name}
                           {row.testMode && <span className="ml-1 text-[11px] text-amber-700">[test]</span>}

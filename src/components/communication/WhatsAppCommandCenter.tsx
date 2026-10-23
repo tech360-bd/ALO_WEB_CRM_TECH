@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 
 // Message delivery status icons
 const DeliveryIcon = ({ status }: { status: string }) => {
-  if (status === 'read') return <span className="text-blue-500 text-[11px] font-bold">✓✓</span>;
+  if (status === 'read') return <span className="text-[var(--alo-brand)] text-[11px] font-bold">✓✓</span>;
   if (status === 'delivered') return <span className="text-[var(--alo-text-muted)] text-[11px]">✓✓</span>;
   if (status === 'sent') return <span className="text-[var(--alo-text-muted)] text-[11px]">✓</span>;
   if (status === 'failed') return <span className="text-red-500 text-[11px]">✗</span>;
@@ -27,12 +27,12 @@ const CHANNEL_COLORS: Record<string, string> = {
   whatsapp: 'bg-emerald-500',
   email: 'bg-blue-500',
   sms: 'bg-purple-500',
-  phone: 'bg-orange-500',
+  phone: 'bg-[var(--alo-cta)]',
   portal: 'bg-slate-500',
 };
 
 const INTENT_COLORS: Record<string, string> = {
-  DOCUMENT_REQUIREMENT: 'bg-blue-100 text-blue-800',
+  DOCUMENT_REQUIREMENT: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   PAYMENT_QUESTION: 'bg-red-100 text-red-800',
   VISA_QUESTION: 'bg-purple-100 text-purple-800',
   APPLICATION_QUESTION: 'bg-indigo-100 text-indigo-800',
@@ -257,7 +257,7 @@ export default function WhatsAppCommandCenter() {
                 key={thread.id}
                 onClick={() => selectThread(thread)}
                 className={`w-full text-left p-3 border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-colors ${
-                  selectedThread?.id === thread.id ? 'bg-blue-50 border-l-2 border-l-[#0057B8]' : ''
+                  selectedThread?.id === thread.id ? 'bg-[var(--alo-brand-pale)] border-l-2 border-l-[#0057B8]' : ''
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-1">
@@ -534,7 +534,7 @@ export default function WhatsAppCommandCenter() {
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--alo-text-muted)]">Stage</span>
-                <Badge className="text-[11px] bg-blue-50 text-[var(--alo-brand)] font-bold">
+                <Badge className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] font-bold">
                   {selectedThread.studentContext.currentStage || 'Unknown'}
                 </Badge>
               </div>

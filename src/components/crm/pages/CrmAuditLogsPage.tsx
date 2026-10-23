@@ -10,9 +10,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Search, Download, Eye, Loader2 } from 'lucide-react';
 
 const actionColors: Record<string, string> = {
-  create: 'bg-emerald-100 text-emerald-700', update: 'bg-blue-100 text-blue-700',
+  create: 'bg-emerald-100 text-emerald-700', update: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   delete: 'bg-red-100 text-red-700', login: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  export: 'bg-purple-100 text-purple-700', status_change: 'bg-orange-100 text-orange-700',
+  export: 'bg-purple-100 text-purple-700', status_change: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   assign: 'bg-cyan-100 text-cyan-700', upload: 'bg-amber-100 text-amber-700',
   import_batch_completed: 'bg-emerald-100 text-emerald-700', import_batch_rolled_back: 'bg-red-100 text-red-700',
 };

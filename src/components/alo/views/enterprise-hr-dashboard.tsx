@@ -278,7 +278,7 @@ const LEAVE_STATUS_COLORS: Record<string, string> = {
 
 const LEAVE_TYPE_COLORS: Record<string, string> = {
   CASUAL: "bg-sky-100 text-sky-700",
-  ANNUAL: "bg-blue-100 text-blue-700",
+  ANNUAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MEDICAL: "bg-rose-100 text-rose-700",
   MATERNITY: "bg-violet-100 text-violet-700",
   PATERNITY: "bg-violet-100 text-violet-700",
@@ -288,7 +288,7 @@ const LEAVE_TYPE_COLORS: Record<string, string> = {
 
 const PAYROLL_STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  APPROVED: "bg-blue-100 text-blue-700",
+  APPROVED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   PAID: "bg-emerald-100 text-emerald-700",
 };
 
@@ -307,7 +307,7 @@ const SESSION_STATUS_COLORS: Record<string, string> = {
 
 const CLEARANCE_STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  IN_PROGRESS: "bg-blue-100 text-blue-700",
+  IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
 };
 
@@ -443,9 +443,9 @@ function PrivateAmount({
             </p>
             <div className="mt-3 flex gap-2">
               <Button
-                variant="outline"
-                className="flex-1 h-9"
-                onClick={() => {
+ variant="outline"
+ className="flex-1 "
+ onClick={() => {
                   setShowPin(false);
                   setPin("");
                 }}
@@ -453,9 +453,9 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                disabled={pin.length < 4}
-                onClick={() => {
+ className="flex-1 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={pin.length < 4}
+ onClick={() => {
                   reveal(id);
                   setShowPin(false);
                   setPin("");
@@ -1349,14 +1349,14 @@ export function EnterpriseHrDashboard() {
                         {attendance.filter((a) => a.status === "LATE").length}
                       </p>
                     </div>
-                    <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
+                    <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-3">
                       <div className="flex items-center gap-2">
-                        <Icon name="CalendarOff" className="size-4 text-blue-600" />
-                        <span className="text-xs font-medium text-blue-700">
+                        <Icon name="CalendarOff" className="size-4 text-[var(--alo-brand)]" />
+                        <span className="text-xs font-medium text-[var(--alo-brand)]">
                           On Leave
                         </span>
                       </div>
-                      <p className="mt-1 text-2xl font-bold text-blue-700 tabular-nums">
+                      <p className="mt-1 text-2xl font-bold text-[var(--alo-brand)] tabular-nums">
                         {attendance.filter((a) => a.status === "LEAVE").length}
                       </p>
                     </div>
@@ -1683,9 +1683,9 @@ export function EnterpriseHrDashboard() {
                                 {l.status === "PENDING" ? (
                                   <div className="flex items-center justify-end gap-1.5">
                                     <Button
-                                      size="sm"
-                                      className="h-8 bg-emerald-600 text-white hover:bg-emerald-700"
-                                      onClick={() =>
+ size="sm"
+ className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ onClick={() =>
                                         handleApproveLeave(l, "APPROVED")
                                       }
                                     >
@@ -1693,10 +1693,10 @@ export function EnterpriseHrDashboard() {
                                       Approve
                                     </Button>
                                     <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-8 border-red-300 text-red-600 hover:bg-red-50"
-                                      onClick={() =>
+ size="sm"
+ variant="outline"
+ className=" border-red-300 text-red-600 hover:bg-red-50"
+ onClick={() =>
                                         handleApproveLeave(l, "REJECTED")
                                       }
                                     >
@@ -1876,9 +1876,9 @@ export function EnterpriseHrDashboard() {
                                 <TableCell className="text-right">
                                   {p.status === "DRAFT" ? (
                                     <Button
-                                      size="sm"
-                                      className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                                      onClick={() =>
+ size="sm"
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ onClick={() =>
                                         handleApprovePayroll(p, "APPROVED")
                                       }
                                     >
@@ -1887,9 +1887,9 @@ export function EnterpriseHrDashboard() {
                                     </Button>
                                   ) : p.status === "APPROVED" ? (
                                     <Button
-                                      size="sm"
-                                      className="h-8 bg-emerald-600 text-white hover:bg-emerald-700"
-                                      onClick={() =>
+ size="sm"
+ className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ onClick={() =>
                                         handleApprovePayroll(p, "PAID")
                                       }
                                     >
@@ -2024,10 +2024,10 @@ export function EnterpriseHrDashboard() {
                               <TableCell className="text-right">
                                 {d.status === "ASSIGNED" ? (
                                   <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                    onClick={() => handleReturnDevice(d)}
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleReturnDevice(d)}
                                   >
                                     <Icon name="Undo" className="size-3.5" />
                                     Return

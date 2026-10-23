@@ -176,9 +176,9 @@ function getDocStatusConfig(status: DocumentStatus) {
       };
     case 'Needs Review':
       return {
-        color: 'bg-blue-50 text-blue-700 border-blue-200',
+        color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
         icon: AlertTriangle,
-        iconColor: 'text-blue-500',
+        iconColor: 'text-[var(--alo-brand)]',
       };
   }
 }
@@ -314,7 +314,7 @@ function UploadDialog({
               className={cn(
                 'flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 cursor-pointer transition-colors',
                 isDragging
-                  ? 'border-[var(--alo-cta-hover)] bg-orange-50/50'
+                  ? 'border-[var(--alo-cta-hover)] bg-[var(--alo-cta-soft)]/50'
                   : file
                     ? 'border-emerald-300 bg-emerald-50/30'
                     : 'border-[var(--alo-text)]/15 bg-[var(--alo-text)]/[0.01] hover:border-[var(--alo-text)]/30 hover:bg-[var(--alo-text)]/[0.02]'
@@ -352,9 +352,9 @@ function UploadDialog({
           {error && <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
 
           {/* File type validation note */}
-          <div className="flex items-start gap-2 rounded-lg bg-blue-50/50 border border-blue-100 px-3 py-2.5">
-            <AlertTriangle className="size-4 text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-xs text-blue-700 leading-relaxed">
+          <div className="flex items-start gap-2 rounded-lg bg-[var(--alo-brand-pale)]/50 border border-[var(--alo-border)] px-3 py-2.5">
+            <AlertTriangle className="size-4 text-[var(--alo-brand)] shrink-0 mt-0.5" />
+            <p className="text-xs text-[var(--alo-brand)] leading-relaxed">
               <span className="font-semibold">File requirements: </span>
               Accepted formats are PDF, JPG, PNG, GIF, and WEBP. Maximum file size is 20MB. Ensure all text is clearly readable.
             </p>
@@ -478,7 +478,7 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1 border-t border-border/40 mt-1">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-text)]/5 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-text)]/5 ">
             <Eye className="size-3.5" />
             View
           </Button>
@@ -486,7 +486,7 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
             <Download className="size-3.5" />
             Download
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-cta-hover)] hover:text-[var(--alo-cta-hover)] hover:bg-orange-50 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-cta-hover)] hover:text-[var(--alo-cta-hover)] hover:bg-[var(--alo-cta-soft)] ">
             <RefreshCw className="size-3.5" />
             Replace
           </Button>

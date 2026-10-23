@@ -361,7 +361,7 @@ export function SuperAdminWebsiteCmsHub() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-[var(--alo-text)]">Super Admin — Website CMS Hub</h2>
-          <p className="text-sm text-[var(--alo-body)] mt-1">Edit any part of website directly — operations, audit logged, RBAC protected. Mobile PWA ready.</p>
+          <p className="text-sm text-[var(--alo-body)] mt-1">Edit website content directly. Every change is audit logged and permission-checked.</p>
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchItems()} className="border rounded-lg px-3 py-2 text-sm w-48" />
@@ -397,7 +397,7 @@ export function SuperAdminWebsiteCmsHub() {
       <div className="bg-white rounded-xl border border-[var(--alo-border)] shadow-sm overflow-hidden">
         <div className="p-4 border-b flex items-center justify-between">
           <h3 className="font-semibold text-sm">{activeType} — {items.length} items {loading && "(loading...)"}</h3>
-          <span className="text-xs text-[var(--alo-text-muted)]">Live data • Audit logged</span>
+          <span className="text-xs text-[var(--alo-text-muted)]">Live data, audit logged</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -421,7 +421,7 @@ export function SuperAdminWebsiteCmsHub() {
                   </td>
                   <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-green-100 text-green-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{item.status||"—"}</span></td>
                   <td className="px-4 py-2.5 text-right space-x-1">
-                    <button onClick={()=>handleEdit(item)} className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">Edit</button>
+                    <button onClick={()=>handleEdit(item)} className="px-2.5 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-lg text-xs font-medium">Edit</button>
                     <button onClick={()=>handleHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
                     <button onClick={()=>handleDelete(item.id)} className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium">Delete</button>
                   </td>
@@ -485,7 +485,7 @@ export function SuperAdminWebsiteCmsHub() {
                     {rev.kind === "DRAFT" && (
                       <button onClick={()=>handlePublishDraft(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold">Publish</button>
                     )}
-                    <button onClick={()=>handleRollback(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 disabled:opacity-50 text-blue-700 rounded-lg text-xs font-semibold">Rollback here</button>
+                    <button onClick={()=>handleRollback(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] disabled:opacity-50 text-[var(--alo-brand)] rounded-lg text-xs font-semibold">Rollback here</button>
                   </div>
                 </div>
               ))}

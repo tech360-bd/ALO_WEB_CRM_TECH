@@ -17,10 +17,14 @@ export default function BlogPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-[var(--alo-brand)] text-white py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Blog & Insights</h1>
-          <p className="text-lg md:text-xl text-blue-100">
+      <section className="border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)] py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-secondary)] ring-1 ring-inset ring-[var(--alo-border)]">
+            <span className="size-1.5 rounded-full bg-[var(--alo-brand)]" aria-hidden="true" />
+            <span className="text-[var(--alo-brand)]">Editorial</span>
+          </span>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">Blog & Insights</h1>
+          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] md:text-base">
             Your ultimate knowledge hub for studying abroad. Discover expert guides on visas, scholarships, universities, and test preparation.
           </p>
         </div>

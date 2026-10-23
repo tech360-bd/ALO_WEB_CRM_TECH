@@ -35,7 +35,7 @@ interface DocumentVersionTimelineProps {
 const versionStatusConfig: Record<string, { label: string; classes: string; icon: React.ReactNode }> = {
   uploaded: {
     label: 'Uploaded',
-    classes: 'bg-blue-50 text-blue-700 border-blue-200',
+    classes: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
     icon: <Clock className="w-3 h-3" />,
   },
   under_review: {
@@ -263,17 +263,17 @@ export default function DocumentVersionTimeline({
 
             <div className="flex gap-3 pt-1">
               <Button
-                variant="outline"
-                className="flex-1 text-xs font-bold"
-                onClick={() => setShowRejectModal(null)}
+ variant="outline"
+ className="flex-1 font-bold"
+ onClick={() => setShowRejectModal(null)}
               >
                 Cancel
               </Button>
               <Button
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
-                onClick={handleConfirmReject}
-                disabled={!rejectReason}
-              >
+ className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold"
+ onClick={handleConfirmReject}
+ disabled={!rejectReason}
+ >
                 Confirm Rejection
               </Button>
             </div>

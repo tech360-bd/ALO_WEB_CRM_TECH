@@ -162,7 +162,7 @@ export default function StudentOnboarding() {
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--alo-surface-muted)]">
                 <div
-                  className="h-full rounded-full bg-alo-blue transition-all"
+                  className="h-full rounded-full bg-alo-brand transition-all"
                   style={{ width: `${Math.max(0, Math.min(100, storedPercent))}%` }}
                 />
               </div>
@@ -175,7 +175,7 @@ export default function StudentOnboarding() {
               className="mb-6"
               title="Your details"
               description="These must match your passport and transcripts"
-              icon={<User className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+              icon={<User className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
             >
               <form className="space-y-3 px-5 py-4" onSubmit={save}>
                 <div className="space-y-1.5">
@@ -253,10 +253,10 @@ export default function StudentOnboarding() {
                 )}
 
                 <Button
-                  type="submit"
-                  disabled={saving}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                >
+ type="submit"
+ disabled={saving}
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                   {saving ? 'Saving…' : 'Save My Details'}
                 </Button>
               </form>
@@ -283,7 +283,7 @@ export default function StudentOnboarding() {
                         {step.href && (
                           <Link
                             href={step.href}
-                            className="mt-1.5 inline-block text-[13px] font-semibold text-alo-blue hover:underline"
+                            className="mt-1.5 inline-block text-[13px] font-semibold text-alo-brand hover:underline"
                           >
                             {step.id === 'courses' ? 'Open My Saved Courses' :
                               step.id === 'documents' ? 'Open Documents' : 'Book an Appointment'}
@@ -306,13 +306,13 @@ export default function StudentOnboarding() {
             </PortalCard>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/student/appointments">
                   <GraduationCap className="mr-2 h-4 w-4" aria-hidden="true" />
                   Book a Consultation
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/ai/course-match">
                   <MapPin className="mr-2 h-4 w-4" aria-hidden="true" />
                   Find Matching Courses

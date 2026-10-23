@@ -173,7 +173,7 @@ export default function ApplicationDetailPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={handleVisaHandover} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Handover to Visa</Button>
+              <Button onClick={handleVisaHandover} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white "><Shield className="w-4 h-4 mr-1" />Handover to Visa</Button>
               <Button variant="outline" className="border-[var(--alo-border)]" onClick={fetchApp}><RefreshCw className="w-4 h-4" /></Button>
             </div>
           </div>
@@ -242,7 +242,7 @@ export default function ApplicationDetailPage() {
                   <option value="">{getAllowedApplicationStageTransitions(app.stage).length ? 'Change to an allowed next stage' : 'No further stage transitions'}</option>
                   {getAllowedApplicationStageTransitions(app.stage).map(stage => <option key={stage} value={stage}>{stage}</option>)}
                 </select>
-                <Button onClick={handleVisaHandover} className="w-full bg-[var(--alo-brand)] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Visa Handover</Button>
+                <Button onClick={handleVisaHandover} className="w-full bg-[var(--alo-brand)] text-white "><Shield className="w-4 h-4 mr-1" />Visa Handover</Button>
               </CardContent>
             </Card>
             <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl"><CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-xs">Visa Handover Status</CardTitle></CardHeader><CardContent className="p-4"><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)]">{app.visaHandoverStatus}</Badge><p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Reuses existing Visa Engine — no duplicate VisaCase</p></CardContent></Card>
@@ -319,7 +319,7 @@ export default function ApplicationDetailPage() {
           <CardContent className="p-4 space-y-4">
             <form onSubmit={handleComment} className="space-y-3">
               <textarea value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="Add comment — visibility filtered backend, B2B never leak in templates" className="w-full bg-white border border-[var(--alo-border)] rounded-xl p-3 text-sm min-h-[80px]" />
-              <div className="flex gap-2 items-center"><select value={commentType} onChange={e=>setCommentType(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-xs"><option value="STUDENT_VISIBLE">STUDENT_VISIBLE</option><option value="PARTNER_VISIBLE">PARTNER_VISIBLE</option><option value="COUNSELOR_VISIBLE">COUNSELOR_VISIBLE</option><option value="APPLICATION_TEAM_INTERNAL">APPLICATION_TEAM_INTERNAL</option><option value="B2B_CONFIDENTIAL">B2B_CONFIDENTIAL</option><option value="UNIVERSITY">UNIVERSITY</option><option value="FINANCE">FINANCE</option><option value="VISA_HANDOVER">VISA_HANDOVER</option></select><Button type="submit" disabled={submitting || !commentText.trim()} className="bg-[var(--alo-brand)] text-white text-xs">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><MessageSquare className="w-4 h-4 mr-1" />Post Comment</>}</Button></div>
+              <div className="flex gap-2 items-center"><select value={commentType} onChange={e=>setCommentType(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-xs"><option value="STUDENT_VISIBLE">STUDENT_VISIBLE</option><option value="PARTNER_VISIBLE">PARTNER_VISIBLE</option><option value="COUNSELOR_VISIBLE">COUNSELOR_VISIBLE</option><option value="APPLICATION_TEAM_INTERNAL">APPLICATION_TEAM_INTERNAL</option><option value="B2B_CONFIDENTIAL">B2B_CONFIDENTIAL</option><option value="UNIVERSITY">UNIVERSITY</option><option value="FINANCE">FINANCE</option><option value="VISA_HANDOVER">VISA_HANDOVER</option></select><Button type="submit" disabled={submitting || !commentText.trim()} className="bg-[var(--alo-brand)] text-white ">{submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><MessageSquare className="w-4 h-4 mr-1" />Post Comment</>}</Button></div>
             </form>
             <div className="space-y-2">
               {(app.comments || []).length===0 ? <p className="text-sm text-[var(--alo-text-muted)] py-4 text-center">No comments — empty. Comments filtered by visibility backend.</p> : (app.comments||[]).map((c:any)=>(

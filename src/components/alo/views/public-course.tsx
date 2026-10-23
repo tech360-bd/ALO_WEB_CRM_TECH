@@ -216,10 +216,10 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             description="This course page may have been moved or is being updated. Browse all courses to find a verified programme."
             action={
               <div className="flex gap-2">
-                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-11" onClick={() => onNavigate("public-courses")}>
+                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 " onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> All courses
                 </Button>
-                <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-11" onClick={() => onNavigate("public-universities")}>
+                <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => onNavigate("public-universities")}>
                   <Icon name="Building2" className="size-4" /> All universities
                 </Button>
               </div>
@@ -350,8 +350,8 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             <p className="mt-1 text-xs text-foreground/80">Run the AI Eligibility Checker — it assesses your profile against this course's requirements.</p>
           </div>
           <Button
-            className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-11"
-            onClick={() => scrollToId("eligibility")}
+ className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ onClick={() => scrollToId("eligibility")}
           >
             <Icon name="Sparkles" className="size-4" /> Check my eligibility
           </Button>
@@ -363,16 +363,16 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         <p className="text-sm leading-relaxed text-muted-foreground">{course.englishRequirement}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
-            variant="outline"
-            className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-11"
-            onClick={() => onNavigate("public-exams")}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("public-exams")}
           >
             <Icon name="GraduationCap" className="size-4" /> Take Free English Test
           </Button>
           <Button
-            variant="outline"
-            className="border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]/40 h-11"
-            onClick={() => onNavigate("public-exam", "ielts")}
+ variant="outline"
+ className="border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]/40 "
+ onClick={() => onNavigate("public-exam", "ielts")}
           >
             <Icon name="PenLine" className="size-4" /> Start IELTS Mock
           </Button>
@@ -459,10 +459,10 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
         className="mt-6"
         action={
           <Button
-            variant="outline"
-            size="sm"
-            className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9"
-            onClick={() => onNavigate("student-dashboard")}
+ variant="outline"
+ size="sm"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("student-dashboard")}
           >
             <Icon name="Upload" className="size-4" /> Upload in Portal
           </Button>
@@ -613,10 +613,10 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             </div>
           </div>
           <Button
-            className="mt-3 h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-            disabled={eligLoading || !eligForm.academicLevel}
-            onClick={runEligibility}
-          >
+ className="mt-3 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ disabled={eligLoading || !eligForm.academicLevel}
+ onClick={runEligibility}
+ >
             {eligLoading ? <><Icon name="Loader2" className="size-4 animate-spin" /> Assessing...</> : <><Icon name="Sparkles" className="size-4" /> Check my eligibility</>}
           </Button>
 
@@ -660,9 +660,9 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
                 <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800"><span className="font-semibold">Visa risk note:</span> {eligResult.visaRiskNote}</p>
               )}
               <Button
-                variant="outline"
-                className="mt-4 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                onClick={() => scrollToId("apply")}
+ variant="outline"
+ className="mt-4 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => scrollToId("apply")}
               >
                 <Icon name="Send" className="size-4" /> Talk to a counselor
               </Button>

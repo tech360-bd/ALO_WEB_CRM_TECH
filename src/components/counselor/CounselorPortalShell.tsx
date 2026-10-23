@@ -118,10 +118,10 @@ function SidebarContent() {
       <Separator />
       <div className="p-3">
         <Button
-          variant="ghost"
-          className="w-full justify-start text-red-600 hover:bg-red-50 h-10 cursor-pointer"
-          onClick={logout}
-        >
+ variant="ghost"
+ className="w-full justify-start text-red-600 hover:bg-red-50 cursor-pointer"
+ onClick={logout}
+ >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>

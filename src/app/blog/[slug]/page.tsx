@@ -40,47 +40,54 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <div className="pt-20 bg-[var(--alo-page)] min-h-screen">
       
-      {/* Hero Image Section */}
-      <div className="w-full h-[40vh] md:h-[60vh] relative">
-        <Image 
-          src={post.heroImage} 
-          alt={post.title} 
-          fill 
-          className="object-cover" 
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-full">
-          <div className="container mx-auto px-4 md:px-6 pb-12">
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-4">
-                <span className="inline-block bg-[var(--alo-cta)] text-black text-sm font-semibold px-4 py-1 rounded-full">
-                  {post.category}
-                </span>
-              </div>
-              <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+      {/* Hero — image as media, title on a light band (no dark overlay over text).
+          Master §08 Variant E: the headline never sits on top of a photograph. */}
+      <header className="border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-8 py-8 lg:grid-cols-[1.05fr_1fr] lg:py-12">
+            <div className="min-w-0">
+              <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-2 text-[13px] text-[var(--alo-text-muted)]">
+                <Link href="/" className="hover:text-[var(--alo-brand)] transition-colors">Home</Link>
+                <span aria-hidden="true">/</span>
+                <Link href="/blog" className="hover:text-[var(--alo-brand)] transition-colors">Blog</Link>
+              </nav>
+              <span className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-secondary)] ring-1 ring-inset ring-[var(--alo-border)]">
+                <span className="size-1.5 rounded-full bg-[var(--alo-cta)]" aria-hidden="true" />
+                <span className="text-[var(--alo-cta-active)]">{post.category}</span>
+              </span>
+              <h1 className="mt-4 font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px]">
                 {post.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-6 text-[var(--alo-placeholder)] text-sm md:text-base">
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-[var(--alo-body)]">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[var(--alo-brand)] font-bold text-lg">
+                  <div className="flex size-9 items-center justify-center rounded-full bg-[var(--alo-brand)] text-sm font-bold text-white">
                     {post.author.charAt(0)}
                   </div>
-                  <span className="font-medium text-white">{post.author}</span>
+                  <span className="font-semibold text-[var(--alo-text)]">{post.author}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                  {new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  <time dateTime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
                 </div>
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   {post.readTime}
                 </div>
               </div>
             </div>
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] lg:aspect-[4/3]">
+              <Image
+                src={post.heroImage}
+                alt={post.title}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12">
@@ -162,10 +169,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-10 -mb-10"></div>
                 
                 <h3 className="text-2xl font-bold mb-4 relative z-10">Ready to Study Abroad?</h3>
-                <p className="text-blue-100 mb-8 text-sm relative z-10">
+                <p className="text-[var(--alo-brand-pale)] mb-8 text-sm relative z-10">
                   Get personalized guidance from our expert counselors to turn your dream into reality.
                 </p>
-                <Link href="/book-consultation" className="inline-block w-full bg-[var(--alo-cta)] hover:bg-orange-600 text-black font-bold py-3 px-6 rounded-xl transition-colors relative z-10">
+                <Link href="/book-consultation" className="inline-block w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold py-3 px-6 rounded-xl transition-colors relative z-10">
                   Book Free Consultation
                 </Link>
               </div>

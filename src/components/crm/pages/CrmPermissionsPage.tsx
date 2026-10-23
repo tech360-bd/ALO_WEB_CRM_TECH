@@ -66,14 +66,14 @@ export default function CrmPermissionsPage() {
         <div className="flex gap-2">
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Upload className="w-4 h-4 mr-2" />Import</Button>
-          <Button className="bg-orange-500 hover:bg-orange-600" onClick={handleSave}><Save className="w-4 h-4 mr-2" />{saved ? 'Saved!' : 'Save Changes'}</Button>
+          <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]" onClick={handleSave}><Save className="w-4 h-4 mr-2" />{saved ? 'Saved!' : 'Save Changes'}</Button>
         </div>
       </div>
 
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-blue-600" />
+            <Shield className="w-5 h-5 text-[var(--alo-brand)]" />
             <div>
               <p className="font-medium text-[var(--alo-text)]">Access Control Configuration</p>
               <p className="text-sm text-[var(--alo-text-muted)]">Define what each role can do across {CATEGORIES.length} categories and {ACTIONS.length} action types</p>

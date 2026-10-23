@@ -271,10 +271,10 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             description="This university page may have been moved or is being updated. Browse all universities to find a partner near you."
             action={
               <div className="flex gap-2">
-                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-11" onClick={() => onNavigate("public-universities")}>
+                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 " onClick={() => onNavigate("public-universities")}>
                   <Icon name="Building2" className="size-4" /> All universities
                 </Button>
-                <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-11" onClick={() => onNavigate("public-courses")}>
+                <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> Browse courses
                 </Button>
               </div>
@@ -425,10 +425,10 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
           </div>
           {(courseLevelFilter !== "all" || courseSubjectFilter !== "all") && (
             <Button
-              variant="outline"
-              size="sm"
-              className="h-10 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-              onClick={() => { setCourseLevelFilter("all"); setCourseSubjectFilter("all"); }}
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => { setCourseLevelFilter("all"); setCourseSubjectFilter("all"); }}
             >
               <Icon name="RotateCcw" className="size-3.5" /> Reset
             </Button>
@@ -442,7 +442,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
               title="No courses match these filters"
               description="Try removing a filter or browse all courses across universities."
               action={
-                <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10" onClick={() => onNavigate("public-courses")}>
+                <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> All courses
                 </Button>
               }
@@ -479,17 +479,17 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9"
-                      onClick={() => onNavigate("public-course", c.slug)}
+ variant="outline"
+ size="sm"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("public-course", c.slug)}
                     >
                       <Icon name="FileText" className="size-4" /> View Details
                     </Button>
                     <Button
-                      size="sm"
-                      className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-9"
-                      onClick={() => {
+ size="sm"
+ className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ onClick={() => {
                         setSelectedCourseSlug(c.slug);
                         toast({ title: "Course selected", description: `${c.name} pre-filled in the application form below.` });
                         scrollToId("apply");
@@ -609,10 +609,10 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
         className="mt-6"
         action={
           <Button
-            variant="outline"
-            size="sm"
-            className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-9"
-            onClick={() => onNavigate("student-dashboard")}
+ variant="outline"
+ size="sm"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("student-dashboard")}
           >
             <Icon name="Upload" className="size-4" /> Upload in Portal
           </Button>
@@ -722,10 +722,10 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
               </div>
             </div>
             <Button
-              className="mt-3 h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-              disabled={eligLoading || !eligForm.academicLevel}
-              onClick={runEligibility}
-            >
+ className="mt-3 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ disabled={eligLoading || !eligForm.academicLevel}
+ onClick={runEligibility}
+ >
               {eligLoading ? <><Icon name="Loader2" className="size-4 animate-spin" /> Assessing...</> : <><Icon name="Sparkles" className="size-4" /> Check my eligibility</>}
             </Button>
 
@@ -760,9 +760,9 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                   <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800"><span className="font-semibold">Visa risk note:</span> {eligResult.visaRiskNote}</p>
                 )}
                 <Button
-                  variant="outline"
-                  className="mt-4 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                  onClick={() => scrollToId("apply")}
+ variant="outline"
+ className="mt-4 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => scrollToId("apply")}
                 >
                   <Icon name="Send" className="size-4" /> Talk to a counselor
                 </Button>

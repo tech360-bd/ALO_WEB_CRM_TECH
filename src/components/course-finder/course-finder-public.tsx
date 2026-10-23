@@ -137,7 +137,7 @@ function FilterSidebar({
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm text-[var(--alo-text)]">Filters</h3>
         {activeCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={onReset} className="text-xs text-[var(--alo-text-muted)] h-7">
+          <Button variant="ghost" size="sm" onClick={onReset} className=" text-[var(--alo-text-muted)] h-7">
             Clear all ({activeCount})
           </Button>
         )}
@@ -285,7 +285,7 @@ function FilterSidebar({
       {/* English Requirements — Enhanced per spec: english_requirements filter */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium text-[var(--alo-text)] flex items-center gap-1.5">
-          <span className="w-5 h-5 rounded bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center text-[11px] font-bold">EN</span>
+          <span className="w-5 h-5 rounded bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center text-[11px] font-bold">EN</span>
           English Requirements
         </h4>
         <p className="text-[11px] text-[var(--alo-text-muted)] leading-relaxed">Filter courses by accepted English test and minimum score. Acceptance varies by university, course and visa route.</p>
@@ -441,28 +441,28 @@ function CourseCard({
         {/* Actions */}
         <div className="flex gap-2 pt-1">
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => onCompare(course)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => onCompare(course)}
           >
             <GitCompare className="size-3 mr-1" />
             Compare
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => onSave(course)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => onSave(course)}
           >
             <BookmarkPlus className="size-3 mr-1" />
             Save
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => onEnquire(course)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => onEnquire(course)}
           >
             <Send className="size-3 mr-1" />
             Enquire

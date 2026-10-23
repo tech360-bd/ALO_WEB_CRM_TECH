@@ -76,7 +76,7 @@ const TEST_TYPES: {
   { slug: "gre", name: "GRE", modules: "Verbal · Quantitative · Analytical Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Calculator", accent: "bg-sky-50 text-sky-600" },
   { slug: "gmat", name: "GMAT", modules: "Quantitative · Verbal · Integrated Reasoning · Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Network", accent: "bg-teal-50 text-teal-600" },
   { slug: "sat", name: "SAT", modules: "Reading & Writing · Math (digital, adaptive)", freeInfo: "3 free for ALO students, 1 for guests", icon: "PenLine", accent: "bg-indigo-50 text-indigo-600" },
-  { slug: "act", name: "ACT", modules: "English · Math · Reading · Science · Writing (optional)", freeInfo: "3 free for ALO students, 1 for guests", icon: "FlaskConical", accent: "bg-orange-50 text-orange-600" },
+  { slug: "act", name: "ACT", modules: "English · Math · Reading · Science · Writing (optional)", freeInfo: "3 free for ALO students, 1 for guests", icon: "FlaskConical", accent: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   { slug: "placement-test", name: "Placement Test", modules: "Reading · Listening · Writing · Speaking (diagnostic)", freeInfo: "1 free for all students", icon: "Compass", accent: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]" },
 ];
 
@@ -143,7 +143,7 @@ const TEST_BADGE_COLORS: Record<string, string> = {
   GRE: "bg-sky-100 text-sky-700",
   GMAT: "bg-teal-100 text-teal-700",
   SAT: "bg-indigo-100 text-indigo-700",
-  ACT: "bg-orange-100 text-orange-700",
+  ACT: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   "Placement Test": "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
 };
 
@@ -398,9 +398,9 @@ export function EnglishTestDashboard() {
                 Part 1/2/3 prompts, and recorded playback.
               </p>
               <Button
-                className="mt-3 h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                onClick={handleSpeakingPractice}
-              >
+ className="mt-3 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ onClick={handleSpeakingPractice}
+ >
                 <Icon name="Mic" className="size-4" />
                 Start Speaking Practice
               </Button>
@@ -420,9 +420,9 @@ export function EnglishTestDashboard() {
                 band-score estimate and line-by-line comments.
               </p>
               <Button
-                className="mt-3 h-10 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-                onClick={handleWritingReview}
-              >
+ className="mt-3 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ onClick={handleWritingReview}
+ >
                 <Icon name="Send" className="size-4" />
                 Submit Writing
               </Button>
@@ -605,8 +605,8 @@ export function EnglishTestDashboard() {
                     </p>
                     <div className="mt-auto pt-4">
                       <Button
-                        className="h-10 w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-                        onClick={() => handleStartMock(t.name, freeMocksRemaining)}
+ className=" w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={() => handleStartMock(t.name, freeMocksRemaining)}
                       >
                         <Icon name="Play" className="size-4" />
                         Start Mock
@@ -703,18 +703,18 @@ export function EnglishTestDashboard() {
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         <Button
-                          size="sm"
-                          className="h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                          onClick={handleSpeakingPractice}
-                        >
+ size="sm"
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ onClick={handleSpeakingPractice}
+ >
                           <Icon name="Mic" className="size-3.5" />
                           Start Speaking Practice
                         </Button>
                         <Button
-                          size="sm"
-                          className="h-9 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-                          onClick={handleWritingReview}
-                        >
+ size="sm"
+ className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ onClick={handleWritingReview}
+ >
                           <Icon name="PenLine" className="size-3.5" />
                           Submit Writing
                         </Button>
@@ -828,16 +828,16 @@ export function EnglishTestDashboard() {
                       </div>
                       <div className="mt-auto flex gap-2 pt-4">
                         <Button
-                          variant="outline"
-                          className="flex-1 h-9 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                          onClick={() => handleLearnMore(t.slug, t.name)}
+ variant="outline"
+ className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleLearnMore(t.slug, t.name)}
                         >
                           <Icon name="BookOpen" className="size-3.5" />
                           Learn More
                         </Button>
                         <Button
-                          className="flex-1 h-9 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-                          onClick={() => handleStartMock(t.name, freeMocksRemaining)}
+ className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={() => handleStartMock(t.name, freeMocksRemaining)}
                         >
                           <Icon name="Play" className="size-3.5" />
                           Start Mock

@@ -55,9 +55,9 @@ interface AttentionReport {
 
 const SEVERITY_STYLE: Record<Severity, { className: string; icon: typeof Info }> = {
   CRITICAL: { className: 'bg-red-100 text-red-700 border-red-200', icon: ShieldAlert },
-  URGENT: { className: 'bg-orange-100 text-orange-700 border-orange-200', icon: AlertTriangle },
+  URGENT: { className: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25', icon: AlertTriangle },
   WARNING: { className: 'bg-amber-100 text-amber-800 border-amber-200', icon: AlertTriangle },
-  INFO: { className: 'bg-blue-100 text-blue-700 border-blue-200', icon: Info },
+  INFO: { className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]', icon: Info },
 };
 
 const SCOPES = [

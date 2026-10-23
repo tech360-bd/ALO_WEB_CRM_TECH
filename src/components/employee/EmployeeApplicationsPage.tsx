@@ -29,7 +29,7 @@ const stages: Stage[] = ['New', 'Documents', 'Submitted', 'Offer', 'Visa', 'Enro
 const stageColors: Record<Stage, string> = {
   New: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   Documents: 'bg-amber-100 text-amber-700 border-amber-200',
-  Submitted: 'bg-blue-100 text-blue-700 border-blue-200',
+  Submitted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   Offer: 'bg-purple-100 text-purple-700 border-purple-200',
   Visa: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   Enrolled: 'bg-emerald-100 text-emerald-700 border-emerald-200',

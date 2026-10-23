@@ -448,7 +448,7 @@ function DestinationsSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[var(--alo-brand)] border border-[var(--alo-brand)]/20 mb-4">Explore the World</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-brand)]/20 mb-4">Explore the World</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Popular Study Destinations</motion.h2>
           <motion.p variants={sectionSubtitle} className="text-[var(--alo-text-muted)] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
         </motion.div>
@@ -489,10 +489,10 @@ function DestinationsSection() {
                   )}
                   {d.visaType && <Badge variant="outline" className="text-xs w-fit" style={{ borderColor: d.accentColor, color: d.accentColor }}>{d.visaType}</Badge>}
                   <div className="flex gap-2 pt-1">
-                    <Button asChild variant="outline" size="sm" className="flex-1 h-12 rounded-xl text-xs font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
+                    <Button asChild variant="outline" size="sm" className="flex-1 h-12 rounded-xl font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
                       <a href={`/destinations/${d.slug}`}>View Guide</a>
                     </Button>
-                    <Button asChild size="sm" className="flex-1 h-12 rounded-xl text-xs font-semibold text-white" style={{ backgroundColor: C.orange }}>
+                    <Button asChild size="sm" className="flex-1 h-12 rounded-xl font-semibold text-white" style={{ backgroundColor: C.orange }}>
                       <a href={`/course-finder?country=${d.slug}`}>{t('cta.findCourse')}</a>
                     </Button>
                   </div>
@@ -552,7 +552,7 @@ function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div variants={slideFromLeft} className="space-y-6">
-            <Badge className="bg-blue-50 text-[var(--alo-brand)] border border-[var(--alo-brand)]/20">About ALO Education</Badge>
+            <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-brand)]/20">About ALO Education</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Who We Are</h2>
             <div className="space-y-4 text-[var(--alo-text-muted)] leading-relaxed">
               <p>In February 2023, <strong style={{ color: C.text }}>Taslima Akter</strong> founded ALO Education with a vision to connect ambitious Bangladeshi students with world-class education opportunities abroad. Her personal experience navigating the complexities of international admissions inspired her to create a platform built on trust, transparency, and genuine care for every student&apos;s future.</p>
@@ -568,7 +568,7 @@ function AboutSection() {
                 'Safe cities and vibrant student life',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm font-medium" style={{ color: C.text }}>
-                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: '#E8501A' }} aria-hidden="true" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--alo-cta)' }} aria-hidden="true" />
                   {item}
                 </li>
               ))}
@@ -610,7 +610,7 @@ function MissionVisionValues() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 mb-4">Our Purpose</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 mb-4">Our Purpose</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Our Commitment to Your Study-Abroad Dream</motion.h2>
         </motion.div>
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -629,7 +629,7 @@ function MissionVisionValues() {
                         { icon: Users, t: 'Student-First', d: 'Every decision prioritizes student success and well-being.' },
                       ].map(v => (
                         <div key={v.t} className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-orange-50"><v.icon className="w-4 h-4" style={{ color: C.orange }} /></div>
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[var(--alo-cta-soft)]"><v.icon className="w-4 h-4" style={{ color: C.orange }} /></div>
                           <div><div className="text-sm font-semibold" style={{ color: C.text }}>{v.t}</div><div className="text-xs text-[var(--alo-text-muted)]">{v.d}</div></div>
                         </div>
                       ))}

@@ -50,7 +50,7 @@ export default function HrmPayrollPage() {
         </div>
         <div className="flex gap-2">
           <input type="month" value={month} onChange={e=> setMonth(e.target.value)} className="h-9 text-xs border border-[var(--alo-border)] rounded px-2 bg-white" />
-          <Button onClick={generate} disabled={generating} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black h-9 text-xs">{generating? 'Generating...' : 'Generate Monthly Payroll'}</Button>
+          <Button onClick={generate} disabled={generating} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">{generating? 'Generating...' : 'Generate Monthly Payroll'}</Button>
         </div>
       </div>
 
@@ -68,9 +68,9 @@ export default function HrmPayrollPage() {
                   <td className="p-2 text-center font-bold">৳{Number(p.netPay||p.netSalary||0).toLocaleString()}</td>
                   <td className="p-2 text-center"><Badge variant="outline" className="text-xs capitalize">{p.status}</Badge></td>
                   <td className="p-2 text-center flex gap-1 justify-center">
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={()=> viewSlip(p.employeeId)}>Slip</Button>
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={()=> patch(p.id, 'approve')}>Approve</Button>
-                    <Button size="sm" className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" onClick={()=> patch(p.id, 'pay')}>Pay</Button>
+                    <Button size="sm" variant="outline" className="h-7 " onClick={()=> viewSlip(p.employeeId)}>Slip</Button>
+                    <Button size="sm" variant="outline" className="h-7 " onClick={()=> patch(p.id, 'approve')}>Approve</Button>
+                    <Button size="sm" className="h-7 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={()=> patch(p.id, 'pay')}>Pay</Button>
                   </td>
                 </tr>
               )) : <tr><td colSpan={6} className="p-6 text-center text-[var(--alo-text-muted)]">No payroll for {month} — click Generate</td></tr>}

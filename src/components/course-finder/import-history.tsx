@@ -285,7 +285,7 @@ export function ImportHistory() {
           <StatCard icon={CheckCircle2} label="Active" value={DEMO_SAMPLE_STATS.active} color="bg-emerald-600" />
           <StatCard icon={FileQuestion} label="Draft" value={DEMO_SAMPLE_STATS.draft} color="bg-slate-400" />
           <StatCard icon={AlertCircle} label="Needs Review" value={DEMO_SAMPLE_STATS.needsReview} color="bg-amber-500" />
-          <StatCard icon={Eye} label="Needs Source" value={DEMO_SAMPLE_STATS.needsOfficialSource} color="bg-orange-500" />
+          <StatCard icon={Eye} label="Needs Source" value={DEMO_SAMPLE_STATS.needsOfficialSource} color="bg-[var(--alo-cta)]" />
         </div>
 
         {/* Filters */}
@@ -491,15 +491,15 @@ export function ImportHistory() {
                         )}
                       </div>
                       <div className="flex gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="outline" size="sm" className="h-7 text-xs flex-1" onClick={() => handleViewErrors(batch)}>
+                        <Button variant="outline" size="sm" className="h-7 flex-1" onClick={() => handleViewErrors(batch)}>
                           <Eye className="size-3 mr-1" /> Errors
                         </Button>
                         {batch.status === 'completed' && (
-                          <Button variant="outline" size="sm" className="h-7 text-xs flex-1" onClick={() => handleRollback(batch)}>
+                          <Button variant="outline" size="sm" className="h-7 flex-1" onClick={() => handleRollback(batch)}>
                             <RotateCcw className="size-3 mr-1" /> Rollback
                           </Button>
                         )}
-                        <Button variant="outline" size="sm" className="h-7 text-xs flex-1" onClick={() => handleDownload(batch)}>
+                        <Button variant="outline" size="sm" className="h-7 flex-1" onClick={() => handleDownload(batch)}>
                           <Download className="size-3 mr-1" /> Download
                         </Button>
                       </div>

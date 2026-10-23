@@ -76,7 +76,7 @@ export default function StudentCas() {
               title="No confirmation document has been issued yet"
               description="This is issued by the university after you accept your offer and, where required, pay a deposit. It appears here as soon as we receive it."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/applications">View My Applications</Link>
                 </Button>
               }
@@ -95,7 +95,7 @@ export default function StudentCas() {
                 <div className="divide-y divide-[var(--alo-border)]">
                   <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                     <div className="flex items-center gap-2.5">
-                      <FileCheck2 className="h-4 w-4 text-alo-blue" aria-hidden="true" />
+                      <FileCheck2 className="h-4 w-4 text-alo-brand" aria-hidden="true" />
                       <span className="text-[13px] font-semibold text-[var(--alo-text)]">Document status</span>
                     </div>
                     <StatusBadge value={entry.record.status} />
@@ -153,7 +153,7 @@ export default function StudentCas() {
 
                 {entry.record.fileUrl && (
                   <div className="border-t border-[var(--alo-border)] px-5 py-3">
-                    <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                    <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                       <a href={entry.record.fileUrl}>
                         <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                         Download Document

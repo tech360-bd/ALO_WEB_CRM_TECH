@@ -31,10 +31,10 @@ export default function TestPrepDirectoryPage() {
             <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">
               Master Your English & Admission Tests
             </h1>
-            <p className="text-base md:text-lg text-blue-100 max-w-3xl leading-relaxed mb-6">
+            <p className="text-base md:text-lg text-[var(--alo-brand-pale)] max-w-3xl leading-relaxed mb-6">
               Compare global recognition, exam pattern, scoring system, and test fees for IELTS, PTE Academic, Duolingo English Test, TOEFL iBT, OIETC Oxford ELLT, and more.
             </p>
-            <div className="flex flex-wrap gap-4 text-xs font-semibold text-blue-200">
+            <div className="flex flex-wrap gap-4 text-xs font-semibold text-[var(--alo-brand-pale)]">
               <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-[var(--alo-cta-accent)]" /> Certified Coaches</span>
               <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-[var(--alo-cta-accent)]" /> 48-Hour Result Guidance</span>
               <span className="flex items-center gap-1.5"><GraduationCap className="h-4 w-4 text-[var(--alo-cta-accent)]" /> Direct CRM Score Planner</span>
@@ -57,7 +57,7 @@ export default function TestPrepDirectoryPage() {
               <Card key={t.id} className="p-6 bg-white hover:shadow-xl transition-all border-[var(--alo-border)] hover:border-[var(--alo-brand)] flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <Badge className="bg-blue-50 text-[var(--alo-brand)] font-bold text-[11px]">
+                    <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] font-bold text-[11px]">
                       {t.logoBadge}
                     </Badge>
                     <span className="text-xs font-semibold text-[var(--alo-text-muted)]">{t.quickInfo.duration}</span>
@@ -77,7 +77,7 @@ export default function TestPrepDirectoryPage() {
                     <span className="text-[var(--alo-text-muted)] font-medium">Target Score:</span>
                     <span className="font-bold text-[var(--alo-brand)]">{t.expectedScore}</span>
                   </div>
-                  <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold py-2.5 rounded-xl">
+                  <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold py-2.5 rounded-xl">
                     <Link href={`/english-test-prep/${t.slug}`}>Explore Full Test Prep & Modules →</Link>
                   </Button>
                 </div>

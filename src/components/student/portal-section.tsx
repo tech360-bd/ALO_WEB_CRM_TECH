@@ -166,7 +166,7 @@ export function PortalError({ message, onRetry }: { message: string; onRetry: ()
         <p className="text-[14px] font-semibold text-red-900">We could not load this</p>
         <p className="mt-0.5 text-[13px] leading-relaxed text-red-800">{message}</p>
       </div>
-      <Button variant="outline" className="h-9 shrink-0 rounded-button border-red-300 bg-white px-4 text-[13px] font-semibold text-red-700" onClick={onRetry}>
+      <Button variant="outline" className=" shrink-0 rounded-button border-red-300 bg-white px-4 text-[13px] font-semibold text-red-700" onClick={onRetry}>
         <RefreshCw className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
         Try Again
       </Button>
@@ -196,8 +196,8 @@ export function PortalEmpty({
 const STATUS_TONE: Record<string, string> = {
   pending: 'border-amber-200 bg-amber-50 text-amber-800',
   PENDING: 'border-amber-200 bg-amber-50 text-amber-800',
-  in_progress: 'border-blue-200 bg-blue-50 text-blue-800',
-  IN_PROGRESS: 'border-blue-200 bg-blue-50 text-blue-800',
+  in_progress: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
+  IN_PROGRESS: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   paid: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   completed: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   COMPLETED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
@@ -222,8 +222,8 @@ export function StatusBadge({ value }: { value: string }) {
 
 const PRIORITY_TONE: Record<string, string> = {
   URGENT: 'border-red-200 bg-red-50 text-red-800',
-  HIGH: 'border-orange-200 bg-orange-50 text-orange-800',
-  MEDIUM: 'border-blue-200 bg-blue-50 text-blue-800',
+  HIGH: 'border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
+  MEDIUM: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   LOW: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };
 

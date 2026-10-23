@@ -34,8 +34,8 @@ interface Lead {
 }
 
 const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-700',
-  hot: 'bg-orange-100 text-orange-700',
+  new: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  hot: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   converted: 'bg-emerald-100 text-emerald-700',
   lost: 'bg-red-100 text-red-700',
 };

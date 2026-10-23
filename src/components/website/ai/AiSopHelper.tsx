@@ -140,7 +140,7 @@ export default function AiSopHelper() {
             description="Stored in this browser only"
             action={
               versions.length > 0 ? (
-                <Button variant="ghost" className="h-8 rounded-button px-2 text-[12px] font-semibold text-alo-error" onClick={() => persist([])}>
+                <Button variant="ghost" className=" rounded-button px-2 text-[12px] font-semibold text-alo-error" onClick={() => persist([])}>
                   <Trash2 className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
                   Clear
                 </Button>
@@ -162,9 +162,9 @@ export default function AiSopHelper() {
                     <p className="text-[12px] text-alo-text-muted">{version.wordCount} words</p>
                   </div>
                   <Button
-                    variant="outline"
-                    className="h-8 shrink-0 rounded-button border-alo-border px-3 text-[12px] font-semibold"
-                    onClick={() => setDraft(version.draft)}
+ variant="outline"
+ className=" shrink-0 rounded-button border-alo-border px-3 text-[12px] font-semibold"
+ onClick={() => setDraft(version.draft)}
                   >
                     Restore
                   </Button>

@@ -27,7 +27,7 @@ const statusColors: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-700',
   approved: 'bg-emerald-100 text-emerald-700',
   pending: 'bg-yellow-100 text-yellow-700',
-  suspended: 'bg-orange-100 text-orange-700',
+  suspended: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   terminated: 'bg-red-100 text-red-700',
 };
 

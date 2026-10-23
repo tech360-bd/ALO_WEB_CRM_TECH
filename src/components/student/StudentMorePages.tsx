@@ -108,8 +108,8 @@ interface ReferralRow {
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING: 'bg-amber-50 text-amber-700',
-  QUALIFIED: 'bg-blue-50 text-blue-700',
-  CONSULTATION_DONE: 'bg-blue-50 text-blue-700',
+  QUALIFIED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  CONSULTATION_DONE: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   APPLICATION_SUBMITTED: 'bg-indigo-50 text-indigo-700',
   ENROLLED: 'bg-emerald-50 text-emerald-700',
   REWARDED: 'bg-emerald-50 text-emerald-700',
@@ -191,17 +191,17 @@ export function StudentReferrals() {
       </div>
 
       {/* Referral Code Card */}
-      <Card className="border-blue-200 bg-blue-50/40">
+      <Card className="border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40">
         <CardContent className="p-6">
           <p className="text-sm font-medium text-[var(--alo-body)] mb-3">Your Referral Code</p>
           <div className="flex items-center gap-3">
-            <div className="flex-1 bg-white rounded-lg border border-blue-200 px-4 py-3 font-mono text-lg font-bold text-[var(--alo-text)] tracking-wider">
+            <div className="flex-1 bg-white rounded-lg border border-[var(--alo-border)] px-4 py-3 font-mono text-lg font-bold text-[var(--alo-text)] tracking-wider">
               {loading ? 'Loading…' : referralCode || 'No referral code issued yet'}
             </div>
             <Button
               onClick={handleCopy}
               disabled={!referralCode}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
             >
               {copied ? <Check className="size-4 mr-1.5" /> : <Copy className="size-4 mr-1.5" />}
               {copied ? 'Copied' : 'Copy'}
@@ -222,7 +222,7 @@ export function StudentReferrals() {
             <Button
               variant="outline"
               disabled={!referralCode}
-              className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800"
+              className="flex-1 border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand-deep)]"
               onClick={handleShareEmail}
             >
               <Mail className="size-4 mr-2" />
@@ -239,7 +239,7 @@ export function StudentReferrals() {
             label: 'Total referred',
             value: loading ? '…' : String(referrals.length),
             icon: Users,
-            color: 'text-blue-600',
+            color: 'text-[var(--alo-brand)]',
           },
           {
             label: 'Enrolled',
@@ -259,7 +259,7 @@ export function StudentReferrals() {
               ? '…'
               : String(referrals.filter((referral) => referral.rewardStatus === 'AWARDED').length),
             icon: Gift,
-            color: 'text-orange-600',
+            color: 'text-[var(--alo-cta-active)]',
           },
         ].map((stat) => (
           <Card key={stat.label}>
@@ -360,7 +360,7 @@ export function StudentReferrals() {
               },
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] font-bold text-sm">
                   {item.step}
                 </div>
                 <div>
@@ -374,9 +374,9 @@ export function StudentReferrals() {
       </Card>
 
       {/* Referral Rules */}
-      <Card className="border-orange-200 bg-orange-50/40">
+      <Card className="border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/40">
         <CardContent className="p-4 flex items-start gap-3">
-          <Info className="size-5 text-orange-600 shrink-0 mt-0.5" />
+          <Info className="size-5 text-[var(--alo-cta-active)] shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-[var(--alo-text)]">Referral Rules</p>
             <p className="text-xs text-[var(--alo-body)] mt-1">
@@ -398,10 +398,10 @@ export function StudentReferrals() {
 /* ================================================================== */
 
 const HELP_CATEGORIES = [
-  { icon: FileText, title: 'Application Help', count: 12, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { icon: FileText, title: 'Application Help', count: 12, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   { icon: Upload, title: 'Document Guide', count: 8, color: 'text-amber-600', bg: 'bg-amber-50' },
   { icon: Shield, title: 'Visa Information', count: 15, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { icon: CreditCard, title: 'Payment & Finance', count: 10, color: 'text-orange-600', bg: 'bg-orange-50' },
+  { icon: CreditCard, title: 'Payment & Finance', count: 10, color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' },
   { icon: Search, title: 'Course Finder', count: 6, color: 'text-green-600', bg: 'bg-green-50' },
   { icon: GraduationCap, title: 'English Tests', count: 9, color: 'text-cyan-600', bg: 'bg-cyan-50' },
   { icon: Award, title: 'Scholarship Guide', count: 11, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -462,13 +462,13 @@ export function StudentHelpCenter() {
           {HELP_CATEGORIES.map((cat) => (
             <Card
               key={cat.title}
-              className="cursor-pointer hover:border-blue-200 hover:shadow-sm transition-all group"
+              className="cursor-pointer hover:border-[var(--alo-border)] hover:shadow-sm transition-all group"
             >
               <CardContent className="p-4 flex flex-col items-center text-center gap-2">
                 <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', cat.bg)}>
                   <cat.icon className={cn('size-5', cat.color)} />
                 </div>
-                <h3 className="text-sm font-medium text-[var(--alo-text)] group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm font-medium text-[var(--alo-text)] group-hover:text-[var(--alo-brand)] transition-colors">
                   {cat.title}
                 </h3>
                 <p className="text-xs text-[var(--alo-text-muted)]">{cat.count} articles</p>
@@ -488,7 +488,7 @@ export function StudentHelpCenter() {
           <Accordion type="single" collapsible className="w-full">
             {FAQ_DATA.map((faq, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
-                <AccordionTrigger className="text-sm font-medium text-[var(--alo-text)] hover:text-blue-600 hover:no-underline">
+                <AccordionTrigger className="text-sm font-medium text-[var(--alo-text)] hover:text-[var(--alo-brand)] hover:no-underline">
                   {faq.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-[var(--alo-body)] leading-relaxed">
@@ -501,7 +501,7 @@ export function StudentHelpCenter() {
       </Card>
 
       {/* Still Need Help */}
-      <Card className="border-blue-200 bg-blue-50/40">
+      <Card className="border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40">
         <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
           <div className="flex-1">
             <h3 className="text-base font-semibold text-[var(--alo-text)]">Still need help?</h3>
@@ -514,7 +514,7 @@ export function StudentHelpCenter() {
               verified against a current source.
             </p>
           </div>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white shrink-0">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white shrink-0">
             <Headphones className="size-4 mr-2" />
             Contact Support
           </Button>
@@ -579,12 +579,12 @@ export function StudentSettings() {
             <Label className="text-xs font-medium text-[var(--alo-text-muted)]">Phone</Label>
             <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXX-XXXXXX" />
           </div>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
             <Lock className="size-3.5 mr-1.5" />
             Change Password
           </Button>
           <div className="flex justify-end pt-2">
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white" size="sm">
               Save Changes
             </Button>
           </div>
@@ -613,14 +613,14 @@ export function StudentSettings() {
                   id={setting.key}
                   checked={toggles[setting.key]}
                   onCheckedChange={() => toggleSetting(setting.key)}
-                  className="data-[state=checked]:bg-blue-600"
+                  className="data-[state=checked]:bg-[var(--alo-brand)]"
                 />
               </div>
               {i < NOTIFICATION_SETTINGS.length - 1 && <Separator />}
             </div>
           ))}
           <div className="flex justify-end pt-3">
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white" size="sm">
               Save Preferences
             </Button>
           </div>
@@ -648,14 +648,14 @@ export function StudentSettings() {
                   id={setting.key}
                   checked={toggles[setting.key]}
                   onCheckedChange={() => toggleSetting(setting.key)}
-                  className="data-[state=checked]:bg-blue-600"
+                  className="data-[state=checked]:bg-[var(--alo-brand)]"
                 />
               </div>
               {i < PRIVACY_SETTINGS.length - 1 && <Separator />}
             </div>
           ))}
           <div className="flex justify-end pt-3">
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-blue-600 hover:bg-blue-700 text-white" size="sm">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white" size="sm">
               Save Privacy
             </Button>
           </div>
@@ -844,7 +844,7 @@ export function StudentAIAdvisor() {
           <button
             key={chip}
             onClick={() => handleChip(chip)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/60 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 px-3 py-1.5 text-xs font-medium text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] transition-colors"
           >
             <Zap className="size-3" />
             {chip}
@@ -884,7 +884,7 @@ export function StudentAIAdvisor() {
                     'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
                     msg.role === 'ai'
                       ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-sm'
-                      : 'bg-blue-600 text-white rounded-tr-sm'
+                      : 'bg-[var(--alo-brand)] text-white rounded-tr-sm'
                   )}
                 >
                   {msg.content}
@@ -916,7 +916,7 @@ export function StudentAIAdvisor() {
             }}
           />
           <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white shrink-0"
+            className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white shrink-0"
             onClick={handleSend}
             disabled={!input.trim()}
           >
@@ -1001,7 +1001,7 @@ export function StudentRecommendations() {
 
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <GraduationCap className="size-5 text-blue-600" />
+          <GraduationCap className="size-5 text-[var(--alo-brand)]" />
           <h2 className="text-base font-semibold text-[var(--alo-text)]">
             Saved courses{!loading ? ` (${courses.length})` : ''}
           </h2>
@@ -1075,9 +1075,9 @@ export function StudentRecommendations() {
         )}
       </div>
 
-      <Card className="border-orange-200 bg-orange-50/40">
+      <Card className="border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/40">
         <CardContent className="p-4 flex items-start gap-3">
-          <Info className="size-5 text-orange-600 shrink-0 mt-0.5" />
+          <Info className="size-5 text-[var(--alo-cta-active)] shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-[var(--alo-text)]">About eligibility and scholarships</p>
             <p className="text-xs text-[var(--alo-body)] mt-1">

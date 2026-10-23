@@ -207,9 +207,9 @@ function PrivateAmount({
             </p>
             <div className="mt-3 flex gap-2">
               <Button
-                variant="outline"
-                className="flex-1 h-9"
-                onClick={() => {
+ variant="outline"
+ className="flex-1 "
+ onClick={() => {
                   setShowPin(false);
                   setPin("");
                 }}
@@ -217,9 +217,9 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                disabled={pin.length < 4}
-                onClick={() => {
+ className="flex-1 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={pin.length < 4}
+ onClick={() => {
                   reveal(id);
                   setShowPin(false);
                   setPin("");

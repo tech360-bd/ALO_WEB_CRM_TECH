@@ -268,19 +268,19 @@ export default function AICommandingCenter() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--alo-blue-soft)] text-[var(--alo-text)] p-5 rounded-[16px] shadow-[var(--alo-shadow-xs)] border border-[var(--alo-brand-border)]">
         <div>
           <div className="flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-orange-500 animate-pulse" />
+            <Cpu className="w-5 h-5 text-[var(--alo-cta)] animate-pulse" />
             <h1 className="text-lg font-bold">AI Commanding Center</h1>
-            <Badge className="bg-orange-500 text-white text-[11px] uppercase font-mono">Owner Protection Enabled</Badge>
+            <Badge className="bg-[var(--alo-cta)] text-white text-[11px] uppercase font-mono">Owner Protection Enabled</Badge>
           </div>
           <p className="text-xs text-[var(--alo-text-muted)] mt-1">
             Department Co-processor • Local-First Execution • Payment Guard: Active ({healthStats.agents} Agents Online)
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-[var(--alo-placeholder)] border-slate-700 hover:bg-slate-700 hover:text-white" onClick={fetchHealth}>
+          <Button variant="outline" size="sm" className=" bg-slate-800 text-[var(--alo-placeholder)] border-slate-700 hover:bg-slate-700 hover:text-white" onClick={fetchHealth}>
             <RefreshCw className="w-3.5 h-3.5 mr-1" /> Reload Core
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-[var(--alo-text-muted)] border-slate-700 font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
+          <Button variant="outline" size="sm" className=" bg-slate-800 text-[var(--alo-text-muted)] border-slate-700 font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
             <Undo className="w-3.5 h-3.5 mr-1" /> Revert Database (disabled)
           </Button>
         </div>
@@ -295,7 +295,7 @@ export default function AICommandingCenter() {
           <Card className="bg-white border-[var(--alo-border)] shadow-2xs">
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center gap-1.5">
-                <Bot className="w-4 h-4 text-orange-500" /> Target AI Agent
+                <Bot className="w-4 h-4 text-[var(--alo-cta)]" /> Target AI Agent
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0">
@@ -310,7 +310,7 @@ export default function AICommandingCenter() {
                   <button
                     key={agent.id}
                     onClick={() => setActiveAgent(agent.id)}
-                    className={`w-full text-left p-2 rounded-lg text-xs transition-all ${activeAgent === agent.id ? 'bg-orange-500 text-white font-bold' : 'hover:bg-[var(--alo-page)] text-[var(--alo-body)]'}`}
+                    className={`w-full text-left p-2 rounded-lg text-xs transition-all ${activeAgent === agent.id ? 'bg-[var(--alo-cta)] text-white font-bold' : 'hover:bg-[var(--alo-page)] text-[var(--alo-body)]'}`}
                   >
                     <div>{agent.name}</div>
                     <div className={`text-[11px] ${activeAgent === agent.id ? 'text-orange-200' : 'text-[var(--alo-text-muted)]'}`}>{agent.dept}</div>
@@ -427,9 +427,9 @@ export default function AICommandingCenter() {
                   onChange={(e) => setCommand(e.target.value)}
                   placeholder="e.g. Add a Source column to the CRM Lead table..."
                   disabled={isExecuting}
-                  className="h-9 text-xs focus:ring-orange-500 focus:border-orange-500"
+                  className="h-9 text-xs focus:ring-orange-500 focus:border-[var(--alo-cta)]"
                 />
-                <Button type="submit" disabled={isExecuting} size="sm" className="h-9 bg-orange-500 hover:bg-orange-600 text-white">
+                <Button type="submit" disabled={isExecuting} size="sm" className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white">
                   <Send className="w-4 h-4" />
                 </Button>
               </form>
@@ -495,7 +495,7 @@ export default function AICommandingCenter() {
                     <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled className="w-full h-8 text-xs bg-slate-300 text-[var(--alo-body)] font-bold" title={SCHEMA_APPLY_DISABLED_MSG}>
                       <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Apply disabled (preview only)
                     </Button>
-                    <Button onClick={handleRejectPlan} disabled={isExecuting} variant="outline" className="w-full h-8 text-xs border-[var(--alo-border)] text-[var(--alo-body)]">
+                    <Button onClick={handleRejectPlan} disabled={isExecuting} variant="outline" className="w-full border-[var(--alo-border)] text-[var(--alo-body)]">
                       <XCircle className="w-3.5 h-3.5 mr-1" /> Discard Plan
                     </Button>
                   </div>
@@ -527,18 +527,18 @@ export default function AICommandingCenter() {
                 <Switch checked={false} onCheckedChange={setTrustedMode} disabled />
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-lint')}>
+                <Button variant="outline" size="sm" className=" text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-lint')}>
                   Lint Check
                 </Button>
-                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-typecheck')}>
+                <Button variant="outline" size="sm" className=" text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-typecheck')}>
                   Typecheck
                 </Button>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-tests')}>
+                <Button variant="outline" size="sm" className=" text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-tests')}>
                   Run Vitest
                 </Button>
-                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-build')}>
+                <Button variant="outline" size="sm" className=" text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-build')}>
                   Prod Build
                 </Button>
               </div>
@@ -552,7 +552,7 @@ export default function AICommandingCenter() {
       <Card className="bg-[var(--alo-surface-muted)] border-[var(--alo-border)] text-[var(--alo-text-secondary)] shadow-[var(--alo-shadow-xs)] overflow-hidden">
         <CardHeader className="p-3 border-b border-[var(--alo-border)] bg-[var(--alo-page)] flex flex-row items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--alo-placeholder)]">
-            <Terminal className="w-4 h-4 text-orange-500 animate-pulse" /> Terminal Console Log
+            <Terminal className="w-4 h-4 text-[var(--alo-cta)] animate-pulse" /> Terminal Console Log
           </div>
           
           {/* Badge Quality Indicators */}

@@ -75,7 +75,7 @@ export default function StudentPaymentsPage() {
               title="No payments recorded"
               description="Charges appear here once your counselor raises them. Nothing is due until it is listed on this page."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/messages">Ask About Fees</Link>
                 </Button>
               }
@@ -163,20 +163,20 @@ export default function StudentPaymentsPage() {
               {totalPages > 1 && (
                 <div className="flex items-center justify-between border-t border-[var(--alo-border)] px-5 py-3">
                   <Button
-                    type="button"
-                    variant="outline"
-                    className="h-8 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
-                    onClick={() => setPage((value) => Math.max(1, value - 1))}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
+ onClick={() => setPage((value) => Math.max(1, value - 1))}
                     disabled={page <= 1}
                   >
                     Previous
                   </Button>
                   <span className="text-[12px] text-[var(--alo-text-muted)]">Page {page} of {totalPages}</span>
                   <Button
-                    type="button"
-                    variant="outline"
-                    className="h-8 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
-                    onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
+ onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
                     disabled={page >= totalPages}
                   >
                     Next

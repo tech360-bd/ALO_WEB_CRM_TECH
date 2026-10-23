@@ -276,9 +276,9 @@ export default function MasterSuperAdminDashboard() {
             </span>
           </div>
           <Button
-            size="sm"
-            className="h-9 bg-crm-warning-bg text-xs font-semibold text-crm-warning-text border border-crm-warning-border hover:bg-[#FFF7E6]"
-            onClick={() => void handleExitActingAs()}
+ size="sm"
+ className=" bg-crm-warning-bg font-semibold text-crm-warning-text border border-crm-warning-border hover:bg-[#FFF7E6]"
+ onClick={() => void handleExitActingAs()}
             disabled={actingAsBusy}
           >
             Exit acting-as mode
@@ -290,9 +290,9 @@ export default function MasterSuperAdminDashboard() {
       <div className="flex flex-col gap-4 rounded-[16px] border border-[var(--alo-brand-border)] bg-[var(--alo-blue-soft)] p-5 text-[var(--alo-text)] shadow-[var(--alo-shadow-xs)] lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-6 w-6 text-orange-500" />
+            <ShieldCheck className="h-6 w-6 text-[var(--alo-cta)]" />
             <h1 className="text-xl font-extrabold tracking-tight text-white">Super Admin Control</h1>
-            <Badge className="bg-orange-500 font-mono text-[11px] text-white">SUPER_ADMIN</Badge>
+            <Badge className="bg-[var(--alo-cta)] font-mono text-[11px] text-white">SUPER_ADMIN</Badge>
           </div>
           <p className="mt-1 text-xs text-[var(--alo-text-muted)]">
             {metrics
@@ -311,15 +311,15 @@ export default function MasterSuperAdminDashboard() {
               placeholder="Filter employees by name, ID or department"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              className="h-8 w-48 rounded-lg border border-slate-700 bg-slate-800 pl-8 pr-3 text-xs text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none sm:w-64"
+              className="h-8 w-48 rounded-lg border border-slate-700 bg-slate-800 pl-8 pr-3 text-xs text-white placeholder-slate-400 focus:border-[var(--alo-cta)] focus:outline-none sm:w-64"
             />
           </div>
 
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 border-[var(--alo-border)] bg-white text-xs"
-            onClick={() => void refreshAll()}
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-border)] bg-white "
+ onClick={() => void refreshAll()}
           >
             <RefreshCw
               className={`mr-1 h-3.5 w-3.5 ${metricsState.loading || employeeState.loading ? 'animate-spin' : ''}`}
@@ -328,13 +328,13 @@ export default function MasterSuperAdminDashboard() {
           </Button>
 
           <Button
-            size="sm"
-            className={`h-8 text-xs font-bold ${
-              lockdown?.active
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'border border-slate-700 bg-slate-800 text-orange-400 hover:bg-slate-700'
-            }`}
-            onClick={() => setActiveTab('employees')}
+ size="sm"
+ className={` font-bold ${
+ lockdown?.active
+ ? 'bg-red-600 text-white hover:bg-red-700'
+ : 'border border-slate-700 bg-slate-800 text-orange-400 hover:bg-slate-700'
+ }`}
+ onClick={() => setActiveTab('employees')}
           >
             <ShieldAlert className="mr-1 h-3.5 w-3.5" />
             {lockdown?.active ? 'Lockdown ACTIVE' : 'Emergency lockdown'}
@@ -394,11 +394,11 @@ export default function MasterSuperAdminDashboard() {
 
       {/* ── QUICK ACTIONS ── */}
       <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-2">
-        <Button variant="outline" size="sm" className="h-8 border-[var(--alo-border)] bg-white text-xs" onClick={() => setActiveTab('employees')}>
+        <Button variant="outline" size="sm" className=" border-[var(--alo-border)] bg-white " onClick={() => setActiveTab('employees')}>
           <Users className="mr-1 h-3.5 w-3.5 text-indigo-600" /> Employee control
         </Button>
-        <Button variant="outline" size="sm" className="h-8 border-[var(--alo-border)] bg-white text-xs" onClick={() => setActiveTab('ai-command')}>
-          <Bot className="mr-1 h-3.5 w-3.5 text-orange-600" /> AI Command Center
+        <Button variant="outline" size="sm" className=" border-[var(--alo-border)] bg-white " onClick={() => setActiveTab('ai-command')}>
+          <Bot className="mr-1 h-3.5 w-3.5 text-[var(--alo-cta-active)]" /> AI Command Center
         </Button>
       </div>
 
@@ -521,11 +521,11 @@ export default function MasterSuperAdminDashboard() {
                           <span className="text-[11px] text-amber-700">In session</span>
                         ) : (
                           <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 text-xs text-indigo-600 hover:bg-indigo-50"
-                            disabled={actingAsBusy || Boolean(actingAsName)}
-                            onClick={() => {
+ size="sm"
+ variant="ghost"
+ className="h-7 text-indigo-600 hover:bg-indigo-50"
+ disabled={actingAsBusy || Boolean(actingAsName)}
+ onClick={() => {
                               setActingAsReason(
                                 `Reviewing work as ${employee.designation || employee.role}`,
                               );
@@ -550,10 +550,10 @@ export default function MasterSuperAdminDashboard() {
         <div className="space-y-4">
           <div className="flex justify-end gap-2">
             <Button
-              size="sm"
-              variant="outline"
-              className="h-8 border-[var(--alo-border)] bg-white text-xs"
-              onClick={() => {
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-border)] bg-white "
+ onClick={() => {
                 const registry = document.getElementById('agent-registry-container');
                 const console_ = document.getElementById('ai-command-container');
                 if (registry && console_) {

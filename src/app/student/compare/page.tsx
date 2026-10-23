@@ -31,7 +31,7 @@ export default function StudentComparePage() {
         </div>
 
         {loading ? <div className="h-64 bg-white border border-[var(--alo-border)] rounded-2xl animate-pulse" /> : courses.length === 0 ? (
-          <Card className="p-12 bg-white border-[var(--alo-border)] rounded-2xl text-center"><GitCompare className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">No courses to compare — add from course finder.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-11">Find Courses</Button></Link></Card>
+          <Card className="p-12 bg-white border-[var(--alo-border)] rounded-2xl text-center"><GitCompare className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">No courses to compare — add from course finder.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[var(--alo-brand)] text-white ">Find Courses</Button></Link></Card>
         ) : (
           <Card className="p-0 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm overflow-x-auto">
             <div className="min-w-[1000px]">

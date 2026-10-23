@@ -115,7 +115,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
   if (loading) {
     return (
       <div className="p-12 text-center text-[var(--alo-text-muted)] space-y-3">
-        <RefreshCw className="w-8 h-8 animate-spin mx-auto text-blue-600" />
+        <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[var(--alo-brand)]" />
         <p className="text-xs font-semibold">Loading B2B Partner Super Admin Portal...</p>
       </div>
     );
@@ -200,7 +200,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <span className="text-[var(--alo-text-muted)] block">User Seats:</span>
             <strong className="text-emerald-700 font-bold">{kpis.counselorSeats.used} / {kpis.counselorSeats.limit} Used</strong>
           </div>
-          <Button onClick={fetchPartnerData} className="bg-[var(--alo-surface-muted)] hover:bg-slate-200 text-[var(--alo-body)] text-xs rounded-xl px-4 flex items-center gap-1.5">
+          <Button onClick={fetchPartnerData} className="bg-[var(--alo-surface-muted)] hover:bg-slate-200 text-[var(--alo-body)] rounded-xl px-4 flex items-center gap-1.5">
             <RefreshCw className="w-4 h-4" /> Refresh
           </Button>
         </div>
@@ -212,7 +212,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Partner Students</span>
-          <p className="text-2xl font-extrabold text-blue-600">{kpis.totalStudents}</p>
+          <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{kpis.totalStudents}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Active Applications</span>
@@ -241,7 +241,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-4">
           <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-3">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" /> Counselor Seat Management
+              <Users className="w-5 h-5 text-[var(--alo-brand)]" /> Counselor Seat Management
             </h2>
             <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
               Default Limit: 3 Users (1 Admin + 2 Counselors)
@@ -254,7 +254,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
                 <span className="font-bold text-[var(--alo-text)]">1. Partner Super Admin (You)</span>
                 <p className="text-[var(--alo-text-muted)]">Master Partner Control • Full Company Scope</p>
               </div>
-              <Badge className="bg-blue-600 text-white text-[11px]">ACTIVE</Badge>
+              <Badge className="bg-[var(--alo-brand)] text-white text-[11px]">ACTIVE</Badge>
             </div>
 
             <div className="p-3 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] flex justify-between items-center">
@@ -310,10 +310,10 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             </div>
 
             <Button
-              onClick={handleSeatRequest}
-              disabled={requestingSeats}
-              className="w-full bg-[var(--alo-brand)] hover:bg-blue-700 text-white text-xs rounded-xl py-2 flex items-center justify-center gap-1.5"
-            >
+ onClick={handleSeatRequest}
+ disabled={requestingSeats}
+ className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-xl py-2 flex items-center justify-center gap-1.5"
+ >
               {requestingSeats ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               {requestingSeats ? 'Submitting Request...' : 'Submit Request to ALO Super Admin'}
             </Button>
@@ -387,10 +387,10 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             </div>
 
             <Button
-              onClick={handleGenerateMarketing}
-              disabled={mGenerating}
-              className="w-full bg-[var(--alo-cta)] hover:bg-orange-600 text-black text-xs font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
-            >
+ onClick={handleGenerateMarketing}
+ disabled={mGenerating}
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
+ >
               {mGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               {mGenerating ? 'Generating AI Draft...' : 'Generate AI Marketing Package'}
             </Button>

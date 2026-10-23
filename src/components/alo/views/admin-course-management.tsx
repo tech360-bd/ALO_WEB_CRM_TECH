@@ -1294,10 +1294,10 @@ export function AdminCourseManagement() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={submitForm}
-                  className="h-10 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-                  disabled={saving}
-                >
+ onClick={submitForm}
+ className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ disabled={saving}
+ >
                   {saving ? (
                     <>
                       <Icon name="Loader2" className="size-4 animate-spin" />

@@ -149,7 +149,7 @@ function MessageBubble({ message }: { message: Message }) {
               'text-[11px] font-semibold',
               isAi
                 ? 'bg-purple-100 text-purple-700'
-                : 'bg-blue-100 text-blue-700'
+                : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
             )}
           >
             {isAi ? <Bot className="w-3.5 h-3.5" /> : 'SK'}
@@ -163,7 +163,7 @@ function MessageBubble({ message }: { message: Message }) {
           className={cn(
             'rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line',
             isSent
-              ? 'bg-blue-600 text-white rounded-tr-md'
+              ? 'bg-[var(--alo-brand)] text-white rounded-tr-md'
               : isAi
                 ? 'bg-purple-50 text-purple-900 border border-purple-200 rounded-tl-md'
                 : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-md'
@@ -184,7 +184,7 @@ function MessageBubble({ message }: { message: Message }) {
           <span className="text-[11px] text-[var(--alo-text-muted)]">{message.timestamp}</span>
           {/* Read receipt for sent messages */}
           {isSent && (
-            <span className="text-blue-500">
+            <span className="text-[var(--alo-brand)]">
               {message.isRead ? (
                 <CheckCheck className="w-3.5 h-3.5" />
               ) : (
@@ -202,7 +202,7 @@ function MessageBubble({ message }: { message: Message }) {
                 key={att.id}
                 className="flex items-center gap-2 bg-white border border-[var(--alo-border)] rounded-lg px-3 py-1.5 hover:bg-[var(--alo-page)] transition-colors cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5 text-blue-600" />
+                <FileText className="w-3.5 h-3.5 text-[var(--alo-brand)]" />
                 <div>
                   <p className="text-xs font-medium text-[var(--alo-body)]">{att.name}</p>
                   <p className="text-[11px] text-[var(--alo-text-muted)]">{att.size}</p>
@@ -442,7 +442,7 @@ export default function StudentMessages() {
                 className={cn(
                   'text-[11px] px-2.5 py-1 rounded-full transition-colors font-medium',
                   activeFilter === opt.value
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-[var(--alo-brand)] text-white'
                     : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200'
                 )}
               >
@@ -507,7 +507,7 @@ export default function StudentMessages() {
                   className={cn(
                     'w-full flex items-start gap-3 p-3 rounded-lg transition-colors text-left',
                     activeThreadId === conv.id
-                      ? 'bg-blue-50 border-l-[3px] border-blue-600'
+                      ? 'bg-[var(--alo-brand-pale)] border-l-[3px] border-[var(--alo-brand)]'
                       : 'hover:bg-[var(--alo-page)]'
                   )}
                 >
@@ -519,8 +519,8 @@ export default function StudentMessages() {
                           conv.type === 'ai'
                             ? 'bg-purple-100 text-purple-700'
                             : conv.type === 'application'
-                              ? 'bg-orange-100 text-orange-700'
-                              : 'bg-blue-100 text-blue-700'
+                              ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
+                              : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                         )}
                       >
                         {conv.type === 'ai' ? (
@@ -540,7 +540,7 @@ export default function StudentMessages() {
                       <span
                         className={cn(
                           'text-sm font-medium truncate',
-                          activeThreadId === conv.id ? 'text-blue-700' : 'text-[var(--alo-text)]'
+                          activeThreadId === conv.id ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]'
                         )}
                       >
                         {conv.name}
@@ -553,8 +553,8 @@ export default function StudentMessages() {
                       variant="secondary"
                       className={cn(
                         'text-[11px] px-1 py-0 mb-1',
-                        conv.type === 'counselor' && 'bg-blue-50 text-blue-600',
-                        conv.type === 'application' && 'bg-orange-50 text-orange-600',
+                        conv.type === 'counselor' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+                        conv.type === 'application' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
                         conv.type === 'ai' && 'bg-purple-50 text-purple-600'
                       )}
                     >
@@ -566,7 +566,7 @@ export default function StudentMessages() {
                   </div>
 
                   {conv.unreadCount > 0 && (
-                    <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center font-bold shrink-0 mt-1">
+                    <span className="w-5 h-5 rounded-full bg-[var(--alo-brand)] text-white text-[11px] flex items-center justify-center font-bold shrink-0 mt-1">
                       {conv.unreadCount}
                     </span>
                   )}
@@ -604,8 +604,8 @@ export default function StudentMessages() {
                       activeThread.type === 'ai'
                         ? 'bg-purple-100 text-purple-700'
                         : activeThread.type === 'application'
-                          ? 'bg-orange-100 text-orange-700'
-                          : 'bg-blue-100 text-blue-700'
+                          ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
+                          : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                     )}
                   >
                     {activeThread.type === 'ai' ? (
@@ -625,8 +625,8 @@ export default function StudentMessages() {
                       variant="secondary"
                       className={cn(
                         'text-[11px] px-1.5 py-0',
-                        activeThread.type === 'counselor' && 'bg-blue-50 text-blue-600',
-                        activeThread.type === 'application' && 'bg-orange-50 text-orange-600',
+                        activeThread.type === 'counselor' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+                        activeThread.type === 'application' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
                         activeThread.type === 'ai' && 'bg-purple-50 text-purple-600'
                       )}
                     >
@@ -678,11 +678,11 @@ export default function StudentMessages() {
                     />
                   </div>
                   <Button
-                    size="icon"
-                    className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 w-10"
-                    onClick={handleSend}
-                    disabled={!messageInput.trim()}
-                  >
+ size="icon"
+ className="shrink-0 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-xl size-12 "
+ onClick={handleSend}
+ disabled={!messageInput.trim()}
+ >
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>

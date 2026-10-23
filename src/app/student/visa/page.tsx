@@ -41,7 +41,7 @@ export default function StudentVisaReadinessPage() {
   useEffect(() => { fetchVisaData(); }, [fetchVisaData]);
 
   if (loading) {
-    return <div className="p-8 text-center text-[var(--alo-text-muted)] text-xs"><RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2" />Loading visa readiness, no fake numbers...</div>;
+    return <div className="p-8 text-center text-[var(--alo-text-muted)] text-xs"><RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2" />Loading your visa readiness…</div>;
   }
 
   const visaCase = data?.visaCase;
@@ -133,7 +133,7 @@ export default function StudentVisaReadinessPage() {
             <CardContent className="p-5 space-y-4">
               <div className="flex items-center gap-2"><Sparkles className="w-5 h-5 text-[var(--alo-cta)]" /><h3 className="font-bold text-sm">AI Mock Interview Simulator</h3></div>
               <p className="text-xs text-[var(--alo-placeholder)] leading-relaxed">Practise embassy credibility questions one at a time. The AI understands Bangladeshi English and Banglish patterns and scores meaning and clarity — never accent. Practice only: no AI tool can guarantee a visa outcome.</p>
-              <Link href="/student/visa-interview-practice" className="block"><Button className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white text-xs py-2.5 flex items-center justify-center gap-2"><span>Start Practice Session</span><ArrowRight className="w-3.5 h-3.5" /></Button></Link>
+              <Link href="/student/visa-interview-practice" className="block"><Button className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white py-2.5 flex items-center justify-center gap-2"><span>Start Practice Session</span><ArrowRight className="w-3.5 h-3.5" /></Button></Link>
               {aiSessions.length > 0 && <div className="text-[11px] text-[var(--alo-text-muted)]">Recent AI sessions: {aiSessions.length} — last score {aiSessions[0]?.readinessScore || 0}% — {aiSessions[0]?.interviewType}</div>}
             </CardContent>
           </Card>

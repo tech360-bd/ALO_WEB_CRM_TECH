@@ -34,10 +34,10 @@ type KeywordTrigger = {
 
 const platformConfig: Record<string, { label: string; bg: string; icon: React.ElementType }> = {
   ALL: { label: 'All platforms', bg: 'bg-gray-600', icon: Globe },
-  FACEBOOK: { label: 'Facebook', bg: 'bg-blue-600', icon: Facebook },
+  FACEBOOK: { label: 'Facebook', bg: 'bg-[var(--alo-brand)]', icon: Facebook },
   INSTAGRAM: { label: 'Instagram', bg: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram },
   MESSENGER: { label: 'Messenger', bg: 'bg-purple-600', icon: MessageCircle },
-  LINKEDIN: { label: 'LinkedIn', bg: 'bg-blue-700', icon: Linkedin },
+  LINKEDIN: { label: 'LinkedIn', bg: 'bg-[var(--alo-brand-hover)]', icon: Linkedin },
   WHATSAPP: { label: 'WhatsApp', bg: 'bg-green-600', icon: MessageCircle },
   WEBSITE: { label: 'Website', bg: 'bg-teal-600', icon: Globe },
 };
@@ -207,7 +207,7 @@ export default function KeywordTriggersView() {
           <Button size="sm" variant="outline" onClick={() => void loadTriggers()} disabled={loading}>
             <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} />Refresh
           </Button>
-          <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => setShowAddForm(!showAddForm)}>
+          <Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white" onClick={() => setShowAddForm(!showAddForm)}>
             <Plus className="w-4 h-4 mr-1" />Add Keyword
           </Button>
         </div>
@@ -216,14 +216,14 @@ export default function KeywordTriggersView() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
-            <div className="p-2 bg-orange-100 rounded-lg w-fit"><Hash className="w-4 h-4 text-orange-600" /></div>
+            <div className="p-2 bg-[var(--alo-cta-soft)] rounded-lg w-fit"><Hash className="w-4 h-4 text-[var(--alo-cta-active)]" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{activeCount}<span className="text-sm text-[var(--alo-text-muted)] font-normal">/{triggers.length}</span></p>
             <p className="text-xs text-[var(--alo-text-muted)]">Active keywords</p>
           </CardContent>
         </Card>
         <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
-            <div className="p-2 bg-blue-100 rounded-lg w-fit"><Zap className="w-4 h-4 text-blue-600" /></div>
+            <div className="p-2 bg-[var(--alo-brand-pale)] rounded-lg w-fit"><Zap className="w-4 h-4 text-[var(--alo-brand)]" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{totalFires.toLocaleString()}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Total fires</p>
           </CardContent>
@@ -245,7 +245,7 @@ export default function KeywordTriggersView() {
       </div>
 
       {showAddForm && (
-        <Card className="bg-orange-50 border border-orange-200">
+        <Card className="bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25">
           <CardContent className="p-4 space-y-3">
             <h3 className="text-sm font-semibold text-[var(--alo-text)]">Add New Keyword Trigger</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -266,10 +266,10 @@ export default function KeywordTriggersView() {
                 </SelectContent>
               </Select>
               <div className="flex gap-2">
-                <Button size="sm" className="flex-1 h-9 bg-orange-500 hover:bg-orange-600" onClick={() => void handleCreate()} disabled={saving}>
+                <Button size="sm" className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]" onClick={() => void handleCreate()} disabled={saving}>
                   {saving ? 'Saving…' : 'Add'}
                 </Button>
-                <Button size="sm" variant="ghost" className="h-9" onClick={() => setShowAddForm(false)}>Cancel</Button>
+                <Button size="sm" variant="ghost" className="" onClick={() => setShowAddForm(false)}>Cancel</Button>
               </div>
             </div>
             <Textarea value={form.autoReplyText} onChange={(e) => setForm((f) => ({ ...f, autoReplyText: e.target.value }))} placeholder="Auto reply text (required)" rows={2} className="text-sm" />
@@ -305,7 +305,7 @@ export default function KeywordTriggersView() {
               <div className="text-sm">
                 <p className="font-semibold">Keyword triggers are unavailable</p>
                 <p className="text-muted-foreground">{loadError}</p>
-                <Button size="sm" variant="outline" className="mt-2 h-8" onClick={() => void loadTriggers()}>Try again</Button>
+                <Button size="sm" variant="outline" className="mt-2 " onClick={() => void loadTriggers()}>Try again</Button>
               </div>
             </div>
           )}
@@ -355,7 +355,7 @@ export default function KeywordTriggersView() {
                     return (
                       <tr key={trigger.id} className="border-b border-gray-50 hover:bg-[var(--alo-page)]/50 transition-colors">
                         <td className="py-3">
-                          <span className="text-sm font-bold text-orange-600">{trigger.keyword}</span>
+                          <span className="text-sm font-bold text-[var(--alo-cta-active)]">{trigger.keyword}</span>
                           <Badge variant="outline" className="ml-2 text-[11px] font-normal">{trigger.keywordType}</Badge>
                         </td>
                         <td className="py-3">
@@ -415,7 +415,7 @@ export default function KeywordTriggersView() {
                 <div className="text-center py-8 text-[var(--alo-text-muted)]">
                   <Search className="w-6 h-6 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">No keywords match your filters</p>
-                  <Button size="sm" variant="ghost" className="mt-2 h-7 text-xs" onClick={() => { setSearch(''); setPlatformFilter('all'); }}>
+                  <Button size="sm" variant="ghost" className="mt-2 h-7 " onClick={() => { setSearch(''); setPlatformFilter('all'); }}>
                     Clear filters
                   </Button>
                 </div>

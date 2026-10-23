@@ -159,7 +159,7 @@ export default function StudentEnglishPrepProfile() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl">Save English Prep Profile</Button>
+          <Button type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl">Save English Prep Profile</Button>
         </form>
 
         {profile && (
@@ -174,10 +174,10 @@ export default function StudentEnglishPrepProfile() {
 
       <Card className="p-5 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 rounded-2xl">
         <h4 className="font-bold text-sm">Need Help Choosing Test?</h4>
-        <p className="text-xs text-blue-100 mt-1 leading-relaxed">Tell us your destination, university and course — our counselor can help you understand relevant English requirement.</p>
+        <p className="text-xs text-[var(--alo-brand-pale)] mt-1 leading-relaxed">Tell us your destination, university and course — our counselor can help you understand relevant English requirement.</p>
         <div className="flex gap-2 mt-3">
-          <Button asChild className="w-full bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-page)] font-bold h-9 rounded-xl text-xs"><a href="/language-prep" className="flex-1">Explore Test Prep →</a></Button>
-          <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-9 rounded-xl text-xs"><a href="/language-prep/comparison">Compare Tests</a></Button>
+          <Button asChild className="w-full bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-page)] font-bold rounded-xl "><a href="/language-prep" className="flex-1">Explore Test Prep →</a></Button>
+          <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl "><a href="/language-prep/comparison">Compare Tests</a></Button>
         </div>
       </Card>
     </div>

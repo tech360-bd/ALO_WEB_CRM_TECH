@@ -473,7 +473,7 @@ export default function MarketingDashboardView() {
           label="Hot Leads"
           value={kpis.hotLeads}
           delta={kpis.hotLeadsDelta}
-          iconColor="bg-orange-50 text-orange-600"
+          iconColor="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]"
         />
         <KpiCard
           icon={MessageCircle}
@@ -532,7 +532,7 @@ export default function MarketingDashboardView() {
           label="Lead Conversion Rate"
           value={`${kpis.leadConversionRate}%`}
           delta={kpis.leadConversionRateDelta}
-          iconColor="bg-orange-50 text-orange-600"
+          iconColor="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]"
         />
         <KpiCard
           icon={ShieldAlert}
@@ -587,17 +587,17 @@ export default function MarketingDashboardView() {
           <CardContent className="space-y-4 pt-0">
             {/* Summary badges */}
             <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="rounded-lg bg-blue-50 py-2">
-                <p className="text-lg font-bold text-blue-700">{slaStatus.assigned}</p>
-                <p className="text-xs text-blue-600">Assigned</p>
+              <div className="rounded-lg bg-[var(--alo-brand-pale)] py-2">
+                <p className="text-lg font-bold text-[var(--alo-brand)]">{slaStatus.assigned}</p>
+                <p className="text-xs text-[var(--alo-brand)]">Assigned</p>
               </div>
               <div className="rounded-lg bg-green-50 py-2">
                 <p className="text-lg font-bold text-green-700">{slaStatus.responded}</p>
                 <p className="text-xs text-green-600">Responded</p>
               </div>
-              <div className="rounded-lg bg-orange-50 py-2">
-                <p className="text-lg font-bold text-orange-700">{slaStatus.escalated}</p>
-                <p className="text-xs text-orange-600">Escalated</p>
+              <div className="rounded-lg bg-[var(--alo-cta-soft)] py-2">
+                <p className="text-lg font-bold text-[var(--alo-cta-active)]">{slaStatus.escalated}</p>
+                <p className="text-xs text-[var(--alo-cta-active)]">Escalated</p>
               </div>
             </div>
 
@@ -608,7 +608,7 @@ export default function MarketingDashboardView() {
                 'text-sm font-semibold',
                 slaStatus.assigned > 0 && slaStatus.responded / slaStatus.assigned >= 0.85
                   ? 'text-green-600'
-                  : 'text-orange-600'
+                  : 'text-[var(--alo-cta-active)]'
               )}>
                 {slaStatus.assigned > 0
                   ? ((slaStatus.responded / slaStatus.assigned) * 100).toFixed(1)
@@ -706,7 +706,7 @@ export default function MarketingDashboardView() {
                 <Target className="h-4 w-4 text-alo-brand" />
                 Recent Leads
               </CardTitle>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-xs h-7">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" h-7">
                 View All
               </Button>
             </div>
@@ -740,8 +740,8 @@ export default function MarketingDashboardView() {
                       <Badge
                         className={cn(
                           'text-xs font-medium',
-                          lead.status === 'Hot' && 'bg-orange-50 text-orange-700 hover:bg-orange-50',
-                          lead.status === 'New' && 'bg-blue-50 text-blue-700 hover:bg-blue-50',
+                          lead.status === 'Hot' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] hover:bg-[var(--alo-cta-soft)]',
+                          lead.status === 'New' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]',
                           lead.status === 'Contacted' && 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]',
                           lead.status === 'Follow-up' && 'bg-purple-50 text-purple-700 hover:bg-purple-50'
                         )}
@@ -767,10 +767,10 @@ export default function MarketingDashboardView() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-orange-600" />
+                  <Clock className="h-4 w-4 text-[var(--alo-cta-active)]" />
                   Pending Approvals
                 </CardTitle>
-                <Badge className="bg-orange-500 text-white hover:bg-orange-500 text-xs">
+                <Badge className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)] text-xs">
                   {pendingApprovals.length}
                 </Badge>
               </div>
@@ -796,10 +796,10 @@ export default function MarketingDashboardView() {
                     <span className="text-xs text-alo-text-muted">{item.scheduledFor}</span>
                   </div>
                   <div className="flex gap-2 pt-1">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-xs bg-alo-brand hover:bg-alo-brand/90">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 bg-alo-brand hover:bg-alo-brand/90">
                       Approve
                     </Button>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 ">
                       Review
                     </Button>
                   </div>
@@ -812,24 +812,24 @@ export default function MarketingDashboardView() {
           <Card className="bg-white rounded-xl border border-alo-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                <Zap className="h-4 w-4 text-orange-600" />
+                <Zap className="h-4 w-4 text-[var(--alo-cta-active)]" />
                 Quick Actions
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full justify-start gap-2 bg-alo-brand hover:bg-alo-brand/90 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full justify-start gap-2 bg-alo-brand hover:bg-alo-brand/90 ">
                 <Plus className="h-4 w-4" />
                 New Campaign
               </Button>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 ">
                 <MessageSquare className="h-4 w-4" />
                 Create Post
               </Button>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 ">
                 <Send className="h-4 w-4" />
                 Send WhatsApp Broadcast
               </Button>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 h-9">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="w-full justify-start gap-2 ">
                 <Calendar className="h-4 w-4" />
                 View Content Calendar
               </Button>

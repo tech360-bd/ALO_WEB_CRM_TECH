@@ -228,7 +228,7 @@ export default function EnhancedSuperAdminControlCenter() {
                 <p className="text-xs mt-1">Real actor: {actingAs.realActor} • Effective: {actingAs.role} • Reason: {actingAs.reason} • Session: {actingAs.sessionId} • Expiry: {new Date(actingAs.expiry).toLocaleTimeString()} • Status: Active • Audit Logging Enabled • No privilege escalation • Secrets denied by default</p>
               </div>
             </div>
-            <Button size="sm" className="bg-[var(--alo-text)] text-white hover:bg-black h-9 text-xs font-bold" onClick={handleExitActingAs}><LogOut className="w-4 h-4 mr-1" />Exit Acting-As Mode — Returns to Real Identity</Button>
+            <Button size="sm" className="bg-[var(--alo-text)] text-white hover:bg-black font-bold" onClick={handleExitActingAs}><LogOut className="w-4 h-4 mr-1" />Exit Acting-As Mode — Returns to Real Identity</Button>
           </CardContent>
         </Card>
       )}
@@ -254,13 +254,13 @@ export default function EnhancedSuperAdminControlCenter() {
             <div className="flex flex-col gap-3 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)]" /><Input placeholder="Global Search — Student, Partner, Employee, Application, Document, Campaign, Visa, Invoice, Payment, Task, Report, Audit Logs — Auth Server-Side + Scope + Masked Sensitive + Audited + Pagination + No Leak Unauthorized" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} className="pl-9 bg-white/10 border-white/20 text-white placeholder-gray-400 h-11 w-64 md:w-80 rounded-xl text-xs" /></div>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-white text-[var(--alo-text)] hover:bg-[var(--alo-surface-muted)] h-11 rounded-xl"><Search className="w-4 h-4 mr-1" />Search — Auth + RBAC + Scope + Masked + Audited</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-white text-[var(--alo-text)] hover:bg-[var(--alo-surface-muted)] rounded-xl"><Search className="w-4 h-4 mr-1" />Search — Auth + RBAC + Scope + Masked + Audited</Button>
               </div>
               <div className="flex gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs">Notifications</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs">Profile</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 h-9 text-xs"><LogOut className="w-4 h-4 mr-1" />Logout</Button>
-                <Button size="sm" className={`${lockdownActive ? 'bg-red-600 hover:bg-red-700' : 'bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]'} text-black h-9 text-xs font-bold`} onClick={handleToggleLockdown}><ShieldAlert className="w-4 h-4 mr-1" />{lockdownActive ? 'Lockdown ACTIVE — Recovery' : 'Emergency Lockdown — Confirmation + Reason + Audit'}</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 ">Notifications</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 ">Profile</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 "><LogOut className="w-4 h-4 mr-1" />Logout</Button>
+                <Button size="sm" className={`${lockdownActive ? 'bg-red-600 hover:bg-red-700' : 'bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]'} text-black font-bold`} onClick={handleToggleLockdown}><ShieldAlert className="w-4 h-4 mr-1" />{lockdownActive ? 'Lockdown ACTIVE — Recovery' : 'Emergency Lockdown — Confirmation + Reason + Audit'}</Button>
               </div>
             </div>
           </div>
@@ -272,25 +272,25 @@ export default function EnhancedSuperAdminControlCenter() {
         <CardHeader className="pb-3"><CardTitle className="text-sm font-bold">Quick Actions — Permission-Checked — Real Destinations — No Inert Buttons</CardTitle><CardDescription className="text-xs">Every action must have real destination or implemented operation — do not render inert buttons — dangerous actions require confirmation and appropriate permission.</CardDescription></CardHeader>
         <CardContent className="p-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <Link href="/admin/employees"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><Users className="w-5 h-5 text-[var(--alo-brand)]" />Add Employee — Real Destination</Button></Link>
-            <Link href="/admin/students"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><GraduationCap className="w-5 h-5 text-emerald-600" />Add Student — Real</Button></Link>
-            <Link href="/admin/partners"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><Building2 className="w-5 h-5 text-indigo-600" />Add Partner — Real</Button></Link>
-            <Link href="/admin/employee-control"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><ShieldCheck className="w-5 h-5 text-[var(--alo-brand)]" />Employee Control — Real</Button></Link>
-            <Link href="/admin/ai-command-center"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-cta)] text-xs"><Bot className="w-5 h-5 text-[var(--alo-cta)]" />AI Command Center — Real</Button></Link>
-            <Link href="/admin/reports"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><FileText className="w-5 h-5 text-teal-600" />Reports — Real</Button></Link>
-            <Link href="/admin/permission-matrix"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-purple-600 text-xs"><Key className="w-5 h-5 text-purple-600" />Permission Matrix — Real</Button></Link>
-            <Link href="/admin/system-builder"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><Cpu className="w-5 h-5 text-[var(--alo-brand)]" />System Builder — Real</Button></Link>
-            <Link href="/admin/homepage-builder"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] text-xs"><Globe className="w-5 h-5 text-blue-600" />Website Builder — Real</Button></Link>
-            <Link href="/admin/approvals"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-amber-600 text-xs"><CheckCircle2 className="w-5 h-5 text-amber-600" />Approval Center — Real</Button></Link>
-            <Link href="/admin/security"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-red-600 text-xs"><ShieldAlert className="w-5 h-5 text-red-600" />Security Center — Real</Button></Link>
-            <Button variant="outline" className="h-12 flex-col gap-1 bg-red-50 border-red-200 text-red-700 hover:bg-red-600 hover:text-white text-xs font-bold" onClick={handleToggleLockdown}><Lock className="w-5 h-5" />Emergency Lockdown — Confirmation + Reason + Audit + No Accidental Permanent Lockout</Button>
+            <Link href="/admin/employees"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><Users className="w-5 h-5 text-[var(--alo-brand)]" />Add Employee — Real Destination</Button></Link>
+            <Link href="/admin/students"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><GraduationCap className="w-5 h-5 text-emerald-600" />Add Student — Real</Button></Link>
+            <Link href="/admin/partners"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><Building2 className="w-5 h-5 text-indigo-600" />Add Partner — Real</Button></Link>
+            <Link href="/admin/employee-control"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><ShieldCheck className="w-5 h-5 text-[var(--alo-brand)]" />Employee Control — Real</Button></Link>
+            <Link href="/admin/ai-command-center"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-cta)] "><Bot className="w-5 h-5 text-[var(--alo-cta)]" />AI Command Center — Real</Button></Link>
+            <Link href="/admin/reports"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><FileText className="w-5 h-5 text-teal-600" />Reports — Real</Button></Link>
+            <Link href="/admin/permission-matrix"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-purple-600 "><Key className="w-5 h-5 text-purple-600" />Permission Matrix — Real</Button></Link>
+            <Link href="/admin/system-builder"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><Cpu className="w-5 h-5 text-[var(--alo-brand)]" />System Builder — Real</Button></Link>
+            <Link href="/admin/homepage-builder"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] "><Globe className="w-5 h-5 text-[var(--alo-brand)]" />Website Builder — Real</Button></Link>
+            <Link href="/admin/approvals"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-amber-600 "><CheckCircle2 className="w-5 h-5 text-amber-600" />Approval Center — Real</Button></Link>
+            <Link href="/admin/security"><Button variant="outline" className="h-12 flex-col gap-1 bg-white border-[var(--alo-border)] hover:border-red-600 "><ShieldAlert className="w-5 h-5 text-red-600" />Security Center — Real</Button></Link>
+            <Button variant="outline" className="h-12 flex-col gap-1 bg-red-50 border-red-200 text-red-700 hover:bg-red-600 hover:text-white font-bold" onClick={handleToggleLockdown}><Lock className="w-5 h-5" />Emergency Lockdown — Confirmation + Reason + Audit + No Accidental Permanent Lockout</Button>
           </div>
         </CardContent>
       </Card>
 
       {/* KPI CARDS — 4 per row desktop, 2 tablet, 1 mobile Data Only When Available — Loading/Error/Empty/Unauthorized/Partial-Data States — No Hardcoded Production Metrics/Fake Employees/Fake Approvals/Fake AI Jobs/Fake Integration Health Business Data */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between"><h3 className="font-bold text-sm">Company Metrics Data Only When Available — No Hardcoded Production Metrics Data — Loading/Error/Empty/Unauthorized/Partial-Data States</h3><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-8 text-xs" onClick={fetchMetrics}><RefreshCw className="w-3.5 h-3.5 mr-1" />Refresh</Button></div>
+        <div className="flex items-center justify-between"><h3 className="font-bold text-sm">Company Metrics Data Only When Available — No Hardcoded Production Metrics Data — Loading/Error/Empty/Unauthorized/Partial-Data States</h3><Button size="sm" variant="outline" className="border-[var(--alo-border)] " onClick={fetchMetrics}><RefreshCw className="w-3.5 h-3.5 mr-1" />Refresh</Button></div>
         {error && <Card className="p-4 bg-red-50 border-red-200 rounded-2xl text-xs text-red-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />Error: {error} — safe error, no stack traces, no DB credentials, no tokens, no internal paths — logged internally and returned safely</Card>}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-white border-[var(--alo-border)] rounded-2xl shadow-sm hover:shadow-md transition-shadow h-full"><CardContent className="p-5"><p className="text-[11px] font-medium text-[var(--alo-text-muted)] uppercase">Active Students</p><p className="text-2xl font-black text-[var(--alo-text)] mt-1">{metrics?.activeStudents ?? 'UNAVAILABLE'}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Real data source: Student/PortalStudentProfile • Calculation: count where status active • Permission: SUPER_ADMIN • Timestamp: {new Date().toLocaleTimeString()} • Loading/Error/Empty/Unauthorized/Partial-Data states • Click-through: /admin/students • If cannot calculate show UNAVAILABLE/NOT CONFIGURED not fabricated</p></CardContent></Card>
@@ -371,8 +371,8 @@ export default function EnhancedSuperAdminControlCenter() {
                     <Card key={i} className="p-4 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
                       <div><h5 className="font-bold text-xs">{dash.name}</h5><p className="text-[11px] text-[var(--alo-body)] mt-1 line-clamp-2">{dash.desc}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Roles: {dash.roles} • Active users: {employees.filter((e:any)=> (e.role||'').toLowerCase().includes(dash.name.toLowerCase().split(' ')[0])).length || 'Check session data — do not invent'} • Pending tasks: Check DB • Alerts: Check DB • Health: Check DB • Permission summary: Check DB — do not invent active-user counts/dashboard health</p></div>
                       <div className="flex gap-2 mt-3">
-                        <Link href={dash.route} className="flex-1"><Button size="sm" className="w-full bg-[var(--alo-brand)] text-white h-8 text-[11px]"><Eye className="w-3 h-3 mr-1" />Open Dashboard — Existing Not Clone</Button></Link>
-                        <Button size="sm" variant="outline" className="border-[var(--alo-border)] h-8 text-[11px]" disabled title="Acting-As requires a specific active employee account, not a role-only identity.">Select an employee to Act-As</Button>
+                        <Link href={dash.route} className="flex-1"><Button size="sm" className="w-full bg-[var(--alo-brand)] text-white text-[11px]"><Eye className="w-3 h-3 mr-1" />Open Dashboard — Existing Not Clone</Button></Link>
+                        <Button size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]" disabled title="Acting-As requires a specific active employee account, not a role-only identity.">Select an employee to Act-As</Button>
                       </div>
                     </Card>
                   ))}
@@ -401,12 +401,12 @@ export default function EnhancedSuperAdminControlCenter() {
               <div>
                 <h5 className="font-bold text-xs flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-amber-500" />Pending Approvals — Real</h5>
                 {approvals.length === 0 ? <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">No pending approvals.</p> : <p className="text-[11px] text-[var(--alo-body)] mt-2">{approvals.length} pending approvals — statuses PENDING/APPROVED/REJECTED/REVISION_NEEDED/ESCALATED/EXPIRED — actual approval workflow — separation-of-duties — audit evidence.</p>}
-                <Link href="/admin/approvals"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] h-9 text-xs">Open Approval Center — {approvals.length} Pending</Button></Link>
+                <Link href="/admin/approvals"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] ">Open Approval Center — {approvals.length} Pending</Button></Link>
               </div>
 
               <div>
                 <h5 className="font-bold text-xs flex items-center gap-2"><ShieldAlert className="w-4 h-4 text-red-600" />Security Warnings</h5>
-                {securityEvents.length === 0 ? <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">No security warnings, no fake security events.</p> : (
+                {securityEvents.length === 0 ? <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">No security warnings.</p> : (
                   <div className="space-y-2 mt-2">
                     {securityEvents.slice(0,3).map((ev:any)=>(
                       <div key={ev.id} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 text-[11px]">
@@ -417,28 +417,28 @@ export default function EnhancedSuperAdminControlCenter() {
                     ))}
                   </div>
                 )}
-                <Link href="/admin/security"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] h-9 text-xs">Open Security Center — {securityEvents.length} Events</Button></Link>
+                <Link href="/admin/security"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] ">Open Security Center — {securityEvents.length} Events</Button></Link>
               </div>
 
               <div>
                 <h5 className="font-bold text-xs flex items-center gap-2"><Bot className="w-4 h-4 text-[var(--alo-cta)]" />AI Actions Requiring Review</h5>
-                {aiJobs.length === 0 ? <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">No AI actions requiring review, no fake AI jobs, no hardcoded agent count 2000 unless DB evidence proves defined count.</p> : <p className="text-[11px] text-[var(--alo-body)] mt-2">{aiJobs.length} AI jobs — statuses ACTIVE/PAUSED/TRAINING_FROM_APPROVED_DATA/WAITING_APPROVAL/RUNNING/FAILED/BLOCKED_BY_POLICY/COMPLETED/ARCHIVED — actual logical agent count via DB query — counting rule — department count — status counts — DB evidence — whether 2000 records verified — whether processes running — do not report 2000 unless DB evidence proves defined count.</p>}
-                <Link href="/admin/ai-command-center"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] h-9 text-xs">Open AI Command Center — {aiJobs.length} Jobs — 2000 Agents Ready (if verified)</Button></Link>
+                {aiJobs.length === 0 ? <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">No AI actions require review.</p> : <p className="text-[11px] text-[var(--alo-body)] mt-2">{aiJobs.length} AI jobs — statuses ACTIVE/PAUSED/TRAINING_FROM_APPROVED_DATA/WAITING_APPROVAL/RUNNING/FAILED/BLOCKED_BY_POLICY/COMPLETED/ARCHIVED — actual logical agent count via DB query — counting rule — department count — status counts — DB evidence — whether 2000 records verified — whether processes running — do not report 2000 unless DB evidence proves defined count.</p>}
+                <Link href="/admin/ai-command-center"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] ">Open AI Command Center — {aiJobs.length} Jobs — 2000 Agents Ready (if verified)</Button></Link>
               </div>
 
               <div>
                 <h5 className="font-bold text-xs">Overdue Tasks — Real</h5>
                 <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Overdue tasks.</p>
-                <Link href="/admin/tasks"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] h-9 text-xs">View Overdue Tasks</Button></Link>
+                <Link href="/admin/tasks"><Button size="sm" variant="outline" className="w-full mt-2 border-[var(--alo-border)] ">View Overdue Tasks</Button></Link>
               </div>
 
               <div>
                 <h5 className="font-bold text-xs">Quick Tools — Real Destinations</h5>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  <Link href="/admin/reports"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9 text-[11px]">Global Reports</Button></Link>
-                  <Link href="/admin/audit-logs"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9 text-[11px]">Audit Log Viewer — Real</Button></Link>
-                  <Link href="/admin/settings"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9 text-[11px]">System Settings — Real</Button></Link>
-                  <Link href="/admin/homepage-builder"><Button size="sm" variant="outline" className="border-[var(--alo-border)] h-9 text-[11px]">Website Builder — Real</Button></Link>
+                  <Link href="/admin/reports"><Button size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]">Global Reports</Button></Link>
+                  <Link href="/admin/audit-logs"><Button size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]">Audit Log Viewer — Real</Button></Link>
+                  <Link href="/admin/settings"><Button size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]">System Settings — Real</Button></Link>
+                  <Link href="/admin/homepage-builder"><Button size="sm" variant="outline" className="border-[var(--alo-border)] text-[11px]">Website Builder — Real</Button></Link>
                 </div>
               </div>
 

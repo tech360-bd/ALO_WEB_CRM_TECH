@@ -227,7 +227,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             <div className="relative" onMouseEnter={() => openMenu("destinations")} onMouseLeave={closeMenu}>
               <button
                 onClick={() => setOpenDropdown((p) => (p === "destinations" ? null : "destinations"))}
-                className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", isDestinationsActive ? "bg-blue-50" : "hover:bg-[var(--alo-page)]")}
+                className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", isDestinationsActive ? "bg-[var(--alo-brand-pale)]" : "hover:bg-[var(--alo-page)]")}
                 style={{ color: isDestinationsActive ? BLUE : TEXT }}
               >
                 <Icon name="Globe" className="size-4" />
@@ -245,18 +245,18 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             </div>
 
             {/* 2. Course Finder */}
-            <button onClick={goCourseFinder} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-course-finder" ? "bg-blue-50" : "hover:bg-[var(--alo-page)]")} style={{ color: view === "public-course-finder" ? BLUE : TEXT }}>
+            <button onClick={goCourseFinder} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-course-finder" ? "bg-[var(--alo-brand-pale)]" : "hover:bg-[var(--alo-page)]")} style={{ color: view === "public-course-finder" ? BLUE : TEXT }}>
               <Icon name="Search" className="size-4" /> Course Finder
             </button>
 
             {/* 3. Services */}
-            <button onClick={goServices} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-services" ? "bg-blue-50" : "hover:bg-[var(--alo-page)]")} style={{ color: view === "public-services" ? BLUE : TEXT }}>
+            <button onClick={goServices} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-services" ? "bg-[var(--alo-brand-pale)]" : "hover:bg-[var(--alo-page)]")} style={{ color: view === "public-services" ? BLUE : TEXT }}>
               <Icon name="Briefcase" className="size-4" /> Services
             </button>
 
             {/* 4. Language Prep */}
             <div className="relative" onMouseEnter={() => openMenu("lang")} onMouseLeave={closeMenu}>
-              <button onClick={() => setOpenDropdown((p) => (p === "lang" ? null : "lang"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--alo-page)]", view === "public-exams" || view === "public-exam" ? "bg-blue-50" : "")} style={{ color: view === "public-exams" || view === "public-exam" ? BLUE : TEXT }}>
+              <button onClick={() => setOpenDropdown((p) => (p === "lang" ? null : "lang"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--alo-page)]", view === "public-exams" || view === "public-exam" ? "bg-[var(--alo-brand-pale)]" : "")} style={{ color: view === "public-exams" || view === "public-exam" ? BLUE : TEXT }}>
                 <Icon name="Languages" className="size-4" /> Language Prep
                 <Icon name="ChevronDown" className={cn("size-3.5 transition-transform", openDropdown === "lang" && "rotate-180")} />
               </button>
@@ -431,16 +431,16 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
               <p className="mt-3 text-xs leading-relaxed text-[var(--alo-text-muted)]">From your ambition to admission, we're with you all the way.</p>
               {/* Social icons */}
               <div className="mt-4 flex gap-2">
-                <a href="https://www.facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Facebook" className="size-4" />
                 </a>
-                <a href="https://www.instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Instagram" className="size-4" />
                 </a>
-                <a href="https://www.linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Linkedin" className="size-4" />
                 </a>
-                <a href="https://www.youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Youtube" className="size-4" />
                 </a>
               </div>

@@ -109,10 +109,10 @@ export default function OldCrmImportCenterPage() {
         </div>
 
         <Button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-9"
-          onClick={handleCreateImportPreview}
-          disabled={importing}
-        >
+ className="bg-indigo-600 hover:bg-indigo-700 text-white "
+ onClick={handleCreateImportPreview}
+ disabled={importing}
+ >
 
           {importing ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Upload className="w-4 h-4 mr-1" />}
           Create Staging Preview
@@ -176,7 +176,7 @@ export default function OldCrmImportCenterPage() {
                     </TableCell>
                     <TableCell className="text-xs font-bold text-[var(--alo-text)]">{b.totalRows}</TableCell>
                     <TableCell><Badge variant="outline" className="text-[11px] bg-emerald-50 text-emerald-700">{b.newCount} New</Badge></TableCell>
-                    <TableCell><Badge variant="outline" className="text-[11px] bg-blue-50 text-blue-700">{b.matchedCount} Matched</Badge></TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{b.matchedCount} Matched</Badge></TableCell>
                     <TableCell><Badge variant="outline" className="text-[11px] bg-amber-50 text-amber-700">{b.duplicateCount} Risk</Badge></TableCell>
                     <TableCell>
                       <Badge className={`text-[11px] ${b.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
@@ -185,7 +185,7 @@ export default function OldCrmImportCenterPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       {b.status === 'pending_review' ? (
-                        <Button size="sm" className="h-7 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => handleApproveBatch(b.id)}>
+                        <Button size="sm" className="h-7 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => handleApproveBatch(b.id)}>
                           Approve Import
                         </Button>
                       ) : (

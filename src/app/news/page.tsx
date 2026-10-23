@@ -17,7 +17,7 @@ export default function NewsListingPage() {
           <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/20 border-none mb-4">
             NEWS & UPDATES
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold text-[var(--alo-text)] mb-4">Study Abroad News</h1>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4">Study Abroad News</h1>
           <p className="text-lg text-[var(--alo-body)]">
             Stay informed with the latest updates on visa regulations, university admissions, scholarships, and ALO Education events.
           </p>
@@ -34,7 +34,7 @@ export default function NewsListingPage() {
               </div>
               <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center justify-between mb-3">
-                  <Badge variant="outline" className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 bg-orange-50">
+                  <Badge variant="outline" className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]">
                     {article.category}
                   </Badge>
                   <span className="text-xs text-[var(--alo-text-muted)] flex items-center gap-1">
@@ -63,7 +63,7 @@ export default function NewsListingPage() {
         <div className="bg-[var(--alo-brand)] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
           <div className="md:w-1/2 text-white text-center md:text-left">
             <h3 className="text-2xl md:text-3xl font-bold mb-3">Never miss an update</h3>
-            <p className="text-blue-100">
+            <p className="text-[var(--alo-brand-pale)]">
               Subscribe to our newsletter to receive the latest study abroad news, scholarship alerts, and visa updates directly in your inbox.
             </p>
           </div>

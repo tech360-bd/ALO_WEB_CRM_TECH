@@ -53,7 +53,7 @@ export default function CrmEnglishPrepCounselorView() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)]" />
             <Input placeholder="Search name, phone, test, country..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 rounded-xl border-[var(--alo-border)] text-xs w-64" />
           </div>
-          <Button onClick={fetchLeads} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs">Refresh</Button>
+          <Button onClick={fetchLeads} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl ">Refresh</Button>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export default function CrmEnglishPrepCounselorView() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold text-sm text-[var(--alo-text)]">{lead.name}</h3>
-                        <Badge className="bg-blue-50 text-[var(--alo-brand)] border-blue-100 text-[11px]">{lead.testName || '—'}</Badge>
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px]">{lead.testName || '—'}</Badge>
                         <Badge className="bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-body)] text-[11px]">{lead.sourceSection || lead.source || 'language_prep'}</Badge>
                         <span className="text-[11px] text-[var(--alo-text-muted)]">{lead.phone}</span>
                       </div>

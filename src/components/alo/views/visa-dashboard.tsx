@@ -87,8 +87,8 @@ const COUNTRY_FLAGS: Record<string, string> = {
 
 const VISA_STAGE_COLORS: Record<string, string> = {
   VISA_DOCUMENTS: "bg-amber-100 text-amber-700",
-  VISA_SUBMITTED: "bg-blue-100 text-blue-700",
-  VISA_DECISION_PENDING: "bg-blue-100 text-blue-700",
+  VISA_SUBMITTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  VISA_DECISION_PENDING: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   VISA_APPROVED: "bg-emerald-100 text-emerald-700",
   VISA_REFUSED: "bg-red-100 text-red-700",
 };
@@ -136,8 +136,8 @@ const DOC_BADGE: Record<string, string> = {
 
 const PRIORITY_BADGE: Record<string, string> = {
   URGENT: "bg-red-100 text-red-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  NORMAL: "bg-blue-100 text-blue-700",
+  HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
@@ -467,9 +467,9 @@ export function VisaDashboard() {
                                 View
                               </Button>
                               <Button
-                                size="sm"
-                                className="h-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-                                onClick={() => openStageDialog(c)}
+ size="sm"
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={() => openStageDialog(c)}
                               >
                                 Update
                               </Button>
@@ -590,9 +590,9 @@ export function VisaDashboard() {
                 description="Try adjusting filters or check back later."
                 action={
                   <Button
-                    variant="outline"
-                    className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
-                    onClick={() => {
+ variant="outline"
+ className=" border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
+ onClick={() => {
                       setFilterCountry("ALL");
                       setFilterStage("ALL");
                       setFilterPriority("ALL");
@@ -692,28 +692,28 @@ export function VisaDashboard() {
                           <TableCell>
                             <div className="flex items-center justify-end gap-1">
                               <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 border-[var(--alo-brand)]/20 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                onClick={() => openStageDialog(c)}
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-brand)]/20 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => openStageDialog(c)}
                               >
                                 <Icon name="GitBranch" className="size-3.5" />
                                 <span className="hidden xl:inline">Stage</span>
                               </Button>
                               <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 border-[var(--alo-brand)]/20 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                onClick={() => scheduleInterview(c)}
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-brand)]/20 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => scheduleInterview(c)}
                               >
                                 <Icon name="CalendarPlus" className="size-3.5" />
                                 <span className="hidden xl:inline">Interview</span>
                               </Button>
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 text-[var(--alo-brand)]"
-                                onClick={() => setDetailsCase(c)}
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)]"
+ onClick={() => setDetailsCase(c)}
                               >
                                 <Icon name="Eye" className="size-3.5" />
                                 <span className="hidden xl:inline">View</span>
@@ -772,14 +772,14 @@ export function VisaDashboard() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10" onClick={() => setStageDialogCase(null)} disabled={savingStage}>
+            <Button variant="outline" className="" onClick={() => setStageDialogCase(null)} disabled={savingStage}>
               Cancel
             </Button>
             <Button
-              className="h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-              onClick={saveStage}
-              disabled={savingStage || !stageValue}
-            >
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={saveStage}
+ disabled={savingStage || !stageValue}
+ >
               {savingStage ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />
@@ -920,16 +920,16 @@ export function VisaDashboard() {
           )}
           <DialogFooter>
             <Button
-              variant="outline"
-              className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
-              onClick={() => detailsCase && scheduleInterview(detailsCase)}
+ variant="outline"
+ className=" border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
+ onClick={() => detailsCase && scheduleInterview(detailsCase)}
             >
               <Icon name="CalendarPlus" className="size-4" />
               Schedule Interview
             </Button>
             <Button
-              className="h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-              onClick={() => {
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={() => {
                 if (detailsCase) {
                   setStageDialogCase(detailsCase);
                   setStageValue(detailsCase.visaStage);

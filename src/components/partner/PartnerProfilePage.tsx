@@ -263,7 +263,7 @@ export default function PartnerProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="email">Sign-in email</Label>
                     <Input id="email" type="email" value={form.email} readOnly aria-readonly="true" />
-                    <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => setView('partner-settings')}>Change email with verification in Settings</Button>
+                    <Button type="button" variant="link" className="h-auto p-0 " onClick={() => setView('partner-settings')}>Change email with verification in Settings</Button>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>

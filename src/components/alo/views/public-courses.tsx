@@ -275,11 +275,11 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                 <span className="font-semibold text-foreground">{filtered.length}</span> of {courses.length} courses match
               </p>
               <Button
-                variant="outline"
-                size="sm"
-                className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                onClick={resetFilters}
-              >
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={resetFilters}
+ >
                 <Icon name="RotateCcw" className="size-3.5" /> Reset all
               </Button>
             </div>
@@ -298,13 +298,13 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
             description="Try removing one or more filters — or use the AI Course Finder to get personalised recommendations."
             action={
               <div className="flex flex-wrap justify-center gap-2">
-                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-10" onClick={resetFilters}>
+                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 " onClick={resetFilters}>
                   <Icon name="RotateCcw" className="size-4" /> Reset filters
                 </Button>
                 <Button
-                  variant="outline"
-                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                  onClick={() => onNavigate("public-course-finder")}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("public-course-finder")}
                 >
                   <Icon name="Sparkles" className="size-4" /> Try AI Course Finder
                 </Button>
@@ -405,15 +405,15 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                       </div>
                       <div className="flex gap-2">
                         <Button
-                          variant="outline"
-                          className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                          onClick={() => onNavigate("public-course", c.slug)}
+ variant="outline"
+ className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("public-course", c.slug)}
                         >
                           <Icon name="FileText" className="size-4" /> View Details
                         </Button>
                         <Button
-                          className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-10"
-                          onClick={() => {
+ className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ onClick={() => {
                             toast({
                               title: "Application started",
                               description: `We'll route your application for ${c.name} to an ALO counselor.`,

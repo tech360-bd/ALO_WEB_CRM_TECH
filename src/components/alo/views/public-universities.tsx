@@ -177,9 +177,9 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
           </div>
           {(countryFilter !== "all" || search) && (
             <Button
-              variant="outline"
-              className="h-10 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-              onClick={() => { setCountryFilter("all"); setSearch(""); }}
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => { setCountryFilter("all"); setSearch(""); }}
             >
               <Icon name="RotateCcw" className="size-4" /> Reset
             </Button>
@@ -206,15 +206,15 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
             action={
               <div className="flex gap-2">
                 <Button
-                  className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-10"
-                  onClick={() => { setCountryFilter("all"); setSearch(""); }}
+ className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ onClick={() => { setCountryFilter("all"); setSearch(""); }}
                 >
                   <Icon name="RotateCcw" className="size-4" /> Reset filters
                 </Button>
                 <Button
-                  variant="outline"
-                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                  onClick={() => onNavigate("public-courses")}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("public-courses")}
                 >
                   <Icon name="BookOpen" className="size-4" /> Browse courses
                 </Button>
@@ -308,15 +308,15 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                     </div>
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <Button
-                        className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-10"
-                        onClick={() => onNavigate("public-university", u.slug)}
+ className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ onClick={() => onNavigate("public-university", u.slug)}
                       >
                         <Icon name="ArrowRight" className="size-4" /> View University
                       </Button>
                       <Button
-                        variant="outline"
-                        className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                        onClick={() => onNavigate("public-courses")}
+ variant="outline"
+ className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("public-courses")}
                       >
                         <Icon name="BookOpen" className="size-4" /> View Courses
                       </Button>

@@ -163,10 +163,10 @@ export function CrmInvoices() {
                           </td>
                           <td className="px-5 py-3">
                             <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-7 border-[var(--alo-brand-border)] text-xs text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                              onClick={() => handleDownload(p.id, p.paymentId)}
+ size="sm"
+ variant="outline"
+ className="h-7 border-[var(--alo-brand-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleDownload(p.id, p.paymentId)}
                             >
                               <Icon name="Download" className="mr-1 size-3" /> Invoice
                             </Button>

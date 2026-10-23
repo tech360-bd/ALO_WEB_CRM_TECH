@@ -37,7 +37,7 @@ export default async function EventsPage() {
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {events.map((event) => (
             <article key={event.id} className="rounded-2xl border border-[var(--alo-border)] p-6">
-              <p className="text-sm text-blue-700">{event.eventType}</p>
+              <p className="text-sm text-[var(--alo-brand)]">{event.eventType}</p>
               <h2 className="mt-2 text-xl font-semibold">{event.title}</h2>
               <p className="mt-3 text-sm text-[var(--alo-body)]">{event.description}</p>
               <p className="mt-4 text-sm"><time dateTime={event.eventDate.toISOString()}>{event.eventDate.toLocaleString('en-GB', { timeZone: 'Asia/Dhaka', dateStyle: 'medium', timeStyle: 'short' })} (Bangladesh time)</time></p>

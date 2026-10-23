@@ -605,9 +605,9 @@ export function EmployeeManagement() {
                         </Button>
                         {(emp.profileStatus === "SUBMITTED" || emp.profileStatus === "UNDER_REVIEW") && (
                           <Button
-                            size="sm"
-                            className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90"
-                            onClick={() => handleApproveProfile(emp)}
+ size="sm"
+ className=" bg-emerald-600 text-white hover:bg-emerald-600/90"
+ onClick={() => handleApproveProfile(emp)}
                           >
                             <Icon name="Check" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -866,8 +866,8 @@ export function EmployeeManagement() {
                 </div>
               </ScrollArea>
               <DialogFooter className="border-t border-border/60 px-6 py-4">
-                <Button type="button" variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>Cancel</Button>
-                <Button type="submit" className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
+                <Button type="button" variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
+                <Button type="submit" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
                   {creating ? (
                     <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
                   ) : (
@@ -991,20 +991,20 @@ function EmployeeProfileBody({
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(emp.profileStatus === "SUBMITTED" || emp.profileStatus === "UNDER_REVIEW") && (
-              <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" onClick={onApprove}>
+              <Button size="sm" className=" bg-emerald-600 text-white hover:bg-emerald-600/90" onClick={onApprove}>
                 <Icon name="Check" className="size-3.5" /> Approve Profile
               </Button>
             )}
-            <Button size="sm" variant="outline" className="h-8" onClick={onResend}>
+            <Button size="sm" variant="outline" className="" onClick={onResend}>
               <Icon name="RefreshCw" className="size-3.5" /> Resend
             </Button>
             <Button
-              size="sm"
-              variant={emp.status === "ACTIVE" ? "destructive" : "outline"}
-              className="h-8"
-              onClick={onToggleStatus}
-              disabled={emp.role === "SUPER_ADMIN"}
-            >
+ size="sm"
+ variant={emp.status === "ACTIVE" ? "destructive" : "outline"}
+ className=""
+ onClick={onToggleStatus}
+ disabled={emp.role === "SUPER_ADMIN"}
+ >
               <Icon name={emp.status === "ACTIVE" ? "Ban" : "CheckCircle"} className="size-3.5" />
               {emp.status === "ACTIVE" ? "Suspend" : "Activate"}
             </Button>
@@ -1243,7 +1243,7 @@ function EmployeeProfileBody({
                       </div>
                       <div className="shrink-0">
                         {downloadable ? (
-                          <Button size="sm" variant="outline" className="h-8" onClick={() => onDownloadDoc(doc)}>
+                          <Button size="sm" variant="outline" className="" onClick={() => onDownloadDoc(doc)}>
                             <Icon name="Download" className="size-3.5" />
                             Download
                           </Button>
@@ -1252,7 +1252,7 @@ function EmployeeProfileBody({
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <span>
-                                  <Button size="sm" variant="outline" className="h-8" disabled>
+                                  <Button size="sm" variant="outline" className="" disabled>
                                     <Icon name="Lock" className="size-3.5" />
                                     Download
                                   </Button>
@@ -1321,11 +1321,11 @@ function CreateEmployeeSuccess({
       </ScrollArea>
 
       <DialogFooter className="border-t border-border/60 px-6 py-4">
-        <Button variant="outline" className="h-11" onClick={onResend}>
+        <Button variant="outline" className="" onClick={onResend}>
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
+        <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>

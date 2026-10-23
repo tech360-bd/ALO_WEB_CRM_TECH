@@ -25,9 +25,9 @@ export default async function CountryCostCalculatorPage({ params }: { params: Pr
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
-          <Link href="/destinations" className="hover:text-blue-600">Destinations</Link>
+          <Link href="/destinations" className="hover:text-[var(--alo-brand)]">Destinations</Link>
           <span>/</span>
-          <Link href={`/destinations/${countryData.slug}`} className="hover:text-blue-600">{countryData.name}</Link>
+          <Link href={`/destinations/${countryData.slug}`} className="hover:text-[var(--alo-brand)]">{countryData.name}</Link>
           <span>/</span>
           <span className="text-[var(--alo-text)] font-semibold">Cost Calculator</span>
         </div>
@@ -61,7 +61,7 @@ export default async function CountryCostCalculatorPage({ params }: { params: Pr
 
           <div className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 space-y-2">
             <span className="text-xs font-semibold text-[var(--alo-text-muted)]">Currency</span>
-            <p className="text-xl font-bold text-blue-600">{countryData.currency}</p>
+            <p className="text-xl font-bold text-[var(--alo-brand)]">{countryData.currency}</p>
             <span className="text-[11px] text-[var(--alo-text-muted)]">Official local currency</span>
           </div>
         </div>
@@ -69,14 +69,14 @@ export default async function CountryCostCalculatorPage({ params }: { params: Pr
         {/* City Living Costs Table */}
         <div className="bg-white rounded-2xl p-6 border border-[var(--alo-border)] space-y-4">
           <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-blue-600" /> City Living Cost Breakdown
+            <Wallet className="w-5 h-5 text-[var(--alo-brand)]" /> City Living Cost Breakdown
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {countryData.cities.map((city, c) => (
               <div key={c} className="p-4 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-[var(--alo-text)] text-sm">{city.name}</h3>
-                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 font-bold rounded-md">{city.costLevel} Cost</span>
+                  <span className="px-2 py-0.5 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] font-bold rounded-md">{city.costLevel} Cost</span>
                 </div>
                 <p className="text-[var(--alo-body)]">Vibe: <strong>{city.vibe}</strong></p>
                 <div className="flex items-center justify-between pt-2 border-t border-[var(--alo-border)]">

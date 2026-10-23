@@ -67,7 +67,7 @@ const STATUS_OPTIONS = [
 ];
 
 const STATUS_TONE: Record<string, string> = {
-  new: 'border-blue-200 bg-blue-50 text-blue-800',
+  new: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   contacted: 'border-indigo-200 bg-indigo-50 text-indigo-800',
   qualified: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   applied: 'border-teal-200 bg-teal-50 text-teal-800',
@@ -180,7 +180,7 @@ export default function CounselorLeadsPage() {
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <Button variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={load}>
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={load}>
               <RefreshCw className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               Refresh
             </Button>
@@ -218,7 +218,7 @@ export default function CounselorLeadsPage() {
             </SelectContent>
           </Select>
           <Link href="/counselor/students">
-            <Button variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
               <Users className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               My Students
             </Button>
@@ -284,7 +284,7 @@ export default function CounselorLeadsPage() {
                             <p className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--alo-text)]">
                               {name}
                               {lead.hotLead && (
-                                <span className="inline-flex items-center gap-1 rounded border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold uppercase text-orange-800">
+                                <span className="inline-flex items-center gap-1 rounded border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] px-1.5 py-0.5 text-[11px] font-bold uppercase text-[var(--alo-cta-active)]">
                                   <Flame className="h-3 w-3" aria-hidden="true" />
                                   Hot
                                 </span>
@@ -302,7 +302,7 @@ export default function CounselorLeadsPage() {
                         {lead.pteScore > 0 && <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">PTE {lead.pteScore}</p>}
                       </TableCell>
                       <TableCell>
-                        <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-[13px] text-[var(--alo-body)] hover:text-blue-600 hover:underline">
+                        <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-[13px] text-[var(--alo-body)] hover:text-[var(--alo-brand)] hover:underline">
                           <Phone className="h-3.5 w-3.5 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
                           {lead.phone || '—'}
                         </a>
@@ -360,7 +360,7 @@ export default function CounselorLeadsPage() {
             )}
 
             <div className="sm:col-span-2 lg:col-span-3">
-              <Button type="submit" disabled={adding} className="h-9 rounded-button bg-blue-600 px-4 text-[13px] font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+              <Button type="submit" disabled={adding} className=" rounded-button bg-[var(--alo-brand)] px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-brand-hover)] disabled:opacity-60">
                 {adding ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <UserPlus className="mr-2 h-3.5 w-3.5" aria-hidden="true" />}
                 {adding ? 'Saving Lead…' : 'Add Lead'}
               </Button>
@@ -378,7 +378,7 @@ export default function CounselorLeadsPage() {
 }
 
 function Metric({ label, value, tone = 'neutral' }: { label: string; value: number; tone?: 'neutral' | 'info' | 'warning' }) {
-  const toneClass = tone === 'warning' ? 'text-orange-600' : tone === 'info' ? 'text-blue-600' : 'text-[var(--alo-text)]';
+  const toneClass = tone === 'warning' ? 'text-[var(--alo-cta-active)]' : tone === 'info' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]';
   return (
     <div className="rounded-xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>

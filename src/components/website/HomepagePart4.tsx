@@ -754,7 +754,7 @@ function FinalCtaSection() {
               </Button>
               <Button
                 className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[var(--alo-brand-border)]"
-                style={{ color: "#0057B8" }}
+                style={{ color: 'var(--alo-brand)' }}
                 asChild
               >
                 <Link href="/course-finder">

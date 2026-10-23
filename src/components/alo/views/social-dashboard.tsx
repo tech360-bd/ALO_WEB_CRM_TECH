@@ -585,25 +585,25 @@ function SocialAccountCard({
 
         {/* Actions */}
         <div className="mt-auto flex flex-wrap gap-1.5 border-t border-[var(--alo-border)] pt-3">
-          <Button size="sm" variant="outline" onClick={onConfigure} className="h-7 px-2 text-xs">
+          <Button size="sm" variant="outline" onClick={onConfigure} className="h-7 px-2 ">
             <Icon name="Settings2" className="size-3" />
             Configure
           </Button>
           <Button
-            size="sm"
-            variant="ghost"
-            onClick={onSync}
-            className="h-7 px-2 text-xs text-[var(--alo-blue-strong)] hover:bg-[var(--alo-blue-soft)]"
-          >
+ size="sm"
+ variant="ghost"
+ onClick={onSync}
+ className="h-7 px-2 text-[var(--alo-blue-strong)] hover:bg-[var(--alo-blue-soft)]"
+ >
             <Icon name="RefreshCw" className="size-3" />
             Sync
           </Button>
           <Button
-            size="sm"
-            variant="ghost"
-            onClick={onDisconnect}
-            className="ml-auto h-7 px-2 text-xs text-[var(--alo-danger-strong)] hover:bg-[var(--alo-danger-soft)]"
-          >
+ size="sm"
+ variant="ghost"
+ onClick={onDisconnect}
+ className="ml-auto h-7 px-2 text-[var(--alo-danger-strong)] hover:bg-[var(--alo-danger-soft)]"
+ >
             <Icon name="Unplug" className="size-3" />
             Disconnect
           </Button>

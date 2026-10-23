@@ -41,12 +41,12 @@ export default function PartnerEnglishPrepView() {
               </div>
               <p className="text-xs text-[var(--alo-body)] line-clamp-3 leading-relaxed">{t.description || t.acceptanceSummary}</p>
               <div className="mt-3 flex flex-wrap gap-1.5">
-                <span className="text-[11px] px-2 py-1 rounded-full bg-blue-50 text-[var(--alo-brand)] border border-blue-100">{t.scoringSystem?.slice(0,20) || 'Scoring'}</span>
+                <span className="text-[11px] px-2 py-1 rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)]">{t.scoringSystem?.slice(0,20) || 'Scoring'}</span>
                 <span className="text-[11px] px-2 py-1 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)]">{t.durationDisplay || 'Duration'}</span>
               </div>
               <div className="mt-4 flex gap-2">
-                <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1"><Eye className="w-3.5 h-3.5 mr-1" /> View Guide</a></Button>
-                <a href={t.officialUrl || t.sourceUrl} target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[var(--alo-border)] h-9 rounded-xl text-xs">Official ↗</Button></a>
+                <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href={`/language-prep/${t.slug}`} className="flex-1"><Eye className="w-3.5 h-3.5 mr-1" /> View Guide</a></Button>
+                <a href={t.officialUrl || t.sourceUrl} target="_blank"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="bg-white border-[var(--alo-border)] rounded-xl ">Official ↗</Button></a>
               </div>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Source: {t.sourceName || 'Check official'} • Verified: {t.lastVerifiedAt || 'Information requires verification'}</p>
             </Card>

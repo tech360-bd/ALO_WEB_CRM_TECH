@@ -237,14 +237,14 @@ const RULE_CATEGORY_COLORS: Record<string, string> = {
   FAIRNESS: "bg-emerald-100 text-emerald-700 border-emerald-200",
   TRANSPARENCY: "bg-sky-100 text-sky-700 border-sky-200",
   ACCOUNTABILITY: "bg-amber-100 text-amber-700 border-amber-200",
-  COMPLIANCE: "bg-blue-100 text-blue-700 border-blue-200",
+  COMPLIANCE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
 };
 
 const ENFORCEMENT_COLORS: Record<string, string> = {
   BLOCK: "bg-rose-100 text-rose-700 border-rose-200",
   WARN: "bg-amber-100 text-amber-700 border-amber-200",
-  LOG: "bg-blue-100 text-blue-700 border-blue-200",
-  ESCALATE: "bg-orange-100 text-orange-700 border-orange-200",
+  LOG: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
+  ESCALATE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
 };
 
 const SAMPLE_RULES: RuleRow[] = [
@@ -858,8 +858,8 @@ export function EnterpriseAiCommand() {
                   </div>
                 ))}
               </div>
-              <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50/50 p-3">
-                <p className="text-xs text-blue-900">
+              <div className="mt-3 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50 p-3">
+                <p className="text-xs text-[var(--alo-brand-deep)]">
                   <Icon name="Info" className="mr-1 inline size-3.5" />
                   A department can create new AI agents <span className="font-semibold">ONLY</span> when it passes all 9 criteria.
                   This ensures it can work independently and create, train, manage, and improve thousands of AI agents under it.
@@ -974,7 +974,7 @@ export function EnterpriseAiCommand() {
                         </TableCell>
                         <TableCell className="text-center">
                           {d.canCreateAgents ? (
-                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Yes</Badge>
+                            <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">Yes</Badge>
                           ) : (
                             <Badge variant="outline" className="text-muted-foreground">No</Badge>
                           )}
@@ -1173,14 +1173,14 @@ export function EnterpriseAiCommand() {
                   <p className="mt-1 text-3xl font-bold text-rose-700 tabular-nums">{fmt(summary.totalRules)}+</p>
                   <p className="text-xs text-muted-foreground">across 6 categories</p>
                 </div>
-                <div className="rounded-xl border-2 border-blue-200 bg-blue-50/40 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-blue-700">Enforced Across</p>
-                  <p className="mt-1 text-3xl font-bold text-blue-700 tabular-nums">100</p>
+                <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-[var(--alo-brand)]">Enforced Across</p>
+                  <p className="mt-1 text-3xl font-bold text-[var(--alo-brand)] tabular-nums">100</p>
                   <p className="text-xs text-muted-foreground">departments &amp; 2,000 agents</p>
                 </div>
               </div>
-              <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50/50 p-3">
-                <p className="text-xs text-blue-900">
+              <div className="mt-3 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50 p-3">
+                <p className="text-xs text-[var(--alo-brand-deep)]">
                   <Icon name="Info" className="mr-1 inline size-3.5" />
                   {fmt(summary.totalRules)}+ constitutional rules are enforced across all 100 departments and 2,000 AI
                   employees by the Governance Engine.

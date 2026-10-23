@@ -103,7 +103,7 @@ const PROPOSABLE_STAGES = [
 const DOC_STATUS_STYLE: Record<string, string> = {
   VERIFIED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   APPROVED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  PENDING: 'border-blue-200 bg-blue-50 text-blue-800',
+  PENDING: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   REJECTED: 'border-red-200 bg-red-50 text-red-700',
   EXPIRED: 'border-amber-200 bg-amber-50 text-amber-800',
 };
@@ -657,7 +657,7 @@ export default function UniversityPortalPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="rounded-lg border border-blue-200 bg-blue-50 p-2.5 text-[11px] text-blue-900">
+            <p className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-2.5 text-[11px] text-[var(--alo-brand-deep)]">
               This creates a PROPOSAL for ALO to review. It does not change the student&apos;s record.
               Current stage: <strong className="font-mono">{proposeFor.stage}</strong>.
             </p>

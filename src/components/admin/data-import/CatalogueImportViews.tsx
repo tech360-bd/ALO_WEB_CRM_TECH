@@ -211,7 +211,7 @@ export function NewCatalogueImport() {
           type="file"
           accept=".csv,text/csv"
           onChange={(e) => { setFile(e.target.files?.[0] ?? null); setPreview(null); setQueued(null); setStaged(null); setError(null); }}
-          className="block w-full text-sm text-[var(--alo-body)] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[var(--alo-brand)]"
+          className="block w-full text-sm text-[var(--alo-body)] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[var(--alo-brand-pale)] file:text-[var(--alo-brand)]"
         />
         {error && <ErrorNote message={error} />}
         <Button onClick={() => send('preview')} disabled={!file || busy !== null} className="bg-[var(--alo-brand)] hover:bg-[#00469a] text-white text-sm flex items-center gap-2">

@@ -19,10 +19,10 @@ const stageLabels: Record<string, string> = {
 };
 
 const stageColors: Record<string, string> = {
-  research: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', shortlisted: 'bg-blue-100 text-blue-700',
+  research: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', shortlisted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   counseling: 'bg-cyan-100 text-cyan-700', document_ready: 'bg-yellow-100 text-yellow-700',
-  submitted: 'bg-blue-100 text-blue-700', under_review: 'bg-purple-100 text-purple-700',
-  offer_received: 'bg-green-100 text-green-700', conditional: 'bg-orange-100 text-orange-700',
+  submitted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', under_review: 'bg-purple-100 text-purple-700',
+  offer_received: 'bg-green-100 text-green-700', conditional: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   unconditional: 'bg-green-100 text-green-700', enrolled: 'bg-emerald-100 text-emerald-700',
   rejected: 'bg-red-100 text-red-700', withdrawn: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   visa_applied: 'bg-indigo-100 text-indigo-700', visa_approved: 'bg-emerald-100 text-emerald-700',

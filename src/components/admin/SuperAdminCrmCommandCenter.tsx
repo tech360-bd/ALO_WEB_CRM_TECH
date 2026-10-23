@@ -76,7 +76,7 @@ export function SuperAdminCrmCommandCenter() {
       <div className="space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {[
-            { label: "Leads", value: c.leads, icon: "🎯", color: "bg-blue-50 text-blue-700 border-blue-200" },
+            { label: "Leads", value: c.leads, icon: "🎯", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
             { label: "Students", value: c.students, icon: "🎓", color: "bg-green-50 text-green-700 border-green-200" },
             { label: "Applications", value: c.applications, icon: "📝", color: "bg-purple-50 text-purple-700 border-purple-200" },
             { label: "Visa Cases", value: c.visaCases, icon: "🛂", color: "bg-amber-50 text-amber-700 border-amber-200" },
@@ -85,7 +85,7 @@ export function SuperAdminCrmCommandCenter() {
             { label: "Partners", value: c.partners, icon: "🤝", color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
             { label: "Universities", value: c.universities, icon: "🏛️", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
             { label: "Courses", value: c.courses, icon: "📚", color: "bg-pink-50 text-pink-700 border-pink-200" },
-            { label: "Campaigns", value: c.campaigns, icon: "📣", color: "bg-orange-50 text-orange-700 border-orange-200" },
+            { label: "Campaigns", value: c.campaigns, icon: "📣", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
             { label: "Tasks Pending", value: c.tasksPending, icon: "✅", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
             { label: "SLA Breaches", value: c.slaBreaches, icon: "⏰", color: "bg-red-50 text-red-700 border-red-200" },
           ].map(k => (
@@ -182,7 +182,7 @@ export function SuperAdminCrmCommandCenter() {
             <thead className="bg-[var(--alo-page)] sticky top-0"><tr><th className="text-left px-3 py-2">ID / Name</th><th className="text-left px-3 py-2">Details</th><th className="text-left px-3 py-2">Status</th><th className="text-right px-3 py-2">Agent Actions</th></tr></thead>
             <tbody>
               {items.map((it:any)=><tr key={it.id} className="border-t hover:bg-[var(--alo-page)]"><td className="px-3 py-2"><div className="font-medium truncate max-w-[180px]">{it.name||it.fullName||it.studentName||it.applicationCode||it.title||it.universityName||it.courseTitle||it.id.slice(0,12)}</div><div className="text-[11px] text-[var(--alo-text-muted)] font-mono">{it.id.slice(0,12)}</div></td><td className="px-3 py-2"><div className="truncate max-w-[280px] text-[var(--alo-body)]">{it.email||it.phone||it.university||it.country||it.destinationCountry||it.courseName||it.status||""} {it.stage?`• ${it.stage}`:""}</div></td><td className="px-3 py-2"><span className="px-2 py-0.5 bg-[var(--alo-surface-muted)] rounded-full text-[11px]">{it.status||it.stage||it.currentStage||"—"}</span></td><td className="px-3 py-2 text-right space-x-1">
-                {activeModule==="leads" && <button disabled={!!actionLoading} onClick={()=>handleAgentAction("assign_lead", { leadId: it.id, counselorId: "super_admin_assign", counselorName: "Super Admin" })} className="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-[11px]">Assign</button>}
+                {activeModule==="leads" && <button disabled={!!actionLoading} onClick={()=>handleAgentAction("assign_lead", { leadId: it.id, counselorId: "super_admin_assign", counselorName: "Super Admin" })} className="px-2 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded text-[11px]">Assign</button>}
                 {activeModule==="applications" && <><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "READY_TO_SUBMIT", note: "Super Admin moved to ready" })} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded text-[11px]">Ready</button><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "SUBMITTED_TO_UNIVERSITY", note: "Super Admin submitted" })} className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded text-[11px]">Submit</button></>}
                 {activeModule==="documents" && <><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "APPROVED", reviewerNote: "Super Admin approved" })} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded text-[11px]">Approve</button><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "REJECTED", reviewerNote: "Super Admin rejected — needs review" })} className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-[11px]">Reject</button></>}
                 <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="px-2 py-1 bg-[var(--alo-surface-muted)] hover:bg-slate-200 rounded text-[11px]">View</button>
@@ -214,9 +214,9 @@ export function SuperAdminCrmCommandCenter() {
 
       {loading ? <div className="bg-white rounded-xl border p-12 text-center text-sm text-[var(--alo-text-muted)]">Loading real CRM data...</div> : activeModule==="overview" ? renderOverview() : renderListModule()}
 
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-        <h4 className="font-semibold text-sm text-blue-900">Paid-App Quality Guarantees — How Agent Tasks Handled Realistically</h4>
-        <div className="grid md:grid-cols-2 gap-3 mt-3 text-xs text-blue-800">
+      <div className="bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl p-4">
+        <h4 className="font-semibold text-sm text-[var(--alo-brand-deep)]">Paid-App Quality Guarantees — How Agent Tasks Handled Realistically</h4>
+        <div className="grid md:grid-cols-2 gap-3 mt-3 text-xs text-[var(--alo-brand-deep)]">
           <div>✅ <b>Knowledge-aware:</b> Counselor tasks use country requirements, course matching, visa rules from. System checks eligibility, English tests, academic requirements before moving stages.</div>
           <div>✅ <b>Skill-aware:</b> Document verification requires checklist, reviewer notes, audit trail. Visa tasks require risk assessment, funding review, study gap analysis.</div>
           <div>✅ <b>No overlooked tasks:</b> SLA tracking, escalation, deadline monitoring, next-best-action, weekly reports ensure nothing missed. Every action audit logged.</div>

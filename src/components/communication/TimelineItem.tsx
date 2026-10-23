@@ -5,7 +5,7 @@ import { MessageSquare, Mail, Phone, PhoneMissed, MessageCircle, Share2, FileTex
 
 const VIS_BADGE: Record<string, string> = {
   public_safe: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
-  student_visible: 'bg-blue-50 text-blue-700 border-blue-200',
+  student_visible: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   partner_visible: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   b2b_confidential: 'bg-rose-100 text-rose-800 border-rose-200',
   internal_only: 'bg-amber-100 text-amber-900 border-amber-200',

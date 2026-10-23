@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 const mockLeaveBalances = [
-  { type: 'Annual Leave', total: 15, used: 5, icon: Plane, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { type: 'Annual Leave', total: 15, used: 5, icon: Plane, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   { type: 'Sick Leave', total: 10, used: 2, icon: BriefcaseMedical, color: 'text-red-600', bg: 'bg-red-50' },
   { type: 'Casual Leave', total: 5, used: 1, icon: Coffee, color: 'text-amber-600', bg: 'bg-amber-50' },
 ];
@@ -69,8 +69,8 @@ export default function EmployeeLeavePage() {
             total: b.total,
             used: b.used,
             icon: b.type.includes('Annual') ? Plane : b.type.includes('Sick') ? BriefcaseMedical : Coffee,
-            color: b.type.includes('Annual') ? 'text-blue-600' : b.type.includes('Sick') ? 'text-red-600' : 'text-amber-600',
-            bg: b.type.includes('Annual') ? 'bg-blue-50' : b.type.includes('Sick') ? 'bg-red-50' : 'bg-amber-50',
+            color: b.type.includes('Annual') ? 'text-[var(--alo-brand)]' : b.type.includes('Sick') ? 'text-red-600' : 'text-amber-600',
+            bg: b.type.includes('Annual') ? 'bg-[var(--alo-brand-pale)]' : b.type.includes('Sick') ? 'bg-red-50' : 'bg-amber-50',
           })));
         }
         if (data?.records?.length) {
@@ -114,8 +114,8 @@ export default function EmployeeLeavePage() {
             total: b.total,
             used: b.used,
             icon: b.type.includes('Annual') ? Plane : b.type.includes('Sick') ? BriefcaseMedical : Coffee,
-            color: b.type.includes('Annual') ? 'text-blue-600' : b.type.includes('Sick') ? 'text-red-600' : 'text-amber-600',
-            bg: b.type.includes('Annual') ? 'bg-blue-50' : b.type.includes('Sick') ? 'bg-red-50' : 'bg-amber-50',
+            color: b.type.includes('Annual') ? 'text-[var(--alo-brand)]' : b.type.includes('Sick') ? 'text-red-600' : 'text-amber-600',
+            bg: b.type.includes('Annual') ? 'bg-[var(--alo-brand-pale)]' : b.type.includes('Sick') ? 'bg-red-50' : 'bg-amber-50',
           })));
         }
         if (data?.record) {

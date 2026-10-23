@@ -234,7 +234,7 @@ const BRAND_CHECKLIST = [
 
 function BrandRulesBanner() {
   return (
-    <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-orange-50/40">
+    <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-[var(--alo-cta-soft)]/40">
       <CardHeader>
         <div className="flex items-start gap-3">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white">
@@ -554,34 +554,34 @@ function ContentGeneratorTab() {
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleCopy}
-                  className="h-10 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                >
+ size="sm"
+ variant="outline"
+ onClick={handleCopy}
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ >
                   <Icon name="Copy" className="size-3.5" /> Copy
                 </Button>
                 <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleRegenerate}
-                  disabled={generating}
-                  className="h-10 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                >
+ size="sm"
+ variant="outline"
+ onClick={handleRegenerate}
+ disabled={generating}
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ >
                   <Icon name="RefreshCw" className="size-3.5" /> Regenerate
                 </Button>
                 <Button
-                  size="sm"
-                  onClick={handleSchedule}
-                  className="h-10 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/90 text-white"
-                >
+ size="sm"
+ onClick={handleSchedule}
+ className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/90 text-white"
+ >
                   <Icon name="CalendarClock" className="size-3.5" /> Schedule Post
                 </Button>
                 <Button
-                  size="sm"
-                  onClick={handleApprovePublish}
-                  className="h-10 bg-emerald-600 hover:bg-emerald-600/90 text-white"
-                >
+ size="sm"
+ onClick={handleApprovePublish}
+ className=" bg-emerald-600 hover:bg-emerald-600/90 text-white"
+ >
                   <Icon name="Send" className="size-3.5" /> Approve & Publish
                 </Button>
               </div>
@@ -695,9 +695,9 @@ function CampaignCalendarTab() {
       description="Upcoming posts, reels, stories, lives, and email drops across all channels."
       action={
         <Button
-          onClick={handleNewIdea}
-          className="h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-        >
+ onClick={handleNewIdea}
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ >
           <Icon name="Plus" className="size-4" /> New Content Idea
         </Button>
       }

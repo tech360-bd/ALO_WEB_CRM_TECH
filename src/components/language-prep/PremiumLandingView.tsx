@@ -148,14 +148,14 @@ export default function PremiumLanguagePrepLandingView() {
       <section className="relative bg-white pt-12 pb-16 lg:pt-20 lg:pb-24 overflow-hidden">
         {/* Subtle soft background shapes — no excessive gradients */}
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--alo-page)] to-white pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50 rounded-full blur-3xl opacity-40 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-50 rounded-full blur-3xl opacity-30 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--alo-brand-pale)] rounded-full blur-3xl opacity-40 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[var(--alo-cta-soft)] rounded-full blur-3xl opacity-30 pointer-events-none" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
             {/* Left — Text */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[var(--alo-brand)] text-[11px] font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] text-[var(--alo-brand)] text-[11px] font-bold uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5" /> ALO Language Preparation Hub
               </div>
 
@@ -205,7 +205,7 @@ export default function PremiumLanguagePrepLandingView() {
               <Card className="p-6 bg-white border border-[var(--alo-border)] shadow-xl rounded-3xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-5">
                   <h3 className="font-bold text-sm text-[var(--alo-text)] flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
+                    <div className="w-8 h-8 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
                     My Preparation Dashboard
                   </h3>
                   <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Live Progress</Badge>
@@ -229,24 +229,24 @@ export default function PremiumLanguagePrepLandingView() {
                     <p className="text-lg font-extrabold text-emerald-600 mt-1">64%</p>
                     <p className="text-[11px] text-[var(--alo-text-muted)]">Weakest: Writing</p>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-orange-50 border border-orange-100">
-                    <p className="text-[11px] uppercase font-bold text-orange-700 tracking-wider">Practice</p>
+                  <div className="p-3.5 rounded-2xl bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25">
+                    <p className="text-[11px] uppercase font-bold text-[var(--alo-cta-active)] tracking-wider">Practice</p>
                     <p className="text-lg font-extrabold text-[var(--alo-cta)] mt-1">Guides</p>
-                    <p className="text-[11px] text-orange-700">Choose your test</p>
+                    <p className="text-[11px] text-[var(--alo-cta-active)]">Choose your test</p>
                   </div>
                 </div>
 
                 <div className="space-y-2.5 mb-5">
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[var(--alo-border)] shadow-sm">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center"><Headphones className="w-3.5 h-3.5" /></div>
+                      <div className="w-7 h-7 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Headphones className="w-3.5 h-3.5" /></div>
                       <span className="text-xs font-semibold text-[var(--alo-text)]">IELTS Listening</span>
                     </div>
                     <span className="text-[11px] font-bold text-emerald-600">7.5 ✓</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[var(--alo-border)] shadow-sm">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-orange-50 text-[var(--alo-cta)] flex items-center justify-center"><PenTool className="w-3.5 h-3.5" /></div>
+                      <div className="w-7 h-7 rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] flex items-center justify-center"><PenTool className="w-3.5 h-3.5" /></div>
                       <span className="text-xs font-semibold text-[var(--alo-text)]">Writing Feedback</span>
                     </div>
                     <span className="text-[11px] font-bold text-amber-600">6.0 • Review</span>
@@ -261,7 +261,7 @@ export default function PremiumLanguagePrepLandingView() {
                 </div>
 
                 <div className="grid grid-cols-4 gap-2 text-[11px] font-semibold">
-                  <div className="text-center p-2 rounded-xl bg-blue-50 text-[var(--alo-brand)] border border-blue-100">IELTS</div>
+                  <div className="text-center p-2 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)]">IELTS</div>
                   <div className="text-center p-2 rounded-xl bg-white border border-[var(--alo-border)] text-[var(--alo-body)]">PTE</div>
                   <div className="text-center p-2 rounded-xl bg-white border border-[var(--alo-border)] text-[var(--alo-body)]">TOEFL</div>
                   <div className="text-center p-2 rounded-xl bg-white border border-[var(--alo-border)] text-[var(--alo-body)]">Duolingo</div>
@@ -290,7 +290,7 @@ export default function PremiumLanguagePrepLandingView() {
                       <option>IELTS</option><option>PTE Academic</option><option>TOEFL iBT</option><option>Duolingo</option><option>OIETC</option><option>MOI Guidance</option>
                     </select>
                   </div>
-                  <Button disabled={submitting} type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl text-sm">
+                  <Button disabled={submitting} type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl text-sm">
                     {submitting ? 'Booking...' : 'Book Free Counselling →'}
                   </Button>
                   <p className="text-[11px] text-[var(--alo-text-muted)] text-center">We respect your privacy — No spam, only relevant guidance. Source: language_prep hero</p>
@@ -383,7 +383,7 @@ export default function PremiumLanguagePrepLandingView() {
             <div className="lg:col-span-5 space-y-4">
               {!recommended ? (
                 <Card className="p-8 bg-white border border-dashed border-[var(--alo-border)] rounded-3xl text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center mx-auto mb-4"><Search className="w-6 h-6" /></div>
+                  <div className="w-12 h-12 rounded-2xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center mx-auto mb-4"><Search className="w-6 h-6" /></div>
                   <h4 className="font-bold text-sm text-[var(--alo-text)]">Your recommendation will appear here</h4>
                   <p className="text-xs text-[var(--alo-text-muted)] mt-2 leading-relaxed">Fill destination, study level and preferences, then click Find Recommended Tests. We will show why this test is recommended, acceptance info, preparation path, target score and next action.</p>
                 </Card>
@@ -412,8 +412,8 @@ export default function PremiumLanguagePrepLandingView() {
                   </div>
 
                   <div className="mt-5 flex gap-2">
-                    <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl text-xs"><a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">Explore {recommended.primary?.name} →</a></Button>
-                    <Button asChild variant="outline" className="border-[var(--alo-border)] bg-white font-semibold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Counselling</a></Button>
+                    <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href={`/language-prep/${recommended.primary?.slug}`} className="flex-1">Explore {recommended.primary?.name} →</a></Button>
+                    <Button asChild variant="outline" className="border-[var(--alo-border)] bg-white font-semibold rounded-xl "><a href="#book-counselling">Book Counselling</a></Button>
                   </div>
 
                   <p className="text-[11px] text-[var(--alo-text-muted)] mt-3 leading-relaxed">Next: {recommended.next} — Acceptance varies by university, course and visa route. Check official provider information.</p>
@@ -431,7 +431,7 @@ export default function PremiumLanguagePrepLandingView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-7">
-              <Badge className="bg-blue-50 text-[var(--alo-brand)] border-blue-100 font-bold text-[11px] px-3 py-1 mb-3">WHY IT MATTERS</Badge>
+              <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] font-bold text-[11px] px-3 py-1 mb-3">WHY IT MATTERS</Badge>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--alo-text)] leading-tight">Why English Language Proficiency Matters</h2>
               <p className="text-sm text-[var(--alo-body)] mt-4 leading-relaxed">
                 English proficiency is often an important part of international university admission and, depending on the destination and immigration pathway, may also be relevant to visa or immigration requirements.
@@ -500,9 +500,9 @@ export default function PremiumLanguagePrepLandingView() {
             ].map((card, i) => (
               <Card key={i} className="p-6 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition-all rounded-3xl group">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
-                  card.color === 'blue' ? 'bg-blue-50 text-[var(--alo-brand)]' :
+                  card.color === 'blue' ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' :
                   card.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
-                  card.color === 'orange' ? 'bg-orange-50 text-[var(--alo-cta)]' : 'bg-purple-50 text-purple-600'
+                  card.color === 'orange' ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]' : 'bg-purple-50 text-purple-600'
                 }`}>
                   <card.icon className="w-5 h-5" />
                 </div>
@@ -556,7 +556,7 @@ export default function PremiumLanguagePrepLandingView() {
                 <AlertCircle className="w-3.5 h-3.5" /> MOI Guidance is guidance resource, not incorrectly represented as English proficiency test. Do not hardcode price/result time unless verified — Check current provider information.
               </p>
             </div>
-            <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold text-sm h-11 rounded-xl"><a href="/language-prep/comparison">Compare All Tests →</a></Button>
+            <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold text-sm rounded-xl"><a href="/language-prep/comparison">Compare All Tests →</a></Button>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -564,7 +564,7 @@ export default function PremiumLanguagePrepLandingView() {
               <Card key={t.id} className="p-5 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition-all rounded-3xl flex flex-col justify-between h-full group">
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-3">
-                    <Badge className={`${t.isPopular ? 'bg-[var(--alo-cta)] text-black' : 'bg-blue-50 text-[var(--alo-brand)] border-blue-100'} font-bold text-[11px] px-2.5 py-1`}>
+                    <Badge className={`${t.isPopular ? 'bg-[var(--alo-cta)] text-black' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]'} font-bold text-[11px] px-2.5 py-1`}>
                       {t.isPopular ? 'Popular' : t.testType === 'moi_guidance' ? 'Guidance' : t.testType === 'academic' ? 'Academic Test' : 'English Test'}
                     </Badge>
                     <span className="text-[11px] font-medium text-[var(--alo-text-muted)] bg-[var(--alo-page)] px-2 py-1 rounded-full border border-[var(--alo-border)]">{t.durationDisplay}</span>
@@ -609,8 +609,8 @@ export default function PremiumLanguagePrepLandingView() {
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-[var(--alo-border)] flex gap-2">
-                  <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-10 rounded-xl text-xs"><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
-                  <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold h-10 rounded-xl text-xs px-3"><a href={`/language-prep/comparison?tests=${t.slug}`}>Compare</a></Button>
+                  <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
+                  <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold rounded-xl px-3"><a href={`/language-prep/comparison?tests=${t.slug}`}>Compare</a></Button>
                 </div>
 
                 <p className="text-[11px] text-[var(--alo-text-muted)] mt-2 text-center">Source: {t.sourceName} • Verified: {t.lastVerifiedAt || 'Check official'} • Acceptance varies</p>
@@ -676,7 +676,7 @@ export default function PremiumLanguagePrepLandingView() {
           </div>
 
           <div className="text-center mt-8">
-            <Button asChild className="bg-white border border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold h-11 rounded-xl shadow-sm"><a href="/language-prep/comparison">View Full Comparison →</a></Button>
+            <Button asChild className="bg-white border border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold rounded-xl shadow-sm"><a href="/language-prep/comparison">View Full Comparison →</a></Button>
           </div>
         </div>
       </section>
@@ -762,7 +762,7 @@ export default function PremiumLanguagePrepLandingView() {
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Course</label>
                   <Input placeholder="e.g. MSc Computer Science" value={scoreExplorer.course} onChange={e => setScoreExplorer({ ...scoreExplorer, course: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                 </div>
-                <Button onClick={handleScoreExplorer} className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl">Check Requirement</Button>
+                <Button onClick={handleScoreExplorer} className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl">Check Requirement</Button>
                 <p className="text-[11px] text-[var(--alo-text-muted)]">If data unavailable: Requirement not available in database. Check university course page.</p>
               </Card>
             </div>
@@ -795,13 +795,13 @@ export default function PremiumLanguagePrepLandingView() {
                     <div className="flex justify-between p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Waiver:</span><span className="font-medium">{scoreResult.waiverAvailable ? 'Available — Check conditions' : 'Not available — Check course page'}</span></div>
                     <div className="p-3 rounded-xl bg-white border border-[var(--alo-border)]"><p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)] mb-1">Remarks</p><p className="text-xs text-[var(--alo-body)]">{scoreResult.remarks || 'Check university course page for remarks'}</p></div>
                     <div className="grid grid-cols-2 gap-3 text-[11px]">
-                      <div className="p-3 rounded-xl bg-blue-50 border border-blue-100"><span className="text-[var(--alo-text-muted)] block">Source URL</span><a href={scoreResult.sourceUrl || '#'} target="_blank" className="font-semibold text-[var(--alo-brand)] hover:underline break-all">{scoreResult.sourceUrl || 'Check university course page'}</a></div>
-                      <div className="p-3 rounded-xl bg-blue-50 border border-blue-100"><span className="text-[var(--alo-text-muted)] block">Last Verified</span><span className="font-semibold text-[var(--alo-text)]">{scoreResult.lastVerifiedAt || 'Information requires verification'}</span></div>
+                      <div className="p-3 rounded-xl bg-[var(--alo-brand-pale)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)] block">Source URL</span><a href={scoreResult.sourceUrl || '#'} target="_blank" className="font-semibold text-[var(--alo-brand)] hover:underline break-all">{scoreResult.sourceUrl || 'Check university course page'}</a></div>
+                      <div className="p-3 rounded-xl bg-[var(--alo-brand-pale)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)] block">Last Verified</span><span className="font-semibold text-[var(--alo-text)]">{scoreResult.lastVerifiedAt || 'Information requires verification'}</span></div>
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl text-xs"><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
-                    <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] h-11 rounded-xl text-xs"><a href="#book-counselling">Book Counselling</a></Button>
+                    <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
+                    <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] rounded-xl "><a href="#book-counselling">Book Counselling</a></Button>
                   </div>
                 </Card>
               )}
@@ -869,7 +869,7 @@ export default function PremiumLanguagePrepLandingView() {
               { title: 'University-Specific Guidance', desc: 'Check requirements before booking your test — source URL, last verified, waiver availability, remarks.', icon: Building2 },
             ].map((c, i) => (
               <Card key={i} className="p-6 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition rounded-3xl">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center mb-4"><c.icon className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center mb-4"><c.icon className="w-5 h-5" /></div>
                 <h3 className="font-bold text-sm text-[var(--alo-text)]">{c.title}</h3>
                 <p className="text-xs text-[var(--alo-body)] mt-2 leading-relaxed">{c.desc}</p>
               </Card>
@@ -893,7 +893,7 @@ export default function PremiumLanguagePrepLandingView() {
               { name: 'Compare the tests', desc: 'Side-by-side formats and requirements', href: '/language-prep/comparison', icon: ClipboardCheck },
             ].map((item) => (
               <Card key={item.name} className="p-5 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md transition rounded-2xl">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center mb-3"><item.icon className="w-4 h-4" /></div>
+                <div className="w-9 h-9 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center mb-3"><item.icon className="w-4 h-4" /></div>
                 <h3 className="font-bold text-sm text-[var(--alo-text)]">{item.name}</h3>
                 <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{item.desc}</p>
                 <a href={item.href} className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold text-[var(--alo-brand)] hover:text-[var(--alo-cta)]">Open guide →</a>
@@ -901,7 +901,7 @@ export default function PremiumLanguagePrepLandingView() {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <a href="#book-counselling" className="inline-flex min-h-11 items-center rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--alo-cta-hover)]">Book free counselling</a>
+            <a href="#book-counselling" className="inline-flex min- items-center rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--alo-cta-hover)]">Book free counselling</a>
           </div>
         </div>
       </section>
@@ -942,7 +942,7 @@ export default function PremiumLanguagePrepLandingView() {
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl pointer-events-none" />
             <div className="relative text-center space-y-6">
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Not Sure Which English Test You Need?</h2>
-              <p className="text-sm sm:text-base text-blue-100 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-sm sm:text-base text-[var(--alo-brand-pale)] max-w-2xl mx-auto leading-relaxed">
                 Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
@@ -952,7 +952,7 @@ export default function PremiumLanguagePrepLandingView() {
                     <MessageSquare className="w-4 h-4" /> Chat with Counselor
                   </a></Button>
               </div>
-              <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-blue-200 border-t border-white/20">
+              <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-[var(--alo-brand-pale)] border-t border-white/20">
                 <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: +880 180 502 0101</span>
                 <span className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Email: info@aloeducation.com</span>
               </div>

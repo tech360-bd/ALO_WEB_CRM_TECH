@@ -731,10 +731,10 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                     )}
                   </label>
                   <Button
-                    onClick={clearFilters}
-                    variant="outline"
-                    className="h-10 w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                  >
+ onClick={clearFilters}
+ variant="outline"
+ className=" w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ >
                     <Icon name="RotateCcw" className="size-4" />
                     Reset filters
                   </Button>
@@ -1154,32 +1154,32 @@ function EligibilityCourseCard({
           </Button>
           <div className="grid grid-cols-2 gap-2">
             <Button
-              onClick={onShortlist}
-              variant={isShortlisted ? "default" : "outline"}
-              className={cn(
-                "h-10",
-                isShortlisted
-                  ? "bg-rose-500 text-white hover:bg-rose-600"
-                  : "border-rose-200 text-rose-600 hover:bg-rose-50",
-              )}
-              size="sm"
-            >
+ onClick={onShortlist}
+ variant={isShortlisted ? "default" : "outline"}
+ className={cn(
+ "",
+ isShortlisted
+ ? "bg-rose-500 text-white hover:bg-rose-600"
+ : "border-rose-200 text-rose-600 hover:bg-rose-50",
+ )}
+ size="sm"
+ >
               <Icon name={isShortlisted ? "Heart" : "Heart"} className="size-4" />
               {isShortlisted ? "Saved" : "Save"}
             </Button>
             <Button
-              onClick={onCompare}
-              variant={isComparing ? "default" : "outline"}
-              disabled={compareDisabled && !isComparing}
-              className={cn(
-                "h-10",
-                isComparing
-                  ? "bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                  : "border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]",
-                compareDisabled && !isComparing && "opacity-50",
-              )}
-              size="sm"
-            >
+ onClick={onCompare}
+ variant={isComparing ? "default" : "outline"}
+ disabled={compareDisabled && !isComparing}
+ className={cn(
+ "",
+ isComparing
+ ? "bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ : "border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]",
+ compareDisabled && !isComparing && "opacity-50",
+ )}
+ size="sm"
+ >
               <Icon name="GitCompare" className="size-4" />
               {isComparing ? "Comparing" : "Compare"}
             </Button>

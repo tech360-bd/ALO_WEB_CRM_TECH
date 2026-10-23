@@ -25,16 +25,16 @@ export default async function CountryAdmissionRequirementsPage({ params }: { par
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
-          <Link href="/destinations" className="hover:text-blue-600">Destinations</Link>
+          <Link href="/destinations" className="hover:text-[var(--alo-brand)]">Destinations</Link>
           <span>/</span>
-          <Link href={`/destinations/${countryData.slug}`} className="hover:text-blue-600">{countryData.name}</Link>
+          <Link href={`/destinations/${countryData.slug}`} className="hover:text-[var(--alo-brand)]">{countryData.name}</Link>
           <span>/</span>
           <span className="text-[var(--alo-text)] font-semibold">Admission Requirements</span>
         </div>
 
         {/* Header Hero */}
         <div className="bg-white rounded-3xl p-8 border border-[var(--alo-border)] shadow-sm space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs font-bold rounded-full">
             <GraduationCap className="w-4 h-4" /> Bangladesh Qualifications Standard
           </div>
           <h1 className="text-3xl font-extrabold text-[var(--alo-text)]">
@@ -49,7 +49,7 @@ export default async function CountryAdmissionRequirementsPage({ params }: { par
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {countryData.entryRequirements.map((req, i) => (
             <div key={i} className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 space-y-4 shadow-sm">
-              <span className="text-xs font-bold px-3 py-1 bg-blue-50 text-blue-700 rounded-full">
+              <span className="text-xs font-bold px-3 py-1 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-full">
                 {req.level} Level
               </span>
 
@@ -69,7 +69,7 @@ export default async function CountryAdmissionRequirementsPage({ params }: { par
                   <ul className="mt-1 space-y-1">
                     {req.documents.map((doc, d) => (
                       <li key={d} className="flex items-center gap-1.5 text-[var(--alo-body)]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[var(--alo-brand)] shrink-0" />
                         <span>{doc}</span>
                       </li>
                     ))}

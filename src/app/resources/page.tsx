@@ -61,10 +61,10 @@ export default function ResourcesHubPage() {
       <main className="flex-1 pt-20 pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Hero — spec §26 exact copy */}
-          <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-8 md:p-12 shadow-sm mb-8">
-            <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs px-3 py-1 mb-4 uppercase">ALO Knowledge & Guidance Hub</Badge>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Your Complete Study Abroad Knowledge Hub</h1>
-            <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">Practical, updated and student-friendly guidance for researching courses, universities, applications, scholarships, visas and life abroad.</p>
+          <div className="mb-8 rounded-[20px] border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-6 md:p-10">
+            <Badge className="bg-card text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] px-3 py-1 mb-4 uppercase tracking-[0.07em] font-semibold">ALO Knowledge & Guidance Hub</Badge>
+            <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] mb-4">Your Complete Study Abroad Knowledge Hub</h1>
+            <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] md:text-base">Practical, updated and student-friendly guidance for researching courses, universities, applications, scholarships, visas and life abroad.</p>
             <div className="flex gap-2 mt-4">
               <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">10 Categories</Badge>
               <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">Database-driven</Badge>
@@ -138,7 +138,7 @@ export default function ResourcesHubPage() {
                         </div>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mb-3">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • {b.authorId ? 'ALO Editorial Team' : 'ALO Editorial Team'}</p>
                       </div>
-                      <Link href={`/resources/${catSlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold h-12 rounded-xl">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href={`/resources/${catSlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold h-12 rounded-xl">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
                     </Card>
                   );
                 })}
@@ -149,10 +149,10 @@ export default function ResourcesHubPage() {
           {/* Final CTA */}
           <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
             <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
-            <p className="text-sm text-blue-100 mb-6">Research first, act with confidence — ALO is your execution and support layer.</p>
+            <p className="text-sm text-[var(--alo-brand-pale)] mb-6">Research first, act with confidence — ALO is your execution and support layer.</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
-              <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-6 font-bold">Find Courses</Button></Link>
+              <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Courses</Button></Link>
               <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
             </div>
           </Card>

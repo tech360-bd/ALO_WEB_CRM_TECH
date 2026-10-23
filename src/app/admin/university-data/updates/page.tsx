@@ -176,11 +176,11 @@ export default function UniversityUpdatesCenter() {
       )}
 
       {/* AI Safeguards Banner */}
-      <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/20 border border-blue-500/20 rounded-2xl p-4 flex items-center gap-4">
+      <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/20 border border-[var(--alo-brand)]/20 rounded-2xl p-4 flex items-center gap-4">
         <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
           <ShieldCheck className="w-5 h-5 text-blue-400" />
         </div>
-        <div className="text-xs text-blue-200">
+        <div className="text-xs text-[var(--alo-brand-pale)]">
           <p className="font-semibold text-white text-sm">Human-in-the-Loop AI Architecture Active</p>
           <p className="mt-0.5">This queue contains unverified proposals. Legacy scan and publication actions are unavailable until official field-level evidence and versioned publication are implemented.</p>
         </div>
@@ -253,7 +253,7 @@ export default function UniversityUpdatesCenter() {
                               <Button
                                 size="sm"
                                 onClick={() => handleApprove(u.id)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                               >
                                 <Check className="w-3.5 h-3.5 mr-1" />
                                 Review Only

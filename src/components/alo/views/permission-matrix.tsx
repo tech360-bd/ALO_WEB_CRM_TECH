@@ -53,8 +53,8 @@ interface PermissionsResponse {
 
 const MODULE_COLORS: Record<string, { badge: string; chip: string; dot: string }> = {
   Student: {
-    badge: "bg-blue-100 text-blue-700 border-blue-200",
-    chip: "bg-blue-50 text-blue-700",
+    badge: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
+    chip: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
     dot: "bg-blue-500",
   },
   Documents: {
@@ -68,9 +68,9 @@ const MODULE_COLORS: Record<string, { badge: string; chip: string; dot: string }
     dot: "bg-emerald-500",
   },
   Application: {
-    badge: "bg-orange-100 text-orange-700 border-orange-200",
-    chip: "bg-orange-50 text-orange-700",
-    dot: "bg-orange-500",
+    badge: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
+    chip: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+    dot: "bg-[var(--alo-cta)]",
   },
   Visa: {
     badge: "bg-rose-100 text-rose-700 border-rose-200",
@@ -378,7 +378,7 @@ export function PermissionMatrix() {
       />
 
       {/* ------------------------------------------------- security notice */}
-      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-[var(--alo-cta-soft)]/40">
         <CardHeader>
           <div className="flex items-start gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white">

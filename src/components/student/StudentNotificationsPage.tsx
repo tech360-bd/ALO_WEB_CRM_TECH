@@ -84,7 +84,7 @@ export default function StudentNotifications() {
           description="Updates on your applications, documents, visa and payments."
           action={
             data && data.unread > 0 ? (
-              <span className="rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-[12px] font-semibold text-orange-700">
+              <span className="rounded-full border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] px-3 py-1 text-[12px] font-semibold text-[var(--alo-cta-active)]">
                 {data.unread} unread
               </span>
             ) : undefined
@@ -110,11 +110,11 @@ export default function StudentNotifications() {
               {notifications.map((notification) => (
                 <li
                   key={notification.id}
-                  className={cn('flex flex-wrap items-start gap-3 px-5 py-4', !notification.isRead && 'bg-blue-50/40')}
+                  className={cn('flex flex-wrap items-start gap-3 px-5 py-4', !notification.isRead && 'bg-[var(--alo-brand-pale)]/40')}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      {!notification.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-alo-blue" aria-label="Unread" />}
+                      {!notification.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-alo-brand" aria-label="Unread" />}
                       <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--alo-text-muted)]">
                         {TYPE_LABELS[notification.type] ?? notification.type}
                       </span>
@@ -139,7 +139,7 @@ export default function StudentNotifications() {
                     {notification.actionUrl && (
                       <Link
                         href={notification.actionUrl}
-                        className="mt-2 inline-block text-[13px] font-semibold text-alo-blue hover:underline"
+                        className="mt-2 inline-block text-[13px] font-semibold text-alo-brand hover:underline"
                       >
                         Open related item
                       </Link>
@@ -148,10 +148,10 @@ export default function StudentNotifications() {
 
                   {!notification.isRead && (
                     <Button
-                      type="button"
-                      variant="outline"
-                      className="h-8 shrink-0 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
-                      onClick={() => markRead(notification.id)}
+ type="button"
+ variant="outline"
+ className=" shrink-0 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
+ onClick={() => markRead(notification.id)}
                       disabled={marking === notification.id}
                     >
                       {marking === notification.id

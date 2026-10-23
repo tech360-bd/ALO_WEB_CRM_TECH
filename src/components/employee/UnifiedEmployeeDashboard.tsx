@@ -185,7 +185,7 @@ export default function UnifiedEmployeeDashboard({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base font-bold text-[var(--alo-text)] tracking-tight">{pageTitle}</h1>
-              <Badge className="bg-blue-50 text-[var(--alo-brand)] border-blue-200 font-semibold text-xs capitalize">
+              <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] font-semibold text-xs capitalize">
                 {activeRole.toLowerCase().replace(/_/g, ' ')}
               </Badge>
             </div>
@@ -238,10 +238,10 @@ export default function UnifiedEmployeeDashboard({
               <p className="text-[11px] text-[var(--alo-text-muted)]">{designation}</p>
             </div>
             <Button
-              variant="ghost"
-              size="icon"
-              className="text-[var(--alo-text-muted)] hover:text-red-600 h-8 w-8 ml-1"
-              onClick={() => {
+ variant="ghost"
+ size="icon"
+ className="text-[var(--alo-text-muted)] hover:text-red-600 size-12 ml-1"
+ onClick={() => {
                 logout();
                 router.replace('/portal/login');
               }}
@@ -276,7 +276,7 @@ export default function UnifiedEmployeeDashboard({
               <div className="flex-1">
                 <p className="text-sm font-semibold text-amber-800">Unable to load dashboard metrics</p>
                 <p className="text-xs text-amber-700 mt-1">{error}</p>
-                <Button size="sm" variant="outline" className="mt-3 h-7 text-xs gap-1" onClick={fetchDashboardData}><RefreshCw className="w-3 h-3" /> Retry</Button>
+                <Button size="sm" variant="outline" className="mt-3 h-7 gap-1" onClick={fetchDashboardData}><RefreshCw className="w-3 h-3" /> Retry</Button>
               </div>
             </CardContent>
           </Card>
@@ -335,7 +335,7 @@ export default function UnifiedEmployeeDashboard({
                     <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.assignedLeads)}</h3>
                     <p className="text-[11px] text-[var(--alo-text-muted)] mt-1 font-medium">{displayMetric(data?.hotLeads)} marked hot • {displayMetric(data?.newLeads)} marked new</p>
                   </div>
-                  <div className="w-11 h-11 rounded-xl bg-orange-50 text-[var(--alo-cta)] flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] flex items-center justify-center">
                     <Users className="w-6 h-6" />
                   </div>
                 </CardContent>
@@ -348,7 +348,7 @@ export default function UnifiedEmployeeDashboard({
                     <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.activeStudents)}</h3>
                     <p className="text-[11px] text-[var(--alo-text-muted)] mt-1 font-medium">{displayMetric(data?.totalStudents)} student records in scope</p>
                   </div>
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center">
                     <GraduationCap className="w-6 h-6" />
                   </div>
                 </CardContent>
@@ -410,7 +410,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.appointmentsToday)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Scheduled or confirmed for assigned students.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -463,9 +463,9 @@ export default function UnifiedEmployeeDashboard({
                       <div>
                         <p className="text-xs font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Review Queue</p>
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.reviewCount)}</h3>
-                        <p className="text-[11px] text-blue-600 mt-1">under review</p>
+                        <p className="text-[11px] text-[var(--alo-brand)] mt-1">under review</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><Eye className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Eye className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -480,7 +480,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.visaCasesCount ?? data?.visaCases)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Readiness totals are not verified.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><ShieldCheck className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><ShieldCheck className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -510,7 +510,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.escalatedCases)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Escalation count is not connected to this dashboard.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -545,7 +545,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-lg font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.pendingCommissionRecords)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Only records in this employee's scope.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><Briefcase className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Briefcase className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -580,7 +580,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.totalLeadsGenerated)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Campaign attribution data is unavailable.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center"><Users className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] flex items-center justify-center"><Users className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -590,7 +590,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.socialInquiriesToday)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Provider-backed inbox metrics are unavailable.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -625,7 +625,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.activeEmployees ?? data?.branchStudents ?? data?.countryApplications)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Records marked active in CRM.' : activeRole.includes('BRANCH') ? 'Student records assigned within this branch.' : 'Applications matching the selected destinations.'}</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><Users className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Users className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -733,7 +733,7 @@ export default function UnifiedEmployeeDashboard({
                             data.myStudents.map((s: any) => (
                               <div key={s.id} className="p-4 flex items-center justify-between hover:bg-[var(--alo-page)] transition-colors">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-9 h-9 rounded-full bg-blue-100 text-[var(--alo-brand)] flex items-center justify-center font-bold text-xs">
+                                  <div className="w-9 h-9 rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold text-xs">
                                     {s.fullName?.substring(0, 2).toUpperCase() || 'ST'}
                                   </div>
                                   <div>
@@ -745,7 +745,7 @@ export default function UnifiedEmployeeDashboard({
                                   <Badge variant="outline" className="bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] capitalize text-xs">
                                     {s.currentStage || 'Stage not recorded'}
                                   </Badge>
-                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-xs text-[var(--alo-brand)] font-medium h-7">
+                                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className=" text-[var(--alo-brand)] font-medium h-7">
                                     Open
                                   </Button>
                                 </div>
@@ -768,9 +768,9 @@ export default function UnifiedEmployeeDashboard({
                         </CardHeader>
                         <CardContent className="p-4 space-y-2">
                           {(data?.recentApplications && data.recentApplications.length>0) ? data.recentApplications.slice(0,4).map((app:any)=>(
-                            <div key={app.id} className="flex items-center justify-between p-3 bg-blue-50/50 rounded-lg border border-blue-100 text-xs">
+                            <div key={app.id} className="flex items-center justify-between p-3 bg-[var(--alo-brand-pale)]/50 rounded-lg border border-[var(--alo-border)] text-xs">
                               <span className="font-semibold text-[var(--alo-body)] truncate pr-2">{app.universityName || app.university} - {app.courseName || app.course} {app.intake? `(${app.intake})`:''}</span>
-                              <Badge className={`${app.stage==='offer_received' || app.safeStatus==='OFFER_RECEIVED' ? 'bg-emerald-600' : 'bg-blue-600'} text-white text-[11px] shrink-0`}>{app.safeStatus || app.stage}</Badge>
+                              <Badge className={`${app.stage==='offer_received' || app.safeStatus==='OFFER_RECEIVED' ? 'bg-emerald-600' : 'bg-[var(--alo-brand)]'} text-white text-[11px] shrink-0`}>{app.safeStatus || app.stage}</Badge>
                             </div>
                           )) : (
                             <div className="text-center py-4 text-xs text-[var(--alo-text-muted)]">No applications in queue. Create an application draft to begin.</div>
@@ -807,7 +807,7 @@ export default function UnifiedEmployeeDashboard({
                       <CardContent className="p-4 space-y-3">
                         {data?.pendingTasksCount > 0 ? (
                           <div className="space-y-2">
-                            <div className="flex items-start gap-3 p-2.5 rounded-lg bg-orange-50 border border-orange-100">
+                            <div className="flex items-start gap-3 p-2.5 rounded-lg bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25">
                               <Clock className="w-4 h-4 text-[var(--alo-cta)] mt-0.5 shrink-0" />
                               <div className="text-xs">
                                 <p className="font-bold text-[var(--alo-text)]">{data.followUpsDue ?? 0} Follow-ups Due Today</p>
@@ -836,7 +836,7 @@ export default function UnifiedEmployeeDashboard({
                         <Button
                           variant="outline"
                           onClick={() => router.push('/admin/university-data')}
-                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-blue-50 hover:text-[var(--alo-brand)]"
+                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)]"
                         >
                           <Building className="w-4 h-4" /> Course Finder
                         </Button>
@@ -850,7 +850,7 @@ export default function UnifiedEmployeeDashboard({
                         <Button
                           variant="outline"
                           onClick={() => router.push('/employee/visa-dashboard')}
-                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-orange-50 hover:text-[var(--alo-cta)]"
+                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-[var(--alo-cta-soft)] hover:text-[var(--alo-cta)]"
                         >
                           <ShieldCheck className="w-4 h-4" /> Visa Cases
                         </Button>
@@ -904,9 +904,9 @@ export default function UnifiedEmployeeDashboard({
                               <td className="p-3 font-bold text-[var(--alo-text)]">{lead.name}</td>
                               <td className="p-3 text-[var(--alo-body)]">{lead.phone}</td>
                               <td className="p-3 text-[var(--alo-body)]">{lead.destination || lead.country || '—'}</td>
-                              <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
+                              <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
                               <td className="p-3 text-right">
-                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[var(--alo-brand)] text-xs h-7">Contact</Button>
+                                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[var(--alo-brand)] h-7">Contact</Button>
                               </td>
                             </tr>
                           ))})() : (
@@ -928,11 +928,11 @@ export default function UnifiedEmployeeDashboard({
                                 <p className="font-bold text-sm text-[var(--alo-text)]">{lead.name}</p>
                                 <p className="text-xs text-[var(--alo-text-muted)]">{lead.phone} • {lead.destination || lead.country || '—'}</p>
                               </div>
-                              <Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge>
+                              <Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge>
                             </div>
                             <div className="mt-3 flex gap-2">
-                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 text-xs h-8"><PhoneCall className="w-3 h-3 mr-1" /> Call</Button>
-                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand)] text-white text-xs h-8"><MessageSquare className="w-3 h-3 mr-1" /> Message</Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 "><PhoneCall className="w-3 h-3 mr-1" /> Call</Button>
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand)] text-white "><MessageSquare className="w-3 h-3 mr-1" /> Message</Button>
                             </div>
                           </div>
                         ));
@@ -959,7 +959,7 @@ export default function UnifiedEmployeeDashboard({
                               <p className="font-bold text-[var(--alo-text)] text-sm">{s.fullName}</p>
                               <p className="text-xs text-[var(--alo-text-muted)]">{s.email} &bull; {s.phone}</p>
                             </div>
-                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-xs border-[var(--alo-border)] h-8">
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" border-[var(--alo-border)] ">
                               Open Profile
                             </Button>
                           </div>
@@ -980,25 +980,25 @@ export default function UnifiedEmployeeDashboard({
                       <Sparkles className="w-5 h-5 text-amber-400" />
                       <h3 className="font-bold text-base">ALO Counselor & Officer AI Co-Pilot</h3>
                     </div>
-                    <p className="text-xs text-blue-200 max-w-xl">
+                    <p className="text-xs text-[var(--alo-brand-pale)] max-w-xl">
                       AI drafting is unavailable from this panel while the existing ALO AI Workforce, knowledge sources, and role/department permissions are being reconciled. No draft or SOP is generated here.
                     </p>
                     <div className="flex flex-wrap gap-2 pt-2">
                       <Button
-                        size="sm"
-                        className="bg-amber-500 text-[var(--alo-text)] font-bold text-xs opacity-60"
-                        disabled
-                        title="Unavailable: no verified, role-scoped follow-up workflow is connected to this control."
-                      >
+ size="sm"
+ className="bg-amber-500 text-[var(--alo-text)] font-bold opacity-60"
+ disabled
+ title="Unavailable: no verified, role-scoped follow-up workflow is connected to this control."
+ >
                         Draft Student Follow-up Script (Unavailable)
                       </Button>
                       <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-white/10 text-white border-white/20 text-xs opacity-60"
-                        disabled
-                        title="Unavailable: no approved employee SOP source/search workflow is connected to this control."
-                      >
+ size="sm"
+ variant="outline"
+ className="bg-white/10 text-white border-white/20 opacity-60"
+ disabled
+ title="Unavailable: no approved employee SOP source/search workflow is connected to this control."
+ >
                         Generate SOP Structure (Unavailable)
                       </Button>
                     </div>
@@ -1063,7 +1063,7 @@ export default function UnifiedEmployeeDashboard({
                 <Button type="button" variant="outline" size="sm" onClick={() => setShowLeadModal(false)} className="text-xs">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={creatingLead} size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black text-xs font-semibold">
+                <Button type="submit" disabled={creatingLead} size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-semibold">
                   {creatingLead ? 'Saving...' : 'Register Lead'}
                 </Button>
               </div>

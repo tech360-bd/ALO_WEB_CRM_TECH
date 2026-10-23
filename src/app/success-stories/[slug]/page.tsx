@@ -91,7 +91,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
                 ))}
               </div>
               <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left">{story.name}</h1>
-              <p className="text-blue-100 text-lg text-center md:text-left flex flex-col md:flex-row md:items-center gap-2">
+              <p className="text-[var(--alo-brand-pale)] text-lg text-center md:text-left flex flex-col md:flex-row md:items-center gap-2">
                 <span><BookOpen className="inline h-4 w-4 mr-1"/> {story.course}</span>
                 <span className="hidden md:inline">•</span>
                 <span><Building2 className="inline h-4 w-4 mr-1"/> {story.university}</span>
@@ -122,7 +122,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
                         )}
                       </div>
                       <div className="pb-2">
-                        <span className="text-xs font-semibold text-[var(--alo-brand)] bg-blue-50 px-2 py-1 rounded-full mb-1 inline-block">
+                        <span className="text-xs font-semibold text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] px-2 py-1 rounded-full mb-1 inline-block">
                           {item.date}
                         </span>
                         <h4 className="font-bold text-[var(--alo-text)]">{item.step}</h4>
@@ -158,7 +158,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
 
             <Card className="p-6 bg-[var(--alo-brand)] text-white border-none text-center">
               <h3 className="font-bold mb-2">Start Your Own Journey</h3>
-              <p className="text-blue-100 text-sm mb-4">
+              <p className="text-[var(--alo-brand-pale)] text-sm mb-4">
                 Let our experts help you achieve your study abroad dreams just like {story.name.split(' ')[0]}.
               </p>
               <Link href="/eligibility-check">
@@ -186,7 +186,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
                     </div>
                   </div>
                   <Link href={`/success-stories/${rs.slug}`}>
-                    <Button variant="outline" className="w-full text-xs">Read Full Story</Button>
+                    <Button variant="outline" className="w-full ">Read Full Story</Button>
                   </Link>
                 </Card>
               ))}

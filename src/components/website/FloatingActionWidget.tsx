@@ -194,7 +194,7 @@ export default function FloatingActionWidget() {
                 </span>
                 <div>
                   <h3 className="font-bold text-sm leading-tight">ALO Guided Assistant (24/7)</h3>
-                  <p className="text-[11px] text-blue-200">WhatsApp: 01805020100 • Honest answers only</p>
+                  <p className="text-[11px] text-[var(--alo-brand-pale)]">WhatsApp: 01805020100 • Honest answers only</p>
                 </div>
               </div>
               <button
@@ -226,7 +226,7 @@ export default function FloatingActionWidget() {
               <div className="flex flex-wrap gap-2 pt-2">
                 <Link
                   href="/course-finder"
-                  className="inline-flex items-center rounded-full border border-[var(--alo-brand)] px-3 py-1.5 text-[11px] font-semibold text-[var(--alo-brand)] hover:bg-blue-50"
+                  className="inline-flex items-center rounded-full border border-[var(--alo-brand)] px-3 py-1.5 text-[11px] font-semibold text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"
                 >
                   Find a course
                 </Link>
@@ -266,7 +266,7 @@ export default function FloatingActionWidget() {
                 placeholder="Ask about courses, fees, or your application..."
                 className="flex-1 h-10 px-3 rounded-xl border border-[var(--alo-border)] text-xs focus:outline-none focus:border-[var(--alo-brand)]"
               />
-              <Button type="submit" aria-label="Send message" className="bg-[var(--alo-cta)] text-black h-12 px-4 rounded-xl font-bold text-xs">
+              <Button type="submit" aria-label="Send message" className="bg-[var(--alo-cta)] text-black h-12 px-4 rounded-xl font-bold ">
                 <Send className="h-3.5 w-3.5" />
               </Button>
             </form>

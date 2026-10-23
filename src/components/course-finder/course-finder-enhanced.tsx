@@ -40,9 +40,9 @@ const ALO_ORANGE = '#E8501A';
 // ============================================================
 const ELIGIBILITY_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
   ELIGIBLE: { label: 'Eligible', color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', icon: CircleCheck },
-  LIKELY_ELIGIBLE: { label: 'Likely Eligible', color: 'text-blue-700', bg: 'bg-blue-50 border-blue-200', icon: TrendingUp },
+  LIKELY_ELIGIBLE: { label: 'Likely Eligible', color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)] border-[var(--alo-border)]', icon: TrendingUp },
   CONDITIONALLY_ELIGIBLE: { label: 'Conditional', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', icon: AlertCircle },
-  PARTIALLY_MATCHED: { label: 'Partial Match', color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200', icon: HelpCircle },
+  PARTIALLY_MATCHED: { label: 'Partial Match', color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25', icon: HelpCircle },
   NOT_CURRENTLY_ELIGIBLE: { label: 'Not Eligible', color: 'text-red-700', bg: 'bg-red-50 border-red-200', icon: CircleAlert },
   INSUFFICIENT_INFO: { label: 'Info Needed', color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)] border-[var(--alo-border)]', icon: HelpCircle },
   COUNSELLOR_REVIEW_REQUIRED: { label: 'Counsellor Review', color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200', icon: Users },
@@ -204,7 +204,7 @@ function getMatchScoreStroke(score: number): string {
 
 function getMatchScoreTextClass(score: number): string {
   if (score >= 90) return 'text-emerald-600';
-  if (score >= 70) return 'text-blue-600';
+  if (score >= 70) return 'text-[var(--alo-brand)]';
   if (score >= 50) return 'text-amber-600';
   return 'text-red-500';
 }
@@ -356,7 +356,7 @@ function HeroSection({
           </div>
           <div className="mt-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
             <p className="text-white/60 text-xs">Only records that pass source verification are shown; counts depend on the live catalogue.</p>
-            <Button className="h-12 px-4 text-xs font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={onCounsellor}>
+            <Button className="h-12 px-4 font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={onCounsellor}>
               <Phone className="size-3.5 mr-1.5" />Talk to a Counsellor
             </Button>
           </div>
@@ -519,7 +519,7 @@ function ProfileStep2({ tests, onChange, onAdd, onRemove }: {
         <Card key={i} className="p-4 border-[var(--alo-border)]">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2"><Languages className="size-4" style={{ color: ALO_BLUE }} /><span className="font-medium text-sm">Test #{i + 1}</span></div>
-            <Button variant="ghost" size="sm" className="h-7 text-xs text-red-500 hover:text-red-700" onClick={() => onRemove(i)}><X className="size-3 mr-1" />Remove</Button>
+            <Button variant="ghost" size="sm" className="h-7 text-red-500 hover:text-red-700" onClick={() => onRemove(i)}><X className="size-3 mr-1" />Remove</Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="space-y-1.5">
@@ -537,7 +537,7 @@ function ProfileStep2({ tests, onChange, onAdd, onRemove }: {
           </div>
         </Card>
       ))}
-      <Button variant="outline" size="sm" className="text-xs" onClick={onAdd}><Plus className="size-3.5 mr-1" />Add English Test</Button>
+      <Button variant="outline" size="sm" className="" onClick={onAdd}><Plus className="size-3.5 mr-1" />Add English Test</Button>
       <p className="text-xs text-[var(--alo-text-muted)]">If you haven't taken any English test yet, you can leave this section empty.</p>
     </div>
   );
@@ -652,7 +652,7 @@ function FilterSidebar({
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm text-[var(--alo-text)] flex items-center gap-2"><Filter className="size-4" />Filters</h3>
         {activeCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={onReset} className="text-xs text-[var(--alo-text-muted)] h-7">Clear all ({activeCount})</Button>
+          <Button variant="ghost" size="sm" onClick={onReset} className=" text-[var(--alo-text-muted)] h-7">Clear all ({activeCount})</Button>
         )}
       </div>
       <Separator />
@@ -931,20 +931,20 @@ function EnhancedCourseCard({
         {/* Action Buttons */}
         <div className="flex flex-col gap-2 pt-1">
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1 h-8 text-xs" onClick={() => onCompare(course)}><GitCompare className="size-3 mr-1" />Compare</Button>
-            <Button variant="outline" size="sm" className="flex-1 h-8 text-xs" onClick={() => onSave(course)}><BookmarkPlus className="size-3 mr-1" />Save</Button>
+            <Button variant="outline" size="sm" className="flex-1 " onClick={() => onCompare(course)}><GitCompare className="size-3 mr-1" />Compare</Button>
+            <Button variant="outline" size="sm" className="flex-1 " onClick={() => onSave(course)}><BookmarkPlus className="size-3 mr-1" />Save</Button>
             {onCheckEligibility && !eligibilityCategory && (
-              <Button variant="outline" size="sm" className="flex-1 h-8 text-xs" style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} onClick={() => onCheckEligibility(course)}><UserCheck className="size-3 mr-1" />Check</Button>
+              <Button variant="outline" size="sm" className="flex-1 " style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} onClick={() => onCheckEligibility(course)}><UserCheck className="size-3 mr-1" />Check</Button>
             )}
           </div>
           <div className="flex gap-2">
-            <Button size="sm" className="flex-1 h-12 text-xs font-semibold text-white" style={{ backgroundColor: ALO_BLUE }} onClick={() => toast.success(`Application started for "${course.title}" via ALO Education`)}>Apply with ALO</Button>
+            <Button size="sm" className="flex-1 h-12 font-semibold text-white" style={{ backgroundColor: ALO_BLUE }} onClick={() => toast.success(`Application started for "${course.title}" via ALO Education`)}>Apply with ALO</Button>
             {course.officialCourseUrl ? (
-              <Button variant="outline" size="sm" className="flex-1 h-12 text-xs" asChild>
+              <Button variant="outline" size="sm" className="flex-1 h-12 " asChild>
                 <a href={course.officialCourseUrl} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-3 mr-1" />View Details</a>
               </Button>
             ) : (
-              <Button variant="outline" size="sm" className="flex-1 h-12 text-xs" disabled title="No official course URL on record for this university yet">View Details</Button>
+              <Button variant="outline" size="sm" className="flex-1 h-12 " disabled title="No official course URL on record for this university yet">View Details</Button>
             )}
           </div>
         </div>
@@ -991,8 +991,8 @@ function UniversityCard({ university, onViewCourses, onCompare }: {
         </div>
         {university.lastVerifiedAt && <div className="flex items-center gap-1 text-xs text-[var(--alo-text-muted)]"><ShieldCheck className="size-3" /><span>Verified {formatDate(university.lastVerifiedAt)}</span></div>}
         <div className="flex gap-2 pt-1">
-          <Button size="sm" className="flex-1 h-12 text-xs font-semibold text-white" style={{ backgroundColor: ALO_BLUE }} onClick={() => onViewCourses(university)}><BookOpen className="size-3 mr-1" />View Courses</Button>
-          <Button variant="outline" size="sm" className="h-12 text-xs" onClick={() => onCompare(university)}><GitCompare className="size-3 mr-1" />Compare</Button>
+          <Button size="sm" className="flex-1 h-12 font-semibold text-white" style={{ backgroundColor: ALO_BLUE }} onClick={() => onViewCourses(university)}><BookOpen className="size-3 mr-1" />View Courses</Button>
+          <Button variant="outline" size="sm" className="h-12 " onClick={() => onCompare(university)}><GitCompare className="size-3 mr-1" />Compare</Button>
         </div>
       </CardContent>
     </Card>
@@ -1081,7 +1081,7 @@ function EligibilitySummaryBar({ summary }: { summary: Record<string, number> })
     { key: 'eligible', label: 'Eligible', color: 'bg-emerald-500', count: summary.eligible || 0 },
     { key: 'likelyEligible', label: 'Likely', color: 'bg-blue-500', count: summary.likelyEligible || 0 },
     { key: 'conditionallyEligible', label: 'Conditional', color: 'bg-amber-500', count: summary.conditionallyEligible || 0 },
-    { key: 'partiallyMatched', label: 'Partial', color: 'bg-orange-500', count: summary.partiallyMatched || 0 },
+    { key: 'partiallyMatched', label: 'Partial', color: 'bg-[var(--alo-cta)]', count: summary.partiallyMatched || 0 },
     { key: 'notCurrentlyEligible', label: 'Not Eligible', color: 'bg-red-500', count: summary.notCurrentlyEligible || 0 },
     { key: 'insufficientInfo', label: 'Info Needed', color: 'bg-slate-400', count: summary.insufficientInfo || 0 },
     { key: 'counsellorReviewRequired', label: 'Counsellor', color: 'bg-purple-500', count: summary.counsellorReviewRequired || 0 },
@@ -1470,12 +1470,12 @@ export function CourseFinderEnhanced() {
           {/* Eligibility Category Filter */}
           <div className="flex items-center gap-2 mt-4 overflow-x-auto pb-2">
             <span className="text-xs text-[var(--alo-text-muted)] shrink-0">Filter:</span>
-            <Button size="sm" variant={eligibilityFilter === 'all' ? 'default' : 'outline'} className={`h-7 text-xs ${eligibilityFilter === 'all' ? 'text-white' : ''}`} style={eligibilityFilter === 'all' ? { backgroundColor: ALO_BLUE } : undefined} onClick={() => setEligibilityFilter('all')}>All ({eligibilityResults.length})</Button>
+            <Button size="sm" variant={eligibilityFilter === 'all' ? 'default' : 'outline'} className={`h-7 ${eligibilityFilter === 'all' ? 'text-white' : ''}`} style={eligibilityFilter === 'all' ? { backgroundColor: ALO_BLUE } : undefined} onClick={() => setEligibilityFilter('all')}>All ({eligibilityResults.length})</Button>
             {Object.entries(ELIGIBILITY_CONFIG).map(([key, config]) => {
               const count = eligibilityResults.filter((r) => r.eligibilityCategory === key).length;
               if (count === 0) return null;
               return (
-                <Button key={key} size="sm" variant={eligibilityFilter === key ? 'default' : 'outline'} className={`h-7 text-xs ${eligibilityFilter === key ? 'text-white' : ''}`} style={eligibilityFilter === key ? { backgroundColor: ALO_BLUE } : undefined} onClick={() => setEligibilityFilter(key)}>{config.label} ({count})</Button>
+                <Button key={key} size="sm" variant={eligibilityFilter === key ? 'default' : 'outline'} className={`h-7 ${eligibilityFilter === key ? 'text-white' : ''}`} style={eligibilityFilter === key ? { backgroundColor: ALO_BLUE } : undefined} onClick={() => setEligibilityFilter(key)}>{config.label} ({count})</Button>
               );
             })}
           </div>
@@ -1492,7 +1492,7 @@ export function CourseFinderEnhanced() {
               <p className="text-sm text-[var(--alo-text-muted)] mt-1">Try a different eligibility filter or adjust your profile.</p>
               <div className="flex gap-2 mt-4">
                 <Button variant="outline" onClick={() => setEligibilityFilter('all')} className="text-xs">Show All</Button>
-                <Button className="text-xs text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
+                <Button className=" text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
               </div>
             </div>
           ) : (
@@ -1581,8 +1581,8 @@ export function CourseFinderEnhanced() {
                     <h3 className="text-lg font-semibold text-[var(--alo-body)]">No courses match your criteria</h3>
                     <p className="text-sm text-[var(--alo-text-muted)] mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
                     <div className="flex gap-2 mt-4">
-                      <Button variant="outline" onClick={handleResetFilters} className="text-xs">Clear all filters</Button>
-                      <Button className="text-xs text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
+                      <Button variant="outline" onClick={handleResetFilters} className="">Clear all filters</Button>
+                      <Button className=" text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
                     </div>
                   </div>
                 )}
@@ -1621,7 +1621,7 @@ export function CourseFinderEnhanced() {
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: `${ALO_ORANGE}15` }}><Trophy className="size-10" style={{ color: ALO_ORANGE, opacity: 0.6 }} /></div>
                 <h3 className="text-lg font-semibold text-[var(--alo-body)]">Scholarships Coming Soon</h3>
                 <p className="text-sm text-[var(--alo-text-muted)] mt-2 max-w-md">ALO Education is building a comprehensive scholarship database. In the meantime, filter courses with the &quot;Scholarship Available&quot; toggle, or speak with a counsellor.</p>
-                <Button className="mt-4 text-xs text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
+                <Button className="mt-4 text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
               </div>
             )}
 

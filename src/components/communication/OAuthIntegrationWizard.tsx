@@ -157,7 +157,7 @@ export default function OAuthIntegrationWizard() {
 
   const statusConfig: Record<string, { label: string; className: string; icon: React.ReactNode }> = {
     connected: { label: 'Connected', className: 'bg-emerald-100 text-emerald-700', icon: <CheckCircle2 className="w-3 h-3" /> },
-    connecting: { label: 'Connecting', className: 'bg-blue-100 text-blue-700', icon: <RefreshCw className="w-3 h-3 animate-spin" /> },
+    connecting: { label: 'Connecting', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: <RefreshCw className="w-3 h-3 animate-spin" /> },
     disconnected: { label: 'Not Connected', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]', icon: <WifiOff className="w-3 h-3" /> },
     expired: { label: 'Token Expired', className: 'bg-red-100 text-red-600', icon: <AlertTriangle className="w-3 h-3" /> },
     error: { label: 'Error', className: 'bg-red-100 text-red-600', icon: <AlertCircle className="w-3 h-3" /> },
@@ -299,7 +299,7 @@ export default function OAuthIntegrationWizard() {
                     className={`w-full py-2.5 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition ${
                       status === 'connected'
                         ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                        : 'bg-[var(--alo-brand)] text-white hover:bg-blue-700 shadow-sm'
+                        : 'bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] shadow-sm'
                     } disabled:opacity-50`}
                   >
                     {isConnecting ? (

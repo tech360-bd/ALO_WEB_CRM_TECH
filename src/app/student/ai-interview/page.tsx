@@ -169,7 +169,7 @@ export default function StudentAiInterviewPage() {
             <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-[#60a5fa] border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
             <p className="text-[var(--alo-text-muted)] text-xs mt-1">Practise embassy credibility questions one at a time. The AI is accent-tolerant — it evaluates the meaning, clarity and consistency of your answers, never your accent — and follows up where an answer is incomplete. This is practice only: it cannot guarantee a visa outcome, and a human officer makes the final internal assessment.</p>
           </div>
-          <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white text-xs">Back to Visa Readiness</Button></Link>
+          <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white ">Back to Visa Readiness</Button></Link>
         </div>
 
         <Card className="bg-[var(--alo-text)] border-white/10 text-white">
@@ -201,7 +201,7 @@ export default function StudentAiInterviewPage() {
           <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-[#60a5fa] border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator — Session {sessionId}</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
           <p className="text-[var(--alo-text-muted)] text-xs mt-1">One general practice question at a time. Responses are saved for officer review; automated language, risk, and eligibility scoring is not enabled.</p>
         </div>
-        <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white text-xs">Back to Visa Readiness</Button></Link>
+        <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white ">Back to Visa Readiness</Button></Link>
       </div>
 
       {!completed ? (
@@ -213,7 +213,7 @@ export default function StudentAiInterviewPage() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)]/20 text-[#60a5fa] flex items-center justify-center flex-shrink-0 mt-0.5"><span className="font-bold text-sm">Q{currentIdx + 1}</span></div>
-                <div><h2 className="text-lg font-semibold text-white leading-relaxed">{currentQ?.question}</h2><p className="text-[11px] text-blue-300 mt-2 bg-blue-500/10 p-2.5 rounded-lg border border-blue-500/20">Counsellor tip: Focus on specific curriculum modules, faculty, research facilities, your legitimate source of funds and your career plan after graduation. Keep every answer truthful and consistent with your documents.</p></div>
+                <div><h2 className="text-lg font-semibold text-white leading-relaxed">{currentQ?.question}</h2><p className="text-[11px] text-blue-300 mt-2 bg-blue-500/10 p-2.5 rounded-lg border border-[var(--alo-brand)]/20">Counsellor tip: Focus on specific curriculum modules, faculty, research facilities, your legitimate source of funds and your career plan after graduation. Keep every answer truthful and consistent with your documents.</p></div>
               </div>
             </CardContent>
           </Card>
@@ -237,7 +237,7 @@ export default function StudentAiInterviewPage() {
                 <div><p className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Practice reminder</p><p className="text-sm text-gray-200 mt-1">{feedback.improvements}</p></div>
                 {feedback.flags?.length > 0 && <div className="bg-amber-500/10 p-3 rounded-lg border border-amber-500/20 text-xs text-amber-300">Practice note: {feedback.flags.join(', ')}. You may add more detail in your own words; do not invent information.</div>}
                 <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-xs text-[var(--alo-text-muted)]">{feedback.accentToleranceNote}</div>
-                <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-xs text-blue-300">Your saved question and response are for practice only. Automated assessment is not enabled; a human officer must review the session.</div>
+                <div className="bg-blue-500/10 p-3 rounded-lg border border-[var(--alo-brand)]/20 text-xs text-blue-300">Your saved question and response are for practice only. Automated assessment is not enabled; a human officer must review the session.</div>
                 <div className="flex justify-end pt-4 border-t border-white/10"><Button onClick={handleNext} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white flex items-center gap-2"><span>{currentIdx < questions.length - 1 ? 'Next Practice Question' : 'Finish Practice Session'}</span><ArrowRight className="w-4 h-4" /></Button></div>
               </CardContent>
             </Card>

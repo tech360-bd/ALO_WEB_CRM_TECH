@@ -143,7 +143,7 @@ export default function AIMarketingDirectorView() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleGenerate} disabled={loading || !instruction.trim()} className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black h-10">
+              <Button onClick={handleGenerate} disabled={loading || !instruction.trim()} className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
                 Generate Plan
               </Button>
@@ -206,8 +206,8 @@ export default function AIMarketingDirectorView() {
                   <div className="p-2 bg-white border rounded-lg"><p className="font-semibold">Retry & Errors</p><p className="text-[var(--alo-body)] mt-1">Duplicate prevention, idempotency, execution locks — no duplicate publishing on retry.</p></div>
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-brand)] text-white flex-1 h-8 text-xs"><CheckCircle2 className="w-3 h-3 mr-1" />Approve</Button>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 h-8 text-xs"><XCircle className="w-3 h-3 mr-1" />Reject</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-brand)] text-white flex-1 "><CheckCircle2 className="w-3 h-3 mr-1" />Approve</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 "><XCircle className="w-3 h-3 mr-1" />Reject</Button>
                 </div>
               </CardContent>
             </Card>

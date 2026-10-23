@@ -222,8 +222,8 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   LIKELY_ELIGIBLE: {
     label: 'Likely Eligible',
     color: '#0057B8',
-    bgClass: 'bg-blue-100 dark:bg-blue-950',
-    textClass: 'text-blue-800 dark:text-blue-200',
+    bgClass: 'bg-[var(--alo-brand-pale)] dark:bg-blue-950',
+    textClass: 'text-[var(--alo-brand-deep)] dark:text-[var(--alo-brand-pale)]',
     borderClass: 'border-blue-300 dark:border-blue-700',
     icon: <TrendingUp className="h-4 w-4" />,
   },
@@ -238,8 +238,8 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   PARTIALLY_MATCHED: {
     label: 'Partial',
     color: '#E8501A',
-    bgClass: 'bg-orange-100 dark:bg-orange-950',
-    textClass: 'text-orange-800 dark:text-orange-200',
+    bgClass: 'bg-[var(--alo-cta-soft)] dark:bg-orange-950',
+    textClass: 'text-[var(--alo-cta-active)] dark:text-orange-200',
     borderClass: 'border-orange-300 dark:border-orange-700',
     icon: <Minus className="h-4 w-4" />,
   },
@@ -556,7 +556,7 @@ export function EligibilityCheckerEnhanced() {
             <ShieldCheck className="h-5 w-5 text-white" />
             <span className="text-white/90 text-sm font-medium">ALO Education Eligibility Engine</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] sm:text-4xl text-white mb-4 leading-tight">
             Check Your Eligibility with ALO Education
           </h1>
           <p className="text-lg sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
@@ -1549,7 +1549,7 @@ function ResultCard({ result, expanded, onToggle }: {
               <p className="text-sm text-muted-foreground mb-3">
                 This course has specific requirements that need human evaluation. Our automated engine cannot fully assess your eligibility for this programme. An ALO Education counsellor will review your profile against the full course requirements, including subject-specific criteria, work experience relevance, and any special conditions.
               </p>
-              <Button asChild size="sm" style={{ background: '#0284C7', color: '#fff' }}>
+              <Button asChild size="sm" style={{ background: 'var(--alo-info)', color: '#fff' }}>
                 <Link href="/book-consultation"><MessageSquare className="h-4 w-4 mr-1" /> Request Counsellor Review</Link>
               </Button>
             </div>

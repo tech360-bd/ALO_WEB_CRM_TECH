@@ -33,7 +33,7 @@ const TEST_TYPES = [
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  IN_PROGRESS: "bg-blue-100 text-blue-700",
+  IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
 };
 

@@ -128,16 +128,16 @@ export default function StudentCv() {
           description="Build the CV your university applications will use, with automatic completeness checks."
           action={
             <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/ai/cv-helper">
                   <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />
                   Open CV Helper
                 </Link>
               </Button>
               <Button
-                type="button"
-                className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                onClick={() => setCreating((value) => !value)}
+ type="button"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ onClick={() => setCreating((value) => !value)}
               >
                 {creating ? 'Cancel' : 'New Draft'}
               </Button>
@@ -180,17 +180,17 @@ export default function StudentCv() {
               )}
               <div className="flex gap-2">
                 <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                >
+ type="submit"
+ disabled={submitting}
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                   {submitting ? 'Saving…' : 'Save Draft'}
                 </Button>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
-                  onClick={() => setCreating(false)}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={() => setCreating(false)}
                 >
                   Cancel
                 </Button>
@@ -206,14 +206,14 @@ export default function StudentCv() {
               description="The CV Helper builds one from your education and experience, or you can start a blank draft here."
               action={
                 <div className="flex flex-wrap justify-center gap-2">
-                  <Button asChild className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500">
+                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                     <Link href="/ai/cv-helper">Build CV with Helper</Link>
                   </Button>
                   <Button
-                    type="button"
-                    variant="outline"
-                    className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
-                    onClick={() => setCreating(true)}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={() => setCreating(true)}
                   >
                     Create Blank Draft
                   </Button>
@@ -237,7 +237,7 @@ export default function StudentCv() {
                     <button
                       type="button"
                       className={`w-full px-5 py-3 text-left transition-colors hover:bg-[var(--alo-page)] ${
-                        selected?.id === draft.id ? 'bg-blue-50' : ''
+                        selected?.id === draft.id ? 'bg-[var(--alo-brand-pale)]' : ''
                       }`}
                       onClick={() => setSelectedId(draft.id)}
                     >
@@ -282,12 +282,12 @@ export default function StudentCv() {
                     {(selected.exportedPdfUrl || selected.exportedDocxUrl) && (
                       <div className="flex flex-wrap gap-2 border-t border-[var(--alo-border)] px-5 py-3">
                         {selected.exportedPdfUrl && (
-                          <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                          <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                             <a href={selected.exportedPdfUrl}>Download PDF</a>
                           </Button>
                         )}
                         {selected.exportedDocxUrl && (
-                          <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                          <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                             <a href={selected.exportedDocxUrl}>Download DOCX</a>
                           </Button>
                         )}

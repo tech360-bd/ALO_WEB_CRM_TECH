@@ -53,7 +53,7 @@ export default function StudentVisaChecklistPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white text-xs">View Readiness Overview — Safe Readiness Only</Button></Link>
+          <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white ">View Readiness Overview — Safe Readiness Only</Button></Link>
           <Button onClick={fetchChecklist} variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white"><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></Button>
         </div>
       </div>
@@ -74,9 +74,9 @@ export default function StudentVisaChecklistPage() {
                     <td className="p-3 font-semibold text-white flex items-center gap-2"><FileText className="w-4 h-4 text-blue-400" /><span>{item.item || item.documentName}</span></td>
                     <td className="p-3 text-xs text-[var(--alo-text-muted)] capitalize">{item.category}</td>
                     <td className="p-3">{item.isRequired ? <Badge className="bg-rose-500/20 text-rose-300 border-rose-500/30 text-[11px]">Required</Badge> : <Badge variant="outline" className="text-[var(--alo-text-muted)] text-[11px]">Optional</Badge>}</td>
-                    <td className="p-3"><Badge className={item.status === 'APPROVED' || item.status === 'approved' || item.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[11px]' : item.status === 'UPLOADED' || item.status === 'uploaded' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30 text-[11px]' : 'bg-amber-500/20 text-amber-400 border-amber-500/30 text-[11px]'}>{(item.status || 'NOT_UPLOADED').toUpperCase()}</Badge></td>
+                    <td className="p-3"><Badge className={item.status === 'APPROVED' || item.status === 'approved' || item.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[11px]' : item.status === 'UPLOADED' || item.status === 'uploaded' ? 'bg-blue-500/20 text-blue-300 border-[var(--alo-brand)]/30 text-[11px]' : 'bg-amber-500/20 text-amber-400 border-amber-500/30 text-[11px]'}>{(item.status || 'NOT_UPLOADED').toUpperCase()}</Badge></td>
                     <td className="p-3 text-xs text-[var(--alo-placeholder)] max-w-xs">{item.note || item.reason || 'Ensure high-resolution scan in PDF format — supportive/clear/professional/actionable — student-safe feedback'}</td>
-                    <td className="p-3 text-right"><Link href="/student/documents"><Button size="sm" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white text-xs h-7"><Upload className="w-3 h-3 mr-1" /> Upload — Replacement Previous Versions Remain Auditable Officer Cannot Silently Delete History</Button></Link></td>
+                    <td className="p-3 text-right"><Link href="/student/documents"><Button size="sm" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white h-7"><Upload className="w-3 h-3 mr-1" /> Upload — Replacement Previous Versions Remain Auditable Officer Cannot Silently Delete History</Button></Link></td>
                   </tr>
                 ))}
               </tbody>

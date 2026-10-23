@@ -15,7 +15,7 @@ import {
 
 const CHANNEL_ICONS: Record<string, React.ReactNode> = {
   whatsapp: <Zap className="w-3.5 h-3.5 text-emerald-500" />,
-  facebook: <Facebook className="w-3.5 h-3.5 text-blue-600" />,
+  facebook: <Facebook className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
   instagram: <Instagram className="w-3.5 h-3.5 text-pink-500" />,
   email: <Mail className="w-3.5 h-3.5 text-amber-500" />,
   live_chat: <Globe className="w-3.5 h-3.5 text-blue-400" />,
@@ -144,13 +144,13 @@ export default function MorningSummaryView() {
             icon: <MessageSquare className="w-6 h-6 text-[var(--alo-brand)]" />,
             value: summary.overnight.newConversations,
             label: 'New Conversations',
-            bg: 'bg-blue-50',
+            bg: 'bg-[var(--alo-brand-pale)]',
           },
           {
             icon: <AlertTriangle className="w-6 h-6 text-[var(--alo-cta)]" />,
             value: summary.overnight.highPriority,
             label: 'High Priority',
-            bg: 'bg-orange-50',
+            bg: 'bg-[var(--alo-cta-soft)]',
           },
           {
             icon: <FileText className="w-6 h-6 text-amber-500" />,

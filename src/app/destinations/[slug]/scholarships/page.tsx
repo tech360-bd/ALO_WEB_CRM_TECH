@@ -44,9 +44,9 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
-          <Link href="/destinations" className="hover:text-blue-600">Destinations</Link>
+          <Link href="/destinations" className="hover:text-[var(--alo-brand)]">Destinations</Link>
           <span>/</span>
-          <Link href={`/destinations/${countryData.slug}`} className="hover:text-blue-600">{countryData.name}</Link>
+          <Link href={`/destinations/${countryData.slug}`} className="hover:text-[var(--alo-brand)]">{countryData.name}</Link>
           <span>/</span>
           <span className="text-[var(--alo-text)] font-semibold">Scholarships</span>
         </div>

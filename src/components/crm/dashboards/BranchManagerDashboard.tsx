@@ -181,7 +181,7 @@ export default function BranchManagerDashboard() {
                   </div>
                 ))}
               </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="w-full mt-3 text-xs">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="w-full mt-3 ">
                 Assign All Leads
               </Button>
             </CardContent>

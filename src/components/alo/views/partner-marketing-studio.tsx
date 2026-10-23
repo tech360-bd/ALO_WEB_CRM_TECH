@@ -273,10 +273,10 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   const { toast } = useToast();
   return (
     <Button
-      variant="outline"
-      size="sm"
-      className="h-7 px-2 text-xs"
-      onClick={() => {
+ variant="outline"
+ size="sm"
+ className="h-7 px-2 "
+ onClick={() => {
         if (!text) return;
         navigator.clipboard?.writeText(text);
         toast({ title: `${label} copied`, description: "Content is now on your clipboard." });
@@ -903,10 +903,10 @@ export function PartnerMarketingStudio() {
                           <div className="flex items-center gap-2">
                             <CopyButton text={currentRequest.imagePrompt || ""} label="Image prompt" />
                             <Button
-                              size="sm"
-                              className="h-7 bg-[var(--alo-brand)] px-2 text-xs text-white hover:bg-[var(--alo-brand)]/90"
-                              disabled={!canCreateCampaign || assetLoading === "generate_image" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
-                              onClick={() => runAssetAction("generate_image")}
+ size="sm"
+ className="h-7 bg-[var(--alo-brand)] px-2 text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={!canCreateCampaign || assetLoading === "generate_image" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
+ onClick={() => runAssetAction("generate_image")}
                             >
                               {assetLoading === "generate_image" ? (
                                 <><Icon name="Loader2" className="size-3 animate-spin" /> Generating...</>
@@ -925,10 +925,10 @@ export function PartnerMarketingStudio() {
                           <div className="flex items-center gap-2">
                             <CopyButton text={currentRequest.videoPrompt || ""} label="Video prompt" />
                             <Button
-                              size="sm"
-                              className="h-7 bg-[var(--alo-brand)] px-2 text-xs text-white hover:bg-[var(--alo-brand)]/90"
-                              disabled={!canCreateCampaign || assetLoading === "generate_video" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
-                              onClick={() => runAssetAction("generate_video")}
+ size="sm"
+ className="h-7 bg-[var(--alo-brand)] px-2 text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={!canCreateCampaign || assetLoading === "generate_video" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
+ onClick={() => runAssetAction("generate_video")}
                             >
                               {assetLoading === "generate_video" ? (
                                 <><Icon name="Loader2" className="size-3 animate-spin" /> Generating...</>

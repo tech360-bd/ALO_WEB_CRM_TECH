@@ -112,7 +112,7 @@ export default function RelatedContentEngine({ sourceType, sourceId = '', source
       </div>
       {related.length > 4 && (
         <div className="text-center pt-2">
-          <Link href={`/course-finder?university=${universityId || ''}&country=${country || ''}`}><Button variant="outline" className="border-[var(--alo-border)] text-xs h-12">View More Related Information</Button></Link>
+          <Link href={`/course-finder?university=${universityId || ''}&country=${country || ''}`}><Button variant="outline" className="border-[var(--alo-border)] h-12">View More Related Information</Button></Link>
         </div>
       )}
     </div>

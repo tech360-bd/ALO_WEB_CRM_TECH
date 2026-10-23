@@ -210,7 +210,7 @@ export function StudentMessages() {
                           <p
                             className={cn(
                               "mt-1 text-[11px]",
-                              m.direction === "OUTBOUND" ? "text-blue-100" : "text-[var(--alo-text-muted)]"
+                              m.direction === "OUTBOUND" ? "text-[var(--alo-brand-pale)]" : "text-[var(--alo-text-muted)]"
                             )}
                           >
                             {m.receivedAt

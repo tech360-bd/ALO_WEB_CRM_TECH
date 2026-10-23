@@ -103,8 +103,8 @@ const STATUS_META: Record<string, { label: string; color: string; dot: string }>
 };
 
 const AGENT_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
-  ADMISSIONS: { label: "Admissions", icon: "FileCheck", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  VISA: { label: "Visa", icon: "Plane", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  ADMISSIONS: { label: "Admissions", icon: "FileCheck", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  VISA: { label: "Visa", icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   COURSE_RECOMMENDATION: { label: "Course Rec.", icon: "Compass", color: "bg-violet-100 text-violet-700 border-violet-200" },
   SCHOLARSHIP: { label: "Scholarship", icon: "Award", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
   UNIVERSITY_MATCHING: { label: "University Match", icon: "Building2", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
@@ -115,11 +115,11 @@ const AGENT_TYPE_META: Record<string, { label: string; icon: string; color: stri
   SEO: { label: "SEO", icon: "Search", color: "bg-amber-100 text-amber-700 border-amber-200" },
   TRANSLATION: { label: "Translation", icon: "Languages", color: "bg-rose-100 text-rose-700 border-rose-200" },
   DOCUMENT_OCR: { label: "Document OCR", icon: "ScanText", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-  EMAIL: { label: "Email", icon: "Mail", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  EMAIL: { label: "Email", icon: "Mail", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
   ANALYTICS: { label: "Analytics", icon: "BarChart3", color: "bg-violet-100 text-violet-700 border-violet-200" },
   REPORTING: { label: "Reporting", icon: "FileBarChart", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
-  INTERVIEW_COACH: { label: "Interview Coach", icon: "Mic", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  INTERVIEW_COACH: { label: "Interview Coach", icon: "Mic", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   TRAINING: { label: "Training", icon: "GraduationCap", color: "bg-teal-100 text-teal-700 border-teal-200" },
   KNOWLEDGE_SEARCH: { label: "Knowledge Search", icon: "Sparkles", color: "bg-purple-100 text-purple-700 border-purple-200" },
 };

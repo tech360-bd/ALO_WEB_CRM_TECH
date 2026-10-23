@@ -101,7 +101,7 @@ const READINESS_COLORS: Record<string, string> = {
   ready: "bg-emerald-100 text-emerald-700",
   needs_practice: "bg-amber-100 text-amber-700",
   high_risk: "bg-rose-100 text-rose-700",
-  human_review_required: "bg-orange-100 text-orange-700",
+  human_review_required: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const RISK_COLORS: Record<string, string> = {

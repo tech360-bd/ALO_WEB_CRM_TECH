@@ -317,9 +317,9 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
           </div>
         </div>
         <Button
-          variant="outline"
-          className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
-          onClick={() => onNavigate("counselor-student-360")}
+ variant="outline"
+ className=" border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
+ onClick={() => onNavigate("counselor-student-360")}
         >
           <Icon name="Orbit" className="size-4" />
           Open Student 360
@@ -869,9 +869,9 @@ function SopResultView({
 
           <div className="flex items-center justify-end">
             <Button
-              variant="link"
-              className="h-8 p-0 text-xs text-[var(--alo-brand)]"
-              onClick={() => onNavigate("counselor-student-360")}
+ variant="link"
+ className=" p-0 text-[var(--alo-brand)]"
+ onClick={() => onNavigate("counselor-student-360")}
             >
               Open Student 360 to view all drafts →
             </Button>
@@ -903,9 +903,9 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
           </div>
           <div className="flex flex-wrap gap-2">
             <Button
-              size="sm"
-              className="h-9 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-              onClick={() => {
+ size="sm"
+ className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ onClick={() => {
                 setStatus("STUDENT_REVIEW");
                 toast({ title: "Sent to student portal for review" });
               }}
@@ -914,10 +914,10 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
               Send to Student
             </Button>
             <Button
-              size="sm"
-              variant="outline"
-              className="h-9 border-emerald-600 text-emerald-700 hover:bg-emerald-50"
-              onClick={() => {
+ size="sm"
+ variant="outline"
+ className=" border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+ onClick={() => {
                 setStatus("APPROVED");
                 toast({ title: "CV approved", description: "Ready to attach to applications." });
               }}
@@ -926,10 +926,10 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
               Approve
             </Button>
             <Button
-              size="sm"
-              variant="outline"
-              className="h-9"
-              onClick={() => toast({ title: "PDF export started" })}
+ size="sm"
+ variant="outline"
+ className=""
+ onClick={() => toast({ title: "PDF export started" })}
             >
               <Icon name="Download" className="size-4" />
               Export PDF

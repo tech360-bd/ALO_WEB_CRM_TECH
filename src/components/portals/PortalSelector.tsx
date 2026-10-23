@@ -101,8 +101,8 @@ function PortalCardItem({ portal }: { portal: PortalCard }) {
   return (
     <div className="flex flex-col rounded-xl border border-[var(--alo-border)] bg-white p-5 transition-shadow duration-200 hover:shadow-lg">
       {/* Icon */}
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
-        <Icon className="h-5 w-5 text-orange-600" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--alo-cta-soft)]">
+        <Icon className="h-5 w-5 text-[var(--alo-cta-active)]" />
       </div>
 
       {/* Name */}
@@ -121,7 +121,7 @@ function PortalCardItem({ portal }: { portal: PortalCard }) {
       {/* Actions */}
       <div className="mt-4 flex flex-col gap-2">
         <Button
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold"
+          className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-semibold"
           onClick={handleLogin}
         >
           Login
@@ -130,7 +130,7 @@ function PortalCardItem({ portal }: { portal: PortalCard }) {
         {portal.showRegister && (
           <Button
             variant="outline"
-            className="w-full border-orange-300 text-orange-600 hover:bg-orange-50"
+            className="w-full border-orange-300 text-[var(--alo-cta-active)] hover:bg-[var(--alo-cta-soft)]"
             onClick={handleRegister}
           >
             Register
@@ -159,7 +159,7 @@ export default function PortalSelector() {
             <span className="text-xl font-bold tracking-tight text-[var(--alo-text)]">
               ALO Education
             </span>
-            <span className="text-xs italic text-orange-500" style={{ fontFamily: 'Georgia, serif' }}>
+            <span className="text-xs italic text-[var(--alo-cta)]" style={{ fontFamily: 'Georgia, serif' }}>
               Your Dream – Our Commitment
             </span>
           </div>

@@ -51,7 +51,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
               const chip: Record<string, string> = {
                 OPEN: 'bg-emerald-50 text-emerald-700 border-emerald-200',
                 CLOSING_SOON: 'bg-amber-50 text-amber-700 border-amber-200',
-                UPCOMING: 'bg-blue-50 text-blue-700 border-blue-200',
+                UPCOMING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
                 CLOSED: 'bg-red-50 text-red-700 border-red-200',
                 NEEDS_VERIFICATION: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
               };
@@ -105,7 +105,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
                 <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Result Timeline</p><p className="font-semibold">{scholarship.resultTimeline || 'Check current provider information — do NOT fabricate result time'}</p></div>
                 <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Renewal Conditions</p><p className="font-semibold">{scholarship.renewalConditions || 'Check official source for renewal'}</p></div>
                 <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Common Mistakes</p><p className="font-semibold">{scholarship.commonMistakes ? (typeof scholarship.commonMistakes === 'string' ? (()=>{try{return JSON.parse(scholarship.commonMistakes).join(', ')}catch{return scholarship.commonMistakes}})() : scholarship.commonMistakes.join(', ')) : 'Missing deadline, incomplete documents, weak essays'}</p></div>
-                <div className="bg-blue-50 border-blue-100 rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">How ALO Can Help</p><p className="font-semibold text-[var(--alo-brand)]">{scholarship.howAloHelps || 'ALO provides finding scholarships, eligibility review, deadline tracking, document preparation, statement support — do NOT guarantee scholarship awards'}</p></div>
+                <div className="bg-[var(--alo-brand-pale)] border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">How ALO Can Help</p><p className="font-semibold text-[var(--alo-brand)]">{scholarship.howAloHelps || 'ALO provides finding scholarships, eligibility review, deadline tracking, document preparation, statement support — do NOT guarantee scholarship awards'}</p></div>
               </div>
               <p className="text-xs text-[var(--alo-text-muted)] mt-4 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3">Official Source: {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'} • Last verified: {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • Status: {scholarship.verificationStatus || 'pending'}</p>
             </Card>
@@ -127,7 +127,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
             </Card>
 
             {/* Application method — separate vs automatic (spec §18) */}
-            <Card className="p-5 bg-blue-50 border-blue-100 rounded-2xl">
+            <Card className="p-5 bg-[var(--alo-brand-pale)] border-[var(--alo-border)] rounded-2xl">
               <h4 className="font-bold text-sm mb-2 text-[var(--alo-brand)]">Separate Application or Automatic Consideration?</h4>
               <p className="text-xs text-[var(--alo-body)] leading-relaxed">
                 {scholarship.applicationMethod
@@ -176,10 +176,10 @@ export default function ScholarshipDetailHub({ slug }: Props) {
             {/* Final CTA — spec §24 exact button set */}
             <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
-              <p className="text-sm text-blue-100 mb-6">Check eligibility, find matching courses, or talk through your scholarship strategy with a counselor.</p>
+              <p className="text-sm text-[var(--alo-brand-pale)] mb-6">Check eligibility, find matching courses, or talk through your scholarship strategy with a counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
-                <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+                <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Matching Courses</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6 font-bold">Book Free Consultation</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
               </div>

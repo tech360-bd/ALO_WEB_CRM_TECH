@@ -115,7 +115,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[var(--alo-text)]">Test not found</h2>
           <p className="text-sm text-[var(--alo-body)] mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
-          <Button asChild className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl"><a href="/language-prep" className="mt-4 inline-block">View All Test Prep →</a></Button>
+          <Button asChild className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl"><a href="/language-prep" className="mt-4 inline-block">View All Test Prep →</a></Button>
         </Card>
       </div>
     );
@@ -131,7 +131,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
       {/* Breadcrumb + Hero — White-first, no dark overlay */}
       <section className="relative bg-white pt-8 pb-12 lg:pt-12 lg:pb-16 overflow-hidden border-b border-[var(--alo-border)]">
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--alo-page)] to-white pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl opacity-30 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--alo-brand-pale)] rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-6 font-medium">
@@ -166,7 +166,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Academic</span>
                   <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Paper</span>
                   <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Computer</span>
-                  {test.slug === 'ielts-ukvi' && <span className="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold text-[var(--alo-brand)]">UKVI SELT</span>}
+                  {test.slug === 'ielts-ukvi' && <span className="px-3 py-1.5 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] text-xs font-bold text-[var(--alo-brand)]">UKVI SELT</span>}
                 </div>
               )}
 
@@ -210,7 +210,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   <p className="text-[11px] text-amber-700 mt-2 p-2 rounded-lg bg-amber-50 border border-amber-100">Acceptance varies by university, course and visa route. Check university-specific acceptance.</p>
                 </div>
 
-                <Button asChild variant="outline" className="w-full bg-white border-[var(--alo-border)] font-semibold h-11 rounded-xl text-xs"><a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
+                <Button asChild variant="outline" className="w-full bg-white border-[var(--alo-border)] font-semibold rounded-xl "><a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
                     Official Provider: {test.provider} ↗
                   </a></Button>
               </Card>
@@ -238,7 +238,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Difficulty:</span><span className="font-semibold">{test.difficultyLevel}</span></div>
                   </div>
                 </Card>
-                <Card className="p-5 bg-blue-50 border border-blue-100 rounded-2xl">
+                <Card className="p-5 bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-2xl">
                   <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--alo-brand)] mb-2">Source Verification</h4>
                   <div className="space-y-2 text-xs">
                     <div><span className="text-[var(--alo-text-muted)]">Source:</span><p className="font-semibold text-[var(--alo-text)]">{test.sourceName}</p></div>
@@ -257,7 +257,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 {modules.map((mod: any, i: number) => (
                   <Card key={mod.id || i} className="p-6 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition rounded-3xl">
                     <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center">
                         {mod.moduleName?.toLowerCase().includes('listen') ? <Headphones className="w-5 h-5" /> :
                          mod.moduleName?.toLowerCase().includes('read') ? <BookOpenCheck className="w-5 h-5" /> :
                          mod.moduleName?.toLowerCase().includes('writ') ? <PenTool className="w-5 h-5" /> :
@@ -357,8 +357,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </div>
                 <p className="text-xs text-[var(--alo-body)]">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
                 <div className="mt-4 flex gap-2">
-                  <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl text-xs"><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
-                  <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] h-11 rounded-xl text-xs"><a href={`/language-prep/comparison?tests=${test.slug}`}>Compare Tests</a></Button>
+                  <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
+                  <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] rounded-xl "><a href={`/language-prep/comparison?tests=${test.slug}`}>Compare Tests</a></Button>
                 </div>
               </Card>
             </section>
@@ -417,7 +417,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   { title: 'University Requirement Guidance', desc: 'Check requirements before booking your test' },
                 ].slice(0,9).map((c: any, i: number) => (
                   <Card key={i} className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
-                    <div className="w-9 h-9 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center mb-3"><BookOpen className="w-4 h-4" /></div>
+                    <div className="w-9 h-9 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center mb-3"><BookOpen className="w-4 h-4" /></div>
                     <h4 className="font-bold text-xs text-[var(--alo-text)]">{c.title}</h4>
                     <p className="text-[11px] text-[var(--alo-body)] mt-1.5 leading-relaxed">{c.desc}</p>
                   </Card>
@@ -450,7 +450,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     </select>
                   </div>
                 </div>
-                <Button onClick={handleScorePlanner} className="w-full mt-4 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl">Calculate Plan</Button>
+                <Button onClick={handleScorePlanner} className="w-full mt-4 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl">Calculate Plan</Button>
 
                 {plannerResult && (
                   <div className="mt-5 p-4 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)] space-y-2 text-xs">
@@ -476,7 +476,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                   {['ielts','pte-academic','toefl-ibt','duolingo'].filter(s => s !== test.slug).slice(0,3).map(s => (
                     <a key={s} href={`/language-prep/${s}`} className="px-3 py-1.5 rounded-full bg-white border border-[var(--alo-border)] text-xs font-semibold hover:border-[var(--alo-brand)]">{s.toUpperCase()}</a>
                   ))}
-                  <Button asChild className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs"><a href="/language-prep/comparison">Compare English Tests →</a></Button>
+                  <Button asChild className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href="/language-prep/comparison">Compare English Tests →</a></Button>
                 </div>
               </Card>
             </section>
@@ -531,7 +531,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
             <section id="book-counselling">
               <Card className="p-8 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-xl rounded-3xl">
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center">Not Sure Which English Test You Need?</h2>
-                <p className="text-sm text-blue-100 text-center max-w-2xl mx-auto mt-3 leading-relaxed">
+                <p className="text-sm text-[var(--alo-brand-pale)] text-center max-w-2xl mx-auto mt-3 leading-relaxed">
                   Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
                 </p>
 
@@ -550,11 +550,11 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 </form>
 
                 <div className="flex flex-wrap justify-center gap-3 mt-6">
-                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm"><a href="/language-prep#test-discovery">Find My Test</a></Button>
-                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-11 rounded-xl text-sm flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</a></Button>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl text-sm"><a href="/language-prep#test-discovery">Find My Test</a></Button>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl text-sm flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</a></Button>
                 </div>
 
-                <p className="text-[11px] text-blue-200 text-center mt-6">Email: info@aloeducation.com • Lead stored with source language_prep and source_section {slug}_final_cta • Do not create duplicate leads unnecessarily</p>
+                <p className="text-[11px] text-[var(--alo-brand-pale)] text-center mt-6">Email: info@aloeducation.com • Lead stored with source language_prep and source_section {slug}_final_cta • Do not create duplicate leads unnecessarily</p>
               </Card>
             </section>
           </div>
@@ -565,7 +565,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               {/* Test Preparation widget */}
               <Card className="p-5 bg-white border border-[var(--alo-brand)]/20 shadow-md rounded-2xl">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center"><BookOpen className="w-4 h-4" /></div>
+                  <div className="w-8 h-8 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><BookOpen className="w-4 h-4" /></div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-brand)]">Test Preparation</span>
                 </div>
                 <h4 className="text-sm font-bold text-[var(--alo-text)] mb-2">Explore other tests</h4>
@@ -577,15 +577,15 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     </a>
                   ))}
                 </div>
-                <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-11 rounded-xl text-xs"><a href="/language-prep" className="block">View All Test Prep →</a></Button>
+                <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href="/language-prep" className="block">View All Test Prep →</a></Button>
               </Card>
 
               {/* Need Help widget */}
               <Card className="p-5 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
-                <p className="text-xs text-blue-100 leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
-                <Button asChild className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold h-11 rounded-xl text-xs"><a href="#book-counselling">Book Free Counselling →</a></Button>
-                <p className="text-[11px] text-blue-200 mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
+                <p className="text-xs text-[var(--alo-brand-pale)] leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
+                <Button asChild className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold rounded-xl "><a href="#book-counselling">Book Free Counselling →</a></Button>
+                <p className="text-[11px] text-[var(--alo-brand-pale)] mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
               </Card>
 
               {/* Resources */}

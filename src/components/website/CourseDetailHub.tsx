@@ -111,11 +111,11 @@ export default function CourseDetailHub({ slug }: Props) {
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
               <h3 className="font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2"><FileText className="w-5 h-5 text-[var(--alo-brand)]" />Entry Requirements (Bachelor / Master)</h3>
               <div className="grid sm:grid-cols-2 gap-4 text-xs mb-4">
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3">
+                <div className="bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl p-3">
                   <p className="text-[var(--alo-text-muted)] font-semibold">Bachelor (Undergraduate) entry requirement</p>
                   <p className="font-semibold mt-1">{/postgrad|master|mres|phd|doctor/i.test(course.studyLevel || '') ? 'Not applicable — this is a postgraduate course. See undergraduate courses at this university in the Course Finder.' : (req.academicReq || 'Not recorded')}</p>
                 </div>
-                <div className="bg-orange-50 border border-orange-100 rounded-xl p-3">
+                <div className="bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25 rounded-xl p-3">
                   <p className="text-[var(--alo-text-muted)] font-semibold">Master (Postgraduate) entry requirement</p>
                   <p className="font-semibold mt-1">{/undergrad|bachelor|foundation/i.test(course.studyLevel || '') ? 'Not applicable — this is an undergraduate course. See postgraduate courses at this university in the Course Finder.' : (req.academicReq || 'Not recorded')}</p>
                 </div>
@@ -135,7 +135,7 @@ export default function CourseDetailHub({ slug }: Props) {
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
               <h3 className="font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[var(--alo-brand)]" />Recorded English requirements</h3>
               <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">IELTS</p><p className="font-bold text-[var(--alo-brand)] mt-1">Overall: {req.ieltsOverall > 0 ? req.ieltsOverall : 'Not recorded'} · Minimum band: {req.ieltsMinBand > 0 ? req.ieltsMinBand : 'Not recorded'}</p></div>
+                <div className="bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">IELTS</p><p className="font-bold text-[var(--alo-brand)] mt-1">Overall: {req.ieltsOverall > 0 ? req.ieltsOverall : 'Not recorded'} · Minimum band: {req.ieltsMinBand > 0 ? req.ieltsMinBand : 'Not recorded'}</p></div>
                 <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">PTE Academic</p><p className="font-semibold mt-1">Overall: {req.pteOverall > 0 ? req.pteOverall : 'Not recorded'} · Minimum: {req.pteMinBand > 0 ? req.pteMinBand : 'Not recorded'}</p></div>
                 <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">TOEFL iBT</p><p className="font-semibold mt-1">{req.toeflOverall > 0 ? `${req.toeflOverall} overall` : 'Not recorded'}</p></div>
                 <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Duolingo (DET)</p><p className="font-semibold mt-1">{req.detOverall > 0 ? req.detOverall : 'Not recorded'}</p></div>
@@ -185,7 +185,7 @@ export default function CourseDetailHub({ slug }: Props) {
             {/* Application Guidance (not an institution checklist) */}
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
               <h3 className="font-bold text-[var(--alo-text)] mb-3">Application guidance</h3>
-              <p className="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-3 text-xs leading-5 text-blue-900">The checklist below is general planning guidance, not a published requirement for this course. Confirm all steps and documents with the institution’s official admissions source.</p>
+              <p className="mb-4 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-3 text-xs leading-5 text-[var(--alo-brand-deep)]">The checklist below is general planning guidance, not a published requirement for this course. Confirm all steps and documents with the institution’s official admissions source.</p>
               <div className="grid md:grid-cols-2 gap-6 text-sm">
                 <div><h4 className="font-semibold text-xs mb-2">Suggested planning sequence</h4><ol className="list-decimal list-inside space-y-1 text-xs text-[var(--alo-body)]"><li>Review the official course and entry-requirement source linked above.</li><li>Ask ALO to review your profile against the recorded criteria.</li><li>Confirm current documents, dates and submission channel with the institution.</li><li>Submit through the institution’s stated application route.</li></ol></div>
                 <div><h4 className="font-semibold text-xs mb-2">Documents</h4><p className="text-xs leading-5 text-[var(--alo-body)]">A course-specific required-document list is not recorded here. Do not rely on a generic checklist; ask the institution for its current list.</p></div>
@@ -212,10 +212,10 @@ export default function CourseDetailHub({ slug }: Props) {
 
             <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Apply for {course.courseTitle}</h3>
-              <p className="text-sm text-blue-100 mb-6 max-w-2xl mx-auto">Move from information → eligibility → course selection → consultation → application. Book consultation, save course, compare, ask counselor.</p>
+              <p className="text-sm text-[var(--alo-brand-pale)] mb-6 max-w-2xl mx-auto">Move from information → eligibility → course selection → consultation → application. Book consultation, save course, compare, ask counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href={`/apply/${encodeURIComponent(course.slug || course.courseId || slug)}`}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Apply Now</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-8 font-bold">Book Free Counseling</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-bold">Book Free Counseling</Button></Link>
                 <Link href="/compare"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-8">Compare Courses</Button></Link>
               </div>
             </Card>

@@ -123,7 +123,7 @@ export default function ConsentBanner({
       role="region"
       aria-label="Analytics consent"
       className="fixed inset-x-0 bottom-0 z-[9998] border-t bg-white px-4 py-4 shadow-[0_-4px_24px_rgba(15,23,42,0.12)] sm:px-6"
-      style={{ borderColor: '#E2E8F0' }}
+      style={{ borderColor: 'var(--alo-border)' }}
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-3xl space-y-2 text-sm text-[var(--alo-body)]">

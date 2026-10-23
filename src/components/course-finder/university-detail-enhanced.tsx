@@ -716,7 +716,7 @@ export function UniversityDetailEnhanced({
                   <div className="text-xs text-[var(--alo-text-muted)]">Eligible</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">{eligibilityProfile.likely}</div>
+                  <div className="text-lg font-bold text-[var(--alo-brand)]">{eligibilityProfile.likely}</div>
                   <div className="text-xs text-[var(--alo-text-muted)]">Likely Match</div>
                 </div>
                 <div className="text-center">

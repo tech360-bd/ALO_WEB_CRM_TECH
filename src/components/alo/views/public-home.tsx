@@ -902,9 +902,9 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         View Country Guide
                       </Button>
                       <Button
-                        onClick={handleFindCourses}
-                        className="h-10 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-                      >
+ onClick={handleFindCourses}
+ className=" w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ >
                         Find Courses
                       </Button>
                     </div>
@@ -1194,7 +1194,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                       <Button onClick={() => handleViewCountry(slide.countrySlug)} variant="outline" className="h-10 flex-1 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                         View Country Guide
                       </Button>
-                      <Button onClick={handleConsult} className="h-10 flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+                      <Button onClick={handleConsult} className=" flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
                         Talk to Counselor
                       </Button>
                     </div>

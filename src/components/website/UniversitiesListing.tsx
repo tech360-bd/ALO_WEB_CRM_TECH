@@ -80,10 +80,10 @@ export default function UniversitiesListing() {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
-        <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs mb-4">{total ? `${total} published university records` : 'Published university directory'}</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] tracking-tight mb-4">University Directory Worldwide</h1>
-          <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.</p>
+        <div className="border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] rounded-[20px] p-6 md:p-10">
+          <Badge className="bg-card text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] uppercase tracking-[0.07em] font-semibold mb-4">{total ? `${total} published university records` : 'Published university directory'}</Badge>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">University Directory Worldwide</h1>
+          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.</p>
           <div className="flex gap-2 mt-4">
 
 

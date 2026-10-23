@@ -529,7 +529,7 @@ function TestLab({ agents }: { agents: Json[] }) {
               <span>runtime {String((result.runtimeKeys as string[] | undefined)?.join(', ') ?? '')}</span>
               {result.humanReviewRequired ? <Badge className="bg-amber-100 text-amber-800">human review required</Badge> : null}
             </div>
-            <pre className="max-h-96 overflow-auto rounded bg-slate-950 p-3 text-xs text-slate-100">{JSON.stringify(result, null, 2)}</pre>
+            <pre className="max-h-96 overflow-auto rounded-[12px] border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 text-[11px] leading-5 text-[var(--alo-text)]">{JSON.stringify(result, null, 2)}</pre>
           </div>
         ) : null}
         <p className="flex items-center gap-1 text-xs text-muted-foreground">

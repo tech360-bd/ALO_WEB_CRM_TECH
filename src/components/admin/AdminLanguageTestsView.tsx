@@ -161,7 +161,7 @@ export default function AdminLanguageTestsView() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)]" />
             <Input placeholder="Search tests..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 h-9 rounded-xl border-[var(--alo-border)] text-xs w-48" />
           </div>
-          <Button onClick={handleNew} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs"><Plus className="w-4 h-4 mr-1" /> New Test</Button>
+          <Button onClick={handleNew} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><Plus className="w-4 h-4 mr-1" /> New Test</Button>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export default function AdminLanguageTestsView() {
                 <h3 className="font-bold text-sm">{activeTest ? `Edit ${activeTest.name}` : 'Create New Test'}</h3>
                 <div className="flex gap-2">
                   <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="h-8 text-xs">Cancel</Button>
-                  <Button type="submit" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-8 rounded-xl text-xs"><Save className="w-3.5 h-3.5 mr-1" /> Save Test</Button>
+                  <Button type="submit" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><Save className="w-3.5 h-3.5 mr-1" /> Save Test</Button>
                 </div>
               </div>
 
@@ -330,7 +330,7 @@ export default function AdminLanguageTestsView() {
 
                 {activeTab === 'sources' && (
                   <div className="space-y-4">
-                    <div><label className="font-semibold">Source URL * — Every factual field must have source</label><Input value={formData.sourceUrl} onChange={e => setFormData({ ...formData, sourceUrl: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail" /></div>
+                    <div><label className="font-semibold">Source URL *</label><Input value={formData.sourceUrl} onChange={e => setFormData({ ...formData, sourceUrl: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail" /></div>
                     <div><label className="font-semibold">Source Name *</label><Input value={formData.sourceName} onChange={e => setFormData({ ...formData, sourceName: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="IELTS Official - British Council" /></div>
                     <div className="grid grid-cols-2 gap-3">
                       <div><label className="font-semibold">Verified By</label><Input value={formData.verifiedBy} onChange={e => setFormData({ ...formData, verifiedBy: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="admin@aloeducation.com" /></div>
@@ -352,12 +352,12 @@ export default function AdminLanguageTestsView() {
                     <Card className="p-4 bg-emerald-50 border-emerald-200 rounded-xl">
                       <h4 className="font-bold text-xs text-emerald-900">Publish Checklist</h4>
                       <ul className="text-[11px] text-emerald-800 mt-2 space-y-1 list-disc pl-4">
-                        <li>Basic info filled, no lorem, no fake</li>
+                        <li>Basic information is complete</li>
                         <li>Source URL + Name + Verified By + Last Verified At + Status</li>
                         <li>SEO Title: {'{Test Name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education'}</li>
                         <li>Is Popular badge only if verified</li>
                         <li>MOI flagged as moi_guidance not english_proficiency</li>
-                        <li>No fake testimonials, pricing, result time, acceptance</li>
+                        <li>No unverified testimonials, pricing, result times or acceptance claims</li>
                         <li>Acceptance disclaimer present</li>
                         <li>Visa careful — never "IELTS mandatory everywhere"</li>
                       </ul>
@@ -376,7 +376,7 @@ export default function AdminLanguageTestsView() {
 
               <div className="p-4 border-t border-[var(--alo-border)] bg-[var(--alo-page)] flex justify-end gap-2">
                 <Button type="button" variant="ghost" onClick={() => setIsEditing(false)} className="h-9 rounded-xl text-xs">Cancel</Button>
-                <Button type="submit" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs"><Save className="w-4 h-4 mr-1" /> Save Test</Button>
+                <Button type="submit" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><Save className="w-4 h-4 mr-1" /> Save Test</Button>
               </div>
             </form>
           ) : (
@@ -384,7 +384,7 @@ export default function AdminLanguageTestsView() {
               <BookOpen className="w-10 h-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
               <h3 className="font-bold text-sm">Select a test to edit its 13 tabs</h3>
               <p className="text-xs text-[var(--alo-text-muted)] mt-1 max-w-md mx-auto">Basic / Format / Modules / Scoring / Acceptance / Requirements / Prep / FAQs / Resources / Success / SEO / Sources / Publish — Super Admin full access, source verification every factual field.</p>
-              <Button onClick={handleNew} className="mt-4 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold h-9 rounded-xl text-xs"><Plus className="w-4 h-4 mr-1" /> Create New Test</Button>
+              <Button onClick={handleNew} className="mt-4 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><Plus className="w-4 h-4 mr-1" /> Create New Test</Button>
             </div>
           )}
         </div>

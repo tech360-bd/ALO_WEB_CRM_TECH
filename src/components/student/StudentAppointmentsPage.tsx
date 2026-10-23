@@ -117,9 +117,9 @@ export default function StudentAppointmentsPage() {
           description="Your consultations and follow-up sessions with your counselor."
           action={
             <Button
-              type="button"
-              className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-              onClick={() => setBooking((value) => !value)}
+ type="button"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ onClick={() => setBooking((value) => !value)}
             >
               <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
               {booking ? 'Cancel' : 'Request Appointment'}
@@ -201,17 +201,17 @@ export default function StudentAppointmentsPage() {
 
               <div className="flex gap-2">
                 <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                >
+ type="submit"
+ disabled={submitting}
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                   {submitting ? 'Sending…' : 'Send Request'}
                 </Button>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
-                  onClick={() => setBooking(false)}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={() => setBooking(false)}
                 >
                   Cancel
                 </Button>
@@ -237,13 +237,13 @@ export default function StudentAppointmentsPage() {
               action={
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
-                    type="button"
-                    className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
-                    onClick={() => setBooking(true)}
+ type="button"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ onClick={() => setBooking(true)}
                   >
                     Request Appointment
                   </Button>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/student/messages">Message Instead</Link>
                   </Button>
                 </div>
@@ -259,7 +259,7 @@ export default function StudentAppointmentsPage() {
                 <ul className="divide-y divide-[var(--alo-border)]">
                   {upcoming.map((appointment) => (
                     <li key={appointment.id} className="flex flex-wrap items-start gap-3 px-5 py-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-button bg-alo-blue/10 text-alo-blue">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-button bg-alo-brand/10 text-alo-brand">
                         <CalendarDays className="h-5 w-5" aria-hidden="true" />
                       </div>
                       <div className="min-w-0 flex-1">

@@ -70,7 +70,7 @@ export interface TimelineEntry {
 
 const VISIBILITY_BADGES: Record<VisibilityLevel, { label: string; bg: string; text: string }> = {
   public_safe: { label: 'Public Safe', bg: 'bg-[var(--alo-surface-muted)]', text: 'text-[var(--alo-body)]' },
-  student_visible: { label: 'Student Visible', bg: 'bg-blue-50', text: 'text-blue-700' },
+  student_visible: { label: 'Student Visible', bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
   partner_visible: { label: 'Partner Visible', bg: 'bg-emerald-50', text: 'text-emerald-700' },
   counselor_visible: { label: 'Counselor Only', bg: 'bg-purple-50', text: 'text-purple-700' },
   application_team_visible: { label: 'App Team', bg: 'bg-amber-50', text: 'text-amber-700' },
@@ -282,7 +282,7 @@ export default function UnifiedCommunicationTimeline({
               <span className="text-[11px] text-[var(--alo-text-muted)]">
                 🔒 All communication is logged to database &amp; audit trail
               </span>
-              <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSend}>
+              <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSend}>
                 <Send className="w-3.5 h-3.5 mr-1" />
                 Send &amp; Log
               </Button>

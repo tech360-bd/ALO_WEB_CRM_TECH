@@ -587,10 +587,10 @@ export function DocumentHub() {
               Cancel
             </Button>
             <Button
-              onClick={submitReview}
-              disabled={reviewSaving}
-              className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-            >
+ onClick={submitReview}
+ disabled={reviewSaving}
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ >
               {reviewSaving ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />
@@ -718,10 +718,10 @@ export function DocumentHub() {
               Cancel
             </Button>
             <Button
-              onClick={submitUpload}
-              disabled={uploadSaving}
-              className="h-10 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-            >
+ onClick={submitUpload}
+ disabled={uploadSaving}
+ className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ >
               {uploadSaving ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />

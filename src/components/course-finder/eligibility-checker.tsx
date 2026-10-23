@@ -417,8 +417,8 @@ export function EligibilityChecker() {
             {/* ─── STEP 2: English Proficiency ───────────────────────────── */}
             {step === 2 && (
               <div className="space-y-5">
-                <div className="rounded-lg bg-blue-50 border border-blue-100 p-4 mb-2">
-                  <p className="text-sm text-blue-800">
+                <div className="rounded-lg bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] p-4 mb-2">
+                  <p className="text-sm text-[var(--alo-brand-deep)]">
                     <strong>Don&apos;t have a test score yet?</strong> That&apos;s fine — select &quot;None yet&quot; and we&apos;ll match you based on other criteria.
                   </p>
                 </div>

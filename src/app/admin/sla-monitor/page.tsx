@@ -66,7 +66,7 @@ export default function SlaMonitorPage() {
             <div key={t.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 text-xs">
               <div><span className="font-mono font-bold">{t.id.slice(0,8)}</span> • {t.channel} • Assigned: {t.assignedToName || t.assignedToId || 'unassigned'}</div>
               <div className="flex items-center gap-2">
-                <Badge className={t.slaStatus?.includes('level1') ? 'bg-amber-500/20 text-amber-300' : t.slaStatus?.includes('level2') ? 'bg-orange-500/20 text-orange-300' : 'bg-rose-500/20 text-rose-300'}>{t.slaStatus}</Badge>
+                <Badge className={t.slaStatus?.includes('level1') ? 'bg-amber-500/20 text-amber-300' : t.slaStatus?.includes('level2') ? 'bg-[var(--alo-cta)]/20 text-orange-300' : 'bg-rose-500/20 text-rose-300'}>{t.slaStatus}</Badge>
                 <span className="text-[var(--alo-text-muted)]">{t.slaDueAt ? new Date(t.slaDueAt).toLocaleString() : ''}</span>
               </div>
             </div>
@@ -79,7 +79,7 @@ export default function SlaMonitorPage() {
         <CardHeader><CardTitle className="text-sm">Escalation Levels</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-3 gap-4 text-xs">
           <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20"><p className="font-bold text-amber-300">LEVEL 1 — Counselor Overdue (30m)</p><p className="text-[var(--alo-placeholder)] mt-1">Notify employee + Branch Manager, create task, warning badge</p></div>
-          <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20"><p className="font-bold text-orange-300">LEVEL 2 — Manager Overdue (+20m = 50m)</p><p className="text-[var(--alo-placeholder)] mt-1">Notify CEO/Super Admin, urgent task, urgent badge</p></div>
+          <div className="p-3 rounded-lg bg-[var(--alo-cta)]/10 border border-[var(--alo-cta)]/20"><p className="font-bold text-orange-300">LEVEL 2 — Manager Overdue (+20m = 50m)</p><p className="text-[var(--alo-placeholder)] mt-1">Notify CEO/Super Admin, urgent task, urgent badge</p></div>
           <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20"><p className="font-bold text-rose-300">LEVEL 3 — CEO Overdue (+10m = 60m)</p><p className="text-[var(--alo-placeholder)] mt-1">Global alarm, notify authorized, critical badge, browser sound optional</p></div>
         </CardContent>
       </Card>

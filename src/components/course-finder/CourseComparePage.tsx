@@ -119,7 +119,7 @@ export default function CourseComparePage() {
     const cs = courses ?? [];
     const first = (c: CompareCourse) => c.intakes[0];
     return [
-      { label: 'University', render: (c: CompareCourse) => c.universitySlug ? <Link className="text-blue-700 underline" href={`/universities/${encodeURIComponent(c.universitySlug)}`}>{c.universityName}</Link> : c.universityName },
+      { label: 'University', render: (c: CompareCourse) => c.universitySlug ? <Link className="text-[var(--alo-brand)] underline" href={`/universities/${encodeURIComponent(c.universitySlug)}`}>{c.universityName}</Link> : c.universityName },
       { label: 'Location', render: (c: CompareCourse) => [c.campus, c.city, c.country].filter(Boolean).join(', ') || NR },
       { label: 'Study level', render: (c: CompareCourse) => c.studyLevel || NR },
       { label: 'Qualification', render: (c: CompareCourse) => c.qualification || NR },
@@ -138,9 +138,9 @@ export default function CourseComparePage() {
       { label: 'Scholarships', render: (c: CompareCourse) => (c.scholarshipsRecorded ? 'Verified scholarship recorded' : 'None recorded') },
       { label: 'Sources', render: (c: CompareCourse) => (
         <span className="space-x-2">
-          {c.courseSourceUrl ? <a className="text-blue-700 underline" href={c.courseSourceUrl} target="_blank" rel="noopener noreferrer">Course</a> : null}
-          {first(c)?.feeSourceUrl ? <a className="text-blue-700 underline" href={first(c)!.feeSourceUrl} target="_blank" rel="noopener noreferrer">Fees</a> : null}
-          {c.requirement?.officialRequirementUrl ? <a className="text-blue-700 underline" href={c.requirement.officialRequirementUrl} target="_blank" rel="noopener noreferrer">Entry requirements</a> : null}
+          {c.courseSourceUrl ? <a className="text-[var(--alo-brand)] underline" href={c.courseSourceUrl} target="_blank" rel="noopener noreferrer">Course</a> : null}
+          {first(c)?.feeSourceUrl ? <a className="text-[var(--alo-brand)] underline" href={first(c)!.feeSourceUrl} target="_blank" rel="noopener noreferrer">Fees</a> : null}
+          {c.requirement?.officialRequirementUrl ? <a className="text-[var(--alo-brand)] underline" href={c.requirement.officialRequirementUrl} target="_blank" rel="noopener noreferrer">Entry requirements</a> : null}
         </span>
       ) },
       { label: 'Last verified', render: (c: CompareCourse) => (c.courseLastVerifiedAt ? new Date(c.courseLastVerifiedAt).toLocaleDateString() : NR) },
@@ -195,7 +195,7 @@ export default function CourseComparePage() {
                   </tr>
                 ))}
                 {elig && (
-                  <tr className="border-t border-[var(--alo-border)] align-top bg-blue-50/40">
+                  <tr className="border-t border-[var(--alo-border)] align-top bg-[var(--alo-brand-pale)]/40">
                     <th scope="row" className="p-3 text-left text-xs font-medium text-[var(--alo-body)]">Your indicative eligibility</th>
                     {courses.map((c) => {
                       const e = elig[c.courseId];

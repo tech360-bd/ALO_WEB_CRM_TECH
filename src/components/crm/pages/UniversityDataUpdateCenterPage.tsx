@@ -115,10 +115,10 @@ export default function UniversityDataUpdateCenterPage() {
         </div>
 
         <Button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-9"
-          onClick={handleRunWeeklyAiAgent}
-          disabled={runningAgent}
-        >
+ className="bg-indigo-600 hover:bg-indigo-700 text-white "
+ onClick={handleRunWeeklyAiAgent}
+ disabled={runningAgent}
+ >
           {runningAgent ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-1" />}
           Run Weekly AI Agent Scan Now
         </Button>
@@ -178,10 +178,10 @@ export default function UniversityDataUpdateCenterPage() {
                     <TableCell className="text-right">
                       {['pending_approval', 'pending', 'apply_failed', 'approved'].includes(u.status) || (u.status === 'reviewed_unverified' && u.approvalFingerprint && u.approvalFingerprint !== 'valid') ? (
                         <div className="flex items-center justify-end gap-1">
-                          <Button size="sm" className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApproveUpdate(u.id)}>
+                          <Button size="sm" className="h-7 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApproveUpdate(u.id)}>
                             {u.status === 'pending_approval' || u.status === 'pending' ? 'Approve (not applied)' : 'Re-approve'}
                           </Button>
-                          <Button size="sm" variant="outline" className="h-7 text-xs text-rose-600 border-rose-200" onClick={() => handleRejectUpdate(u.id)}>
+                          <Button size="sm" variant="outline" className="h-7 text-rose-600 border-rose-200" onClick={() => handleRejectUpdate(u.id)}>
                             Reject
                           </Button>
                         </div>

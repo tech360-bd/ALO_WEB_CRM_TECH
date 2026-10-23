@@ -25,16 +25,16 @@ export default async function CountryVisaGuidePage({ params }: { params: Promise
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
-          <Link href="/destinations" className="hover:text-blue-600">Destinations</Link>
+          <Link href="/destinations" className="hover:text-[var(--alo-brand)]">Destinations</Link>
           <span>/</span>
-          <Link href={`/destinations/${countryData.slug}`} className="hover:text-blue-600">{countryData.name}</Link>
+          <Link href={`/destinations/${countryData.slug}`} className="hover:text-[var(--alo-brand)]">{countryData.name}</Link>
           <span>/</span>
           <span className="text-[var(--alo-text)] font-semibold">Visa Guide</span>
         </div>
 
         {/* Header Hero */}
         <div className="bg-white rounded-3xl p-8 border border-[var(--alo-border)] shadow-sm space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs font-bold rounded-full">
             <ShieldCheck className="w-4 h-4" /> Official Immigration & Visa Route
           </div>
           <h1 className="text-3xl font-extrabold text-[var(--alo-text)]">
@@ -48,12 +48,12 @@ export default async function CountryVisaGuidePage({ params }: { params: Promise
         {/* Visa Steps */}
         <div className="bg-white rounded-2xl p-6 border border-[var(--alo-border)] space-y-6">
           <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
-            <FileCheck className="w-5 h-5 text-blue-600" /> Step-by-Step Visa Workflow
+            <FileCheck className="w-5 h-5 text-[var(--alo-brand)]" /> Step-by-Step Visa Workflow
           </h2>
           <div className="space-y-4">
             {countryData.visaSteps.map((step) => (
               <div key={step.step} className="p-4 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] flex gap-4 items-start">
-                <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)] text-white font-bold text-sm flex items-center justify-center shrink-0">
                   {step.step}
                 </div>
                 <div>
@@ -73,9 +73,9 @@ export default async function CountryVisaGuidePage({ params }: { params: Promise
               <span className="font-bold text-emerald-800">Term-Time Work Allowance:</span>
               <p className="text-emerald-700">{countryData.workRights}</p>
             </div>
-            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 space-y-1">
-              <span className="font-bold text-blue-800">Living Costs & Proof of Funds:</span>
-              <p className="text-blue-700">{countryData.livingCost}</p>
+            <div className="p-4 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)] space-y-1">
+              <span className="font-bold text-[var(--alo-brand-deep)]">Living Costs & Proof of Funds:</span>
+              <p className="text-[var(--alo-brand)]">{countryData.livingCost}</p>
             </div>
           </div>
         </div>

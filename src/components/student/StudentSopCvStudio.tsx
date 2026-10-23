@@ -160,9 +160,9 @@ Marketing Intern - Foodpanda Pakistan (Jun 2024 - Aug 2024)
 ];
 
 const CV_TEMPLATES = [
-  { id: 'classic', name: 'Classic', color: 'bg-blue-600', preview: 'Traditional professional layout' },
+  { id: 'classic', name: 'Classic', color: 'bg-[var(--alo-brand)]', preview: 'Traditional professional layout' },
   { id: 'modern', name: 'Modern', color: 'bg-slate-900', preview: 'Clean minimalist design' },
-  { id: 'creative', name: 'Creative', color: 'bg-orange-600', preview: 'Bold with accent colors' },
+  { id: 'creative', name: 'Creative', color: 'bg-[var(--alo-cta-hover)]', preview: 'Bold with accent colors' },
 ];
 
 const CV_SECTION_CONFIG: { key: CvSection; label: string; icon: React.ElementType }[] = [
@@ -184,7 +184,7 @@ function StatusBadge({ status }: { status: SopStatus }) {
     Draft: { className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
     'Needs Review': { className: 'bg-amber-100 text-amber-700' },
     Approved: { className: 'bg-emerald-100 text-emerald-700' },
-    Submitted: { className: 'bg-blue-100 text-blue-700' },
+    Submitted: { className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
   };
   return (
     <Badge variant="secondary" className={cn('text-[11px] px-2 py-0.5', config[status].className)}>
@@ -263,14 +263,14 @@ export default function StudentSopCvStudio() {
         <TabsList className="shrink-0 bg-[var(--alo-surface-muted)] h-10 p-0.5">
           <TabsTrigger
             value="sop"
-            className="h-9 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm text-sm font-medium gap-2"
+            className="h-9 rounded-md data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm text-sm font-medium gap-2"
           >
             <FileText className="w-4 h-4" />
             SOP Writer
           </TabsTrigger>
           <TabsTrigger
             value="cv"
-            className="h-9 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm text-sm font-medium gap-2"
+            className="h-9 rounded-md data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm text-sm font-medium gap-2"
           >
             <LayoutTemplate className="w-4 h-4" />
             CV Builder
@@ -282,7 +282,7 @@ export default function StudentSopCvStudio() {
           <div className="flex gap-4 h-[calc(100vh-16rem)]">
             {/* Left panel: SOP list */}
             <div className="w-1/3 min-w-[260px] max-w-[340px] shrink-0 flex flex-col">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-3 bg-orange-600 hover:bg-orange-700 text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-3 bg-[var(--alo-cta-hover)] hover:bg-orange-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Create New SOP
               </Button>
@@ -300,7 +300,7 @@ export default function StudentSopCvStudio() {
                       className={cn(
                         'w-full text-left p-3 rounded-lg border transition-all',
                         activeSopId === sop.id
-                          ? 'border-blue-200 bg-blue-50 shadow-sm'
+                          ? 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] shadow-sm'
                           : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)] hover:shadow-sm'
                       )}
                     >
@@ -309,7 +309,7 @@ export default function StudentSopCvStudio() {
                           <p
                             className={cn(
                               'text-sm font-medium truncate',
-                              activeSopId === sop.id ? 'text-blue-900' : 'text-[var(--alo-text)]'
+                              activeSopId === sop.id ? 'text-[var(--alo-brand-deep)]' : 'text-[var(--alo-text)]'
                             )}
                           >
                             {sop.title}
@@ -398,7 +398,7 @@ export default function StudentSopCvStudio() {
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="outline"
                       size="sm"
-                      className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                      className="border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"
                     >
                       <Send className="w-3.5 h-3.5 mr-1.5" />
                       Request Review
@@ -482,14 +482,14 @@ export default function StudentSopCvStudio() {
                     <Card className="mt-3 border-[var(--alo-border)]">
                       <CardHeader className="py-3 px-4">
                         <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                          <History className="w-4 h-4 text-blue-600" />
+                          <History className="w-4 h-4 text-[var(--alo-brand)]" />
                           Version History
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="px-4 pb-3">
                         <div className="space-y-2">
-                          <div className="flex items-center gap-3 p-2 rounded-lg bg-blue-50 border border-blue-100">
-                            <span className="text-xs font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">v3</span>
+                          <div className="flex items-center gap-3 p-2 rounded-lg bg-[var(--alo-brand-pale)] border border-[var(--alo-border)]">
+                            <span className="text-xs font-bold text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] px-1.5 py-0.5 rounded">v3</span>
                             <div className="flex-1">
                               <p className="text-xs text-[var(--alo-body)]">Current version</p>
                               <p className="text-[11px] text-[var(--alo-text-muted)]">Jul 12, 2025 at 3:45 PM — by Ahmed Hassan</p>
@@ -531,7 +531,7 @@ export default function StudentSopCvStudio() {
           <div className="flex gap-4 h-[calc(100vh-16rem)]">
             {/* Left panel: CV list + Templates */}
             <div className="w-1/3 min-w-[260px] max-w-[340px] shrink-0 flex flex-col">
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-3 bg-orange-600 hover:bg-orange-700 text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mb-3 bg-[var(--alo-cta-hover)] hover:bg-orange-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Create New CV
               </Button>
@@ -546,14 +546,14 @@ export default function StudentSopCvStudio() {
                       className={cn(
                         'w-full text-left p-3 rounded-lg border transition-all',
                         activeCvId === cv.id
-                          ? 'border-blue-200 bg-blue-50 shadow-sm'
+                          ? 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] shadow-sm'
                           : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)] hover:shadow-sm'
                       )}
                     >
                       <p
                         className={cn(
                           'text-sm font-medium',
-                          activeCvId === cv.id ? 'text-blue-900' : 'text-[var(--alo-text)]'
+                          activeCvId === cv.id ? 'text-[var(--alo-brand-deep)]' : 'text-[var(--alo-text)]'
                         )}
                       >
                         {cv.title}
@@ -581,7 +581,7 @@ export default function StudentSopCvStudio() {
                       className={cn(
                         'flex-1 p-2 rounded-lg border text-center transition-all',
                         selectedTemplate === t.id
-                          ? 'border-blue-300 bg-blue-50 shadow-sm'
+                          ? 'border-blue-300 bg-[var(--alo-brand-pale)] shadow-sm'
                           : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)]'
                       )}
                     >
@@ -620,14 +620,14 @@ export default function StudentSopCvStudio() {
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="outline"
                     size="sm"
-                    className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                    className="border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"
                   >
                     <Eye className="w-3.5 h-3.5 mr-1.5" />
                     Preview
                   </Button>
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                   >
                     <Download className="w-3.5 h-3.5 mr-1.5" />
                     Download PDF
@@ -651,12 +651,12 @@ export default function StudentSopCvStudio() {
                             <CardHeader className="py-3 px-4 cursor-pointer hover:bg-[var(--alo-page)] transition-colors rounded-t-lg">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <Icon className="w-4 h-4 text-blue-600" />
+                                  <Icon className="w-4 h-4 text-[var(--alo-brand)]" />
                                   <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
                                     {label}
                                   </CardTitle>
                                   {key === 'personal' && (
-                                    <Badge variant="secondary" className="text-[11px] bg-blue-50 text-blue-600 px-1.5">
+                                    <Badge variant="secondary" className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] px-1.5">
                                       Pre-filled
                                     </Badge>
                                   )}
@@ -692,10 +692,10 @@ export default function StudentSopCvStudio() {
                                       return (
                                         <span
                                           key={idx}
-                                          className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1"
+                                          className="inline-flex items-center gap-1 text-xs bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] rounded-full px-2.5 py-1"
                                         >
                                           {trimmed}
-                                          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-blue-400 hover:text-blue-700">
+                                          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-blue-400 hover:text-[var(--alo-brand)]">
                                             <X className="w-3 h-3" />
                                           </button>
                                         </span>

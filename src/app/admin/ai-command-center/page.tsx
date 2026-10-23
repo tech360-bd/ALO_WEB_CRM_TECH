@@ -68,13 +68,13 @@ export default function AICommandCenterDashboard() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 text-[var(--alo-text)]">
       {/* Master Top Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-950 text-white p-6 rounded-2xl shadow-xl border border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[var(--alo-blue-soft)] text-[var(--alo-text)] p-6 rounded-[16px] shadow-[var(--alo-shadow-xs)] border border-[var(--alo-brand-border)]">
         <div>
           <div className="flex items-center gap-2.5">
             <Cpu className="w-7 h-7 text-[var(--alo-cta)]" />
             <h1 className="text-2xl font-bold tracking-tight">ALO Education AI Command Center</h1>
           </div>
-          <p className="text-xs text-[var(--alo-text-muted)] mt-1">
+          <p className="text-[13px] text-[var(--alo-text-secondary)] mt-1">
             Legacy AgentOS registry snapshot — runtime and cross-registry health are not verified here.
           </p>
         </div>
@@ -82,11 +82,11 @@ export default function AICommandCenterDashboard() {
         <div className="flex items-center gap-3">
           <Badge
             title="This page reads legacy AgentOS database records; it does not establish live runtime health."
-            className={`text-xs px-3 py-1 font-bold ${health ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40' : 'bg-slate-700 text-slate-200 border border-slate-600'}`}
+            className={`text-xs px-3 py-1 font-bold ${health ? 'bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border' : 'bg-crm-neutral-bg text-crm-neutral-text border border-crm-neutral-border'}`}
           >
             {loadingHealth ? 'CHECKING LEGACY DATA' : health ? 'LEGACY DB SNAPSHOT' : 'STATUS UNAVAILABLE'}
           </Badge>
-          <Button onClick={fetchHealth} size="sm" className="bg-slate-800 hover:bg-slate-700 text-white text-xs border border-slate-700">
+          <Button onClick={fetchHealth} size="sm" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white">
             <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Refresh
           </Button>
         </div>

@@ -27,7 +27,7 @@ function typeIcon(type: NotificationType) {
   return <Icon className="w-4 h-4" />;
 }
 function typeColor(type: NotificationType) {
-  return { lead: 'bg-blue-50 text-blue-600', application: 'bg-purple-50 text-purple-600', payment: 'bg-emerald-50 text-emerald-600', system: 'bg-amber-50 text-amber-600' }[type];
+  return { lead: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', application: 'bg-purple-50 text-purple-600', payment: 'bg-emerald-50 text-emerald-600', system: 'bg-amber-50 text-amber-600' }[type];
 }
 function typeBadgeVariant(type: NotificationType) {
   return { lead: 'brand', application: 'secondary', payment: 'success', system: 'warning' }[type] as 'brand' | 'secondary' | 'success' | 'warning';

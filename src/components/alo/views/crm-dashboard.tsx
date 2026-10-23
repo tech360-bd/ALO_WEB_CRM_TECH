@@ -124,7 +124,7 @@ interface Stats {
 // ---------- Color maps ----------
 const LEAD_STATUS_COLORS: Record<string, string> = {
   NEW: "bg-amber-100 text-amber-700",
-  CONTACTED: "bg-blue-100 text-blue-700",
+  CONTACTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   QUALIFIED: "bg-violet-100 text-violet-700",
   CONVERTED: "bg-emerald-100 text-emerald-700",
   LOST: "bg-rose-100 text-rose-700",
@@ -145,12 +145,12 @@ const LEAD_STATUSES = ["NEW", "CONTACTED", "QUALIFIED", "CONVERTED", "LOST", "DU
 const STUDENT_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  GRADUATED: "bg-blue-100 text-blue-700",
+  GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  NORMAL: "bg-blue-100 text-blue-700",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -522,10 +522,10 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                           <TableCell className="pr-4 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 px-2 text-xs text-[var(--alo-brand)]"
-                                onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" px-2 text-[var(--alo-brand)]"
+ onClick={() =>
                                   toast({
                                     title: "Lead detail",
                                     description: `Opening detail for ${lead.fullName} (${lead.leadId}).`,
@@ -536,11 +536,11 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                                 View
                               </Button>
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 px-2 text-xs text-[var(--alo-cta)]"
-                                disabled={lead.status === "CONVERTED" || lead.status === "DUPLICATE"}
-                                onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" px-2 text-[var(--alo-cta)]"
+ disabled={lead.status === "CONVERTED" || lead.status === "DUPLICATE"}
+ onClick={() =>
                                   toast({
                                     title: "Convert lead",
                                     description: `Starting conversion flow for ${lead.fullName}. A new student record will be created.`,
@@ -641,9 +641,9 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                           </TableCell>
                           <TableCell className="pr-4 text-right">
                             <Button
-                              size="sm"
-                              className="h-8 bg-[var(--alo-brand)] px-3 text-xs hover:bg-[var(--alo-brand)]/90"
-                              onClick={() => {
+ size="sm"
+ className=" bg-[var(--alo-brand)] px-3 hover:bg-[var(--alo-brand)]/90"
+ onClick={() => {
                                 setSheetStudentId(s.id);
                                 setSheetOpen(true);
                               }}
@@ -935,7 +935,7 @@ function Student360Sheet({
                       colorMap={{
                         ACTIVE: "bg-emerald-100 text-emerald-700",
                         INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-                        GRADUATED: "bg-blue-100 text-blue-700",
+                        GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
                       }}
                     />
                   </div>

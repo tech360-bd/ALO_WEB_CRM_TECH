@@ -247,11 +247,11 @@ function PendingItemCard({
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <Button
-          size="sm"
-          variant="outline"
-          className="h-9 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-          disabled={acting}
-          onClick={() =>
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ disabled={acting}
+ onClick={() =>
             // informational only — surfaces a toast via parent's onAction with a custom action handled below.
             onAction(type, item.slug, "review" as ApprovalAction)
           }
@@ -260,20 +260,20 @@ function PendingItemCard({
           Review
         </Button>
         <Button
-          size="sm"
-          className="h-9 bg-emerald-600 text-white hover:bg-emerald-700"
-          disabled={acting}
-          onClick={() => onAction(type, item.slug, "publish")}
+ size="sm"
+ className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ disabled={acting}
+ onClick={() => onAction(type, item.slug, "publish")}
         >
           <Icon name="CheckCircle2" className="size-4" />
           Approve &amp; Publish
         </Button>
         <Button
-          size="sm"
-          variant="outline"
-          className="h-9 border-rose-300 text-rose-600 hover:bg-rose-50"
-          disabled={acting}
-          onClick={() => onAction(type, item.slug, "reject")}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={acting}
+ onClick={() => onAction(type, item.slug, "reject")}
         >
           <Icon name="XCircle" className="size-4" />
           Reject
@@ -609,10 +609,10 @@ export function ImportCenter() {
         icon="Download"
         action={
           <Button
-            variant="outline"
-            className="h-10 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-            onClick={fetchMain}
-          >
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={fetchMain}
+ >
             <Icon name="RefreshCw" className="size-4" />
             Refresh
           </Button>
@@ -771,10 +771,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /destinations/${c.slug} in the public site…`,
@@ -785,11 +785,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `country:${c.slug}`}
-                                  onClick={() => handleUnpublish("country", c.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `country:${c.slug}`}
+ onClick={() => handleUnpublish("country", c.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -848,10 +848,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /universities/${u.slug} in the public site…`,
@@ -862,11 +862,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `university:${u.slug}`}
-                                  onClick={() => handleUnpublish("university", u.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `university:${u.slug}`}
+ onClick={() => handleUnpublish("university", u.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -926,10 +926,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /courses/${c.slug} in the public site…`,
@@ -940,11 +940,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `course:${c.slug}`}
-                                  onClick={() => handleUnpublish("course", c.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `course:${c.slug}`}
+ onClick={() => handleUnpublish("course", c.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -1001,10 +1001,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /exams/${e.slug} in the public site…`,
@@ -1015,11 +1015,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `exam:${e.slug}`}
-                                  onClick={() => handleUnpublish("exam", e.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `exam:${e.slug}`}
+ onClick={() => handleUnpublish("exam", e.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -1292,12 +1292,12 @@ export function ImportCenter() {
             description="Every approval, rejection, and publish action is audit-logged with user, timestamp, and change details."
             action={
               <Button
-                variant="outline"
-                size="sm"
-                className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                onClick={fetchAudit}
-                disabled={auditLoading}
-              >
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={fetchAudit}
+ disabled={auditLoading}
+ >
                 <Icon name="RefreshCw" className={cn("size-3.5", auditLoading && "animate-spin")} />
                 Refresh
               </Button>

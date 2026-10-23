@@ -46,7 +46,7 @@ export default function AdvertisingManagerView() {
               <div className="grid md:grid-cols-3 gap-3">
                 <div><label className="text-xs font-semibold">Platform</label><Select value={platform} onValueChange={setPlatform}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="meta">Meta Ads (Facebook/Instagram)</SelectItem><SelectItem value="google">Google Ads</SelectItem></SelectContent></Select></div>
                 <div><label className="text-xs font-semibold">Budget (BDT)</label><Input type="number" value={budget} onChange={e=>setBudget(parseInt(e.target.value)||0)} className="mt-1 h-9" /></div>
-                <div className="flex items-end"><Button onClick={handlePropose} className="w-full bg-[var(--alo-cta)] text-black h-9"><BarChart3 className="w-4 h-4 mr-2" />Propose Structure</Button></div>
+                <div className="flex items-end"><Button onClick={handlePropose} className="w-full bg-[var(--alo-cta)] text-black "><BarChart3 className="w-4 h-4 mr-2" />Propose Structure</Button></div>
               </div>
               {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
               {proposal && <pre className="text-xs bg-[var(--alo-page)] border rounded-xl p-3 whitespace-pre-wrap max-h-[300px] overflow-auto">{proposal}</pre>}
@@ -61,7 +61,7 @@ export default function AdvertisingManagerView() {
                 <div className="space-y-2">
                   {campaigns.slice(0,6).map((c:any)=><div key={c.id} className="p-3 border rounded-xl flex items-center justify-between">
                     <div><p className="text-sm font-semibold">{c.name}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.platform} • Budget ৳{c.budget?.toLocaleString?.() || c.budget} • Status {c.status}</p></div>
-                    <div className="flex gap-2"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-xs"><Pause className="w-3 h-3 mr-1" />Pause</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 text-xs bg-[var(--alo-brand)] text-white"><Play className="w-3 h-3 mr-1" />Activate</Button></div>
+                    <div className="flex gap-2"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 "><Pause className="w-3 h-3 mr-1" />Pause</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 bg-[var(--alo-brand)] text-white"><Play className="w-3 h-3 mr-1" />Activate</Button></div>
                   </div>)}
                 </div>
               )}

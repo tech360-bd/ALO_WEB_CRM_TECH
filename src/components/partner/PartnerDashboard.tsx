@@ -253,7 +253,7 @@ export default function PartnerDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-0"><div className="flex items-center justify-between"><CardTitle className="text-base font-semibold text-alo-text">Recent Leads</CardTitle><Button variant="ghost" size="sm" className="text-xs text-alo-brand" onClick={() => router.push('/partner/leads')}>View All <ChevronRight className="w-3.5 h-3.5" /></Button></div></CardHeader>
+            <CardHeader className="pb-0"><div className="flex items-center justify-between"><CardTitle className="text-base font-semibold text-alo-text">Recent Leads</CardTitle><Button variant="ghost" size="sm" className=" text-alo-brand" onClick={() => router.push('/partner/leads')}>View All <ChevronRight className="w-3.5 h-3.5" /></Button></div></CardHeader>
             <CardContent className="pt-4">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -275,7 +275,7 @@ export default function PartnerDashboard() {
           </Card>
 
           <Card className="bg-white rounded-xl border border-alo-border">
-            <CardHeader className="pb-0"><div className="flex items-center justify-between"><CardTitle className="text-base font-semibold text-alo-text">Application Tracker</CardTitle><Button variant="ghost" size="sm" className="text-xs text-alo-brand" onClick={() => router.push('/partner/applications')}>View All <ChevronRight className="w-3.5 h-3.5" /></Button></div></CardHeader>
+            <CardHeader className="pb-0"><div className="flex items-center justify-between"><CardTitle className="text-base font-semibold text-alo-text">Application Tracker</CardTitle><Button variant="ghost" size="sm" className=" text-alo-brand" onClick={() => router.push('/partner/applications')}>View All <ChevronRight className="w-3.5 h-3.5" /></Button></div></CardHeader>
             <CardContent className="pt-4">
               <div className="space-y-1 max-h-96 overflow-y-auto">
                 {applications.length === 0 ? <p className="py-10 text-center text-sm text-alo-text-muted">No partner student applications recorded yet.</p> : applications.map((application) => (
@@ -306,7 +306,7 @@ export default function PartnerDashboard() {
               <div className="flex items-center justify-between text-sm"><span className="text-alo-text-secondary">Paid</span><span className="font-semibold text-alo-text">{formatCurrency(commissionPaid)}</span></div>
               <div className="mt-3 h-3 rounded-full bg-[var(--alo-surface-muted)] overflow-hidden" role="progressbar" aria-valuenow={Math.round(paidPercent)} aria-valuemin={0} aria-valuemax={100} aria-label="Paid commission percentage"><div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${paidPercent}%` }} /></div>
               <div className="mt-3 flex items-center justify-between text-xs text-alo-text-muted"><span>Pending {formatCurrency(commissionPending)}</span><span>Expected {formatCurrency(commissionExpected)}</span></div>
-              <Button variant="link" className="mt-2 h-auto px-0 text-xs" onClick={() => router.push('/partner/commission')}>Open commission statement <ChevronRight className="ml-1 h-3.5 w-3.5" /></Button>
+              <Button variant="link" className="mt-2 h-auto px-0 " onClick={() => router.push('/partner/commission')}>Open commission statement <ChevronRight className="ml-1 h-3.5 w-3.5" /></Button>
             </CardContent>
           </Card>
 

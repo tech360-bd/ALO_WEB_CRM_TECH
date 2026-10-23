@@ -117,7 +117,7 @@ const riskBadge = (r: string) => {
 // --- Component ---
 
 export default function CrmSeoPolicyWatcher() {
- return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">Immigration Policy Watcher</h1><p role="status">No current authoritative policy feed is verified here. Historical sample policy dates and claims must not be used as immigration advice.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">Immigration Policy Watcher</h1><p role="status">No current authoritative policy feed is verified here. Historical sample policy dates and claims must not be used as immigration advice.</p><a href="/crm/seo-manager" className="text-[var(--alo-brand)] underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
 }
 /** Historical design fixture; not an operational dashboard. */
 function LegacyUnverifiedCrmSeoPolicyWatcher() {
@@ -436,7 +436,7 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
                         <span>·</span>
                         <span className={c.humanReviewed === c.pages ? 'text-emerald-600 font-semibold' : 'text-amber-600'}>{c.humanReviewed}/{c.pages} reviewed</span>
                         {c.humanReviewed < c.pages && (
-                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 px-2 text-xs">Review {c.pages - c.humanReviewed} left</Button>
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 px-2 ">Review {c.pages - c.humanReviewed} left</Button>
                         )}
                       </div>
                       <Separator className="mt-3" />

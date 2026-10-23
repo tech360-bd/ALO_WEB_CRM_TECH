@@ -107,7 +107,7 @@ function CheckIcon({ val }: { val: boolean }) {
 }
 
 export default function CrmSeoCompetitorAnalysis() {
- return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Competitor Analysis</h1><p role="status">No authenticated competitor or backlink data source is connected here. Historical mock competitor rankings are not displayed as facts.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Competitor Analysis</h1><p role="status">No authenticated competitor or backlink data source is connected here. Historical mock competitor rankings are not displayed as facts.</p><a href="/crm/seo-manager" className="text-[var(--alo-brand)] underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
 }
 /** Historical design fixture; not an operational dashboard. */
 function LegacyUnverifiedCrmSeoCompetitorAnalysis() {

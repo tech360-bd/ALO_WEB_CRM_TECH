@@ -88,10 +88,10 @@ export default function ApplicationManagerDashboard() {
   const kpis = [
     { label: 'Total Applications', value: metrics?.totalApplications ?? metrics?.total ?? 0, icon: FileCheck, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand)]/10 border-[var(--alo-brand)]/20' },
     { label: 'New Today', value: metrics?.newToday ?? 0, icon: Plus, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-    { label: 'Direct', value: metrics?.direct ?? 0, icon: User, color: 'text-blue-600 bg-blue-50 border-blue-200' },
+    { label: 'Direct', value: metrics?.direct ?? 0, icon: User, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]' },
     { label: 'Partner', value: metrics?.partner ?? 0, icon: Handshake, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
     { label: 'B2B Total', value: metrics?.b2b ?? metrics?.confidentialB2bCases ?? 0, icon: Building2, color: 'text-rose-600 bg-rose-50 border-rose-200' },
-    { label: 'B2B Inbound', value: metrics?.b2bInbound ?? 0, icon: ArrowDownRight, color: 'text-orange-600 bg-orange-50 border-orange-200' },
+    { label: 'B2B Inbound', value: metrics?.b2bInbound ?? 0, icon: ArrowDownRight, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25' },
     { label: 'B2B Outbound', value: metrics?.b2bOutbound ?? 0, icon: ArrowUpRight, color: 'text-amber-600 bg-amber-50 border-amber-200' },
     { label: 'Submitted', value: metrics?.submitted ?? 0, icon: Send, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
     { label: 'Decision Pending', value: metrics?.decisionPending ?? 0, icon: Clock, color: 'text-amber-600 bg-amber-50 border-amber-200' },
@@ -99,7 +99,7 @@ export default function ApplicationManagerDashboard() {
     { label: 'Unconditional Offers', value: metrics?.unconditionalOffers ?? 0, icon: Award, color: 'text-violet-600 bg-violet-50 border-violet-200' },
     { label: 'Rejected', value: metrics?.rejected ?? 0, icon: X, color: 'text-red-600 bg-red-50 border-red-200' },
     { label: 'Deferred', value: metrics?.deferred ?? 0, icon: Timer, color: 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]' },
-    { label: 'Documents Pending', value: metrics?.documentsPending ?? 0, icon: FileWarning, color: 'text-orange-600 bg-orange-50 border-orange-200' },
+    { label: 'Documents Pending', value: metrics?.documentsPending ?? 0, icon: FileWarning, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25' },
     { label: 'CAS / I-20 / COE Pending', value: metrics?.casPending ?? 0, icon: Shield, color: 'text-cyan-600 bg-cyan-50 border-cyan-200' },
     { label: 'Urgent Deadlines', value: metrics?.urgentDeadlines ?? 0, icon: AlertTriangle, color: 'text-red-600 bg-red-50 border-red-200' },
     { label: 'Pending Tasks', value: metrics?.pendingTasks ?? 0, icon: CheckSquare, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand)]/10 border-[var(--alo-brand)]/20' },
@@ -242,7 +242,7 @@ export default function ApplicationManagerDashboard() {
                   </div>
                 ))}
                 {(dashboard?.documents || []).length === 0 && <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No documents pending review.</p>}
-                <Link href="/application-manager/document-review"><Button variant="outline" size="sm" className="w-full mt-2 border-[var(--alo-border)] text-xs">Open Document Review</Button></Link>
+                <Link href="/application-manager/document-review"><Button variant="outline" size="sm" className="w-full mt-2 border-[var(--alo-border)] ">Open Document Review</Button></Link>
               </CardContent>
             </Card>
           </div>
@@ -256,7 +256,7 @@ export default function ApplicationManagerDashboard() {
                   <div className="bg-purple-50 border border-purple-200 rounded-xl p-3 text-center"><p className="text-lg font-bold text-purple-700">{metrics?.conditionalOffers || 0}</p><p className="text-[11px] text-purple-600">Conditional</p></div>
                   <div className="bg-violet-50 border border-violet-200 rounded-xl p-3 text-center"><p className="text-lg font-bold text-violet-700">{metrics?.unconditionalOffers || 0}</p><p className="text-[11px] text-violet-600">Unconditional</p></div>
                 </div>
-                <Link href="/application-manager/offer-management"><Button variant="outline" size="sm" className="w-full border-[var(--alo-border)] text-xs">Manage Offers</Button></Link>
+                <Link href="/application-manager/offer-management"><Button variant="outline" size="sm" className="w-full border-[var(--alo-border)] ">Manage Offers</Button></Link>
               </CardContent>
             </Card>
           </div>

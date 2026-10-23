@@ -109,7 +109,7 @@ interface StaleRule {
 
 const STATUS_STYLE: Record<RuleStatus, string> = {
   ACTIVE: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-  PENDING_APPROVAL: 'bg-blue-100 text-blue-800 border-blue-200',
+  PENDING_APPROVAL: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]',
   DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   SUPERSEDED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]',
   REJECTED: 'bg-red-100 text-red-800 border-red-200',
@@ -118,9 +118,9 @@ const STATUS_STYLE: Record<RuleStatus, string> = {
 
 const SEVERITY_STYLE: Record<string, string> = {
   CRITICAL: 'bg-red-100 text-red-800 border-red-200',
-  URGENT: 'bg-orange-100 text-orange-800 border-orange-200',
+  URGENT: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25',
   WARNING: 'bg-amber-100 text-amber-800 border-amber-200',
-  INFO: 'bg-blue-100 text-blue-800 border-blue-200',
+  INFO: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]',
 };
 
 const RULE_TYPES = [
@@ -576,7 +576,7 @@ export default function RuleVersionsPage() {
                   <Textarea id="p-payload" value={form.payload} onChange={(e) => setForm({ ...form, payload: e.target.value })} rows={4} className="font-mono text-xs" />
                 </div>
 
-                <div className="rounded-lg border border-blue-200 bg-blue-50 p-2.5 text-[11px] text-blue-900">
+                <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-2.5 text-[11px] text-[var(--alo-brand-deep)]">
                   Proposing does not change what is in force. A named administrator must approve the
                   version before it applies (human-in-the-loop).
                 </div>
@@ -783,7 +783,7 @@ export default function RuleVersionsPage() {
                     </div>
 
                     {alert.requiresApproval && (
-                      <p className="flex items-start gap-1.5 rounded-lg border border-blue-200 bg-blue-50 p-2.5 text-[11px] text-blue-900">
+                      <p className="flex items-start gap-1.5 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-2.5 text-[11px] text-[var(--alo-brand-deep)]">
                         <ShieldAlert className="mt-0.5 size-3.5 shrink-0" />
                         Applying this change requires administrator approval. Nothing has been applied.
                       </p>

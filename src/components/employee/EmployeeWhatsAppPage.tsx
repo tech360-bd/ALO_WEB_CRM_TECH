@@ -56,7 +56,7 @@ const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
   high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
   urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
   medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
-  low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
+  low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
@@ -301,7 +301,7 @@ export default function EmployeeWhatsAppPage() {
                           {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
                         </p>
                         {thread.unreadCount && thread.unreadCount > 0 ? (
-                          <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[11px]">
+                          <Badge variant="outline" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">
                             {thread.unreadCount}
                           </Badge>
                         ) : null}

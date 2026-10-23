@@ -31,7 +31,7 @@ import { toast } from 'sonner';
 const empStatusColors: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-700',
   invited: 'bg-amber-100 text-amber-700',
-  suspended: 'bg-orange-100 text-orange-700',
+  suspended: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   terminated: 'bg-red-100 text-red-700',
 };
 
@@ -188,7 +188,7 @@ export default function CrmHRMPage() {
         <div>
           <div className="flex items-center gap-2">
             <Badge className="bg-[var(--alo-cta)] text-white text-[11px] uppercase font-bold">HR & WORKFORCE</Badge>
-            <span className="text-xs text-blue-200 font-mono">ALO_EMPLOYEE_ACCESS_SYSTEM</span>
+            <span className="text-xs text-[var(--alo-brand-pale)] font-mono">ALO_EMPLOYEE_ACCESS_SYSTEM</span>
           </div>
           <h1 className="text-xl font-black text-white mt-1">Enterprise Human Resource & Workforce System</h1>
           <p className="text-xs text-[var(--alo-placeholder)]">
@@ -204,7 +204,7 @@ export default function CrmHRMPage() {
           >
             <ArrowRight className="w-4 h-4 text-[var(--alo-cta)]" /> Work Reassignment
           </Button>
-          <Button asChild className="bg-[var(--alo-brand)] hover:bg-[#004088] text-white text-xs font-bold gap-2"><a href="/admin/access-control-center">
+          <Button asChild className="bg-[var(--alo-brand)] hover:bg-[#004088] text-white font-bold gap-2"><a href="/admin/access-control-center">
               <ShieldCheck className="w-4 h-4" /> Control Center
             </a></Button>
         </div>
@@ -214,7 +214,7 @@ export default function CrmHRMPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -363,18 +363,18 @@ export default function CrmHRMPage() {
 
               <div className="flex items-center gap-2">
                 <Button
-                  onClick={handleGeneratePayroll}
-                  disabled={payrollLoading}
-                  className="bg-[var(--alo-brand)] hover:bg-[#004088] text-white text-xs font-bold px-4 py-2 rounded-xl"
-                >
+ onClick={handleGeneratePayroll}
+ disabled={payrollLoading}
+ className="bg-[var(--alo-brand)] hover:bg-[#004088] text-white font-bold px-4 py-2 rounded-xl"
+ >
                   {payrollLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : '1. Prepare AI Draft Payroll'}
                 </Button>
                 {currentPayroll && currentPayroll.status === 'draft' && (
                   <Button
-                    onClick={handleApprovePayroll}
-                    disabled={payrollLoading}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl"
-                  >
+ onClick={handleApprovePayroll}
+ disabled={payrollLoading}
+ className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl"
+ >
                     2. Human Final Approve & Disburse
                   </Button>
                 )}
@@ -385,7 +385,7 @@ export default function CrmHRMPage() {
               <div className="p-4 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-[var(--alo-text)]">Payroll Cycle: {currentPayroll.monthYear}</span>
-                  <Badge className="bg-blue-100 text-[var(--alo-brand)] font-bold uppercase">{currentPayroll.status}</Badge>
+                  <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] font-bold uppercase">{currentPayroll.status}</Badge>
                 </div>
                 <div className="grid grid-cols-3 gap-3 pt-2 font-mono">
                   <div>Gross Payroll: <strong className="text-[var(--alo-text)]">৳{currentPayroll.totalGross?.toLocaleString()}</strong></div>
@@ -446,7 +446,7 @@ export default function CrmHRMPage() {
               <Button variant="outline" onClick={() => setShowReassignModal(false)} className="text-xs font-bold">
                 Cancel
               </Button>
-              <Button onClick={handleReassignWork} disabled={reassigning} className="bg-[var(--alo-cta)] text-black text-xs font-bold px-4 py-2 rounded-xl">
+              <Button onClick={handleReassignWork} disabled={reassigning} className="bg-[var(--alo-cta)] text-black font-bold px-4 py-2 rounded-xl">
                 {reassigning ? 'Reassigning...' : 'Execute Reassignment'}
               </Button>
             </div>

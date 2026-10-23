@@ -32,7 +32,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  IN_PROGRESS: "bg-blue-100 text-blue-700",
+  IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
   CANCELLED: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
@@ -355,18 +355,18 @@ export function CrmTasks() {
                           <div className="flex gap-1">
                             {t.status === "PENDING" && (
                               <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-7 border-[var(--alo-brand-border)] text-xs"
-                                onClick={() => handleStatus(t.id, "IN_PROGRESS")}
+ size="sm"
+ variant="outline"
+ className="h-7 border-[var(--alo-brand-border)] "
+ onClick={() => handleStatus(t.id, "IN_PROGRESS")}
                               >
                                 Start
                               </Button>
                             )}
                             <Button
-                              size="sm"
-                              className="h-7 bg-emerald-600 px-2 text-xs text-white hover:bg-emerald-700"
-                              onClick={() => handleStatus(t.id, "COMPLETED")}
+ size="sm"
+ className="h-7 bg-emerald-600 px-2 text-white hover:bg-emerald-700"
+ onClick={() => handleStatus(t.id, "COMPLETED")}
                             >
                               <Icon name="Check" className="size-3" />
                             </Button>

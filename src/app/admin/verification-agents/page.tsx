@@ -29,7 +29,7 @@ export default function VerificationAgentsRoute() {
             Agent: <strong className="text-[var(--alo-text)]">UniversityCourseVerificationAgent</strong> • Schedule: Weekly (Asia/Dhaka)
           </p>
         </div>
-        <Button onClick={handleRunNow} disabled={running} className="bg-[var(--alo-brand)] hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
+        <Button onClick={handleRunNow} disabled={running} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-semibold rounded-xl flex items-center gap-1.5">
           <Play className="w-4 h-4" /> {running ? 'Agent Inspecting Sources...' : 'Trigger Verification Agent Now'}
         </Button>
       </div>
@@ -59,7 +59,7 @@ export default function VerificationAgentsRoute() {
           <p><strong>Hash Changes Detected:</strong> {runResult.contentHashChangesDetected}</p>
           <p><strong>Proposed Approval Items Created:</strong> {runResult.proposedChanges.length}</p>
 
-          <div className="p-3 bg-slate-900 text-slate-200 font-mono text-[11px] rounded-xl space-y-1 overflow-x-auto">
+          <div className="p-3 rounded-[12px] border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] font-mono text-[11px] leading-5 text-[var(--alo-text)] space-y-1 overflow-x-auto">
             {runResult.agentLogs.map((log, idx) => (
               <div key={idx}>{log}</div>
             ))}

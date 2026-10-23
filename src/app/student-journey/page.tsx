@@ -133,7 +133,7 @@ export default function StudentJourneyPage() {
 
                 {/* Content Card */}
                 <div className="w-full md:w-1/2 flex flex-col items-center text-center md:items-start md:text-left p-6 md:p-8 bg-white rounded-3xl shadow-sm border border-[var(--alo-border)] hover:shadow-xl transition-all relative z-10 group">
-                  <div className={`w-14 h-14 rounded-2xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center mb-6 group-hover:bg-[var(--alo-brand)] group-hover:text-white transition-colors ${index % 2 === 0 ? 'md:self-end' : ''}`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center mb-6 group-hover:bg-[var(--alo-brand)] group-hover:text-white transition-colors ${index % 2 === 0 ? 'md:self-end' : ''}`}>
                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={phase.icon}></path>
                     </svg>
@@ -142,7 +142,7 @@ export default function StudentJourneyPage() {
                   <div className={`w-full flex flex-col ${index % 2 === 0 ? 'md:items-end md:text-right' : ''}`}>
                     <div className="flex items-center gap-3 mb-2 flex-wrap justify-center md:justify-start">
                       <h3 className="text-2xl font-bold text-[var(--alo-text)]">{phase.title}</h3>
-                      <span className="bg-orange-50 text-[var(--alo-cta)] text-xs font-bold px-3 py-1 rounded-full">
+                      <span className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] text-xs font-bold px-3 py-1 rounded-full">
                         {phase.timeline}
                       </span>
                     </div>
@@ -156,7 +156,7 @@ export default function StudentJourneyPage() {
                       ))}
                     </ul>
                     
-                    <div className={`bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-[var(--alo-brand)] leading-relaxed w-full ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                    <div className={`bg-[var(--alo-brand-pale)] p-4 rounded-xl border border-[var(--alo-border)] text-sm text-[var(--alo-brand)] leading-relaxed w-full ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
                       <strong>ALO's Role:</strong> {phase.aloRole}
                     </div>
                   </div>
@@ -204,7 +204,7 @@ export default function StudentJourneyPage() {
       <section className="py-24 bg-[var(--alo-brand)] text-white">
         <div className="container mx-auto px-4 md:px-6 text-center max-w-3xl">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Take the First Step?</h2>
-          <p className="text-xl text-blue-100 mb-10">
+          <p className="text-xl text-[var(--alo-brand-pale)] mb-10">
             Let's start your journey today with a free profile evaluation and counseling session.
           </p>
           <AloCtaLink href="/book-consultation">

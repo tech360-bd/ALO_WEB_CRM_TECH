@@ -76,7 +76,7 @@ const CHANNEL_META: Record<
   SMS: { label: "SMS", icon: "MessageSquare", color: "#0057B8", bg: "bg-[var(--alo-brand-light)]", text: "text-[var(--alo-brand)]" },
   EMAIL: { label: "Email", icon: "Mail", color: "#0284C7", bg: "bg-violet-50", text: "text-violet-700" },
   WEBSITE_CHAT: { label: "Website Chat", icon: "Globe", color: "#0057B8", bg: "bg-[var(--alo-brand-light)]", text: "text-[var(--alo-brand)]" },
-  FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-blue-50", text: "text-blue-700" },
+  FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
   INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-pink-50", text: "text-pink-700" },
   MESSENGER: { label: "Messenger", icon: "Send", color: "#0084ff", bg: "bg-sky-50", text: "text-sky-700" },
   PORTAL: { label: "Portal", icon: "LayoutDashboard", color: "#E8501A", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta)]" },
@@ -280,7 +280,7 @@ export function UnifiedInbox() {
         icon="Inbox"
         subtitle="All channels — WhatsApp, SMS, email, social — in one place. SLA: 30 min first response."
         action={
-          <Button onClick={loadData} variant="outline" className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
+          <Button onClick={loadData} variant="outline" className=" border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
             <Icon name="RefreshCw" className="size-4" />
             Refresh
           </Button>
@@ -332,7 +332,7 @@ export function UnifiedInbox() {
             </p>
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">≤ 10 min · OK</Badge>
-              <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">10–30 min · warning</Badge>
+              <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] hover:bg-[var(--alo-cta-soft)]">10–30 min · warning</Badge>
               <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">30–40 min · branch manager</Badge>
               <Badge className="bg-red-100 text-red-700 hover:bg-red-100">&gt; 50 min · admin</Badge>
             </div>
@@ -667,12 +667,12 @@ function ActiveConversation({
               </SelectContent>
             </Select>
             <Button
-              variant="outline"
-              size="sm"
-              className="h-9 border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/5"
-              onClick={onAiSuggest}
-              disabled={suggesting}
-            >
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-cta)]/40 text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/5"
+ onClick={onAiSuggest}
+ disabled={suggesting}
+ >
               {suggesting ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />

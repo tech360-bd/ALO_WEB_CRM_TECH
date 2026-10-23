@@ -20,7 +20,7 @@ export default function UserGuidePage() {
   return (
     <div className="min-h-screen bg-white pt-8 pb-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Badge className="bg-blue-50 text-[var(--alo-brand)] border border-blue-100 mb-4">HELP</Badge>
+        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] mb-4">HELP</Badge>
         <h1 className="text-3xl font-bold text-[var(--alo-text)] mb-2">User Guide</h1>
         <p className="text-sm text-[var(--alo-body)] mb-8 max-w-3xl">Choose your portal. Every feature is permission-controlled and audit-logged. Support 24/7 via AI Agent, WhatsApp AI <strong>01805020100</strong>, or <a href="https://www.facebook.com/aloeducation" className="text-[var(--alo-brand)] underline">Facebook</a> • Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" className="text-[var(--alo-brand)] underline">Maps</a></p>
 

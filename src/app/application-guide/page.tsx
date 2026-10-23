@@ -21,7 +21,7 @@ export default function ApplicationGuidePageRoute() {
     <div className="min-h-screen bg-[var(--alo-page)]">
       <main className="flex-1 pt-20 pb-16 max-w-4xl mx-auto px-4 w-full">
         <div className="text-center space-y-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 text-orange-700 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] text-xs font-semibold">
             <GraduationCap className="w-4 h-4" /> Official ALO Education Admission Roadmap
           </div>
           <h1 className="text-3xl font-bold text-[var(--alo-text)]">Step-by-Step International Application Guide</h1>

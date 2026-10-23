@@ -30,7 +30,7 @@ export default function LeadGenerationView() {
               <CardTitle className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[var(--alo-brand)]" />Generated Leads (MarketingLead)</CardTitle>
               <div className="flex gap-2">
                 <Input placeholder="Filter by source/destination" value={filter} onChange={e=>setFilter(e.target.value)} className="h-8 text-xs w-48" />
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs"><Filter className="w-3 h-3 mr-1" />Filter</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" "><Filter className="w-3 h-3 mr-1" />Filter</Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -43,7 +43,7 @@ export default function LeadGenerationView() {
               ) : (
                 <div className="space-y-2">
                   {leads.slice(0,10).map((l:any)=><div key={l.id} className="p-3 border rounded-xl flex items-center justify-between">
-                    <div><p className="text-sm font-semibold">{l.name||l.phone||'Lead'}</p><p className="text-xs text-[var(--alo-text-muted)]">{l.source||'—'} • Destination {l.destination||'—'} • Score {l.score||0} {l.hotLead && <Badge className="bg-orange-500 text-white ml-1 text-[11px]">HOT</Badge>}</p></div>
+                    <div><p className="text-sm font-semibold">{l.name||l.phone||'Lead'}</p><p className="text-xs text-[var(--alo-text-muted)]">{l.source||'—'} • Destination {l.destination||'—'} • Score {l.score||0} {l.hotLead && <Badge className="bg-[var(--alo-cta)] text-white ml-1 text-[11px]">HOT</Badge>}</p></div>
                     <Badge variant="outline" className="text-xs">{l.status||'new'}</Badge>
                   </div>)}
                 </div>
@@ -67,14 +67,14 @@ export default function LeadGenerationView() {
             <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Sparkles className="w-4 h-4 text-[var(--alo-cta)]" />Lead Scoring</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <p className="text-[var(--alo-body)]">Scoring via MarketingLeadScore (factors: destination intent, budget, IELTS, engagement). HotLead flag auto.</p>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs"><RefreshCw className="w-3 h-3 mr-1" />Recalculate Scores</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" "><RefreshCw className="w-3 h-3 mr-1" />Recalculate Scores</Button>
             </CardContent>
           </Card>
           <Card>
             <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Globe className="w-4 h-4 text-[var(--alo-brand)]" />Source Tracking</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <p className="text-[var(--alo-body)]">Every lead has <code>source, sourceDetail, campaignId</code>. Attribution preserved through CRM.</p>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs"><Download className="w-3 h-3 mr-1" />Export CSV</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" "><Download className="w-3 h-3 mr-1" />Export CSV</Button>
             </CardContent>
           </Card>
         </div>

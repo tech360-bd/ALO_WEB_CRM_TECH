@@ -220,10 +220,10 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
                   </div>
                   <div className="mt-auto pt-4">
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-full justify-between px-0 text-xs text-[var(--alo-brand)] hover:bg-transparent hover:text-[var(--alo-brand)]"
-                    >
+ variant="ghost"
+ size="sm"
+ className=" w-full justify-between px-0 text-[var(--alo-brand)] hover:bg-transparent hover:text-[var(--alo-brand)]"
+ >
                       View country page
                       <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                     </Button>

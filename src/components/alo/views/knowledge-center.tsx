@@ -149,10 +149,10 @@ interface EnterpriseSearchResponse {
 
 const FILE_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
   PDF: { label: "PDF", icon: "FileText", color: "bg-rose-100 text-rose-700 border-rose-200" },
-  DOCX: { label: "DOCX", icon: "FileType", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  DOC: { label: "DOC", icon: "FileType", color: "bg-blue-100 text-blue-700 border-blue-200" },
-  PPT: { label: "PPT", icon: "Presentation", color: "bg-orange-100 text-orange-700 border-orange-200" },
-  PPTX: { label: "PPTX", icon: "Presentation", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  DOCX: { label: "DOCX", icon: "FileType", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  DOC: { label: "DOC", icon: "FileType", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  PPT: { label: "PPT", icon: "Presentation", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
+  PPTX: { label: "PPTX", icon: "Presentation", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   XLSX: { label: "XLSX", icon: "Sheet", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
   XLS: { label: "XLS", icon: "Sheet", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
   IMAGE: { label: "IMG", icon: "Image", color: "bg-violet-100 text-violet-700 border-violet-200" },
@@ -193,11 +193,11 @@ const NEWS_CATEGORY_LABEL: Record<string, string> = {
 };
 
 const NEWS_CATEGORY_COLORS: Record<string, string> = {
-  OFFICE_ANNOUNCEMENT: "bg-blue-100 text-blue-700 border-blue-200",
+  OFFICE_ANNOUNCEMENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
   UNIVERSITY_UPDATE: "bg-violet-100 text-violet-700 border-violet-200",
   SCHOLARSHIP_UPDATE: "bg-emerald-100 text-emerald-700 border-emerald-200",
   COUNTRY_UPDATE: "bg-cyan-100 text-cyan-700 border-cyan-200",
-  IMMIGRATION_UPDATE: "bg-orange-100 text-orange-700 border-orange-200",
+  IMMIGRATION_UPDATE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
   TRAINING_NEWS: "bg-amber-100 text-amber-700 border-amber-200",
   MEETING_NOTES: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]",
   POLICY_UPDATE: "bg-rose-100 text-rose-700 border-rose-200",
@@ -208,14 +208,14 @@ const NEWS_CATEGORY_COLORS: Record<string, string> = {
 };
 
 const TRAINING_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
-  RECORDED_TRAINING: { label: "Recorded Training", icon: "Video", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  RECORDED_TRAINING: { label: "Recorded Training", icon: "Video", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   LIVE_TRAINING: { label: "Live Training", icon: "Radio", color: "bg-rose-100 text-rose-700 border-rose-200" },
   QUIZ: { label: "Quiz", icon: "HelpCircle", color: "bg-amber-100 text-amber-700 border-amber-200" },
   CERTIFICATE: { label: "Certificate", icon: "Award", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
   HANDBOOK: { label: "Handbook", icon: "BookOpen", color: "bg-violet-100 text-violet-700 border-violet-200" },
   SALES_TRAINING: { label: "Sales Training", icon: "TrendingUp", color: "bg-teal-100 text-teal-700 border-teal-200" },
   COUNSELING_TRAINING: { label: "Counseling Training", icon: "Users", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
-  VISA_TRAINING: { label: "Visa Training", icon: "Plane", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  VISA_TRAINING: { label: "Visa Training", icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   CRM_TRAINING: { label: "CRM Training", icon: "LayoutDashboard", color: "bg-purple-100 text-purple-700 border-purple-200" },
   AI_TRAINING: { label: "AI Training", icon: "BrainCircuit", color: "bg-pink-100 text-pink-700 border-pink-200" },
 };
@@ -746,13 +746,13 @@ export function KnowledgeCenter() {
                           <FileTypeBadge ft={doc.fileType} />
                           <div className="flex flex-wrap gap-1">
                             {doc.isFeatured && (
-                              <span className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold text-orange-700">
+                              <span className="inline-flex items-center gap-1 rounded-md border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--alo-cta-active)]">
                                 <Icon name="Star" className="size-3" />
                                 Featured
                               </span>
                             )}
                             {doc.isPinned && (
-                              <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700">
+                              <span className="inline-flex items-center gap-1 rounded-md border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--alo-brand)]">
                                 <Icon name="Pin" className="size-3" />
                                 Pinned
                               </span>
@@ -875,13 +875,13 @@ export function KnowledgeCenter() {
                           </span>
                           <CountryBadge country={n.country} />
                           {n.isPinned && (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700">
+                            <span className="inline-flex items-center gap-1 rounded-md border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--alo-brand)]">
                               <Icon name="Pin" className="size-3" />
                               Pinned
                             </span>
                           )}
                           {n.isFeatured && (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold text-orange-700">
+                            <span className="inline-flex items-center gap-1 rounded-md border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--alo-cta-active)]">
                               <Icon name="Star" className="size-3" />
                               Featured
                             </span>
@@ -1459,7 +1459,7 @@ export function KnowledgeCenter() {
             <Button variant="outline" onClick={() => setUploadOpen(false)} disabled={uploading} className="h-10">
               Cancel
             </Button>
-            <Button onClick={handleUpload} disabled={uploading} className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">
+            <Button onClick={handleUpload} disabled={uploading} className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">
               {uploading ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Upload" className="size-4" />}
               {uploading ? "Uploading…" : "Upload & AI-process"}
             </Button>

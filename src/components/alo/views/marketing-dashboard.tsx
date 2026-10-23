@@ -243,7 +243,7 @@ const PLATFORM_ICON: Record<string, string> = {
 
 const PLATFORM_COLOR: Record<string, string> = {
   WHATSAPP: "bg-green-100 text-green-700",
-  FACEBOOK: "bg-blue-100 text-blue-700",
+  FACEBOOK: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   INSTAGRAM: "bg-pink-100 text-pink-700",
   MESSENGER: "bg-sky-100 text-sky-700",
   EMAIL: "bg-violet-100 text-violet-700",
@@ -315,11 +315,11 @@ const TRIGGER_TYPES = [
 ];
 
 const TRIGGER_TYPE_BADGE: Record<string, string> = {
-  LEAD_CREATED: "bg-blue-100 text-blue-700",
+  LEAD_CREATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   FOLLOW_UP: "bg-amber-100 text-amber-700",
   WHATSAPP_REPLY: "bg-green-100 text-green-700",
   CAMPAIGN_REPORT: "bg-violet-100 text-violet-700",
-  COUNSELOR_NOTIFY: "bg-orange-100 text-orange-700",
+  COUNSELOR_NOTIFY: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const CONSENT_BADGE: Record<string, string> = {
@@ -680,16 +680,16 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
       <div className="flex flex-wrap items-center gap-2">
         {PLATFORMS.map((p) => (
           <Button
-            key={p}
-            variant={platformFilter === p ? "default" : "outline"}
-            size="sm"
-            className={cn(
-              "h-9",
-              platformFilter === p
-                ? "bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-                : "border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]",
-            )}
-            onClick={() => setPlatformFilter(p)}
+ key={p}
+ variant={platformFilter === p ? "default" : "outline"}
+ size="sm"
+ className={cn(
+ "",
+ platformFilter === p
+ ? "bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ : "border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]",
+ )}
+ onClick={() => setPlatformFilter(p)}
           >
             <Icon name={PLATFORM_ICON[p] || "Circle"} className="size-3.5" />
             {p === "ALL" ? "All Platforms" : p}
@@ -942,11 +942,11 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
   };
 
   const flowSteps = [
-    { icon: "MessageSquare", label: "Comment", color: "bg-blue-100 text-blue-700" },
+    { icon: "MessageSquare", label: "Comment", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
     { icon: "Search", label: "Keyword Match", color: "bg-violet-100 text-violet-700" },
     { icon: "Reply", label: "Auto-Reply", color: "bg-emerald-100 text-emerald-700" },
     { icon: "Send", label: "Auto-DM", color: "bg-sky-100 text-sky-700" },
-    { icon: "UserPlus", label: "Create Lead", color: "bg-orange-100 text-orange-700" },
+    { icon: "UserPlus", label: "Create Lead", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
     { icon: "UserCheck", label: "Assign Counselor", color: "bg-amber-100 text-amber-700" },
     { icon: "Link", label: "Send Portal Link", color: "bg-cyan-100 text-cyan-700" },
     { icon: "Database", label: "Save to CRM Timeline", color: "bg-[var(--alo-brand)] text-white" },
@@ -1044,8 +1044,8 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" className="h-11" onClick={() => setDialogOpen(false)}>Cancel</Button>
-              <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={saveTrigger}>
+              <Button variant="outline" className="" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={saveTrigger}>
                 {saving ? "Saving..." : "Create Trigger"}
               </Button>
             </DialogFooter>
@@ -1056,7 +1056,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
       {/* Spec 8 default triggers — one-click seed */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[#eef4ff] px-4 py-3">
         <div><p className="text-sm font-bold text-[var(--alo-brand)]">Spec 8 Keyword Triggers</p><p className="text-[11px] text-muted-foreground">Study Abroad • IELTS • Visa • UK • Canada • Australia • Scholarship • Apply — auto-reply + DM + lead + portal link</p></div>
-        <Button size="sm" className="h-9 bg-[var(--alo-brand)] text-white" onClick={seedDefaults}><Icon name="Zap" className="size-3.5"/> Seed 8 Defaults</Button>
+        <Button size="sm" className=" bg-[var(--alo-brand)] text-white" onClick={seedDefaults}><Icon name="Zap" className="size-3.5"/> Seed 8 Defaults</Button>
       </div>
 
       {/* Flow visualization */}
@@ -1256,7 +1256,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
           <div className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
             <div className="space-y-1.5"><Label>Idea / verified update *</Label><Input value={autoIdea} onChange={e=> setAutoIdea(e.target.value)} placeholder="Use an ALO-approved or official-source update; review claims before submission"/></div>
             <div className="space-y-1.5"><Label>Optional source image URL (HTTPS)</Label><Input value={autoImageUrl} onChange={e=> setAutoImageUrl(e.target.value)} placeholder="https://approved-cdn.example/brand-image.jpg"/></div>
-            <div className="flex items-end"><Button className="h-11 bg-[var(--alo-cta)] text-black w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Creating drafts...":"Create Drafts & Prompts"}</Button></div>
+            <div className="flex items-end"><Button className=" bg-[var(--alo-cta)] text-black w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Creating drafts...":"Create Drafts & Prompts"}</Button></div>
           </div>
           <p className="text-[11px] text-muted-foreground">Every generated item remains an internal draft. A Marketing Manager must review and approve it; no automatic indexing, posting, outreach, or lead assignment is claimed.</p>
         </CardContent>
@@ -1376,8 +1376,8 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>Cancel</Button>
-              <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || logoMissing} onClick={createPost}>
+              <Button variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
+              <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || logoMissing} onClick={createPost}>
                 {saving ? "Creating..." : "Create as Draft"}
               </Button>
             </DialogFooter>
@@ -1435,39 +1435,39 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                       <TableCell>
                         <div className="flex flex-wrap justify-end gap-1.5">
                           {p.approvalStatus === "DRAFT" && (
-                            <Button size="sm" className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={() => patchPost(p.id, "submit_approval")}>
+                            <Button size="sm" className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={() => patchPost(p.id, "submit_approval")}>
                               <Icon name="Send" className="size-3" /> Submit
                             </Button>
                           )}
                           {p.approvalStatus === "PENDING_APPROVAL" && (
                             <>
-                              <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => patchPost(p.id, "approve")}>
+                              <Button size="sm" className=" bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => patchPost(p.id, "approve")}>
                                 <Icon name="Check" className="size-3" /> Approve
                               </Button>
-                              <Button size="sm" variant="outline" className="h-8 border-red-300 text-red-600" onClick={() => { setRejectTarget(p); setRejectionReason(""); }}>
+                              <Button size="sm" variant="outline" className=" border-red-300 text-red-600" onClick={() => { setRejectTarget(p); setRejectionReason(""); }}>
                                 <Icon name="X" className="size-3" /> Reject
                               </Button>
                             </>
                           )}
                           {p.approvalStatus === "APPROVED" && (
                             <>
-                              <Button size="sm" variant="outline" className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)]" onClick={() => { setScheduleTarget(p); setScheduleDate(""); }}>
+                              <Button size="sm" variant="outline" className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)]" onClick={() => { setScheduleTarget(p); setScheduleDate(""); }}>
                                 <Icon name="Calendar" className="size-3" /> Schedule
                               </Button>
-                              <Button size="sm" className="h-8 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={() => patchPost(p.id, "publish")}>
+                              <Button size="sm" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={() => patchPost(p.id, "publish")}>
                                 <Icon name="Send" className="size-3" /> Publish
                               </Button>
                             </>
                           )}
                           {p.approvalStatus === "PUBLISHED" && p.publishedUrl && (
                             <a href={p.publishedUrl} target="_blank" rel="noopener noreferrer">
-                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 border-emerald-300 text-emerald-700">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" border-emerald-300 text-emerald-700">
                                 <Icon name="ExternalLink" className="size-3" /> View
                               </Button>
                             </a>
                           )}
                           {p.approvalStatus === "REJECTED" && (
-                            <Button size="sm" variant="outline" className="h-8" onClick={() => toast({ title: "Edit & resubmit", description: "Opening post editor... (toast demo)" })}>
+                            <Button size="sm" variant="outline" className="" onClick={() => toast({ title: "Edit & resubmit", description: "Opening post editor... (toast demo)" })}>
                               <Icon name="Pencil" className="size-3" /> Edit & Resubmit
                             </Button>
                           )}
@@ -1510,11 +1510,11 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-11" onClick={() => setRejectTarget(null)}>Cancel</Button>
+            <Button variant="outline" className="" onClick={() => setRejectTarget(null)}>Cancel</Button>
             <Button
-              className="h-11 bg-red-600 text-white hover:bg-red-600/90"
-              disabled={saving || !rejectionReason.trim()}
-              onClick={() => {
+ className=" bg-red-600 text-white hover:bg-red-600/90"
+ disabled={saving || !rejectionReason.trim()}
+ onClick={() => {
                 if (rejectTarget) {
                   patchPost(rejectTarget.id, "reject", { rejectionReason });
                   setRejectTarget(null);
@@ -1544,11 +1544,11 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-11" onClick={() => setScheduleTarget(null)}>Cancel</Button>
+            <Button variant="outline" className="" onClick={() => setScheduleTarget(null)}>Cancel</Button>
             <Button
-              className="h-11 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-              disabled={saving || !scheduleDate}
-              onClick={() => {
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={saving || !scheduleDate}
+ onClick={() => {
                 if (scheduleTarget) {
                   patchPost(scheduleTarget.id, "schedule", { scheduledAt: new Date(scheduleDate).toISOString() });
                   setScheduleTarget(null);
@@ -1670,8 +1670,8 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" className="h-11" onClick={() => setUploadOpen(false)}>Cancel</Button>
-                    <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={uploadLogo}>
+                    <Button variant="outline" className="" onClick={() => setUploadOpen(false)}>Cancel</Button>
+                    <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={uploadLogo}>
                       {saving ? "Uploading..." : "Upload"}
                     </Button>
                   </DialogFooter>
@@ -1988,10 +1988,10 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
                   </div>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => approveDraft(msg)}>
+                  <Button size="sm" className=" bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => approveDraft(msg)}>
                     <Icon name="Check" className="size-3" /> Approve Draft Only
                   </Button>
-                  <Button size="sm" variant="outline" className="h-8 border-red-300 text-red-600" disabled={saving} onClick={() => rejectDraft(msg)}>
+                  <Button size="sm" variant="outline" className=" border-red-300 text-red-600" disabled={saving} onClick={() => rejectDraft(msg)}>
                     <Icon name="X" className="size-3" /> Reject Draft
                   </Button>
                 </div>
@@ -2131,8 +2131,8 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>Cancel</Button>
-              <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={createWorkflowPlaceholder}>
+              <Button variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
+              <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={createWorkflowPlaceholder}>
                 {saving ? "Saving..." : "Save placeholder"}
               </Button>
             </DialogFooter>
@@ -2395,7 +2395,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
         action={
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="h-9 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={slotsRemaining === 0}>
+              <Button size="sm" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={slotsRemaining === 0}>
                 <Icon name="UserPlus" className="size-3.5" /> Add Approved User
               </Button>
             </DialogTrigger>
@@ -2419,8 +2419,8 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" className="h-11" onClick={() => setAddOpen(false)}>Cancel</Button>
-                <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={addUser}>
+                <Button variant="outline" className="" onClick={() => setAddOpen(false)}>Cancel</Button>
+                <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={addUser}>
                   {saving ? "Granting..." : "Grant Access"}
                 </Button>
               </DialogFooter>
@@ -2459,7 +2459,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
                       )}
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" className="h-8 border-red-300 text-red-600" onClick={() => revoke(a)}>
+                  <Button size="sm" variant="outline" className=" border-red-300 text-red-600" onClick={() => revoke(a)}>
                     <Icon name="UserX" className="size-3" /> Revoke
                   </Button>
                 </div>
@@ -2512,7 +2512,7 @@ function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | n
       <CardContent className="pt-6 space-y-4">
         <div className="flex items-center justify-between">
           <div><p className="text-sm font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="BadgeCheck" className="size-4"/> Education Partner Brand Kit — Logo / Address / Phone / WhatsApp</p><p className="text-[11px] text-muted-foreground">এখানে আপলোড করা তথ্য দিয়ে সব ইমেজ/ভিডিওতে প্রফেশনাল overlay হবে (logo bottom-right 8%, footer bar + phone/WhatsApp/website)।</p></div>
-          <Button className="h-10 bg-[var(--alo-brand)] text-white" disabled={saving} onClick={saveKit}><Icon name={saving?"Loader2":"Save"} className={saving?"size-4 animate-spin":"size-4"}/>{saving?"Saving...":"Save Brand Kit"}</Button>
+          <Button className=" bg-[var(--alo-brand)] text-white" disabled={saving} onClick={saveKit}><Icon name={saving?"Loader2":"Save"} className={saving?"size-4 animate-spin":"size-4"}/>{saving?"Saving...":"Save Brand Kit"}</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1.5"><Label>Logo URL *</Label><Input value={form.logoUrl} onChange={e=> setForm({...form, logoUrl:e.target.value})} placeholder="https://cdn.alo-education.com/logo.png"/></div>
@@ -2556,7 +2556,7 @@ function LibraryRepostTab() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h2 className="text-lg font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="Library" className="size-5"/> Approved Content Library</h2><p className="text-xs text-muted-foreground">Approved content can be copied into a new draft for review. This workspace does not publish to personal or company channels.</p></div>
-        <div className="flex items-center gap-2"><Input placeholder="Search library..." value={q} onChange={e=> setQ(e.target.value)} className="h-9 w-48"/><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3"/> Refresh</Button></div>
+        <div className="flex items-center gap-2"><Input placeholder="Search library..." value={q} onChange={e=> setQ(e.target.value)} className="h-9 w-48"/><Button variant="outline" className="" onClick={load}><Icon name="RefreshCw" className="size-3"/> Refresh</Button></div>
       </div>
       {loading ? <LoadingGrid count={3}/> : posts.length===0 ? <EmptyState icon="Library" title="No approved posts yet" description="Approved content will appear here for creating reviewed drafts."/> : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2568,7 +2568,7 @@ function LibraryRepostTab() {
                 <p className="text-xs text-muted-foreground line-clamp-2">{p.caption?.slice(0,120)}</p>
                 <div className="flex flex-wrap gap-1.5 pt-2">
                   {["FACEBOOK","INSTAGRAM","LINKEDIN"].map(pl=>(
-                    <Button key={pl} size="sm" className="h-8 bg-[var(--alo-brand)] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Create {pl} Draft</Button>
+                    <Button key={pl} size="sm" className=" bg-[var(--alo-brand)] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Create {pl} Draft</Button>
                   ))}
                 </div>
                 <p className="text-[11px] text-muted-foreground">Brand: {p.brandAssetApplied? "✓ Applied":"—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
@@ -2606,7 +2606,7 @@ function AnalyticsTab() {
   const { inbox, posts, leads, outreach, triggers, workflows } = data;
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="BarChart3" className="size-5"/> Marketing Analytics — 360°</h2><Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button></div>
+      <div className="flex items-center justify-between"><h2 className="text-lg font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="BarChart3" className="size-5"/> Marketing Analytics — 360°</h2><Button variant="outline" className="" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button></div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         <StatCard label="Leads Total" value={leads.total} icon="Users" accent="blue" hint={`${leads.hot} hot • ${leads.followUpOverdue} overdue`} />
         <StatCard label="Conversion" value={`${leads.conversionRate}%`} icon="TrendingUp" accent="emerald" hint={`${leads.byStatus?.converted || 0} converted`} />
@@ -2667,7 +2667,7 @@ function LeadPipelineTab() {
     try { const r= await fetch("/api/marketing/lead-pipeline",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:assignOpen.id,counselorId:counselor,counselorName:counselor,followUpDueAt: followUp || undefined})}); const j=await r.json(); if(j.lead){ toast({title:"Assigned",description:`${assignOpen.name} → ${counselor}`}); setAssignOpen(null); setCounselor(""); setFollowUp(""); load(); } else throw new Error(j.error);} catch(e:any){ toast({title:"Assign failed",description:e.message,variant:"destructive"});}
   };
   const STAGES = ["new","contacted","qualified","assigned","converted","lost"] as const;
-  const STAGE_COLOR: Record<string,string> = { new:"bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", contacted:"bg-blue-100 text-blue-700", qualified:"bg-violet-100 text-violet-700", assigned:"bg-amber-100 text-amber-700", converted:"bg-emerald-100 text-emerald-700", lost:"bg-red-100 text-red-700" };
+  const STAGE_COLOR: Record<string,string> = { new:"bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", contacted:"bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]", qualified:"bg-violet-100 text-violet-700", assigned:"bg-amber-100 text-amber-700", converted:"bg-emerald-100 text-emerald-700", lost:"bg-red-100 text-red-700" };
   if (loading) return <LoadingGrid count={6} />;
   const byStatus = data?.byStatus || {};
   return (
@@ -2676,7 +2676,7 @@ function LeadPipelineTab() {
         <div><h2 className="text-lg font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="GitBranch" className="size-5"/> Lead Pipeline — Kanban + Assignment</h2><p className="text-xs text-muted-foreground">Drag not needed — use Move buttons. Counselor assignment & follow-up calendar are SLA-tracked (40→20→10).</p></div>
         <div className="flex items-center gap-2">
           <Select value={filter} onValueChange={setFilter}><SelectTrigger className="h-9 w-36"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All Stages</SelectItem>{STAGES.map(s=><SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}</SelectContent></Select>
-          <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
+          <Button variant="outline" className="" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
         </div>
       </div>
       {data?.overdueFollowUps ? <div className="rounded-2xl border-2 border-red-200 bg-red-50 px-4 py-3 flex items-center gap-3"><Icon name="AlertTriangle" className="size-5 text-red-600"/><p className="text-sm font-semibold text-red-700">{data.overdueFollowUps} overdue follow-ups</p><span className="text-xs text-red-600">— move to Contacted or schedule next date</span></div> : null}
@@ -2688,7 +2688,7 @@ function LeadPipelineTab() {
               <ScrollArea className="h-[420px]"><div className="space-y-3 p-3">
                 {(byStatus[stage]||[]).length===0 ? <p className="py-8 text-center text-xs text-muted-foreground">No leads in {stage}</p> : (byStatus[stage]||[]).map((l:any)=>(
                   <div key={l.id} className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
-                    <p className="text-sm font-semibold">{l.name || "Unknown"} {l.hotLead ? <Badge className="ml-1 bg-orange-100 text-orange-700 text-[11px]">HOT</Badge>:null}</p>
+                    <p className="text-sm font-semibold">{l.name || "Unknown"} {l.hotLead ? <Badge className="ml-1 bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] text-[11px]">HOT</Badge>:null}</p>
                     <p className="text-[11px] text-muted-foreground">{l.phone || l.email || l.id.slice(0,8)} • {l.destination || "—"} • Score {l.score||0}</p>
                     {l.counselorName ? <p className="text-[11px]"><span className="font-semibold text-[var(--alo-brand)]">Counselor:</span> {l.counselorName}</p>:null}
                     {l.followUpDueAt ? <p className="text-[11px]"><Icon name="Calendar" className="inline size-3"/> {fmtDate(l.followUpDueAt)} {new Date(l.followUpDueAt) < new Date() && !l.followUpDone ? <Badge className="bg-red-100 text-red-700 ml-1">OVERDUE</Badge>:null}</p>:null}
@@ -2739,7 +2739,7 @@ function CalendarTab() {
         <div><h2 className="text-lg font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="CalendarDays" className="size-5"/> Content Calendar — Schedule & Publish</h2><p className="text-xs text-muted-foreground">Campaign posts + marketing calendar merged. Schedule from Campaign Posts tab or here.</p></div>
         <div className="flex items-center gap-2">
           <Select value={filter} onValueChange={setFilter}><SelectTrigger className="h-9 w-36"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All</SelectItem><SelectItem value="scheduled">Scheduled</SelectItem><SelectItem value="published">Published</SelectItem><SelectItem value="approved">Approved</SelectItem></SelectContent></Select>
-          <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
+          <Button variant="outline" className="" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
         </div>
       </div>
       {items.length===0 ? <EmptyState icon="CalendarDays" title="No calendar items" description="Posts you schedule or publish will appear here. Use Campaign Posts → Schedule to add."/> : (
@@ -2780,7 +2780,7 @@ function AuditLogsTab() {
         <div><h2 className="text-lg font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="ScrollText" className="size-5"/> Audit Logs — Full CRM Timeline</h2><p className="text-xs text-muted-foreground">Every comment, DM, WhatsApp, email, SMS, lead, campaign, assignment & publish — channel, messageId, conversationId, leadId/studentId, AI/human, timestamp</p></div>
         <div className="flex items-center gap-2">
           <Select value={resource} onValueChange={setResource}><SelectTrigger className="h-9 w-44"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="ALL">All Resources</SelectItem><SelectItem value="CampaignPost">CampaignPost</SelectItem><SelectItem value="MarketingLead">MarketingLead</SelectItem><SelectItem value="SocialInboxMessage">SocialInbox</SelectItem><SelectItem value="KeywordTrigger">KeywordTrigger</SelectItem><SelectItem value="BrandAsset">BrandAsset</SelectItem></SelectContent></Select>
-          <Button variant="outline" className="h-9" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
+          <Button variant="outline" className="" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
         </div>
       </div>
       {loading ? <LoadingGrid count={4}/> : logs.length===0 ? <EmptyState icon="ScrollText" title="No audit logs yet" description="Actions across marketing (approve, assign, publish, SLA escalations) will appear here."/> : (
@@ -2832,9 +2832,9 @@ function WhatsAppCard() {
             </div>
           </div>
           <Button
-            variant="outline"
-            className="h-11 border-green-300 text-green-700"
-            onClick={() => toast({ title: "Webhook test sent", description: "Test payload delivered to WhatsApp webhook. Check n8n for response." })}
+ variant="outline"
+ className=" border-green-300 text-green-700"
+ onClick={() => toast({ title: "Webhook test sent", description: "Test payload delivered to WhatsApp webhook. Check n8n for response." })}
           >
             <Icon name="Webhook" className="size-4" /> Test WhatsApp Webhook
           </Button>

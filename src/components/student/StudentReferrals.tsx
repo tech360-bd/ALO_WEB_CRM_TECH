@@ -109,11 +109,11 @@ export default function StudentReferrals() {
                   {data?.referralCode ?? '—'}
                 </code>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
-                  onClick={copyCode}
-                >
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={copyCode}
+ >
                   <Copy className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                   {copied ? 'Copied' : 'Copy Code'}
                 </Button>
@@ -127,7 +127,7 @@ export default function StudentReferrals() {
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
               <PortalCard>
                 <PortalSectionTitle>
-                  <Users className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />
+                  <Users className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />
                   Your Referrals
                 </PortalSectionTitle>
 
@@ -227,10 +227,10 @@ export default function StudentReferrals() {
                   )}
 
                   <Button
-                    type="submit"
-                    disabled={submitting}
-                    className="h-9 w-full rounded-button bg-alo-cta text-[13px] font-semibold text-black hover:bg-orange-500"
-                  >
+ type="submit"
+ disabled={submitting}
+ className=" w-full rounded-button bg-alo-cta text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                     {submitting ? 'Saving…' : 'Save Referral'}
                   </Button>
                 </form>

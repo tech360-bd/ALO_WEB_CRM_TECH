@@ -142,8 +142,8 @@ export default function CrmAccountingPage() {
         </Card>
       )}
       {postError && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-4 text-sm text-orange-700">{postError}</CardContent>
+        <Card className="border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]">
+          <CardContent className="pt-4 text-sm text-[var(--alo-cta-active)]">{postError}</CardContent>
         </Card>
       )}
 

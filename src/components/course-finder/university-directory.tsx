@@ -141,19 +141,19 @@ function UniversityCard({ uni }: { uni: University }) {
         {/* Actions */}
         <div className="flex gap-2 pt-1">
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => toast.info('Browsing courses at ' + uni.name)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => toast.info('Browsing courses at ' + uni.name)}
           >
             <BookOpen className="size-3 mr-1" />
             View Courses
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={() => window.open(uni.website, '_blank')}
+ variant="outline"
+ size="sm"
+ className=" "
+ onClick={() => window.open(uni.website, '_blank')}
           >
             <Globe className="size-3 mr-1" />
             Website

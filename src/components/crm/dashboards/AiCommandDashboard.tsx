@@ -30,7 +30,7 @@ function TaskStatusBadge({ status }: { status: string }) {
 
 function TypeBadge({ type }: { type: string }) {
   const colors: Record<string, string> = {
-    'Course Match': 'bg-blue-100 text-blue-700',
+    'Course Match': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
     'SOP Draft': 'bg-purple-100 text-purple-700',
     'CV Draft': 'bg-emerald-100 text-emerald-700',
     'Doc Check': 'bg-amber-100 text-amber-700',
@@ -138,7 +138,7 @@ export default function AiCommandDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-alo-brand" /> AI Task Overview
                 </CardTitle>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className=" text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">

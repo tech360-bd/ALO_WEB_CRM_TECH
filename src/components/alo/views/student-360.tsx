@@ -202,12 +202,12 @@ interface StudentDetail {
 const STUDENT_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  GRADUATED: "bg-blue-100 text-blue-700",
+  GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  NORMAL: "bg-blue-100 text-blue-700",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -226,7 +226,7 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 
 const COMMISSION_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-blue-100 text-blue-700",
+  APPROVED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   PAID: "bg-emerald-100 text-emerald-700",
 };
 
@@ -264,17 +264,17 @@ const INTERVIEW_TYPE_LABELS: Record<string, string> = {
 };
 
 const TIMELINE_META: Record<string, { icon: string; color: string }> = {
-  LEAD_CREATED: { icon: "UserPlus", color: "bg-blue-100 text-blue-700" },
-  PROFILE_UPDATED: { icon: "UserCog", color: "bg-blue-100 text-blue-700" },
+  LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   DOC_UPLOADED: { icon: "FileUp", color: "bg-amber-100 text-amber-700" },
   DOC_APPROVED: { icon: "FileCheck2", color: "bg-emerald-100 text-emerald-700" },
   DOC_REJECTED: { icon: "FileX2", color: "bg-rose-100 text-rose-700" },
-  APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-orange-100 text-orange-700" },
-  VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-orange-100 text-orange-700" },
+  APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
+  VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-violet-100 text-violet-700" },
   MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
   AI_ACTION: { icon: "Bot", color: "bg-violet-100 text-violet-700" },
-  MESSAGE_SENT: { icon: "MessageSquare", color: "bg-blue-100 text-blue-700" },
+  MESSAGE_SENT: { icon: "MessageSquare", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   PAYMENT: { icon: "CreditCard", color: "bg-emerald-100 text-emerald-700" },
   NOTE: { icon: "StickyNote", color: "bg-amber-100 text-amber-700" },
 };
@@ -494,9 +494,9 @@ export function Student360() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button
-                    variant="outline"
-                    className="h-10 rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]/60"
-                    onClick={() =>
+ variant="outline"
+ className=" rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]/60"
+ onClick={() =>
                       toast({
                         title: "Edit profile",
                         description: `Opening edit form for ${student.fullName}.`,
@@ -507,9 +507,9 @@ export function Student360() {
                     Edit Profile
                   </Button>
                   <Button
-                    variant="outline"
-                    className="h-10 rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]/60"
-                    onClick={() =>
+ variant="outline"
+ className=" rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]/60"
+ onClick={() =>
                       toast({
                         title: "Message sent",
                         description: `A WhatsApp/SMS template was prepared for ${student.fullName}.`,

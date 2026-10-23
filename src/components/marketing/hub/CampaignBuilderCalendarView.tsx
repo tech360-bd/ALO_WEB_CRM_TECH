@@ -73,7 +73,7 @@ interface BuilderForm {
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   active: { label: 'Active', color: 'bg-green-100 text-green-700 border-green-200' },
   paused: { label: 'Paused', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  draft: { label: 'Draft', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  draft: { label: 'Draft', color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   completed: { label: 'Completed', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
   archived: { label: 'Archived', color: 'bg-gray-200 text-[var(--alo-text-muted)] border-[var(--alo-border-strong)]' },
 };
@@ -85,7 +85,7 @@ const PLATFORM_COLORS: Record<string, string> = {
   TikTok: 'bg-gray-800',
   YouTube: 'bg-red-600',
   WhatsApp: 'bg-green-600',
-  Website: 'bg-orange-500',
+  Website: 'bg-[var(--alo-cta)]',
 };
 
 const PLATFORM_DOT_COLORS: Record<string, string> = {
@@ -95,7 +95,7 @@ const PLATFORM_DOT_COLORS: Record<string, string> = {
   TikTok: 'bg-gray-800',
   YouTube: 'bg-red-600',
   WhatsApp: 'bg-green-600',
-  Website: 'bg-orange-500',
+  Website: 'bg-[var(--alo-cta)]',
 };
 
 // ============================================================
@@ -196,14 +196,14 @@ function KpiCards({ campaigns }: { campaigns: CampaignRow[] }) {
       value: activeCampaigns.length.toString(),
       icon: Megaphone,
       change: '+2 this month',
-      color: 'text-orange-600 bg-orange-50',
+      color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)]',
     },
     {
       label: 'Total Leads',
       value: totalLeads.toString(),
       icon: Users,
       change: '+18% vs last month',
-      color: 'text-blue-600 bg-blue-50',
+      color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]',
     },
     {
       label: 'Total Spend',
@@ -284,7 +284,7 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
           </TableHeader>
           <TableBody>
             {campaigns.map((c) => (
-              <TableRow key={c.id} className="hover:bg-orange-50/30 transition-colors">
+              <TableRow key={c.id} className="hover:bg-[var(--alo-cta-soft)]/30 transition-colors">
                 <TableCell className="py-3">
                   <div>
                     <p className="text-sm font-medium text-[var(--alo-text)]">{c.name}</p>
@@ -323,10 +323,10 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1 justify-end">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-blue-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)]">
                       <Eye className="w-3.5 h-3.5" />
                     </Button>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-orange-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-cta-active)]">
                       <Edit className="w-3.5 h-3.5" />
                     </Button>
                     {c.status === 'active' && (
@@ -398,7 +398,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
-              <Calendar className="w-4 h-4 inline mr-2 text-orange-500" />
+              <Calendar className="w-4 h-4 inline mr-2 text-[var(--alo-cta)]" />
               {monthNames[month]} {year}
             </CardTitle>
             <div className="flex items-center gap-1">
@@ -446,13 +446,13 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
                   onClick={() => setSelectedDate(dateStr)}
                   className={`h-20 rounded-lg border p-1 text-left transition-all cursor-pointer overflow-hidden ${
                     isSelected
-                      ? 'border-orange-400 bg-orange-50/50 shadow-sm'
+                      ? 'border-orange-400 bg-[var(--alo-cta-soft)]/50 shadow-sm'
                       : isToday
-                      ? 'border-orange-200 bg-orange-50/30'
+                      ? 'border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/30'
                       : 'border-[var(--alo-border)] hover:border-[var(--alo-border)] hover:bg-[var(--alo-page)]/50'
                   }`}
                 >
-                  <span className={`text-[11px] font-medium ${isToday ? 'text-orange-600 font-bold' : 'text-[var(--alo-body)]'}`}>
+                  <span className={`text-[11px] font-medium ${isToday ? 'text-[var(--alo-cta-active)] font-bold' : 'text-[var(--alo-body)]'}`}>
                     {day}
                   </span>
                   <div className="mt-0.5 space-y-0.5">
@@ -536,7 +536,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium text-[var(--alo-body)] truncate group-hover:text-orange-600 transition-colors">
+                    <p className="text-[11px] font-medium text-[var(--alo-body)] truncate group-hover:text-[var(--alo-cta-active)] transition-colors">
                       {ev.title}
                     </p>
                     <p className="text-[11px] text-[var(--alo-text-muted)]">
@@ -551,9 +551,9 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
         </Card>
 
         {/* Drag hint */}
-        <div className="rounded-lg border border-dashed border-orange-200 bg-orange-50/30 p-3 text-center">
+        <div className="rounded-lg border border-dashed border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/30 p-3 text-center">
           <Globe className="w-5 h-5 text-orange-400 mx-auto mb-1" />
-          <p className="text-[11px] text-orange-600 font-medium">Drag events to reschedule</p>
+          <p className="text-[11px] text-[var(--alo-cta-active)] font-medium">Drag events to reschedule</p>
           <p className="text-[11px] text-orange-400">Visual drag & drop coming soon</p>
         </div>
       </div>
@@ -613,7 +613,7 @@ function CampaignBuilder() {
         <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-              <Megaphone className="w-4 h-4 text-orange-500" />
+              <Megaphone className="w-4 h-4 text-[var(--alo-cta)]" />
               Campaign Details
             </CardTitle>
           </CardHeader>
@@ -647,7 +647,7 @@ function CampaignBuilder() {
         <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-              <Globe className="w-4 h-4 text-blue-500" />
+              <Globe className="w-4 h-4 text-[var(--alo-brand)]" />
               Platform & Targeting
             </CardTitle>
           </CardHeader>
@@ -663,13 +663,13 @@ function CampaignBuilder() {
                       onClick={() => togglePlatform(p)}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                         selected
-                          ? 'border-orange-300 bg-orange-50 text-orange-700'
+                          ? 'border-orange-300 bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
                           : 'border-[var(--alo-border)] bg-white text-[var(--alo-text-muted)] hover:border-[var(--alo-border-strong)]'
                       }`}
                     >
                       <span className={`w-2 h-2 rounded-full ${PLATFORM_DOT_COLORS[p]}`} />
                       {p}
-                      {selected && <span className="text-orange-500">✓</span>}
+                      {selected && <span className="text-[var(--alo-cta)]">✓</span>}
                     </button>
                   );
                 })}
@@ -803,11 +803,11 @@ function CampaignBuilder() {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-between pt-2">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="text-xs">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="">
             <Archive className="w-3.5 h-3.5 mr-1" />
             Save as Draft
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600 text-xs text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white">
             <ArrowRight className="w-3.5 h-3.5 mr-1" />
             Submit for Approval
           </Button>
@@ -829,7 +829,7 @@ function CampaignBuilder() {
                 'Track ROI weekly for optimal performance',
               ].map((tip, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
+                  <span className="w-4 h-4 rounded-full bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
                     {i + 1}
                   </span>
                   <span className="text-[11px] text-[var(--alo-body)] leading-relaxed">{tip}</span>
@@ -894,15 +894,15 @@ export default function CampaignBuilderCalendarView() {
       {/* Main Tabs */}
       <Tabs defaultValue="campaigns" className="space-y-4">
         <TabsList className="bg-[var(--alo-surface-muted)] p-0.5 h-9">
-          <TabsTrigger value="campaigns" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-orange-700 data-[state=active]:shadow-sm">
+          <TabsTrigger value="campaigns" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-[var(--alo-cta-active)] data-[state=active]:shadow-sm">
             <Megaphone className="w-3.5 h-3.5 mr-1.5" />
             Campaigns
           </TabsTrigger>
-          <TabsTrigger value="calendar" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-orange-700 data-[state=active]:shadow-sm">
+          <TabsTrigger value="calendar" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-[var(--alo-cta-active)] data-[state=active]:shadow-sm">
             <Calendar className="w-3.5 h-3.5 mr-1.5" />
             Calendar
           </TabsTrigger>
-          <TabsTrigger value="builder" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-orange-700 data-[state=active]:shadow-sm">
+          <TabsTrigger value="builder" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-[var(--alo-cta-active)] data-[state=active]:shadow-sm">
             <Plus className="w-3.5 h-3.5 mr-1.5" />
             Campaign Builder
           </TabsTrigger>
@@ -950,15 +950,15 @@ export default function CampaignBuilderCalendarView() {
                   </SelectContent>
                 </Select>
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 text-[11px] text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
-                  onClick={() => { setPlatformFilter('all'); setStatusFilter('all'); setSearchQuery(''); }}
+ variant="ghost"
+ size="sm"
+ className=" text-[11px] text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
+ onClick={() => { setPlatformFilter('all'); setStatusFilter('all'); setSearchQuery(''); }}
                 >
                   Reset
                 </Button>
                 <div className="flex-1" />
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600 text-xs text-white h-8">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white ">
                   <Plus className="w-3.5 h-3.5 mr-1" />
                   New Campaign
                 </Button>

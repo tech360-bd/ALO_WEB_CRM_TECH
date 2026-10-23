@@ -551,9 +551,9 @@ export function CsvImportCenter() {
                 <Collapsible open={showSample} onOpenChange={setShowSample}>
                   <CollapsibleTrigger asChild>
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
-                      variant="outline"
-                      className="h-9 w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                    >
+ variant="outline"
+ className=" w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ >
                       <Icon name={showSample ? "ChevronUp" : "ChevronDown"} className="size-4" />
                       {showSample ? "Hide sample" : "Show sample CSV"}
                     </Button>

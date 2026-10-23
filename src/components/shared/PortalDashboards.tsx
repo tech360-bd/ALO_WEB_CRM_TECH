@@ -27,7 +27,7 @@ export function StudentDashboard({ stats, onAction }: any) {
   const [range,setRange]=React.useState('This Month');
   return (
     <div className="space-y-6">
-      <PageHeader title="Welcome back" subtitle="Your study abroad journey at a glance" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-orange-500" onClick={()=> setView('student-course-finder')}><Plus className="w-4 h-4 mr-1"/> Find Courses</Button>} />
+      <PageHeader title="Welcome back" subtitle="Your study abroad journey at a glance" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('student-course-finder')}><Plus className="w-4 h-4 mr-1"/> Find Courses</Button>} />
       <KpiGrid>
         <KpiCard title="Applications" value={stats?.applications ?? 3} subtitle="2 in review" icon={FileText} drillDown={()=> setView('student-applications')} />
         <KpiCard title="Shortlisted" value={stats?.shortlisted ?? 5} subtitle="Courses saved" icon={BookOpen} drillDown={()=> setView('student-favorites')} />
@@ -53,7 +53,7 @@ export function CounselorDashboard({ stats, leads, onSearch }: any) {
   if (!stats) return <SkeletonCards />;
   return (
     <div className="space-y-6">
-      <PageHeader title="Counselor Workspace" subtitle="Leads, follow-ups, applications assigned to you" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-orange-500" onClick={()=> setView('employee-leads')}><Plus className="w-4 h-4 mr-1"/> New Lead</Button>} />
+      <PageHeader title="Counselor Workspace" subtitle="Leads, follow-ups, applications assigned to you" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('employee-leads')}><Plus className="w-4 h-4 mr-1"/> New Lead</Button>} />
       <KpiGrid>
         <KpiCard title="Assigned Leads" value={stats.leadsAssigned ?? 18} icon={Target} drillDown={()=> setView('employee-leads')} />
         <KpiCard title="Follow-ups Today" value={stats.followupsDue ?? 7} trend="up" icon={Clock} drillDown={()=> setView('employee-tasks')} />
@@ -120,7 +120,7 @@ export function VisaDashboard({ stats }: any) {
   const { setView } = usePortalStore() as any;
   return (
     <div className="space-y-6">
-      <PageHeader title="Visa & Compliance" subtitle="CAS/I-20/CoE, checklists, interview readiness" actions={<Button className="bg-orange-500" onClick={()=> setView('crm-visa-cases')}><Plus className="w-4 h-4 mr-1"/> New Case</Button>} />
+      <PageHeader title="Visa & Compliance" subtitle="CAS/I-20/CoE, checklists, interview readiness" actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('crm-visa-cases')}><Plus className="w-4 h-4 mr-1"/> New Case</Button>} />
       <KpiGrid>
         <KpiCard title="Active Cases" value={stats?.active ?? 19} icon={Plane} />
         <KpiCard title="Checklists Overdue" value={stats?.overdue ?? 5} trend="up" icon={AlertTriangle} />
@@ -139,7 +139,7 @@ export function FrontDeskDashboard({ stats }: any) {
   const { setView } = usePortalStore() as any;
   return (
     <div className="space-y-6">
-      <PageHeader title="Front Desk" subtitle="Queue, appointments, handover" actions={<Button className="bg-orange-500" onClick={()=> setView('crm-leads')}><Plus className="w-4 h-4 mr-1"/> New Enquiry</Button>} />
+      <PageHeader title="Front Desk" subtitle="Queue, appointments, handover" actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('crm-leads')}><Plus className="w-4 h-4 mr-1"/> New Enquiry</Button>} />
       <KpiGrid>
         <KpiCard title="Walk-ins Today" value={stats?.walkins ?? 14} icon={Users} />
         <KpiCard title="Upcoming Appointments" value={stats?.appts ?? 9} icon={Calendar} />
@@ -155,7 +155,7 @@ export function MarketingDashboard({ stats }: any) {
   const { setView } = usePortalStore() as any;
   return (
     <div className="space-y-6">
-      <PageHeader title="Marketing Overview" subtitle="Campaigns, content, attribution" actions={<Button className="bg-orange-500" onClick={()=> setView('marketing-campaigns')}><Megaphone className="w-4 h-4 mr-1"/> New Campaign</Button>} />
+      <PageHeader title="Marketing Overview" subtitle="Campaigns, content, attribution" actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('marketing-campaigns')}><Megaphone className="w-4 h-4 mr-1"/> New Campaign</Button>} />
       <KpiGrid>
         <KpiCard title="Active Campaigns" value={stats?.active ?? 6} icon={Megaphone} />
         <KpiCard title="Leads (Attribution)" value={stats?.leads ?? 143} trend="up" icon={Target} />
@@ -186,7 +186,7 @@ export function PartnerDashboard({ stats }: any) {
 export function DataDashboard({ stats }: any) {
   return (
     <div className="space-y-6">
-      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
+      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)]"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
       <KpiGrid>
         <KpiCard title="Universities" value={stats?.unis ?? 0} icon={Building2} />
         <KpiCard title="Courses" value={stats?.courses ?? 0} icon={BookOpen} />

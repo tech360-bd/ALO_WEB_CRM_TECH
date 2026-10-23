@@ -74,20 +74,20 @@ const AUDIT_ACTION_COLORS: Record<string, string> = {
   LOGIN: "bg-emerald-100 text-emerald-700",
   FAILED_LOGIN: "bg-red-100 text-red-700",
   LOGOUT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  DOC_UPLOAD: "bg-blue-100 text-blue-700",
+  DOC_UPLOAD: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   DOC_APPROVE: "bg-emerald-100 text-emerald-700",
   DOC_REJECT: "bg-red-100 text-red-700",
-  APP_STATUS_CHANGE: "bg-orange-100 text-orange-700",
-  VISA_STATUS_CHANGE: "bg-orange-100 text-orange-700",
+  APP_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  VISA_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   AI_ACTION: "bg-violet-100 text-violet-700",
-  PROFILE_UPDATE: "bg-blue-100 text-blue-700",
+  PROFILE_UPDATE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MESSAGE_ACTION: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   DATA_IMPORT: "bg-amber-100 text-amber-700",
   ROLE_CHANGE: "bg-violet-100 text-violet-700",
   PERMISSION_CHANGE: "bg-violet-100 text-violet-700",
   SALARY_ACCESS: "bg-amber-100 text-amber-700",
   COMMISSION_APPROVE: "bg-emerald-100 text-emerald-700",
-  MOCK_CREDIT_CHANGE: "bg-orange-100 text-orange-700",
+  MOCK_CREDIT_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const ACTION_FILTERS = [
@@ -389,7 +389,7 @@ export function AuditLogs() {
           description={`${filtered.length} of ${logs.length} events${hasActiveFilters ? " (filtered)" : ""}`}
           action={
             hasActiveFilters ? (
-              <Button size="sm" variant="ghost" onClick={resetFilters} className="h-8 text-xs">
+              <Button size="sm" variant="ghost" onClick={resetFilters} className=" ">
                 <Icon name="X" className="size-3.5" /> Clear filters
               </Button>
             ) : undefined
@@ -456,7 +456,7 @@ export function AuditLogs() {
               }
               action={
                 hasActiveFilters ? (
-                  <Button variant="outline" onClick={resetFilters} className="h-10">
+                  <Button variant="outline" onClick={resetFilters} className="">
                     <Icon name="RotateCcw" className="size-4" /> Reset filters
                   </Button>
                 ) : undefined
@@ -554,10 +554,10 @@ export function AuditLogs() {
                         </TableCell>
                         <TableCell className="align-top text-right">
                           <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 px-2 text-xs text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                            onClick={() => setSelected(log)}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => setSelected(log)}
                           >
                             <Icon name="Eye" className="size-3.5" /> View
                           </Button>
@@ -666,9 +666,9 @@ export function AuditLogs() {
 
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <Button
-                  variant="outline"
-                  className="h-10"
-                  onClick={() => {
+ variant="outline"
+ className=""
+ onClick={() => {
                     navigator.clipboard?.writeText(prettyJSON(selected.details));
                     toast({ title: "Copied", description: "Audit details copied to clipboard." });
                   }}

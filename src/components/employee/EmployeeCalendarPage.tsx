@@ -40,7 +40,7 @@ interface LoadState {
 }
 
 const TYPE_CONFIG: Record<string, { color: string; bg: string; border: string; dot: string }> = {
-  counseling: { color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200', dot: 'bg-blue-500' },
+  counseling: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-blue-500' },
   follow_up: { color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200', dot: 'bg-amber-500' },
   interview: { color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', dot: 'bg-purple-500' },
   meeting: { color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', dot: 'bg-emerald-500' },

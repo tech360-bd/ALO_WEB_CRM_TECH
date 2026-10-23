@@ -12,26 +12,26 @@ import { useToast } from "@/hooks/use-toast";
 import { timeAgo, fmtDate } from "@/lib/alo-types";
 
 const POOL_COLORS: Record<string, { border: string; bg: string; text: string; bar: string }> = {
-  STUDENT_PARTNER: { border: "border-blue-200", bg: "bg-blue-50/50", text: "text-blue-700", bar: "#0057B8" },
-  OFFICIAL: { border: "border-orange-200", bg: "bg-orange-50/50", text: "text-orange-700", bar: "#E8501A" },
+  STUDENT_PARTNER: { border: "border-[var(--alo-border)]", bg: "bg-[var(--alo-brand-pale)]/50", text: "text-[var(--alo-brand)]", bar: "#0057B8" },
+  OFFICIAL: { border: "border-[var(--alo-cta)]/25", bg: "bg-[var(--alo-cta-soft)]/50", text: "text-[var(--alo-cta-active)]", bar: "#E8501A" },
   OPERATIONAL: { border: "border-violet-200", bg: "bg-violet-50/50", text: "text-violet-700", bar: "#0284C7" },
 };
 
 const STATUS_COLORS: Record<string, string> = {
   HEALTHY: "bg-emerald-100 text-emerald-700",
   WARNING: "bg-amber-100 text-amber-700",
-  HIGH: "bg-orange-100 text-orange-700",
+  HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   CRITICAL: "bg-rose-100 text-rose-700",
   OFFLINE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
 const EVENT_COLORS: Record<string, string> = {
   UPLOAD: "text-emerald-600",
-  DOWNLOAD: "text-blue-600",
+  DOWNLOAD: "text-[var(--alo-brand)]",
   DELETE: "text-rose-600",
   VIEW: "text-[var(--alo-body)]",
   FAILED_UPLOAD: "text-rose-600",
-  QUARANTINE: "text-orange-600",
+  QUARANTINE: "text-[var(--alo-cta-active)]",
 };
 
 function formatBytes(bytes: number): string {
@@ -71,7 +71,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
         subtitle="Three storage pools · UUID-based storage · SHA-256 checksums · Access-controlled downloads · Full audit trail. No file exists only in the browser — every upload is physically stored and verified on the ALO Education server."
         icon="HardDrive"
         action={
-          <Button variant="outline" onClick={fetchHealth} className="h-10">
+          <Button variant="outline" onClick={fetchHealth} className="">
             <Icon name="RefreshCw" className="mr-2 h-4 w-4" /> Refresh
           </Button>
         }
@@ -81,12 +81,12 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
       <Card className={`rounded-2xl border-2 p-5 ${
         data.overallStatus === "HEALTHY" ? "border-emerald-200 bg-emerald-50/50" :
         data.overallStatus === "WARNING" ? "border-amber-200 bg-amber-50/50" :
-        data.overallStatus === "HIGH" ? "border-orange-200 bg-orange-50/50" :
+        data.overallStatus === "HIGH" ? "border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/50" :
         "border-rose-200 bg-rose-50/50"
       }`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className={`h-3 w-3 rounded-full ${data.overallStatus === "HEALTHY" ? "bg-emerald-500" : data.overallStatus === "WARNING" ? "bg-amber-500" : data.overallStatus === "HIGH" ? "bg-orange-500" : "bg-rose-500"}`} />
+            <div className={`h-3 w-3 rounded-full ${data.overallStatus === "HEALTHY" ? "bg-emerald-500" : data.overallStatus === "WARNING" ? "bg-amber-500" : data.overallStatus === "HIGH" ? "bg-[var(--alo-cta)]" : "bg-rose-500"}`} />
             <div>
               <div className="text-sm font-semibold text-[var(--alo-text)]">Overall Storage Status: {data.overallStatus}</div>
               <div className="text-xs text-[var(--alo-body)]">
@@ -104,7 +104,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
               <div className="text-[var(--alo-text-muted)]">Soft-deleted</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-orange-600">{data.summary.quarantinedFiles}</div>
+              <div className="font-bold text-[var(--alo-cta-active)]">{data.summary.quarantinedFiles}</div>
               <div className="text-[var(--alo-text-muted)]">Quarantined</div>
             </div>
           </div>
@@ -137,7 +137,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
               {/* Usage bar */}
               <div className="h-3 rounded-full bg-white overflow-hidden border border-[var(--alo-border)]">
                 <div
-                  className={`h-full transition-all ${percentage >= pool.criticalThreshold ? "bg-rose-500" : percentage >= pool.highThreshold ? "bg-orange-500" : percentage >= pool.warningThreshold ? "bg-amber-500" : "bg-emerald-500"}`}
+                  className={`h-full transition-all ${percentage >= pool.criticalThreshold ? "bg-rose-500" : percentage >= pool.highThreshold ? "bg-[var(--alo-cta)]" : percentage >= pool.warningThreshold ? "bg-amber-500" : "bg-emerald-500"}`}
                   style={{ width: `${Math.min(percentage, 100)}%` }}
                 />
               </div>
@@ -172,7 +172,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
                       <span className="text-[var(--alo-body)]">{e.type}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-[var(--alo-text-muted)]">{formatBytes(e.sizeBytes)}</span>
-                        <Badge className="bg-blue-50 text-blue-700">{e.count}</Badge>
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{e.count}</Badge>
                       </div>
                     </div>
                   ))
@@ -361,7 +361,7 @@ function FileBrowser() {
                       <div className="text-[var(--alo-text-muted)]">{f.entityId || "—"}</div>
                     </TableCell>
                     <TableCell className="align-top text-xs text-[var(--alo-body)]">{formatBytes(f.sizeBytes)}</TableCell>
-                    <TableCell className="align-top"><Badge className="bg-blue-50 text-blue-700 text-xs">{f.visibility}</Badge></TableCell>
+                    <TableCell className="align-top"><Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs">{f.visibility}</Badge></TableCell>
                     <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{timeAgo(f.uploadedAt)}</TableCell>
                   </TableRow>
                 ))}

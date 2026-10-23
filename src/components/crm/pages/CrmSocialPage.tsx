@@ -37,9 +37,9 @@ interface SocialPost {
 }
 
 const PLATFORM_META: Record<string, { label: string; bg: string; icon: React.ElementType }> = {
-  facebook: { label: 'Facebook', bg: 'bg-blue-600', icon: Facebook },
+  facebook: { label: 'Facebook', bg: 'bg-[var(--alo-brand)]', icon: Facebook },
   instagram: { label: 'Instagram', bg: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram },
-  linkedin: { label: 'LinkedIn', bg: 'bg-blue-700', icon: Linkedin },
+  linkedin: { label: 'LinkedIn', bg: 'bg-[var(--alo-brand-hover)]', icon: Linkedin },
   tiktok: { label: 'TikTok', bg: 'bg-gray-900', icon: Music },
 };
 
@@ -50,7 +50,7 @@ function platformMeta(value: string) {
 
 const STATUS_META: Record<string, { label: string; className: string; icon: React.ElementType }> = {
   published: { label: 'Published', className: 'bg-green-100 text-green-700', icon: CheckCircle },
-  scheduled: { label: 'Scheduled', className: 'bg-blue-100 text-blue-700', icon: Clock },
+  scheduled: { label: 'Scheduled', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: Clock },
   draft: { label: 'Draft', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', icon: FileText },
   failed: { label: 'Failed', className: 'bg-red-100 text-red-700', icon: XCircle },
 };
@@ -201,7 +201,7 @@ export default function CrmSocialPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-orange-600 rounded-lg">
+          <div className="p-2 bg-[var(--alo-cta-hover)] rounded-lg">
             <Share2 className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -216,18 +216,18 @@ export default function CrmSocialPage() {
           <div className="flex items-center border rounded-lg overflow-hidden">
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 text-xs font-medium ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-page)]'}`}
+              className={`px-3 py-1.5 text-xs font-medium ${viewMode === 'table' ? 'bg-[var(--alo-brand)] text-white' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-page)]'}`}
             >
               Table
             </button>
             <button
               onClick={() => setViewMode('calendar')}
-              className={`px-3 py-1.5 text-xs font-medium ${viewMode === 'calendar' ? 'bg-blue-600 text-white' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-page)]'}`}
+              className={`px-3 py-1.5 text-xs font-medium ${viewMode === 'calendar' ? 'bg-[var(--alo-brand)] text-white' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-page)]'}`}
             >
               Calendar
             </button>
           </div>
-          <Button size="sm" onClick={() => setShowCreatePost(true)} className="bg-blue-600 hover:bg-blue-700">
+          <Button size="sm" onClick={() => setShowCreatePost(true)} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]">
             <Plus className="h-4 w-4 mr-1" />
             Create Post
           </Button>
@@ -238,7 +238,7 @@ export default function CrmSocialPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Card className="shadow-sm">
           <CardContent className="p-4">
-            <div className="p-2 bg-blue-100 rounded-lg w-fit"><BarChart3 className="h-4 w-4 text-blue-600" /></div>
+            <div className="p-2 bg-[var(--alo-brand-pale)] rounded-lg w-fit"><BarChart3 className="h-4 w-4 text-[var(--alo-brand)]" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-3">{total}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Stored posts</p>
           </CardContent>
@@ -252,7 +252,7 @@ export default function CrmSocialPage() {
         </Card>
         <Card className="shadow-sm">
           <CardContent className="p-4">
-            <div className="p-2 bg-orange-100 rounded-lg w-fit"><Clock className="h-4 w-4 text-orange-600" /></div>
+            <div className="p-2 bg-[var(--alo-cta-soft)] rounded-lg w-fit"><Clock className="h-4 w-4 text-[var(--alo-cta-active)]" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-3">{scheduledCount}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Scheduled</p>
           </CardContent>
@@ -300,7 +300,7 @@ export default function CrmSocialPage() {
               <div>
                 <p className="text-sm font-semibold text-[var(--alo-text)]">Social posts are unavailable</p>
                 <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{loadError}</p>
-                <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadPosts()}>Try again</Button>
+                <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadPosts()}>Try again</Button>
               </div>
             </div>
           </CardContent>
@@ -324,7 +324,7 @@ export default function CrmSocialPage() {
             <p className="text-xs text-[var(--alo-text-muted)] mt-1 max-w-md mx-auto">
               Create your first post to start scheduling content. Posts are stored against the marketing calendar.
             </p>
-            <Button size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700" onClick={() => setShowCreatePost(true)}>
+            <Button size="sm" className="mt-3 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]" onClick={() => setShowCreatePost(true)}>
               <Plus className="h-4 w-4 mr-1" />Create Post
             </Button>
           </CardContent>
@@ -401,7 +401,7 @@ export default function CrmSocialPage() {
               {filteredPosts.length === 0 && (
                 <div className="p-8 text-center">
                   <p className="text-sm text-[var(--alo-text-muted)]">No posts match your search.</p>
-                  <Button size="sm" variant="ghost" className="mt-2 h-7 text-xs" onClick={() => setSearchQuery('')}>
+                  <Button size="sm" variant="ghost" className="mt-2 h-7 " onClick={() => setSearchQuery('')}>
                     Clear search
                   </Button>
                 </div>
@@ -416,7 +416,7 @@ export default function CrmSocialPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-blue-600" />{monthLabel} Schedule
+                <Calendar className="h-4 w-4 text-[var(--alo-brand)]" />{monthLabel} Schedule
               </CardTitle>
               <span className="text-[11px] text-[var(--alo-text-muted)]">{postsByDay.size} day(s) with posts</span>
             </div>
@@ -434,12 +434,12 @@ export default function CrmSocialPage() {
                 return (
                   <div
                     key={day}
-                    className={`p-1 min-h-[48px] rounded text-center text-xs ${hasPosts ? 'bg-blue-50 border border-blue-200' : 'hover:bg-[var(--alo-page)]'} text-[var(--alo-body)]`}
+                    className={`p-1 min-h-[48px] rounded text-center text-xs ${hasPosts ? 'bg-[var(--alo-brand-pale)] border border-[var(--alo-border)]' : 'hover:bg-[var(--alo-page)]'} text-[var(--alo-body)]`}
                   >
                     <span className="font-medium">{day}</span>
                     {hasPosts && (
                       <div className="mt-0.5">
-                        <span className="bg-blue-600 text-white text-[11px] rounded px-1 py-0.5">
+                        <span className="bg-[var(--alo-brand)] text-white text-[11px] rounded px-1 py-0.5">
                           {count} post{count > 1 ? 's' : ''}
                         </span>
                       </div>
@@ -454,7 +454,7 @@ export default function CrmSocialPage() {
 
       {/* Create Post */}
       {showCreatePost && (
-        <Card className="shadow-lg border-blue-200">
+        <Card className="shadow-lg border-[var(--alo-border)]">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">Create New Post</CardTitle>
@@ -470,7 +470,7 @@ export default function CrmSocialPage() {
                   <button
                     key={p}
                     onClick={() => setNewPostPlatform(p)}
-                    className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-colors ${newPostPlatform === p ? 'border-blue-500 bg-blue-50' : 'hover:bg-[var(--alo-page)]'}`}
+                    className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-colors ${newPostPlatform === p ? 'border-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' : 'hover:bg-[var(--alo-page)]'}`}
                   >
                     <span className={`w-8 h-8 rounded ${meta.bg} flex items-center justify-center`}>
                       <Icon className="h-4 w-4 text-white" />
@@ -506,7 +506,7 @@ export default function CrmSocialPage() {
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowCreatePost(false)} disabled={saving}>Cancel</Button>
-              <Button onClick={() => void handleCreatePost()} disabled={saving} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={() => void handleCreatePost()} disabled={saving} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]">
                 <Send className="h-4 w-4 mr-1" />
                 {saving ? 'Saving…' : newPostStatus === 'published' ? 'Publish' : 'Save'}
               </Button>

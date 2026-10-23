@@ -74,7 +74,7 @@ const RISK_STYLE: Record<RiskLevel, string> = {
 
 const BAND_STYLE: Record<SuccessBand, string> = {
   ON_TRACK: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  NEEDS_SUPPORT: 'border-blue-200 bg-blue-50 text-blue-800',
+  NEEDS_SUPPORT: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   AT_RISK: 'border-amber-200 bg-amber-50 text-amber-800',
   CRITICAL: 'border-red-200 bg-red-50 text-red-800',
 };
@@ -312,7 +312,7 @@ export default function RiskDashboardPage() {
                 </p>
               )}
 
-              <p className="rounded-xl border-2 border-blue-200 bg-blue-50 p-3 text-[11px] leading-relaxed text-blue-900">
+              <p className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-3 text-[11px] leading-relaxed text-[var(--alo-brand-deep)]">
                 <strong className="font-bold">About this score:</strong> {data.disclaimer}
               </p>
             </CardContent>

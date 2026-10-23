@@ -179,7 +179,7 @@ export default function MasterCountryDestinationView({
             
             {/* LEFT COLUMN */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-[var(--alo-brand)] rounded-full text-xs font-bold border border-blue-100">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-full text-xs font-bold border border-[var(--alo-border)]">
                 <span className="text-lg">{countryData.flag}</span>
                 <span className="tracking-wider uppercase">STUDY IN {countryData.name}</span>
                 <span className="bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-extrabold">✓ Verified 2026</span>
@@ -265,7 +265,7 @@ export default function MasterCountryDestinationView({
           <div className="flex items-center gap-2 overflow-x-auto py-3 text-xs font-bold text-[var(--alo-body)] no-scrollbar">
             <Link
               href={`/destinations/${countryData.slug}`}
-              className="px-4 py-2 rounded-xl bg-[var(--alo-brand)] text-white shrink-0 hover:bg-blue-700 transition"
+              className="px-4 py-2 rounded-xl bg-[var(--alo-brand)] text-white shrink-0 hover:bg-[var(--alo-brand-hover)] transition"
             >
               Overview
             </Link>
@@ -324,7 +324,7 @@ export default function MasterCountryDestinationView({
             </div>
 
             <div className="lg:col-span-7 space-y-4">
-              <span className="text-xs font-bold text-[var(--alo-brand)] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              <span className="text-xs font-bold text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] px-3 py-1 rounded-full border border-[var(--alo-border)]">
                 Editorial Insight • ALO Education
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-[var(--alo-text)] tracking-tight">
@@ -399,7 +399,7 @@ export default function MasterCountryDestinationView({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {countryData.pathways.map((path, idx) => (
               <div key={idx} className="bg-white p-6 rounded-2xl border border-[var(--alo-border)] shadow-sm space-y-3">
-                <span className="text-xs font-bold text-[var(--alo-brand)] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+                <span className="text-xs font-bold text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] px-2.5 py-1 rounded-full border border-[var(--alo-border)]">
                   Pathway {idx + 1}
                 </span>
                 <h4 className="font-bold text-sm text-[var(--alo-text)]">{path.fromLevel}</h4>
@@ -426,7 +426,7 @@ export default function MasterCountryDestinationView({
             </div>
             <Link
               href={`/course-finder?country=${countryData.code}`}
-              className="h-10 px-5 bg-[var(--alo-brand)] hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition"
+              className="h-10 px-5 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition"
             >
               Explore All Courses <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -437,7 +437,7 @@ export default function MasterCountryDestinationView({
               <div key={c.id || c.courseId} className="bg-white rounded-2xl border border-[var(--alo-border)] p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-[var(--alo-brand)] transition">
                 <div className="space-y-2">
                   <div className="flex justify-between items-start gap-2">
-                    <Badge variant="outline" className="text-[var(--alo-brand)] border-blue-200 text-[11px] font-bold">
+                    <Badge variant="outline" className="text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] font-bold">
                       {c.studyLevel || 'Postgraduate'}
                     </Badge>
                     <span className="text-[11px] text-[var(--alo-text-muted)] font-medium">{c.durationMonths ? `${c.durationMonths} Months` : '1 Year'}</span>
@@ -484,7 +484,7 @@ export default function MasterCountryDestinationView({
             {linkedUniversities.slice(0, 8).map((u: any) => (
               <div key={u.id || u.universityId} className="bg-white rounded-2xl border border-[var(--alo-border)] p-5 shadow-sm space-y-3 flex flex-col justify-between hover:border-[var(--alo-brand)] transition">
                 <div className="space-y-1.5">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-[var(--alo-brand)] flex items-center justify-center font-black text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-black text-sm">
                     {u.name?.charAt(0) || 'U'}
                   </div>
                   <h3 className="font-bold text-sm text-[var(--alo-text)] line-clamp-2">{u.name}</h3>
@@ -574,11 +574,11 @@ export default function MasterCountryDestinationView({
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-blue-100">Net 1st Year Tuition:</span>
+                  <span className="text-[var(--alo-brand-pale)]">Net 1st Year Tuition:</span>
                   <span className="font-bold text-sm">{countryData.currency} {netTuition.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-blue-100">Estimated Living Expenses:</span>
+                  <span className="text-[var(--alo-brand-pale)]">Estimated Living Expenses:</span>
                   <span className="font-bold text-sm">{countryData.currency} {estimatedLiving.toLocaleString()}</span>
                 </div>
                 <div className="border-t border-white/20 pt-2 flex justify-between text-base font-black text-amber-300">
@@ -586,7 +586,7 @@ export default function MasterCountryDestinationView({
                   <span>৳ {totalCostBdt.toLocaleString()} BDT</span>
                 </div>
                 <div className="p-3 bg-white/10 rounded-xl space-y-1">
-                  <span className="text-blue-200 font-semibold">Estimated Bank Statement Requirement:</span>
+                  <span className="text-[var(--alo-brand-pale)] font-semibold">Estimated Bank Statement Requirement:</span>
                   <p className="text-sm font-black text-emerald-300">৳ {bankStatementBdt.toLocaleString()} BDT</p>
                 </div>
               </div>
@@ -650,7 +650,7 @@ export default function MasterCountryDestinationView({
                   </div>
                   <button
                     onClick={handleRunEligibilityCheck}
-                    className="w-full h-11 bg-[var(--alo-brand)] hover:bg-blue-700 text-white font-bold rounded-xl transition"
+                    className="w-full h-11 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl transition"
                   >
                     Run AI Check
                   </button>
@@ -834,7 +834,7 @@ export default function MasterCountryDestinationView({
             {countryData.sources.map((src, i) => (
               <span key={i} className="inline-flex items-center gap-1">
                 • <strong>{src.section}:</strong> Verified by ALO Compliance via{' '}
-                <a href={src.sourceUrl} target="_blank" rel="noreferrer" className="underline text-blue-600">
+                <a href={src.sourceUrl} target="_blank" rel="noreferrer" className="underline text-[var(--alo-brand)]">
                   {src.sourceName}
                 </a>{' '}
                 ({src.lastVerifiedAt})

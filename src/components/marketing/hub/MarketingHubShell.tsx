@@ -358,10 +358,10 @@ export default function MarketingHubShell({ children }: MarketingHubShellProps) 
         <div className="flex items-center justify-between px-4 py-2 bg-[var(--alo-page)] border-b border-[var(--alo-border)] shrink-0">
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="sm"
-              className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-8"
-              onClick={() => setView('crm-dashboard')}
+ variant="ghost"
+ size="sm"
+ className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] "
+ onClick={() => setView('crm-dashboard')}
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               CRM
@@ -374,7 +374,7 @@ export default function MarketingHubShell({ children }: MarketingHubShellProps) 
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[11px] bg-orange-50 text-orange-600 border-orange-200">
+            <Badge variant="outline" className="text-[11px] bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25">
               <Megaphone className="w-3 h-3 mr-1" />
               Marketing Manager
             </Badge>

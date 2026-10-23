@@ -771,7 +771,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
     <div className="space-y-6 bg-[var(--alo-page)]/50 min-h-screen p-4 lg:p-6 text-[var(--alo-text)]">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white p-5 rounded-xl border shadow-sm">
         <div className="flex items-center gap-3">
-          {onBack ? <Button variant="outline" size="sm" onClick={onBack} className="h-8 text-xs"><ArrowLeft className="w-3.5 h-3.5 mr-1" /> Back</Button> : <Link href="/employee/visa-cases"><Button variant="outline" size="sm" className="h-8 text-xs"><ArrowLeft className="w-3.5 h-3.5 mr-1" /> Cases</Button></Link>}
+          {onBack ? <Button variant="outline" size="sm" onClick={onBack} className=" "><ArrowLeft className="w-3.5 h-3.5 mr-1" /> Back</Button> : <Link href="/employee/visa-cases"><Button variant="outline" size="sm" className=" "><ArrowLeft className="w-3.5 h-3.5 mr-1" /> Cases</Button></Link>}
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-bold">Visa Interview Workspace ({caseData.caseCode})</h1>
@@ -782,7 +782,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
           </div>
         </div>
         {caseAccess.readinessUpdate && <div className="flex items-center gap-2">
-          <Button onClick={handleCalculateReadiness} size="sm" variant="outline" className="h-8 text-xs"><Sparkles className="w-3.5 h-3.5 mr-1 text-indigo-600" /> Recalculate Completion</Button>
+          <Button onClick={handleCalculateReadiness} size="sm" variant="outline" className=" "><Sparkles className="w-3.5 h-3.5 mr-1 text-indigo-600" /> Recalculate Completion</Button>
         </div>}
       </div>
 
@@ -947,7 +947,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                     onChange={(event) => setStudentFeedbackText(event.target.value)}
                     className="text-xs bg-[var(--alo-page)]"
                   />
-                  <Button size="sm" className="w-full h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" disabled={!studentFeedbackText.trim()} onClick={handleSendStudentFeedback}>
+                  <Button size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" disabled={!studentFeedbackText.trim()} onClick={handleSendStudentFeedback}>
                     <Send className="mr-1 h-3.5 w-3.5" /> Approve & share in student portal
                   </Button>
                   <p className="text-[11px] text-[var(--alo-text-muted)]">The feedback is saved to the portal; this action does not send an external message.</p>
@@ -1218,7 +1218,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
               <CardTitle className="text-sm font-bold">Case-record completion indicator</CardTitle>
               <p className="text-xs text-[var(--alo-text-muted)] mt-1">A summary of recorded case information only — not eligibility, visa readiness, an approval prediction, or a guarantee.</p>
             </div>
-            {caseAccess.readinessUpdate && <Button onClick={handleCalculateReadiness} size="sm" className="h-8 text-xs bg-indigo-600 text-white">Recalculate from records</Button>}
+            {caseAccess.readinessUpdate && <Button onClick={handleCalculateReadiness} size="sm" className=" bg-indigo-600 text-white">Recalculate from records</Button>}
           </CardHeader>
           <CardContent className="p-4">
             {readiness && typeof readiness.overallScore === 'number' ? (
@@ -1265,7 +1265,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                   >
                     {noteVisibilityOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
-                  <Button size="sm" disabled={!officerNoteText.trim()} className="h-8 text-xs bg-indigo-600 text-white" onClick={handleSaveOfficerNote}>
+                  <Button size="sm" disabled={!officerNoteText.trim()} className=" bg-indigo-600 text-white" onClick={handleSaveOfficerNote}>
                     Save note
                   </Button>
                 </div>

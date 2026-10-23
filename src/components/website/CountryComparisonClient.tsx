@@ -102,10 +102,10 @@ export default function CountryComparisonClient({
             </span>
             {countries.length > 0 && (
               <Button
-                variant="outline"
-                onClick={exportCsv}
-                className="h-10 rounded-button border-alo-border px-4 text-[13px] font-semibold"
-              >
+ variant="outline"
+ onClick={exportCsv}
+ className=" rounded-button border-alo-border px-4 text-[13px] font-semibold"
+ >
                 <Download className="mr-2 h-4 w-4" aria-hidden="true" />
                 Download Comparison
               </Button>
@@ -173,8 +173,8 @@ export default function CountryComparisonClient({
               entry requirements.
             </p>
             <Button
-              className="mt-2 h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover"
-              onClick={() => setSelection(allCountries.slice(0, 2).map((country) => country.slug))}
+ className="mt-2 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover"
+ onClick={() => setSelection(allCountries.slice(0, 2).map((country) => country.slug))}
             >
               Compare the two most popular destinations
             </Button>

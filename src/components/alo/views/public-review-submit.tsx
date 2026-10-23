@@ -153,7 +153,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
 
           {/* Multi-channel: show Google/Facebook links if available */}
           {(invitation.googleReviewUrl || invitation.facebookRecommendUrl) && (
-            <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 mb-4 text-left">
+            <div className="rounded-lg bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] p-4 mb-4 text-left">
               <div className="text-sm font-semibold text-[var(--alo-brand)] mb-2">Optional: Also share on these platforms</div>
               <p className="text-xs text-[var(--alo-body)] mb-3">
                 You can optionally share your experience on Google and Facebook. Clicking a link opens the official platform — you submit the review yourself. We never post on your behalf.
@@ -203,8 +203,8 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           {/* Context */}
           {(invitation.country || invitation.serviceType) && (
             <div className="flex flex-wrap gap-2">
-              {invitation.country && <Badge className="bg-blue-50 text-blue-700">🌍 {invitation.country}</Badge>}
-              {invitation.serviceType && <Badge className="bg-orange-50 text-orange-700">{SERVICE_LABELS[invitation.serviceType] || invitation.serviceType}</Badge>}
+              {invitation.country && <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">🌍 {invitation.country}</Badge>}
+              {invitation.serviceType && <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]">{SERVICE_LABELS[invitation.serviceType] || invitation.serviceType}</Badge>}
             </div>
           )}
 
@@ -271,7 +271,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           </div>
 
           {/* AI notice */}
-          <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 text-xs text-[var(--alo-body)]">
+          <div className="rounded-lg bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] p-3 text-xs text-[var(--alo-body)]">
             <Icon name="Info" className="h-4 w-4 inline mr-1 text-[var(--alo-brand)]" />
             Your review will be checked by our AI system for spam and inappropriate content. We never modify your words — the review is published as you wrote it (after moderation).
           </div>

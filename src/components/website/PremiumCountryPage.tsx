@@ -125,7 +125,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] h-12 px-8 font-semibold rounded-xl">Check Eligibility</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
               </div>
               <p className="text-[11px] text-[var(--alo-text-muted)]">Last Verified: {countryData.lastVerifiedAt}</p>
             </div>
@@ -260,7 +260,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Popular courses in {countryData.name}</h2>
-            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[var(--alo-border)] h-12 text-xs">Find more courses</Button></Link>
+            <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[var(--alo-border)] h-12 ">Find more courses</Button></Link>
           </div>
           {linkedCourses.length === 0 ? (
             <Card className="p-12 bg-white border-[var(--alo-border)] rounded-2xl text-center"><GraduationCap className="w-12 h-12 text-[var(--alo-border-strong)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">We have no verified course records for {countryData.name} yet.</p><p className="text-xs text-[var(--alo-text-muted)] mt-2">Information not currently verified. Please check with an ALO Education counselor.</p></Card>
@@ -282,7 +282,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Last Verified: {c.lastVerifiedAt || countryData.lastVerifiedAt}</p>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 text-xs font-bold">View course</Button></Link>
+                    <Link href={`/course/${c.slug || c.courseId}`} className="block"><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 font-bold">View course</Button></Link>
                     <div className="grid grid-cols-2 gap-2">
                       <Link href={`/compare?course=${c.courseId}`}><Button variant="outline" size="sm" className="w-full border-[var(--alo-border)] h-12 text-[11px]">Compare</Button></Link>
                       <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full border-[var(--alo-border)] h-12 text-[11px]">Apply</Button></Link>
@@ -300,7 +300,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Popular universities in {countryData.name}</h2>
-            <Link href={`/universities?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[var(--alo-border)] h-12 text-xs">View All Universities in {countryData.name}</Button></Link>
+            <Link href={`/universities?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[var(--alo-border)] h-12 ">View All Universities in {countryData.name}</Button></Link>
           </div>
           {linkedUniversities.length === 0 ? (
             <Card className="p-12 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><Building2 className="w-12 h-12 text-[var(--alo-border-strong)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">We have no verified university records for {countryData.name} yet.</p></Card>
@@ -321,7 +321,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                     </div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <Link href={`/universities/${u.slug || u.universityId}`} className="block"><Button className="w-full bg-[var(--alo-brand)] text-white h-12 text-xs font-bold">View university</Button></Link>
+                    <Link href={`/universities/${u.slug || u.universityId}`} className="block"><Button className="w-full bg-[var(--alo-brand)] text-white h-12 font-bold">View university</Button></Link>
                     <div className="grid grid-cols-2 gap-2">
                       <Link href={`/course-finder?university=${u.universityId}`}><Button variant="outline" size="sm" className="w-full border-[var(--alo-border)] h-12 text-[11px]">View Courses</Button></Link>
                       <Link href="/eligibility-check"><Button variant="outline" size="sm" className="w-full bg-[var(--alo-cta)]/10 border-[var(--alo-cta)]/20 text-[var(--alo-cta)] h-12 text-[11px]">Apply Through ALO</Button></Link>
@@ -443,7 +443,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             {countryData.englishTests.map((test, i) => (
               <Card key={i} className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm hover:shadow-md transition-all h-full flex flex-col justify-between">
                 <div>
-                  <Badge className="bg-blue-50 text-[var(--alo-brand)] border-blue-100 text-[11px] mb-2">{test.name}</Badge>
+                  <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] mb-2">{test.name}</Badge>
                   <p className="text-xs font-semibold text-[var(--alo-text)]">Accepted for: {test.accepted}</p>
                   <p className="text-xs text-[var(--alo-body)] mt-1">{test.note}</p>
                   <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Source: <a href={test.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline">{test.sourceUrl}</a></p>
@@ -566,7 +566,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
       {/* 18. SCHOLARSHIPS — Load from scholarships table filter country */}
       <section className="py-16 bg-[var(--alo-page)] border-b border-[var(--alo-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex items-center justify-between"><h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Scholarships in {countryData.name} — Load from DB Filter Country</h2><Link href={`/scholarships?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[var(--alo-border)] h-12 text-xs">View All Scholarships in {countryData.name}</Button></Link></div>
+          <div className="flex items-center justify-between"><h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Scholarships in {countryData.name} — Load from DB Filter Country</h2><Link href={`/scholarships?country=${encodeURIComponent(countryData.name)}`}><Button variant="outline" className="border-[var(--alo-border)] h-12 ">View All Scholarships in {countryData.name}</Button></Link></div>
           {linkedScholarships.length === 0 ? <Card className="p-8 bg-white border-[var(--alo-border)] rounded-2xl text-center"><Award className="w-12 h-12 text-[var(--alo-border-strong)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">We have no verified scholarship records for {countryData.name} yet.</p></Card> : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {linkedScholarships.slice(0,6).map((s:any)=>(
@@ -603,7 +603,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Last verified: {countryData.lastVerifiedAt}</p>
                 </div>
                 <div className="p-5 pt-0">
-                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)] hover:text-white h-12 text-xs font-bold">Explore {city.name} courses</Button></Link>
+                  <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}&city=${encodeURIComponent(city.name)}`} className="block"><Button className="w-full bg-white border border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)] hover:text-white h-12 font-bold">Explore {city.name} courses</Button></Link>
                 </div>
               </Card>
             ))}

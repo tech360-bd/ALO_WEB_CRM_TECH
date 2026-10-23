@@ -994,3 +994,205 @@ summary:focus-visible {
   outline: 2px solid var(--alo-brand);
   outline-offset: 2px;
 }
+
+/* ============================================================
+   MOTION, READING LAYOUT AND REMAINING UTILITIES
+   ------------------------------------------------------------
+   These classes are referenced throughout the app but were never
+   generated: `tailwindcss-animate` is not a dependency, so every
+   dialog/sheet/popover mounted with `animate-in fade-in-0 zoom-in-95`
+   (100+ call sites) simply appeared with no transition, and the blog,
+   news and resource pages used `prose` with no typography styles at all.
+   Rather than add dependencies, the subset that the product actually uses
+   is implemented here on the brand easing curve (Master §12: 150–250 ms,
+   ±8–16 px reveal, and fully disabled under prefers-reduced-motion).
+   ============================================================ */
+
+/* ── 1. Enter / exit animations (shadcn-compatible custom properties) ── */
+@keyframes alo-enter {
+  from {
+    opacity: var(--alo-enter-opacity, 1);
+    transform: translate3d(var(--alo-enter-translate-x, 0), var(--alo-enter-translate-y, 0), 0)
+      scale(var(--alo-enter-scale, 1))
+      rotate(var(--alo-enter-rotate, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) rotate(0);
+  }
+}
+
+@keyframes alo-exit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) rotate(0);
+  }
+  to {
+    opacity: var(--alo-exit-opacity, 1);
+    transform: translate3d(var(--alo-exit-translate-x, 0), var(--alo-exit-translate-y, 0), 0)
+      scale(var(--alo-exit-scale, 1))
+      rotate(var(--alo-exit-rotate, 0));
+  }
+}
+
+.animate-in {
+  animation-name: alo-enter;
+  animation-duration: 200ms;
+  animation-timing-function: var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  animation-fill-mode: both;
+}
+.animate-out {
+  animation-name: alo-exit;
+  animation-duration: 150ms;
+  animation-timing-function: var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  animation-fill-mode: both;
+}
+
+.fade-in-0 { --alo-enter-opacity: 0; }
+.fade-out-0 { --alo-exit-opacity: 0; }
+.zoom-in-95 { --alo-enter-scale: 0.95; }
+.zoom-out-95 { --alo-exit-scale: 0.95; }
+.slide-in-from-top-1 { --alo-enter-translate-y: -0.25rem; }
+.slide-in-from-top-2 { --alo-enter-translate-y: -0.5rem; }
+.slide-in-from-top-4 { --alo-enter-translate-y: -1rem; }
+.slide-in-from-bottom-1 { --alo-enter-translate-y: 0.25rem; }
+.slide-in-from-bottom-2 { --alo-enter-translate-y: 0.5rem; }
+.slide-in-from-bottom-3 { --alo-enter-translate-y: 0.75rem; }
+.slide-in-from-bottom-4 { --alo-enter-translate-y: 1rem; }
+.slide-in-from-left-2 { --alo-enter-translate-x: -0.5rem; }
+.slide-in-from-left-4 { --alo-enter-translate-x: -1rem; }
+.slide-in-from-right-2 { --alo-enter-translate-x: 0.5rem; }
+.slide-in-from-right-4 { --alo-enter-translate-x: 1rem; }
+.slide-out-to-top-2 { --alo-exit-translate-y: -0.5rem; }
+.slide-out-to-bottom-2 { --alo-exit-translate-y: 0.5rem; }
+.slide-out-to-left-2 { --alo-exit-translate-x: -0.5rem; }
+.slide-out-to-right-2 { --alo-exit-translate-x: 0.5rem; }
+
+/* ── 2. Radix accordion + OTP caret (referenced by ui/accordion, ui/input-otp) ── */
+@keyframes alo-accordion-down {
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+@keyframes alo-accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
+}
+.animate-accordion-down {
+  animation: alo-accordion-down 220ms var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+}
+.animate-accordion-up {
+  animation: alo-accordion-up 180ms var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+}
+
+@keyframes alo-caret-blink {
+  0%, 70% { opacity: 1; }
+  71%, 100% { opacity: 0; }
+}
+.animate-caret-blink {
+  animation: alo-caret-blink 1.1s steps(1, end) infinite;
+}
+
+/* ── 3. Reading layout for blog / news / resource bodies (`.prose`) ── */
+.prose {
+  color: var(--alo-body);
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 72ch;
+}
+.prose > * + * { margin-top: 1.15em; }
+.prose :where(h1, h2, h3, h4) {
+  color: var(--alo-text);
+  font-family: var(--alo-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  margin-top: 1.9em;
+}
+.prose :where(h1) { font-size: 30px; }
+.prose :where(h2) { font-size: 23px; }
+.prose :where(h3) { font-size: 19px; }
+.prose :where(h4) { font-size: 17px; }
+.prose :where(p, ul, ol, blockquote, figure, table) { margin-top: 1.15em; }
+.prose :where(ul) { list-style: disc; padding-left: 1.4em; }
+.prose :where(ol) { list-style: decimal; padding-left: 1.4em; }
+.prose :where(li) { margin-top: 0.4em; }
+.prose :where(a) {
+  color: var(--alo-brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose :where(a:hover) { color: var(--alo-brand-hover); }
+.prose :where(strong) { color: var(--alo-text); font-weight: 700; }
+.prose :where(blockquote) {
+  border-left: 3px solid var(--alo-brand-border);
+  color: var(--alo-text-secondary);
+  font-style: italic;
+  padding-left: 1.1em;
+}
+.prose :where(code) {
+  background: var(--alo-surface-muted);
+  border-radius: 6px;
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+}
+.prose :where(pre) {
+  background: var(--alo-text);
+  border-radius: 12px;
+  color: var(--alo-surface-muted);
+  font-size: 13px;
+  overflow-x: auto;
+  padding: 1em 1.15em;
+}
+.prose :where(img, video) { border-radius: 14px; width: 100%; }
+.prose :where(hr) { border-color: var(--alo-border); }
+.prose :where(table) { font-size: 14px; width: 100%; border-collapse: collapse; }
+.prose :where(th) { text-align: left; color: var(--alo-text); font-weight: 600; }
+.prose :where(th, td) { border-bottom: 1px solid var(--alo-border); padding: 0.6em 0.75em; }
+.prose-sm { font-size: 14px; }
+.prose-lg { font-size: 18px; line-height: 1.7; }
+.prose-slate, .prose-blue, .prose-headings { color: inherit; }
+
+/* ── 4. Remaining referenced-but-missing helpers ── */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.bg-alo-hero {
+  background-color: var(--alo-brand-pale);
+  background-image: radial-gradient(120% 140% at 82% -10%, var(--alo-brand-light) 0%, transparent 62%);
+}
+.bg-alo-gradient-orange {
+  background-image: linear-gradient(90deg, var(--alo-cta) 0%, var(--alo-cta-accent) 100%);
+}
+
+/* Graduate-cap marquee used by the public footer */
+@keyframes alo-cap-scroll-left {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes alo-cap-scroll-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.alo-cap-track {
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  width: max-content;
+  will-change: transform;
+}
+.alo-cap-stack { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.alo-cap-left { animation: alo-cap-scroll-left 42s linear infinite; }
+.alo-cap-right { animation: alo-cap-scroll-right 42s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .animate-out,
+  .animate-accordion-down,
+  .animate-accordion-up,
+  .animate-caret-blink,
+  .alo-cap-left,
+  .alo-cap-right {
+    animation: none !important;
+  }
+}

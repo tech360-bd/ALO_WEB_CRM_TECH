@@ -209,7 +209,7 @@ const SUBJECT_MAP: Record<string, string[]> = {
 function levelColor(level: string): string {
   const l = (level || '').toLowerCase();
   if (l.includes('phd') || l.includes('doctor')) return 'bg-purple-100 text-purple-700';
-  if (l.includes('master') || l.includes('msc') || l.includes('ma ')) return 'bg-blue-100 text-blue-700';
+  if (l.includes('master') || l.includes('msc') || l.includes('ma ')) return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
   if (l.includes('bachelor') || l.includes('bsc') || l.includes('ba ')) return 'bg-green-100 text-green-700';
   if (l.includes('foundation') || l.includes('diploma') || l.includes('certificate')) return 'bg-amber-100 text-amber-700';
   return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
@@ -567,11 +567,11 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
                       </div>
                       <div className="flex gap-2 pt-2">
                         <Link href={`/course-finder?search=${encodeURIComponent(course.courseTitle || '')}`}>
-                        <Button variant="outline" className="flex-1 h-12 text-xs rounded-lg" style={{ borderColor: C.border, color: C.text }}>
+                        <Button variant="outline" className="flex-1 h-12 rounded-lg" style={{ borderColor: C.border, color: C.text }}>
                           View Details
                         </Button>
                       </Link>
-                        <Button asChild className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
+                        <Button asChild className="flex-1 h-12 rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
                           Apply
                         </Link></Button>
                       </div>

@@ -21,10 +21,10 @@ import {
 type PlatformKey = 'facebook' | 'instagram' | 'messenger' | 'linkedin' | 'tiktok' | 'youtube' | 'whatsapp_status' | 'website';
 
 const platformConfig: Record<PlatformKey, { label: string; bg: string; icon: React.ElementType }> = {
-  facebook: { label: 'Facebook', bg: 'bg-blue-600', icon: Facebook },
+  facebook: { label: 'Facebook', bg: 'bg-[var(--alo-brand)]', icon: Facebook },
   instagram: { label: 'Instagram', bg: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram },
   messenger: { label: 'Messenger', bg: 'bg-purple-600', icon: MessageSquare },
-  linkedin: { label: 'LinkedIn', bg: 'bg-blue-700', icon: Linkedin },
+  linkedin: { label: 'LinkedIn', bg: 'bg-[var(--alo-brand-hover)]', icon: Linkedin },
   tiktok: { label: 'TikTok', bg: 'bg-gray-900', icon: Youtube },
   youtube: { label: 'YouTube', bg: 'bg-red-600', icon: Youtube },
   whatsapp_status: { label: 'WhatsApp', bg: 'bg-green-600', icon: MessageCircle },
@@ -405,7 +405,7 @@ export default function SocialMediaAutomationView() {
                 <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
                   <p className="font-semibold">Social inbox is unavailable</p>
                   <p className="text-muted-foreground">{inboxError}</p>
-                  <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadInbox()}>Try again</Button>
+                  <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadInbox()}>Try again</Button>
                 </div>
               ) : inboxLoading ? (
                 <div className="space-y-2" aria-busy="true" aria-live="polite">
@@ -433,7 +433,7 @@ export default function SocialMediaAutomationView() {
                             <div className="flex items-center justify-between gap-2">
                               <span className="text-xs font-semibold text-[var(--alo-text)] flex items-center gap-1.5">
                                 {conversation.senderName || 'Unknown sender'}
-                                {conversation.unread > 0 && <span className="w-2 h-2 rounded-full bg-orange-500" aria-label="unread" />}
+                                {conversation.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--alo-cta)]" aria-label="unread" />}
                               </span>
                               <span className="flex items-center gap-1 shrink-0">
                                 <Icon className="w-3 h-3 text-[var(--alo-text-muted)]" />
@@ -480,7 +480,7 @@ export default function SocialMediaAutomationView() {
                 <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
                   <p className="font-semibold">Comments are unavailable</p>
                   <p className="text-muted-foreground">{commentsError}</p>
-                  <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadComments()}>Try again</Button>
+                  <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadComments()}>Try again</Button>
                 </div>
               ) : commentsLoading ? (
                 <div className="space-y-2" aria-busy="true" aria-live="polite">
@@ -540,7 +540,7 @@ export default function SocialMediaAutomationView() {
                             </td>
                             <td className="py-2.5 text-right">
                               {isConverted ? (
-                                <Badge className="text-[11px] bg-blue-100 text-blue-700">
+                                <Badge className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                                   <Target className="w-2.5 h-2.5 mr-0.5" />{comment.leadId || 'Converted'}
                                 </Badge>
                               ) : (
@@ -572,7 +572,7 @@ export default function SocialMediaAutomationView() {
           <Card className="bg-white border border-[var(--alo-border)] mt-4">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                <Hash className="w-4 h-4 text-orange-500" /> Keyword Triggers
+                <Hash className="w-4 h-4 text-[var(--alo-cta)]" /> Keyword Triggers
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -580,7 +580,7 @@ export default function SocialMediaAutomationView() {
                 <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
                   <p className="font-semibold">Keyword triggers are unavailable</p>
                   <p className="text-muted-foreground">{triggersError}</p>
-                  <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadTriggers()}>Try again</Button>
+                  <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadTriggers()}>Try again</Button>
                 </div>
               ) : triggersLoading ? (
                 <div className="space-y-2" aria-busy="true" aria-live="polite">
@@ -611,7 +611,7 @@ export default function SocialMediaAutomationView() {
                         return (
                           <tr key={trigger.id} className="border-b border-gray-50 hover:bg-[var(--alo-page)]">
                             <td className="py-2.5">
-                              <span className="text-xs font-bold text-orange-600">{trigger.keyword}</span>
+                              <span className="text-xs font-bold text-[var(--alo-cta-active)]">{trigger.keyword}</span>
                               <Badge variant="outline" className="ml-1.5 text-[11px] font-normal">{trigger.keywordType}</Badge>
                             </td>
                             <td className="py-2.5">
@@ -673,7 +673,7 @@ export default function SocialMediaAutomationView() {
             <Card className="bg-white border border-[var(--alo-border)]">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                  <Send className="w-4 h-4 text-orange-500" /> Auto DM Sequences
+                  <Send className="w-4 h-4 text-[var(--alo-cta)]" /> Auto DM Sequences
                 </CardTitle>
               </CardHeader>
               <CardContent>

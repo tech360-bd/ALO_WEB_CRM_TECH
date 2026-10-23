@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Globe, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { COUNTRY_DESTINATIONS } from '@/lib/country-destinations-data';
 
 export const metadata = {
@@ -12,31 +12,52 @@ export default function DestinationsIndexPage() {
   const destinations = Object.values(COUNTRY_DESTINATIONS);
 
   return (
-    <div className="bg-[var(--alo-page)] min-h-screen py-16 text-[var(--alo-text)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-[var(--alo-brand)] font-bold text-xs rounded-full border border-blue-100">
-            <Globe className="w-4 h-4" /> Global Study Destinations
+    <div className="min-h-screen bg-[var(--alo-page)] text-[var(--alo-text)]">
+      {/* Hero Variant C — destination-led: the countries carry the composition,
+          so the band is a media strip rather than a centred text block. */}
+      <header className="border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)]">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr]">
+            <div>
+              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-secondary)] ring-1 ring-inset ring-[var(--alo-border)]">
+                <span className="size-1.5 rounded-full bg-[var(--alo-brand)]" aria-hidden="true" />
+                <span className="text-[var(--alo-brand)]">Global study destinations</span>
+              </span>
+              <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px]">
+                Choose Your Target Country
+              </h1>
+              <p className="mt-4 max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)]">
+                Verified official visa rules, 1-year Master’s pathways, work rights, and scholarships tailored for Bangladeshi applicants.
+              </p>
+            </div>
+            <nav aria-label="Jump to a destination" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:gap-3">
+              {destinations.map((dest, index) => (
+                <Link
+                  key={dest.slug}
+                  href={`/destinations/${dest.slug}`}
+                  className="group flex min-h-12 items-center gap-2 rounded-[14px] border border-[var(--alo-border)] bg-card px-3 py-2.5 text-[13px] font-semibold text-[var(--alo-text)] transition-colors hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
+                >
+                  <span aria-hidden="true" className="text-base leading-none">{dest.flag}</span>
+                  <span className="truncate">{dest.name}</span>
+                </Link>
+              ))}
+            </nav>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--alo-text)] tracking-tight">
-            Choose Your Target Country
-          </h1>
-          <p className="text-sm text-[var(--alo-body)] leading-relaxed">
-            Verified official visa rules, 1-year Master’s pathways, work rights, and scholarships tailored for Bangladeshi applicants.
-          </p>
         </div>
+      </header>
 
+      <div className="mx-auto max-w-7xl space-y-12 px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {destinations.map((dest) => (
+          {destinations.map((dest, index) => (
             <div
               key={dest.slug}
-              className="bg-white rounded-2xl border border-[var(--alo-border)] shadow-sm overflow-hidden flex flex-col justify-between hover:border-[var(--alo-brand)] hover:shadow-md transition"
+              className={`bg-card rounded-[20px] border border-[var(--alo-border)] overflow-hidden flex flex-col justify-between transition-colors hover:border-[var(--alo-brand)] ${index === 0 ? 'lg:col-span-2 lg:grid lg:grid-cols-[1.1fr_1fr]' : 'lg:col-span-1'}`}
             >
-              <div className="p-6 space-y-4">
+              <div className="space-y-4 p-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-4xl">{dest.flag}</span>
-                  <span className="text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">
-                    ✓ Verified {dest.lastVerifiedAt}
+                  <span aria-hidden="true" className="text-4xl leading-none">{dest.flag}</span>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[var(--alo-success)]/25 bg-[var(--alo-success-soft)] px-2.5 py-1 text-[11px] font-bold text-[var(--alo-success-dark)]">
+                    <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" /> Verified {dest.lastVerifiedAt}
                   </span>
                 </div>
 
@@ -56,7 +77,7 @@ export default function DestinationsIndexPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--alo-text-muted)]">Work Rights:</span>
-                    <span className="font-semibold text-emerald-600">{dest.workRights}</span>
+                    <span className="font-semibold text-[var(--alo-success-dark)]">{dest.workRights}</span>
                   </div>
                 </div>
               </div>
@@ -64,7 +85,7 @@ export default function DestinationsIndexPage() {
               <div className="p-4 bg-[var(--alo-page)] border-t border-[var(--alo-border)]">
                 <Link
                   href={`/destinations/${dest.slug}`}
-                  className="w-full h-11 bg-[var(--alo-brand)] hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition"
+                  className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--alo-brand)] text-sm font-bold text-white transition-colors hover:bg-[var(--alo-brand-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
                 >
                   Explore {dest.name} Guide <ArrowRight className="w-4 h-4" />
                 </Link>

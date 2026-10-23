@@ -125,7 +125,7 @@ export default function StudentLoginPage() {
             </div>
             <div>
               <p className="text-white font-bold text-xl">ALO Education</p>
-              <p className="text-blue-200 text-sm">Student Portal</p>
+              <p className="text-[var(--alo-brand-pale)] text-sm">Student Portal</p>
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function StudentLoginPage() {
             <h1 className="text-4xl font-bold text-white leading-tight">
               Your Study Abroad<br />Journey, All in One Place
             </h1>
-            <p className="mt-4 text-blue-200 text-lg leading-relaxed">
+            <p className="mt-4 text-[var(--alo-brand-pale)] text-lg leading-relaxed">
               Track applications, manage documents, prepare for interviews, and stay updated on your visa — from anywhere.
             </p>
           </div>
@@ -150,13 +150,13 @@ export default function StudentLoginPage() {
             ].map((stat) => (
               <div key={stat.label} className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-blue-200 text-sm mt-1">{stat.label}</p>
+                <p className="text-[var(--alo-brand-pale)] text-sm mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-blue-200 text-sm">
+        <div className="flex items-center gap-2 text-[var(--alo-brand-pale)] text-sm">
           <Shield className="w-4 h-4" />
           <span>Your data is protected with enterprise-grade security</span>
         </div>

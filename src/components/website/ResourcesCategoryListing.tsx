@@ -90,7 +90,7 @@ export default function ResourcesCategoryListing({ categorySlug, categoryName, i
                   <p className="text-xs text-[var(--alo-body)] mb-3 line-clamp-3">{b.excerpt || b.summary || ''}</p>
                   <p className="text-[11px] text-[var(--alo-text-muted)]">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • ALO Editorial Team</p>
                 </div>
-                <Link href={`/resources/${categorySlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold h-12 rounded-xl mt-4">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                <Link href={`/resources/${categorySlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold h-12 rounded-xl mt-4">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
               </Card>
             ))}
           </div>

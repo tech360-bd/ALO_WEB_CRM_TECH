@@ -253,12 +253,12 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
 
             {/* Submit Button */}
             <Button
-              type="submit"
-              variant="cta"
-              size="lg"
-              className="w-full h-11"
-              disabled={loginLoading}
-            >
+ type="submit"
+ variant="cta"
+ size="lg"
+ className="w-full "
+ disabled={loginLoading}
+ >
               {loginLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : null}

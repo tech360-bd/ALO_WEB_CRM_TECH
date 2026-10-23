@@ -962,10 +962,10 @@ export function AccessControlCenter() {
                                   />
                                   {pending !== undefined && pending !== String(limit) && (
                                     <Button
-                                      size="sm"
-                                      className="h-8 bg-[var(--alo-brand)] px-2 text-xs text-white hover:bg-[var(--alo-brand)]/90"
-                                      disabled={ruleSavingKey === fd.key}
-                                      onClick={() => handleSaveLimit(fd, pending)}
+ size="sm"
+ className=" bg-[var(--alo-brand)] px-2 text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={ruleSavingKey === fd.key}
+ onClick={() => handleSaveLimit(fd, pending)}
                                     >
                                       <Icon name="Save" className="size-3" />
                                       Save
@@ -1070,9 +1070,9 @@ export function AccessControlCenter() {
                             {req.status === "PENDING" ? (
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90"
-                                  onClick={() => {
+ size="sm"
+ className=" bg-emerald-600 text-white hover:bg-emerald-600/90"
+ onClick={() => {
                                     setReviewReq(req);
                                     setReviewDecision("APPROVED");
                                     setReviewNote("");
@@ -1082,10 +1082,10 @@ export function AccessControlCenter() {
                                   Approve
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  className="h-8"
-                                  onClick={() => {
+ size="sm"
+ variant="destructive"
+ className=""
+ onClick={() => {
                                     setReviewReq(req);
                                     setReviewDecision("REJECTED");
                                     setReviewNote("");
@@ -1357,10 +1357,10 @@ export function AccessControlCenter() {
                 </div>
               </ScrollArea>
               <DialogFooter className="border-t border-border/60 px-6 py-4">
-                <Button type="button" variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>
+                <Button type="button" variant="outline" className="" onClick={() => setCreateOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
+                <Button type="submit" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
                   {creating ? (
                     <>
                       <Icon name="Loader2" className="size-4 animate-spin" /> Creating…
@@ -1431,17 +1431,17 @@ export function AccessControlCenter() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-11" onClick={() => setReviewReq(null)}>Cancel</Button>
+            <Button variant="outline" className="" onClick={() => setReviewReq(null)}>Cancel</Button>
             <Button
-              className={cn(
-                "h-11 text-white",
-                reviewDecision === "APPROVED"
-                  ? "bg-emerald-600 hover:bg-emerald-600/90"
-                  : "bg-rose-600 hover:bg-rose-600/90"
-              )}
-              disabled={reviewSaving}
-              onClick={handleReviewQuota}
-            >
+ className={cn(
+ " text-white",
+ reviewDecision === "APPROVED"
+ ? "bg-emerald-600 hover:bg-emerald-600/90"
+ : "bg-rose-600 hover:bg-rose-600/90"
+ )}
+ disabled={reviewSaving}
+ onClick={handleReviewQuota}
+ >
               {reviewSaving ? (
                 <><Icon name="Loader2" className="size-4 animate-spin" /> Saving…</>
               ) : (
@@ -1541,7 +1541,7 @@ function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void 
         )}
 
         <div className="mt-auto pt-4">
-          <Button variant="outline" className="h-10 w-full" onClick={onEdit}>
+          <Button variant="outline" className=" w-full" onClick={onEdit}>
             <Icon name="Pencil" className="size-4" />
             Edit Package
           </Button>
@@ -1591,7 +1591,7 @@ function CreateEmployeeSuccess({
           </p>
           <div className="mt-1.5 flex items-center gap-2 rounded-lg border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40 p-2.5">
             <code className="flex-1 truncate font-mono text-xs text-[var(--alo-brand)]">{result.activationLink}</code>
-            <Button size="sm" className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={onCopy}>
+            <Button size="sm" className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={onCopy}>
               <Icon name="Copy" className="size-3.5" />
               Copy
             </Button>
@@ -1620,11 +1620,11 @@ function CreateEmployeeSuccess({
       </ScrollArea>
 
       <DialogFooter className="border-t border-border/60 px-6 py-4">
-        <Button variant="outline" className="h-11" onClick={onResend}>
+        <Button variant="outline" className="" onClick={onResend}>
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
+        <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>
@@ -1723,11 +1723,11 @@ function EditPackageDialog({
           </div>
         </ScrollArea>
         <DialogFooter className="border-t border-border/60 px-6 py-4">
-          <Button variant="outline" className="h-11" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" className="" onClick={onClose}>Cancel</Button>
           <Button
-            className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
-            disabled={saving}
-            onClick={() => onSave(pkg, form)}
+ className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ disabled={saving}
+ onClick={() => onSave(pkg, form)}
           >
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Saving…</>
@@ -1848,8 +1848,8 @@ function NewPackageDialog({
           </div>
         </ScrollArea>
         <DialogFooter className="border-t border-border/60 px-6 py-4">
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !form.name.trim()} onClick={submit}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !form.name.trim()} onClick={submit}>
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
             ) : (
@@ -1947,8 +1947,8 @@ function NewQuotaRequestDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !partnerId} onClick={submit}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !partnerId} onClick={submit}>
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting…</>
             ) : (

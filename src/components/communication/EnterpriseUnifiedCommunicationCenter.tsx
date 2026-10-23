@@ -185,7 +185,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
       case 'whatsapp':
         return <span className="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded font-semibold flex items-center gap-1"><MessageSquare className="w-3 h-3" /> WhatsApp</span>;
       case 'facebook':
-        return <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded font-semibold flex items-center gap-1"><Facebook className="w-3 h-3" /> Facebook</span>;
+        return <span className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs px-2 py-0.5 rounded font-semibold flex items-center gap-1"><Facebook className="w-3 h-3" /> Facebook</span>;
       case 'instagram':
         return <span className="bg-pink-100 text-pink-700 text-xs px-2 py-0.5 rounded font-semibold flex items-center gap-1"><Instagram className="w-3 h-3" /> Instagram</span>;
       case 'email':
@@ -264,7 +264,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                     key={conv.id}
                     onClick={() => handleSelectConv(conv)}
                     className={`p-3.5 cursor-pointer hover:bg-[var(--alo-page)] dark:hover:bg-slate-800/50 transition ${
-                      isSelected ? 'bg-blue-50/70 dark:bg-slate-800 border-l-4 border-[var(--alo-brand)]' : ''
+                      isSelected ? 'bg-[var(--alo-brand-pale)]/70 dark:bg-slate-800 border-l-4 border-[var(--alo-brand)]' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -315,7 +315,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleSendMessage('Thank you for your message. A counselor is reviewing your case and will reply with the verified details shortly.')}
-                    className="px-3 py-1 bg-blue-50 text-[var(--alo-brand)] dark:bg-blue-900/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-blue-100"
+                    className="px-3 py-1 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] dark:bg-[var(--alo-brand-deep)]/40 dark:text-blue-300 text-xs font-medium rounded-lg hover:bg-[var(--alo-brand-pale)]"
                   >
                     + Acknowledge
                   </button>
@@ -428,7 +428,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                   <button
                     disabled={sending || (!messageInput.trim() && !selectedFile)}
                     onClick={() => handleSendMessage()}
-                    className="px-5 py-2.5 bg-[var(--alo-brand)] hover:bg-blue-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition disabled:opacity-50"
+                    className="px-5 py-2.5 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition disabled:opacity-50"
                   >
                     <Send className="w-3.5 h-3.5" /> {sending ? 'Sending…' : 'Send'}
                   </button>
@@ -446,7 +446,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
         {/* Right Column: AI Assistant & Auto CRM Student Profile Card */}
         <div className="w-80 border-l border-[var(--alo-border)] dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex flex-col space-y-4 overflow-y-auto">
           {/* AI Smart Copilot Panel */}
-          <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/80 rounded-xl border border-blue-200 dark:border-slate-700 space-y-3">
+          <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/80 rounded-xl border border-[var(--alo-border)] dark:border-slate-700 space-y-3">
             <div className="flex items-center gap-2 font-bold text-xs text-[var(--alo-brand)] dark:text-blue-300">
               <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" /> ALO AI Smart Suggestions
             </div>
@@ -459,7 +459,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                   <button
                     key={idx}
                     onClick={() => setMessageInput(sug)}
-                    className="w-full text-left p-2.5 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-[var(--alo-border)] dark:border-slate-700 rounded-lg text-[11px] text-[var(--alo-body)] dark:text-slate-200 transition line-clamp-2"
+                    className="w-full text-left p-2.5 bg-white dark:bg-slate-900 hover:bg-[var(--alo-brand-pale)] dark:hover:bg-slate-700 border border-[var(--alo-border)] dark:border-slate-700 rounded-lg text-[11px] text-[var(--alo-body)] dark:text-slate-200 transition line-clamp-2"
                   >
                     💡 {sug}
                   </button>
@@ -482,7 +482,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
           {prefilledForm && (
             <div className="p-3.5 bg-[var(--alo-page)] dark:bg-slate-800 rounded-xl border border-[var(--alo-border)] dark:border-slate-700 space-y-2">
               <span className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase tracking-wide flex items-center gap-1">
-                <FileCheck className="w-3.5 h-3.5 text-blue-500" /> Auto Form Prefill Data
+                <FileCheck className="w-3.5 h-3.5 text-[var(--alo-brand)]" /> Auto Form Prefill Data
               </span>
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Name:</span> <span className="font-semibold">{prefilledForm.studentName}</span></div>
@@ -492,7 +492,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
               </div>
               <button
                 onClick={() => alert('Form fields pre-filled in CRM Student Profile.')}
-                className="w-full mt-2 py-1.5 bg-[var(--alo-brand)] hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition"
+                className="w-full mt-2 py-1.5 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-medium text-xs rounded-lg transition"
               >
                 Apply to CRM Profile
               </button>

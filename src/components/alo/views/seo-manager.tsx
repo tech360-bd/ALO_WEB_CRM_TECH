@@ -183,7 +183,7 @@ export default function SeoManager() {
         <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <h1 className="flex items-center gap-2 text-[20px] font-bold leading-tight tracking-[-0.01em] text-[var(--alo-text)]">
-              <FileSearch className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <FileSearch className="h-5 w-5 text-[var(--alo-brand)]" aria-hidden="true" />
               SEO Manager
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-text-muted)]">
@@ -191,7 +191,7 @@ export default function SeoManager() {
               draft first — approval is required and every action is audited.
             </p>
           </div>
-          <Button variant="outline" className="h-9 shrink-0 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={load}>
+          <Button variant="outline" className=" shrink-0 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={load}>
             <RefreshCw className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
             Refresh
           </Button>
@@ -245,7 +245,7 @@ export default function SeoManager() {
               <Input id="seo-course" value={course} onChange={(e) => setCourse(e.target.value)} placeholder="MSc Data Science" className="h-10 rounded-input border-[var(--alo-border)] text-sm" />
             </div>
           </div>
-          <Button type="submit" disabled={generating} className="mt-4 h-10 rounded-button bg-orange-600 px-5 text-[13px] font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
+          <Button type="submit" disabled={generating} className="mt-4 rounded-button bg-[var(--alo-cta-hover)] px-5 text-[13px] font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
             {generating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> : <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />}
             {generating ? 'Generating Draft…' : 'Generate Draft'}
           </Button>
@@ -329,9 +329,9 @@ export default function SeoManager() {
                     </span>
                     {item.status !== 'approved' && (
                       <Button
-                        variant="outline"
-                        className="h-8 rounded-button border-emerald-300 px-3 text-[12px] font-semibold text-emerald-700"
-                        onClick={() => approve(item)}
+ variant="outline"
+ className=" rounded-button border-emerald-300 px-3 text-[12px] font-semibold text-emerald-700"
+ onClick={() => approve(item)}
                         disabled={approving === item.id}
                       >
                         {approving === item.id ? (

@@ -166,7 +166,7 @@ export default function StudentApplicationDetail() {
       <div className="mx-auto w-full max-w-4xl">
         <Link
           href="/student/applications"
-          className="mb-4 inline-block text-[13px] font-semibold text-[var(--alo-text-muted)] hover:text-alo-blue hover:underline"
+          className="mb-4 inline-block text-[13px] font-semibold text-[var(--alo-text-muted)] hover:text-alo-brand hover:underline"
         >
           ← All applications
         </Link>
@@ -183,7 +183,7 @@ export default function StudentApplicationDetail() {
               title="Application not found"
               description="This application may have been removed, or it belongs to another account."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/applications">Back to Applications</Link>
                 </Button>
               }
@@ -246,7 +246,7 @@ export default function StudentApplicationDetail() {
                 className="mt-5"
                 title="Offer"
                 description={application.offer.offerStatus.replace(/_/g, ' ').toLowerCase()}
-                icon={<GraduationCap className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+                icon={<GraduationCap className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
               >
                 <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">
                   {application.offer.decisionDate && (
@@ -309,7 +309,7 @@ export default function StudentApplicationDetail() {
 
                 {application.offer.offerLetterUrl && (
                   <div className="border-t border-[var(--alo-border)] px-5 py-3">
-                    <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                    <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                       <a href={application.offer.offerLetterUrl}>
                         <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                         Download Offer Letter
@@ -327,7 +327,7 @@ export default function StudentApplicationDetail() {
                 description={`${outstanding.length} of ${required.length} outstanding`}
                 icon={<FileText className="mr-2 h-4 w-4 text-amber-600" aria-hidden="true" />}
                 action={
-                  <Button asChild variant="outline" className="h-8 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold">
                     <Link href="/student/documents">Upload</Link>
                   </Button>
                 }
@@ -348,7 +348,7 @@ export default function StudentApplicationDetail() {
                 className="mt-5"
                 title="Payment instructions"
                 description="Details recorded by your counselor — confirm before paying"
-                icon={<Landmark className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+                icon={<Landmark className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
               >
                 <ul className="divide-y divide-[var(--alo-border)]">
                   {application.paymentInstructions.map((instruction) => (
@@ -397,7 +397,7 @@ export default function StudentApplicationDetail() {
               <PortalCard
                 className="mt-5"
                 title="Messages from your team"
-                icon={<MessageSquare className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+                icon={<MessageSquare className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
               >
                 <ul className="divide-y divide-[var(--alo-border)]">
                   {application.comments.map((comment) => (
@@ -453,13 +453,13 @@ export default function StudentApplicationDetail() {
             </PortalCard>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button asChild variant="outline" className={cn('h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold')}>
+              <Button asChild variant="outline" className={cn(' rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold')}>
                 <Link href="/student/documents">Manage Documents</Link>
               </Button>
-              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/student/visa/checklist">Visa Checklist</Link>
               </Button>
-              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/student/messages">Message Your Counselor</Link>
               </Button>
             </div>

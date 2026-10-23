@@ -86,12 +86,12 @@ export default function AIVideoStudioView() {
             <Card>
               <CardHeader><CardTitle className="text-sm">Workflow</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-3 gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><Eye className="w-3 h-3 mr-1" />Preview</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><Play className="w-3 h-3 mr-1" />Render</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-[11px] bg-emerald-600 text-white"><Check className="w-3 h-3 mr-1" />Approve</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]">Schedule</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]">Publish</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-[11px]"><Archive className="w-3 h-3 mr-1" />Archive</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><Eye className="w-3 h-3 mr-1" />Preview</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><Play className="w-3 h-3 mr-1" />Render</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className=" text-[11px] bg-emerald-600 text-white"><Check className="w-3 h-3 mr-1" />Approve</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]">Schedule</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]">Publish</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><Archive className="w-3 h-3 mr-1" />Archive</Button>
               </CardContent>
             </Card>
             <p className="text-[11px] text-[var(--alo-text-muted)]">If video provider unavailable, status shows `ON_HOLD — provider not configured` and task remains in queue. Asset storage: MarketingAsset (type video) with versioning.</p>

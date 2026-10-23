@@ -71,7 +71,7 @@ export default async function AdminDigitalAssetsPage() {
                 <a className="inline-flex items-center rounded-[10px] bg-[var(--alo-brand)] px-3 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[var(--alo-brand-hover)]" href={`/api/crm/ucc/oauth/start?provider=${p.provider}`}>Connect OAuth</a>
                 <a className="text-xs border px-3 py-1.5 rounded" href={`/api/crm/ucc/webhooks/${p.provider}`}>Webhook</a>
               </div>
-              {!isConnected && <div className="mt-2 text-xs text-amber-700">Connect via official OAuth — never store employee tokens in .env (per spec Phase 8). Tokens encrypted, audit logged.</div>}
+              {!isConnected && <div className="mt-2 text-xs text-amber-700">Connect through each provider's official OAuth flow. Access tokens are stored encrypted and every connection change is audit logged.</div>}
               {row?.metadata && <details className="mt-2 text-xs"><summary>metadata</summary><pre className="bg-[var(--alo-surface-muted)] p-2 rounded mt-1 overflow-auto max-h-32">{JSON.stringify(JSON.parse(row.metadata || "{}"), null, 2).slice(0,1000)}</pre></details>}
             </div>
           );

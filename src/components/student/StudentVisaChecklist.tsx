@@ -58,7 +58,7 @@ export default function StudentVisaChecklist() {
           title="Visa Document Checklist"
           description="Every document your visa file needs, grouped by category."
           action={
-            <Button asChild className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500">
+            <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
               <Link href="/student/documents">
                 <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
                 Upload Documents
@@ -77,7 +77,7 @@ export default function StudentVisaChecklist() {
               title="Your checklist has not been created"
               description="A visa checklist is built from your application and destination once you reach the visa stage. Your counselor can create it earlier on request."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/messages">Contact Your Counselor</Link>
                 </Button>
               }

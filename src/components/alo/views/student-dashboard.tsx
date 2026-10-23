@@ -144,7 +144,7 @@ function TimelineItem({ ev }: { ev: TimelineEventRow }) {
     DOC_UPLOADED: { icon: "Upload", color: "bg-sky-500 text-white" },
     DOC_APPROVED: { icon: "CheckCircle2", color: "bg-emerald-500 text-white" },
     APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-violet-500 text-white" },
-    VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-orange-500 text-white" },
+    VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta)] text-white" },
     INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-rose-500 text-white" },
     MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-amber-500 text-white" },
     AI_ACTION: { icon: "Bot", color: "bg-indigo-500 text-white" },
@@ -260,8 +260,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
         description={error || "Once your counselor creates your student record, your mission-control dashboard will appear here."}
         action={
           <Button
-            className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-11"
-            onClick={() => onNavigate("student-profile")}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("student-profile")}
           >
             <Icon name="ArrowRight" className="size-4" />
             Go to Profile Form
@@ -354,8 +354,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 </div>
                 <div className="mt-3">
                   <Button
-                    className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-10"
-                    onClick={() => onNavigate("student-profile")}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("student-profile")}
                   >
                     <Icon name="UserSquare" className="size-4" />
                     View Profile
@@ -421,16 +421,16 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
             </div>
             <div className="flex shrink-0 gap-2">
               <Button
-                variant="outline"
-                className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-11"
-                onClick={() => onNavigate("document-hub")}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("document-hub")}
               >
                 <Icon name="Upload" className="size-4" />
                 Upload Now
               </Button>
               <Button
-                className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-11"
-                onClick={() => toast({ title: "Reminder snoozed", description: "We'll remind you tomorrow morning." })}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => toast({ title: "Reminder snoozed", description: "We'll remind you tomorrow morning." })}
               >
                 <Icon name="BellOff" className="size-4" />
                 Snooze
@@ -570,17 +570,17 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <Button
-                  variant="outline"
-                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                  onClick={() => toast({ title: "Message sent", description: `Your counselor ${counselName} will reply shortly.` })}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => toast({ title: "Message sent", description: `Your counselor ${counselName} will reply shortly.` })}
                 >
                   <Icon name="MessageSquare" className="size-4" />
                   Message
                 </Button>
                 <Button
-                  variant="outline"
-                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                  onClick={() => toast({ title: "Call scheduled", description: "A 15-min slot has been added to your calendar." })}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => toast({ title: "Call scheduled", description: "A 15-min slot has been added to your calendar." })}
                 >
                   <Icon name="PhoneCall" className="size-4" />
                   Book Call
@@ -619,8 +619,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </div>
                   )}
                   <Button
-                    className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-10"
-                    onClick={() => onNavigate("ai-interview")}
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("ai-interview")}
                   >
                     <Icon name="Mic" className="size-4" />
                     Practice Again
@@ -638,8 +638,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </p>
                   </div>
                   <Button
-                    className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-10"
-                    onClick={() => onNavigate("ai-interview")}
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("ai-interview")}
                   >
                     <Icon name="Sparkles" className="size-4" />
                     Practice Now
@@ -680,9 +680,9 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     ))}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
-                    onClick={() => onNavigate("english-test")}
+ variant="outline"
+ className="w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("english-test")}
                   >
                     <Icon name="Plus" className="size-4" />
                     Take New Mock Test
@@ -695,8 +695,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                   description="Take a free mock test to estimate your IELTS/PTE band score."
                   action={
                     <Button
-                      className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-10"
-                      onClick={() => onNavigate("english-test")}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("english-test")}
                     >
                       <Icon name="Sparkles" className="size-4" />
                       Take Free Mock

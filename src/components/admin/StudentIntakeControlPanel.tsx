@@ -58,9 +58,9 @@ export default function StudentIntakeControlPanel() {
           Public intake replies are rule-based and are not a substitute for current university or government requirements. AI-generated staff replies remain drafts for human review; this panel does not send test or customer messages.
         </p>
         <div className="flex gap-2">
-          <Link href="/super-admin/dashboard"><Button variant="outline" className="h-8 text-[11px] border-[var(--alo-border)]">Super-Admin Dashboard</Button></Link>
-          <Link href="/admin/ai-command-center"><Button variant="outline" className="h-8 text-[11px] border-[var(--alo-border)]">AI Command Center</Button></Link>
-          <Button asChild variant="outline" className="h-8 text-[11px] border-[var(--alo-border)]"><a href="/admin/document-security">Document Security</a></Button>
+          <Link href="/super-admin/dashboard"><Button variant="outline" className=" text-[11px] border-[var(--alo-border)]">Super-Admin Dashboard</Button></Link>
+          <Link href="/admin/ai-command-center"><Button variant="outline" className=" text-[11px] border-[var(--alo-border)]">AI Command Center</Button></Link>
+          <Button asChild variant="outline" className=" text-[11px] border-[var(--alo-border)]"><a href="/admin/document-security">Document Security</a></Button>
         </div>
       </CardContent>
     </Card>

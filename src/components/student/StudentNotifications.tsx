@@ -59,13 +59,13 @@ const TYPE_CONFIG: Record<
   NotificationType,
   { icon: React.ElementType; color: string; bg: string }
 > = {
-  application: { icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
+  application: { icon: FileText, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   document: { icon: FileUp, color: 'text-amber-600', bg: 'bg-amber-50' },
   visa: { icon: Shield, color: 'text-purple-600', bg: 'bg-purple-50' },
   message: { icon: MessageSquare, color: 'text-green-600', bg: 'bg-green-50' },
   deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-50' },
   scholarship: { icon: Award, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  payment: { icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50' },
+  payment: { icon: CreditCard, color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' },
   system: { icon: Settings, color: 'text-[var(--alo-text-muted)]', bg: 'bg-[var(--alo-page)]' },
 };
 
@@ -107,8 +107,8 @@ function NotificationCard({
   return (
     <Card
       className={cn(
-        'relative border transition-colors hover:border-blue-200 hover:shadow-sm cursor-pointer',
-        !notification.isRead && 'border-l-4 border-l-blue-500 bg-blue-50/30'
+        'relative border transition-colors hover:border-[var(--alo-border)] hover:shadow-sm cursor-pointer',
+        !notification.isRead && 'border-l-4 border-l-blue-500 bg-[var(--alo-brand-pale)]/30'
       )}
       onClick={() => onNavigate(notification.navigateTo)}
     >
@@ -138,10 +138,10 @@ function NotificationCard({
             </h4>
             {!notification.isRead && (
               <Button
-                variant="ghost"
-                size="sm"
-                className="shrink-0 h-7 px-2 text-xs text-[var(--alo-text-muted)] hover:text-blue-600"
-                onClick={(e) => {
+ variant="ghost"
+ size="sm"
+ className="shrink-0 h-7 px-2 text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)]"
+ onClick={(e) => {
                   e.stopPropagation();
                   onMarkRead(notification.id);
                 }}
@@ -306,7 +306,7 @@ export function StudentNotifications() {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-[var(--alo-text)]">Notifications</h1>
           {unreadCount > 0 && (
-            <Badge className="bg-blue-600 text-white hover:bg-blue-700 px-2.5 py-0.5 text-xs font-semibold">
+            <Badge className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] px-2.5 py-0.5 text-xs font-semibold">
               {unreadCount} unread
             </Badge>
           )}
@@ -315,7 +315,7 @@ export function StudentNotifications() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-[var(--alo-body)] hover:text-blue-600"
+            className="text-[var(--alo-body)] hover:text-[var(--alo-brand)]"
             onClick={handleMarkAllRead}
           >
             <CheckCheck className="size-4 mr-1.5" />
@@ -341,7 +341,7 @@ export function StudentNotifications() {
               <TabsTrigger
                 key={tab.key}
                 value={tab.key}
-                className="text-xs px-2.5 py-1.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                className="text-xs px-2.5 py-1.5 data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white data-[state=active]:shadow-sm"
               >
                 {tab.label}
                 {tabCounts[tab.key] > 0 && (

@@ -180,7 +180,7 @@ export default function MarketingAutomationDashboard() {
   if (loading) {
     return (
       <div className="p-12 text-center text-[var(--alo-text-muted)] space-y-3">
-        <RefreshCw className="w-8 h-8 animate-spin mx-auto text-blue-600" />
+        <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[var(--alo-brand)]" />
         <p className="text-xs font-semibold">Loading Marketing Automation Center...</p>
       </div>
     );
@@ -217,9 +217,9 @@ export default function MarketingAutomationDashboard() {
         <div className="flex items-center gap-3">
           <div className="p-3 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] text-xs">
             <span className="text-[var(--alo-text-muted)] block">Access Control Level:</span>
-            <strong className="text-blue-700 font-bold">{role}</strong>
+            <strong className="text-[var(--alo-brand)] font-bold">{role}</strong>
           </div>
-          <Button onClick={fetchDashboardData} className="bg-[var(--alo-surface-muted)] hover:bg-slate-200 text-[var(--alo-body)] text-xs rounded-xl px-4 flex items-center gap-1.5">
+          <Button onClick={fetchDashboardData} className="bg-[var(--alo-surface-muted)] hover:bg-slate-200 text-[var(--alo-body)] rounded-xl px-4 flex items-center gap-1.5">
             <RefreshCw className="w-4 h-4" /> Refresh Status
           </Button>
         </div>
@@ -229,7 +229,7 @@ export default function MarketingAutomationDashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Active Campaigns</span>
-          <p className="text-2xl font-extrabold text-blue-600">{metrics.activeCampaigns}</p>
+          <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{metrics.activeCampaigns}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Pending Approvals</span>
@@ -284,7 +284,7 @@ export default function MarketingAutomationDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl lg:col-span-2 space-y-4">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Share2 className="w-5 h-5 text-blue-600" /> Official Channel Integration Status
+              <Share2 className="w-5 h-5 text-[var(--alo-brand)]" /> Official Channel Integration Status
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               {providerCards.map((provider) => (
@@ -353,7 +353,7 @@ export default function MarketingAutomationDashboard() {
             <div className="p-6 bg-[var(--alo-page)] rounded-2xl border border-[var(--alo-border)] space-y-4 text-center">
               <div className="w-20 h-20 bg-white border-2 border-dashed border-[var(--alo-border-strong)] rounded-2xl mx-auto flex items-center justify-center text-[var(--alo-text-muted)]">
                 {logoUploaded ? (
-                  <span className="font-extrabold text-blue-700 text-lg">ALO</span>
+                  <span className="font-extrabold text-[var(--alo-brand)] text-lg">ALO</span>
                 ) : (
                   <Upload className="w-8 h-8" />
                 )}
@@ -370,10 +370,10 @@ export default function MarketingAutomationDashboard() {
                 className="w-full px-3 py-2 text-xs border border-[var(--alo-border-strong)] rounded-xl"
               />
               <Button
-                onClick={handleLogoUpload}
-                disabled={uploadingLogo}
-                className="bg-[var(--alo-brand)] hover:bg-blue-700 text-white text-xs rounded-xl px-5 mx-auto flex items-center gap-1.5"
-              >
+ onClick={handleLogoUpload}
+ disabled={uploadingLogo}
+ className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-xl px-5 mx-auto flex items-center gap-1.5"
+ >
                 {uploadingLogo ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                 {uploadingLogo ? 'Configuring Logo...' : 'Upload & Save Official Logo'}
               </Button>
@@ -416,7 +416,7 @@ export default function MarketingAutomationDashboard() {
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-6">
           <div className="border-b border-[var(--alo-border)] pb-4">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Zap className="w-5 h-5 text-blue-600" /> Facebook & Instagram Comment-to-Lead Automation
+              <Zap className="w-5 h-5 text-[var(--alo-brand)]" /> Facebook & Instagram Comment-to-Lead Automation
             </h2>
             <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               Creates approval-required reply drafts from keyword rules. Live public replies require approved Meta OAuth, verified webhooks, and Marketing Manager approval.
@@ -432,7 +432,7 @@ export default function MarketingAutomationDashboard() {
                     key={kw}
                     onClick={() => setCommentKeyword(kw)}
                     className={`px-3 py-1.5 rounded-xl border text-xs font-semibold transition ${
-                      commentKeyword === kw ? 'bg-blue-600 text-white border-blue-600' : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] hover:bg-[var(--alo-surface-muted)]'
+                      commentKeyword === kw ? 'bg-[var(--alo-brand)] text-white border-[var(--alo-brand)]' : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] hover:bg-[var(--alo-surface-muted)]'
                     }`}
                   >
                     {kw}
@@ -449,7 +449,7 @@ export default function MarketingAutomationDashboard() {
                     onChange={(e) => setCommentKeyword(e.target.value)}
                     className="flex-1 px-3 py-2 text-xs border border-[var(--alo-border-strong)] rounded-xl"
                   />
-                  <Button onClick={handleTestCommentAutomation} className="bg-[var(--alo-brand)] text-white text-xs rounded-xl px-4">
+                  <Button onClick={handleTestCommentAutomation} className="bg-[var(--alo-brand)] text-white rounded-xl px-4">
                     Create Draft
                   </Button>
                 </div>
@@ -489,9 +489,9 @@ export default function MarketingAutomationDashboard() {
               <p className="text-emerald-800">Office hours: Human counselor chat.<br />After hours: AI auto-responds in Bangla/English.</p>
             </div>
 
-            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 space-y-2">
-              <span className="font-bold text-blue-900">OTP Privacy Protection:</span>
-              <p className="text-blue-800">AI requires OTP verification before releasing application, visa, or payment info.</p>
+            <div className="p-4 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)] space-y-2">
+              <span className="font-bold text-[var(--alo-brand-deep)]">OTP Privacy Protection:</span>
+              <p className="text-[var(--alo-brand-deep)]">AI requires OTP verification before releasing application, visa, or payment info.</p>
             </div>
 
             <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-2">
@@ -519,10 +519,10 @@ export default function MarketingAutomationDashboard() {
                 <p className="text-[var(--alo-text-muted)] mt-0.5">Prepared by Marketing Staff • Facebook, Instagram, LinkedIn</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded-xl px-3 py-1 flex items-center gap-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-3 py-1 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" /> Approve & Publish
                 </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-red-50 text-red-600 hover:bg-red-100 text-xs rounded-xl px-3 py-1 flex items-center gap-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-red-50 text-red-600 hover:bg-red-100 rounded-xl px-3 py-1 flex items-center gap-1">
                   <X className="w-3.5 h-3.5" /> Reject
                 </Button>
               </div>
@@ -544,9 +544,9 @@ export default function MarketingAutomationDashboard() {
               </p>
             </div>
             <Button
-              onClick={handleWorkflowRequest}
-              className="text-xs font-bold rounded-xl px-4 bg-amber-100 text-amber-800 hover:bg-amber-200"
-            >
+ onClick={handleWorkflowRequest}
+ className=" font-bold rounded-xl px-4 bg-amber-100 text-amber-800 hover:bg-amber-200"
+ >
               Request Workflow Change
             </Button>
           </div>

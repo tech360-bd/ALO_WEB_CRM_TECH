@@ -74,7 +74,7 @@ export default function StudentCredibilityInterview() {
           title="Credibility Interview"
           description="Your mock and credibility interview sessions, with the feedback your interviewer recorded."
           action={
-            <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+            <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
               <Link href="/ai/visa-coach">
                 <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />
                 Practise with AI Coach
@@ -94,10 +94,10 @@ export default function StudentCredibilityInterview() {
               description="Your counselor schedules a mock credibility interview once your visa file is ready. You can practise questions with the AI coach in the meantime."
               action={
                 <div className="flex flex-wrap justify-center gap-2">
-                  <Button asChild className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500">
+                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                     <Link href="/ai/visa-coach">Practise with AI Coach</Link>
                   </Button>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/student/messages">Ask to Book a Session</Link>
                   </Button>
                 </div>

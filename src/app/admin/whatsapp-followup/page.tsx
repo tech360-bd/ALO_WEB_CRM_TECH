@@ -57,7 +57,7 @@ export default function WhatsAppFollowUpPage() {
         </div>
         <div className="flex gap-2">
           <Button onClick={fetchData} variant="outline" className="border-white/10"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
-          <Button onClick={triggerProcess} className="bg-blue-600 hover:bg-blue-700"><Play className="w-4 h-4 mr-2" />Process Due</Button>
+          <Button onClick={triggerProcess} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]"><Play className="w-4 h-4 mr-2" />Process Due</Button>
         </div>
       </div>
 

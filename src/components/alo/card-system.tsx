@@ -400,7 +400,7 @@ export function LeadCard({ leadId, name, destination, course, intake, aiMatch, l
           </div>
         )}
         <div className="alo-card-cta mt-3 flex gap-1.5">
-          <Button size="sm" variant="outline" onClick={onOpen} className="flex-1 text-xs">Open</Button>
+          <Button size="sm" variant="outline" onClick={onOpen} className="flex-1 ">Open</Button>
           <Button size="icon" variant="ghost" onClick={onWhatsApp} className="size-8 text-[var(--alo-success)]" aria-label="WhatsApp"><Icon name="MessageCircle" className="size-4" /></Button>
           <Button size="icon" variant="ghost" onClick={onAssign} className="size-8 text-[var(--alo-blue)]" aria-label="Assign"><Icon name="UserPlus" className="size-4" /></Button>
         </div>

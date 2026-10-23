@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Calendar, Plus, Search, Clock, User, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
-const typeColors: Record<string, string> = { counseling: 'bg-blue-100 text-blue-700', 'application_review': 'bg-green-100 text-green-700', 'visa_prep': 'bg-amber-100 text-amber-700', 'document_review': 'bg-purple-100 text-purple-700', 'internal_meeting': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
-const statusBadge: Record<string, string> = { scheduled: 'bg-blue-50 text-blue-700 border-blue-200', completed: 'bg-green-50 text-green-700 border-green-200', cancelled: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]', 'no_show': 'bg-red-50 text-red-700 border-red-200' };
+const typeColors: Record<string, string> = { counseling: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', 'application_review': 'bg-green-100 text-green-700', 'visa_prep': 'bg-amber-100 text-amber-700', 'document_review': 'bg-purple-100 text-purple-700', 'internal_meeting': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
+const statusBadge: Record<string, string> = { scheduled: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]', completed: 'bg-green-50 text-green-700 border-green-200', cancelled: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]', 'no_show': 'bg-red-50 text-red-700 border-red-200' };
 
 interface Appointment {
   id: string;
@@ -102,7 +102,7 @@ export default function CrmAppointmentsPage() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Calendar className="w-4 h-4 text-blue-500" /><span className="text-xs text-[var(--alo-text-muted)]">Today</span></div><p className="text-2xl font-bold">{stats.today}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Calendar className="w-4 h-4 text-[var(--alo-brand)]" /><span className="text-xs text-[var(--alo-text-muted)]">Today</span></div><p className="text-2xl font-bold">{stats.today}</p></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Clock className="w-4 h-4 text-amber-500" /><span className="text-xs text-[var(--alo-text-muted)]">Upcoming</span></div><p className="text-2xl font-bold">{stats.upcoming}</p></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-xs text-[var(--alo-text-muted)]">Completed</span></div><p className="text-2xl font-bold">{stats.completed}</p></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><User className="w-4 h-4 text-[var(--alo-text-muted)]" /><span className="text-xs text-[var(--alo-text-muted)]">Total</span></div><p className="text-2xl font-bold">{stats.total}</p></CardContent></Card>

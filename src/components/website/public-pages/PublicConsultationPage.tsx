@@ -131,10 +131,10 @@ export default function PublicConsultationPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-orange-50 text-[var(--alo-cta)] mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] mb-4">
               FREE CONSULTATION
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-[var(--alo-text)] mb-4">
+            <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4">
               Book Your Free Consultation
             </h1>
             <p className="text-lg text-[var(--alo-body)] max-w-2xl mx-auto">
@@ -369,19 +369,19 @@ export default function PublicConsultationPage() {
                   <h3 className="text-lg font-bold mb-4">Contact Directly</h3>
                   <div className="space-y-3 text-sm">
                     <div>
-                      <p className="text-blue-100 text-xs">Phone</p>
+                      <p className="text-[var(--alo-brand-pale)] text-xs">Phone</p>
                       <a href={ALO_CONTACT.mobileHref} className="font-semibold">{ALO_CONTACT.mobileDisplay}</a>
                     </div>
                     <div>
-                      <p className="text-blue-100 text-xs">Email</p>
+                      <p className="text-[var(--alo-brand-pale)] text-xs">Email</p>
                       <a href={ALO_CONTACT.emailHref} className="font-semibold">{ALO_CONTACT.email}</a>
                     </div>
                     <div>
-                      <p className="text-blue-100 text-xs">Hours</p>
+                      <p className="text-[var(--alo-brand-pale)] text-xs">Hours</p>
                       <p className="font-semibold">{ALO_CONTACT.officeHours}</p>
                     </div>
                     <div>
-                      <p className="text-blue-100 text-xs">Address</p>
+                      <p className="text-[var(--alo-brand-pale)] text-xs">Address</p>
                       <p className="font-semibold text-xs leading-relaxed">{ALO_CONTACT.address}</p>
                       <a
                         href={ALO_CONTACT.mapsUrl}
@@ -409,7 +409,7 @@ export default function PublicConsultationPage() {
                   </Button>
                 </div>
 
-                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6">
+                <div className="bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25 rounded-2xl p-6">
                   <h3 className="text-base font-bold text-[var(--alo-cta)] mb-2">Why Choose Us?</h3>
                   <ul className="space-y-2 text-sm text-[var(--alo-body)]">
                     <li className="flex items-start gap-2">

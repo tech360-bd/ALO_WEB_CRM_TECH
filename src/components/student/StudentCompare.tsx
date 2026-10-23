@@ -273,10 +273,10 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
       </div>
 
       <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 ">
           Apply
         </Button>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" ">
           <Bookmark className="size-3 fill-amber-500 text-amber-500 mr-1" />
           Saved
         </Button>

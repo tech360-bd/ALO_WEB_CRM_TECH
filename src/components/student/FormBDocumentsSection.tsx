@@ -337,7 +337,7 @@ export default function FormBDocumentsSection({
                   </div>
 
                   {comment && (
-                    <p className={`mt-2 rounded-lg border px-3 py-2 text-xs ${chip.tone === 'rejected' ? 'border-red-200 bg-red-50 text-red-800' : 'border-blue-200 bg-blue-50 text-blue-900'}`}>
+                    <p className={`mt-2 rounded-lg border px-3 py-2 text-xs ${chip.tone === 'rejected' ? 'border-red-200 bg-red-50 text-red-800' : 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'}`}>
                       <strong>Counselor comment:</strong> {comment}
                     </p>
                   )}

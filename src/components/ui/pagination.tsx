@@ -55,7 +55,9 @@ function PaginationLink({
       data-active={isActive}
       className={cn(
         buttonVariants({
-          variant: isActive ? "outline" : "ghost",
+          // Selected page reads as a filled brand chip, not a faint outline,
+          // and `aria-current` carries the same information for AT.
+          variant: isActive ? "brand" : "ghost",
           size,
         }),
         className

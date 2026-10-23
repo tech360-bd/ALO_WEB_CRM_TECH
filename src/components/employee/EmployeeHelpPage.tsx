@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { HelpCircle, Phone, Mail, Monitor, MessageCircle, Send, Headphones, Users, Calculator } from 'lucide-react';
 
 const contacts = [
-  { label: 'IT Support', detail: 'ext 101 · it@alo.edu.bd', icon: Monitor, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { label: 'IT Support', detail: 'ext 101 · it@alo.edu.bd', icon: Monitor, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   { label: 'HR Department', detail: 'ext 102 · hr@alo.edu.bd', icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   { label: 'Finance', detail: 'ext 103 · finance@alo.edu.bd', icon: Calculator, color: 'text-amber-600', bg: 'bg-amber-50' },
   { label: 'Manager', detail: 'ext 105 · sarah.khan@alo.edu.bd', icon: Headphones, color: 'text-purple-600', bg: 'bg-purple-50' },

@@ -317,7 +317,7 @@ export default function StudentPortalShell({
                       className={cn(
                         'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold',
                         realtimeStatus === 'connected' && 'bg-emerald-100 text-emerald-700',
-                        realtimeStatus === 'connecting' && 'bg-blue-100 text-blue-700',
+                        realtimeStatus === 'connecting' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
                         realtimeStatus === 'reconnecting' && 'bg-amber-100 text-amber-800',
                         realtimeStatus === 'not_configured' && 'bg-slate-200 text-[var(--alo-body)]',
                         realtimeStatus === 'error' && 'bg-red-100 text-red-700',

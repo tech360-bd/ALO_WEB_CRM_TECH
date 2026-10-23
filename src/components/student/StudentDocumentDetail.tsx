@@ -94,7 +94,7 @@ export default function StudentDocumentDetail() {
       <div className="mx-auto w-full max-w-3xl">
         <Link
           href="/student/documents"
-          className="mb-4 inline-block text-[13px] font-semibold text-[var(--alo-text-muted)] hover:text-alo-blue hover:underline"
+          className="mb-4 inline-block text-[13px] font-semibold text-[var(--alo-text-muted)] hover:text-alo-brand hover:underline"
         >
           ← All documents
         </Link>
@@ -110,7 +110,7 @@ export default function StudentDocumentDetail() {
               title="Document not found"
               description="This document may have been removed, or it belongs to another account."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/documents">Back to Documents</Link>
                 </Button>
               }
@@ -185,7 +185,7 @@ export default function StudentDocumentDetail() {
                   <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-red-900">
                     {document.rejectionReason}
                   </p>
-                  <Button asChild className="mt-3 h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500">
+                  <Button asChild className="mt-3 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                     <Link href="/student/documents">Upload a Replacement</Link>
                   </Button>
                 </div>
@@ -210,7 +210,7 @@ export default function StudentDocumentDetail() {
 
               {!document.isArchived && (
                 <div className="border-t border-[var(--alo-border)] px-5 py-3">
-                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <a href={document.downloadUrl}>
                       <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                       Download Document

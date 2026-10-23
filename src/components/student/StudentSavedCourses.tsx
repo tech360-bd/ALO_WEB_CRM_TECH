@@ -103,7 +103,7 @@ export default function StudentSavedCourses() {
           title="Saved Courses"
           description="Courses you shortlisted while searching. Only you and your assigned counselor can see this list."
           action={
-            <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
+            <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
               <Link href="/course-finder">
                 <Search className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                 Find More Courses
@@ -128,7 +128,7 @@ export default function StudentSavedCourses() {
               title="No saved courses yet"
               description="Save courses from the course finder and they will collect here, so you can compare them and share the shortlist with your counselor."
               action={
-                <Button asChild className="h-9 rounded-button bg-orange-600 px-4 text-[13px] font-semibold text-white hover:bg-orange-700">
+                <Button asChild className=" rounded-button bg-[var(--alo-cta-hover)] px-4 text-[13px] font-semibold text-white hover:bg-orange-700">
                   <Link href="/course-finder">Search the Course Finder</Link>
                 </Button>
               }
@@ -178,7 +178,7 @@ export default function StudentSavedCourses() {
               <ul className="divide-y divide-[var(--alo-border)]">
                 {filtered.map((course) => (
                   <li key={course.id} className="flex flex-wrap items-start gap-4 px-5 py-4">
-                    <Bookmark className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" aria-hidden="true" />
+                    <Bookmark className="mt-0.5 h-4 w-4 shrink-0 text-[var(--alo-cta)]" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
                       <p className="text-[14px] font-semibold text-[var(--alo-text)]">{course.courseName}</p>
                       <p className="mt-0.5 text-[13px] text-[var(--alo-body)]">
@@ -195,9 +195,9 @@ export default function StudentSavedCourses() {
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                       <Button
-                        variant="outline"
-                        className="h-8 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold text-red-600"
-                        onClick={() => remove(course)}
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold text-red-600"
+ onClick={() => remove(course)}
                         disabled={removing === course.id}
                       >
                         <Trash2 className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />

@@ -57,7 +57,7 @@ export default function DocumentSecurityPage() {
                 <p className="text-[var(--alo-text-muted)]">{inc.reason} • By {inc.attemptedByName} ({inc.attemptedByRole}) • {new Date(inc.createdAt).toLocaleString()}</p>
               </div>
               <div className="flex gap-2">
-                <Badge className={inc.severity==='critical' ? 'bg-rose-500/20 text-rose-300' : inc.severity==='high' ? 'bg-orange-500/20 text-orange-300' : 'bg-amber-500/20 text-amber-300'}>{inc.severity}</Badge>
+                <Badge className={inc.severity==='critical' ? 'bg-rose-500/20 text-rose-300' : inc.severity==='high' ? 'bg-[var(--alo-cta)]/20 text-orange-300' : 'bg-amber-500/20 text-amber-300'}>{inc.severity}</Badge>
                 <Badge className={inc.status==='blocked' ? 'bg-rose-500/20 text-rose-300' : 'bg-blue-500/20 text-blue-300'}>{inc.status}</Badge>
                 {inc.blocked && <Badge className="bg-rose-500/20 text-rose-300">BLOCKED</Badge>}
               </div>

@@ -289,7 +289,7 @@ interface StudentDetailResponse {
 const STUDENT_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  GRADUATED: "bg-blue-100 text-blue-700",
+  GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -333,17 +333,17 @@ const INTERVIEW_STATUS_COLORS: Record<string, string> = {
 };
 
 const TIMELINE_META: Record<string, { icon: string; color: string }> = {
-  LEAD_CREATED: { icon: "UserPlus", color: "bg-blue-100 text-blue-700" },
-  PROFILE_UPDATED: { icon: "UserCog", color: "bg-blue-100 text-blue-700" },
+  LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   DOC_UPLOADED: { icon: "FileUp", color: "bg-amber-100 text-amber-700" },
   DOC_APPROVED: { icon: "FileCheck2", color: "bg-emerald-100 text-emerald-700" },
   DOC_REJECTED: { icon: "FileX2", color: "bg-rose-100 text-rose-700" },
-  APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-orange-100 text-orange-700" },
-  VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-orange-100 text-orange-700" },
+  APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
+  VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-violet-100 text-violet-700" },
   MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
   AI_ACTION: { icon: "Bot", color: "bg-violet-100 text-violet-700" },
-  MESSAGE_SENT: { icon: "MessageSquare", color: "bg-blue-100 text-blue-700" },
+  MESSAGE_SENT: { icon: "MessageSquare", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   PAYMENT: { icon: "CreditCard", color: "bg-emerald-100 text-emerald-700" },
   NOTE: { icon: "StickyNote", color: "bg-amber-100 text-amber-700" },
 };
@@ -382,13 +382,13 @@ const FUNDING_LABELS: Record<string, string> = {
 
 const CHANNEL_COLORS: Record<string, string> = {
   WHATSAPP: "bg-emerald-100 text-emerald-700",
-  SMS: "bg-blue-100 text-blue-700",
+  SMS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   EMAIL: "bg-violet-100 text-violet-700",
-  FACEBOOK: "bg-blue-100 text-blue-700",
+  FACEBOOK: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   INSTAGRAM: "bg-pink-100 text-pink-700",
   MESSENGER: "bg-sky-100 text-sky-700",
   WEBSITE_CHAT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PORTAL: "bg-orange-100 text-orange-700",
+  PORTAL: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const CHANNEL_LABELS: Record<string, string> = {
@@ -413,11 +413,11 @@ const VISIBILITY_LABELS: Record<string, string> = {
 
 const VISIBILITY_COLORS: Record<string, string> = {
   INTERNAL_ONLY: "bg-amber-100 text-amber-700",
-  APPLICATION_TEAM_ONLY: "bg-orange-100 text-orange-700",
+  APPLICATION_TEAM_ONLY: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   VISA_TEAM_ONLY: "bg-rose-100 text-rose-700",
   FINANCE_ONLY: "bg-emerald-100 text-emerald-700",
   SUPER_ADMIN_ONLY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  COUNSELOR_VISIBLE: "bg-blue-100 text-blue-700",
+  COUNSELOR_VISIBLE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const COMMENT_TYPE_LABELS: Record<string, string> = {
@@ -434,9 +434,9 @@ const COMMENT_TYPE_LABELS: Record<string, string> = {
 
 const COMMENT_TYPE_COLORS: Record<string, string> = {
   COUNSELOR_NOTE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  APPLICATION_TEAM_NOTE: "bg-orange-100 text-orange-700",
+  APPLICATION_TEAM_NOTE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   VISA_OFFICER_NOTE: "bg-rose-100 text-rose-700",
-  PARTNER_SUBMISSION_NOTE: "bg-blue-100 text-blue-700",
+  PARTNER_SUBMISSION_NOTE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   FINANCE_NOTE: "bg-emerald-100 text-emerald-700",
   RISK_NOTE: "bg-amber-100 text-amber-700",
   FRAUD_NOTE: "bg-red-100 text-red-700",
@@ -459,9 +459,9 @@ const SOP_TYPE_LABELS: Record<string, string> = {
 const SOP_STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   STUDENT_REVIEW: "bg-amber-100 text-amber-700",
-  COUNSELOR_REVIEW: "bg-orange-100 text-orange-700",
+  COUNSELOR_REVIEW: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   APPROVED: "bg-emerald-100 text-emerald-700",
-  SENT: "bg-blue-100 text-blue-700",
+  SENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 // ============================================================
@@ -966,18 +966,18 @@ function StudentDetailBody({
             action={
               <div className="flex gap-2">
                 <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                  onClick={() => toast({ title: "Request document", description: "Document request template opened." })}
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => toast({ title: "Request document", description: "Document request template opened." })}
                 >
                   <Icon name="FileUp" className="mr-1.5 size-3.5" /> Request Document
                 </Button>
                 <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 border-[var(--alo-cta)]/30 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
-                  onClick={() => toast({ title: "Upload on behalf", description: "Counselor upload form opened — student will be notified." })}
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-cta)]/30 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
+ onClick={() => toast({ title: "Upload on behalf", description: "Counselor upload form opened — student will be notified." })}
                 >
                   <Icon name="Upload" className="mr-1.5 size-3.5" /> Upload on Behalf
                 </Button>
@@ -1034,18 +1034,18 @@ function StudentDetailBody({
             title="Student-Visible Comments"
             description="These comments appear in the student's portal inbox"
             icon="MessageSquare"
-            className="border-2 border-blue-200"
-            action={<Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Student can see</Badge>}
+            className="border-2 border-[var(--alo-border)]"
+            action={<Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">Student can see</Badge>}
           >
             <div className="space-y-3">
               {studentComments.length === 0 ? (
                 <EmptyState icon="MessageSquare" title="No student-visible comments" description="Be the first to share an update with the student." />
               ) : (
                 studentComments.map((c) => (
-                  <div key={c.id} className="rounded-xl border border-blue-100 bg-blue-50/30 p-3">
+                  <div key={c.id} className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/30 p-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-8 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+                        <div className="flex size-8 items-center justify-center rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                           <Icon name="User" className="size-4" />
                         </div>
                         <div>
@@ -1059,7 +1059,7 @@ function StudentDetailBody({
                             <Icon name="Bot" className="mr-1 size-3" /> AI
                           </Badge>
                         )}
-                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-[11px]">
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] text-[11px]">
                           <Icon name="Eye" className="mr-1 size-3" /> Student can see
                         </Badge>
                         {c.readByStudent ? (
@@ -1475,7 +1475,7 @@ function CommentComposer({
   };
 
   return (
-    <div className={`mt-4 rounded-xl border-2 p-3 ${isInternal ? "border-amber-200 bg-amber-50/30" : "border-blue-200 bg-blue-50/30"}`}>
+    <div className={`mt-4 rounded-xl border-2 p-3 ${isInternal ? "border-amber-200 bg-amber-50/30" : "border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/30"}`}>
       <Label htmlFor={`composer-${kind}`} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         <Icon name={isInternal ? "Lock" : "MessageSquarePlus"} className="size-3.5" />
         {isInternal ? "Add internal note (staff-only)" : "Add student-visible comment"}
@@ -1523,7 +1523,7 @@ function CommentComposer({
         </div>
       )}
       <div className="mt-2 flex items-center justify-between gap-2">
-        <p className={`text-[11px] ${isInternal ? "text-amber-700" : "text-blue-700"}`}>
+        <p className={`text-[11px] ${isInternal ? "text-amber-700" : "text-[var(--alo-brand)]"}`}>
           {isInternal ? (
             <span className="flex items-center gap-1"><Icon name="ShieldAlert" className="size-3" /> Audit-logged. Student will NOT see this.</span>
           ) : (
@@ -1531,15 +1531,15 @@ function CommentComposer({
           )}
         </p>
         <Button
-          size="sm"
-          disabled={!body.trim() || posting}
-          onClick={handleSubmit}
-          className={
-            isInternal
-              ? "h-9 bg-amber-600 text-white hover:bg-amber-700"
-              : "h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
-          }
-        >
+ size="sm"
+ disabled={!body.trim() || posting}
+ onClick={handleSubmit}
+ className={
+ isInternal
+ ? " bg-amber-600 text-white hover:bg-amber-700"
+ : " bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ }
+ >
           {posting ? <Icon name="Loader2" className="mr-1.5 size-3.5 animate-spin" /> : <Icon name="Send" className="mr-1.5 size-3.5" />}
           {isInternal ? "Post Note" : "Post Comment"}
         </Button>

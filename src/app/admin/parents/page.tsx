@@ -98,7 +98,7 @@ interface Parent {
 
 const ACCESS_STYLE: Record<string, string> = {
   FULL_JOURNEY: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  LIMITED: 'border-blue-200 bg-blue-50 text-blue-800',
+  LIMITED: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   NONE: 'border-[var(--alo-border-strong)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
@@ -516,7 +516,7 @@ export default function ParentsAdminPage() {
               </label>
             </div>
 
-            <p className="rounded-lg border border-blue-200 bg-blue-50 p-2.5 text-[11px] text-blue-900">
+            <p className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-2.5 text-[11px] text-[var(--alo-brand-deep)]">
               {ACCESS_CONSEQUENCE[form.accessLevel]}
             </p>
 

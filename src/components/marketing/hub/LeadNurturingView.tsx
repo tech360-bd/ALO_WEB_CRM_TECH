@@ -37,12 +37,12 @@ export default function LeadNurturingView() {
             <CardContent className="space-y-3">
               <div className="grid md:grid-cols-2 gap-3">
                 <div><label className="text-xs font-semibold">Journey</label><Select value={journey} onValueChange={setJourney}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="whatsapp_7day">WhatsApp 7-Day Drip</SelectItem><SelectItem value="email_5mail">Email 5-Mail Journey</SelectItem><SelectItem value="sms_reminder">SMS Deadline Reminder</SelectItem><SelectItem value="mixed">Mixed (WhatsApp+Email+SMS)</SelectItem></SelectContent></Select></div>
-                <div className="flex items-end"><Button onClick={handleTrigger} disabled={loading} className="w-full bg-[var(--alo-cta)] text-black h-9">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Nurturing (Dry Run)</Button></div>
+                <div className="flex items-end"><Button onClick={handleTrigger} disabled={loading} className="w-full bg-[var(--alo-cta)] text-black ">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Nurturing (Dry Run)</Button></div>
               </div>
               {log && <p className="text-xs bg-[var(--alo-page)] border rounded-lg p-3">{log}</p>}
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><MessageSquare className="w-3 h-3 text-emerald-600" />WhatsApp</p><p className="text-[var(--alo-body)] mt-1">Day 1 Welcome → Day 3 Program match → Day 7 Deadline</p></div>
-                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Mail className="w-3 h-3 text-blue-600" />Email</p><p className="text-[var(--alo-body)] mt-1">Welcome → Scholarship → Success story → CTA</p></div>
+                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Mail className="w-3 h-3 text-[var(--alo-brand)]" />Email</p><p className="text-[var(--alo-body)] mt-1">Welcome → Scholarship → Success story → CTA</p></div>
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Clock className="w-3 h-3 text-amber-600" />SMS</p><p className="text-[var(--alo-body)] mt-1">Deadline + counselor contact + opt-out</p></div>
               </div>
               <p className="text-[11px] text-[var(--alo-text-muted)]">Preserves CRM workflows — AI must not overwrite important student records or reassign counselors outside authorized rules. Uses MarketingLead.counselorId via existing assignment rules.</p>

@@ -288,7 +288,7 @@ export function AiCommandCenter() {
       />
 
       {/* AI Safety Rules Banner */}
-      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-[var(--alo-cta-soft)]/40">
         <CardHeader>
           <div className="flex items-center gap-2.5">
             <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white">
@@ -515,37 +515,37 @@ export function AiCommandCenter() {
                           </div>
                           <div className="mt-2 flex items-center gap-1.5">
                             <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-xs text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                              onClick={() => handleAgentAction(agent, "run")}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleAgentAction(agent, "run")}
                             >
                               <Icon name="Play" className="size-3" /> Run
                             </Button>
                             {agent.status === "ACTIVE" ? (
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-amber-700 hover:bg-amber-50"
-                                onClick={() => handleAgentAction(agent, "pause")}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-amber-700 hover:bg-amber-50"
+ onClick={() => handleAgentAction(agent, "pause")}
                               >
                                 <Icon name="Pause" className="size-3" /> Pause
                               </Button>
                             ) : (
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-emerald-700 hover:bg-emerald-50"
-                                onClick={() => handleAgentAction(agent, "resume")}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-emerald-700 hover:bg-emerald-50"
+ onClick={() => handleAgentAction(agent, "resume")}
                               >
                                 <Icon name="PlayCircle" className="size-3" /> Resume
                               </Button>
                             )}
                             <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-xs"
-                              onClick={() =>
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 "
+ onClick={() =>
                                 toast({
                                   title: "Agent details",
                                   description: `${agent.agentName} · ${agent.department} · ${agent.status}`,
@@ -682,10 +682,10 @@ export function AiCommandCenter() {
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">{alert.description}</p>
                     <Button
-                      size="sm"
-                      variant="link"
-                      className="mt-1 h-auto p-0 text-xs text-[var(--alo-brand)]"
-                      onClick={() =>
+ size="sm"
+ variant="link"
+ className="mt-1 h-auto p-0 text-[var(--alo-brand)]"
+ onClick={() =>
                         toast({
                           title: "Alert acknowledged",
                           description: `${alert.title} — assigned to a human reviewer.`,

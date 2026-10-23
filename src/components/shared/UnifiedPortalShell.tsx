@@ -32,12 +32,12 @@ function NavLink({ item, active, onClick }: { item: NavItem; active: boolean; on
         onClick={() => hasChildren ? setOpen(!open) : onClick()}
         className={cn(
           'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-          active ? 'bg-orange-500 text-white shadow-sm' : 'text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]',
+          active ? 'bg-[var(--alo-cta)] text-white shadow-sm' : 'text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]',
         )}
       >
         <Icon className="w-4 h-4 shrink-0" />
         <span className="flex-1 text-left truncate">{item.label}</span>
-        {item.badge && <Badge className={cn('text-[11px] px-1.5 py-0', active ? 'bg-white text-orange-600' : 'bg-orange-100 text-orange-700')}>{item.badge}</Badge>}
+        {item.badge && <Badge className={cn('text-[11px] px-1.5 py-0', active ? 'bg-white text-[var(--alo-cta-active)]' : 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]')}>{item.badge}</Badge>}
         {hasChildren && <ChevronRight className={cn('w-3.5 h-3.5 transition-transform', open && 'rotate-90')} />}
       </button>
       {hasChildren && open && (
@@ -70,7 +70,7 @@ function SidebarContent({ role, collapsed, collapsible = false, navGroups, curre
   return (
     <div className="flex flex-col h-full bg-white">
       <div className={cn('p-4 flex items-center gap-3 border-b border-[var(--alo-border)]', collapsible && collapsed && 'justify-center px-2')}>
-        <div className="w-9 h-9 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black text-sm">ALO</div>
+        <div className="w-9 h-9 rounded-xl bg-[var(--alo-cta)] text-white flex items-center justify-center font-black text-sm">ALO</div>
         {(!collapsible || !collapsed) && (
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-[var(--alo-text)] leading-tight truncate">ALO Education</p>
@@ -130,9 +130,9 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
   return (
     <div className="min-h-screen bg-[var(--alo-page)] flex flex-col">
       <header className="h-14 bg-white border-b border-[var(--alo-border)] flex items-center gap-3 px-4 sticky top-0 z-30">
-        <Button variant="ghost" size="icon" className="hidden lg:flex h-8 w-8" onClick={() => setCollapsed(!collapsed)}><Menu className="w-4 h-4" /></Button>
+        <Button variant="ghost" size="icon" className="hidden lg:flex size-12 " onClick={() => setCollapsed(!collapsed)}><Menu className="w-4 h-4" /></Button>
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden h-8 w-8"><Menu className="w-4 h-4" /></Button></SheetTrigger>
+          <SheetTrigger asChild><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden size-12 "><Menu className="w-4 h-4" /></Button></SheetTrigger>
           <SheetContent side="left" className="p-0 w-72">
             <SidebarContent role={role} collapsed={collapsed} navGroups={navGroups} currentView={currentView} user={user} setView={setView} setMobileOpen={setMobileOpen} logout={logout} />
           </SheetContent>
@@ -155,11 +155,11 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
 
         <div className="flex items-center gap-2">
           {primaryAction && (
-            <Button onClick={primaryAction.onClick} className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold h-9 hidden sm:flex">
+            <Button onClick={primaryAction.onClick} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold hidden sm:flex">
               {primaryAction.icon && <primaryAction.icon className="w-4 h-4 mr-1" />}{primaryAction.label}
             </Button>
           )}
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="h-8 w-8 relative"><Bell className="w-4 h-4" /><span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" /></Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="size-12 relative"><Bell className="w-4 h-4" /><span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" /></Button>
           <Avatar className="w-8 h-8 hidden sm:flex"><AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback></Avatar>
         </div>
       </header>
@@ -178,7 +178,7 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
               </div>
             )}
             {primaryAction && (
-              <Button onClick={primaryAction.onClick} className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:hidden">
+              <Button onClick={primaryAction.onClick} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white w-full sm:hidden">
                 {primaryAction.icon && <primaryAction.icon className="w-4 h-4 mr-2" />}{primaryAction.label}
               </Button>
             )}
@@ -192,7 +192,7 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
           const Icon = item.icon;
           const active = !!item.view && isActive(item.view as PortalView);
           return (
-            <button key={item.label} onClick={() => item.view && setView(item.view as PortalView)} className={cn('flex flex-col items-center gap-1 px-3 py-1 rounded-lg', active ? 'text-orange-600' : 'text-[var(--alo-text-muted)]')}>
+            <button key={item.label} onClick={() => item.view && setView(item.view as PortalView)} className={cn('flex flex-col items-center gap-1 px-3 py-1 rounded-lg', active ? 'text-[var(--alo-cta-active)]' : 'text-[var(--alo-text-muted)]')}>
               <Icon className="w-5 h-5" />
               <span className="text-[11px] font-medium truncate max-w-[60px]">{item.label}</span>
             </button>

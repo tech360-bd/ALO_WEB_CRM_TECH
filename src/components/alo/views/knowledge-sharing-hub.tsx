@@ -47,10 +47,10 @@ interface KnowledgePost {
 const CATEGORIES = [
   { value: "general", label: "General", icon: "FileText", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
   { value: "university_update", label: "University Update", icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
-  { value: "visa_update", label: "Visa Update", icon: "Plane", color: "bg-blue-100 text-blue-700" },
+  { value: "visa_update", label: "Visa Update", icon: "Plane", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   { value: "scholarship", label: "Scholarship", icon: "Award", color: "bg-emerald-100 text-emerald-700" },
   { value: "country_guide", label: "Country Guide", icon: "Globe", color: "bg-cyan-100 text-cyan-700" },
-  { value: "course_info", label: "Course Info", icon: "BookOpen", color: "bg-orange-100 text-orange-700" },
+  { value: "course_info", label: "Course Info", icon: "BookOpen", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   { value: "partnership", label: "Partnership", icon: "Handshake", color: "bg-teal-100 text-teal-700" },
   { value: "business_strategy", label: "Business Strategy", icon: "MapPinned", color: "bg-amber-100 text-amber-700" },
   { value: "training", label: "Training", icon: "Users", color: "bg-pink-100 text-pink-700" },
@@ -291,8 +291,8 @@ export function KnowledgeSharingHub() {
                         <Icon name={meta.icon} className="size-3" />{meta.label}
                       </span>
                       <div className="flex gap-1">
-                        {post.isPinned && <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[11px]"><Icon name="Pin" className="size-3" />Pinned</Badge>}
-                        {post.isFeatured && <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-[11px]"><Icon name="Star" className="size-3" />Featured</Badge>}
+                        {post.isPinned && <Badge variant="outline" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px]"><Icon name="Pin" className="size-3" />Pinned</Badge>}
+                        {post.isFeatured && <Badge variant="outline" className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25 text-[11px]"><Icon name="Star" className="size-3" />Featured</Badge>}
                         {post.status === "PENDING" && <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">Pending</Badge>}
                       </div>
                     </div>
@@ -352,7 +352,7 @@ export function KnowledgeSharingHub() {
                 <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--alo-surface-muted)]">{selectedPost.content}</div>
                 {selectedPost.fileUrl && (
                   <div className="rounded-lg border p-3 bg-[var(--alo-page)]">
-                    <a href={selectedPost.fileUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline inline-flex items-center gap-1"><Icon name="Paperclip" className="size-4" />Attachment: {selectedPost.fileType || "file"}</a>
+                    <a href={selectedPost.fileUrl} target="_blank" rel="noreferrer" className="text-sm text-[var(--alo-brand)] hover:underline inline-flex items-center gap-1"><Icon name="Paperclip" className="size-4" />Attachment: {selectedPost.fileType || "file"}</a>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
@@ -372,7 +372,7 @@ export function KnowledgeSharingHub() {
                   </div>
                   <div className="flex gap-2 mt-3">
                     <Input placeholder="Add a comment…" value={newComment} onChange={(e) => setNewComment(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleComment()} className="h-9" />
-                    <Button size="sm" onClick={handleComment} className="h-9">Post</Button>
+                    <Button size="sm" onClick={handleComment} className="">Post</Button>
                   </div>
                 </div>
               </div>
@@ -420,7 +420,7 @@ export function KnowledgeSharingHub() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={creating} className="h-10">Cancel</Button>
-            <Button onClick={handleCreate} disabled={creating} className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">{creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Share2" className="size-4" />}{creating ? "Sharing…" : "Share Knowledge"}</Button>
+            <Button onClick={handleCreate} disabled={creating} className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">{creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Share2" className="size-4" />}{creating ? "Sharing…" : "Share Knowledge"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

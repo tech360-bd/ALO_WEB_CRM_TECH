@@ -80,7 +80,7 @@ export default function MarketingSettingsView() {
             <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Bell className="w-4 h-4 text-amber-600" />Notifications</CardTitle></CardHeader>
             <CardContent className="text-xs space-y-2">
               <p className="text-[var(--alo-body)]">Failure alerts via in-app + email + WhatsApp (no sensitive leak). Daily/weekly reports scheduled.</p>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs">Configure Alerts</Button>
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" ">Configure Alerts</Button>
             </CardContent>
           </Card>
         </div>

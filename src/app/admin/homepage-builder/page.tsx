@@ -16,7 +16,7 @@ export default function AdminHomepageBuilderPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Badge className="bg-[var(--alo-brand)] text-white font-bold text-xs">SUPER_ADMIN / ADMIN</Badge>
-              <Badge variant="outline" className="text-emerald-700 border-emerald-300 font-semibold text-xs">Audit Logged • RBAC • PWA Ready</Badge>
+              <Badge variant="outline" className="text-emerald-700 border-emerald-300 font-semibold text-xs">Changes are audit logged</Badge>
             </div>
             <h1 className="text-xl font-black text-[var(--alo-text)] tracking-tight">Homepage Master Builder & CMS — Real Implementation</h1>
             <p className="text-xs text-[var(--alo-body)] mt-1">
@@ -24,10 +24,10 @@ export default function AdminHomepageBuilderPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button asChild variant="outline" size="sm" className="h-10 rounded-xl text-xs flex items-center gap-1.5 border-[var(--alo-border-strong)]"><a href="/" target="_blank" rel="noopener noreferrer">
+            <Button asChild variant="outline" size="sm" className=" rounded-xl flex items-center gap-1.5 border-[var(--alo-border-strong)]"><a href="/" target="_blank" rel="noopener noreferrer">
                 <Eye className="h-4 w-4 text-[var(--alo-brand)]" /> Live Preview
               </a></Button>
-            <Button asChild size="sm" className="h-10 rounded-xl text-xs bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]"><a href="/admin/master-command">Master Command Center</a></Button>
+            <Button asChild size="sm" className=" rounded-xl bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]"><a href="/admin/master-command">Master Command Center</a></Button>
           </div>
         </div>
 

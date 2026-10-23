@@ -17,7 +17,7 @@ import { fmtDate, timeAgo } from "@/lib/alo-types";
 
 // Change type metadata
 const CHANGE_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
-  NEW_UNIVERSITY: { label: "New University", icon: "Building2", color: "bg-blue-50 text-blue-700 border-blue-200" },
+  NEW_UNIVERSITY: { label: "New University", icon: "Building2", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   UNIVERSITY_UPDATED: { label: "University Updated", icon: "Building2", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
   UNIVERSITY_CLOSED: { label: "University Closed", icon: "XCircle", color: "bg-rose-50 text-rose-700 border-rose-200" },
   NEW_FACULTY: { label: "New Faculty", icon: "Layers", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -27,30 +27,30 @@ const CHANGE_TYPE_META: Record<string, { label: string; icon: string; color: str
   COURSE_CLOSED: { label: "Course Closed", icon: "XCircle", color: "bg-rose-50 text-rose-700 border-rose-200" },
   COURSE_RENAMED: { label: "Course Renamed", icon: "Edit3", color: "bg-amber-50 text-amber-700 border-amber-200" },
   COURSE_CODE_CHANGED: { label: "Course Code Changed", icon: "Hash", color: "bg-amber-50 text-amber-700 border-amber-200" },
-  FEE_CHANGED: { label: "Fee Changed", icon: "DollarSign", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  INTAKE_CHANGED: { label: "Intake Changed", icon: "Calendar", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  DEADLINE_CHANGED: { label: "Deadline Changed", icon: "Clock", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  REQUIREMENT_CHANGED: { label: "Requirement Changed", icon: "FileCheck", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  ENGLISH_REQUIREMENT_CHANGED: { label: "English Req. Changed", icon: "Languages", color: "bg-orange-50 text-orange-700 border-orange-200" },
+  FEE_CHANGED: { label: "Fee Changed", icon: "DollarSign", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
+  INTAKE_CHANGED: { label: "Intake Changed", icon: "Calendar", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
+  DEADLINE_CHANGED: { label: "Deadline Changed", icon: "Clock", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
+  REQUIREMENT_CHANGED: { label: "Requirement Changed", icon: "FileCheck", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
+  ENGLISH_REQUIREMENT_CHANGED: { label: "English Req. Changed", icon: "Languages", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   SCHOLARSHIP_NEW: { label: "New Scholarship", icon: "Award", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  SCHOLARSHIP_UPDATED: { label: "Scholarship Updated", icon: "Award", color: "bg-orange-50 text-orange-700 border-orange-200" },
+  SCHOLARSHIP_UPDATED: { label: "Scholarship Updated", icon: "Award", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   SCHOLARSHIP_CLOSED: { label: "Scholarship Closed", icon: "Award", color: "bg-rose-50 text-rose-700 border-rose-200" },
   DURATION_CHANGED: { label: "Duration Changed", icon: "Clock", color: "bg-amber-50 text-amber-700 border-amber-200" },
   CAMPUS_CHANGED: { label: "Campus Changed", icon: "MapPin", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
   STUDY_MODE_CHANGED: { label: "Study Mode Changed", icon: "Monitor", color: "bg-amber-50 text-amber-700 border-amber-200" },
   APPLICATION_PROCESS_CHANGED: { label: "Application Process", icon: "ListChecks", color: "bg-amber-50 text-amber-700 border-amber-200" },
-  OFFICIAL_POLICY_CHANGE: { label: "Official Policy Change", icon: "ShieldAlert", color: "bg-orange-50 text-orange-700 border-orange-200" },
+  OFFICIAL_POLICY_CHANGE: { label: "Official Policy Change", icon: "ShieldAlert", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   GOVERNMENT_POLICY_CHANGE: { label: "Government Policy", icon: "Landmark", color: "bg-rose-50 text-rose-700 border-rose-200" },
   SOURCE_CHANGED: { label: "Source Changed", icon: "RefreshCw", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
   SOURCE_UNAVAILABLE: { label: "Source Unavailable", icon: "WifiOff", color: "bg-rose-50 text-rose-700 border-rose-200" },
-  POSSIBLE_DATA_CONFLICT: { label: "Data Conflict", icon: "AlertTriangle", color: "bg-orange-50 text-orange-700 border-orange-200" },
+  POSSIBLE_DATA_CONFLICT: { label: "Data Conflict", icon: "AlertTriangle", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   NEEDS_MANUAL_REVIEW: { label: "Needs Review", icon: "HelpCircle", color: "bg-amber-50 text-amber-700 border-amber-200" },
 };
 
 const IMPACT_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   MEDIUM: "bg-amber-100 text-amber-700",
-  HIGH: "bg-orange-100 text-orange-700",
+  HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   CRITICAL: "bg-rose-100 text-rose-700",
 };
 
@@ -58,8 +58,8 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
-  NEEDS_REVIEW: "bg-orange-100 text-orange-700",
-  RECHECK_REQUESTED: "bg-blue-100 text-blue-700",
+  NEEDS_REVIEW: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  RECHECK_REQUESTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   SUPERSEDED: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
@@ -347,7 +347,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
             <Button variant="outline" onClick={() => fetchDashboard()} className="h-10">
               <Icon name="RefreshCw" className="mr-2 h-4 w-4" /> Refresh
             </Button>
-            <Button onClick={triggerRun} disabled={triggering} className="h-10 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/90">
+            <Button onClick={triggerRun} disabled={triggering} className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/90">
               <Icon name={triggering ? "Loader2" : "Play"} className={`mr-2 h-4 w-4 ${triggering ? "animate-spin" : ""}`} />
               {triggering ? "Running..." : "Trigger Run Now"}
             </Button>
@@ -358,7 +358,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
       {/* Health Banner */}
       <Card className={`rounded-2xl border-2 p-5 ${
         data.health === "HEALTHY" ? "border-emerald-200 bg-emerald-50/50" :
-        data.health === "RUNNING" ? "border-blue-200 bg-blue-50/50" :
+        data.health === "RUNNING" ? "border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50" :
         data.health === "NEEDS_REVIEW" ? "border-amber-200 bg-amber-50/50" :
         "border-rose-200 bg-rose-50/50"
       }`}>
@@ -446,7 +446,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                     </div>
                   </div>
                   {data.lastRun.aiReportSummary && (
-                    <div className="rounded-lg bg-blue-50 p-3 text-xs text-[var(--alo-body)]">
+                    <div className="rounded-lg bg-[var(--alo-brand-pale)] p-3 text-xs text-[var(--alo-body)]">
                       <div className="mb-1 font-semibold text-[var(--alo-brand)]">AI Report Summary</div>
                       {data.lastRun.aiReportSummary}
                     </div>
@@ -484,7 +484,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 {data.coursesByLevel.map((c) => (
                   <div key={c.level} className="flex items-center justify-between text-sm">
                     <div className="text-[var(--alo-body)]">{c.level}</div>
-                    <Badge className="bg-blue-50 text-blue-700">{c.count}</Badge>
+                    <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{c.count}</Badge>
                   </div>
                 ))}
               </div>
@@ -654,13 +654,13 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                           <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{timeAgo(c.detectedAt)}</TableCell>
                           <TableCell className="align-top text-right" onClick={(e) => e.stopPropagation()}>
                             <div className="flex justify-end gap-1">
-                              <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => recheck(c.id)} disabled={acting}>
+                              <Button size="sm" variant="outline" className="h-7 px-2 " onClick={() => recheck(c.id)} disabled={acting}>
                                 <Icon name="RefreshCw" className="h-3 w-3" />
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 px-2 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(c.id, "APPROVE")} disabled={acting}>
+                              <Button size="sm" variant="outline" className="h-7 px-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(c.id, "APPROVE")} disabled={acting}>
                                 <Icon name="Check" className="h-3 w-3" />
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 px-2 text-xs border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(c.id, "REJECT")} disabled={acting}>
+                              <Button size="sm" variant="outline" className="h-7 px-2 border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(c.id, "REJECT")} disabled={acting}>
                                 <Icon name="X" className="h-3 w-3" />
                               </Button>
                             </div>
@@ -682,11 +682,11 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
           ) : (
             <div className="grid gap-4">
               {conflicts.map((c) => (
-                <Card key={c.id} className="rounded-2xl border-2 border-orange-200 p-4">
+                <Card key={c.id} className="rounded-2xl border-2 border-[var(--alo-cta)]/25 p-4">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-orange-100 text-orange-700">CONFLICT</Badge>
+                        <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]">CONFLICT</Badge>
                         <span className="font-mono text-sm text-[var(--alo-brand)]">{c.fieldName}</span>
                       </div>
                       <div className="mt-1 text-xs text-[var(--alo-text-muted)]">
@@ -707,7 +707,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
         {/* SOURCES TAB */}
         <TabsContent value="sources" className="mt-6 space-y-4">
-          <div className="flex flex-col gap-3 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/70 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="text-sm font-semibold text-[var(--alo-text)]">Official source registry</div>
               <div className="mt-1 text-xs text-[var(--alo-body)]">New entries remain paused until a Super Admin confirms official ownership and a safe HTTPS probe succeeds. Page facts still require separate review.</div>
@@ -745,7 +745,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                         <div className="text-[var(--alo-text-muted)]">{s.universitySlug || s.courseSlug || s.countrySlug || "—"}</div>
                       </TableCell>
                       <TableCell className="align-top text-xs">
-                        <Badge className={s.priority === 1 ? "bg-emerald-100 text-emerald-700" : s.priority <= 3 ? "bg-blue-100 text-blue-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>P{s.priority}</Badge>
+                        <Badge className={s.priority === 1 ? "bg-emerald-100 text-emerald-700" : s.priority <= 3 ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>P{s.priority}</Badge>
                       </TableCell>
                       <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{s.lastCheckedAt ? timeAgo(s.lastCheckedAt) : "never"}</TableCell>
                       <TableCell className="align-top">
@@ -886,7 +886,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 </div>
 
                 {/* AI Analysis */}
-                <div className="rounded-lg bg-blue-50 p-3 text-xs">
+                <div className="rounded-lg bg-[var(--alo-brand-pale)] p-3 text-xs">
                   <div className="mb-1 font-semibold text-[var(--alo-brand)]">AI Explanation</div>
                   <div className="text-[var(--alo-body)]">{selectedChange.aiExplanation}</div>
                   <div className="mt-2 flex items-center gap-4 text-xs text-[var(--alo-text-muted)]">

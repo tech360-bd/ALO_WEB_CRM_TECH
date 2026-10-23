@@ -109,7 +109,7 @@ export default function StudentFinance() {
           title="Finance"
           description="Service fees, deposits and payments recorded against your file."
           action={
-            <Button variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={exportCsv} disabled={payments.length === 0}>
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={exportCsv} disabled={payments.length === 0}>
               <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               Export CSV
             </Button>
@@ -167,7 +167,7 @@ export default function StudentFinance() {
                       : 'When a service fee or deposit is added to your file it will appear here with its due date and status.'
                   }
                   action={
-                    <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
+                    <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                       <Link href="/student/messages">Ask About Fees</Link>
                     </Button>
                   }

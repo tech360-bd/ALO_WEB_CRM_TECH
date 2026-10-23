@@ -32,10 +32,10 @@ export default function ServicesDirectoryPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {error && <p role="alert" className="p-4 mb-6 border border-red-200 bg-red-50 rounded-xl">{error}</p>}
           {/* Hero — spec §3 exact copy */}
-          <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-8 md:p-12 shadow-sm mb-12">
-            <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs px-3 py-1 mb-4 uppercase">ALO End-to-End Advisory</Badge>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Complete Support for Your Study Abroad Journey</h1>
-            <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">Provide professional guidance from course selection and university applications to visa preparation, pre-departure planning and post-arrival support.</p>
+          <div className="mb-12 rounded-[20px] border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-6 md:p-10">
+            <Badge className="bg-card text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] px-3 py-1 mb-4 uppercase tracking-[0.07em] font-semibold">ALO End-to-End Advisory</Badge>
+            <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] mb-4">Complete Support for Your Study Abroad Journey</h1>
+            <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] md:text-base">Provide professional guidance from course selection and university applications to visa preparation, pre-departure planning and post-arrival support.</p>
             <div className="flex flex-wrap gap-3 mt-6">
               <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Book Free Consultation</Button></Link>
               <Link href="/course-finder"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6 font-bold text-[var(--alo-brand)]">Explore Course Finder</Button></Link>
@@ -63,7 +63,7 @@ export default function ServicesDirectoryPage() {
                     </div>
                   </div>
                   <div className="p-6 pt-0">
-                    <Link href={`/services/${s.slug}`} className="block w-full"><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold h-12 rounded-xl flex items-center justify-center gap-1.5">View Details <ArrowRight className="h-4 w-4" /></Button></Link>
+                    <Link href={`/services/${s.slug}`} className="block w-full"><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold h-12 rounded-xl flex items-center justify-center gap-1.5">View Details <ArrowRight className="h-4 w-4" /></Button></Link>
                   </div>
                 </Card>
               ))}
