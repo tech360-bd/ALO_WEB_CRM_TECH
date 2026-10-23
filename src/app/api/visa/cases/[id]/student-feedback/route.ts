@@ -7,7 +7,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext, context?: a
   try {
     const caseId = context?.params?.id;
     if (typeof caseId !== 'string' || !caseId) return NextResponse.json({ success: false, error: 'Case ID required.' }, { status: 400 });
-    const visaCase = await db.visaCase.findUnique({ where: { id: caseId }, select: { id: true, studentId: true } });
+    const visaCase = await db.visaCase.findUnique({ where: { id: caseId }, select: { id: true, studentId: true, visaOfficerId: true } });
     if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
     const result = await publishApprovedStudentFeedback(auth, visaCase, await req.json().catch(() => null));
     return NextResponse.json({ success: true, data: result, externalDelivery: false }, { headers: { 'Cache-Control': 'private, no-store' } });

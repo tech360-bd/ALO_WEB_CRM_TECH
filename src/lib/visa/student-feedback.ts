@@ -25,7 +25,7 @@ export class VisaFeedbackError extends Error {
   }
 }
 
-export async function publishApprovedStudentFeedback(auth: AuthContext, visaCase: { id: string; studentId: string }, input: unknown) {
+export async function publishApprovedStudentFeedback(auth: AuthContext, visaCase: { id: string; studentId: string; visaOfficerId?: string | null }, input: unknown) {
   const fullScope = visaCaseViewScope(auth, visaCase) === 'full';
   if (!isVisaSuperAdmin(auth) && !(fullScope && hasVisaPermission(auth, 'visa.notes.student_feedback.create'))) {
     throw new VisaFeedbackError('Assigned case and visa.notes.student_feedback.create permission required.', 403);

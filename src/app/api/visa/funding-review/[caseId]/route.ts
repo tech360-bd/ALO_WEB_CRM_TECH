@@ -13,7 +13,7 @@ function parseStringList(value: string | null | undefined): string[] {
   } catch { return []; }
 }
 
-async function projectFundingReview(auth: AuthContext, visaCase: { id: string; studentId: string }, review: any) {
+async function projectFundingReview(auth: AuthContext, visaCase: { id: string; studentId: string; visaOfficerId: string | null }, review: any) {
   if (!review) return null;
   const canDownload = isVisaSuperAdmin(auth) || hasVisaPermission(auth, 'visa.documents.download');
   const sponsorDocuments = canDownload
@@ -82,7 +82,7 @@ export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: 
       ...((fields.sourceOfFundExplanation || '').trim().length > 0 && (fields.sourceOfFundExplanation || '').trim().length < 20 ? ['Source-of-funds explanation may need more detail.'] : []),
       ...((dependents || []).length > 0 && !fields.livingCostPlan ? ['Review how dependent living costs are covered.'] : []),
     ];
-    const data = {
+    const updateData = {
       ...fields,
       ...(dependents !== undefined ? { dependents: JSON.stringify(dependents) } : {}),
       ...(sponsorDocumentIds !== undefined ? { sponsorDocuments: JSON.stringify(sponsorDocumentIds) } : {}),
@@ -92,8 +92,8 @@ export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: 
     const review = await db.$transaction(async (tx) => {
       const saved = await tx.visaFundingReview.upsert({
         where: { caseId },
-        create: { caseId, studentId: visaCase.studentId, fundingStatus: 'pending_review', ...data },
-        update: data,
+        create: { caseId, studentId: visaCase.studentId, fundingStatus: 'pending_review', ...updateData },
+        update: updateData,
       });
       await tx.portalAuditLog.create({
         data: { actorUserId: auth.actorUserId, action: 'VISA_FUNDING_UPDATE', entityType: 'VisaFundingReview', entityId: caseId, metadata: JSON.stringify({ studentId: visaCase.studentId, changedFields: Object.keys(parsed.data), before: existing ? { fundingStatus: existing.fundingStatus, hasBankStatement: existing.hasBankStatement, hasSolvencyCert: existing.hasSolvencyCert } : null, after: { fundingStatus: saved.fundingStatus, hasBankStatement: saved.hasBankStatement, hasSolvencyCert: saved.hasSolvencyCert } }), ipAddress: '', userAgent: '' },

@@ -24,16 +24,20 @@ function auditData(auth: AuthContext, action: string, itemId: string, caseId: st
   };
 }
 
-async function loadAuthorizedItem(auth: AuthContext, itemId: unknown, permission: string) {
-  if (typeof itemId !== 'string' || !itemId.trim()) return { error: NextResponse.json({ success: false, error: 'Checklist item ID required.' }, { status: 400 }) };
+type AuthorizedItemResult =
+  | { ok: false; response: NextResponse }
+  | { ok: true; item: any; visaCase: any };
+
+async function loadAuthorizedItem(auth: AuthContext, itemId: unknown, permission: string): Promise<AuthorizedItemResult> {
+  if (typeof itemId !== 'string' || !itemId.trim()) return { ok: false, response: NextResponse.json({ success: false, error: 'Checklist item ID required.' }, { status: 400 }) };
   const item = await db.visaChecklistItem.findUnique({ where: { id: itemId } });
-  if (!item || item.archivedAt || !item.caseId) return { error: NextResponse.json({ success: false, error: 'Checklist item not found.' }, { status: 404 }) };
+  if (!item || item.archivedAt || !item.caseId) return { ok: false, response: NextResponse.json({ success: false, error: 'Checklist item not found.' }, { status: 404 }) };
   const visaCase = await db.visaCase.findUnique({ where: { id: item.caseId } });
-  if (!visaCase || visaCase.studentId !== item.studentId) return { error: NextResponse.json({ success: false, error: 'Checklist item not found.' }, { status: 404 }) };
+  if (!visaCase || visaCase.studentId !== item.studentId) return { ok: false, response: NextResponse.json({ success: false, error: 'Checklist item not found.' }, { status: 404 }) };
   if (!canManageVisaPermission(auth, permission, visaCase)) {
-    return { error: NextResponse.json({ success: false, error: `Assigned case and ${permission} permission required.` }, { status: 403 }) };
+    return { ok: false, response: NextResponse.json({ success: false, error: `Assigned case and ${permission} permission required.` }, { status: 403 }) };
   }
-  return { item, visaCase };
+  return { ok: true, item, visaCase };
 }
 
 function safeItem(item: any) {
@@ -62,7 +66,7 @@ function safeItem(item: any) {
 export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
   try {
     const result = await loadAuthorizedItem(auth, context?.params?.id, 'visa.documents.view');
-    if ('error' in result) return result.error;
+    if (!result.ok) return result.response;
     const { item, visaCase } = result;
     await db.portalAuditLog.create({ data: auditData(auth, 'VISA_CHECKLIST_ITEM_VIEW', item.id, visaCase.id, visaCase.studentId, { status: item.status }) });
     return NextResponse.json({ success: true, data: safeItem(item) }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
@@ -74,7 +78,7 @@ export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: a
 export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
     const result = await loadAuthorizedItem(auth, context?.params?.id, 'visa.documents.review');
-    if ('error' in result) return result.error;
+    if (!result.ok) return result.response;
     const { item, visaCase } = result;
     const parsed = updateSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid checklist update.', details: parsed.error.flatten() }, { status: 400 });
@@ -111,7 +115,7 @@ export const DELETE = withAuth(async (_req: Request, auth: AuthContext, context?
   try {
     if (!isVisaSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Only SUPER_ADMIN may archive a checklist item.' }, { status: 403 });
     const result = await loadAuthorizedItem(auth, context?.params?.id, 'visa.documents.review');
-    if ('error' in result) return result.error;
+    if (!result.ok) return result.response;
     const { item, visaCase } = result;
     const archived = await db.$transaction(async (tx) => {
       const saved = await tx.visaChecklistItem.update({ where: { id: item.id }, data: { status: 'NOT_APPLICABLE', archivedAt: new Date() } });

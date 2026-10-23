@@ -4,21 +4,25 @@ import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 import { hasVisaPermission, isVisaSuperAdmin, visaCaseViewScope } from '@/lib/visa/access';
 import { publishApprovedStudentFeedback, VisaFeedbackError } from '@/lib/visa/student-feedback';
 
-async function getAssignedInterview(id: unknown, auth: AuthContext) {
-  if (typeof id !== 'string' || !id) return { error: NextResponse.json({ success: false, error: 'Interview ID required.' }, { status: 400 }) };
+type InterviewAccessResult =
+  | { ok: false; response: NextResponse }
+  | { ok: true; interview: { id: string; caseId: string; studentId: string }; visaCase: { id: string; studentId: string; visaOfficerId: string | null } };
+
+async function getAssignedInterview(id: unknown, auth: AuthContext): Promise<InterviewAccessResult> {
+  if (typeof id !== 'string' || !id) return { ok: false, response: NextResponse.json({ success: false, error: 'Interview ID required.' }, { status: 400 }) };
   const interview = await db.visaInterview.findUnique({ where: { id }, select: { id: true, caseId: true, studentId: true } });
-  if (!interview) return { error: NextResponse.json({ success: false, error: 'Interview not found.' }, { status: 404 }) };
+  if (!interview) return { ok: false, response: NextResponse.json({ success: false, error: 'Interview not found.' }, { status: 404 }) };
   const visaCase = await db.visaCase.findUnique({ where: { id: interview.caseId }, select: { id: true, studentId: true, visaOfficerId: true } });
   if (!visaCase || visaCase.studentId !== interview.studentId || visaCaseViewScope(auth, visaCase) !== 'full') {
-    return { error: NextResponse.json({ success: false, error: 'Assigned case access required.' }, { status: 403 }) };
+    return { ok: false, response: NextResponse.json({ success: false, error: 'Assigned case access required.' }, { status: 403 }) };
   }
-  return { interview, visaCase };
+  return { ok: true, interview, visaCase };
 }
 
 export const POST = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
     const access = await getAssignedInterview(context?.params?.id, auth);
-    if ('error' in access) return access.error;
+    if (!access.ok) return access.response;
     const result = await publishApprovedStudentFeedback(auth, access.visaCase, await req.json().catch(() => null));
     return NextResponse.json({ success: true, data: result, externalDelivery: false }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
@@ -30,7 +34,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext, context?: a
 export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
   try {
     const access = await getAssignedInterview(context?.params?.id, auth);
-    if ('error' in access) return access.error;
+    if (!access.ok) return access.response;
     if (!isVisaSuperAdmin(auth) && !hasVisaPermission(auth, 'visa.interviews.view')) return NextResponse.json({ success: false, error: 'visa.interviews.view permission required.' }, { status: 403 });
     const feedback = await db.visaStudentFeedback.findMany({
       where: { caseId: access.visaCase.id, studentId: access.visaCase.studentId, approvedBy: { not: '' } },

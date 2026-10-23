@@ -57,7 +57,7 @@ export const POST = withAuth(async (_req: Request, auth: AuthContext, context?: 
     const fundingEvidence = [
       Boolean(funding?.sponsorRelation.trim()),
       Boolean(funding?.sourceOfFund.trim()),
-      funding?.sourceOfFundExplanation.trim().length >= 20,
+      (funding?.sourceOfFundExplanation ?? '').trim().length >= 20,
       Boolean(funding?.livingCostPlan.trim()),
     ].filter(Boolean).length;
     const fundingScore = Math.round((fundingEvidence / 4) * 15);

@@ -46,7 +46,7 @@ export async function GET(request: Request) {
 
       const [legacy, extended, sessions, failed] = await Promise.all([
         db.loginSecurity.findMany({ where: { userId: targetUserId }, orderBy: { loginTime: 'desc' }, take: 50, select: { id: true, ipAddress: true, browser: true, operatingSystem: true, location: true, loginTime: true, logoutTime: true, sessionStatus: true, failedAttempts: true } }),
-        db.hrmLoginSecurityExtended.findMany({ where: { userId: targetUserId }, orderBy: { loginAt: 'desc' }, take: 50, select: { id: true, ipAddress: true, browser: true, operatingSystem: true, device: true, location: true, city: true, country: true, loginAt: true, logoutAt: true, success: true, failureReason: true } }),
+        db.hrmLoginSecurityExtended.findMany({ where: { userId: targetUserId }, orderBy: { loginAt: 'desc' }, take: 50, select: { id: true, ipAddress: true, browser: true, operatingSystem: true, device: true, location: true, city: true, country: true, loginAt: true, logoutAt: true, success: true, failureReason: true, sessionId: true } }),
         db.portalSession.findMany({ where: { userId: targetUserId }, orderBy: { createdAt: 'desc' }, take: 20, select: { id: true, deviceName: true, ipAddress: true, userAgent: true, expiresAt: true, revokedAt: true, createdAt: true } }),
         db.employeeLoginLog.findMany({ where: { userId: targetUserId }, orderBy: { loginAt: 'desc' }, take: 50, select: { id: true, ipAddress: true, browser: true, os: true, device: true, location: true, status: true, isSuccess: true, loginAt: true, logoutAt: true, failureReason: true, sessionId: true } }),
       ]);
