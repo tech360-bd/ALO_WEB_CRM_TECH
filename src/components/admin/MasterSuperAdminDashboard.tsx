@@ -34,6 +34,7 @@ interface AdminMetrics {
 // GET /api/employees → Employee
 interface EmployeeRow {
   id: string;
+  userId?: string;
   employeeId: string;
   name: string;
   email: string;
@@ -189,28 +190,27 @@ export default function MasterSuperAdminDashboard() {
     }
     setActingAsBusy(true);
     try {
-      const sessionId = `sa-${Date.now()}`;
+      if (!employee.userId) {
+        toast.error('This employee record is not linked to a portal login; Acting-As is unavailable.');
+        return;
+      }
       const response = await fetch('/api/portal-auth/acting-as/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          targetRole: employee.role,
-          targetName: employee.name,
-          reason: actingAsReason.trim(),
-          sessionId,
-        }),
+        body: JSON.stringify({ targetUserId: employee.userId, reason: actingAsReason.trim() }),
       });
       const payload = await response.json().catch(() => ({}));
-      if (!response.ok || payload?.success === false) {
+      const session = payload?.actingAsSession;
+      if (!response.ok || !payload?.success || !session?.id) {
         toast.error(payload?.error || `Could not start acting-as session (HTTP ${response.status})`);
         return;
       }
-      setActingAsRole(employee.role);
-      setActingAsName(employee.name);
-      setActingAsSessionId(sessionId);
+      setActingAsRole(session.effectiveRole || employee.role);
+      setActingAsName(session.effectiveName || employee.name);
+      setActingAsSessionId(session.id);
       setActingAsReason('');
-      toast.info(`Acting as ${employee.designation || employee.role}. Audited; expires in 30 minutes.`);
-      setView('crm-dashboard');
+      toast.info(`Acting as ${session.effectiveName || employee.name}. Audited; expires at ${new Date(session.expiry).toLocaleTimeString()}.`);
+      router.push('/employee/dashboard');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Could not start acting-as session');
     } finally {
@@ -221,21 +221,22 @@ export default function MasterSuperAdminDashboard() {
   const handleExitActingAs = async () => {
     setActingAsBusy(true);
     try {
-      await fetch('/api/portal-auth/acting-as/stop', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: actingAsSessionId }),
-      });
-    } catch {
-      // Ending the session locally is still correct even if the call fails;
-      // the server-side session expires on its own after 30 minutes.
-    } finally {
+      const response = await fetch('/api/portal-auth/acting-as/stop', { method: 'POST' });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) {
+        toast.error(payload?.error || 'Could not end Acting-As session.');
+        return;
+      }
       setActingAsRole(null);
       setActingAsName(null);
       setActingAsSessionId(null);
       setActingAsBusy(false);
       toast.success('Exited acting-as mode.');
-      setView('crm-dashboard');
+      router.replace('/super-admin/dashboard');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not end Acting-As session.');
+    } finally {
+      setActingAsBusy(false);
     }
   };
 

@@ -173,7 +173,7 @@ export default function CountryComparisonClient({
               entry requirements.
             </p>
             <Button
-              className="mt-2 h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover"
+              className="mt-2 h-11 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover"
               onClick={() => setSelection(allCountries.slice(0, 2).map((country) => country.slug))}
             >
               Compare the two most popular destinations
@@ -283,7 +283,7 @@ export default function CountryComparisonClient({
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
+            <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
               <Link href="/course-finder">Find My Course</Link>
             </Button>
             <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">

@@ -11,7 +11,11 @@ import { expect, test } from '@playwright/test';
  *   • CTA "Book Free Counseling" (ALO Orange) → /book-consultation
  */
 
-const PUBLIC_ROUTES = ['/', '/destinations', '/course-finder', '/services', '/faqs', '/visa'];
+const PUBLIC_ROUTES = [
+  '/', '/destinations', '/course-finder', '/services', '/language-prep', '/resources',
+  '/scholarships', '/faqs', '/visa', '/about', '/contact', '/global-offices',
+  '/code-of-conduct', '/student-complaint-policy', '/aqf-compliance', '/book-consultation',
+];
 
 const MENU_ORDER = [
   'Destinations',
@@ -24,12 +28,15 @@ const MENU_ORDER = [
 ];
 
 /** Resolve a menu entry whichever role it has (links and dropdown triggers differ). */
-function menuEntry(page: import('@playwright/test').Page, label: string) {
-  const header = page.locator('#alo-public-header');
-  return header
+function menuEntryWithin(scope: import('@playwright/test').Locator, label: string) {
+  return scope
     .getByRole('link', { name: label, exact: true })
-    .or(header.getByRole('button', { name: label, exact: true }))
+    .or(scope.getByRole('button', { name: label, exact: true }))
     .first();
+}
+
+function menuEntry(page: import('@playwright/test').Page, label: string) {
+  return menuEntryWithin(page.locator('#alo-public-header'), label);
 }
 
 test.describe('desktop header (before login)', () => {
@@ -45,7 +52,10 @@ test.describe('desktop header (before login)', () => {
       for (const label of MENU_ORDER) {
         await expect(menuEntry(page, label), `${label} missing on ${route}`).toBeVisible();
       }
-      await expect(header.getByRole('link', { name: 'Book Free Counseling' })).toBeVisible();
+      const cta = header.getByRole('link', { name: 'Book Free Counseling' });
+      await expect(cta).toBeVisible();
+      await expect(cta).toHaveCSS('background-color', 'rgb(243, 112, 33)');
+      await expect(cta).toHaveCSS('color', 'rgb(0, 0, 0)');
     }
   });
 
@@ -80,6 +90,7 @@ test.describe('desktop header (before login)', () => {
     // Resources ▾
     await header.getByRole('button', { name: 'Resources', exact: true }).click();
     await expect(header.getByRole('link', { name: 'Visa Guides' })).toBeVisible();
+    await expect(header.getByRole('link', { name: 'English Test' })).toBeVisible();
 
     // Portal ▾
     await header.getByRole('button', { name: 'Portal', exact: true }).click();
@@ -104,10 +115,17 @@ test.describe('mobile header (before login)', () => {
     await expect(header.getByText('Your Dream – Our Commitment')).toBeVisible();
 
     await header.getByRole('button', { name: 'Open navigation menu' }).click();
+    const mobileMenu = page.locator('[data-slot="sheet-content"]');
+    await expect(mobileMenu).toBeVisible();
     for (const label of MENU_ORDER) {
-      await expect(menuEntry(page, label), `${label} missing on mobile`).toBeVisible();
+      await expect(menuEntryWithin(mobileMenu, label), `${label} missing on mobile`).toBeVisible();
     }
-    await expect(page.getByRole('link', { name: 'Book Free Counseling' })).toBeVisible();
+    const mobileCta = mobileMenu.getByRole('link', { name: 'Book Free Counseling' });
+    await expect(mobileCta).toBeVisible();
+    await expect(mobileCta).toHaveCSS('background-color', 'rgb(243, 112, 33)');
+    await expect(mobileCta).toHaveCSS('color', 'rgb(0, 0, 0)');
+    await mobileMenu.getByRole('button', { name: 'Resources', exact: true }).click();
+    await expect(mobileMenu.getByRole('link', { name: 'English Test' })).toBeVisible();
   });
 });
 

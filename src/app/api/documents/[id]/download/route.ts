@@ -21,7 +21,8 @@ function isAdmin(auth: UnifiedAuthContext): boolean {
 function canManage(auth: UnifiedAuthContext): boolean {
   return auth.type === 'portal' && (
     isAdmin(auth) ||
-    auth.data.roles.some((role) => ['COUNSELOR', 'APPLICATION_TEAM', 'DOCUMENT_OFFICER', 'VISA_OFFICER', 'FRONT_DESK'].includes(role.toUpperCase()))
+    auth.data.roles.some((role) => ['COUNSELOR', 'APPLICATION_TEAM', 'APPLICATION_MANAGER', 'APPLICATION_OFFICER', 'DOCUMENT_OFFICER', 'VISA_OFFICER', 'FRONT_DESK'].includes(role.toUpperCase())) ||
+    auth.data.permissions.some((permission) => ['document.view_private', 'application.view_offer', 'application.manage_offer', 'application.manage_cas_i20_coe'].includes(permission))
   );
 }
 

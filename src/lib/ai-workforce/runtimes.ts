@@ -34,6 +34,42 @@ export interface RuntimeDefinition {
 }
 
 const DEFAULT_TIMEOUT_MS = 30_000;
+const CLOUD_PROVIDER_NAMES = new Set(['groq', 'openrouter', 'zai', 'openai', 'anthropic', 'google', 'gemini', 'azure-openai']);
+
+function isPrivateIpv4(host: string): boolean {
+  const parts = host.split('.').map(Number);
+  if (parts.length !== 4 || parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)) return false;
+  const [a, b] = parts;
+  return a === 10 || a === 127 || a === 192 && b === 168 || a === 172 && b >= 16 && b <= 31 || a === 169 && b === 254;
+}
+
+function isTrustedLocalEndpoint(endpoint: string): boolean {
+  try {
+    const url = new URL(endpoint);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return false;
+    const host = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+    if (host === 'localhost' || host.endsWith('.localhost') || host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80:')) return true;
+    if (isPrivateIpv4(host)) return true;
+    if (host.endsWith('.local') || host.endsWith('.internal') || host.endsWith('.lan') || host.endsWith('.cluster.local')) return true;
+    // Single-label HTTP hosts such as `ollama` are conventional internal
+    // service names in a private container network; public DNS names are not.
+    return url.protocol === 'http:' && !host.includes('.') && !host.includes(':');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Determine billing exposure from provider identity and endpoint, not only the
+ * caller-supplied `kind`/`isPaidService` flags. Unknown public endpoints fail
+ * closed as cloud runtimes.
+ */
+export function isCloudRuntime(runtime: Pick<RuntimeDefinition, 'kind' | 'isPaidService' | 'provider' | 'endpoint'>): boolean {
+  if (runtime.kind === 'DETERMINISTIC') return false;
+  if (runtime.isPaidService || runtime.kind === 'OPTIONAL_CLOUD_LLM') return true;
+  if (CLOUD_PROVIDER_NAMES.has(runtime.provider.toLowerCase())) return true;
+  return !isTrustedLocalEndpoint(runtime.endpoint);
+}
 
 function envFlag(name: string): boolean {
   const value = process.env[name];
@@ -85,7 +121,7 @@ export function detectRuntimes(): RuntimeDefinition[] {
   }
 
   // Optional, opt-in only. Absence of this runtime must never fail a workflow.
-  if (envFlag('ALO_ENABLE_OPTIONAL_CLOUD_AI') && (process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY)) {
+  if (envFlag('ALO_ENABLE_OPTIONAL_CLOUD_AI') && process.env.PAID_AI_API_ALLOWED === 'true' && (process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY)) {
     const useGroq = Boolean(process.env.GROQ_API_KEY);
     runtimes.push({
       runtimeKey: 'alo-optional-cloud',
@@ -240,6 +276,12 @@ async function executeLocalLlm(
   req: GatewayRequest,
   schemaDescription: string
 ): Promise<RuntimeExecution> {
+  if (isCloudRuntime(runtime) && process.env.PAID_AI_API_ALLOWED !== 'true') {
+    throw new Error('AWF_CLOUD_AI_DISABLED: owner approval requires PAID_AI_API_ALLOWED=true');
+  }
+  if (req.confidential && isCloudRuntime(runtime)) {
+    throw new Error('AWF_CONFIDENTIAL_CLOUD_BLOCKED: confidential requests require a trusted local runtime');
+  }
   if (!runtime.endpoint) throw new Error('AWF_RUNTIME_UNCONFIGURED: endpoint missing');
   if (!runtime.model) throw new Error('AWF_RUNTIME_UNCONFIGURED: model missing');
   const url = new URL(runtime.endpoint);
@@ -290,6 +332,12 @@ export async function executeOnRuntime(
   req: GatewayRequest,
   schemaDescription: string
 ): Promise<RuntimeExecution> {
+  if (runtime.kind !== 'DETERMINISTIC' && isCloudRuntime(runtime) && process.env.PAID_AI_API_ALLOWED !== 'true') {
+    throw new Error('AWF_CLOUD_AI_DISABLED: owner approval requires PAID_AI_API_ALLOWED=true');
+  }
+  if (runtime.kind !== 'DETERMINISTIC' && req.confidential && isCloudRuntime(runtime)) {
+    throw new Error('AWF_CONFIDENTIAL_CLOUD_BLOCKED: confidential requests require a trusted local runtime');
+  }
   if (!hasCapacity(runtime)) throw new Error('AWF_RUNTIME_SATURATED');
   acquire(runtime.runtimeKey);
   try {

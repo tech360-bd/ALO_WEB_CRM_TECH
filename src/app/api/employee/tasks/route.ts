@@ -1,211 +1,178 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { writePortalAudit } from '@/lib/transactional-audit';
 
-// ============================================================
-// EMPLOYEE TASKS API
-// GET  — List CounselorTasks for the authenticated employee
-// POST — Create a new task
-// PUT  — Update a task (mark complete, update fields)
-// ============================================================
+const TASK_STATUSES = new Set(['pending', 'in_progress', 'completed', 'cancelled']);
+const TASK_PRIORITIES = new Set(['low', 'medium', 'high']);
+const TASK_TYPES = new Set(['follow_up', 'document_review', 'application', 'visa', 'counselling', 'other']);
+const SORT_FIELDS = new Set(['createdAt', 'updatedAt', 'dueDate', 'priority', 'status', 'title']);
 
-export async function GET(request: Request) {
-  return withAuth(async (req, auth) => {
-    // RBAC: block student/partner from employee APIs
-    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
-    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
-      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
-    }
-    try {
-      const { searchParams } = new URL(req.url);
-      const search = searchParams.get('search') || '';
-      const status = searchParams.get('status') || '';
-      const priority = searchParams.get('priority') || '';
-      const type = searchParams.get('type') || '';
-      const page = parseInt(searchParams.get('page') || '1');
-      const limit = parseInt(searchParams.get('limit') || '20');
-      const sortBy = searchParams.get('sortBy') || 'createdAt';
-      const sortOrder = searchParams.get('sortOrder') || 'desc';
-
-      // Get employeeId from EmployeeProfile
-      const profile = await db.employeeProfile.findUnique({
-        where: { userId: auth.userId },
-      });
-      const employeeId = profile?.id || auth.userId;
-
-      const where: Record<string, unknown> = { employeeId };
-
-      if (search) {
-        where.OR = [
-          { title: { contains: search } },
-          { description: { contains: search } },
-        ];
-      }
-      if (status) where.status = status;
-      if (priority) where.priority = priority;
-      if (type) where.type = type;
-
-      const [tasks, total] = await Promise.all([
-        db.counselorTask.findMany({
-          where,
-          orderBy: { [sortBy]: sortOrder as 'asc' | 'desc' },
-          skip: (page - 1) * limit,
-          take: limit,
-        }),
-        db.counselorTask.count({ where }),
-      ]);
-
-      return NextResponse.json({
-        success: true,
-        data: tasks,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-        },
-      });
-    } catch (error) {
-      console.error('Employee tasks GET error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({
-          success: true,
-          data: [],
-          pagination: { page: 1, limit: 20, total: 0, totalPages: 0 },
-        });
-      }
-      return NextResponse.json(
-        { success: false, error: 'Failed to load tasks' },
-        { status: 500 }
-      );
-    }
-  })(request);
+async function getEmployee(request: NextRequest) {
+  const auth = await authenticateRequest(request);
+  if (auth instanceof NextResponse) return auth;
+  const roles = new Set([auth.userType, ...auth.roles].map((role) => role.toLowerCase()));
+  if (roles.has('student') || roles.has('partner')) return NextResponse.json({ success: false, error: 'Employee access only.' }, { status: 403 });
+  const employee = await db.employee.findUnique({ where: { userId: auth.userId }, select: { id: true, userId: true, employeeId: true, status: true } }).catch(() => null);
+  if (!employee || employee.status.toLowerCase() !== 'active') return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
+  return { auth, employee, identifiers: [...new Set([employee.id, employee.userId, employee.employeeId].filter(Boolean))] };
 }
 
-export async function POST(request: Request) {
-  return withAuth(async (_request, auth) => {
-    try {
-      const body = await request.json();
-      const { title, description, type, priority, status, dueDate, studentId, leadId } = body;
-
-      if (!title) {
-        return NextResponse.json(
-          { success: false, error: 'Task title is required' },
-          { status: 400 }
-        );
-      }
-
-      // Get employeeId from EmployeeProfile
-      const profile = await db.employeeProfile.findUnique({
-        where: { userId: auth.userId },
-      });
-      const employeeId = profile?.id || auth.userId;
-
-      const task = await db.counselorTask.create({
-        data: {
-          employeeId,
-          title,
-          description: description || '',
-          type: type || 'follow_up',
-          priority: priority || 'medium',
-          status: status || 'pending',
-          dueDate: dueDate || '',
-          studentId: studentId || '',
-          leadId: leadId || '',
-        },
-      });
-
-      await logAuditAction(auth, 'create_task', 'CounselorTask', task.id, {
-        title: task.title,
-        type: task.type,
-        priority: task.priority,
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: task,
-        message: 'Task created successfully',
-      });
-    } catch (error) {
-      console.error('Employee tasks POST error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to create task' },
-        { status: 500 }
-      );
-    }
-  })(request);
+function validDate(value: unknown): value is string {
+  if (value === '') return true;
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
-export async function PUT(request: Request) {
-  return withAuth(async (_request, auth) => {
-    try {
-      const body = await request.json();
-      const { id, title, description, type, priority, status, dueDate, completedAt } = body;
+export async function GET(request: NextRequest) {
+  const access = await getEmployee(request);
+  if (access instanceof NextResponse) return access;
+  const { auth, employee, identifiers } = access;
+  const params = request.nextUrl.searchParams;
+  const pageValue = params.get('page') || '1';
+  const limitValue = params.get('limit') || '20';
+  if (!/^\d+$/.test(pageValue) || !/^\d+$/.test(limitValue)) return NextResponse.json({ success: false, error: 'page and limit must be positive integers.' }, { status: 400 });
+  const page = Number(pageValue);
+  const limit = Number(limitValue);
+  if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(limit) || limit < 1 || limit > 100) return NextResponse.json({ success: false, error: 'page must be positive and limit must be between 1 and 100.' }, { status: 400 });
+  const sortBy = params.get('sortBy') || 'createdAt';
+  const sortOrder = params.get('sortOrder') || 'desc';
+  if (!SORT_FIELDS.has(sortBy) || !['asc', 'desc'].includes(sortOrder)) return NextResponse.json({ success: false, error: 'Invalid task sort.' }, { status: 400 });
+  const status = params.get('status')?.toLowerCase();
+  const priority = params.get('priority')?.toLowerCase();
+  const type = params.get('type')?.toLowerCase();
+  if (status && !TASK_STATUSES.has(status)) return NextResponse.json({ success: false, error: 'Invalid task status.' }, { status: 400 });
+  if (priority && !TASK_PRIORITIES.has(priority)) return NextResponse.json({ success: false, error: 'Invalid task priority.' }, { status: 400 });
+  if (type && !TASK_TYPES.has(type)) return NextResponse.json({ success: false, error: 'Invalid task type.' }, { status: 400 });
+  const search = params.get('search')?.trim() || '';
+  if (search.length > 100 || /[\u0000-\u001f]/.test(search)) return NextResponse.json({ success: false, error: 'Search text is invalid or too long.' }, { status: 400 });
 
-      if (!id) {
-        return NextResponse.json(
-          { success: false, error: 'Task id is required' },
-          { status: 400 }
-        );
-      }
+  const where = {
+    employeeId: { in: identifiers },
+    ...(status ? { status } : {}),
+    ...(priority ? { priority } : {}),
+    ...(type ? { type } : {}),
+    ...(search ? { OR: [{ title: { contains: search } }, { description: { contains: search } }] } : {}),
+  };
+  try {
+    const [tasks, total] = await Promise.all([
+      db.counselorTask.findMany({ where, orderBy: { [sortBy]: sortOrder as 'asc' | 'desc' }, skip: (page - 1) * limit, take: limit }),
+      db.counselorTask.count({ where }),
+    ]);
+    await db.portalAuditLog.create({ data: { actorUserId: auth.actorUserId, action: 'EMPLOYEE_TASKS_VIEWED', entityType: 'CounselorTask', entityId: employee.id, metadata: JSON.stringify({ effectiveUserId: auth.userId, total, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }) } });
+    return NextResponse.json({ success: true, tasks, data: tasks, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Employee tasks are temporarily unavailable.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
+  }
+}
 
-      // Get employeeId for ownership check
-      const profile = await db.employeeProfile.findUnique({
-        where: { userId: auth.userId },
-      });
-      const employeeId = profile?.id || auth.userId;
+export async function POST(request: NextRequest) {
+  const access = await getEmployee(request);
+  if (access instanceof NextResponse) return access;
+  const { auth, employee, identifiers } = access;
+  if (!mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+  const body: unknown = await request.json().catch(() => null);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'A valid task is required.' }, { status: 400 });
+  const input = body as Record<string, unknown>;
+  const allowed = new Set(['title', 'description', 'type', 'priority', 'dueDate', 'studentId', 'leadId']);
+  if (Object.keys(input).some((field) => !allowed.has(field))) return NextResponse.json({ success: false, error: 'Unsupported task fields; ownership and status are server-controlled.' }, { status: 400 });
+  const title = typeof input.title === 'string' ? input.title.trim() : '';
+  const description = typeof input.description === 'string' ? input.description.trim() : '';
+  const type = typeof input.type === 'string' ? input.type.toLowerCase() : 'follow_up';
+  const priority = typeof input.priority === 'string' ? input.priority.toLowerCase() : 'medium';
+  const dueDate = input.dueDate === undefined ? '' : input.dueDate;
+  const studentId = typeof input.studentId === 'string' ? input.studentId.trim() : '';
+  const leadId = typeof input.leadId === 'string' ? input.leadId.trim() : '';
+  if (!title || title.length > 191 || /[\u0000-\u001f]/.test(title)) return NextResponse.json({ success: false, error: 'A valid task title is required.' }, { status: 400 });
+  if (description.length > 2000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(description)) return NextResponse.json({ success: false, error: 'Task description is invalid or too long.' }, { status: 400 });
+  if (!TASK_TYPES.has(type) || !TASK_PRIORITIES.has(priority) || !validDate(dueDate)) return NextResponse.json({ success: false, error: 'Task type, priority, or due date is invalid.' }, { status: 400 });
+  if (studentId && leadId) return NextResponse.json({ success: false, error: 'A task may link to either one assigned student or one assigned lead, not both.' }, { status: 400 });
+  if (studentId.length > 191 || leadId.length > 191) return NextResponse.json({ success: false, error: 'Linked record identifier is invalid.' }, { status: 400 });
 
-      const existingTask = await db.counselorTask.findUnique({
-        where: { id },
-      });
-
-      if (!existingTask) {
-        return NextResponse.json(
-          { success: false, error: 'Task not found' },
-          { status: 404 }
-        );
-      }
-
-      if (existingTask.employeeId !== employeeId && !auth.roles.includes('super_admin')) {
-        return NextResponse.json(
-          { success: false, error: 'Unauthorized to update this task' },
-          { status: 403 }
-        );
-      }
-
-      const updateData: Record<string, unknown> = {};
-      if (title !== undefined) updateData.title = title;
-      if (description !== undefined) updateData.description = description;
-      if (type !== undefined) updateData.type = type;
-      if (priority !== undefined) updateData.priority = priority;
-      if (dueDate !== undefined) updateData.dueDate = dueDate;
-      if (status !== undefined) {
-        updateData.status = status;
-        if (status === 'completed') {
-          updateData.completedAt = completedAt || new Date();
-        }
-      }
-
-      const updatedTask = await db.counselorTask.update({
-        where: { id },
-        data: updateData,
-      });
-
-      await logAuditAction(auth, 'update_task', 'CounselorTask', id, {
-        updatedFields: Object.keys(updateData),
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: updatedTask,
-        message: 'Task updated successfully',
-      });
-    } catch (error) {
-      console.error('Employee tasks PUT error:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to update task' },
-        { status: 500 }
-      );
+  try {
+    let linkedStudentId = '';
+    let linkedLeadId = '';
+    if (studentId) {
+      const student = await db.student.findFirst({ where: { OR: [{ id: studentId }, { studentId }], counselorId: { in: identifiers } }, select: { id: true } });
+      if (!student) return NextResponse.json({ success: false, error: 'The selected student is not assigned to this employee.' }, { status: 403 });
+      linkedStudentId = student.id;
     }
-  })(request);
+    if (leadId) {
+      const lead = await db.marketingLead.findFirst({ where: { id: leadId, counselorId: { in: identifiers } }, select: { id: true } });
+      if (!lead) return NextResponse.json({ success: false, error: 'The selected lead is not assigned to this employee.' }, { status: 403 });
+      linkedLeadId = lead.id;
+    }
+    const task = await db.$transaction(async (tx) => {
+      const created = await tx.counselorTask.create({ data: { employeeId: employee.id, title, description, type, priority, status: 'pending', dueDate, studentId: linkedStudentId, leadId: linkedLeadId } });
+      await writePortalAudit(tx, auth, 'EMPLOYEE_TASK_CREATED', 'CounselorTask', created.id, { ownerEmployeeId: employee.id, type, priority, dueDate, studentId: linkedStudentId || null, leadId: linkedLeadId || null }, request);
+      return created;
+    });
+    return NextResponse.json({ success: true, data: task, task, message: 'Task created.' }, { status: 201 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Task could not be created.' }, { status: 503 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  const access = await getEmployee(request);
+  if (access instanceof NextResponse) return access;
+  const { auth, employee, identifiers } = access;
+  if (!mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+  const body: unknown = await request.json().catch(() => null);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'A valid task update is required.' }, { status: 400 });
+  const input = body as Record<string, unknown>;
+  const allowed = new Set(['id', 'title', 'description', 'type', 'priority', 'status', 'dueDate']);
+  if (Object.keys(input).some((field) => !allowed.has(field))) return NextResponse.json({ success: false, error: 'Unsupported task update field.' }, { status: 400 });
+  const id = typeof input.id === 'string' ? input.id.trim() : '';
+  if (!id || id.length > 191) return NextResponse.json({ success: false, error: 'A valid task id is required.' }, { status: 400 });
+  const updateData: Record<string, unknown> = {};
+  if (input.title !== undefined) {
+    if (typeof input.title !== 'string' || !input.title.trim() || input.title.trim().length > 191 || /[\u0000-\u001f]/.test(input.title)) return NextResponse.json({ success: false, error: 'Task title is invalid.' }, { status: 400 });
+    updateData.title = input.title.trim();
+  }
+  if (input.description !== undefined) {
+    if (typeof input.description !== 'string' || input.description.length > 2000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(input.description)) return NextResponse.json({ success: false, error: 'Task description is invalid.' }, { status: 400 });
+    updateData.description = input.description.trim();
+  }
+  if (input.type !== undefined) {
+    if (typeof input.type !== 'string' || !TASK_TYPES.has(input.type.toLowerCase())) return NextResponse.json({ success: false, error: 'Task type is invalid.' }, { status: 400 });
+    updateData.type = input.type.toLowerCase();
+  }
+  if (input.priority !== undefined) {
+    if (typeof input.priority !== 'string' || !TASK_PRIORITIES.has(input.priority.toLowerCase())) return NextResponse.json({ success: false, error: 'Task priority is invalid.' }, { status: 400 });
+    updateData.priority = input.priority.toLowerCase();
+  }
+  if (input.dueDate !== undefined) {
+    if (!validDate(input.dueDate)) return NextResponse.json({ success: false, error: 'Due date must use YYYY-MM-DD.' }, { status: 400 });
+    updateData.dueDate = input.dueDate;
+  }
+  if (input.status !== undefined) {
+    if (typeof input.status !== 'string' || !TASK_STATUSES.has(input.status.toLowerCase())) return NextResponse.json({ success: false, error: 'Task status is invalid.' }, { status: 400 });
+    updateData.status = input.status.toLowerCase();
+  }
+  if (!Object.keys(updateData).length) return NextResponse.json({ success: false, error: 'No task changes were supplied.' }, { status: 400 });
+
+  try {
+    const updated = await db.$transaction(async (tx) => {
+      const existing = await tx.counselorTask.findFirst({ where: { id, employeeId: { in: identifiers } } });
+      if (!existing) throw new Error('not found');
+      const currentStatus = existing.status.toLowerCase();
+      const nextStatus = typeof updateData.status === 'string' ? updateData.status : currentStatus;
+      if (['completed', 'cancelled'].includes(currentStatus) && nextStatus !== currentStatus) throw new Error('terminal status');
+      if (nextStatus === 'completed' && currentStatus !== 'completed') updateData.completedAt = new Date();
+      const result = await tx.counselorTask.updateMany({ where: { id, employeeId: { in: identifiers }, status: existing.status }, data: updateData });
+      if (result.count !== 1) throw new Error('changed');
+      await writePortalAudit(tx, auth, 'EMPLOYEE_TASK_UPDATED', 'CounselorTask', id, { fields: Object.keys(updateData), fromStatus: existing.status, toStatus: nextStatus }, request);
+      return tx.counselorTask.findUnique({ where: { id } });
+    });
+    return NextResponse.json({ success: true, data: updated, task: updated, message: 'Task updated.' });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    if (message === 'not found') return NextResponse.json({ success: false, error: 'Task not found in your assigned scope.' }, { status: 404 });
+    if (message === 'terminal status') return NextResponse.json({ success: false, error: 'Completed or cancelled tasks are immutable.' }, { status: 409 });
+    if (message === 'changed') return NextResponse.json({ success: false, error: 'Task was changed by another request; reload and retry.' }, { status: 409 });
+    return NextResponse.json({ success: false, error: 'Task could not be updated.' }, { status: 503 });
+  }
 }

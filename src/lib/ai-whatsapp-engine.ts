@@ -171,7 +171,8 @@ export function calculateLeadScore(params: {
   };
 }
 
-// AI reply generation (safe, no guarantees)
+// Deterministic, non-factual staff draft policy. Generated replies are not sent
+// from this helper and must be reviewed before any customer communication.
 export async function generateAiReply(params: {
   message: string;
   studentName?: string;
@@ -180,81 +181,29 @@ export async function generateAiReply(params: {
   sentiment: string;
   context?: string;
 }): Promise<{ reply: string; shouldHandover: boolean; handoverReason?: string; confidence: number }> {
-  const { message, studentName, language, intent, sentiment, context } = params;
+  const lower = params.message.toLowerCase();
+  const language = params.language === 'bangla' ? 'bangla' : 'english';
+  const sensitive = /\b(passport|bank statement|bank account|card number|card pin|otp|password|passcode|student id|application status|visa status|date of birth|identity document)\b|পাসপোর্ট|ব্যাংক|ওটিপি|পাসওয়ার্ড|কার্ড|পিন|স্টুডেন্ট আইডি/i.test(params.message);
+  const urgent = ['urgent', 'emergency', 'immediate', 'asap', 'today', 'deadline', 'জরুরি', 'এখনই', 'তাড়াতাড়ি'].some((word) => lower.includes(word));
+  const complaint = ['complaint', 'complain', 'legal', 'refund dispute', 'angry', 'অভিযোগ'].some((word) => lower.includes(word));
+  const asksHuman = ['human', 'counselor', 'talk to person', 'manager', 'কাউন্সেলর', 'মানুষের সঙ্গে'].some((word) => lower.includes(word));
+  const shouldHandover = urgent || complaint || asksHuman || sensitive;
+  const handoverReason = urgent ? 'urgent_human_review' : complaint ? 'complaint_human_review' : asksHuman ? 'human_requested' : sensitive ? 'sensitive_or_account_specific' : undefined;
 
-  // Check handover conditions
-  const lower = message.toLowerCase();
-
-  const handoverTriggers = [
-    'human','counselor','talk to person','manager','ceo','coo',
-    'complaint','legal','visa refusal','payment dispute','angry',
-    'sensitive document','cannot answer','কাউকে দরকার','অভিযোগ'
-  ];
-
-  if (handoverTriggers.some(t => lower.includes(t))) {
-    return {
-      reply: language === 'bangla'
-        ? `ধন্যবাদ ${studentName || ''}। আপনার বিষয়টি আমাদের কাউন্সেলরের কাছে পাঠানো হয়েছে। খুব শীঘ্রই যোগাযোগ করা হবে। জরুরি হলে কল করুন: 01805020101`
-        : `Thank you ${studentName || ''}. Your query has been forwarded to our counselor. You will be contacted shortly. For urgent support: 01805020101`,
-      shouldHandover: true,
-      handoverReason: 'explicit_human_request_or_complaint',
-      confidence: 0.95,
-    };
+  let reply: string;
+  if (language === 'bangla') {
+    if (sensitive) reply = 'আপনার নিরাপত্তার জন্য এই WhatsApp চ্যাটে Student ID, পাসপোর্ট, ব্যাংক/কার্ড তথ্য, OTP, পাসওয়ার্ড বা ব্যক্তিগত নথি পাঠাবেন না। অ্যাকাউন্ট-সম্পর্কিত সহায়তার জন্য নিরাপদ Student Portal ব্যবহার করুন।';
+    else if (/visa|cas|i-20|coe|ভিসা/i.test(lower)) reply = 'ভিসা বা যোগ্যতা সম্পর্কে চূড়ান্ত সিদ্ধান্ত এই খসড়ায় দেওয়া হচ্ছে না। শর্ত পরিবর্তিত হতে পারে—বর্তমান সরকারি/বিশ্ববিদ্যালয়ের অফিসিয়াল উৎসে যাচাই করুন বা অনুমোদিত ALO ভিসা কর্মকর্তার পরামর্শ নিন।';
+    else if (complaint || urgent || asksHuman) reply = 'আপনার বার্তাটি একজন অনুমোদিত কাউন্সেলরের মানব পর্যালোচনার জন্য খসড়া করা হয়েছে। প্রয়োজন হলে ২৪/৭ জরুরি সহায়তার জন্য 01805020101 নম্বরে কল করুন। এই চ্যাটে গোপন তথ্য বা নথি পাঠাবেন না।';
+    else reply = 'ALO Education-এ যোগাযোগের জন্য ধন্যবাদ। সাধারণ সহায়তার জন্য পছন্দের দেশ, পড়াশোনার স্তর ও সম্ভাব্য intake জানাতে পারেন। নির্দিষ্ট ভর্তি-সংক্রান্ত শর্ত বর্তমান অফিসিয়াল উৎসে যাচাই করুন; কোনো ফলাফল নিশ্চিত নয়।';
+  } else {
+    if (sensitive) reply = 'For your security, do not share a Student ID, passport, bank/card details, OTP, password, or private document in this WhatsApp chat. Use the secure Student Portal for account-specific help.';
+    else if (/visa|cas|i-20|coe|eligib|refusal/.test(lower)) reply = 'This draft does not make a visa or eligibility decision. Requirements can change; verify current information through official government/university sources or an authorized ALO visa officer.';
+    else if (complaint || urgent || asksHuman) reply = 'This message needs review by an authorized counselor. For immediate urgent support, call 01805020101. Do not share credentials or private documents in chat.';
+    else reply = 'Thank you for contacting ALO Education. For general guidance, you may share your preferred destination, study level, and intended intake. Verify specific requirements with current official sources; no outcome is guaranteed.';
   }
 
-  if (sentiment === 'angry' || sentiment === 'frustrated') {
-    return {
-      reply: language === 'bangla'
-        ? `দুঃখিত ${studentName || ''}, আপনার অসুবিধার জন্য। আমাদের টিম বিষয়টি গুরুত্ব সহকারে দেখছে। অনুগ্রহ করে আপনার Student ID শেয়ার করুন। জরুরি: 01805020101`
-        : `Sorry ${studentName || ''} for the inconvenience. Our team is looking into this urgently. Please share your Student ID. Urgent: 01805020101`,
-      shouldHandover: true,
-      handoverReason: 'high_risk_sentiment',
-      confidence: 0.9,
-    };
-  }
-
-  // Safe reply templates by intent
-  const replies: Record<string, Record<string, string>> = {
-    course_inquiry: {
-      english: `Hello ${studentName || ''}! For course inquiry, please share: 1) Preferred country 2) Study level 3) Subject 4) Intake 5) Budget. Our counselor will suggest best options. Portal: https://aloeducation.com/student/login`,
-      bangla: `হ্যালো ${studentName || ''}! কোর্স সম্পর্কে জানতে শেয়ার করুন: ১) দেশ ২) লেভেল ৩) সাবজেক্ট ৪) ইনটেক ৫) বাজেট। কাউন্সেলর সেরা অপশন সাজেস্ট করবেন।`,
-      mixed: `Hello ${studentName || ''}! Course er jonno share korun: country, level, subject, intake, budget. Counselor best option suggest korben. Portal: https://aloeducation.com/student/login`,
-    },
-    visa: {
-      english: `For visa guidance, our visa team will assist you. Please upload: passport, bank statement, academic docs in portal. We provide preparation, not guarantee of approval. Portal: https://aloeducation.com/student/login`,
-      bangla: `ভিসা গাইডেন্সের জন্য ভিসা টিম সহায়তা করবে। পোর্টালে আপলোড করুন: পাসপোর্ট, ব্যাংক স্টেটমেন্ট, একাডেমিক ডকুমেন্ট। আমরা প্রস্তুতি দিই, অনুমোদনের গ্যারান্টি দিই না।`,
-      mixed: `Visa guidance er jonno visa team help korbe. Portal e upload korun: passport, bank statement, academic docs. Amra preparation dei, approval guarantee na.`,
-    },
-    payment: {
-      english: `For payment related queries, please share your Student ID and reference. Our finance team will check. Never share card PIN, OTP, or banking password here. For urgent: 01805020101`,
-      bangla: `পেমেন্ট সংক্রান্ত, Student ID এবং রেফারেন্স শেয়ার করুন। ফাইন্যান্স টিম চেক করবে। কার্ড PIN, OTP, ব্যাংকিং পাসওয়ার্ড শেয়ার করবেন না। জরুরি: 01805020101`,
-      mixed: `Payment query er jonno Student ID ar reference share korun. Finance team check korbe. PIN/OTP/password share korben na. Urgent: 01805020101`,
-    },
-  };
-
-  const langKey = language === 'bangla' ? 'bangla' : language === 'mixed' || language === 'banglish' ? 'mixed' : 'english';
-  const intentReply = replies[intent]?.[langKey] || replies[intent]?.['english'];
-
-  if (intentReply) {
-    return {
-      reply: intentReply,
-      shouldHandover: false,
-      confidence: 0.8,
-    };
-  }
-
-  // Default safe reply
-  const defaultReplies: Record<string, string> = {
-    english: `Hello ${studentName || ''}! I'm ALO AI Assistant. I can help with: study abroad options, courses, universities, IELTS/PTE, visa guidance, scholarships, portal help. How can I assist today? For human counselor, type "counselor".`,
-    bangla: `হ্যালো ${studentName || ''}! আমি ALO AI Assistant। সাহায্য করতে পারি: বিদেশে পড়াশোনা, কোর্স, ইউনিভার্সিটি, IELTS/PTE, ভিসা গাইডেন্স, স্কলারশিপ। কিভাবে সাহায্য করতে পারি? কাউন্সেলর লাগলে "counselor" লিখুন।`,
-    mixed: `Hello ${studentName || ''}! Ami ALO AI Assistant. Help korte pari: study abroad, course, university, IELTS/PTE, visa guidance, scholarship. Kivabe help korte pari? Counselor lagle "counselor" likhun.`,
-  };
-
-  return {
-    reply: defaultReplies[langKey] || defaultReplies['english'],
-    shouldHandover: false,
-    confidence: 0.6,
-  };
+  return { reply, shouldHandover, handoverReason, confidence: 0.5 };
 }
 
 // Log AI operations

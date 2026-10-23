@@ -5,7 +5,8 @@ import { getFormBReadiness } from '@/lib/application-readiness';
 import { authenticateUnified } from '@/lib/unified-auth';
 import { logAuditAction } from '@/lib/auth-middleware';
 import { logStudentEvent } from '@/lib/student-auth';
-import { canViewB2B, canViewB2BCommission, stripB2BFields, mapStageToSafeStatus, APPLICATION_SOURCES } from '@/lib/application-manager/service';
+import { canViewB2B, canManageB2B, canViewB2BCommission, stripB2BFields, mapStageToSafeStatus, APPLICATION_SOURCES } from '@/lib/application-manager/service';
+import { DEFAULT_APPLICATION_DOCUMENT_REQUIREMENTS, refreshApplicationDocumentStatus } from '@/lib/application-manager/document-readiness';
 
 export async function GET(req: Request) {
   const authRes = await authenticateUnified(req);
@@ -26,6 +27,10 @@ export async function GET(req: Request) {
   const deadlineFilter = searchParams.get('deadline');
   const urgent = searchParams.get('urgent');
   const confidential = searchParams.get('confidential');
+  const canViewB2BFlag = authRes.type === 'portal' && canViewB2B(authRes.data.roles, authRes.data.permissions);
+  const canViewCommission = authRes.type === 'portal' && canViewB2BCommission(authRes.data.roles, authRes.data.permissions);
+  if (confidential === 'true' && !canViewB2BFlag) return NextResponse.json({ success: false, error: 'Forbidden: confidential application filtering requires B2B permission.' }, { status: 403 });
+  if (source?.toUpperCase().startsWith('B2B_') && !canViewB2BFlag && !canViewCommission) return NextResponse.json({ success: false, error: 'Forbidden: B2B source filtering requires explicit permission.' }, { status: 403 });
   const sla = searchParams.get('sla');
   const status = searchParams.get('status');
   const stage = searchParams.get('stage');
@@ -33,57 +38,57 @@ export async function GET(req: Request) {
   const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 100);
   const skip = (page - 1) * limit;
 
-  let where: any = {};
-
-  // Ownership / visibility filtering
+  const scope: Record<string, unknown> = {};
+  const roles = authRes.type === 'portal' ? authRes.data.roles.map((role) => role.toLowerCase()) : [];
   if (authRes.type === 'student') {
-    where.studentId = authRes.data.studentId;
+    scope.studentId = authRes.data.studentId;
   } else {
     const portal = authRes.data;
-    const roles = portal.roles || [];
-    const isSuper = roles.includes('super_admin') || roles.includes('admin') || roles.includes('application_manager') || roles.includes('application_team');
-    if (!isSuper) {
-      if (portal.userType === 'partner' || roles.includes('partner')) {
-        where.partnerId = portal.userId;
-      } else if (portal.userType === 'counselor' || roles.includes('counselor')) {
-        where.counselorId = portal.userId;
-      } else if (roles.includes('visa_officer')) {
-        // visa officer can see only VISA_HANDOVER_READY and beyond
-        where.stage = { in: ['VISA_HANDOVER_READY', 'VISA_FILE_CREATED', 'VISA_PREPARATION', 'CAS_RECEIVED', 'I20_RECEIVED', 'COE_RECEIVED'] };
-      }
+    const isPartner = Boolean(portal.partnerId || portal.userType.toLowerCase() === 'partner' || roles.some((role) => role.startsWith('partner')));
+    const canViewAll = roles.some((role) => ['super_admin', 'admin', 'application_manager', 'application_team'].includes(role)) || portal.permissions.includes('application.view_all');
+    if (isPartner) {
+      if (!portal.partnerId) return NextResponse.json({ success: false, error: 'Partner identity is not linked to this account.' }, { status: 403 });
+      scope.partnerId = portal.partnerId;
+    } else if (!canViewAll && (portal.userType.toLowerCase() === 'counselor' || roles.includes('counselor'))) {
+      scope.counselorId = portal.userId;
+    } else if (!canViewAll && roles.includes('visa_officer')) {
+      scope.OR = [
+        { visaOfficerId: portal.userId },
+        { stage: { in: ['VISA_HANDOVER_READY', 'VISA_FILE_CREATED', 'VISA_PREPARATION', 'VISA_SUBMITTED', 'VISA_DECISION_PENDING', 'VISA_APPROVED', 'VISA_REFUSED', 'PRE_DEPARTURE'] } },
+      ];
+    } else if (!canViewAll && !roles.includes('finance') && !portal.permissions.includes('application.view')) {
+      return NextResponse.json({ success: false, error: 'Forbidden: application.view permission required' }, { status: 403 });
     }
   }
 
-  // Filters
-  if (source) where.applicationSource = source;
-  if (country) where.country = { contains: country };
-  if (university) where.universityName = { contains: university };
-  if (course) where.courseName = { contains: course };
-  if (intake) where.intake = { contains: intake };
-  if (counselorId) where.counselorId = counselorId;
-  if (officerId) where.appTeamOfficerId = officerId;
-  if (documentStatus) where.documentStatus = documentStatus;
-  if (offerStatus) where.offerStatus = offerStatus;
-  if (casStatus) where.casI20CoeStatus = casStatus;
-  if (status) where.safeStatus = status;
-  if (stage) where.stage = stage;
-  if (sla) where.slaStatus = sla;
-  if (confidential === 'true') where.isB2bConfidential = true;
-  if (urgent === 'true') {
-    where.deadlineDate = { lte: new Date(Date.now() + 3 * 86400000) };
-  }
-  if (deadlineFilter) {
-    if (deadlineFilter === 'OVERDUE') where.deadlineDate = { lt: new Date() };
-    if (deadlineFilter === 'DUE_TODAY') {
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate()+1);
-      where.deadlineDate = { gte: today, lt: tomorrow };
-    }
+  const filters: Record<string, unknown> = {};
+  if (source) filters.applicationSource = source;
+  if (country) filters.country = { contains: country };
+  if (university) filters.universityName = { contains: university };
+  if (course) filters.courseName = { contains: course };
+  if (intake) filters.intake = { contains: intake };
+  if (counselorId) filters.counselorId = counselorId;
+  if (officerId) filters.appTeamOfficerId = officerId;
+  if (documentStatus) filters.documentStatus = documentStatus;
+  if (offerStatus) filters.offerStatus = offerStatus;
+  if (casStatus) filters.casI20CoeStatus = casStatus;
+  if (status) filters.safeStatus = status;
+  if (stage) filters.stage = stage;
+  if (sla) filters.slaStatus = sla;
+  if (confidential === 'true') filters.isB2bConfidential = true;
+
+  const dateFilters: Record<string, unknown>[] = [];
+  if (urgent === 'true') dateFilters.push({ deadlineDate: { lte: new Date(Date.now() + 3 * 86400000) } });
+  if (deadlineFilter === 'OVERDUE') dateFilters.push({ deadlineDate: { lt: new Date() } });
+  if (deadlineFilter === 'DUE_TODAY') {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateFilters.push({ deadlineDate: { gte: today, lt: tomorrow } });
   }
   if (search) {
-    where.OR = [
+    filters.OR = [
       { applicationCode: { contains: search } },
       { studentId: { contains: search } },
       { universityName: { contains: search } },
@@ -91,6 +96,20 @@ export async function GET(req: Request) {
       { country: { contains: search } },
     ];
   }
+  const clauses: Record<string, unknown>[] = [];
+  if (Object.keys(scope).length) clauses.push(scope);
+  // Keep B2B-specific records out of ordinary scopes; Finance with the exact
+  // commission grant may see only the sanitized commission projection below.
+  if (!canViewB2BFlag && !canViewCommission) clauses.push({
+    isB2b: false,
+    isB2bConfidential: false,
+    applicationSource: { notIn: ['B2B_INBOUND_APPLICATION', 'B2B_OUTBOUND_APPLICATION'] },
+    b2bApplications: { none: {} },
+  });
+  if (Object.keys(filters).length) clauses.push(filters);
+  clauses.push(...dateFilters);
+  const where = clauses.length ? { AND: clauses } : {};
+
 
   try {
     const [applications, total] = await Promise.all([
@@ -106,14 +125,6 @@ export async function GET(req: Request) {
       }),
       db.application.count({ where }),
     ]);
-
-    // Determine B2B view permission
-    let canViewB2BFlag = false;
-    let canViewCommission = false;
-    if (authRes.type === 'portal') {
-      canViewB2BFlag = canViewB2B(authRes.data.roles, authRes.data.permissions);
-      canViewCommission = canViewB2BCommission(authRes.data.roles, authRes.data.permissions);
-    }
 
     const sanitized = applications.map(app => {
       const withSafe = {
@@ -140,21 +151,44 @@ export async function POST(req: Request) {
   const authRes = await authenticateUnified(req);
   if (authRes instanceof NextResponse) return authRes;
 
-  if (authRes.type === 'student') {
-    // students can create self application - userType check not needed, StudentAuthContext has no userType
+  const portalRoles = authRes.type === 'portal' ? authRes.data.roles.map((role) => role.toLowerCase()) : [];
+  const isPartnerUser = Boolean(authRes.type === 'portal' && (authRes.data.partnerId || authRes.data.userType.toLowerCase() === 'partner' || portalRoles.some((role) => role.startsWith('partner'))));
+  if (authRes.type === 'portal') {
+    if (isPartnerUser && !authRes.data.partnerId) return NextResponse.json({ success: false, error: 'Partner identity is not linked to this account.' }, { status: 403 });
+    const canCreate = isPartnerUser || portalRoles.some((role) => ['super_admin', 'admin', 'application_manager', 'application_team', 'counselor'].includes(role)) || authRes.data.permissions.includes('application.create');
+    if (!canCreate) return NextResponse.json({ success: false, error: 'Forbidden: application.create permission required' }, { status: 403 });
   }
 
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'Invalid application request' }, { status: 400 });
 
   // Validation
   if (!body.studentId && authRes.type !== 'student') {
     return NextResponse.json({ success: false, error: 'studentId required' }, { status: 400 });
   }
-  if (!body.universityName || !body.courseName) {
+  if (typeof body.universityName !== 'string' || !body.universityName.trim() || typeof body.courseName !== 'string' || !body.courseName.trim()) {
     return NextResponse.json({ success: false, error: 'universityName and courseName required' }, { status: 400 });
   }
 
-  const applicationSource = body.applicationSource || (authRes.type === 'student' ? 'STUDENT_SELF_APPLICATION' : 'DIRECT_ALO_APPLICATION');
+  if (isPartnerUser && authRes.type === 'portal' && !authRes.data.partnerId) {
+    return NextResponse.json({ success: false, error: 'Partner identity is not linked to this account.' }, { status: 403 });
+  }
+  if (isPartnerUser && authRes.type === 'portal' && body.partnerId && body.partnerId !== authRes.data.partnerId) {
+    return NextResponse.json({ success: false, error: 'Client-supplied partnerId does not match the authenticated tenant.' }, { status: 403 });
+  }
+  if (isPartnerUser && authRes.type === 'portal') {
+    const linkedStudent = await db.portalStudentProfile.findFirst({
+      where: { studentId: body.studentId, partnerId: authRes.data.partnerId },
+      select: { id: true },
+    });
+    if (!linkedStudent) return NextResponse.json({ success: false, error: 'Student is not linked to this partner tenant.' }, { status: 404 });
+  }
+
+  const applicationSource = authRes.type === 'student'
+    ? 'STUDENT_SELF_APPLICATION'
+    : isPartnerUser
+      ? 'PARTNER_APPLICATION'
+      : (body.applicationSource || 'DIRECT_ALO_APPLICATION');
 
   // ── FORM B GATE ───────────────────────────────────────────────────────────
   // A student self-application (Form A on the public site, or the portal Apply
@@ -187,90 +221,140 @@ export async function POST(req: Request) {
   }
 
   const isB2b = applicationSource === 'B2B_INBOUND_APPLICATION' || applicationSource === 'B2B_OUTBOUND_APPLICATION' || !!body.b2bProviderId;
+  const requestedPartnerId = isPartnerUser && authRes.type === 'portal'
+    ? authRes.data.partnerId!
+    : (typeof body.partnerId === 'string' ? body.partnerId.trim() : '');
 
-  // B2B creation requires permission
-  if (isB2b && authRes.type === 'portal') {
-    const canManage = canViewB2B(authRes.data.roles, authRes.data.permissions);
-    if (!canManage) {
-      return NextResponse.json({ success: false, error: 'Forbidden: B2B application creation requires application.view_b2b permission' }, { status: 403 });
+  if (!isPartnerUser && requestedPartnerId && authRes.type === 'portal' && !canViewB2B(authRes.data.roles, authRes.data.permissions)) {
+    return NextResponse.json({ success: false, error: 'Forbidden: assigning an application to a partner requires B2B permission.' }, { status: 403 });
+  }
+  if (!isPartnerUser && requestedPartnerId) {
+    const partner = await db.partnerProfile.findFirst({ where: { partnerId: requestedPartnerId }, select: { id: true } });
+    if (!partner) return NextResponse.json({ success: false, error: 'Unknown partner tenant.' }, { status: 400 });
+  }
+
+  // B2B creation is ALO-side only; a student cannot turn a direct application
+  // into a confidential B2B record by adding client-controlled source/provider fields.
+  let canViewCommissionForCreate = false;
+  if (isB2b) {
+    if (authRes.type !== 'portal' || !canManageB2B(authRes.data.roles, authRes.data.permissions)) {
+      return NextResponse.json({ success: false, error: 'Forbidden: B2B application creation requires an authorized ALO-side manage permission.' }, { status: 403 });
+    }
+    if (typeof body.b2bProviderId !== 'string' || !body.b2bProviderId.trim() || body.b2bProviderId.length > 191) {
+      return NextResponse.json({ success: false, error: 'A valid b2bProviderId is required for a B2B application.' }, { status: 400 });
+    }
+    if (body.b2bType !== undefined && !['B2B_INBOUND', 'B2B_OUTBOUND', 'INBOUND', 'OUTBOUND'].includes(body.b2bType)) {
+      return NextResponse.json({ success: false, error: 'Invalid b2bType.' }, { status: 400 });
+    }
+    if (typeof body.b2bCommissionAmount === 'string' || (body.b2bCommissionAmount !== undefined && (typeof body.b2bCommissionAmount !== 'number' || !Number.isFinite(body.b2bCommissionAmount) || body.b2bCommissionAmount < 0))) {
+      return NextResponse.json({ success: false, error: 'b2bCommissionAmount must be a finite non-negative number.' }, { status: 400 });
+    }
+    if (typeof body.b2bInternalNote === 'string' && body.b2bInternalNote.length > 10000) {
+      return NextResponse.json({ success: false, error: 'b2bInternalNote is too long.' }, { status: 400 });
+    }
+    const provider = await db.b2bProvider.findFirst({
+      where: { id: body.b2bProviderId.trim(), status: { in: ['ACTIVE', 'active', 'APPROVED', 'approved'] } },
+      select: { id: true },
+    });
+    if (!provider) return NextResponse.json({ success: false, error: 'B2B provider is not active or approved.' }, { status: 400 });
+    canViewCommissionForCreate = canViewB2BCommission(authRes.data.roles, authRes.data.permissions);
+    const hasCommissionInput = ['b2bCommissionType', 'b2bCommissionAmount', 'b2bPaymentCondition', 'b2bClaimStage'].some((field) => Object.prototype.hasOwnProperty.call(body, field));
+    if (hasCommissionInput && !canViewCommissionForCreate) {
+      return NextResponse.json({ success: false, error: 'B2B commission updates require application.view_b2b_commission permission.' }, { status: 403 });
     }
   }
 
-  const applicationCode = body.applicationCode || `APP-${new Date().getFullYear()}-${Math.floor(Math.random() * 900000) + 100000}`;
-  const stage = body.stage || 'APPLICATION_DRAFT';
+  const applicationCode = `APP-${new Date().getFullYear()}-${Math.floor(Math.random() * 900000) + 100000}`;
+  // Creation is always a draft; clients cannot jump over review/document gates.
+  const stage = 'APPLICATION_DRAFT';
   const safeStatus = mapStageToSafeStatus(stage);
 
   try {
-    const newApp = await db.application.create({
-      data: {
-        applicationCode,
-        studentId: authRes.type === 'student' ? authRes.data.studentId : body.studentId,
-        partnerId: body.partnerId || (authRes.type === 'portal' && authRes.data.userType === 'partner' ? authRes.data.userId : ''),
-        counselorId: body.counselorId || '',
-        counselorName: body.counselorName || '',
-        applicationOfficer: body.applicationOfficer || body.appTeamOfficerId || '',
-        appTeamOfficerId: body.appTeamOfficerId || body.applicationOfficer || '',
-        visaOfficerId: body.visaOfficerId || '',
-        universityId: body.universityId || '',
-        universityName: body.universityName,
-        courseId: body.courseId || '',
-        courseName: body.courseName,
-        country: body.country || '',
-        intake: body.intake || '',
-        level: body.level || '',
-        applicationSource,
-        isB2b,
-        isB2bConfidential: isB2b,
-        b2bType: body.b2bType || (applicationSource === 'B2B_INBOUND_APPLICATION' ? 'B2B_INBOUND' : applicationSource === 'B2B_OUTBOUND_APPLICATION' ? 'B2B_OUTBOUND' : ''),
-        b2bProviderId: body.b2bProviderId || '',
-        stage,
-        safeStatus,
-        reviewStatus: body.reviewStatus || 'PENDING',
-        documentStatus: body.documentStatus || 'PENDING',
-        paymentStatus: body.paymentStatus || 'PENDING',
-        offerStatus: body.offerStatus || 'PENDING',
-        casI20CoeStatus: body.casI20CoeStatus || 'NOT_STARTED',
-        visaHandoverStatus: body.visaHandoverStatus || 'NOT_READY',
-        status: body.status || 'active',
-        deadline: body.deadline || '',
-        notes: body.notes || '',
-        internalNotes: body.internalNotes || '',
-        createdBy: authRes.type === 'portal' ? authRes.data.userId : authRes.data.studentId,
-      },
-    });
-
-    // Create status log
-    await db.applicationStatusLog.create({
-      data: {
-        applicationId: newApp.id,
-        oldStatus: '',
-        newStatus: stage,
-        safeStatus,
-        changedBy: authRes.type === 'portal' ? authRes.data.userId : authRes.data.studentId,
-        visibility: isB2b ? 'B2B_CONFIDENTIAL' : 'public_safe',
-        note: isB2b ? `Application created via B2B channel ${applicationSource}` : `Application created: ${applicationSource}`,
-      },
-    });
-
-    // If B2B, create B2bApplication record
-    if (isB2b && body.b2bProviderId) {
-      await db.b2bApplication.create({
+    const newApp = await db.$transaction(async (tx) => {
+      const created = await tx.application.create({
         data: {
-          applicationId: newApp.id,
-          b2bProviderId: body.b2bProviderId,
-          b2bType: body.b2bType || (applicationSource === 'B2B_INBOUND_APPLICATION' ? 'B2B_INBOUND' : 'B2B_OUTBOUND'),
-          b2bReference: body.b2bReference || '',
-          submissionRoute: body.submissionRoute || 'B2B_OUTBOUND',
-          b2bStatus: 'SUBMITTED',
-          b2bCommissionType: body.b2bCommissionType || '',
-          b2bCommissionAmount: body.b2bCommissionAmount || 0,
-          b2bPaymentCondition: body.b2bPaymentCondition || '',
-          b2bClaimStage: body.b2bClaimStage || 'NOT_CLAIMED',
-          b2bInternalNote: body.b2bInternalNote || body.internalNotes || '',
+          applicationCode,
+          studentId: authRes.type === 'student' ? authRes.data.studentId : body.studentId,
+          partnerId: requestedPartnerId,
+          counselorId: isPartnerUser ? '' : (body.counselorId || ''),
+          counselorName: isPartnerUser ? '' : (body.counselorName || ''),
+          applicationOfficer: isPartnerUser ? '' : (body.applicationOfficer || body.appTeamOfficerId || ''),
+          appTeamOfficerId: isPartnerUser ? '' : (body.appTeamOfficerId || body.applicationOfficer || ''),
+          visaOfficerId: isPartnerUser ? '' : (body.visaOfficerId || ''),
+          universityId: body.universityId || '',
+          universityName: body.universityName,
+          courseId: body.courseId || '',
+          courseName: body.courseName,
+          country: body.country || '',
+          intake: body.intake || '',
+          level: body.level || '',
+          applicationSource,
+          isB2b,
+          isB2bConfidential: isB2b,
+          b2bType: body.b2bType || (applicationSource === 'B2B_INBOUND_APPLICATION' ? 'B2B_INBOUND' : applicationSource === 'B2B_OUTBOUND_APPLICATION' ? 'B2B_OUTBOUND' : ''),
+          b2bProviderId: body.b2bProviderId || '',
+          stage,
+          safeStatus,
+          reviewStatus: 'PENDING',
+          documentStatus: 'PENDING',
+          paymentStatus: 'PENDING',
+          offerStatus: 'PENDING',
+          casI20CoeStatus: 'NOT_STARTED',
+          visaHandoverStatus: 'NOT_READY',
+          status: 'active',
+          deadline: body.deadline || '',
+          notes: body.notes || '',
+          internalNotes: isPartnerUser ? '' : (body.internalNotes || ''),
           createdBy: authRes.type === 'portal' ? authRes.data.userId : authRes.data.studentId,
         },
       });
-    }
+      await tx.applicationDocument.createMany({
+        data: DEFAULT_APPLICATION_DOCUMENT_REQUIREMENTS.map((requirement) => ({
+          applicationId: created.id,
+          studentId: created.studentId,
+          documentType: requirement.type,
+          fileName: requirement.label,
+          status: 'REQUIRED',
+          visibility: 'student_visible',
+          version: 1,
+        })),
+      });
+      await refreshApplicationDocumentStatus(tx, created.id);
+      await tx.applicationStageHistory.create({
+        data: { applicationId: created.id, stage, status: 'completed', note: `Application created as a draft (${applicationSource}).`, actor: authRes.type === 'portal' ? authRes.data.userId : authRes.data.studentId },
+      });
+      await tx.applicationStatusLog.create({
+        data: {
+          applicationId: created.id,
+          oldStatus: '',
+          newStatus: stage,
+          safeStatus,
+          changedBy: authRes.type === 'portal' ? authRes.data.userId : authRes.data.studentId,
+          visibility: isB2b ? 'B2B_CONFIDENTIAL' : 'public_safe',
+          note: isB2b ? `Application created as draft via B2B channel ${applicationSource}` : `Application created as draft: ${applicationSource}`,
+        },
+      });
+      if (isB2b && body.b2bProviderId) {
+        const b2bType = body.b2bType === 'B2B_INBOUND' || body.b2bType === 'INBOUND' || applicationSource === 'B2B_INBOUND_APPLICATION' ? 'B2B_INBOUND' : 'B2B_OUTBOUND';
+        await tx.b2bApplication.create({
+          data: {
+            applicationId: created.id,
+            b2bProviderId: body.b2bProviderId.trim(),
+            b2bType,
+            b2bReference: typeof body.b2bReference === 'string' ? body.b2bReference.slice(0, 191) : '',
+            submissionRoute: typeof body.submissionRoute === 'string' ? body.submissionRoute.slice(0, 191) : b2bType,
+            b2bStatus: 'DRAFT',
+            b2bCommissionType: canViewCommissionForCreate && typeof body.b2bCommissionType === 'string' ? body.b2bCommissionType.slice(0, 191) : '',
+            b2bCommissionAmount: canViewCommissionForCreate && typeof body.b2bCommissionAmount === 'number' && Number.isFinite(body.b2bCommissionAmount) && body.b2bCommissionAmount >= 0 ? body.b2bCommissionAmount : 0,
+            b2bPaymentCondition: canViewCommissionForCreate && typeof body.b2bPaymentCondition === 'string' ? body.b2bPaymentCondition.slice(0, 191) : '',
+            b2bClaimStage: canViewCommissionForCreate && typeof body.b2bClaimStage === 'string' ? body.b2bClaimStage.slice(0, 191) : 'NOT_CLAIMED',
+            b2bInternalNote: typeof body.b2bInternalNote === 'string' ? body.b2bInternalNote.slice(0, 10000) : '',
+            createdBy: authRes.type === 'portal' ? authRes.data.userId : authRes.data.studentId,
+          },
+        });
+      }
+      return created;
+    });
 
     // Audit log
     if (authRes.type === 'portal') {

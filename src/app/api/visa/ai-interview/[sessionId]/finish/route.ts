@@ -1,87 +1,57 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateStudentRequest } from '@/lib/student-auth';
+
+const schema = z.object({}).strict();
+const safeStudentFeedback = 'Your practice transcript has been saved. Automated scoring is not enabled, so no readiness result has been calculated. A visa officer must review the practice before providing feedback. This practice session is not a visa decision or guarantee.';
 
 export async function POST(req: Request, context?: any) {
   try {
     const auth = await authenticateStudentRequest(req);
     if (auth instanceof NextResponse) return auth;
-
     const sessionId = context?.params?.sessionId;
-    const session = await db.aiInterviewSession.findUnique({ where: { id: sessionId } });
-    if (!session) return NextResponse.json({ success: false, error: 'Session not found' }, { status: 404 });
-    if (session.studentId !== auth.studentId) return NextResponse.json({ success: false, error: 'Cross-student blocked — IDOR blocked' }, { status: 403 });
+    if (typeof sessionId !== 'string' || !sessionId) return NextResponse.json({ success: false, error: 'Session ID required.' }, { status: 400 });
+    const session = await db.aiInterviewSession.findFirst({ where: { id: sessionId, studentId: auth.studentId } });
+    if (!session) return NextResponse.json({ success: false, error: 'Interview practice session not found.' }, { status: 404 });
+    if (session.status !== 'in_progress') return NextResponse.json({ success: false, error: 'Interview practice session has already been completed.' }, { status: 409 });
+    const parsed = schema.safeParse(await req.json().catch(() => ({})));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Scores and readiness labels cannot be submitted by a student.' }, { status: 400 });
+    const answerCount = await db.aiInterviewAnswer.count({ where: { sessionId } });
+    if (answerCount === 0) return NextResponse.json({ success: false, error: 'Record at least one practice response before finishing.' }, { status: 400 });
 
-    const body = await req.json();
-    const {
-      communicationClarity, confidence, courseKnowledge, universityKnowledge,
-      countryKnowledge, financialExplanation, sponsorExplanation, studyGapExplanation,
-      futurePlanClarity, visaRisk, overallReadiness, verdict, finalFeedback,
-      clarity, courseModules, university, sponsor, studyGap, futurePlan, refusalExplanation, documentReadiness
-    } = body;
-
-    // AI safety: never guarantee approval/success/pretend embassy/confidential/invent requirements/refusal/university/policy/speculation as fact/automatically final decision must show uncertainty/cite source/flag manual verification/recommend human review
-    const safeFeedback = finalFeedback || 'AI preliminary analysis only — human officer remains responsible for final internal assessment — must show uncertainty/cite source/flag manual verification/recommend human review — Interview prep doc branded question/answer framework/student answer/AI suggestion no memorized false truthful consistent';
-
-    const result = await db.aiInterviewResult.upsert({
-      where: { sessionId },
-      create: {
-        sessionId,
-        communicationClarity: communicationClarity || clarity || 75,
-        confidence: confidence || 75,
-        courseKnowledge: courseKnowledge || courseModules || 80,
-        universityKnowledge: universityKnowledge || university || 80,
-        countryKnowledge: countryKnowledge || 80,
-        financialExplanation: financialExplanation || 70,
-        sponsorExplanation: sponsorExplanation || sponsor || 70,
-        studyGapExplanation: studyGapExplanation || studyGap || 75,
-        futurePlanClarity: futurePlanClarity || futurePlan || 80,
-        refusalExplanation: refusalExplanation || 75,
-        documentReadiness: documentReadiness || 75,
-        visaRisk: visaRisk || 20,
-        overallReadiness: overallReadiness || 78,
-        verdict: verdict || 'HUMAN_REVIEW_REQUIRED',
-        finalFeedback: safeFeedback,
-      } as any,
-      update: {
-        overallReadiness: overallReadiness || 78,
-        verdict: verdict || 'HUMAN_REVIEW_REQUIRED',
-        finalFeedback: safeFeedback,
-        communicationClarity: communicationClarity || clarity,
-        confidence,
-        courseKnowledge: courseKnowledge || courseModules,
-        universityKnowledge: universityKnowledge || university,
-        financialExplanation,
-        sponsorExplanation: sponsorExplanation || sponsor,
-        studyGapExplanation: studyGapExplanation || studyGap,
-        futurePlanClarity: futurePlanClarity || futurePlan,
-      } as any,
+    await db.$transaction(async (tx) => {
+      await tx.aiInterviewResult.upsert({
+        where: { sessionId },
+        create: {
+          sessionId,
+          communicationClarity: 0,
+          confidence: 0,
+          courseKnowledge: 0,
+          universityKnowledge: 0,
+          countryKnowledge: 0,
+          financialExplanation: 0,
+          sponsorExplanation: 0,
+          studyGapExplanation: 0,
+          futurePlanClarity: 0,
+          refusalExplanation: 0,
+          documentReadiness: 0,
+          visaRisk: 0,
+          overallReadiness: 0,
+          verdict: 'human_review_required',
+          finalFeedback: safeStudentFeedback,
+        },
+        update: { overallReadiness: 0, verdict: 'human_review_required', finalFeedback: safeStudentFeedback },
+      });
+      await tx.aiInterviewSession.update({ where: { id: sessionId }, data: { status: 'completed', readinessScore: 0, riskLevel: 'human_review_required', completedAt: new Date() } });
+      await tx.studentEvent.create({ data: { studentId: auth.studentId, eventType: 'VISA_AI_INTERVIEW_COMPLETED', payload: JSON.stringify({ sessionId, answerCount, automatedAssessment: false }) } });
+      await tx.timelineEvent.create({
+        data: { studentId: auth.studentId, stage: 'VISA_AI_INTERVIEW_COMPLETED', title: 'Interview practice session completed.', description: 'Practice transcript was saved; automated scoring is not enabled and officer review is pending.', actor: auth.studentId },
+      });
     });
 
-    await db.aiInterviewSession.update({
-      where: { id: sessionId },
-      data: {
-        status: 'completed',
-        readinessScore: overallReadiness || 78,
-        completedAt: new Date(),
-      } as any,
-    });
-
-    await db.timelineEvent.create({
-      data: {
-        studentId: auth.studentId,
-        stage: 'VISA_AI_INTERVIEW_COMPLETED',
-        title: `AI interview completed — score ${overallReadiness || 78}% — readiness ${verdict || 'HUMAN_REVIEW_REQUIRED'} — AI preliminary only human final`,
-        description: `AI interview 9 types — Scorecard 12 scores AI preliminary only human final — Final result internal workflow NOT visa decision — AI cannot automatically make final visa/admission decision — must show uncertainty/cite source/flag manual verification/recommend human review — Financial/future plan framework real info no fabrication`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({
-      success: true,
-      result,
-      note: 'AI preliminary only — human officer remains responsible for final internal assessment — AI cannot automatically make final visa/admission decision — must show uncertainty/cite source/flag manual verification/recommend human review — Scorecard 12 scores AI preliminary only human final — Final result internal workflow status NOT visa decision — Interview prep doc branded question/answer framework/student answer/AI suggestion no memorized false truthful consistent — Financial/future plan framework real info no fabrication salary/balance/income/employment/job/assets/travel/academic — Video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording — Practice 3 days after package store attempts improvement',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, sessionId, status: 'completed', assessmentStatus: 'pending_officer_review', feedback: safeStudentFeedback }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Interview practice could not be completed.' }, { status: 503 });
   }
 }

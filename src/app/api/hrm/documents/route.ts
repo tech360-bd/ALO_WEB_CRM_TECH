@@ -1,108 +1,98 @@
-import { NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth-middleware";
-import { db } from "@/lib/db";
-import { logHrmAudit } from "@/lib/hrms/audit";
-import { canViewEmployeeProfile, isHR, isSuperAdmin } from "@/lib/hrms/rbac";
+import { NextResponse } from 'next/server';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { db } from '@/lib/db';
+import { canViewEmployeeProfile, isHR, isSuperAdmin } from '@/lib/hrms/rbac';
+import { writePortalAudit } from '@/lib/transactional-audit';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
 const MANDATORY_TYPES = [
-  'passport','nid','photo','cv','certificates','experience_letter','appointment_letter','confirmation_letter',
-  'increment_letter','promotion_letter','transfer_letter','warning_letter','termination_letter','employment_agreement',
-  'nda','confidentiality_agreement','device_agreement','it_policy','data_privacy_agreement','international_agreement','bangladesh_agreement','exit_clearance'
+  'passport', 'nid', 'photo', 'cv', 'certificates', 'experience_letter', 'appointment_letter', 'confirmation_letter',
+  'increment_letter', 'promotion_letter', 'transfer_letter', 'warning_letter', 'termination_letter', 'employment_agreement',
+  'nda', 'confidentiality_agreement', 'device_agreement', 'it_policy', 'data_privacy_agreement', 'international_agreement', 'bangladesh_agreement', 'exit_clearance',
 ];
 
-export async function GET(req: Request) {
-  return withAuth(async (request, auth) => {
-    const url = new URL(request.url);
-    const employeeId = url.searchParams.get("employeeId") || "";
-    const targetUserId = url.searchParams.get("userId") || auth.userId;
-    if (auth.roles.includes("student")) return NextResponse.json({ success:false, error:"Forbidden" }, { status:403 });
-
-    // resolve employeeId from userId if not provided
-    let eid = employeeId;
-    if (!eid) {
-      const hr = await (db as any).employeeHR.findUnique({ where:{ userId: targetUserId }}).catch(()=>null);
-      eid = hr?.employeeId || "";
-    }
-    if (!eid) return NextResponse.json({ success:true, data:[], mandatory: MANDATORY_TYPES });
-
-    // private doc center: only own, HR, SuperAdmin
-    const canView = canViewEmployeeProfile(auth, targetUserId, eid);
-    if (!canView) return NextResponse.json({ success:false, error:"Access denied to document center" }, { status:403 });
-
-    const docs = await (db as any).employeeDocument.findMany({ where:{ employeeId: eid, isDeleted:false }, orderBy:{ updatedAt:'desc' }, include:{ versions:true } }).catch(async()=>{
-      return await (db as any).employeeDocument.findMany({ where:{ employeeId: eid }, orderBy:{ updatedAt:'desc' } }).catch(()=>[]);
-    });
-
-    const missing = MANDATORY_TYPES.filter(t=> !docs.some((d:any)=> (d.documentType||'').toLowerCase()===t));
-    const withHistory = await Promise.all(docs.map(async(d:any)=>{
-      const versions = await (db as any).employeeDocumentVersion.findMany({ where:{ documentId: d.id }, orderBy:{ version:'desc' } }).catch(()=>[]);
-      return { ...d, versions, isDeletable: false }; // no mandatory doc can be deleted
-    }));
-
-    return NextResponse.json({ success:true, data: withHistory, mandatory: MANDATORY_TYPES, missing, canUpload: true });
-  })(req);
+async function resolveEmployee(userId: string, employeeId: string) {
+  const hr = employeeId
+    ? await db.employeeHR.findUnique({ where: { employeeId }, select: { id: true, userId: true, employeeId: true, status: true } })
+    : await db.employeeHR.findUnique({ where: { userId }, select: { id: true, userId: true, employeeId: true, status: true } });
+  const employee = hr
+    ? await db.employee.findUnique({ where: { userId: hr.userId }, select: { id: true, userId: true, employeeId: true, status: true } })
+    : employeeId
+      ? await db.employee.findFirst({ where: { OR: [{ id: employeeId }, { employeeId }] }, select: { id: true, userId: true, employeeId: true, status: true } })
+      : await db.employee.findUnique({ where: { userId }, select: { id: true, userId: true, employeeId: true, status: true } });
+  if (hr) return { userId: hr.userId, employeeId: hr.employeeId, identifiers: [...new Set([hr.employeeId, hr.userId, employee?.id, employee?.employeeId].filter((value): value is string => Boolean(value)))], status: employee?.status || hr.status };
+  if (!employee) return null;
+  return { userId: employee.userId, employeeId: employee.employeeId, identifiers: [...new Set([employee.id, employee.userId, employee.employeeId].filter(Boolean))], status: employee.status };
 }
 
-export async function POST(req: Request) {
-  return withAuth(async (request, auth) => {
-    const body = await request.json().catch(()=>({}));
-    const { employeeId, documentType, filePath, fileName, fileSize, mimeType, expiryDate, title, isMandatory } = body;
-    if (!employeeId || !documentType || !filePath) return NextResponse.json({ success:false, error:"employeeId, documentType, filePath required" }, { status:400 });
-    if (!MANDATORY_TYPES.includes(String(documentType).toLowerCase()) && !['other'].includes(String(documentType).toLowerCase())) {
-      // allow any but track mandatory
-    }
-    // check target employee HR exists
-    const targetHr = await (db as any).employeeHR.findUnique({ where:{ employeeId } }).catch(()=>null);
-    const targetUserId = targetHr?.userId || "";
-    // Only own or HR can upload? Per spec: every employee must upload mandatory documents — employee uploads own, HR can upload on behalf
-    const isOwner = auth.userId === targetUserId;
-    if (!isOwner && !isHR(auth) && !isSuperAdmin(auth)) return NextResponse.json({ success:false, error:"Cannot upload for other employee" }, { status:403 });
-
-    // Find existing doc of same type
-    const existing = await (db as any).employeeDocument.findFirst({ where:{ employeeId, documentType } }).catch(()=>null);
-    let doc;
-    if (existing) {
-      // create version history, update to new version, soft archive old version
-      const newVersion = (existing.version||1)+1;
-      await (db as any).employeeDocumentVersion.create({ data:{
-        documentId: existing.id,
-        employeeDocumentId: existing.id,
-        version: existing.version||1,
-        filePath: existing.filePath,
-        fileName: existing.fileName,
-        uploadedBy: existing.uploadedBy || targetUserId,
-        status: 'superseded',
-        fileHash: (existing as any).fileHash || "",
-      }}).catch(()=>{});
-      doc = await (db as any).employeeDocument.update({ where:{ id: existing.id }, data:{
-        filePath, fileName: fileName||existing.fileName, fileSize: fileSize||0, mimeType: mimeType||"", expiryDate: expiryDate||"", title: title||"", version: newVersion, status:'pending', uploadedBy: auth.userId, isMandatory: isMandatory ?? MANDATORY_TYPES.includes(String(documentType).toLowerCase())
-      }});
-      await logHrmAudit({ actor: auth, action:'UPDATE_DOCUMENT', entityType:'EmployeeDocument', entityId: doc.id, employeeId, oldValue: existing, newValue: doc });
-    } else {
-      doc = await (db as any).employeeDocument.create({ data:{
-        employeeId, documentType, title: title||"", filePath, fileName: fileName||"", fileSize: fileSize||0, mimeType: mimeType||"", expiryDate: expiryDate||"", status:'pending', uploadedBy: auth.userId, version:1, isMandatory: isMandatory ?? MANDATORY_TYPES.includes(String(documentType).toLowerCase())
-      }});
-      await logHrmAudit({ actor: auth, action:'CREATE_DOCUMENT', entityType:'EmployeeDocument', entityId: doc.id, employeeId, newValue: doc });
-    }
-
-    return NextResponse.json({ success:true, data: doc });
-  })(req);
+async function requireActiveActor(auth: AuthContext) {
+  if (isSuperAdmin(auth)) return true;
+  const employee = await db.employee.findUnique({ where: { userId: auth.userId }, select: { status: true } });
+  return Boolean(employee && employee.status.toLowerCase() === 'active');
 }
 
-// DELETE is soft-delete only, and mandatory docs cannot be deleted
-export async function DELETE(req: Request) {
-  return withAuth(async (request, auth) => {
-    const url = new URL(request.url);
-    const id = url.searchParams.get("id") || "";
-    if (!id) return NextResponse.json({ success:false, error:"id required" }, { status:400 });
-    const doc = await (db as any).employeeDocument.findUnique({ where:{ id }}).catch(()=>null);
-    if (!doc) return NextResponse.json({ success:false, error:"Not found" }, { status:404 });
-    if (MANDATORY_TYPES.includes(String(doc.documentType).toLowerCase())) {
-      return NextResponse.json({ success:false, error:"Mandatory document cannot be deleted — only version update allowed" }, { status:400 });
+export async function GET(request: Request) {
+  return withAuth(async (req, auth) => {
+    const roles = new Set([auth.userType, ...auth.roles].map((role) => role.toLowerCase()));
+    if (roles.has('student') || roles.has('partner')) return NextResponse.json({ success: false, error: 'Employee documents are not available to student or partner accounts.' }, { status: 403 });
+    if (!await requireActiveActor(auth).catch(() => false)) return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
+    const url = new URL(req.url);
+    const requestedUserId = url.searchParams.get('userId')?.trim() || auth.userId;
+    const requestedEmployeeId = url.searchParams.get('employeeId')?.trim() || '';
+    try {
+      const target = await resolveEmployee(requestedUserId, requestedEmployeeId);
+      if (!target) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+      if (!canViewEmployeeProfile(auth, target.userId, target.employeeId)) return NextResponse.json({ success: false, error: 'Access denied to document center.' }, { status: 403 });
+      const active = await db.employee.findUnique({ where: { userId: target.userId }, select: { status: true } });
+      if (!active || active.status.toLowerCase() !== 'active') return NextResponse.json({ success: false, error: 'Active employee record not found.' }, { status: 404 });
+      const identifiers = [...new Set(target.identifiers.filter(Boolean))];
+      const docs = await db.employeeDocument.findMany({
+        where: { employeeId: { in: identifiers }, isDeleted: false },
+        orderBy: { updatedAt: 'desc' },
+        select: {
+          id: true, employeeId: true, documentType: true, title: true, fileName: true, fileSize: true, mimeType: true,
+          isMandatory: true, isVerified: true, status: true, version: true, expiryDate: true, createdAt: true, updatedAt: true,
+          versions: { orderBy: { version: 'desc' }, select: { id: true, version: true, fileName: true, status: true, createdAt: true } },
+        },
+      });
+      const missing = MANDATORY_TYPES.filter((type) => !docs.some((doc) => doc.documentType.toLowerCase() === type));
+      await db.$transaction(async (tx) => {
+        await writePortalAudit(tx, auth, 'EMPLOYEE_DOCUMENT_CENTER_VIEWED', 'EmployeeDocument', target.employeeId, { targetUserId: target.userId, count: docs.length, missingCount: missing.length }, req);
+      });
+      const data = docs.map((doc) => ({ ...doc, downloadUrl: `/api/employee/documents/${doc.id}/download` }));
+      return NextResponse.json({ success: true, data, mandatory: MANDATORY_TYPES, missing, canUpload: true }, { headers: { 'Cache-Control': 'private, no-store' } });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Employee documents are temporarily unavailable.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
     }
-    if (!isHR(auth) && !isSuperAdmin(auth) && auth.userId !== doc.uploadedBy) return NextResponse.json({ success:false, error:"Forbidden" }, { status:403 });
-    const updated = await (db as any).employeeDocument.update({ where:{ id }, data:{ isDeleted:true, deletedAt: new Date(), deletedBy: auth.userId }});
-    await logHrmAudit({ actor: auth, action:'SOFT_DELETE_DOCUMENT', entityType:'EmployeeDocument', entityId: id, employeeId: doc.employeeId, oldValue: doc, newValue: updated });
-    return NextResponse.json({ success:true, data: updated });
-  })(req);
+  })(request);
+}
+
+export async function POST() {
+  return NextResponse.json({ success: false, error: 'Path or URL based document uploads are disabled. Upload actual file bytes through /api/employee/documents.' }, { status: 405, headers: { Allow: 'GET, DELETE' } });
+}
+
+export async function DELETE(request: Request) {
+  return withAuth(async (req, auth) => {
+    if (!isHR(auth) && !isSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'HR or Super Admin permission is required for document archival.' }, { status: 403 });
+    if (!await requireActiveActor(auth).catch(() => false)) return NextResponse.json({ success: false, error: 'An active HR employee account is required.' }, { status: 403 });
+    if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+    const body: unknown = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'A document id and archival reason are required.' }, { status: 400 });
+    const id = typeof (body as Record<string, unknown>).id === 'string' ? String((body as Record<string, unknown>).id).trim() : '';
+    const reason = typeof (body as Record<string, unknown>).reason === 'string' ? String((body as Record<string, unknown>).reason).trim() : '';
+    if (!id || id.length > 191 || reason.length < 8 || reason.length > 500) return NextResponse.json({ success: false, error: 'A valid document id and reason of 8 to 500 characters are required.' }, { status: 400 });
+    try {
+      const doc = await db.employeeDocument.findUnique({ where: { id } });
+      if (!doc || doc.isDeleted) return NextResponse.json({ success: false, error: 'Document not found.' }, { status: 404 });
+      if (MANDATORY_TYPES.includes(doc.documentType.toLowerCase())) return NextResponse.json({ success: false, error: 'Mandatory documents cannot be deleted or archived from this workflow.' }, { status: 409 });
+      const updated = await db.$transaction(async (tx) => {
+        const result = await tx.employeeDocument.update({ where: { id }, data: { isDeleted: true, deletedAt: new Date(), deletedBy: auth.actorUserId } });
+        await writePortalAudit(tx, auth, 'EMPLOYEE_DOCUMENT_ARCHIVED', 'EmployeeDocument', id, { employeeId: doc.employeeId, reason }, req);
+        return result;
+      });
+      return NextResponse.json({ success: true, data: { id: updated.id, status: 'archived' } });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Document archival could not be completed.' }, { status: 503 });
+    }
+  })(request);
 }

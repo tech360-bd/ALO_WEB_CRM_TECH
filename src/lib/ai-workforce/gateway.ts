@@ -25,6 +25,7 @@ import {
   recordRuntimeOutcome,
   runtimeIsTripped,
   runtimeSupports,
+  isCloudRuntime,
   syncRuntimes,
   type RuntimeDefinition,
 } from './runtimes';
@@ -70,7 +71,9 @@ export async function planRoute(req: GatewayRequest, runtimes?: RuntimeDefinitio
   const catalogue = (runtimes ?? detectRuntimes()).filter((runtime) => runtime.enabled);
   const usable: RuntimeDefinition[] = [];
   for (const runtime of catalogue) {
-    if (req.confidential && runtime.kind === 'OPTIONAL_CLOUD_LLM') continue;
+    const cloudRuntime = isCloudRuntime(runtime);
+    if (cloudRuntime && process.env.PAID_AI_API_ALLOWED !== 'true') continue;
+    if (req.confidential && cloudRuntime) continue;
     if (!runtimeSupports(runtime, req.task)) continue;
     if (await runtimeIsTripped(runtime.runtimeKey)) continue;
     usable.push(runtime);

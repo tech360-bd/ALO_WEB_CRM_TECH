@@ -250,7 +250,7 @@ export default function AiScholarshipMatch({
           <div className="sm:col-span-2 border-t border-alo-border pt-5">
             <Button
               onClick={() => void run()}
-              className="h-12 rounded-button bg-alo-cta px-6 text-[15px] font-semibold text-white hover:bg-alo-cta-hover"
+              className="h-12 rounded-button bg-alo-cta px-6 text-[15px] font-semibold text-black hover:bg-alo-cta-hover"
             >
               {state.status === 'loading' ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />Searching…</>

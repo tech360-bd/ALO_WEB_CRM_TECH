@@ -17,9 +17,12 @@ import {
  */
 function createFakeDatabase() {
   const rows = new Map<string, { lastValue: number }>();
+  const reservedCodes = new Set<string>();
   let lastInsertId = 0;
 
   const makeTx = () => ({
+    student: { findUnique: async ({ where }: { where: { studentId: string } }) => reservedCodes.has(where.studentId) ? { id: 'legacy-student' } : null },
+    portalStudentProfile: { findUnique: async ({ where }: { where: { studentId: string } }) => reservedCodes.has(where.studentId) ? { id: 'portal-profile' } : null },
     $executeRaw: async (strings: TemplateStringsArray, ...values: unknown[]) => {
       const sql = strings.join('?');
       if (sql.includes('ON DUPLICATE KEY UPDATE')) {
@@ -58,13 +61,13 @@ function createFakeDatabase() {
     }
   };
 
-  return { transaction, rows };
+  return { transaction, rows, reservedCodes };
 }
 
 describe('identifier format', () => {
   it('formats the canonical student ID exactly as specified', () => {
-    expect(formatIdentifier('AE', 2026, 1)).toBe('AE-202600001');
-    expect(formatIdentifier('AE', 2026, 2)).toBe('AE-202600002');
+    expect(formatIdentifier('AE', 2026, 1)).toBe('AE-2026000001');
+    expect(formatIdentifier('AE', 2026, 2)).toBe('AE-2026000002');
     expect(formatIdentifier('AEP', 2026, 1)).toBe('AEP-202600001');
     expect(formatIdentifier('EMP', 2026, 99999)).toBe('EMP-202699999');
   });
@@ -76,7 +79,7 @@ describe('identifier format', () => {
     expect(() => formatIdentifier('AE', 1999, 1)).toThrow(/Invalid year/);
   });
 
-  it('accepts the format used by the intake agent regex (AE-YYYY + 5 digits)', () => {
+  it('accepts both new six-digit and historical five-digit student codes', () => {
     const regex = /\b(AE-\d{4}\d{5}|AE-\d{4}\d{6}|ALO-S-\d+|AE-\d{8}|STU-\w+)\b/i;
     expect(regex.exec('my id is AE-202600042 thanks')?.[1]).toBe('AE-202600042');
   });
@@ -98,8 +101,8 @@ describe('allocateIdentifier', () => {
       ids.push(await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026)));
     }
     expect(new Set(ids).size).toBe(200);
-    expect(ids[0]).toBe('AE-202600001');
-    expect(ids[199]).toBe('AE-202600200');
+    expect(ids[0]).toBe('AE-2026000001');
+    expect(ids[199]).toBe('AE-2026000200');
   });
 
   it('keeps each year and scope independent (restart per year, no cross-scope reuse)', async () => {
@@ -107,7 +110,14 @@ describe('allocateIdentifier', () => {
     const a = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
     const b = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2027));
     const c = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AEP', 2026));
-    expect([a, b, c]).toEqual(['AE-202600001', 'AE-202700001', 'AEP-202600001']);
+    expect([a, b, c]).toEqual(['AE-2026000001', 'AE-2027000001', 'AEP-202600001']);
+  });
+
+  it('skips a legacy six-digit student code that exists outside the new sequence', async () => {
+    const fake = createFakeDatabase();
+    fake.reservedCodes.add('AE-2026000001');
+    const next = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
+    expect(next).toBe('AE-2026000002');
   });
 
   it('never reuses a committed number, even after later failures', async () => {
@@ -120,10 +130,10 @@ describe('allocateIdentifier', () => {
       }),
     ).rejects.toThrow('welcome workflow failed');
     const next = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
-    expect(first).toBe('AE-202600001');
+    expect(first).toBe('AE-2026000001');
     // The rolled-back allocation released its number before anything was committed, so the next
-    // committed ID is 00002 and nothing visible was ever reused.
-    expect(next).toBe('AE-202600002');
+    // committed ID is 000002 and nothing visible was ever reused.
+    expect(next).toBe('AE-2026000002');
   });
 
   it('rejects unknown scopes before touching the database', async () => {

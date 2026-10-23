@@ -226,24 +226,34 @@ interface UpcomingBirthday {
 interface HrAnalytics {
   headcount: number;
   activeEmployees: number;
-  attendanceRate: number;
+  attendanceRate: number | null;
+  attendanceRateNote: string;
   lateToday: number;
   absentToday: number;
   onLeaveToday: number;
+  attendanceRecordsToday: number;
   pendingLeaves: number;
-  payrollPending: number;
-  payrollPaid: number;
-  totalPayrollCost: number;
-  devicesAssigned: number;
-  devicesReturned: number;
+  payrollPending: number | null;
+  payrollPaid: number | null;
+  totalPayrollCost: number | null;
+  devicesAssigned: number | null;
+  devicesReturned: number | null;
   activeNotices: number;
   pendingExits: number;
   probationEmployees: number;
   newJoiners: number;
 }
 
+interface HrAnalyticsPermissions {
+  canViewPayroll: boolean;
+  canViewDevices: boolean;
+  canViewLoginSecurity: boolean;
+  privateDatesVisible: boolean;
+}
+
 interface HrAnalyticsResponse {
   analytics: HrAnalytics;
+  permissions: HrAnalyticsPermissions;
   employees: Employee[];
   leaveRequests: LeaveRequest[];
   payroll: Payroll[];
@@ -1115,6 +1125,13 @@ export function EnterpriseHrDashboard() {
   const loginSecurity = data?.loginSecurity || [];
   const attendance = data?.attendance || [];
   const upcomingBirthdays = data?.upcomingBirthdays || [];
+  const canViewPayroll = data?.permissions.canViewPayroll === true;
+  const canViewDevices = data?.permissions.canViewDevices === true;
+  const canViewLoginSecurity = data?.permissions.canViewLoginSecurity === true;
+
+  if (!loading && !data) {
+    return <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">HR dashboard data is unavailable for this account or scope. No company metrics are displayed.</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -1146,10 +1163,10 @@ export function EnterpriseHrDashboard() {
           />
           <StatCard
             label="Attendance Rate"
-            value={`${analytics?.attendanceRate ?? 0}%`}
+            value={analytics?.attendanceRate == null ? 'Not calculated' : `${analytics.attendanceRate}%`}
             icon="Calendar"
             accent="violet"
-            hint="Today's attendance"
+            hint={analytics?.attendanceRateNote || 'Attendance denominator unavailable'}
           />
           <StatCard
             label="Late Today"
@@ -1179,60 +1196,15 @@ export function EnterpriseHrDashboard() {
             accent="amber"
             hint="Awaiting review"
           />
-          <StatCard
-            label="Payroll Pending"
-            value={analytics?.payrollPending ?? 0}
-            icon="DollarSign"
-            accent="orange"
-            hint="Draft payroll"
-          />
-          <StatCard
-            label="Payroll Paid"
-            value={analytics?.payrollPaid ?? 0}
-            icon="CheckCircle"
-            accent="emerald"
-            hint="Disbursed"
-          />
-          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0057B8]/20 hover:border-[#0057B8]/50 transition-colors">
-            <CardContent className="pt-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Total Payroll Cost
-                  </p>
-                  <div className="mt-1.5">
-                    <SensitiveField
-                      id="hr-total-payroll-cost"
-                      label="Total Paid (BDT)"
-                      value={formatBDT(analytics?.totalPayrollCost ?? 0)}
-                      type="currency"
-                      mono
-                    />
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Cumulative disbursed
-                  </p>
-                </div>
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]">
-                  <Icon name="Wallet" className="size-5" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <StatCard
-            label="Devices Assigned"
-            value={analytics?.devicesAssigned ?? 0}
-            icon="Laptop"
-            accent="violet"
-            hint="In employee hands"
-          />
-          <StatCard
-            label="Devices Returned"
-            value={analytics?.devicesReturned ?? 0}
-            icon="Undo"
-            accent="blue"
-            hint="Back to inventory"
-          />
+          {canViewPayroll && <>
+            <StatCard label="Payroll Pending" value={analytics?.payrollPending ?? 'Unavailable'} icon="DollarSign" accent="orange" hint="Draft payroll" />
+            <StatCard label="Payroll Paid" value={analytics?.payrollPaid ?? 'Unavailable'} icon="CheckCircle" accent="emerald" hint="Disbursed" />
+            <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0057B8]/20 hover:border-[#0057B8]/50 transition-colors"><CardContent className="pt-5"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Payroll Cost</p><div className="mt-1.5"><SensitiveField id="hr-total-payroll-cost" label="Total Paid (BDT)" value={analytics?.totalPayrollCost == null ? 'Unavailable' : formatBDT(analytics.totalPayrollCost)} type="currency" mono /></div><p className="mt-1 text-xs text-muted-foreground">Cumulative disbursed</p></div><div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]"><Icon name="Wallet" className="size-5" /></div></div></CardContent></Card>
+          </>}
+          {canViewDevices && <>
+            <StatCard label="Devices Assigned" value={analytics?.devicesAssigned ?? 'Unavailable'} icon="Laptop" accent="violet" hint="In employee hands" />
+            <StatCard label="Devices Returned" value={analytics?.devicesReturned ?? 'Unavailable'} icon="Undo" accent="blue" hint="Back to inventory" />
+          </>}
           <StatCard
             label="Active Notices"
             value={analytics?.activeNotices ?? 0}
@@ -1277,18 +1249,9 @@ export function EnterpriseHrDashboard() {
                 <Icon name="CalendarOff" className="size-3.5" />
                 Leave Management
               </TabsTrigger>
-              <TabsTrigger value="payroll" className="gap-1.5">
-                <Icon name="Wallet" className="size-3.5" />
-                Payroll
-              </TabsTrigger>
-              <TabsTrigger value="devices" className="gap-1.5">
-                <Icon name="Laptop" className="size-3.5" />
-                Devices
-              </TabsTrigger>
-              <TabsTrigger value="login-security" className="gap-1.5">
-                <Icon name="ShieldCheck" className="size-3.5" />
-                Login Security
-              </TabsTrigger>
+              {canViewPayroll && <TabsTrigger value="payroll" className="gap-1.5"><Icon name="Wallet" className="size-3.5" />Payroll</TabsTrigger>}
+              {canViewDevices && <TabsTrigger value="devices" className="gap-1.5"><Icon name="Laptop" className="size-3.5" />Devices</TabsTrigger>}
+              {canViewLoginSecurity && <TabsTrigger value="login-security" className="gap-1.5"><Icon name="ShieldCheck" className="size-3.5" />Login Security</TabsTrigger>}
               <TabsTrigger value="notice-exit" className="gap-1.5">
                 <Icon name="LogOut" className="size-3.5" />
                 Notice & Exit
@@ -1315,8 +1278,8 @@ export function EnterpriseHrDashboard() {
                   {upcomingBirthdays.length === 0 ? (
                     <EmptyState
                       icon="Cake"
-                      title="No upcoming birthdays"
-                      description="No birthdays in the next 30 days."
+                      title="Birthday details are not included"
+                      description="Individual employee birth dates are excluded from this analytics response for privacy."
                     />
                   ) : (
                     <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
@@ -2492,78 +2455,51 @@ export function EnterpriseHrDashboard() {
                     LEAVE_TYPES.map((t) => [t.value, t.label])
                   )}
                 />
-                <SectionCard
-                  title="Attendance Rate Trend"
-                  icon="TrendingUp"
-                  description="Last 7 days"
-                  className="lg:col-span-2"
-                >
-                  <div className="flex items-end gap-3 pt-2">
-                    {buildAttendanceTrend(attendance).map((d, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-1 flex-col items-center gap-2"
-                      >
-                        <div className="flex w-full flex-1 items-end">
-                          <div
-                            className="w-full rounded-t-lg bg-[#0057B8] transition-all hover:bg-[#0057B8]/80"
-                            style={{
-                              height: `${Math.max(8, d.rate)}%`,
-                              minHeight: "8px",
-                            }}
-                            title={`${d.label}: ${d.rate}%`}
-                          />
-                        </div>
-                        <span className="text-[10px] font-medium text-muted-foreground">
-                          {d.label}
-                        </span>
-                        <span className="text-xs font-bold text-[#0057B8] tabular-nums">
-                          {d.rate}%
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                <SectionCard title="Attendance Trend" icon="TrendingUp" description="Historical trend" className="lg:col-span-2">
+                  <EmptyState icon="TrendingUp" title="Historical trend unavailable" description="This API does not have a complete historical attendance series. No trend is inferred from today's records." />
                 </SectionCard>
-                <SectionCard
-                  title="Payroll Cost by Month"
-                  icon="Wallet"
-                  description="Net pay disbursed per month"
-                  className="lg:col-span-2"
-                >
-                  {payrolls.length === 0 ? (
-                    <EmptyState
-                      icon="Wallet"
-                      title="No payroll data"
-                      description="Payroll cost trend will appear here."
-                    />
-                  ) : (
-                    <div className="space-y-3">
-                      {buildPayrollByMonth(payrolls).map((m, i) => (
-                        <div key={i} className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-medium text-foreground">
-                              {m.label}
-                            </span>
-                            <span className="font-bold text-[#0057B8] tabular-nums">
-                              {formatBDT(m.total)}
-                            </span>
+                {canViewPayroll && (
+                  <SectionCard
+                    title="Payroll Cost by Month"
+                    icon="Wallet"
+                    description="Net pay disbursed per month"
+                    className="lg:col-span-2"
+                  >
+                    {payrolls.length === 0 ? (
+                      <EmptyState
+                        icon="Wallet"
+                        title="No payroll data"
+                        description="Payroll cost trend will appear here."
+                      />
+                    ) : (
+                      <div className="space-y-3">
+                        {buildPayrollByMonth(payrolls).map((m, i) => (
+                          <div key={i} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-medium text-foreground">
+                                {m.label}
+                              </span>
+                              <span className="font-bold text-[#0057B8] tabular-nums">
+                                {formatBDT(m.total)}
+                              </span>
+                            </div>
+                            <MiniBar
+                              value={m.total}
+                              max={
+                                Math.max(
+                                  ...buildPayrollByMonth(payrolls).map(
+                                    (x) => x.total
+                                  )
+                                ) || 1
+                              }
+                              color="#E8501A"
+                            />
                           </div>
-                          <MiniBar
-                            value={m.total}
-                            max={
-                              Math.max(
-                                ...buildPayrollByMonth(payrolls).map(
-                                  (x) => x.total
-                                )
-                              ) || 1
-                            }
-                            color="#E8501A"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </SectionCard>
+                        ))}
+                      </div>
+                    )}
+                  </SectionCard>
+                )}
               </div>
             )}
           </TabsContent>
@@ -2695,36 +2631,6 @@ function buildCountBuckets(values: string[]): { label: string; count: number }[]
     .map(([label, count]) => ({ label, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 8);
-}
-
-function buildAttendanceTrend(
-  attendance: AttendanceRow[]
-): { label: string; rate: number }[] {
-  // Build a synthetic 7-day trend based on current attendance rate
-  // (the API returns only today's attendance, so we derive a trend illustration)
-  const days: { label: string; rate: number }[] = [];
-  const today = new Date();
-  const baseRate =
-    attendance.length > 0
-      ? Math.round(
-          (attendance.filter((a) => a.status === "PRESENT").length /
-            attendance.length) *
-            100
-        )
-      : 0;
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const label = d.toLocaleDateString("en-GB", {
-      weekday: "short",
-      day: "2-digit",
-    });
-    // Slight variance around base rate
-    const variance = i === 0 ? 0 : Math.round((Math.sin(i * 1.3) * 8));
-    const rate = Math.max(0, Math.min(100, baseRate + variance));
-    days.push({ label, rate });
-  }
-  return days;
 }
 
 function buildPayrollByMonth(

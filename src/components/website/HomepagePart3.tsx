@@ -28,8 +28,8 @@ import { EnglishExamButton } from '@/components/website/EnglishExamCta';
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#0066CC',
+  orange: '#F37021',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',
@@ -181,11 +181,11 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0066CC]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#C93D13' }}>
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#D95D12' }}>
                       {sch.deadline}
                     </span>
                   </div>
@@ -427,7 +427,7 @@ function EnglishTestsSection() {
             <h3 className="text-xl md:text-2xl font-bold" style={{ color: C.text }}>
               English Test Comparison
             </h3>
-            <Button asChild variant="outline" className="h-12 text-xs font-semibold rounded-lg border-[#0057B8] text-[#0057B8]"><Link href="/language-prep/comparison">
+            <Button asChild variant="outline" className="h-12 text-xs font-semibold rounded-lg border-[#0066CC] text-[#0066CC]"><Link href="/language-prep/comparison">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Link></Button>
           </div>
@@ -474,7 +474,7 @@ function EnglishTestsSection() {
           <motion.div variants={staggerItem}>
             <EnglishExamButton
               location="homepage_english_tests"
-              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#E8501A] px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#F37021] px-6 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
             >
               Take the English Test
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />

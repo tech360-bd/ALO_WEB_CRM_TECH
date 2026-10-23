@@ -29,8 +29,8 @@ export const GET = withAuth(async () => {
       configured: providers.filter((p) => p.configured && !p.blocker).length,
       official: providers.filter((p) => p.provenance === 'official').length,
       unofficialBlocked: providers.filter((p) => p.provenance === 'unofficial-proxy').length,
-      // PAID_AI_API_ALLOWED=false: nothing in this catalog can bill anyone.
-      paidAllowed: false,
+      // Cloud inference is fail-closed until an owner explicitly approves it.
+      paidAllowed: process.env.PAID_AI_API_ALLOWED === 'true',
     },
     onboardingNote:
       'Set the listed environment variable on the server to connect a provider. ' +

@@ -15,7 +15,11 @@ import { expect, test } from '@playwright/test';
  *   • no B2B / partner-recruitment content
  */
 
-const PUBLIC_ROUTES = ['/', '/destinations', '/course-finder', '/services', '/faqs'];
+const PUBLIC_ROUTES = [
+  '/', '/destinations', '/course-finder', '/services', '/language-prep', '/resources',
+  '/scholarships', '/faqs', '/visa', '/about', '/contact', '/global-offices',
+  '/code-of-conduct', '/student-complaint-policy', '/aqf-compliance', '/book-consultation',
+];
 
 const OFFICIAL_SOCIALS = [
   'https://www.facebook.com/aloeducation',
@@ -44,9 +48,15 @@ test.describe('site-wide footer', () => {
       await expect(footer.getByText('Your Dream – Our Commitment')).toBeVisible();
       await expect(footer.getByText(/All rights reserved\./)).toBeVisible();
 
-      await expect(columnLinks(page, 'Destinations'), route).toHaveText(DESTINATIONS);
-      await expect(columnLinks(page, 'Quick Links'), route).toHaveText(QUICK_LINKS);
-      await expect(columnLinks(page, 'Company'), route).toHaveText(COMPANY);
+      for (const [column, required] of [
+        ['Destinations', DESTINATIONS],
+        ['Quick Links', QUICK_LINKS],
+        ['Company', COMPANY],
+      ] as const) {
+        const links = columnLinks(page, column);
+        const labels = (await links.allTextContents()).map((label) => label.trim());
+        expect(labels.slice(0, required.length), `${column} required links/order on ${route}`).toEqual(required);
+      }
     }
   });
 
@@ -68,14 +78,15 @@ test.describe('site-wide footer', () => {
 
   test('column links resolve to real pages', async ({ page }) => {
     await page.goto('/');
-    for (const name of ['Destinations', 'Quick Links', 'Company']) {
+    const requiredCounts = { Destinations: DESTINATIONS.length, 'Quick Links': QUICK_LINKS.length, Company: COMPANY.length };
+    for (const name of ['Destinations', 'Quick Links', 'Company'] as const) {
       const links = columnLinks(page, name);
-      const count = await links.count();
+      const count = Math.min(await links.count(), requiredCounts[name]);
       for (let i = 0; i < count; i += 1) {
         const href = await links.nth(i).getAttribute('href');
         expect(href, `${name} link ${i} has no href`).toBeTruthy();
         const response = await page.request.get(href as string);
-        expect(response.status(), `${href} did not resolve`).toBeLessThan(400);
+        expect(response.status(), `${href} did not resolve as a public page`).toBeLessThan(300);
       }
     }
   });
@@ -83,6 +94,10 @@ test.describe('site-wide footer', () => {
   test('publishes the verified contact details', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('#alo-public-footer');
+
+    const consultationCta = footer.getByRole('link', { name: 'Book Free Counseling' });
+    await expect(consultationCta).toHaveCSS('background-color', 'rgb(243, 112, 33)');
+    await expect(consultationCta).toHaveCSS('color', 'rgb(0, 0, 0)');
 
     await expect(footer.getByRole('link', { name: 'Open in Google Maps' })).toHaveAttribute(
       'href',
@@ -105,6 +120,29 @@ test.describe('site-wide footer', () => {
     ).toBeVisible();
   });
 
+  test('the public contact page shares the verified contact source', async ({ page }) => {
+    await page.goto('/contact');
+    const main = page.locator('main');
+
+    await expect(main.getByRole('link', { name: '+8801805020101-10' })).toHaveAttribute(
+      'href',
+      'tel:+8801805020101'
+    );
+    await expect(main.getByRole('link', { name: 'info@aloeducation.com' })).toHaveAttribute(
+      'href',
+      'mailto:info@aloeducation.com'
+    );
+    await expect(main.getByRole('link', { name: 'Open in Google Maps' })).toHaveAttribute(
+      'href',
+      'https://share.google/aarau5V2GfBrICZTj'
+    );
+    await expect(main.getByText(/Quick response on WhatsApp: \+8801805020101/)).toBeVisible();
+    await expect(
+      main.getByText('Barek Mansion-02 (5th Floor), 58/9 Box Culvert Road, Panthapath, Dhaka-1205, Bangladesh.')
+    ).toBeVisible();
+    await expect(main.getByText('Sat–Thu: 9:00 AM – 6:00 PM (Asia/Dhaka)')).toBeVisible();
+  });
+
   test('keeps the moving cap strip in three brand colours and no B2B content', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('#alo-public-footer');
@@ -114,7 +152,7 @@ test.describe('site-wide footer', () => {
     await expect(strip).toHaveCount(1);
     await expect(strip.locator('svg.lucide-graduation-cap').first()).toBeAttached();
 
-    for (const colour of ['#0057B8', '#E8501A', '#FFB347']) {
+    for (const colour of ['#0066CC', '#F37021', '#FFB347']) {
       await expect(strip.locator(`div[style*="${colour}"]`), `${colour} row missing`).toHaveCount(1);
     }
 

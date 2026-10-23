@@ -38,16 +38,16 @@ export default function RelatedQuestions({ type, context, title = 'You May Also 
               type="button"
               onClick={() => setOpen(open === i ? -1 : i)}
               aria-expanded={open === i}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left min-h-[48px] hover:bg-[#F8FAFC] transition-colors focus-visible:outline-2 focus-visible:outline-[#0057B8]"
+              className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left min-h-[48px] hover:bg-[#F8FAFC] transition-colors focus-visible:outline-2 focus-visible:outline-[#0066CC]"
             >
               <span className="text-sm font-semibold text-[#0F172A]">{q.question}</span>
-              <ChevronDown className={`w-4 h-4 shrink-0 text-[#0057B8] transition-transform ${open === i ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 shrink-0 text-[#0066CC] transition-transform ${open === i ? 'rotate-180' : ''}`} />
             </button>
             {open === i && (
               <div className="px-4 pb-4 text-sm text-gray-700 leading-relaxed border-t border-[#E2E8F0] pt-3">
                 {q.answer}
                 {q.href && (
-                  <Link href={q.href} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#0057B8] hover:underline">
+                  <Link href={q.href} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#0066CC] hover:underline">
                     Read the full guide <ArrowRight className="w-3 h-3" />
                   </Link>
                 )}

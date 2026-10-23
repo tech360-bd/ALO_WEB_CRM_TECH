@@ -10,7 +10,14 @@ export async function writePortalAudit(
   if ('$transaction' in tx) throw new Error('Audit requires an interactive transaction client');
   return tx.portalAuditLog.create({ data: {
     actorUserId: auth.actorUserId, action, entityType, entityId,
-    metadata: JSON.stringify(auth.actorUserId !== auth.userId ? { ...metadata, actingAsUser: auth.userId } : metadata),
+    metadata: JSON.stringify(auth.actingAsSessionId ? {
+      ...metadata,
+      realActorUserId: auth.actorUserId,
+      actingAsUser: auth.userId,
+      actingAsRole: auth.actingAsRole || auth.roles[0] || auth.userType,
+      actingAsSessionId: auth.actingAsSessionId,
+      actingAsExpiresAt: auth.actingAsExpiresAt?.toISOString(),
+    } : metadata),
     // Forwarded IP is proxy-asserted, not a verified actor identity.
     ipAddress: request?.headers.get('x-forwarded-for')?.split(',')[0].trim().slice(0, 191) || '',
     userAgent: request?.headers.get('user-agent')?.slice(0, 191) || '',

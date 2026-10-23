@@ -7,74 +7,54 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // POST /api/ai-command/retry — SUPER_ADMIN/ADMIN only.
-// Body: { actionId: string }
-// Resets an action's status to PENDING, increments retryCount, clears lastError,
-// then attempts execution via ai-action-executor (if available).
+// A failed external action can have an uncertain outcome. This endpoint never
+// resets its state or invokes an executor; an authorized operator must reconcile
+// the original side effect before creating a separately approved replacement.
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const role = (session.user as any).role;
-    if (role !== "SUPER_ADMIN" && role !== "ADMIN") {
+    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user = session.user as { role?: string; id?: string };
+    if (user.role !== "SUPER_ADMIN" && user.role !== "ADMIN") {
       return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
     }
+    if (!user.id) return NextResponse.json({ error: "Authenticated user identity is missing" }, { status: 403 });
 
-    const body = await req.json();
-    const { actionId } = body;
-    if (!actionId) {
-      return NextResponse.json({ error: "actionId is required" }, { status: 400 });
+    const body = await req.json().catch(() => null) as { actionId?: unknown } | null;
+    const actionId = typeof body?.actionId === "string" ? body.actionId.trim() : "";
+    if (!actionId || actionId.length > 191 || /[\u0000-\u001f\u007f]/.test(actionId)) {
+      return NextResponse.json({ error: "A valid actionId is required" }, { status: 400 });
     }
 
-    const action = await db.aiCommandAction.findUnique({ where: { id: actionId } });
-    if (!action) {
-      return NextResponse.json({ error: "Action not found" }, { status: 404 });
-    }
-
+    const action = await db.aiCommandAction.findUnique({ where: { id: actionId }, select: { id: true, actionType: true, status: true } });
+    if (!action) return NextResponse.json({ error: "Action not found" }, { status: 404 });
     if (action.status === "EXECUTED") {
-      return NextResponse.json(
-        { error: "Cannot retry an action that already succeeded" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, code: "ACTION_ALREADY_EXECUTED", error: "Cannot retry an action that already succeeded." }, { status: 409 });
     }
 
-    // Bump retryCount + reset
-    await db.aiCommandAction.update({
-      where: { id: actionId },
+    await db.auditLog.create({
       data: {
-        retryCount: { increment: 1 },
-        lastError: null,
-        status: "PENDING",
+        userId: user.id,
+        action: "AI_ACTION_RETRY_BLOCKED",
+        resource: "AiCommandAction",
+        resourceId: action.id,
+        details: JSON.stringify({ actionType: action.actionType, currentStatus: action.status, reason: "MANUAL_RECONCILIATION_REQUIRED" }),
+        actorRole: user.role,
       },
     });
 
-    // Try to delegate to ai-action-executor
-    try {
-      const executor = await import("@/lib/ai-action-executor");
-      if (typeof (executor as any).executeAiAction === "function") {
-        const result = await (executor as any).executeAiAction(actionId, {
-          actorId: (session.user as any).id,
-          actorType: "USER",
-        });
-        return NextResponse.json({
-          success: true,
-          actionId,
-          result,
-          delegated: "ai-action-executor",
-        });
-      }
-    } catch (err: any) {
-      console.warn("[ai-command.retry] executor unavailable:", err?.message);
-    }
-
-    // The centralized ai-action-executor must handle retries. No unprotected inline fallback is permitted.
-    return NextResponse.json(
-      { error: "Retry blocked: centralized ai-action-executor unavailable. Unprotected fallback execution is not permitted for security and authorization compliance.", actionId },
-      { status: 423 }
-    );
-  } catch (err: any) {
-    console.error("[ai-command.retry] error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const retryableState = action.status === "FAILED" || action.status === "EXECUTING" || action.status === "PERMANENTLY_FAILED";
+    return NextResponse.json({
+      success: false,
+      code: retryableState ? "RETRY_REQUIRES_RECONCILIATION" : "ACTION_NOT_RETRYABLE",
+      actionId: action.id,
+      currentStatus: action.status,
+      error: retryableState
+        ? "Automatic retry is disabled because the prior executor may have completed its side effect. Reconcile the original action before requesting a replacement."
+        : "Only a separately verified, action-specific workflow may retry this action; pending actions should be reviewed through the approval queue.",
+    }, { status: 409 });
+  } catch (error) {
+    console.error("[ai-command.retry] request failed", { error: error instanceof Error ? error.name : "UnknownError" });
+    return NextResponse.json({ error: "AI action retry could not be safely evaluated." }, { status: 503 });
   }
 }

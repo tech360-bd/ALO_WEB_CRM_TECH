@@ -22,12 +22,12 @@ export function TestPreparationMiniCard({
   if (compact) {
     // Compact sidebar version per spec
     return (
-      <Card className={`p-5 bg-white border border-[#0057B8]/20 shadow-sm hover:shadow-md transition-all rounded-2xl ${className}`}>
+      <Card className={`p-5 bg-white border border-[#0066CC]/20 shadow-sm hover:shadow-md transition-all rounded-2xl ${className}`}>
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0057B8] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0066CC] flex items-center justify-center">
             <BookOpen className="w-4 h-4" />
           </div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0057B8]">Test Preparation</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0066CC]">Test Preparation</span>
         </div>
 
         <h4 className="text-sm font-bold text-[#0F172A] leading-tight">
@@ -46,7 +46,7 @@ export function TestPreparationMiniCard({
           Find the right test for your university and destination. Acceptance varies by university, course and visa route.
         </p>
 
-        <Button asChild className="w-full bg-white border border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8] hover:text-white font-bold h-12 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"><a href="/language-prep" className="block w-full">
+        <Button asChild className="w-full bg-white border border-[#0066CC] text-[#0066CC] hover:bg-[#0066CC] hover:text-white font-bold h-12 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"><a href="/language-prep" className="block w-full">
             View All Test Prep <ArrowRight className="w-3.5 h-3.5" />
           </a></Button>
       </Card>
@@ -54,13 +54,13 @@ export function TestPreparationMiniCard({
   }
 
   return (
-    <Card className={`p-5 bg-white border border-[#0057B8]/20 shadow-md hover:shadow-lg transition-all rounded-2xl ${className}`}>
+    <Card className={`p-5 bg-white border border-[#0066CC]/20 shadow-md hover:shadow-lg transition-all rounded-2xl ${className}`}>
       <div className="flex items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-blue-50 text-[#0057B8] flex items-center justify-center">
+          <div className="h-8 w-8 rounded-xl bg-blue-50 text-[#0066CC] flex items-center justify-center">
             <BookOpen className="h-4 w-4" />
           </div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0057B8]">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0066CC]">
             Test Preparation
           </span>
         </div>
@@ -79,7 +79,7 @@ export function TestPreparationMiniCard({
       <div className="bg-[#F8FAFC] p-3 rounded-xl border border-[#E2E8F0] mb-3 space-y-1.5 text-[11px]">
         <div className="flex items-center justify-between text-slate-700">
           <span className="text-slate-500 font-medium">Accepted Tests:</span>
-          <span className="font-bold text-[#0057B8]">{recommendedTest}</span>
+          <span className="font-bold text-[#0066CC]">{recommendedTest}</span>
         </div>
         <div className="flex items-center justify-between text-slate-700">
           <span className="text-slate-500 font-medium">Benchmark Score:</span>
@@ -89,14 +89,14 @@ export function TestPreparationMiniCard({
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-4">
-        <span className="text-[10px] font-semibold bg-blue-50 text-[#0057B8] border border-blue-100 px-2.5 py-1 rounded-full">IELTS</span>
-        <span className="text-[10px] font-semibold bg-blue-50 text-[#0057B8] border border-blue-100 px-2.5 py-1 rounded-full">PTE</span>
-        <span className="text-[10px] font-semibold bg-blue-50 text-[#0057B8] border border-blue-100 px-2.5 py-1 rounded-full">OIETC</span>
-        <span className="text-[10px] font-semibold bg-blue-50 text-[#0057B8] border border-blue-100 px-2.5 py-1 rounded-full">Duolingo</span>
-        <span className="text-[10px] font-semibold bg-blue-50 text-[#0057B8] border border-blue-100 px-2.5 py-1 rounded-full">TOEFL</span>
+        <span className="text-[10px] font-semibold bg-blue-50 text-[#0066CC] border border-blue-100 px-2.5 py-1 rounded-full">IELTS</span>
+        <span className="text-[10px] font-semibold bg-blue-50 text-[#0066CC] border border-blue-100 px-2.5 py-1 rounded-full">PTE</span>
+        <span className="text-[10px] font-semibold bg-blue-50 text-[#0066CC] border border-blue-100 px-2.5 py-1 rounded-full">OIETC</span>
+        <span className="text-[10px] font-semibold bg-blue-50 text-[#0066CC] border border-blue-100 px-2.5 py-1 rounded-full">Duolingo</span>
+        <span className="text-[10px] font-semibold bg-blue-50 text-[#0066CC] border border-blue-100 px-2.5 py-1 rounded-full">TOEFL</span>
       </div>
 
-      <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl flex items-center justify-center gap-1.5 shadow-sm"><a href="/language-prep" className="block w-full">
+      <Button asChild className="w-full bg-[#0066CC] text-white hover:bg-[#003D7A] text-xs font-bold h-12 rounded-xl flex items-center justify-center gap-1.5 shadow-sm"><a href="/language-prep" className="block w-full">
           View All Test Prep <ArrowRight className="h-3.5 w-3.5" />
         </a></Button>
 

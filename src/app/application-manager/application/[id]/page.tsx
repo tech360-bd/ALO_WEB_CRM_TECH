@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { getAllowedApplicationStageTransitions } from '@/lib/application-manager/service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,8 @@ export default function ApplicationDetailPage() {
   const [offerData, setOfferData] = useState<any>(null);
   const [casData, setCasData] = useState<any>(null);
   const [canViewB2B, setCanViewB2B] = useState(false);
+  const [stageReason, setStageReason] = useState('');
+  const [handoverReason, setHandoverReason] = useState('');
 
   const fetchApp = useCallback(async () => {
     if (!applicationId) return;
@@ -98,12 +101,23 @@ export default function ApplicationDetailPage() {
   useEffect(()=>{ if (activeTab==='b2b') fetchB2B(); if (activeTab==='offer') fetchOffer(); if (activeTab==='cas') fetchCas(); },[activeTab]);
 
   const handleVisaHandover = async () => {
+    if (!handoverReason.trim()) {
+      setMsg({ type: 'error', text: 'Enter a reason before handing the application to the visa team.' });
+      return;
+    }
     try {
-      const res = await fetch(`/api/applications/${applicationId}/visa-handover`, { method:'POST', headers:{ Authorization:`Bearer ${token}` } });
+      const res = await fetch(`/api/applications/${applicationId}/visa-handover`, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+        body: JSON.stringify({ reason: handoverReason.trim() }),
+      });
       const json = await res.json();
-      if (json.success) { setMsg({type:'success', text:`Visa handover complete — ${json.visaCase?.caseCode} created, reusing Visa Engine`}); fetchApp(); }
-      else setMsg({type:'error', text: json.error || 'Handover failed'});
-    } catch (e:any){ setMsg({type:'error', text:e.message}); }
+      if (res.ok && json.success) {
+        setHandoverReason('');
+        setMsg({type:'success', text:json.message || `Visa handover complete — ${json.visaCase?.caseCode} created`});
+        await fetchApp();
+      } else setMsg({type:'error', text: json.error || 'Handover failed'});
+    } catch { setMsg({type:'error', text:'Unable to complete visa handover. Please retry.'}); }
   };
 
   const handleComment = async (e:any) => {
@@ -117,11 +131,23 @@ export default function ApplicationDetailPage() {
   };
 
   const handleStatusChange = async (newStage:string) => {
+    if (!stageReason.trim()) {
+      setMsg({ type: 'error', text: 'Enter a reason before changing the application stage.' });
+      return;
+    }
     try {
-      const res = await fetch(`/api/applications/${applicationId}/status`, { method:'PATCH', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body: JSON.stringify({ stage:newStage }) });
+      const res = await fetch(`/api/applications/${applicationId}/status`, { method:'PATCH', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body: JSON.stringify({ stage:newStage, reason:stageReason.trim() }) });
       const json = await res.json();
-      if (json.success) { setMsg({type:'success', text:`Status updated to ${newStage}`}); fetchApp(); }
-    } catch {}
+      if (res.ok && json.success) {
+        setStageReason('');
+        setMsg({type:'success', text:`Status updated to ${newStage}`});
+        await fetchApp();
+      } else {
+        setMsg({type:'error', text:json.error || 'Stage transition was rejected'});
+      }
+    } catch {
+      setMsg({type:'error', text:'Unable to save the stage change. Please retry.'});
+    }
   };
 
   if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#0057B8]" /></div>;
@@ -190,7 +216,32 @@ export default function ApplicationDetailPage() {
             <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
               <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-xs uppercase tracking-wider text-gray-500">Quick Actions</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-2">
-                <select onChange={e=> e.target.value && handleStatusChange(e.target.value)} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs"><option value="">Change Stage (30+)</option><option value="DOCUMENT_REVIEW">DOCUMENT_REVIEW</option><option value="READY_TO_SUBMIT">READY_TO_SUBMIT</option><option value="SUBMITTED_TO_UNIVERSITY">SUBMITTED_TO_UNIVERSITY</option><option value="DECISION_PENDING">DECISION_PENDING</option><option value="CONDITIONAL_OFFER">CONDITIONAL_OFFER</option><option value="UNCONDITIONAL_OFFER">UNCONDITIONAL_OFFER</option><option value="CAS_PENDING">CAS_PENDING</option><option value="VISA_HANDOVER_READY">VISA_HANDOVER_READY</option></select>
+                <Input
+                  value={handoverReason}
+                  onChange={(event) => setHandoverReason(event.target.value)}
+                  maxLength={180}
+                  aria-label="Reason for visa handover"
+                  placeholder="Reason for visa handover (required)"
+                  className="text-xs"
+                />
+                <Input
+                  value={stageReason}
+                  onChange={(event) => setStageReason(event.target.value)}
+                  maxLength={180}
+                  aria-label="Reason for application stage change"
+                  placeholder="Reason for stage change (required)"
+                  className="text-xs"
+                />
+                <select
+                  value=""
+                  onChange={event => event.target.value && handleStatusChange(event.target.value)}
+                  disabled={getAllowedApplicationStageTransitions(app.stage).length === 0}
+                  aria-label="Choose an allowed next application stage"
+                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs disabled:opacity-60"
+                >
+                  <option value="">{getAllowedApplicationStageTransitions(app.stage).length ? 'Change to an allowed next stage' : 'No further stage transitions'}</option>
+                  {getAllowedApplicationStageTransitions(app.stage).map(stage => <option key={stage} value={stage}>{stage}</option>)}
+                </select>
                 <Button onClick={handleVisaHandover} className="w-full bg-[#0057B8] text-white text-xs"><Shield className="w-4 h-4 mr-1" />Visa Handover</Button>
               </CardContent>
             </Card>

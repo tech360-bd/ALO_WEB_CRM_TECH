@@ -1,15 +1,12 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { createAuditLog } from '@/lib/marketing/audit';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from '@/lib/auth-middleware';
+import { withMarketingAccess } from '@/lib/marketing/access';
 
 // ─── POST: Convert a comment to a lead ────────────────────────────────────────
 
-export const POST = withAuth(async (request: Request, auth: AuthContext) => {
+export const POST = withMarketingAccess(async (request: Request, auth: AuthContext) => {
   try {
     const body = await request.json();
     const { commentId } = body;
@@ -40,27 +37,26 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       );
     }
 
-    // Create a MarketingLead from the comment data
-    const lead = await db.marketingLead.create({
-      data: {
-        name: comment.authorName,
-        source: 'comment',
-        sourceDetail: `Comment on ${comment.postId} via ${comment.platform}`,
-        destination: comment.intent && comment.intent.includes('country_asking') ? '' : '',
-        status: 'new',
-        hotLead: comment.intent === 'interested' || comment.intent === 'urgent',
-        createdById: userId,
-      },
-    });
-
-    // Update the comment to reference the new lead
-    const updatedComment = await db.marketingComment.update({
-      where: { id: commentId },
-      data: {
-        leadId: lead.id,
-        convertedToLead: lead.id,
-        status: 'converted',
-      },
+    // Create/link atomically so a retry cannot make a second lead. Inbound interest is not marketing consent.
+    const { lead, updatedComment } = await db.$transaction(async (tx) => {
+      const current = await tx.marketingComment.findUnique({ where: { id: commentId } });
+      if (!current || current.convertedToLead) throw new Error('COMMENT_ALREADY_CONVERTED');
+      const createdLead = await tx.marketingLead.create({
+        data: {
+          name: current.authorName,
+          source: 'comment',
+          sourceDetail: `Comment on ${current.postId} via ${current.platform}`,
+          destination: '', status: 'new', consent: false,
+          hotLead: current.intent === 'interested' || current.intent === 'urgent',
+          createdById: userId,
+        },
+      });
+      const changed = await tx.marketingComment.updateMany({
+        where: { id: commentId, convertedToLead: '' },
+        data: { leadId: createdLead.id, convertedToLead: createdLead.id, status: 'converted' },
+      });
+      if (!changed.count) throw new Error('COMMENT_ALREADY_CONVERTED');
+      return { lead: createdLead, updatedComment: await tx.marketingComment.findUnique({ where: { id: commentId } }) };
     });
 
     await createAuditLog({
@@ -78,7 +74,8 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
 
     return NextResponse.json({ lead, comment: updatedComment }, { status: 201 });
   } catch (error) {
-    console.error('Comment convert-lead error:', error);
+    if (error instanceof Error && error.message === 'COMMENT_ALREADY_CONVERTED') return NextResponse.json({ success: false, error: 'Comment was already converted by another request.' }, { status: 409 });
+    console.error('Comment convert-lead error:', error instanceof Error ? error.name : 'UnknownError');
     if (error instanceof SyntaxError) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
@@ -87,4 +84,4 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'manager');

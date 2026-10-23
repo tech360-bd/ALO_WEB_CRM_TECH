@@ -7,8 +7,8 @@ export interface BrandKit {
   phone: string;
   whatsapp: string;
   website: string;
-  primary: string; // #0057B8
-  cta: string; // #E8501A
+  primary: string; // #0066CC
+  cta: string; // #F37021
 }
 
 function parseAsset(value?: string): Record<string, unknown> {
@@ -32,8 +32,8 @@ export async function getBrandKit(): Promise<BrandKit> {
     phone: "",
     whatsapp: "",
     website: "",
-    primary: "#0057B8",
-    cta: "#E8501A",
+    primary: "#0066CC",
+    cta: "#F37021",
   };
   try {
     const assets = await db.brandAsset.findMany({ where: { isActive: true } });

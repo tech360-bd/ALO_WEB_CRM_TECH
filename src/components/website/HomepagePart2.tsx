@@ -26,8 +26,8 @@ import {
 } from 'lucide-react';
 
 const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
+  blue: '#0066CC',
+  orange: '#F37021',
   text: '#0F172A',
   textSoft: '#64748B',
   bg: '#F8FAFC',

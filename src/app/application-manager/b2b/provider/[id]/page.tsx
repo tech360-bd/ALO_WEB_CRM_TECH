@@ -25,7 +25,7 @@ export default function B2BProviderDetailPage() {
       if (res.status===403) { setError('Forbidden: B2B provider access requires application.view_b2b permission'); setLoading(false); return; }
       if (!res.ok) throw new Error(`Failed ${res.status}`);
       const json = await res.json();
-      setProvider(json.provider || json.data);
+      setProvider({ ...(json.provider || json.data), loginNote: '' });
     } catch (e:any){ setError(e.message); } finally { setLoading(false); }
   }, [id, token]);
 
@@ -34,11 +34,28 @@ export default function B2BProviderDetailPage() {
   const handleSave = async () => {
     setSaving(true); setMsg(null);
     try {
-      const res = await fetch(`/api/b2b/providers/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body: JSON.stringify(provider) });
+      const update = {
+        providerCode: provider.providerCode,
+        name: provider.name,
+        providerType: provider.providerType,
+        countryCoverage: provider.countryCoverage,
+        universityCoverage: provider.universityCoverage,
+        contactPerson: provider.contactPerson,
+        email: provider.email,
+        phone: provider.phone,
+        portalUrl: provider.portalUrl,
+        loginNote: provider.loginNote || undefined,
+        commissionRule: provider.commissionRule,
+        paymentCondition: provider.paymentCondition,
+        claimStage: provider.claimStage,
+        status: provider.status,
+        internalNote: provider.internalNote,
+      };
+      const res = await fetch(`/api/b2b/providers/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body: JSON.stringify(update) });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Failed');
-      setMsg({type:'success', text:'Provider updated — audit logged'});
-      setProvider(json.provider || json.data);
+      setMsg({type:'success', text:'Provider updated — encrypted credentials are not returned; access is audit logged'});
+      setProvider({ ...(json.provider || json.data), loginNote: '' });
     } catch (e:any){ setMsg({type:'error', text:e.message}); } finally { setSaving(false); }
   };
 
@@ -64,7 +81,7 @@ export default function B2BProviderDetailPage() {
                 <div className="col-span-6"><label className="text-xs font-medium">Email (confidential)</label><Input value={provider.email||''} onChange={e=>setProvider({...provider, email:e.target.value})} className="bg-white border-[#E2E8F0]" /></div>
                 <div className="col-span-6"><label className="text-xs font-medium">Phone (confidential)</label><Input value={provider.phone||''} onChange={e=>setProvider({...provider, phone:e.target.value})} className="bg-white border-[#E2E8F0]" /></div>
                 <div className="col-span-6"><label className="text-xs font-medium">Portal URL (confidential)</label><Input value={provider.portalUrl||''} onChange={e=>setProvider({...provider, portalUrl:e.target.value})} className="bg-white border-[#E2E8F0]" /></div>
-                <div className="col-span-12"><label className="text-xs font-medium">Login Note — Encrypted Credentials Never in Normal Response</label><textarea value={provider.loginNote||''} onChange={e=>setProvider({...provider, loginNote:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[80px]" placeholder="Portal credentials — encrypted, only APPLICATION_MANAGER can view" /></div>
+                <div className="col-span-12"><label className="text-xs font-medium">Replace encrypted login note (never read back)</label><textarea value={provider.loginNote||''} onChange={e=>setProvider({...provider, loginNote:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[80px]" placeholder={provider.hasStoredLoginNote ? 'A protected secret is stored. Enter a new value to replace it; leave blank to keep it.' : 'Enter a secret note to encrypt before storage.'} /><p className="text-[11px] text-gray-500 mt-1">{provider.hasStoredLoginNote ? 'Protected secret stored; the current value is never returned by normal APIs.' : 'No protected secret is stored.'}</p></div>
                 <div className="col-span-12"><label className="text-xs font-medium">Commission Rule (confidential)</label><textarea value={provider.commissionRule||''} onChange={e=>setProvider({...provider, commissionRule:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[60px]" /></div>
                 <div className="col-span-12"><label className="text-xs font-medium">Internal Note (confidential)</label><textarea value={provider.internalNote||''} onChange={e=>setProvider({...provider, internalNote:e.target.value})} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm min-h-[60px]" /></div>
               </div>

@@ -1,111 +1,111 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission, canViewVisaSensitive, hasVisaPermission, isVisaSuperAdmin } from '@/lib/visa/access';
+import { listPrivateVisaDocumentLinks } from '@/lib/visa/private-document-links';
 
-export const GET = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
+
+function parseStringList(value: string | null | undefined): string[] {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('counselor') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER') || auth.roles.includes('COUNSELOR') || auth.roles.includes('APPLICATION_TEAM');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Funding review permission required' }, { status: 403 });
+    const parsed = JSON.parse(value || '[]');
+    return Array.isArray(parsed) ? parsed.filter((entry): entry is string => typeof entry === 'string' && entry.length <= 191) : [];
+  } catch { return []; }
+}
 
+async function projectFundingReview(auth: AuthContext, visaCase: { id: string; studentId: string }, review: any) {
+  if (!review) return null;
+  const canDownload = isVisaSuperAdmin(auth) || hasVisaPermission(auth, 'visa.documents.download');
+  const sponsorDocuments = canDownload
+    ? await listPrivateVisaDocumentLinks(visaCase.studentId, visaCase.id, parseStringList(review.sponsorDocuments), canViewVisaSensitive(auth, visaCase))
+    : [];
+  const { sponsorDocuments: _storedIds, dependents: storedDependents, ...safeReview } = review;
+  return { ...safeReview, sponsorDocuments, dependents: parseStringList(storedDependents) };
+}
+
+const schema = z.object({
+  fundingStatus: z.enum(['pending', 'pending_review', 'complete', 'verified', 'needs_update']).optional(),
+  sponsor: z.string().trim().max(191).optional(),
+  sponsorRelation: z.string().trim().max(191).optional(),
+  sponsorOccupation: z.string().trim().max(191).optional(),
+  sponsorIncome: z.string().trim().max(191).optional(),
+  sourceOfFund: z.string().trim().max(500).optional(),
+  hasBankStatement: z.boolean().optional(),
+  hasSolvencyCert: z.boolean().optional(),
+  sourceOfFundExplanation: z.string().trim().max(4000).optional(),
+  tuitionDeposit: z.string().trim().max(191).optional(),
+  livingCostPlan: z.string().trim().max(4000).optional(),
+  dependents: z.array(z.string().trim().min(1).max(191)).max(20).optional(),
+  sponsorDocumentIds: z.array(z.string().trim().min(1).max(191)).max(20).optional(),
+}).strict();
+
+export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
+  try {
     const caseId = context?.params?.caseId;
+    if (typeof caseId !== 'string' || !caseId) return NextResponse.json({ success: false, error: 'Case ID required.' }, { status: 400 });
     const visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase) return NextResponse.json({ success: false, error: 'Case not found' }, { status: 404 });
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isCounselor = auth.roles.includes('counselor') || auth.roles.includes('COUNSELOR');
-    if (!isSuper && !isCounselor && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Cannot access unassigned funding review — IDOR blocked' }, { status: 403 });
-    }
-
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.risk.view', visaCase)) return NextResponse.json({ success: false, error: 'Assigned case and visa.risk.view permission required.' }, { status: 403 });
     const review = await db.visaFundingReview.findUnique({ where: { caseId } });
-
-    await logAuditAction(auth, 'VISA_FUNDING_VIEW', 'VisaFundingReview', caseId, { studentId: visaCase.studentId });
-
-    return NextResponse.json({
-      success: true,
-      data: review,
-      emptyState: review ? null : 'No funding review — proper empty state — fields Funding Status/Sponsor/Relationship/Occupation/Income/Source of Funds/Bank Statement/Solvency Certificate/Sponsor Documents/Tuition Deposit/Living Cost Plan/Dependents — risk Missing bank statement/solvency/unclear source/relationship mismatch/document mismatch/insufficient explanation/dependent funding problem/unverified scholarship/missing loan — Actions Request document/explanation/ask counselor/finance/human review — Every sensitive access audited',
+    await db.portalAuditLog.create({
+      data: { actorUserId: auth.actorUserId, action: 'VISA_FUNDING_VIEW', entityType: 'VisaFundingReview', entityId: caseId, metadata: JSON.stringify({ studentId: visaCase.studentId, hasReview: Boolean(review) }), ipAddress: '', userAgent: '' },
     });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    const data = await projectFundingReview(auth, visaCase, review);
+    return NextResponse.json({ success: true, data, emptyState: review ? null : 'No funding review has been recorded.' }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Funding review view could not be audited or loaded.' }, { status: 503 });
   }
 });
 
 export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Funding review update requires visa officer permission' }, { status: 403 });
-
     const caseId = context?.params?.caseId;
+    if (typeof caseId !== 'string' || !caseId) return NextResponse.json({ success: false, error: 'Case ID required.' }, { status: 400 });
     const visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase) return NextResponse.json({ success: false, error: 'Case not found' }, { status: 404 });
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.risk.update', visaCase)) return NextResponse.json({ success: false, error: 'Assigned case and visa.risk.update permission required.' }, { status: 403 });
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success || Object.keys(parsed.data || {}).length === 0) return NextResponse.json({ success: false, error: 'Invalid funding review update.', details: parsed.success ? undefined : parsed.error.flatten() }, { status: 400 });
 
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isSuper && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Cannot edit unassigned funding review — IDOR blocked' }, { status: 403 });
+    const { dependents, sponsorDocumentIds, ...fields } = parsed.data;
+    if (sponsorDocumentIds?.length) {
+      const documents = await db.studentDocument.findMany({
+        where: { id: { in: sponsorDocumentIds }, studentId: visaCase.studentId, caseId: { in: [caseId, ''] }, isArchived: false, storagePath: { not: null }, mimeType: { not: null }, fileHash: { not: null } },
+        select: { id: true },
+      });
+      if (documents.length !== new Set(sponsorDocumentIds).size) return NextResponse.json({ success: false, error: 'Every sponsor document must be a stored private document belonging to this student.' }, { status: 400 });
     }
 
-    const body = await req.json();
-
-    // AI safety: never guarantee approval, never invent salary/balance
-    const riskChecks: string[] = [];
-    if (!body.hasBankStatement) riskChecks.push('Missing bank statement');
-    if (!body.hasSolvencyCert) riskChecks.push('Missing solvency certificate');
-    if (!body.sourceOfFundExplanation || body.sourceOfFundExplanation.length < 20) riskChecks.push('Insufficient explanation of source of funds');
-    if (!body.sponsorRelation) riskChecks.push('Relationship mismatch / missing');
-    if (body.sponsor && body.sponsorRelation && !['father','mother','parent','spouse','self','brother','sister'].some(k => body.sponsorRelation.toLowerCase().includes(k))) riskChecks.push('Relationship mismatch requires verification');
-
-    const review = await db.visaFundingReview.upsert({
-      where: { caseId },
-      create: {
-        caseId,
-        studentId: body.studentId || visaCase.studentId,
-        fundingStatus: body.fundingStatus || 'pending_review',
-        sponsor: body.sponsor || '',
-        sponsorRelation: body.sponsorRelation || '',
-        sponsorOccupation: body.sponsorOccupation || '',
-        sponsorIncome: body.sponsorIncome || '',
-        sourceOfFund: body.sourceOfFund || '',
-        hasBankStatement: body.hasBankStatement || false,
-        hasSolvencyCert: body.hasSolvencyCert || false,
-        sourceOfFundExplanation: body.sourceOfFundExplanation || '',
-        riskWarning: riskChecks.length ? riskChecks.join(', ') : body.riskWarning || 'none',
-        tuitionDeposit: body.tuitionDeposit,
-        livingCostPlan: body.livingCostPlan,
-        dependents: body.dependents,
-        sponsorDocuments: body.sponsorDocuments,
-      },
-      update: {
-        fundingStatus: body.fundingStatus,
-        sponsor: body.sponsor,
-        sponsorRelation: body.sponsorRelation,
-        sponsorOccupation: body.sponsorOccupation,
-        sponsorIncome: body.sponsorIncome,
-        sourceOfFund: body.sourceOfFund,
-        hasBankStatement: body.hasBankStatement,
-        hasSolvencyCert: body.hasSolvencyCert,
-        sourceOfFundExplanation: body.sourceOfFundExplanation,
-        riskWarning: riskChecks.length ? riskChecks.join(', ') : body.riskWarning,
-        tuitionDeposit: body.tuitionDeposit,
-        livingCostPlan: body.livingCostPlan,
-        dependents: body.dependents,
-        sponsorDocuments: body.sponsorDocuments,
-      },
+    const reviewPrompts = [
+      ...(fields.hasBankStatement === false ? ['Bank statement evidence is not marked available.'] : []),
+      ...(fields.hasSolvencyCert === false ? ['Solvency certificate evidence is not marked available.'] : []),
+      ...((fields.sourceOfFundExplanation || '').trim().length > 0 && (fields.sourceOfFundExplanation || '').trim().length < 20 ? ['Source-of-funds explanation may need more detail.'] : []),
+      ...((dependents || []).length > 0 && !fields.livingCostPlan ? ['Review how dependent living costs are covered.'] : []),
+    ];
+    const data = {
+      ...fields,
+      ...(dependents !== undefined ? { dependents: JSON.stringify(dependents) } : {}),
+      ...(sponsorDocumentIds !== undefined ? { sponsorDocuments: JSON.stringify(sponsorDocumentIds) } : {}),
+      riskWarning: reviewPrompts.length ? reviewPrompts.join(' ') : 'human_review_required',
+    };
+    const existing = await db.visaFundingReview.findUnique({ where: { caseId } });
+    const review = await db.$transaction(async (tx) => {
+      const saved = await tx.visaFundingReview.upsert({
+        where: { caseId },
+        create: { caseId, studentId: visaCase.studentId, fundingStatus: 'pending_review', ...data },
+        update: data,
+      });
+      await tx.portalAuditLog.create({
+        data: { actorUserId: auth.actorUserId, action: 'VISA_FUNDING_UPDATE', entityType: 'VisaFundingReview', entityId: caseId, metadata: JSON.stringify({ studentId: visaCase.studentId, changedFields: Object.keys(parsed.data), before: existing ? { fundingStatus: existing.fundingStatus, hasBankStatement: existing.hasBankStatement, hasSolvencyCert: existing.hasSolvencyCert } : null, after: { fundingStatus: saved.fundingStatus, hasBankStatement: saved.hasBankStatement, hasSolvencyCert: saved.hasSolvencyCert } }), ipAddress: '', userAgent: '' },
+      });
+      await tx.timelineEvent.create({
+        data: { studentId: visaCase.studentId, stage: 'VISA_FUNDING_REVIEW_UPDATED', title: 'Visa funding review updated.', description: 'A restricted funding review was updated; sensitive financial details are not included in the timeline.', actor: auth.actorUserId },
+      });
+      return saved;
     });
-
-    await logAuditAction(auth, 'VISA_FUNDING_UPDATE', 'VisaFundingReview', caseId, { after: review, riskChecks, studentId: visaCase.studentId });
-    await db.timelineEvent.create({
-      data: {
-        studentId: visaCase.studentId,
-        stage: 'VISA_FUNDING_UPDATED',
-        title: `Funding review updated by ${auth.name} — risk ${riskChecks.length ? riskChecks.join(', ') : 'none'}`,
-        description: `Case ${caseId} funding — 12 fields + 9 risk checks audit sensitive — actions Request document/explanation/ask counselor/finance/human review — every sensitive access audited`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: review, riskChecks, note: 'Funding 12 fields + 9 risk checks audit sensitive — never fabricate salary/balance/income/employment/job/assets — must use real info' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    const data = await projectFundingReview(auth, visaCase, review);
+    return NextResponse.json({ success: true, data, reviewPrompts, automatedAssessment: false }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Funding review could not be saved; any audit failure rolled back.' }, { status: 503 });
   }
 });

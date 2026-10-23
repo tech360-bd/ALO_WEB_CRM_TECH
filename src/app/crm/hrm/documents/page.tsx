@@ -13,71 +13,67 @@ export default function HrmDocumentsPage() {
   const [missing, setMissing] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({ documentType: 'nid', filePath: '', fileName: '', expiryDate: '' });
+  const [file, setFile] = useState<File | null>(null);
+  const [form, setForm] = useState({ documentType: 'nid', title: '', expiryDate: '' });
 
-  const load = () => {
+  const load = async () => {
     setLoading(true);
-    fetch('/api/hrm/documents').then(r=>r.json()).then(j=> { if(j.success){ setDocs(j.data||[]); setMissing(j.missing||[]);} }).finally(()=> setLoading(false));
+    try {
+      const response = await fetch('/api/hrm/documents', { cache: 'no-store' });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) throw new Error(payload?.error || 'Documents are unavailable for this account.');
+      setDocs(payload.data || []);
+      setMissing(payload.missing || []);
+    } catch (cause) {
+      toast.error(cause instanceof Error ? cause.message : 'Documents could not be loaded.');
+      setDocs([]);
+      setMissing([]);
+    } finally { setLoading(false); }
   };
-  useEffect(()=> { load(); }, []);
+  useEffect(() => { void load(); }, []);
 
   const upload = async () => {
-    if (!form.filePath) return toast.error('File path required (use /uploads/... or storage URL)');
+    if (!file) return toast.error('Choose a document file to upload.');
     setUploading(true);
     try {
-      const hr = await fetch('/api/hrm/profile').then(r=>r.json()).catch(()=>null);
-      const employeeId = hr?.data?.employeeId;
-      const res = await fetch('/api/hrm/documents', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ...form, employeeId })});
-      const j = await res.json();
-      if (j.success) { toast.success('Document uploaded — version history saved'); load(); } else toast.error(j.error);
-    } catch { toast.error('Upload failed'); } finally { setUploading(false); }
+      const formData = new FormData();
+      formData.set('file', file);
+      formData.set('documentType', form.documentType);
+      formData.set('title', form.title);
+      formData.set('expiryDate', form.expiryDate);
+      const response = await fetch('/api/employee/documents', { method: 'POST', body: formData });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) throw new Error(payload?.error || 'Document upload failed.');
+      toast.success('Private document uploaded for review.');
+      setFile(null);
+      setForm({ documentType: 'nid', title: '', expiryDate: '' });
+      await load();
+    } catch (cause) {
+      toast.error(cause instanceof Error ? cause.message : 'Document upload failed.');
+    } finally { setUploading(false); }
   };
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-xl font-bold text-slate-900">Document Center</h1><p className="text-xs text-slate-500">22 mandatory documents • No mandatory document can be deleted • Version history & audit log • Soft delete only</p></div>
-        <Badge className="bg-white border-slate-200 text-slate-700 text-xs">{docs.length} uploaded • {missing.length} missing</Badge>
-      </div>
+      <div className="flex items-center justify-between"><div><h1 className="text-xl font-bold text-slate-900">Document Center</h1><p className="text-xs text-slate-500">Private employee files are uploaded as actual bytes and downloaded through authenticated, audited endpoints. Mandatory documents cannot be deleted.</p></div><Badge className="bg-white border-slate-200 text-slate-700 text-xs">{docs.length} uploaded · {missing.length} missing from configured checklist</Badge></div>
 
-      <Card className="bg-white border-slate-200">
-        <CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Upload Document</CardTitle></CardHeader>
+      <Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Upload Document</CardTitle></CardHeader>
         <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 gap-3">
-          <select value={form.documentType} onChange={e=> setForm({...form, documentType:e.target.value})} className="h-9 text-xs border border-slate-200 rounded px-2 bg-white">
-            {MANDATORY.map(t=> <option key={t} value={t}>{t}</option>)}
-            <option value="other">other</option>
-          </select>
-          <Input placeholder="File path / URL (storage)" value={form.filePath} onChange={e=> setForm({...form, filePath:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
-          <Input placeholder="File name" value={form.fileName} onChange={e=> setForm({...form, fileName:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
-          <Input type="date" value={form.expiryDate} onChange={e=> setForm({...form, expiryDate:e.target.value})} className="h-9 text-xs bg-white border-slate-200" />
-          <Button onClick={upload} disabled={uploading} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-4">{uploading? 'Uploading...' : 'Upload — Create Version'}</Button>
+          <select value={form.documentType} onChange={(event) => setForm({ ...form, documentType: event.target.value })} className="h-9 text-xs border border-slate-200 rounded px-2 bg-white">{MANDATORY.map((type) => <option key={type} value={type}>{type}</option>)}<option value="other">other</option></select>
+          <Input value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} placeholder="Document title (optional)" maxLength={191} className="h-9 text-xs bg-white border-slate-200" />
+          <Input type="date" value={form.expiryDate} onChange={(event) => setForm({ ...form, expiryDate: event.target.value })} className="h-9 text-xs bg-white border-slate-200" />
+          <Input type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" onChange={(event) => setFile(event.target.files?.[0] || null)} className="h-9 text-xs bg-white border-slate-200" />
+          <Button onClick={() => void upload()} disabled={uploading || !file} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs md:col-span-4">{uploading ? 'Uploading…' : 'Upload private file'}</Button>
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-slate-200">
-        <CardHeader className="p-4 border-b flex flex-row items-center justify-between"><CardTitle className="text-sm font-bold">My Documents — Version History</CardTitle><Button variant="outline" size="sm" onClick={load} className="h-7 text-xs">Refresh</Button></CardHeader>
-        <CardContent className="p-0 overflow-auto">
-          <table className="w-full text-xs">
-            <thead className="bg-slate-50 text-slate-500"><tr><th className="p-2 text-left">Type</th><th className="p-2">File</th><th className="p-2">Status</th><th className="p-2">Version</th><th className="p-2">Expiry</th><th className="p-2">History</th></tr></thead>
-            <tbody>
-              {loading ? <tr><td colSpan={6} className="p-6 text-center text-slate-400">Loading...</td></tr> : docs.length ? docs.map((d:any)=> (
-                <tr key={d.id} className="border-t border-slate-100">
-                  <td className="p-2 font-medium capitalize">{d.documentType} {d.isMandatory && <Badge variant="outline" className="ml-1 text-xs bg-amber-50 text-amber-700">mandatory</Badge>}</td>
-                  <td className="p-2 truncate max-w-[200px]">{d.fileName||d.filePath}</td>
-                  <td className="p-2 text-center"><Badge variant="outline" className="text-xs">{d.status}</Badge></td>
-                  <td className="p-2 text-center">v{d.version}</td>
-                  <td className="p-2 text-center">{d.expiryDate || '-'}</td>
-                  <td className="p-2 text-center text-slate-500">{d.versions?.length||0} versions</td>
-                </tr>
-              )) : <tr><td colSpan={6} className="p-6 text-center text-slate-400">No documents yet — upload mandatory 22 types</td></tr>}
-            </tbody>
-          </table>
-        </CardContent>
+      <Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b flex flex-row items-center justify-between"><CardTitle className="text-sm font-bold">My Documents — Version History</CardTitle><Button variant="outline" size="sm" onClick={() => void load()} disabled={loading} className="h-7 text-xs">Refresh</Button></CardHeader>
+        <CardContent className="p-0 overflow-auto"><table className="w-full text-xs"><thead className="bg-slate-50 text-slate-500"><tr><th className="p-2 text-left">Type</th><th className="p-2">File</th><th className="p-2">Status</th><th className="p-2">Version</th><th className="p-2">Expiry</th><th className="p-2">History</th></tr></thead>
+          <tbody>{loading ? <tr><td colSpan={6} className="p-6 text-center text-slate-400">Loading…</td></tr> : docs.length ? docs.map((doc: any) => <tr key={doc.id} className="border-t border-slate-100"><td className="p-2 font-medium capitalize">{doc.documentType} {doc.isMandatory && <Badge variant="outline" className="ml-1 text-xs bg-amber-50 text-amber-700">mandatory</Badge>}</td><td className="p-2 truncate max-w-[200px]">{doc.downloadUrl ? <a href={doc.downloadUrl} className="text-blue-700 underline" rel="noreferrer">{doc.fileName || doc.title || 'Download file'}</a> : (doc.fileName || doc.title || 'No file recorded')}</td><td className="p-2 text-center"><Badge variant="outline" className="text-xs">{doc.status}</Badge></td><td className="p-2 text-center">v{doc.version}</td><td className="p-2 text-center">{doc.expiryDate || 'Not recorded'}</td><td className="p-2 text-center text-slate-500">{doc.versions?.length || 0} versions</td></tr>) : <tr><td colSpan={6} className="p-6 text-center text-slate-400">No documents recorded.</td></tr>}</tbody>
+        </table></CardContent>
       </Card>
 
-      {missing.length>0 && (
-        <Card className="bg-amber-50 border-amber-200"><CardContent className="p-3 text-xs text-amber-800"><p className="font-bold">Missing Mandatory Documents ({missing.length})</p><p className="mt-1 flex flex-wrap gap-1">{missing.map(m=> <Badge key={m} variant="outline" className="bg-white text-amber-700 text-xs">{m}</Badge>)}</p></CardContent></Card>
-      )}
+      {missing.length > 0 && <Card className="bg-amber-50 border-amber-200"><CardContent className="p-3 text-xs text-amber-800"><p className="font-bold">Checklist items with no recorded upload ({missing.length})</p><p className="mt-1 flex flex-wrap gap-1">{missing.map((item) => <Badge key={item} variant="outline" className="bg-white text-amber-700 text-xs">{item}</Badge>)}</p></CardContent></Card>}
     </div>
   );
 }

@@ -18,6 +18,7 @@
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { createRegistrationLead, type RegistrationAttributionInput } from "@/lib/crm/registration-lead";
+import { allocateIdentifier, allocateIdentifierCommitted } from "@/lib/identity/student-id";
 import { Prisma } from "@prisma/client";
 
 const CANONICAL_STUDENT_REGEX = /^AE-(\d{4})(\d{6})$/;
@@ -34,33 +35,12 @@ export function isCanonicalStudentCode(value: string): boolean {
  * and return the next sequential code.
  */
 export async function generateCanonicalStudentCode(): Promise<string> {
-  return generateCanonicalStudentCodeTx(db);
+  return allocateIdentifierCommitted('AE');
 }
 
-async function generateCanonicalStudentCodeTx(
-  tx: Prisma.TransactionClient | PrismaClient
-): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `AE-${year}`;
-
-  const students = await tx.student.findMany({
-    where: { studentId: { startsWith: prefix } },
-    select: { studentId: true },
-  });
-
-  let maxSeq = 0;
-  for (const s of students) {
-    const m = s.studentId.match(CANONICAL_STUDENT_REGEX);
-    if (m && parseInt(m[2], 10) > maxSeq) {
-      maxSeq = parseInt(m[2], 10);
-    }
-  }
-
-  return `${prefix}${String(maxSeq + 1).padStart(6, "0")}`;
+async function generateCanonicalStudentCodeTx(tx: Prisma.TransactionClient): Promise<string> {
+  return allocateIdentifier(tx, 'AE');
 }
-
-// PrismaClient alias for typing (avoids importing PrismaClient type explicitly)
-type PrismaClient = typeof db;
 
 export interface CreateCanonicalStudentParams {
   name: string;

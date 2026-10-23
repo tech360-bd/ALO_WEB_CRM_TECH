@@ -77,7 +77,7 @@ export async function generateDoodleNotes(captureId: string, transcriptText: str
   const apiKey = process.env.OPENAI_API_KEY || process.env.DOODLE_NOTE_API_KEY;
   let notes: DoodleNotes | null = null;
 
-  if (apiKey && transcriptText.length > 20) {
+  if (apiKey && process.env.PAID_AI_API_ALLOWED === 'true' && transcriptText.length > 20) {
     try {
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',

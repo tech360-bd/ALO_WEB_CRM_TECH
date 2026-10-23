@@ -13,10 +13,10 @@
  *    variable that holds the key (`apiKeyEnv`). The value is supplied by the
  *    operator at deploy time and is never committed, logged or returned by an
  *    API. `scripts/ci/scan-credentials.sh` scans this file.
- * 2. `PAID_AI_API_ALLOWED=false` is honoured by construction: every entry
- *    declares a `freeTier`, and providers whose only offering is paid are not
- *    listed at all. See EXCLUDED_PROVIDERS below for what was deliberately left
- *    out and why.
+ * 2. No advertised "free tier" is assumed to prevent overage billing. All
+ *    cloud inference is disabled unless the owner explicitly sets
+ *    `PAID_AI_API_ALLOWED=true` after reviewing the account, model and limits.
+ *    `freeTier` describes a claim, not a billing guarantee.
  * 3. `baseUrl` is only populated where the endpoint is well established. Where
  *    it is uncertain, it is `null` and the operator MUST supply
  *    `ALO_AI_<SLUG>_BASE_URL`. A guessed endpoint that silently 404s is worse

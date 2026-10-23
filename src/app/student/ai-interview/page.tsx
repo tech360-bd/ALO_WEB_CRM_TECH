@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Sparkles, Mic, MicOff, Send, Play, RotateCcw, CheckCircle2,
-  Award, Shield, BookOpen, AlertTriangle, ArrowRight, Loader2, RefreshCw
+  Sparkles, Send, RotateCcw, ArrowRight, Loader2, RefreshCw
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -21,13 +20,12 @@ interface QuestionItem {
 }
 
 export default function StudentAiInterviewPage() {
-  const { student, token } = useStudentAuth();
+  const { token } = useStudentAuth();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [interviewType, setInterviewType] = useState('embassy_mock');
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
@@ -47,17 +45,17 @@ export default function StudentAiInterviewPage() {
       const json = await res.json();
       if (json.success) {
         setSessionId(json.sessionId);
-        toast.success(`AI interview started — type ${interviewType} — session ${json.sessionId} — AI interview 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness one Q at a time`);
-        // Load questions based on type — real question engine would come from API
+        toast.success(`Practice session started — type ${interviewType} — session saved. No automated assessment is enabled.`);
+        // General practice prompts only; these are not official embassy questions or country-specific requirements.
         const baseQuestions: QuestionItem[] = [
-          { category: 'Introduction & Country', question: 'Why did you choose this country for your higher education rather than Bangladesh?', researchLabel: 'Common' },
-          { category: 'University Knowledge', question: 'Why did you select this university over other institutions?', researchLabel: 'Official' },
-          { category: 'Course Modules', question: 'Can you detail two specific core modules in your course curriculum and how they align with your career?', researchLabel: 'Official' },
-          { category: 'Funding & Sponsor', question: 'Who is sponsoring your tuition and living expenses, and what is their verified annual income and source of funds?', researchLabel: 'Common' },
-          { category: 'Study Gap & Work History', question: 'Could you explain your study gap and what professional experience you acquired during that period?', researchLabel: 'Potential' },
-          { category: 'Future Career Plan', question: 'What is your exact career plan after completing your degree back in Bangladesh?', researchLabel: 'Common' },
-          { category: 'Refusal History', question: 'Have you ever been refused a visa for any country? If yes, explain reason and improvements.', researchLabel: 'Potential' },
-          { category: 'English Proficiency', question: 'How have you prepared for English language requirements and living in an English-speaking environment?', researchLabel: 'Practice' },
+          { category: 'Introduction', question: 'Please introduce yourself and summarize your recent education.', researchLabel: 'Practice' },
+          { category: 'Country Choice', question: 'What are your main reasons for choosing this study destination?', researchLabel: 'Practice' },
+          { category: 'Institution', question: 'What have you learned about your chosen institution, and why does it fit your study plans?', researchLabel: 'Practice' },
+          { category: 'Course Choice', question: 'What do you expect to study, and how does it relate to your background or goals?', researchLabel: 'Practice' },
+          { category: 'Funding', question: 'How do you plan to fund tuition and living costs? Share only what you are comfortable sharing; never enter account numbers, passwords, or OTPs.', researchLabel: 'Practice' },
+          { category: 'Study History', question: 'Is there a gap in your study or work history that you would like to explain?', researchLabel: 'Practice' },
+          { category: 'Future Plans', question: 'What are your plans after completing the course?', researchLabel: 'Practice' },
+          { category: 'Previous Refusal', question: 'If you have had a visa refusal, how have you addressed the reasons stated in the decision? You may skip sensitive details here.', researchLabel: 'Practice' },
         ];
         setQuestions(baseQuestions);
         setCurrentIdx(0);
@@ -65,7 +63,7 @@ export default function StudentAiInterviewPage() {
         setCompleted(false);
         setFinalResult(null);
       } else {
-        toast.error(json.error || 'Failed to start AI interview — practice 3 days after package store attempts improvement');
+        toast.error(json.error || 'Unable to start practice session.');
       }
     } catch (err) {
       console.error(err);
@@ -83,11 +81,11 @@ export default function StudentAiInterviewPage() {
 
   const handleSubmitAnswer = async () => {
     if (!userAnswer.trim()) {
-      toast.error('Answer required — AI must ask naturally one question at a time wait for answer — understand Bangladeshi English accents broken English Banglish pauses incomplete pronunciation — do NOT penalize Bangladeshi accent — evaluate meaning/clarity/consistency/relevance/confidence');
+      toast.error('Enter a practice response. Do not include private banking credentials or unverifiable facts.');
       return;
     }
     if (!sessionId) {
-      toast.error('No active session — start AI interview first — POST /api/visa/ai-interview/start');
+      toast.error('Start a practice session first.');
       return;
     }
 
@@ -96,7 +94,7 @@ export default function StudentAiInterviewPage() {
       const res = await fetch(`/api/visa/ai-interview/${sessionId}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ question: currentQ.question, answer: userAnswer, category: currentQ.category, transcript: userAnswer }),
+        body: JSON.stringify({ question: currentQ.question, answer: userAnswer, category: currentQ.category }),
       });
       const json = await res.json();
       if (json.success) {
@@ -104,12 +102,12 @@ export default function StudentAiInterviewPage() {
           questionId: currentQ.id || `q${currentIdx}`,
           question: currentQ.question,
           answer: userAnswer,
-          score: json.data?.score || 75,
-          strengths: json.data?.feedback || 'Good foundation and genuine intent conveyed — AI understands Bangladeshi English',
-          improvements: json.flags?.length ? `Detected: ${json.flags.join(', ')} — Be more precise regarding sponsor income, course modules, university specifics, future plan — truthful consistent not memorized false` : 'Add specific module names, sponsor annual income, bank statement history, career plan in Bangladesh — truthful consistent',
-          accentToleranceNote: 'Bangladeshi English speech patterns evaluated on clarity, relevance, semantic intent — no penalty applied for non-native accent — understand Bangladeshi English accents broken English Banglish pauses incomplete pronunciation — evaluate meaning/clarity/consistency/relevance/confidence/understanding rather than accent alone',
+          score: null,
+          strengths: 'Your response has been saved. Automated content assessment is not enabled.',
+          improvements: json.flags?.length ? 'This response was short. If you want, add more detail in your own words; never invent facts.' : 'A human officer has not assessed this answer. Keep it truthful and consistent with your actual documents.',
+          accentToleranceNote: 'No automated pronunciation, accent, eligibility, or visa scoring is performed. This practice is not an official interview.',
           flags: json.flags || [],
-          nextQuestionHint: json.nextQuestionHint,
+          nextQuestionHint: null,
         };
         setFeedback(evalFeedback);
         setHistory(prev => [...prev, evalFeedback]);
@@ -129,38 +127,22 @@ export default function StudentAiInterviewPage() {
     if (currentIdx < questions.length - 1) {
       setCurrentIdx(curr => curr + 1);
     } else {
-      // Finish session
+      // Finish the saved practice transcript; no score is fabricated or submitted by the student.
       try {
-        const avgScore = history.length ? Math.round(history.reduce((a, b) => a + (b.score || 0), 0) / history.length) : 0;
         const res = await fetch(`/api/visa/ai-interview/${sessionId}/finish`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({
-            overallReadiness: avgScore,
-            communicationClarity: 75,
-            confidence: 75,
-            courseKnowledge: 80,
-            universityKnowledge: 80,
-            countryKnowledge: 80,
-            financialExplanation: 70,
-            sponsorExplanation: 70,
-            studyGapExplanation: 75,
-            futurePlanClarity: 80,
-            refusalExplanation: 75,
-            documentReadiness: 75,
-            visaRisk: avgScore < 60 ? 60 : 20,
-            verdict: avgScore >= 80 ? 'READY' : avgScore >= 60 ? 'NEEDS_PRACTICE' : 'HUMAN_REVIEW_REQUIRED',
-            finalFeedback: `AI preliminary analysis only — human officer remains responsible for final internal assessment — average score ${avgScore}% — ${history.length} questions answered — Interview prep doc branded question/answer framework/student answer/AI suggestion no memorized false truthful consistent — Financial/future plan framework real info no fabrication salary/balance/income/employment/job/assets/travel/academic — must show uncertainty/cite source/flag manual verification/recommend human review — Practice 3 days after package store attempts improvement — video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording`,
-          }),
+          headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
-        if (json.success) {
-          setFinalResult(json.result);
-          setCompleted(true);
-          toast.success(`AI interview completed — score ${avgScore}% — AI preliminary only human final — human responsible — NOT visa decision`);
+        if (!res.ok || !json.success) {
+          toast.error(json.error || 'Unable to finish practice session.');
+          return;
         }
-      } catch (err) {
+        setFinalResult(json);
         setCompleted(true);
+        toast.success('Practice transcript saved; officer review is pending. No automated visa assessment was generated.');
+      } catch {
+        toast.error('Unable to finish practice session.');
       }
     }
   };
@@ -176,7 +158,7 @@ export default function StudentAiInterviewPage() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-400 text-xs"><RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2" />Starting AI interview session — real API — no fake — POST /api/visa/ai-interview/start — 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness</div>;
+    return <div className="p-8 text-center text-gray-400 text-xs"><RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2" />Starting private practice session…</div>;
   }
 
   if (!sessionId) {
@@ -205,7 +187,7 @@ export default function StudentAiInterviewPage() {
               <option value="final_readiness">Final Readiness — Comprehensive</option>
             </select>
             <Button onClick={startSession} className="w-full bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center justify-center gap-2"><Play className="w-4 h-4" /> Start AI Interview Session</Button>
-            <p className="text-[10px] text-gray-500">Questions are drawn from recent official sources and labelled Common, Potential, Practice or Official. Base financial and future-plan answers only on your real documents — never on invented figures. Recordings are used only with your explicit consent.</p>
+            <p className="text-[10px] text-gray-500">This page uses general practice prompts only; it does not cite official sources or provide AI scoring. Use your own verified facts and never enter passwords, OTPs, account numbers, or fabricated figures.</p>
           </CardContent>
         </Card>
       </div>
@@ -217,7 +199,7 @@ export default function StudentAiInterviewPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-2"><Badge className="bg-[#0057B8]/20 text-[#60a5fa] border-[#0057B8]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator — Session {sessionId}</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
-          <p className="text-gray-400 text-xs mt-1">One question at a time, with follow-ups where an answer is incomplete. The AI scores meaning and consistency — never your accent.</p>
+          <p className="text-gray-400 text-xs mt-1">One general practice question at a time. Responses are saved for officer review; automated language, risk, and eligibility scoring is not enabled.</p>
         </div>
         <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-gray-300 hover:text-white text-xs">Back to Visa Readiness</Button></Link>
       </div>
@@ -239,24 +221,24 @@ export default function StudentAiInterviewPage() {
           {!feedback ? (
             <Card className="bg-[#0d1526] border-white/10 text-white">
               <CardContent className="p-6 space-y-4">
-                <label className="block text-xs font-medium text-gray-300">Your Answer (Speak or Type) — the AI understands Bangladeshi English and Banglish, and scores meaning and clarity, never accent</label>
+                <label className="block text-xs font-medium text-gray-300">Your Answer (Type) — practice only; do not include account numbers, passwords, OTPs, or facts you cannot verify</label>
                 <textarea rows={5} value={userAnswer} onChange={e => setUserAnswer(e.target.value)} placeholder="State your clear, genuine answer here — based on your real documents and plans" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] text-sm" />
                 <div className="flex items-center justify-between gap-4">
-                  <Button type="button" variant="outline" onClick={() => setIsRecording(!isRecording)} className={`border-white/10 text-xs flex items-center gap-2 ${isRecording ? 'bg-red-500/20 text-red-400 border-red-500/30 animate-pulse' : 'text-gray-300'}`}>{isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}<span>{isRecording ? 'Stop Recording — Explicit Consent No Secret Recording — Store Session/Timestamp/Transcript/Audio/Video Ref/AI Analysis/Human Review' : 'Voice Input (Audio Practice) — Reuse Existing Video/Voice Store Session/Timestamp/Transcript/Audio/Video Ref'}</span></Button>
-                  <Button onClick={handleSubmitAnswer} disabled={!userAnswer.trim() || submitting} className="bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center gap-2">{submitting ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Evaluating your answer…</span> : <span className="flex items-center gap-2"><Send className="w-4 h-4" /> Submit for AI Review</span>}</Button>
+                  <p className="text-[11px] text-gray-400">Audio recording is not available in this practice workflow.</p>
+                  <Button onClick={handleSubmitAnswer} disabled={!userAnswer.trim() || submitting} className="bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center gap-2">{submitting ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Saving response…</span> : <span className="flex items-center gap-2"><Send className="w-4 h-4" /> Save Practice Response</span>}</Button>
                 </div>
               </CardContent>
             </Card>
           ) : (
             <Card className="bg-gradient-to-br from-[#0d1526] to-[#152238] border-emerald-500/30 text-white animate-in fade-in">
-              <CardHeader className="p-6 border-b border-white/10 flex flex-row items-center justify-between"><div><Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">EVALUATION SCORE: {feedback.score}/100 (preliminary)</Badge><CardTitle className="text-base font-bold mt-1">AI Credibility Feedback (preliminary — not a visa decision)</CardTitle></div><div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-extrabold text-lg">{feedback.score}%</div></CardHeader>
+              <CardHeader className="p-6 border-b border-white/10 flex flex-row items-center justify-between"><div><Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30">Saved — human review pending</Badge><CardTitle className="text-base font-bold mt-1">Practice response saved</CardTitle></div><div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs">REVIEW</div></CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div><p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Strengths — What Is Strong</p><p className="text-sm text-gray-200 mt-1">{feedback.strengths}</p></div>
-                <div><p className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Required Improvement</p><p className="text-sm text-gray-200 mt-1">{feedback.improvements}</p></div>
-                {feedback.flags?.length > 0 && <div className="bg-amber-500/10 p-3 rounded-lg border border-amber-500/20 text-xs text-amber-300">Flags detected: {feedback.flags.join(', ')} — review your funding, course and future-plan explanations for gaps or inconsistencies.</div>}
+                <div><p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Status</p><p className="text-sm text-gray-200 mt-1">{feedback.strengths}</p></div>
+                <div><p className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Practice reminder</p><p className="text-sm text-gray-200 mt-1">{feedback.improvements}</p></div>
+                {feedback.flags?.length > 0 && <div className="bg-amber-500/10 p-3 rounded-lg border border-amber-500/20 text-xs text-amber-300">Practice note: {feedback.flags.join(', ')}. You may add more detail in your own words; do not invent information.</div>}
                 <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-xs text-gray-400">{feedback.accentToleranceNote}</div>
-                <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-xs text-blue-300">Your interview prep summary brings together each question, your answer and the AI&apos;s suggestion. Keep answers truthful and consistent with your real documents — the AI cannot guarantee any visa outcome.</div>
-                <div className="flex justify-end pt-4 border-t border-white/10"><Button onClick={handleNext} className="bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center gap-2"><span>{currentIdx < questions.length - 1 ? 'Next Question' : 'View Final Scorecard'}</span><ArrowRight className="w-4 h-4" /></Button></div>
+                <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-xs text-blue-300">Your saved question and response are for practice only. Automated assessment is not enabled; a human officer must review the session.</div>
+                <div className="flex justify-end pt-4 border-t border-white/10"><Button onClick={handleNext} className="bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center gap-2"><span>{currentIdx < questions.length - 1 ? 'Next Practice Question' : 'Finish Practice Session'}</span><ArrowRight className="w-4 h-4" /></Button></div>
               </CardContent>
             </Card>
           )}
@@ -265,14 +247,13 @@ export default function StudentAiInterviewPage() {
         <Card className="bg-[#0d1526] border-white/10 text-white text-center p-8">
           <CardContent className="space-y-6">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center mx-auto"><Award className="w-8 h-8 text-white" /></div>
-            <div><h2 className="text-2xl font-bold">Mock Interview Completed</h2><p className="text-gray-400 text-xs mt-1">Your practice answers and scores have been saved to your visa profile — Timeline event Visa AI Interview Completed — Student practice AI Q-by-Q voice/text follow-up history feedback retry progress understand non-native no accent penalty — Practice 3 days after package store attempts improvement — video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording — AI preliminary only human final — human responsible — NOT visa decision</p></div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Average Score</p><p className="text-2xl font-bold text-emerald-400 mt-1">{history.length ? Math.round(history.reduce((a, b) => a + (b.score || 0), 0) / history.length) : 0}%</p></div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Questions Answered</p><p className="text-2xl font-bold text-white mt-1">{history.length}</p></div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Credibility Verdict (internal — not a visa decision)</p><p className="text-sm font-bold text-blue-400 mt-2">{finalResult?.verdict || (history.length && history.reduce((a, b) => a + (b.score || 0), 0) / history.length >= 80 ? 'READY' : 'NEEDS_PRACTICE')}</p></div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Officer Review</p><p className="text-sm font-bold text-amber-400 mt-2">QUEUED — HUMAN_REVIEW_REQUIRED</p></div>
+            <div><h2 className="text-2xl font-bold">Practice Session Completed</h2><p className="text-gray-400 text-xs mt-1">Your transcript has been saved. Automated scoring is not enabled; officer review is pending. This is not an official embassy interview or visa decision.</p></div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Automated Score</p><p className="text-sm font-bold text-gray-300 mt-2">Not calculated</p></div>
+              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Responses Saved</p><p className="text-2xl font-bold text-white mt-1">{history.length}</p></div>
+              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-gray-400">Human Review</p><p className="text-sm font-bold text-amber-400 mt-2">{finalResult?.assessmentStatus || 'Pending'}</p></div>
             </div>
-            <div className="text-[10px] text-gray-500">Your scorecard covers 12 dimensions — clarity, confidence, course, university and country knowledge, financial and sponsor explanation, study-gap explanation, future plan, refusal explanation, document readiness and overall readiness. Scores are preliminary AI guidance for internal preparation only — not a visa decision.</div>
+            <div className="text-[10px] text-gray-500">No automated assessment or visa decision is made by this practice flow. Share only facts you can verify and never enter banking credentials or OTPs.</div>
             <div className="flex justify-center gap-4 pt-4"><Button onClick={handleRestart} variant="outline" className="border-white/10 text-gray-300 flex items-center gap-2"><RotateCcw className="w-4 h-4" /><span>Practice Again</span></Button><Link href="/student/visa"><Button className="bg-[#0057B8] hover:bg-[#0046a0] text-white">Return to Visa Center</Button></Link></div>
           </CardContent>
         </Card>

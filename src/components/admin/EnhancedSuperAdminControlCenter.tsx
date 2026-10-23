@@ -127,35 +127,58 @@ export default function EnhancedSuperAdminControlCenter() {
 
   useEffect(() => { fetchMetrics(); }, [fetchMetrics]);
 
-  const handleStartActingAs = async (role: string, name: string, reason: string) => {
-    // Secure Acting-As — require authenticated Super Admin, explicit reason, short-lived revocable sessions, record real actor separately, persistent banner, exit action, prevent escalation, no password, re-auth/MFA, no conceal real actor, deny secrets by default
-    const realActor = 'Super Admin'; // From auth context
-    const sessionId = `act-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-    const expiry = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 min short-lived
+  const handleStartActingAs = async (employee: any) => {
+    const targetUserId = typeof employee?.userId === 'string' ? employee.userId : '';
+    if (!targetUserId) {
+      setError('This employee record is not linked to a portal login; Acting-As is unavailable.');
+      return;
+    }
+    const reason = window.prompt(`Why are you acting as ${employee.name || employee.role || 'this employee'}? (8–500 characters)`);
+    if (!reason?.trim() || reason.trim().length < 8 || reason.trim().length > 500) {
+      setError('A reason between 8 and 500 characters is required.');
+      return;
+    }
 
-    // Create audit event for Acting-As start
     try {
-      const token = localStorage.getItem('portal_token') || '';
-      await fetch('/api/portal-auth/acting-as/start', {
+      const response = await fetch('/api/portal-auth/acting-as/start', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ targetRole: role, targetName: name, reason, sessionId, expiry }),
-      }).catch(() => {});
-    } catch {}
-
-    setActingAs({ role, name, reason, sessionId, expiry, realActor });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetUserId, reason: reason.trim() }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      const session = payload?.actingAsSession;
+      if (!response.ok || !payload?.success || !session?.id) {
+        setError(payload?.error || `Acting-As could not start (HTTP ${response.status}).`);
+        return;
+      }
+      setActingAs({
+        role: session.effectiveRole,
+        name: session.effectiveName,
+        reason: session.reason,
+        sessionId: session.id,
+        expiry: session.expiry,
+        realActor: session.realActorName,
+      });
+      setError(null);
+      router.push('/employee/dashboard');
+    } catch {
+      setError('Acting-As could not start. The server did not confirm the audited session.');
+    }
   };
 
   const handleExitActingAs = async () => {
     try {
-      const token = localStorage.getItem('portal_token') || '';
-      await fetch('/api/portal-auth/acting-as/stop', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ sessionId: actingAs?.sessionId }),
-      }).catch(() => {});
-    } catch {}
-    setActingAs(null);
+      const response = await fetch('/api/portal-auth/acting-as/stop', { method: 'POST' });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) {
+        setError(payload?.error || 'Acting-As session could not be ended.');
+        return;
+      }
+      setActingAs(null);
+      router.replace('/super-admin/dashboard');
+    } catch {
+      setError('Acting-As session could not be ended. Retry before leaving this view.');
+    }
   };
 
   const handleToggleLockdown = async () => {
@@ -312,7 +335,7 @@ export default function EnhancedSuperAdminControlCenter() {
                         <div className="flex flex-wrap gap-1 justify-end">
                           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">View Profile</Button>
                           <Link href="/admin/employee-control"><Button size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Open Dashboard — Existing Dashboard Not Clone</Button></Link>
-                          <Button size="sm" className="h-7 text-[10px] bg-[#0057B8] text-white" onClick={()=>handleStartActingAs(emp.designation || emp.role || 'Employee', emp.name || 'Employee', `Acting-As for ${emp.name} — reason required`)}>Acting-As — Reason + Audit + No Password + No Escalation</Button>
+                          <Button size="sm" className="h-7 text-[10px] bg-[#0057B8] text-white" onClick={()=>handleStartActingAs(emp)} disabled={!emp.userId || String(emp.status).toLowerCase() !== 'active'} title={!emp.userId ? 'Linked employee portal account required' : 'Start a server-validated 30-minute session'}>Acting-As — Reason + Audit + No Password + No Escalation</Button>
                           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Assign Role</Button>
                           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Permissions</Button>
                           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[10px] border-[#E2E8F0]">Branch/Country/Dept</Button>
@@ -349,7 +372,7 @@ export default function EnhancedSuperAdminControlCenter() {
                       <div><h5 className="font-bold text-xs">{dash.name}</h5><p className="text-[11px] text-gray-600 mt-1 line-clamp-2">{dash.desc}</p><p className="text-[10px] text-gray-400 mt-2">Roles: {dash.roles} • Active users: {employees.filter((e:any)=> (e.role||'').toLowerCase().includes(dash.name.toLowerCase().split(' ')[0])).length || 'Check session data — do not invent'} • Pending tasks: Check DB • Alerts: Check DB • Health: Check DB • Permission summary: Check DB — do not invent active-user counts/dashboard health</p></div>
                       <div className="flex gap-2 mt-3">
                         <Link href={dash.route} className="flex-1"><Button size="sm" className="w-full bg-[#0057B8] text-white h-8 text-[11px]"><Eye className="w-3 h-3 mr-1" />Open Dashboard — Existing Not Clone</Button></Link>
-                        <Button size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[10px]" onClick={()=>handleStartActingAs(dash.name, 'Role', `Acting-As for ${dash.name} — reason required`)}>Acting-As — Only Where Explicitly Allowed</Button>
+                        <Button size="sm" variant="outline" className="border-[#E2E8F0] h-8 text-[10px]" disabled title="Acting-As requires a specific active employee account, not a role-only identity.">Select an employee to Act-As</Button>
                       </div>
                     </Card>
                   ))}

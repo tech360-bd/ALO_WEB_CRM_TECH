@@ -5,12 +5,12 @@ import type { AuthContext } from '@/lib/auth-middleware';
 
 export type HrmRole = 'super_admin'|'admin'|'hr_manager'|'hr'|'finance'|'accounts'|'manager'|'team_leader'|'branch_manager'|'employee'|'counselor';
 
-const HR_ROLES = ['super_admin','admin','hr_manager','hr'];
-const FINANCE_ROLES = ['super_admin','admin','finance','accounts','finance_manager'];
-const MANAGER_ROLES = ['super_admin','admin','hr_manager','branch_manager','manager','team_leader'];
+const HR_ROLES = ['hr_manager','hr'];
+const FINANCE_ROLES = ['finance','accounts','finance_manager'];
+const MANAGER_ROLES = ['hr_manager','branch_manager','manager','team_leader'];
 
 export function isSuperAdmin(auth: AuthContext): boolean {
-  return auth.roles.some(r=> ['super_admin','admin','SUPER_ADMIN','ADMIN'].includes(r)) || ['SUPER_ADMIN','ADMIN'].includes(auth.userType);
+  return auth.roles.some((role) => role.toLowerCase() === 'super_admin') || auth.userType.toLowerCase() === 'super_admin';
 }
 export function isHR(auth: AuthContext): boolean {
   if (isSuperAdmin(auth)) return true;

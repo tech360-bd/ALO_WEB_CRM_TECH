@@ -39,6 +39,7 @@ export type PermissionAction =
   // Student module — scoped view/update
   | "view_assigned"
   | "view_all"
+  | "assign"
   | "view_partner_referred"
   | "update_assigned"
   | "view_private_notes"
@@ -150,6 +151,8 @@ export type RoleName =
   | "counselor"
   | "application_officer"
   | "visa_officer"
+  | "visa_interview_officer"
+  | "visa_team"
   | "finance_officer"
   | "marketing_manager"
   | "hr_manager"
@@ -208,6 +211,43 @@ export const PERMISSION_CATALOG: Permission[] = [
   { id: "v4", module: "visa", feature: "visa", action: "interview_schedule", description: "Schedule visa interview" },
   { id: "v5", module: "visa", feature: "visa", action: "readiness_view", description: "View visa readiness score" },
   { id: "v6", module: "visa", feature: "visa", action: "status_update", description: "Update visa status" },
+  { id: "visa.dashboard.view", module: "visa", feature: "visa.dashboard", action: "view", description: "View the visa officer dashboard" },
+  { id: "visa.cases.view", module: "visa", feature: "visa.cases", action: "view", description: "View visa cases within assigned scope" },
+  { id: "visa.cases.assigned.view", module: "visa", feature: "visa.cases", action: "view_assigned", description: "View only assigned visa cases" },
+  { id: "visa.cases.view_all", module: "visa", feature: "visa.cases", action: "view_all", description: "View all visa cases" },
+  { id: "visa.cases.update", module: "visa", feature: "visa.cases", action: "update", description: "Update assigned visa cases" },
+  { id: "visa.cases.create", module: "visa", feature: "visa.cases", action: "create", description: "Create visa cases from eligible applications" },
+  { id: "visa.cases.assign", module: "visa", feature: "visa.cases", action: "assign", description: "Assign visa officers to cases" },
+  { id: "visa.cases.summary.view", module: "visa", feature: "visa.cases.summary", action: "view", description: "View assigned student-safe visa summaries" },
+  { id: "visa.cases.stage.view", module: "visa", feature: "visa.cases.stage", action: "view", description: "View assigned application-stage visa status" },
+  { id: "visa.interviews.view", module: "visa", feature: "visa.interviews", action: "view", description: "View assigned visa interviews" },
+  { id: "visa.interviews.create", module: "visa", feature: "visa.interviews", action: "create", description: "Schedule visa interviews" },
+  { id: "visa.interviews.update", module: "visa", feature: "visa.interviews", action: "update", description: "Update assigned visa interviews" },
+  { id: "visa.interviews.finish", module: "visa", feature: "visa.interviews", action: "finish", description: "Finish assigned visa interviews" },
+  { id: "visa.interviews.export", module: "visa", feature: "visa.interviews", action: "export", description: "Export assigned visa interview results" },
+  { id: "visa.documents.view", module: "visa", feature: "visa.documents", action: "view", description: "View visa document metadata and checklist" },
+  { id: "visa.documents.review", module: "visa", feature: "visa.documents", action: "review", description: "Review visa documents" },
+  { id: "visa.documents.request", module: "visa", feature: "visa.documents", action: "request", description: "Request visa documents" },
+  { id: "visa.documents.download", module: "visa", feature: "visa.documents", action: "download", description: "Download authorized visa documents" },
+  { id: "visa.readiness.view", module: "visa", feature: "visa.readiness", action: "view", description: "View visa readiness within assigned scope" },
+  { id: "visa.readiness.update", module: "visa", feature: "visa.readiness", action: "update", description: "Calculate or update visa readiness" },
+  { id: "visa.risk.view", module: "visa", feature: "visa.risk", action: "view", description: "View internal visa risk assessments" },
+  { id: "visa.risk.update", module: "visa", feature: "visa.risk", action: "update", description: "Update internal visa risk assessments" },
+  { id: "visa.notes.create", module: "visa", feature: "visa.notes", action: "create", description: "Create visibility-controlled visa notes" },
+  { id: "visa.notes.internal.create", module: "visa", feature: "visa.notes.internal", action: "create", description: "Create internal visa notes" },
+  { id: "visa.notes.internal.view", module: "visa", feature: "visa.notes.internal", action: "view", description: "View internal notes for assigned visa cases" },
+  { id: "visa.notes.student_feedback.create", module: "visa", feature: "visa.notes.student_feedback", action: "create", description: "Draft and approve student-safe visa feedback" },
+  { id: "visa.reports.view", module: "visa", feature: "visa.reports", action: "view", description: "View visa reports" },
+  { id: "visa.reports.export", module: "visa", feature: "visa.reports", action: "export", description: "Export authorized visa reports" },
+  { id: "visa.reports.view_all", module: "visa", feature: "visa.reports", action: "view_all", description: "View all reports inside all-case authorization scope" },
+  { id: "visa.reports.staff_performance.view", module: "visa", feature: "visa.reports.staff_performance", action: "view", description: "View restricted staff performance aggregates" },
+  { id: "visa.sensitive.view", module: "visa", feature: "visa.sensitive", action: "view", description: "View sensitive medical and criminal visa reviews" },
+  { id: "visa.sensitive.update", module: "visa", feature: "visa.sensitive", action: "update", description: "Update sensitive medical and criminal visa reviews" },
+  { id: "visa.super_review.request", module: "visa", feature: "visa.super_review", action: "request", description: "Escalate a case for senior or super-admin review" },
+  { id: "visa.timeline.view", module: "visa", feature: "visa.timeline", action: "view", description: "View authorized visa workflow timeline" },
+  { id: "visa.tasks.view", module: "visa", feature: "visa.tasks", action: "view", description: "View visa tasks in assigned scope" },
+  { id: "visa.tasks.create", module: "visa", feature: "visa.tasks", action: "create", description: "Create visa tasks in assigned scope" },
+  { id: "visa.tasks.update", module: "visa", feature: "visa.tasks", action: "update", description: "Update visa tasks in assigned scope" },
 
   // --- MARKETING MODULE ---
   { id: "m1", module: "marketing", feature: "marketing", action: "dashboard_view", description: "View marketing dashboard" },
@@ -242,6 +282,11 @@ export const PERMISSION_CATALOG: Permission[] = [
   { id: "f3", module: "finance", feature: "finance", action: "manage_commission", description: "Manage commission" },
   { id: "f4", module: "finance", feature: "finance", action: "approve_commission", description: "Approve commission" },
 
+  // --- EMPLOYEE DASHBOARD ---
+  { id: "employee.dashboard.view", module: "hr_self", feature: "employee.dashboard", action: "view", description: "View an authorized employee dashboard using server-enforced data scope" },
+  { id: "employee.dashboard.view_all", module: "hr_private", feature: "employee.dashboard", action: "view_all", description: "View company-wide employee dashboard data when explicitly assigned" },
+  { id: "employee.permission_requests.approve", module: "hr_private", feature: "employee.permissions", action: "approve", description: "Review and approve temporary employee access requests with separation of duties" },
+
   // --- ADMIN MODULE ---
   { id: "ad1", module: "admin", feature: "admin", action: "manage_permissions", description: "Manage role permissions" },
   { id: "ad2", module: "admin", feature: "admin", action: "view_all_data", description: "View all data" },
@@ -258,6 +303,7 @@ export const PERMISSION_CATALOG: Permission[] = [
 export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   super_admin: PERMISSION_CATALOG.map((p) => p.id),
   branch_manager: [
+    "employee.dashboard.view",
     "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9",
     "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d9",
     "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9",
@@ -269,27 +315,62 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
     "ad1", "ad2", "ad3", "ad4",
   ],
   counselor: [
+    "employee.dashboard.view",
     "s1", "s3", "s4", "s6", "s8", "s9",
     "d1", "d2", "d3", "d7",
     "c1", "c2", "c3", "c4", "c5", "c7", "c8",
     "a1", "a2", "a3",
     "v1", "v3", "v5",
+    "visa.cases.summary.view",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
   ],
   application_officer: [
+    "employee.dashboard.view",
     "s1", "s2", "s4",
     "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d9",
     "c1", "c3", "c7", "c9",
     "a1", "a2", "a3", "a4", "a5",
+    "visa.cases.stage.view",
   ],
   visa_officer: [
+    "employee.dashboard.view",
     "s1", "s2",
     "d1", "d3", "d4", "d5", "d6", "d7",
     "c1", "c7",
     "a1",
     "v1", "v2", "v3", "v4", "v5", "v6",
+    "visa.dashboard.view", "visa.cases.view", "visa.cases.assigned.view", "visa.cases.update",
+    "visa.interviews.view", "visa.interviews.create", "visa.interviews.update", "visa.interviews.finish",
+    "visa.documents.view", "visa.documents.review", "visa.documents.request", "visa.documents.download",
+    "visa.readiness.view", "visa.readiness.update", "visa.risk.view", "visa.risk.update",
+    "visa.notes.create", "visa.notes.internal.create", "visa.notes.internal.view", "visa.notes.student_feedback.create",
+    "visa.reports.view", "visa.reports.export", "visa.sensitive.view", "visa.sensitive.update", "visa.super_review.request",
+    "visa.timeline.view", "visa.tasks.view", "visa.tasks.create", "visa.tasks.update",
+  ],
+  visa_interview_officer: [
+    "employee.dashboard.view",
+    "s1", "v1", "v4", "v5",
+    "visa.dashboard.view", "visa.cases.view", "visa.cases.assigned.view",
+    "visa.interviews.view", "visa.interviews.create", "visa.interviews.update", "visa.interviews.finish",
+    "visa.documents.view", "visa.documents.review", "visa.documents.request", "visa.documents.download",
+    "visa.readiness.view", "visa.readiness.update", "visa.risk.view", "visa.risk.update",
+    "visa.notes.create", "visa.notes.internal.create", "visa.notes.internal.view", "visa.notes.student_feedback.create",
+    "visa.reports.view", "visa.reports.export", "visa.super_review.request",
+    "visa.timeline.view", "visa.tasks.view", "visa.tasks.create", "visa.tasks.update",
+  ],
+  visa_team: [
+    "employee.dashboard.view",
+    "s1", "v1", "v2", "v3", "v4", "v5", "v6",
+    "visa.dashboard.view", "visa.cases.view", "visa.cases.assigned.view", "visa.cases.update",
+    "visa.interviews.view", "visa.interviews.create", "visa.interviews.update", "visa.interviews.finish",
+    "visa.documents.view", "visa.documents.review", "visa.documents.request", "visa.documents.download",
+    "visa.readiness.view", "visa.readiness.update", "visa.risk.view", "visa.risk.update",
+    "visa.notes.create", "visa.notes.internal.create", "visa.notes.internal.view", "visa.notes.student_feedback.create",
+    "visa.reports.view", "visa.reports.export", "visa.super_review.request",
+    "visa.timeline.view", "visa.tasks.view", "visa.tasks.create", "visa.tasks.update",
   ],
   finance_officer: [
+    "employee.dashboard.view",
     "s1", "s2",
     "d1", "d7",
     "c1",
@@ -297,16 +378,20 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
     "f1", "f2", "f3", "f4",
   ],
   marketing_manager: [
+    "employee.dashboard.view",
     "s2", "s5",
     "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9",
     "c1", "c5", "c7",
   ],
   hr_manager: [
+    "employee.dashboard.view",
+    "employee.permission_requests.approve",
     "s1", "s2",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
     "hp1", "hp2", "hp3", "hp4", "hp5",
   ],
   employee: [
+    "employee.dashboard.view",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
   ],
 };

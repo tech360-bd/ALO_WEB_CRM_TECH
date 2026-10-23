@@ -1,75 +1,90 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission, canViewVisaSensitive } from '@/lib/visa/access';
+
+const schema = z.object({
+  caseId: z.string().trim().min(1).max(191),
+  documentName: z.string().trim().min(1).max(191),
+  category: z.string().trim().min(1).max(80).default('general'),
+  reason: z.string().trim().max(1000).default(''),
+  description: z.string().trim().max(1500).default(''),
+  dueDate: z.string().datetime().optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+  studentVisible: z.boolean().default(true),
+  counselorVisible: z.boolean().default(true),
+}).strict();
+
+const unsafeStudentCopy = /\b(?:internal risk|confidential|medical condition|criminal record|staff criticism|guarantee approval|guaranteed visa|100\s*%\s*success)\b/i;
 
 export const POST = withAuth(async (req: Request, auth: AuthContext) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Document request requires visa officer — documents.request' }, { status: 403 });
-
-    const body = await req.json();
-    const { studentId, caseId, documentName, description, dueDate, reason, deadline, priority, visibility, notificationChannel, category } = body;
-
-    if (!documentName) return NextResponse.json({ success: false, error: 'Document name required — 25+ types Passport/Photo/Offer Letter/CAS/Academic Certificates/Transcripts/English Test/Bank Statement/Solvency Certificate/Sponsor Letter/Sponsor ID/Sponsor Occupation Proof/Source of Funds/Birth Certificate/Marriage Certificate/Work Experience/Study Gap Evidence/Refusal Letter/TB/Medical/Accommodation/Consent Documents/Visa Application/Biometric Appointment/Payment Receipt/Other Country-specific' }, { status: 400 });
-
-    let visaCase: any = null;
-    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase && studentId) visaCase = await (db as any).visaCase.findFirst({ where: { studentId } });
-
-    if (caseId && visaCase) {
-      const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-      if (!isSuper && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot request document for unassigned case — IDOR blocked' }, { status: 403 });
-      }
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'A case, document name, and valid request details are required.', details: parsed.error.flatten() }, { status: 400 });
+    const visaCase = await db.visaCase.findUnique({ where: { id: parsed.data.caseId }, select: { id: true, studentId: true, applicationId: true, visaOfficerId: true, counselorId: true, applicationOfficerId: true } });
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.documents.request', visaCase)) return NextResponse.json({ success: false, error: 'Assigned case and visa.documents.request permission required.' }, { status: 403 });
+    if (/medical|criminal|sensitive/i.test(parsed.data.category) && !canViewVisaSensitive(auth, visaCase)) {
+      return NextResponse.json({ success: false, error: 'Explicit sensitive-data permission is required for this document category.' }, { status: 403 });
+    }
+    if (parsed.data.studentVisible && unsafeStudentCopy.test(parsed.data.reason)) {
+      return NextResponse.json({ success: false, error: 'Student-facing request reasons must not contain restricted or unsupported language.' }, { status: 400 });
     }
 
-    const task = await (db as any).visaTask.create({
-      data: {
-        studentId: studentId || visaCase?.studentId || '',
-        caseId: caseId || visaCase?.id || '',
-        title: `Document Requested: ${documentName}`,
-        description: description || reason || `Please provide: ${documentName} — reason ${reason || 'visa requirement'} — priority ${priority || 'medium'} — visibility ${visibility || 'student_visible'} — notification ${notificationChannel || 'portal+email'}`,
-        status: 'pending',
-        taskType: 'DOCUMENT_REQUEST',
-        priority: priority || 'medium',
-        dueDate: dueDate || deadline ? new Date(dueDate || deadline) : null,
-        assignedTo: 'student',
-        createdBy: auth.userId,
-      } as any,
-    });
-
-    // Also create checklist item if case exists
-    if (visaCase) {
-      await (db as any).visaChecklistItem.create({
+    const dueDate = parsed.data.dueDate ? new Date(parsed.data.dueDate) : null;
+    const created = await db.$transaction(async (tx) => {
+      const duplicate = await tx.visaChecklistItem.findFirst({
+        where: { caseId: visaCase.id, studentId: visaCase.studentId, item: parsed.data.documentName, status: { notIn: ['approved', 'verified', 'complete', 'APPROVED', 'VERIFIED', 'COMPLETE'] }, archivedAt: null },
+        select: { id: true },
+      });
+      if (duplicate) throw new Error('REQUEST_ALREADY_OPEN');
+      const checklist = await tx.visaChecklistItem.create({
         data: {
+          caseId: visaCase.id,
           studentId: visaCase.studentId,
-          applicationId: visaCase.applicationId || '',
-          item: documentName,
-          category: category || 'general',
+          applicationId: visaCase.applicationId,
+          item: parsed.data.documentName,
+          documentName: parsed.data.documentName,
+          category: parsed.data.category,
           isRequired: true,
           status: 'NOT_UPLOADED',
-          priority: priority || 'medium',
-          deadline: deadline || dueDate ? new Date(deadline || dueDate) : null,
-          reason: reason || description,
-          studentVisible: visibility !== 'internal_only',
-        } as any,
-      }).catch(() => {});
-    }
-
-    await (db as any).timelineEvent.create({
-      data: {
-        studentId: studentId || visaCase?.studentId || '',
-        stage: 'VISA_DOCUMENT_REQUESTED',
-        title: `Visa Document Requested: ${documentName} — reason ${reason || 'visa requirement'} — deadline ${deadline || dueDate || 'none'} — priority ${priority || 'medium'}`,
-        description: `Requested by ${auth.name} — Request with name/reason/deadline/priority/visibility/notification — notification channel ${notificationChannel || 'portal+email'} — student can upload replacement previous versions remain auditable officer cannot silently delete history`,
-      },
-    }).catch(() => {});
-
-    await logAuditAction(auth, 'VISA_DOCUMENT_REQUEST', 'VisaTask', task.id, { documentName, reason, deadline, priority, visibility, studentId: studentId || visaCase?.studentId, caseId });
-
-    return NextResponse.json({ success: true, data: task, note: 'Request with name/reason/deadline/priority/visibility/notification — student can upload replacement previous versions remain auditable officer cannot silently delete history — no permanent delete version history — reuse existing Email/WhatsApp/SMS/Portal Message no duplicate engine RBAC/consent/audit' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+          priority: parsed.data.priority,
+          deadline: dueDate,
+          reason: parsed.data.studentVisible ? parsed.data.reason : '',
+          note: '',
+          reviewerNote: '',
+          studentVisible: parsed.data.studentVisible,
+          counselorVisible: parsed.data.counselorVisible,
+        },
+      });
+      const task = await tx.visaTask.create({
+        data: {
+          caseId: visaCase.id,
+          studentId: visaCase.studentId,
+          taskType: 'DOCUMENT_REQUEST',
+          title: `Document request: ${parsed.data.documentName}`,
+          description: parsed.data.studentVisible ? (parsed.data.description || parsed.data.reason) : 'Restricted document request; details are visible only in the authorized visa workflow.',
+          assignedTo: 'student',
+          priority: parsed.data.priority,
+          createdBy: auth.actorUserId,
+          dueDate,
+          status: 'pending',
+        },
+      });
+      if (parsed.data.studentVisible) {
+        const messageParts = [`The visa team requested: ${parsed.data.documentName}.`, parsed.data.reason && `Reason: ${parsed.data.reason}`, dueDate && `Requested by: ${dueDate.toISOString().slice(0, 10)}`].filter(Boolean);
+        await tx.studentMessage.create({ data: { studentId: visaCase.studentId, senderType: 'visa_team', senderName: auth.actorName || auth.name || 'Visa Team', message: messageParts.join(' '), channel: 'portal', isRead: false } });
+      }
+      await tx.portalAuditLog.create({
+        data: { actorUserId: auth.actorUserId, action: 'VISA_DOCUMENT_REQUEST', entityType: 'VisaChecklistItem', entityId: checklist.id, metadata: JSON.stringify({ caseId: visaCase.id, studentId: visaCase.studentId, documentName: parsed.data.documentName, category: parsed.data.category, priority: parsed.data.priority, studentVisible: parsed.data.studentVisible, dueDate }), ipAddress: '', userAgent: '' },
+      });
+      await tx.timelineEvent.create({ data: { studentId: visaCase.studentId, stage: 'VISA_DOCUMENT_REQUESTED', title: 'Visa checklist updated with a document request.', description: 'The request is available through the authenticated student portal. No external message delivery is represented.', actor: auth.actorUserId } });
+      return { checklist, task };
+    });
+    return NextResponse.json({ success: true, data: created, externalDelivery: false }, { status: 201, headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'REQUEST_ALREADY_OPEN') return NextResponse.json({ success: false, error: 'An open checklist request already exists for this document.' }, { status: 409 });
+    return NextResponse.json({ success: false, error: 'Document request could not be saved; any audit failure rolled back.' }, { status: 503 });
   }
 });

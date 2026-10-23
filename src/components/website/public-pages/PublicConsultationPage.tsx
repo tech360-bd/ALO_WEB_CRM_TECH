@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, Clock, User, Mail, Phone, Globe, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { ALO_CONTACT } from '@/lib/alo-site-info';
 
 const SERVICE_OPTIONS = [
   'General Consultation',
@@ -130,7 +131,7 @@ export default function PublicConsultationPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-orange-50 text-[#E8501A] mb-4">
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-orange-50 text-[#F37021] mb-4">
               FREE CONSULTATION
             </span>
             <h1 className="text-4xl md:text-5xl font-bold text-[#0F172A] mb-4">
@@ -156,12 +157,12 @@ export default function PublicConsultationPage() {
               </p>
               <div className="bg-slate-50 rounded-xl p-4 mb-6 inline-block">
                 <p className="text-sm text-slate-500">Your booking reference</p>
-                <p className="text-lg font-mono font-bold text-[#0057B8]">
+                <p className="text-lg font-mono font-bold text-[#0066CC]">
                   ALO-{Date.now().toString().slice(-6)}
                 </p>
               </div>
               <div className="flex gap-3 justify-center">
-                <Button onClick={() => setView('website')} className="bg-[#0057B8] text-white">
+                <Button onClick={() => setView('website')} className="bg-[#0066CC] text-white">
                   Back to Home
                 </Button>
                 <Button variant="outline" onClick={() => setSubmitted(false)}>
@@ -181,7 +182,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <User className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Full Name *
+                        <User className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Full Name *
                       </Label>
                       <Input
                         required
@@ -193,7 +194,7 @@ export default function PublicConsultationPage() {
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Phone className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Phone *
+                        <Phone className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Phone *
                       </Label>
                       <Input
                         required
@@ -208,7 +209,7 @@ export default function PublicConsultationPage() {
 
                   <div>
                     <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                      <Mail className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Email *
+                      <Mail className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Email *
                     </Label>
                     <Input
                       required
@@ -223,7 +224,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Globe className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Preferred Destination *
+                        <Globe className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Preferred Destination *
                       </Label>
                       <Select value={form.destination} onValueChange={(v) => setForm({ ...form, destination: v })}>
                         <SelectTrigger className="h-11">
@@ -256,7 +257,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Calendar className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Intended Intake *
+                        <Calendar className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Intended Intake *
                       </Label>
                       <Select value={form.intake} onValueChange={(v) => setForm({ ...form, intake: v })}>
                         <SelectTrigger className="h-11">
@@ -300,7 +301,7 @@ export default function PublicConsultationPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Calendar className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Preferred Date *
+                        <Calendar className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Preferred Date *
                       </Label>
                       <Input
                         required
@@ -313,7 +314,7 @@ export default function PublicConsultationPage() {
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-[#0F172A] mb-1.5 block">
-                        <Clock className="inline h-4 w-4 mr-1 text-[#0057B8]" /> Preferred Time *
+                        <Clock className="inline h-4 w-4 mr-1 text-[#0066CC]" /> Preferred Time *
                       </Label>
                       <Select value={form.preferredTime} onValueChange={(v) => setForm({ ...form, preferredTime: v })}>
                         <SelectTrigger className="h-11">
@@ -347,7 +348,7 @@ export default function PublicConsultationPage() {
                   <Button
                     type="submit"
                     disabled={submitting}
-                    className="w-full h-12 bg-[#E8501A] text-white font-semibold rounded-xl hover:brightness-110 transition-all"
+                    className="w-full h-12 bg-[#F37021] text-black font-semibold rounded-xl hover:brightness-110 transition-all"
                   >
                     {submitting ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
@@ -364,28 +365,32 @@ export default function PublicConsultationPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="space-y-4"
               >
-                <div className="bg-gradient-to-br from-[#0057B8] to-[#003F87] rounded-2xl p-6 text-white">
+                <div className="bg-gradient-to-br from-[#0066CC] to-[#003D7A] rounded-2xl p-6 text-white">
                   <h3 className="text-lg font-bold mb-4">Contact Directly</h3>
                   <div className="space-y-3 text-sm">
                     <div>
                       <p className="text-blue-100 text-xs">Phone</p>
-                      <p className="font-semibold">+88 01805020101-10</p>
+                      <a href={ALO_CONTACT.mobileHref} className="font-semibold">{ALO_CONTACT.mobileDisplay}</a>
                     </div>
                     <div>
                       <p className="text-blue-100 text-xs">Email</p>
-                      <p className="font-semibold">info@aloeducation.com</p>
+                      <a href={ALO_CONTACT.emailHref} className="font-semibold">{ALO_CONTACT.email}</a>
                     </div>
                     <div>
                       <p className="text-blue-100 text-xs">Hours</p>
-                      <p className="font-semibold">Sat-Thu: 10 AM - 6 PM</p>
+                      <p className="font-semibold">{ALO_CONTACT.officeHours}</p>
                     </div>
                     <div>
                       <p className="text-blue-100 text-xs">Address</p>
-                      <p className="font-semibold text-xs leading-relaxed">
-                        Barek Mansion-02 (5th Floor)<br />
-                        58/9 Box Culvert Road, Panthapath<br />
-                        Dhaka-1205, Bangladesh
-                      </p>
+                      <p className="font-semibold text-xs leading-relaxed">{ALO_CONTACT.address}</p>
+                      <a
+                        href={ALO_CONTACT.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-block text-xs font-semibold underline underline-offset-2"
+                      >
+                        Open in Google Maps
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -395,7 +400,7 @@ export default function PublicConsultationPage() {
                   <p className="text-sm text-green-800 mb-3">Quick response on WhatsApp</p>
                   <Button asChild className="w-full bg-[#25D366] text-white hover:brightness-110">
                     <a
-                      href="https://wa.me/8801805020101?text=I%20want%20to%20book%20a%20consultation"
+                      href={`${ALO_CONTACT.whatsappHref}?text=I%20want%20to%20book%20a%20consultation`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -405,22 +410,22 @@ export default function PublicConsultationPage() {
                 </div>
 
                 <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6">
-                  <h3 className="text-base font-bold text-[#E8501A] mb-2">Why Choose Us?</h3>
+                  <h3 className="text-base font-bold text-[#F37021] mb-2">Why Choose Us?</h3>
                   <ul className="space-y-2 text-sm text-slate-700">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#E8501A] mt-0.5 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-[#F37021] mt-0.5 shrink-0" />
                       {verifiedClaims.destinations}
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#E8501A] mt-0.5 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-[#F37021] mt-0.5 shrink-0" />
                       {verifiedClaims.universities}
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#E8501A] mt-0.5 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-[#F37021] mt-0.5 shrink-0" />
                       {verifiedClaims.courses}
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#E8501A] mt-0.5 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-[#F37021] mt-0.5 shrink-0" />
                       Free service for students
                     </li>
                   </ul>

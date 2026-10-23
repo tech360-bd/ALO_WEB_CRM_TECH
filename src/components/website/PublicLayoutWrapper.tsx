@@ -38,7 +38,7 @@ function CmsAnnouncements() {
   const top = visible[0];
   const level = top.data?.level === 'urgent' ? 'error' : top.data?.level === 'warning' ? 'warning' : 'info';
   const styles: Record<string, string> = {
-    info: 'bg-[#0057B8] text-white',
+    info: 'bg-[#0066CC] text-white',
     warning: 'bg-amber-500 text-white',
     error: 'bg-red-600 text-white',
   };
@@ -84,7 +84,7 @@ function CmsBanner() {
   if (!banner) return null;
   const message = banner.data?.message || banner.label;
   return (
-    <div className="bg-[#E8501A] text-white text-xs sm:text-sm font-semibold px-4 py-1.5 text-center">
+    <div className="bg-[#F37021] text-black text-xs sm:text-sm font-semibold px-4 py-1.5 text-center">
       {banner.data?.href ? (
         <Link href={banner.data.href} className="hover:underline">{message}</Link>
       ) : (

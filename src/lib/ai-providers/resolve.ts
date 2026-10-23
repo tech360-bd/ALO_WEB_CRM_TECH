@@ -5,9 +5,8 @@
  * This module is the enforcement point for three project rules that would
  * otherwise only exist as prose:
  *
- *   PAID_AI_API_ALLOWED=false          → only catalogued free tiers resolve
- *   OWNER_APPROVAL_REQUIRED_FOR_PAID_API → a paid slug is refused with a message
- *                                          that names the approval path
+ *   PAID_AI_API_ALLOWED must be explicitly true before any cloud inference.
+ *   Free-tier claims are unverified and cannot be assumed to prevent overage billing.
  *   never expose credentials           → keys are read here and returned only to
  *                                          the caller that makes the request;
  *                                          display goes through maskKey()
@@ -27,6 +26,20 @@ export class ProviderConfigurationError extends Error {
     super(message);
     this.name = 'ProviderConfigurationError';
   }
+}
+
+/**
+ * Cloud billing cannot be ruled out from a key or a provider's advertised free
+ * tier. Until an owner explicitly enables cloud inference, every external
+ * provider (native or catalogued) is blocked. Local inference remains available.
+ */
+export function assertCloudInferenceAllowed(slug: string): void {
+  if (process.env.PAID_AI_API_ALLOWED === 'true') return;
+  throw new ProviderConfigurationError(
+    `Cloud AI provider "${slug}" is disabled by default. Its free allowance is not verified as billing-safe. ` +
+      'An owner must explicitly set PAID_AI_API_ALLOWED=true after reviewing the provider, selected model, account billing and usage limits.',
+    slug,
+  );
 }
 
 export interface ResolvedProvider {
@@ -89,6 +102,8 @@ export function resolveFreeProvider(slug: string, modelHint?: string): ResolvedP
       slug,
     );
   }
+
+  assertCloudInferenceAllowed(slug);
 
   const baseUrl = process.env[definition.baseUrlEnv]?.trim() || definition.baseUrl;
   if (!baseUrl) {
@@ -220,11 +235,13 @@ export interface ProviderStatus {
  *     be requested by name.
  *  3. a recurring free tier ranks above a one-time credit, which will exhaust
  *  4. must have a usable endpoint and a default model, so it cannot fail at call time
+ *  5. PAID_AI_API_ALLOWED=true must be set before any cloud provider is selected
  *
  * Returns null when nothing usable is configured, which the caller turns into the
  * existing "No AI provider is configured" error.
  */
 export function firstConfiguredFreeProvider(): { slug: string; defaultModel: string } | null {
+  if (process.env.PAID_AI_API_ALLOWED !== 'true') return null;
   const rank = (tier: FreeProviderDefinition['freeTier']) => (tier === 'recurring' ? 0 : 1);
   const candidates = FREE_PROVIDERS.filter(
     (definition) =>
@@ -247,6 +264,7 @@ export function listProviderStatus(): ProviderStatus[] {
     const configured = isProviderConfigured(definition);
     let blocker: string | null = null;
     if (!configured) blocker = `Set ${definition.apiKeyEnv}`;
+    else if (process.env.PAID_AI_API_ALLOWED !== 'true') blocker = 'Cloud inference disabled by default; owner approval and PAID_AI_API_ALLOWED=true are required';
     else if (definition.provenance === 'unofficial-proxy' && !unofficialProxiesAllowed()) {
       blocker = 'Unofficial proxy — blocked until ALO_AI_ALLOW_UNOFFICIAL_PROVIDERS=true';
     } else if (!process.env[definition.baseUrlEnv]?.trim() && !definition.baseUrl) {

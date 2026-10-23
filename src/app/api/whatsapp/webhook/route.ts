@@ -5,10 +5,11 @@ import { downloadWhatsAppInboundMedia } from "@/lib/whatsapp-inbound-media";
 import { removePrivateFile, storePrivateFile } from "@/lib/storage/private-file-store";
 import crypto from "crypto";
 import { normalizeBdPhone, determineSenderNumber, MAIN_NUMBER, COO_NUMBER } from "@/lib/whatsapp-number-pool";
-import { detectLanguage, detectIntent, detectSentiment, generateAiReply, logAiOperation, calculateLeadScore } from "@/lib/ai-whatsapp-engine";
+import { detectLanguage, detectIntent, detectSentiment, logAiOperation, calculateLeadScore } from "@/lib/ai-whatsapp-engine";
 import { handleIntakeMessage as handleStudentIntake } from "@/lib/ai-agents/student-intake-agent";
 import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
-import { handleStopStartCommand, createFollowUpScheduleForStudent } from "@/lib/whatsapp-followup-engine";
+import { handleStopStartCommand } from "@/lib/whatsapp-followup-engine";
+import { handleAfterHoursMessage } from "@/lib/communication/after-hours";
 import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164, extractMessageContent as extractMessageContentHandler } from "@/lib/whatsapp-webhook-handler";
 import { deriveWebhookEventId, mapProviderStatus, shouldApplyStatus } from '@/lib/communications/webhook-idempotency';
 import { createLeadWithReference } from '@/lib/lead-reference';
@@ -726,14 +727,19 @@ export async function POST(req: NextRequest) {
     const sentiment = detectSentiment(messageBody);
 
     let aiReplyText = "";
+    let afterHoursAutoReply: string | null = null;
     let shouldHandover = false;
     let handoverReason = "";
 
-    // Unified intake agent: first asks Student ID, then informs independent application, then counseling (BN/EN, doc/voice, memory, office-hours human-like, sequential)
+    // Public intake may create a safe reply draft. It is never sent automatically;
+    // only the configured, pre-approved after-hours acknowledgement may be sent.
     // Respect STOP opt-out; still allow media (image/doc/audio) to be routed via intake
     const shouldAiHandle = !stopStart.optedOut && ((type === 'text' && messageBody.length > 0) || ['image','document','audio','video'].includes(type));
     if (mediaIngestionFailure && !stopStart.optedOut) {
       aiReplyText = 'We could not securely store your attachment. Please resend it as a PDF or clear image, or contact your ALO counsellor. The file has not been added to your student record.';
+      if (inboundMessage?.id) {
+        await db.socialInboxMessage.update({ where: { id: inboundMessage.id }, data: { aiDraftReply: aiReplyText, aiHandled: true, humanApproved: false } }).catch(() => {});
+      }
       shouldHandover = true;
       handoverReason = 'whatsapp_media_ingestion_failed';
     } else if (shouldAiHandle) {
@@ -747,6 +753,12 @@ export async function POST(req: NextRequest) {
         });
         if (intake?.reply) {
           aiReplyText = intake.reply;
+          if (inboundMessage?.id) {
+            await db.socialInboxMessage.update({
+              where: { id: inboundMessage.id },
+              data: { aiDraftReply: intake.reply.slice(0, 5000), aiHandled: true, humanApproved: false },
+            }).catch(() => {});
+          }
           // Keep intent/sentiment logging even when intake handled
           await logAiOperation({
             threadId: threadId || conversationId,
@@ -761,56 +773,46 @@ export async function POST(req: NextRequest) {
             handoverReason: `intake:${intake.context.state}`,
           }).catch(() => {});
         } else {
-          // Fallback to legacy engine if intake empty
-          const aiResult = await generateAiReply({
-            message: messageBody,
-            studentName: fromName,
-            language: lang.language,
-            intent: intent.intent,
-            sentiment: sentiment.sentiment,
-            context: `StudentId: ${studentId}, LeadId: ${leadId}`,
-          });
-          aiReplyText = aiResult.reply;
-          shouldHandover = aiResult.shouldHandover;
-          handoverReason = aiResult.handoverReason || "";
-          await logAiOperation({
-            threadId: threadId || conversationId,
-            messageId: providerMessageId,
-            studentId: studentId || "",
-            intent: intent.intent,
-            intentConfidence: intent.confidence,
-            sentiment: sentiment.sentiment,
-            sentimentConfidence: sentiment.confidence,
-            language: lang.language,
-            shouldHandover,
-            handoverReason,
-          }).catch(() => {});
+          // No legacy generated fallback: an empty intake result is a human-review case.
+          aiReplyText = lang.language === 'bangla'
+            ? 'স্বয়ংক্রিয় সহায়তা এই মুহূর্তে প্রস্তুত নয়। অনুগ্রহ করে অনুমোদিত কাউন্সেলরের মানব পর্যালোচনার জন্য অপেক্ষা করুন। এই চ্যাটে OTP, পাসওয়ার্ড, ব্যাংক/কার্ড তথ্য বা ব্যক্তিগত নথি পাঠাবেন না।'
+            : 'Automated assistance is unavailable right now. An authorized counselor should review this message. Do not share an OTP, password, bank/card details, or private documents in this chat.';
+          if (inboundMessage?.id) {
+            await db.socialInboxMessage.update({ where: { id: inboundMessage.id }, data: { aiDraftReply: aiReplyText, aiHandled: true, humanApproved: false } }).catch(() => {});
+          }
+          shouldHandover = true;
+          handoverReason = 'intake_empty_human_review';
         }
       } catch {
-        const aiResult = await generateAiReply({
-          message: messageBody,
-          studentName: fromName,
-          language: lang.language,
-          intent: intent.intent,
-          sentiment: sentiment.sentiment,
-          context: `StudentId: ${studentId}, LeadId: ${leadId}`,
-        });
-        aiReplyText = aiResult.reply;
-        shouldHandover = aiResult.shouldHandover;
-        handoverReason = aiResult.handoverReason || "";
-        await logAiOperation({
-          threadId: threadId || conversationId,
-          messageId: providerMessageId,
-          studentId: studentId || "",
-          intent: intent.intent,
-          intentConfidence: intent.confidence,
-          sentiment: sentiment.sentiment,
-          sentimentConfidence: sentiment.confidence,
-          language: lang.language,
-          shouldHandover,
-          handoverReason,
-        }).catch(() => {});
+        // Keep failures safe and visible; do not invoke a legacy reply generator or send a fallback.
+        aiReplyText = lang.language === 'bangla'
+          ? 'স্বয়ংক্রিয় সহায়তা এই মুহূর্তে প্রস্তুত নয়। অনুমোদিত কাউন্সেলরের মানব পর্যালোচনা প্রয়োজন। এই চ্যাটে OTP, পাসওয়ার্ড, ব্যাংক/কার্ড তথ্য বা ব্যক্তিগত নথি পাঠাবেন না।'
+          : 'Automated assistance is unavailable right now and needs authorized human review. Do not share an OTP, password, bank/card details, or private documents in this chat.';
+        if (inboundMessage?.id) {
+          await db.socialInboxMessage.update({ where: { id: inboundMessage.id }, data: { aiDraftReply: aiReplyText, aiHandled: true, humanApproved: false } }).catch(() => {});
+        }
+        shouldHandover = true;
+        handoverReason = 'intake_failed_human_review';
       }
+      // Optional approved after-hours acknowledgement: no generated draft is sent.
+      // This helper checks the persisted Dhaka schedule and creates an idempotent
+      // next-opening follow-up task when a lead/student is already linked.
+      if (!stopStart.optedOut && !sentiment.isUrgent && intent.intent !== 'urgent_support' && intent.intent !== 'complaint') {
+        try {
+          const afterHours = await handleAfterHoursMessage({
+            channel: 'whatsapp',
+            senderPhone: from,
+            message: messageBody,
+            leadId: leadId || undefined,
+            studentId: studentId || undefined,
+            assignedTo: assignedUserId || undefined,
+          });
+          if (afterHours.isAfterHours) afterHoursAutoReply = afterHours.autoReply;
+        } catch (error) {
+          console.error('[whatsapp.webhook] after-hours automation failed closed', { error: error instanceof Error ? error.name : 'UnknownError' });
+        }
+      }
+
       // Lead scoring (always)
       const leadScore = calculateLeadScore({
         engagement: 5,
@@ -865,6 +867,8 @@ export async function POST(req: NextRequest) {
 
     // 14. Urgent escalation
     if (sentiment.isUrgent || intent.intent === 'urgent_support' || intent.intent === 'complaint') {
+      shouldHandover = true;
+      handoverReason = intent.intent === 'complaint' ? 'complaint_human_review' : 'urgent_support_human_review';
       await db.dashboardAlarm.create({
         data: {
           alarmType: intent.intent === 'complaint' ? 'COMPLAINT' : 'URGENT_SUPPORT',
@@ -906,11 +910,18 @@ export async function POST(req: NextRequest) {
         },
       }).catch(() => {});
 
-      // If urgent, AI reply should share COO number
+      // Urgent/complaint responses stay as human-review drafts. Never repeat a
+      // Student ID or ask for credentials/private records in a public reply.
       if (sentiment.isUrgent) {
         aiReplyText = lang.language === 'bangla'
-          ? `জরুরি সহায়তার জন্য ধন্যবাদ। আমাদের 24/7 সাপোর্ট নম্বর: ${COO_NUMBER}। আমাদের COO টিম আপনাকে সহায়তা করবে। আপনার Student ID: ${studentId || 'N/A'}`
-          : `Thank you for urgent request. Our 24/7 support number: ${COO_NUMBER}. Our COO team will assist you. Your Student ID: ${studentId || 'N/A'}`;
+          ? `জরুরি সহায়তার জন্য ${COO_NUMBER} নম্বরে কল করুন। এই খসড়াটি অনুমোদিত মানব পর্যালোচনার জন্য; এই চ্যাটে Student ID, OTP, পাসওয়ার্ড বা ব্যক্তিগত নথি দেবেন না।`
+          : `For immediate urgent support, call ${COO_NUMBER}. This draft requires authorized human review. Do not share a Student ID, OTP, password, or private document in this chat.`;
+        if (inboundMessage?.id) {
+          await db.socialInboxMessage.update({
+            where: { id: inboundMessage.id },
+            data: { aiDraftReply: aiReplyText, aiHandled: true, humanApproved: false },
+          }).catch(() => {});
+        }
       }
     }
 
@@ -918,67 +929,83 @@ export async function POST(req: NextRequest) {
     let outboundApiResult: any = null;
     let outboundMessage: any = null;
 
-    if (aiReplyText && !shouldHandover && !stopStart.optedOut) {
+    if (afterHoursAutoReply && !shouldHandover && !stopStart.optedOut) {
+      const approvedTemplateText = afterHoursAutoReply;
       try {
         outboundMessage = await db.socialInboxMessage.create({
           data: {
             platform: "WHATSAPP",
             direction: "OUTBOUND",
-            senderName: "ALO AI",
+            senderName: "ALO Education",
             recipientId: from,
-            messageText: aiReplyText,
+            messageText: approvedTemplateText,
             conversationId: `wa-${from}`,
             leadId: leadId || "",
             studentId: studentId || "",
-            aiHandled: true,
+            aiHandled: false,
             humanApproved: false,
             isRead: true,
-            sentAt: new Date(),
+            messageMediaMetadata: JSON.stringify({ deliveryStatus: 'PENDING', source: 'approved_after_hours_template', automationApproved: true }),
           },
         }).catch(() => null);
 
-        const sendResult = await sendOutboundViaApi(normalizedFrom || from, aiReplyText);
-        outboundApiResult = sendResult;
+        // Do not send externally unless the durable CRM record exists.
+        if (!outboundMessage?.id) {
+          outboundApiResult = { sent: false, status: 'record_failed' };
+        } else {
+          const sendResult = await sendOutboundViaApi(normalizedFrom || from, approvedTemplateText);
+          if (sendResult.messageId) {
+            outboundApiResult = { sent: true, status: 'sent' };
+            await db.socialInboxMessage.update({
+              where: { id: outboundMessage.id },
+              data: {
+                externalId: sendResult.messageId,
+                sentAt: new Date(),
+                messageMediaMetadata: JSON.stringify({ deliveryStatus: 'SENT', source: 'approved_after_hours_template', automationApproved: true }),
+              },
+            }).catch(() => {});
 
-        if (sendResult.messageId && outboundMessage) {
-          await db.socialInboxMessage.update({
-            where: { id: outboundMessage.id },
-            data: { externalId: sendResult.messageId },
-          }).catch(() => {});
+            await db.whatsAppMessageStatus.create({
+              data: {
+                messageId: sendResult.messageId,
+                socialMessageId: outboundMessage.id,
+                recipientPhone: normalizedFrom || from,
+                status: "SENT",
+                providerPayload: JSON.stringify({ status: 'sent' }),
+              },
+            }).catch(() => {});
 
-          await db.whatsAppMessageStatus.create({
-            data: {
-              messageId: sendResult.messageId,
-              socialMessageId: outboundMessage.id,
-              recipientPhone: normalizedFrom || from,
-              status: "SENT",
-              providerPayload: JSON.stringify(sendResult.apiResponse),
-            },
-          }).catch(() => {});
-
-          await db.whatsAppMessageArchive.create({
-            data: {
-              whatsappMessageId: sendResult.messageId,
-              conversationId,
-              threadId,
-              studentId: studentId || "",
-              leadId: leadId || "",
-              senderPhone: receivingPhone || MAIN_NUMBER,
-              receiverPhone: from,
-              senderNumber: receivingPhone || MAIN_NUMBER,
-              messageType: 'text',
-              messageBody: aiReplyText,
-              timestamp: new Date(),
-              direction: 'outbound',
-              deliveryStatus: 'sent',
-              aiGenerated: true,
-              rawEventId: webhookEvent?.id || "",
-            },
-          }).catch(() => {});
+            await db.whatsAppMessageArchive.create({
+              data: {
+                whatsappMessageId: sendResult.messageId,
+                conversationId,
+                threadId,
+                studentId: studentId || "",
+                leadId: leadId || "",
+                senderPhone: receivingPhone || MAIN_NUMBER,
+                receiverPhone: from,
+                senderNumber: receivingPhone || MAIN_NUMBER,
+                messageType: 'text',
+                messageBody: approvedTemplateText,
+                timestamp: new Date(),
+                direction: 'outbound',
+                deliveryStatus: 'sent',
+                aiGenerated: false,
+                rawEventId: webhookEvent?.id || "",
+              },
+            }).catch(() => {});
+          } else {
+            outboundApiResult = { sent: false, status: 'failed_or_unconfigured' };
+            await db.socialInboxMessage.update({
+              where: { id: outboundMessage.id },
+              data: { messageMediaMetadata: JSON.stringify({ deliveryStatus: 'FAILED', source: 'approved_after_hours_template', automationApproved: true }) },
+            }).catch(() => {});
+          }
         }
-      } catch (err: any) {
-        outboundApiResult = { error: err.message };
+      } catch {
+        outboundApiResult = { sent: false, status: 'failed' };
       }
+
     } else if (shouldHandover) {
       // Handover: assign conversation, notify employee, preserve transcript
       try {
@@ -1063,7 +1090,8 @@ export async function POST(req: NextRequest) {
       language: lang.language,
       routing: routing.reason,
       shouldHandover,
-      aiReplySent: !!outboundApiResult?.messageId,
+      aiReplySent: outboundApiResult?.sent === true,
+      outboundStatus: outboundApiResult?.status || null,
       webhookEventId: webhookEvent?.id,
     });
   }

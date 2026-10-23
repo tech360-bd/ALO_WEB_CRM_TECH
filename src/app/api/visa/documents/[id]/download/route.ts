@@ -1,86 +1,60 @@
+import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission, canViewVisaSensitive, isVisaPartner, isVisaStudent, isVisaSuperAdmin } from '@/lib/visa/access';
+import { readPrivateFile } from '@/lib/storage/private-file-store';
 
-export const GET = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+function isSensitiveCategory(category: string) {
+  return ['medical', 'criminal', 'sensitive'].some((part) => category.toLowerCase().includes(part));
+}
+
+export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('counselor') || auth.roles.includes('application_team') || auth.roles.includes('student') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER') || auth.roles.includes('COUNSELOR') || auth.roles.includes('APPLICATION_TEAM') || auth.roles.includes('STUDENT');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Document download requires permission — documents.download — every download/readiness/sensitive audited — signed URLs/protected storage/encryption/audit/session/secure cookies no client trust no predictable public URLs' }, { status: 403 });
-
+    if (isVisaPartner(auth) || isVisaStudent(auth)) return NextResponse.json({ success: false, error: 'This private visa document is not available to this account.' }, { status: 403 });
     const id = context?.params?.id;
-    const doc = await db.studentDocument.findUnique({ where: { id } });
-    if (!doc) return NextResponse.json({ success: false, error: 'Document not found' }, { status: 404 });
+    if (typeof id !== 'string' || !id) return NextResponse.json({ success: false, error: 'Document ID required.' }, { status: 400 });
+    const document = await db.studentDocument.findUnique({ where: { id } });
+    if (!document || document.isArchived || !document.storagePath || !document.mimeType || !document.fileHash) return NextResponse.json({ success: false, error: 'Private document is not available.' }, { status: 404 });
 
-    // SECURITY FIX (identity domain): the student branch compared a document's
-    // `studentId` (a Student row id) against `auth.userId` (a user/portal account
-    // id). Those are different identifiers, so the comparison was meaningless —
-    // it denied the legitimate owner and would have permitted anyone whose user id
-    // happened to collide. The student's identity is now resolved properly, and an
-    // unresolvable student identity is refused rather than allowed.
-    const isStudent = auth.roles.includes('student') || auth.roles.includes('STUDENT');
-    if (isStudent) {
-      const ownStudent = await db.student
-        .findFirst({ where: { userId: auth.userId }, select: { id: true } })
-        .catch(() => null);
-      const ownProfile = ownStudent
-        ? null
-        : await db.portalStudentProfile.findFirst({ where: { userId: auth.userId }, select: { studentId: true } }).catch(() => null);
-      const ownStudentIds = [ownStudent?.id, ownProfile?.studentId].filter(Boolean) as string[];
-      if (ownStudentIds.length === 0 || !ownStudentIds.includes(doc.studentId)) {
-        return NextResponse.json({ success: false, error: 'Cross-student access blocked.' }, { status: 403 });
-      }
+    let candidates;
+    if (document.caseId) {
+      const assignedCase = await db.visaCase.findUnique({ where: { id: document.caseId } });
+      candidates = assignedCase && assignedCase.studentId === document.studentId ? [assignedCase] : [];
+    } else {
+      candidates = await db.visaCase.findMany({ where: { studentId: document.studentId }, orderBy: { updatedAt: 'desc' } });
+    }
+    const visaCase = candidates.find((candidate) => canManageVisaPermission(auth, 'visa.documents.download', candidate));
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Assigned visa case and visa.documents.download permission required.' }, { status: 403 });
+    if (isSensitiveCategory(document.category) && !canViewVisaSensitive(auth, visaCase)) return NextResponse.json({ success: false, error: 'Explicit sensitive-data permission is required for this document.' }, { status: 403 });
+
+    try {
+      await db.portalAuditLog.create({
+        data: { actorUserId: auth.actorUserId, action: 'VISA_DOCUMENT_DOWNLOAD', entityType: 'StudentDocument', entityId: id, metadata: JSON.stringify({ caseId: visaCase.id, studentId: document.studentId, category: document.category, fileHash: document.fileHash }), ipAddress: '', userAgent: '' },
+      });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Download could not be audited; the document was not served.' }, { status: 503 });
     }
 
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    // SECURITY FIX: same missing-assignment gap as the review routes — an absent
-    // case or an unassigned officer skipped the check entirely.
-    if (!isSuper && !isStudent && isVisa) {
-      const visaCase = await db.visaCase.findFirst({ where: { studentId: doc.studentId } });
-      const assignedOfficer = visaCase?.visaOfficerId || '';
-      if (!assignedOfficer || assignedOfficer !== auth.userId) {
-        return NextResponse.json({
-          success: false,
-          error: visaCase
-            ? 'Cannot download a document for a visa case assigned to another officer.'
-            : 'Cannot download a document for a student with no visa case assigned to you.',
-        }, { status: 403 });
-      }
-    }
+    const bytes = await readPrivateFile(document.storagePath);
+    if (createHash('sha256').update(bytes).digest('hex') !== document.fileHash) return NextResponse.json({ success: false, error: 'Stored document integrity check failed.' }, { status: 500 });
 
-    // Check marketing/partner — marketing no sensitive, partner no visa cases
-    const isMarketing = auth.roles.includes('marketing') || auth.roles.includes('MARKETING');
-    const isPartner = auth.roles.includes('partner') || auth.roles.includes('PARTNER');
-    if (isMarketing) return NextResponse.json({ success: false, error: 'Marketing cannot access visa documents — marketing no sensitive — every download audited' }, { status: 403 });
-    if (isPartner) return NextResponse.json({ success: false, error: 'Partner cannot access visa cases — partner no visa cases — every download audited' }, { status: 403 });
-
-    // Sensitive medical/criminal restricted
-    const isSensitiveCategory = ['medical','criminal','sensitive'].some(k => (doc.category||'').toLowerCase().includes(k));
-    if (isSensitiveCategory) {
-      const canViewSensitive = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-      if (!canViewSensitive) return NextResponse.json({ success: false, error: 'Sensitive medical/criminal restricted VISA_OFFICER/VISA_INTERVIEW_OFFICER/SUPER_ADMIN/explicitly authorized only — Never expose to Marketing/Partner/General Employee/Sales/Public/Student normal dashboard — Every view/edit/download must create audit log' }, { status: 403 });
-    }
-
-    await logAuditAction(auth, 'VISA_DOCUMENT_DOWNLOAD', 'StudentDocument', id, { studentId: doc.studentId, fileName: doc.fileName, category: doc.category, actorRole: auth.roles[0] });
-    await db.timelineEvent.create({
-      data: {
-        studentId: doc.studentId,
-        stage: 'VISA_DOCUMENT_DOWNLOADED',
-        title: `Document downloaded: ${doc.fileName || doc.category} by ${auth.name} (${auth.roles[0]}) — audit logged — signed URL protected storage`,
-        description: `Download — every download/readiness/sensitive audited — signed URLs/protected storage/encryption/audit/session/secure cookies no client trust no predictable public URLs — direct private URL fails — RBAC/ABAC/ownership/CSRF/ORM/validation/encoding/rate limiting`,
-      },
-    }).catch(() => {});
-
-    // Return fileUrl with signed URL logic — for now return real fileUrl, but in production would be signed
-    return NextResponse.json({
-      success: true,
-      data: doc,
-      fileUrl: doc.fileUrl,
-      signedUrl: doc.fileUrl, // In production: generate signed URL with expiry — protected storage — no predictable public URLs
-      note: 'Every download/readiness/sensitive audited — signed URLs/protected storage/encryption/audit/session/secure cookies no client trust no predictable public URLs — direct private URL fails — RBAC/ABAC/ownership/CSRF/ORM/validation/encoding/rate limiting — marketing no sensitive — partner no visa cases — application team no medical/criminal without perm — finance cannot modify interview — visa officer cannot modify commission/salary — suspended cannot access — public cannot download — cross-student blocked — IDOR blocked — unauthorized export/bulk blocked',
+    const fileName = (document.fileName || 'document').replace(/[\r\n\u0000-\u001f]/g, '_').slice(0, 191);
+    const headers = new Headers({
+      'Content-Type': document.mimeType,
+      'Content-Length': String(bytes.length),
+      'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+      'Cache-Control': 'private, no-store',
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'none'; sandbox",
+      'Vary': 'Cookie, Authorization',
     });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return new NextResponse(new Uint8Array(bytes), { status: 200, headers });
+  } catch (error) {
+    if (isVisaSuperAdmin(auth)) console.error('[visa-document-download] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Private document download failed.' }, { status: 503 });
   }
 });

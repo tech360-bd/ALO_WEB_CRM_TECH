@@ -24,8 +24,8 @@ export default function TestPrepDirectoryPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           {/* HERO BANNER */}
-          <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl p-8 md:p-12 text-white mb-12 shadow-xl">
-            <Badge className="bg-[#E8501A] text-white font-bold text-xs px-3 py-1 mb-4 uppercase">
+          <div className="bg-gradient-to-r from-[#0066CC] to-[#003D7A] rounded-3xl p-8 md:p-12 text-white mb-12 shadow-xl">
+            <Badge className="bg-[#F37021] text-black font-bold text-xs px-3 py-1 mb-4 uppercase">
               ALO LANGUAGE PREPARATION CENTRE
             </Badge>
             <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">
@@ -54,17 +54,17 @@ export default function TestPrepDirectoryPage() {
           {/* GRID OF TEST PREP CARDS */}
           <div id="prep-cards" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {tests.map((t) => (
-              <Card key={t.id} className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between">
+              <Card key={t.id} className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0066CC] flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <Badge className="bg-blue-50 text-[#0057B8] font-bold text-[11px]">
+                    <Badge className="bg-blue-50 text-[#0066CC] font-bold text-[11px]">
                       {t.logoBadge}
                     </Badge>
                     <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
                   </div>
 
                   <h3 className="text-xl font-bold text-[#0F172A] mb-1">{t.name}</h3>
-                  <p className="text-xs text-[#E8501A] font-semibold mb-3">{t.officialOwner}</p>
+                  <p className="text-xs text-[#F37021] font-semibold mb-3">{t.officialOwner}</p>
                   <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
                 </div>
 
@@ -75,9 +75,9 @@ export default function TestPrepDirectoryPage() {
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Target Score:</span>
-                    <span className="font-bold text-[#0057B8]">{t.expectedScore}</span>
+                    <span className="font-bold text-[#0066CC]">{t.expectedScore}</span>
                   </div>
-                  <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold py-2.5 rounded-xl">
+                  <Button asChild className="w-full bg-[#0066CC] text-white hover:bg-[#003D7A] text-xs font-bold py-2.5 rounded-xl">
                     <Link href={`/english-test-prep/${t.slug}`}>Explore Full Test Prep & Modules →</Link>
                   </Button>
                 </div>
@@ -103,7 +103,7 @@ export default function TestPrepDirectoryPage() {
                 <tbody className="divide-y divide-slate-100">
                   {tests.map((t) => (
                     <tr key={t.id} className="hover:bg-slate-50">
-                      <td className="p-3 font-bold text-[#0057B8]">{t.name}</td>
+                      <td className="p-3 font-bold text-[#0066CC]">{t.name}</td>
                       <td className="p-3 text-slate-700">{t.quickInfo.duration}</td>
                       <td className="p-3 font-semibold text-emerald-600">{t.quickInfo.resultTime}</td>
                       <td className="p-3 text-slate-700">{t.quickInfo.scoreScale}</td>

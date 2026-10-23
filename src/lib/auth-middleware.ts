@@ -32,6 +32,10 @@ export interface AuthContext {
   actorUserId: string;
   actorEmail: string;
   actorName: string;
+  /** Bound, revocable Acting-As session. Present only for a server-validated employee impersonation. */
+  actingAsSessionId?: string;
+  actingAsExpiresAt?: Date;
+  actingAsRole?: string;
 }
 
 // ============================================================
@@ -175,104 +179,107 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
     return NextResponse.json({ success: false, error: 'Partner account approval is required.' }, { status: 403 });
   }
 
-  // Base user (Actor) info
-  let actingUserId = session.user.id;
-  let actingPartnerId = session.user.partnerProfile?.partnerId;
-  let actingPartnerRole = session.user.partnerProfile?.partnerRole;
-  let actingEmail = session.user.email;
-  let actingName = session.user.name;
-  let actingUserType = session.user.userType;
-  let roles = session.user.roles.map(ur => ur.role.name);
-  let permissions = session.user.roles.flatMap(ur =>
-    ur.role.permissions
-      .filter(rp => rp.granted)
-      .map(rp => rp.permission.id)
-  );
+  // The effective identity can only come from a short-lived database session
+  // bound to the authenticated Super Admin's base session. Client-supplied role
+  // and target headers are deliberately not an identity source.
+  if (request.headers.has('x-acting-as-user')) {
+    return NextResponse.json(
+      { success: false, error: 'Client-supplied Acting-As identity headers are not supported.' },
+      { status: 403 },
+    );
+  }
 
-  // Handle "actingAs" — only super_admin, strict equality, audited, no escalation beyond original actor (SEC-03)
-  const actingAsUserId = request.headers.get('x-acting-as-user');
-  if (actingAsUserId) {
-    // Must be exact super_admin (not admin) — fail closed if not
-    if (!roles.includes('super_admin')) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden: only super_admin may act as another user' },
-        { status: 403 }
-      ) as any;
-    }
-    // Prevent acting-as loop: cannot act as self (no-op, but audit)
-    if (actingAsUserId === session.user.id) {
-      // no impersonation needed — continue as self but audit
-    } else {
-      const actingAsUser = await db.portalUser.findUnique({
-        where: { id: actingAsUserId },
-        include: {
-          partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
-          roles: {
-            include: {
-              role: {
-                include: {
-                  permissions: {
-                    include: {
-                      permission: true,
-                    },
-                  },
+  let effectiveUserId = session.user.id;
+  let effectiveEmail = session.user.email;
+  let effectiveName = session.user.name;
+  let effectiveUserType = session.user.userType;
+  let roles = session.user.roles.map((ur) => ur.role.name);
+  let permissions = session.user.roles.flatMap((ur) =>
+    ur.role.permissions
+      .filter((rp) => rp.granted)
+      .map((rp) => rp.permission.id)
+  );
+  let actingAsSessionId: string | undefined;
+  let actingAsExpiresAt: Date | undefined;
+  let actingAsRole: string | undefined;
+
+  const actingCookieId = cookieValue(request, 'alo_acting_as_session');
+  const realActorIsSuperAdmin = roles.some((role) => role.toLowerCase() === 'super_admin');
+  if (actingCookieId && realActorIsSuperAdmin) {
+    const actingSession = await db.portalSession.findUnique({ where: { id: actingCookieId } });
+    const now = new Date();
+    const marker = 'ALO_ACTING_AS:';
+    const isBoundActiveSession = actingSession
+      && actingSession.userId === session.user.id
+      && !actingSession.revokedAt
+      && actingSession.expiresAt > now
+      && actingSession.deviceName.startsWith(marker);
+
+    if (isBoundActiveSession) {
+      const targetUserId = actingSession.deviceName.slice(marker.length);
+      const [targetUser, targetEmployee] = await Promise.all([
+        db.portalUser.findUnique({
+          where: { id: targetUserId },
+          include: {
+            partnerProfile: { select: { id: true, partnerId: true, partnerRole: true, approvalStatus: true } },
+            roles: {
+              include: {
+                role: {
+                  include: { permissions: { include: { permission: true } } },
                 },
               },
             },
           },
-        },
-      });
+        }),
+        db.employee.findUnique({
+          where: { userId: targetUserId },
+          select: { id: true, role: true, status: true },
+        }),
+      ]);
 
-      if (!actingAsUser || actingAsUser.status.toLowerCase() !== 'active' || !actingAsUser.emailVerified ||
-        (actingAsUser.userType === 'PARTNER' && !['approved', 'active'].includes((actingAsUser.partnerProfile?.approvalStatus || '').toLowerCase()))) {
+      const targetRoles = targetUser?.roles.map((ur) => ur.role.name) || [];
+      const targetHasAdminRole = targetRoles.some((role) => ['admin', 'super_admin'].includes(role.toLowerCase()));
+      if (
+        !targetUser
+        || targetUser.userType !== 'EMPLOYEE'
+        || targetUser.status.toLowerCase() !== 'active'
+        || !targetUser.emailVerified
+        || !targetEmployee
+        || targetEmployee.status.toLowerCase() !== 'active'
+        || targetHasAdminRole
+      ) {
         return NextResponse.json(
-          { success: false, error: 'Acting-as target not found, inactive, or not approved' },
-          { status: 404 }
-        ) as any;
+          { success: false, error: 'Acting-As employee is unavailable or no longer active.' },
+          { status: 403 },
+        );
       }
 
-      // Audit every impersonation — never silent
-      try {
-        await db.portalAuditLog.create({
-          data: {
-            actorUserId: session.user.id,
-            action: 'IMPERSONATION_START',
-            entityType: 'PortalUser',
-            entityId: actingAsUser.id,
-            metadata: JSON.stringify({ actor: session.user.email, target: actingAsUser.email, sessionId: session.id }),
-            ipAddress: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || '',
-            userAgent: request.headers.get('user-agent') || '',
-          },
-        }).catch(() => {});
-      } catch {}
-
-      actingUserId = actingAsUser.id;
-      actingEmail = actingAsUser.email;
-      actingName = actingAsUser.name;
-      actingUserType = actingAsUser.userType;
-      actingPartnerId = actingAsUser.partnerProfile?.partnerId;
-      actingPartnerRole = actingAsUser.partnerProfile?.partnerRole;
-      roles = actingAsUser.roles.map(ur => ur.role.name);
-      permissions = actingAsUser.roles.flatMap(ur =>
-        ur.role.permissions
-          .filter(rp => rp.granted)
-          .map(rp => rp.permission.id)
+      effectiveUserId = targetUser.id;
+      effectiveEmail = targetUser.email;
+      effectiveName = targetUser.name;
+      effectiveUserType = targetUser.userType;
+      roles = targetRoles;
+      permissions = targetUser.roles.flatMap((ur) =>
+        ur.role.permissions.filter((rp) => rp.granted).map((rp) => rp.permission.id)
       );
+      actingAsSessionId = actingSession.id;
+      actingAsExpiresAt = actingSession.expiresAt;
+      actingAsRole = targetEmployee.role;
     }
   }
 
   // Tenant scope follows the EFFECTIVE user (so Super-Admin "acting as" a
   // partner is correctly confined to that partner's tenant), while the audit
   // fields below still record the real actor.
-  const partnerScope = await resolvePartnerScopeByUserId(actingUserId);
+  const partnerScope = await resolvePartnerScopeByUserId(effectiveUserId);
 
   return {
     identityDomain: 'portal',
     authenticationMethod: bearerToken && bearerToken !== 'null' && bearerToken !== 'undefined' ? 'bearer' : 'cookie',
-    userId: actingUserId,
-    email: actingEmail,
-    name: actingName,
-    userType: actingUserType,
+    userId: effectiveUserId,
+    email: effectiveEmail,
+    name: effectiveName,
+    userType: effectiveUserType,
     roles,
     permissions,
     sessionId: session.id,
@@ -281,6 +288,9 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
     actorUserId: session.user.id,
     actorEmail: session.user.email,
     actorName: session.user.name,
+    actingAsSessionId,
+    actingAsExpiresAt,
+    actingAsRole,
   };
 }
 
@@ -456,9 +466,17 @@ export async function logAuditAction(
   metadata: Record<string, unknown> = {}
 ) {
   try {
-    // If acting on behalf of someone, log both acting user and actual actor
-    const finalMetadata = auth.actorUserId !== auth.userId
-      ? { ...metadata, actingAsUser: auth.userId }
+    // Preserve the real actor, effective employee, short-lived session and
+    // effective role in every action event written through this helper.
+    const finalMetadata = auth.actingAsSessionId
+      ? {
+        ...metadata,
+        realActorUserId: auth.actorUserId,
+        actingAsUser: auth.userId,
+        actingAsRole: auth.actingAsRole || auth.roles[0] || auth.userType,
+        actingAsSessionId: auth.actingAsSessionId,
+        actingAsExpiresAt: auth.actingAsExpiresAt?.toISOString(),
+      }
       : metadata;
 
     await db.portalAuditLog.create({

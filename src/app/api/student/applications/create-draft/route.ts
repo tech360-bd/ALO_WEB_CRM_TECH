@@ -2,8 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
 import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
+import { DEFAULT_APPLICATION_DOCUMENT_REQUIREMENTS, refreshApplicationDocumentStatus } from '@/lib/application-manager/document-readiness';
+import { createCanonicalStudent } from '@/lib/student/canonical-student';
+import { randomUUID } from 'node:crypto';
 
 const INTAKE_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+function studentSafeApplication(application: any) {
+  return {
+    id: application.id,
+    applicationId: application.applicationId || application.applicationCode || application.id,
+    applicationCode: application.applicationCode || '',
+    universityId: application.universityId || '',
+    universityName: application.universityName || '',
+    courseId: application.courseId || '',
+    courseName: application.courseName || '',
+    country: application.country || '',
+    intake: application.intake || '',
+    level: application.level || '',
+    safeStatus: application.safeStatus || 'DRAFT',
+    documentStatus: application.documentStatus || 'PENDING',
+    createdAt: application.createdAt || null,
+    updatedAt: application.updatedAt || null,
+  };
+}
 
 function intakeMonthNumber(value: unknown): number | null {
   if (typeof value !== 'string' && typeof value !== 'number') return null;
@@ -83,89 +105,109 @@ export async function POST(request: NextRequest) {
       }
       const targetIntake = selectedIntake ? `${selectedIntake.intakeMonth} ${selectedIntake.intakeYear}` : '';
 
-      // Find or create the student's CRM record only after course/intake checks pass.
-      let student = await db.student.findFirst({
-        where: {
-          OR: [
-            { id: auth.userId },
-            { studentId: auth.userId },
-            { email: auth.email },
-          ],
-        },
-      });
-
-      if (!student) {
-        student = await db.student.create({
-          data: {
-            id: auth.userId || `STU-${Date.now()}`,
-            studentId: `STU-${Date.now().toString(36).toUpperCase()}`,
-            name: auth.name || 'Student Applicant',
-            email: auth.email || 'student@aloeducation.com',
-            phone: '',
-            journeyStage: 'application_drafted',
-          },
-        });
+      // Link the authenticated account to a canonical CRM Student record. Never
+      // invent a placeholder name, email, phone, or non-canonical Student ID.
+      if (!auth.name?.trim() || !auth.email?.trim()) {
+        return NextResponse.json({ success: false, code: 'STUDENT_PROFILE_INCOMPLETE', error: 'Your verified account profile needs a real name and email before an application can be created.' }, { status: 422 });
       }
-
-      // Prevent duplicate draft for same student + course
-      const existingApp = await db.application.findFirst({
-        where: {
-          studentId: student.id,
-          courseName: course.courseTitle,
-          status: 'draft',
-        },
-      });
-
-      if (existingApp) {
-        return NextResponse.json({
-          success: true,
-          message: 'Existing application draft loaded.',
-          applicationId: existingApp.id,
-          data: existingApp,
-        });
+      const canonicalStudent = await createCanonicalStudent({ name: auth.name, email: auth.email, userId: auth.userId });
+      if (!canonicalStudent.success) {
+        return NextResponse.json({ success: false, code: canonicalStudent.errorCode, error: canonicalStudent.error }, { status: canonicalStudent.errorCode === 'STUDENT_EXISTS_DIFFERENT_OWNER' ? 409 : 503 });
       }
+      const student = await db.student.findUnique({ where: { id: canonicalStudent.studentDbId } });
+      if (!student) return NextResponse.json({ success: false, error: 'Student profile could not be resolved.' }, { status: 503 });
 
-      const appCode = `APP-${Date.now().toString(36).toUpperCase()}`;
+      // Reuse a draft for the same student, source-verified course, and intake.
+      // The lookup is repeated inside the write transaction to reduce duplicate
+      // drafts when the client retries the same request.
 
-      // Create Application Draft
-      const application = await db.application.create({
-        data: {
-          applicationId: appCode,
-          studentId: student.id,
-          universityName: course.university?.name || '',
-          courseName: course.courseTitle,
-          intake: targetIntake,
-          country: course.country || course.university?.country || '',
-          level: course.studyLevel || course.programLevel || '',
-          stage: 'counseling',
-          status: 'draft',
-        },
-      });
+      const appCode = `APP-${randomUUID().toUpperCase()}`;
 
-      // Create Document Checklist items for Student
-      const requiredDocs = [
-        { category: 'Passport', fileName: 'Valid Passport (Information Pages)' },
-        { category: 'Academic', fileName: 'Academic Certificate & Transcript' },
-        { category: 'English', fileName: 'English Proficiency Certificate (IELTS/PTE/MOI)' },
-        { category: 'SOP', fileName: 'Statement of Purpose (SOP)' },
-        { category: 'CV', fileName: 'Curriculum Vitae (CV) / Resume' },
-        { category: 'References', fileName: 'Academic or Professional Recommendation Letters' },
-      ];
-
-      for (const doc of requiredDocs) {
-        await db.studentDocument.create({
-          data: {
+      // Create the application and its required-document checklist atomically.
+      // Each placeholder is application-scoped; the submission gate can only
+      // open after the latest version of every listed requirement is verified.
+      const result = await db.$transaction(async (tx) => {
+        const existingApp = await tx.application.findFirst({
+          where: {
             studentId: student.id,
-            category: doc.category,
-            fileName: doc.fileName,
-            status: 'not_uploaded',
+            courseId: course.courseId,
+            universityId: course.universityId,
+            intake: targetIntake,
+            stage: { notIn: ['CLOSED', 'WITHDRAWN', 'REJECTED'] },
           },
-        }).catch(() => null);
-      }
+          orderBy: { createdAt: 'desc' },
+        });
+        if (existingApp) return { application: existingApp, created: false };
 
-      // Create Timeline Entry without implying an intake when none was confirmed.
+        const created = await tx.application.create({
+          data: {
+            applicationCode: appCode,
+            applicationId: appCode,
+            studentId: student.id,
+            universityId: course.universityId || '',
+            universityName: course.university?.name || '',
+            courseId: course.courseId,
+            courseName: course.courseTitle,
+            intake: targetIntake,
+            country: course.country || course.university?.country || '',
+            level: course.studyLevel || course.programLevel || '',
+            applicationSource: 'STUDENT_SELF_APPLICATION',
+            stage: 'APPLICATION_DRAFT',
+            safeStatus: 'DRAFT',
+            status: 'draft',
+            reviewStatus: 'PENDING',
+            documentStatus: 'PENDING',
+            createdBy: auth.userId,
+          },
+        });
+
+        for (const requirement of DEFAULT_APPLICATION_DOCUMENT_REQUIREMENTS) {
+          const studentDocument = await tx.studentDocument.findFirst({
+            where: { studentId: student.id, category: requirement.type, isArchived: false },
+            orderBy: { version: 'desc' },
+            select: { id: true, fileName: true, storagePath: true, fileHash: true, status: true, reviewedBy: true, reviewerNote: true, version: true },
+          });
+          const hasStoredFile = Boolean(studentDocument?.storagePath && studentDocument.fileHash);
+          const studentDocumentStatus = studentDocument?.status.toLowerCase() || '';
+          const linkedStatus = !hasStoredFile
+            ? 'REQUIRED'
+            : ['approved', 'verified'].includes(studentDocumentStatus)
+              ? 'VERIFIED'
+              : ['needs_update'].includes(studentDocumentStatus)
+                ? 'REQUEST_AGAIN'
+                : ['rejected'].includes(studentDocumentStatus)
+                  ? 'REJECTED'
+                  : 'UPLOADED';
+          await tx.applicationDocument.create({
+            data: {
+              applicationId: created.id,
+              studentId: student.id,
+              documentId: hasStoredFile ? studentDocument!.id : '',
+              documentType: requirement.type,
+              fileName: hasStoredFile ? studentDocument!.fileName || requirement.label : requirement.label,
+              fileUrl: '',
+              status: linkedStatus,
+              reviewerId: hasStoredFile ? studentDocument!.reviewedBy || '' : '',
+              reviewerNote: hasStoredFile ? studentDocument!.reviewerNote || '' : '',
+              visibility: 'student_visible',
+              version: hasStoredFile ? studentDocument!.version || 1 : 1,
+            },
+          });
+        }
+        await refreshApplicationDocumentStatus(tx, created.id);
+        await tx.applicationStageHistory.create({
+          data: { applicationId: created.id, stage: 'APPLICATION_DRAFT', status: 'completed', note: 'Student application draft created.', actor: auth.userId },
+        });
+        await tx.applicationStatusLog.create({
+          data: { applicationId: created.id, oldStatus: '', newStatus: 'APPLICATION_DRAFT', safeStatus: 'DRAFT', changedBy: auth.userId, visibility: 'public_safe', note: 'Student application draft created with a required-document checklist.' },
+        });
+        return { application: created, created: true };
+      });
+      const application = result.application;
+
+      // Create a timeline entry only for a newly created draft.
       const intakeContext = targetIntake ? ` (${targetIntake})` : ' (intake not yet confirmed)';
-      await db.timelineEvent.create({
+      if (result.created) await db.timelineEvent.create({
         data: {
           studentId: student.id,
           stage: 'counseling',
@@ -175,12 +217,14 @@ export async function POST(request: NextRequest) {
         },
       }).catch(() => null);
 
+      const safeApplication = studentSafeApplication(application);
       return NextResponse.json({
         success: true,
-        message: 'Application draft created successfully with document checklist.',
-        databaseId: application.id,
-        applicationId: application.applicationId,
-        data: application,
+        message: result.created ? 'Application draft created with a document checklist.' : 'Existing application draft loaded.',
+        reused: !result.created,
+        databaseId: safeApplication.id,
+        applicationId: safeApplication.applicationId,
+        data: safeApplication,
       });
     } catch (error) {
       console.error('[student/applications/create-draft] failed', error);

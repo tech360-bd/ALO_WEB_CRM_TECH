@@ -1,76 +1,75 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { safeVisaCaseStage, safeVisaCaseSummary, visaCaseListScope, visaCaseViewScope } from '@/lib/visa/access';
+
+function auditData(auth: AuthContext, action: string, entityId: string, studentId: string) {
+  return { actorUserId: auth.actorUserId, action, entityType: 'VisaCase', entityId, metadata: JSON.stringify({ studentId, viewScope: action === 'VISA_COUNSELOR_SUMMARY_VIEW' ? 'summary' : 'stage' }), ipAddress: '', userAgent: '' };
+}
 
 export const GET = withAuth(async (req: Request, auth: AuthContext) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('counselor') || auth.roles.includes('COUNSELOR') || auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Counselor visa readiness requires counselor/visa officer permission — assigned summary readiness/missing/safe feedback/tasks/doc status/timeline no sensitive without perm' }, { status: 403 });
-
     const { searchParams } = new URL(req.url);
-    const studentId = searchParams.get('studentId');
     const caseId = searchParams.get('caseId');
-    if (!studentId && !caseId) return NextResponse.json({ success: false, error: 'studentId or caseId required' }, { status: 400 });
+    const studentId = searchParams.get('studentId');
+    if (!caseId && !studentId) return NextResponse.json({ success: false, error: 'caseId or studentId is required.' }, { status: 400 });
 
-    let visaCase: any = null;
-    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } }).catch(() => null);
-    else visaCase = await (db as any).visaCase.findFirst({ where: { studentId: studentId! }, orderBy: { createdAt: 'desc' } }).catch(() => null);
-
-    const resolvedStudentId = visaCase?.studentId || studentId!;
-
-    // Counselor can only view assigned students unless super_admin/visa_officer
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER');
-    if (!isSuper && !isVisa && visaCase && visaCase.counselorId && visaCase.counselorId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Counselor can only view assigned students — IDOR blocked — assigned summary readiness/missing/safe feedback/tasks/doc status/timeline no sensitive without perm' }, { status: 403 });
+    let visaCase: any;
+    if (caseId) {
+      visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
+    } else {
+      const scope = visaCaseListScope(auth);
+      if (!scope) return NextResponse.json({ success: false, error: 'Assigned visa-summary permission is required.' }, { status: 403 });
+      visaCase = await db.visaCase.findFirst({ where: { AND: [scope.where, { studentId: studentId! }] }, orderBy: { createdAt: 'desc' } });
     }
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found in the assigned scope.' }, { status: 404 });
 
-    const [checklist, readiness, interviews, funding, studyGap, refusal, notes, tasks, documents, timeline] = await Promise.all([
-      (db as any).visaChecklistItem.findMany({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'asc' } }).catch(() => []),
-      (db as any).visaReadinessReport.findFirst({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'desc' } }).catch(() => null),
-      (db as any).visaInterview.findMany({ where: { studentId: resolvedStudentId }, orderBy: { scheduledAt: 'desc' }, take: 10, include: { answers: true } }).catch(() => []),
-      visaCase ? (db as any).visaFundingReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
-      visaCase ? (db as any).visaStudyGapReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
-      visaCase ? (db as any).visaRefusalReview.findUnique({ where: { caseId: visaCase.id } }).catch(() => null) : Promise.resolve(null),
-      (db as any).visaOfficerNote.findMany({ where: { studentId: resolvedStudentId, visibility: { in: ['counselor_visible','student_safe_feedback','visa_team_only','application_team_visible','COUNSELOR_VISIBLE','STUDENT_SAFE_FEEDBACK'] } }, orderBy: { createdAt: 'desc' }, take: 20 }).catch(() => []),
-      (db as any).visaTask ? (db as any).visaTask.findMany({ where: { studentId: resolvedStudentId }, orderBy: { dueDate: 'asc' }, take: 20 }).catch(() => []) : Promise.resolve([]),
-      (db as any).studentDocument.findMany({ where: { studentId: resolvedStudentId }, orderBy: { updatedAt: 'desc' }, take: 30 }).catch(() => []),
-      (db as any).timelineEvent.findMany({ where: { studentId: resolvedStudentId }, orderBy: { createdAt: 'desc' }, take: 30 }).catch(() => []),
+    const viewScope = visaCaseViewScope(auth, visaCase);
+    if (!viewScope) return NextResponse.json({ success: false, error: 'Visa case is outside this account’s assigned scope.' }, { status: 403 });
+
+    const [checklist, feedback] = await Promise.all([
+      viewScope === 'summary' ? db.visaChecklistItem.findMany({
+        where: { caseId: visaCase.id, studentId: visaCase.studentId, counselorVisible: true, archivedAt: null },
+        select: { id: true, item: true, documentName: true, category: true, isRequired: true, status: true, priority: true, deadline: true, updatedAt: true },
+        orderBy: [{ category: 'asc' }, { updatedAt: 'desc' }],
+      }) : Promise.resolve([]),
+      viewScope === 'summary' ? db.visaStudentFeedback.findMany({
+        where: { caseId: visaCase.id, studentId: visaCase.studentId, approvedBy: { not: '' } },
+        select: { id: true, supportiveText: true, nextSteps: true, missingDocs: true, practiceTips: true, isSentToStudent: true, sentAt: true, createdAt: true },
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+      }) : Promise.resolve([]),
     ]);
 
-    const canViewSensitive = auth.roles.includes('visa_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
-    const safeRefusal = canViewSensitive ? refusal : null;
-    const safeFunding = funding; // Counselor can see funding summary but not sensitive details? Per spec counselor assigned summary readiness/missing/safe feedback/tasks/doc status/timeline no sensitive without perm
-    // Filter timeline to student-safe events for counselor
-    const studentSafeTimeline = timeline.filter((ev: any) => !ev.stage.includes('SENSITIVE') || canViewSensitive);
+    const safeCase = viewScope === 'stage' ? safeVisaCaseStage(visaCase) : safeVisaCaseSummary(visaCase);
+    const blockingItems = checklist.filter((item) => item.isRequired && !['approved', 'verified', 'complete'].includes(item.status.toLowerCase()));
+    const readiness = viewScope === 'summary' ? {
+      status: checklist.length === 0 ? 'not_assessed' : blockingItems.length > 0 ? 'preparation_in_progress' : 'ready_for_officer_review',
+      requiredItemsPending: blockingItems.length,
+      checklistItems: checklist.length,
+    } : undefined;
 
-    await logAuditAction(auth, 'COUNSELOR_VISA_READINESS_VIEW', 'VisaCase', visaCase?.id || resolvedStudentId, { studentId: resolvedStudentId, canViewSensitive });
+    try {
+      await db.portalAuditLog.create({ data: auditData(auth, viewScope === 'summary' ? 'VISA_COUNSELOR_SUMMARY_VIEW' : 'VISA_APPLICATION_STAGE_VIEW', visaCase.id, visaCase.studentId) });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Visa summary access could not be audited.' }, { status: 503 });
+    }
 
     return NextResponse.json({
       success: true,
-      visaCase,
-      checklist,
-      readiness,
-      interviews,
-      funding: safeFunding,
-      studyGap,
-      refusal: safeRefusal,
-      notes,
-      tasks,
-      documents,
-      timeline: studentSafeTimeline,
-      privacy: {
-        canViewSensitive,
-        blurPassport: !canViewSensitive,
-        blurRefusal: !canViewSensitive,
-        pinRequired: true,
-        auditLogged: true,
-        note: 'Counselor assigned summary readiness/missing/safe feedback/tasks/doc status/timeline no sensitive without perm — sensitive medical/criminal restricted VISA_OFFICER/VISA_INTERVIEW_OFFICER/SUPER_ADMIN/explicitly authorized only — never expose to Marketing/Partner/General Employee/Sales/Public/Student normal dashboard — every view/edit/download must create audit log',
-      },
-      note: 'Counselor assigned summary readiness/missing/safe feedback/tasks/doc status/timeline no sensitive without perm — Application Team Offer/CAS stage/doc status/blockers/timeline with perm',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      case: safeCase,
+      ...(viewScope === 'summary' ? {
+        readiness,
+        checklist,
+        approvedStudentFeedback: feedback.map((item) => ({
+          ...item,
+          missingDocs: (() => { try { const parsed = JSON.parse(item.missingDocs || '[]'); return Array.isArray(parsed) ? parsed.filter((entry) => typeof entry === 'string') : []; } catch { return []; } })(),
+        })),
+      } : {}),
+      viewScope,
+      privacy: 'Only assigned-scope case, counselor-visible checklist metadata, and approved student-safe feedback are included. Financial, refusal, medical/criminal, internal notes, interview answers, documents, and private timeline details are excluded.',
+    }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Counselor visa summary is temporarily unavailable.' }, { status: 503 });
   }
 });

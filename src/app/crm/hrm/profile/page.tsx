@@ -1,5 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,165 +9,113 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { usePortalStore } from '@/lib/stores/portal-store';
+
+const EDITABLE_FIELDS = new Set(['fullName','fatherName','motherName','gender','dob','nationality','religion','bloodGroup','maritalStatus','personalEmail','phone','presentAddress','permanentAddress','emergencyContactName','emergencyContactPhone','emergencyRelation','photo']);
+const PERSONAL_FIELDS: Array<[string, string, boolean?]> = [
+  ['fullName','Full Name'], ['fatherName','Father Name'], ['motherName','Mother Name'], ['gender','Gender'], ['dob','DOB (YYYY-MM-DD)'],
+  ['nationality','Nationality'], ['religion','Religion'], ['bloodGroup','Blood Group'], ['maritalStatus','Marital Status'],
+  ['nidNumber','NID'], ['passportNumber','Passport'], ['passportExpiry','Passport Expiry'], ['tinNumber','TIN'], ['drivingLicense','Driving License'],
+  ['personalEmail','Personal Email'], ['officialEmail','Official Email', true], ['phone','Phone'],
+  ['emergencyContactName','Emergency Contact Name'], ['emergencyContactPhone','Emergency Contact Phone'], ['emergencyRelation','Emergency Relation'],
+  ['presentAddress','Present Address'], ['permanentAddress','Permanent Address'],
+];
+const EMPLOYMENT_FIELDS: Array<[string, string]> = [
+  ['joiningDate','Joining Date'], ['confirmationDate','Confirmation Date'], ['probationEndDate','Probation End Date'], ['probationMonths','Probation (months)'],
+  ['department','Department'], ['designation','Designation'], ['reportingManagerId','Reporting Manager ID'], ['branch','Branch'], ['officeId','Office'],
+  ['employeeType','Employee Type'], ['employmentStatus','Employment Status'], ['employmentType','Employment Type'], ['workingHours','Working Hours'], ['shift','Shift'],
+];
+const PAYROLL_FIELDS: Array<[string, string]> = [
+  ['salaryGrade','Salary Grade'], ['grossSalary','Gross Salary'], ['baseSalary','Basic Salary'], ['allowances','Allowances'], ['taxDeduction','Tax'],
+  ['pfRate','PF Rate %'], ['insurance','Insurance'], ['bankName','Bank Name'], ['bankAccount','Bank Account'], ['bankBranch','Bank Branch'],
+  ['bankRouting','Routing'], ['mobileBankingType','Mobile Banking'], ['mobileBankingNumber','Mobile Banking Number'],
+];
 
 export default function HrmProfilePage() {
-  const { user } = usePortalStore();
+  const searchParams = useSearchParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const fetchProfile = () => {
+  const fetchProfile = useCallback(async () => {
     setLoading(true);
-    fetch('/api/hrm/profile').then(r=>r.json()).then(j=> { if(j.success) setData(j.data); else toast.error(j.error); }).catch(()=> toast.error('Failed to load profile')).finally(()=> setLoading(false));
-  };
-  useEffect(()=> { fetchProfile(); }, []);
+    const params = new URLSearchParams();
+    const userId = searchParams.get('userId');
+    const employeeId = searchParams.get('employeeId');
+    if (userId) params.set('userId', userId);
+    if (employeeId) params.set('employeeId', employeeId);
+    try {
+      const response = await fetch(`/api/hrm/profile${params.size ? `?${params}` : ''}`, { cache: 'no-store' });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Failed to load private profile.');
+      setData({ ...result.data, canEdit: Boolean(result.canEdit), isOwner: Boolean(result.isOwner), fieldAccess: result.fieldAccess || {} });
+    } catch (error) {
+      setData(null);
+      toast.error(error instanceof Error ? error.message : 'Failed to load private profile.');
+    } finally { setLoading(false); }
+  }, [searchParams]);
+  useEffect(() => { void fetchProfile(); }, [fetchProfile]);
 
-  const onSave = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const payload:any = {};
-    fd.forEach((v,k)=> payload[k]=String(v));
-    // cast numbers
-    ['grossSalary','baseSalary','allowances','taxDeduction','pfRate','insurance','probationMonths'].forEach(k=> { if(payload[k]) payload[k]= Number(payload[k]); });
+  const onSave = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!data?.canEdit || !data.userId) return;
+    const form = new FormData(event.currentTarget);
+    const payload: Record<string, string> = { userId: data.userId };
+    form.forEach((value, key) => { if (EDITABLE_FIELDS.has(key)) payload[key] = String(value); });
     setSaving(true);
-    try{
-      const res = await fetch('/api/hrm/profile', { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ...payload, userId: data?.userId || (user as any)?.id }) });
-      const j = await res.json();
-      if(j.success){ toast.success('Profile updated'); setData(j.data); } else toast.error(j.error);
-    } catch { toast.error('Save failed'); } finally { setSaving(false); }
+    try {
+      const response = await fetch('/api/hrm/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || 'Profile update failed.');
+      toast.success('Authorized personal-profile fields updated and audited.');
+      await fetchProfile();
+    } catch (error) { toast.error(error instanceof Error ? error.message : 'Profile update failed.'); }
+    finally { setSaving(false); }
   };
 
-  if (loading) return <div className="min-h-screen bg-white p-6 text-xs text-slate-400">Loading private profile...</div>;
-  if (!data) return <div className="min-h-screen bg-white p-6 text-sm">No HR profile found. Contact HR.</div>;
+  if (loading) return <div className="min-h-screen bg-white p-6 text-xs text-slate-400">Loading private profile…</div>;
+  if (!data) return <div className="min-h-screen bg-white p-6 text-sm">No accessible HR profile found. Contact HR.</div>;
 
-  const isPrivate = true; // visible only to Employee/HR/Super Admin — enforced by API
+  const safeValue = (value: unknown) => value === null || value === undefined ? '' : String(value);
+  const renderInputs = (fields: Array<[string, string]>, editable: boolean) => fields.map(([key, label]) => (
+    <div key={key} className={key.toLowerCase().includes('address') ? 'md:col-span-2 lg:col-span-3' : ''}>
+      <Label htmlFor={key} className="text-xs text-slate-600">{label}</Label>
+      <Input id={key} name={key} defaultValue={safeValue(data[key])} readOnly={!editable || !EDITABLE_FIELDS.has(key)} className="h-9 text-sm bg-white border-slate-200 read-only:bg-slate-50" />
+    </div>
+  ));
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">Employee Private Profile</h1>
-          <p className="text-xs text-slate-500">Visible only to: Employee (own), HR, Super Admin • AES encrypted sensitive fields</p>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <div><h1 className="text-xl font-bold text-slate-900">Employee Private Profile</h1><p className="text-xs text-slate-500">Access and fields are enforced by server-side HR permissions. Reads and changes are audited.</p></div>
         <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">Private</Badge>
       </div>
-
       <Tabs defaultValue="personal">
-        <TabsList className="bg-slate-100 h-9">
-          <TabsTrigger value="personal" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Personal</TabsTrigger>
-          <TabsTrigger value="employment" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Employment</TabsTrigger>
-          <TabsTrigger value="bank" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Bank & Payroll</TabsTrigger>
-          <TabsTrigger value="education" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Education & Skills</TabsTrigger>
+        <TabsList className="bg-slate-100 h-9 flex-wrap">
+          <TabsTrigger value="personal" className="text-xs">Personal</TabsTrigger><TabsTrigger value="employment" className="text-xs">Employment</TabsTrigger>
+          <TabsTrigger value="bank" className="text-xs">Bank & Payroll</TabsTrigger><TabsTrigger value="education" className="text-xs">Education & Skills</TabsTrigger>
         </TabsList>
-
         <form onSubmit={onSave} className="mt-4 space-y-4">
-          <TabsContent value="personal">
-            <Card className="bg-white border-slate-200">
-              <CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Personal Information</CardTitle></CardHeader>
-              <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  ['employeeId','Employee ID', data.employeeId, true],
-                  ['fullName','Full Name', data.fullName||'', false],
-                  ['fatherName','Father Name', data.fatherName||'', false],
-                  ['motherName','Mother Name', data.motherName||'', false],
-                  ['gender','Gender', data.gender||'', false],
-                  ['dob','DOB (YYYY-MM-DD)', data.dob||'', false],
-                  ['nationality','Nationality', data.nationality||'Bangladeshi', false],
-                  ['religion','Religion', data.religion||'', false],
-                  ['bloodGroup','Blood Group', data.bloodGroup||'', false],
-                  ['maritalStatus','Marital Status', data.maritalStatus||'', false],
-                  ['nidNumber','NID', data.nidNumber||'', false],
-                  ['passportNumber','Passport', data.passportNumber||'', false],
-                  ['passportExpiry','Passport Expiry', data.passportExpiry||'', false],
-                  ['tinNumber','TIN', data.tinNumber||'', false],
-                  ['drivingLicense','Driving License', data.drivingLicense||'', false],
-                  ['personalEmail','Personal Email', data.personalEmail||'', false],
-                  ['officialEmail','Official Email', data.officialEmail||'', false],
-                  ['phone','Phone', data.phone||data.officialPhone||'', false],
-                  ['emergencyContactName','Emergency Contact Name', data.emergencyContactName||'', false],
-                  ['emergencyContactPhone','Emergency Contact Phone', data.emergencyContactPhone||'', false],
-                  ['emergencyRelation','Emergency Relation', data.emergencyRelation||'', false],
-                  ['presentAddress','Present Address', data.presentAddress||'', false],
-                  ['permanentAddress','Permanent Address', data.permanentAddress||'', false],
-                ].map(([key,label,val,readonly])=> (
-                  <div key={key as string} className={String(key).includes('Address') ? 'md:col-span-2 lg:col-span-3' : ''}>
-                    <Label className="text-xs text-slate-600">{label as string}</Label>
-                    <Input name={key as string} defaultValue={String(val||'')} readOnly={!!readonly} className="h-9 text-sm bg-white border-slate-200" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="employment">
-            <Card className="bg-white border-slate-200">
-              <CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Employment Information</CardTitle></CardHeader>
-              <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  ['joiningDate','Joining Date', data.joiningDate||'', false],
-                  ['confirmationDate','Confirmation Date', data.confirmationDate||'', false],
-                  ['probationEndDate','Probation End Date', data.probationEndDate||'', false],
-                  ['probationMonths','Probation (months)', data.probationMonths||6, false],
-                  ['department','Department', data.department||'', false],
-                  ['designation','Designation', data.designation||'', false],
-                  ['reportingManagerId','Reporting Manager ID', data.reportingManagerId||'', false],
-                  ['branch','Branch', data.branch||'', false],
-                  ['officeId','Office', data.officeId||'', false],
-                  ['employeeType','Employee Type', data.employeeType||'PERMANENT', false],
-                  ['employmentStatus','Employment Status', data.employmentStatus||data.status||'ACTIVE', false],
-                  ['employmentType','Employment Type', data.employmentType||'FULL_TIME', false],
-                  ['workingHours','Working Hours', data.workingHours||'9:00 AM - 6:00 PM', false],
-                  ['shift','Shift', data.shift||'Day', false],
-                ].map(([k,l,v])=> (
-                  <div key={k as string}><Label className="text-xs text-slate-600">{l as string}</Label><Input name={k as string} defaultValue={String(v||'')} className="h-9 text-sm bg-white border-slate-200" /></div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="bank">
-            <Card className="bg-white border-slate-200">
-              <CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Bank & Compensation (HR/Finance only details)</CardTitle></CardHeader>
-              <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  ['salaryGrade','Salary Grade', data.salaryGrade||'G7'],
-                  ['grossSalary','Gross Salary', data.grossSalary||0],
-                  ['baseSalary','Basic Salary', data.baseSalary||0],
-                  ['allowances','Allowances', data.allowances||0],
-                  ['taxDeduction','Tax', data.taxDeduction||0],
-                  ['pfRate','PF Rate %', data.pfRate||8],
-                  ['insurance','Insurance', data.insurance||0],
-                  ['bankName','Bank Name', data.bankName||''],
-                  ['bankAccount','Bank Account (encrypted)', data.bankAccount||''],
-                  ['bankBranch','Bank Branch', data.bankBranch||''],
-                  ['bankRouting','Routing', data.bankRouting||''],
-                  ['mobileBankingType','Mobile Banking (bKash/Nagad)', data.mobileBankingType||''],
-                  ['mobileBankingNumber','Mobile Banking Number', data.mobileBankingNumber||''],
-                ].map(([k,l,v])=> (
-                  <div key={k as string}><Label className="text-xs text-slate-600">{l as string}</Label><Input name={k as string} defaultValue={String(v||'')} className="h-9 text-sm bg-white border-slate-200" /></div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="education">
-            <Card className="bg-white border-slate-200">
-              <CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Education • Experience • Skills • Languages</CardTitle></CardHeader>
-              <CardContent className="p-4 space-y-3 text-xs text-slate-600">
-                <div><p className="font-semibold text-slate-700">Education</p><div className="mt-1 space-y-1">{(data.education||[]).length ? data.education.map((e:any)=> <div key={e.id} className="p-2 bg-slate-50 border rounded">{e.degree} — {e.institution} ({e.passingYear}) — {e.result}</div>) : <span className="text-slate-400">No education records — add via HR</span>}</div></div>
-                <div><p className="font-semibold text-slate-700">Experience</p><div className="mt-1 space-y-1">{(data.experience||[]).length ? data.experience.map((e:any)=> <div key={e.id} className="p-2 bg-slate-50 border rounded">{e.company} — {e.designation} ({e.fromDate} to {e.toDate||'Present'})</div>) : <span className="text-slate-400">No experience records</span>}</div></div>
-                <div><p className="font-semibold text-slate-700">Skills</p><div className="flex flex-wrap gap-1 mt-1">{(data.skills||[]).length ? data.skills.map((s:any)=> <Badge key={s.id||s.name} variant="outline" className="text-xs">{s.name} — {s.level}</Badge>) : <span className="text-slate-400">No skills</span>}</div></div>
-                <div><p className="font-semibold text-slate-700">Languages</p><div className="flex flex-wrap gap-1 mt-1">{(data.languages||[]).length ? data.languages.map((l:any)=> <Badge key={l.id||l.name} variant="outline" className="text-xs">{l.name}: {l.speaking}/{l.writing}</Badge>) : <span className="text-slate-400">No languages</span>}</div></div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
+          <TabsContent value="personal"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Personal Information</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div><Label className="text-xs text-slate-600">Employee ID</Label><Input value={safeValue(data.employeeId)} readOnly className="h-9 text-sm bg-slate-50" /></div>
+            {renderInputs(PERSONAL_FIELDS.filter(([key]) => key !== 'officialEmail'), Boolean(data.canEdit))}
+            {data.officialEmail !== undefined && <div><Label className="text-xs text-slate-600">Official Email</Label><Input value={safeValue(data.officialEmail)} readOnly className="h-9 text-sm bg-slate-50" /></div>}
+          </CardContent></Card></TabsContent>
+          <TabsContent value="employment"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Employment Information</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{renderInputs(EMPLOYMENT_FIELDS, false)}</CardContent></Card></TabsContent>
+          <TabsContent value="bank"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Bank & Compensation</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.fieldAccess?.payroll ? renderInputs(PAYROLL_FIELDS, false) : <p className="text-sm text-slate-500 md:col-span-3">Payroll calculation details are not available to this account.</p>}
+            {!data.fieldAccess?.bank && <p className="text-sm text-slate-500 md:col-span-3">Bank details are not available to this account.</p>}
+          </CardContent></Card></TabsContent>
+          <TabsContent value="education"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Education • Experience • Skills • Languages</CardTitle></CardHeader><CardContent className="p-4 space-y-4 text-xs text-slate-600">
+            <section><p className="font-semibold text-slate-700">Education</p>{data.education?.length ? data.education.map((item: any) => <div key={item.id} className="mt-1 p-2 bg-slate-50 border rounded">{item.degree} — {item.institution} ({item.passingYear}) — {item.result}</div>) : <p className="text-slate-400">No education records.</p>}</section>
+            <section><p className="font-semibold text-slate-700">Experience</p>{data.experience?.length ? data.experience.map((item: any) => <div key={item.id} className="mt-1 p-2 bg-slate-50 border rounded">{item.company} — {item.designation} ({item.fromDate} to {item.toDate || 'Present'})</div>) : <p className="text-slate-400">No experience records.</p>}</section>
+            <section><p className="font-semibold text-slate-700">Skills</p><div className="mt-1 flex flex-wrap gap-1">{data.skills?.length ? data.skills.map((item: any) => <Badge key={item.id} variant="outline">{item.name} — {item.level}</Badge>) : <span className="text-slate-400">No skills.</span>}</div></section>
+            <section><p className="font-semibold text-slate-700">Languages</p><div className="mt-1 flex flex-wrap gap-1">{data.languages?.length ? data.languages.map((item: any) => <Badge key={item.id} variant="outline">{item.name}: {item.speaking}/{item.writing}</Badge>) : <span className="text-slate-400">No languages.</span>}</div></section>
+          </CardContent></Card></TabsContent>
           <div className="flex gap-2">
-            <Button type="submit" disabled={saving} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-sm">{saving? 'Saving...' : 'Save (HR/Super Admin only)'}</Button>
-            <Button type="button" variant="outline" onClick={fetchProfile} className="h-9 text-sm">Reload</Button>
+            {data.canEdit && <Button type="submit" disabled={saving} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-sm">{saving ? 'Saving…' : 'Save personal-profile fields'}</Button>}
+            <Button type="button" variant="outline" onClick={() => void fetchProfile()} className="h-9 text-sm">Reload</Button>
           </div>
-          <p className="text-xs text-slate-400">Employee view is read-only for sensitive fields; HR must approve changes — version history and audit log active.</p>
+          <p className="text-xs text-slate-400">Employment, role, branch, access, lifecycle, salary and bank changes must use their dedicated reviewed workflows; they cannot be changed here.</p>
         </form>
       </Tabs>
     </div>

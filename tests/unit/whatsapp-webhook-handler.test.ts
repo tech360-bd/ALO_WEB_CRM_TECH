@@ -1,4 +1,4 @@
-const allocateMock = vi.hoisted(() => vi.fn(async () => 'AE-202600001'));
+const allocateMock = vi.hoisted(() => vi.fn(async () => 'AE-2026000001'));
 vi.mock('@/lib/identity/student-id', () => ({ allocateIdentifierCommitted: allocateMock }));
 import { describe, it, expect, vi } from 'vitest';
 

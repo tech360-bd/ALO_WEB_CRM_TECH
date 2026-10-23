@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
-import { isOfficeHours } from '@/lib/ai-agents/student-intake-agent';
+import { getOfficeHoursStatus } from '@/lib/communication/after-hours';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
   const agent = await db.agentDefinition.findUnique({ where: { agentCode: 'STUDENT_INTAKE_BN' } }).catch(()=> null)
     || await db.aiAgent.findFirst({ where: { agentCode: 'STUDENT_INTAKE_BN' } }).catch(()=> null);
   const enabled = (agent as any)?.status ? (agent as any).status !== 'disabled' && (agent as any).status !== 'paused' : true;
+  const officeHoursStatus = await getOfficeHoursStatus();
   return NextResponse.json({
     success: true,
     data: {
@@ -31,8 +32,10 @@ export async function GET(req: NextRequest) {
       agentName: (agent as any)?.name || (agent as any)?.agentName || 'Bangla Intake AI (ID-First)',
       status: (agent as any)?.status || 'active',
       enabled,
-      officeHours: isOfficeHours(),
-      officeWindow: '10:00-19:00 Asia/Dhaka (Sat-Thu)',
+      officeHours: !officeHoursStatus.isAfterHours,
+      officeWindow: officeHoursStatus.message,
+      nextOpen: officeHoursStatus.nextOpen,
+      timezone: officeHoursStatus.timezone,
       channels: ['website','whatsapp','webchat','facebook'],
       memory: 'AgentMemory per senderId+channel (+ TimelineEvent fallback), sequential queue',
       version: (agent as any)?.version || '1.0.0',

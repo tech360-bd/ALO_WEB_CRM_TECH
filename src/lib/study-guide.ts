@@ -212,7 +212,7 @@ export function renderGuideAsHTML(guide: StudyGuide): string {
 <title>${escapeHtml(c.name)} — Study Guide | ALO Education</title>
 <style>
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:900px;margin:0 auto;padding:24px;color:#1f2937;line-height:1.6;}
-  h1{color:#0f172a;border-bottom:3px solid #0057B8;padding-bottom:8px;}
+  h1{color:#0f172a;border-bottom:3px solid #0066CC;padding-bottom:8px;}
   h2{color:#1e40af;margin-top:32px;border-bottom:1px solid #e5e7eb;padding-bottom:4px;}
   h3{color:#374151;margin-top:20px;}
   .meta{background:#f8fafc;padding:12px 16px;border-radius:8px;margin:12px 0;font-size:14px;}

@@ -36,6 +36,8 @@ const ROLES: RoleSpec[] = [
   { name: 'application_team', label: 'Application Manager', description: 'Application processing team.', userType: 'EMPLOYEE', department: 'Applications', grantFrom: 'application_officer' },
   { name: 'application_officer', label: 'Application Officer', description: 'Application processing officer.', userType: 'EMPLOYEE', department: 'Applications', grantFrom: 'application_officer' },
   { name: 'visa_officer', label: 'Visa Officer', description: 'Visa case processing.', userType: 'EMPLOYEE', department: 'Visa', grantFrom: 'visa_officer' },
+  { name: 'visa_interview_officer', label: 'Visa Interview Officer', description: 'Assigned visa interview preparation and feedback.', userType: 'EMPLOYEE', department: 'Visa', grantFrom: 'visa_interview_officer' },
+  { name: 'visa_team', label: 'Visa Team', description: 'Assigned visa operations team.', userType: 'EMPLOYEE', department: 'Visa', grantFrom: 'visa_team' },
   { name: 'finance', label: 'Finance Officer', description: 'Finance and payments.', userType: 'EMPLOYEE', department: 'Finance', grantFrom: 'finance_officer' },
   { name: 'finance_officer', label: 'Finance Officer (legacy)', description: 'Finance and payments (legacy alias).', userType: 'EMPLOYEE', department: 'Finance', grantFrom: 'finance_officer' },
   { name: 'marketing_manager', label: 'Marketing Manager', description: 'Marketing campaigns and content.', userType: 'EMPLOYEE', department: 'Marketing', grantFrom: 'marketing_manager' },
@@ -104,6 +106,7 @@ async function seedRbac() {
   for (const spec of ROLES) {
     const roleId = roleIds.get(spec.name)!;
     const ids = new Set(resolveGrants(spec));
+    if (spec.userType === 'EMPLOYEE') ids.add('employee.dashboard.view');
     if (PARTNER_B2B_ROLES.includes(spec.name)) ids.add(B2B_PERMISSION_ID);
     for (const permissionId of ids) {
       await db.portalRolePermission.upsert({

@@ -14,10 +14,20 @@ export default function CrmHrmHubPage() {
   const role = (user as any)?.roles?.[0]?.name || (user as any)?.roles?.[0] || (user as any)?.role || 'employee';
   const roleStr = String(role).toLowerCase();
   const [analytics, setAnalytics] = useState<any>(null);
+  const [analyticsError, setAnalyticsError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/hrm/analytics').then(r=>r.json()).then(j=> setAnalytics(j.data)).catch(()=>{}).finally(()=> setLoading(false));
+    void (async () => {
+      try {
+        const response = await fetch('/api/hrm/analytics', { cache: 'no-store' });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload?.success) throw new Error(payload?.error || `Analytics unavailable (HTTP ${response.status}).`);
+        setAnalytics(payload.data);
+      } catch (cause) {
+        setAnalyticsError(cause instanceof Error ? cause.message : 'HR analytics are unavailable for this account.');
+      } finally { setLoading(false); }
+    })();
   }, []);
 
   if (roleStr === 'student') return <div className="p-8 text-center text-slate-600">HR module not available for Student Dashboard</div>;
@@ -47,30 +57,14 @@ export default function CrmHrmHubPage() {
           <Link href="/crm/hrm/analytics"><Button variant="ghost" size="sm" className="text-xs text-[#E8501A]">Detailed Analytics →</Button></Link>
         </CardHeader>
         <CardContent className="p-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {loading ? <div className="col-span-4 text-xs text-slate-400">Loading analytics...</div> : (
+          {loading ? <div className="col-span-4 text-xs text-slate-400">Loading analytics...</div> : analyticsError ? <p role="alert" className="col-span-4 text-sm text-amber-800">{analyticsError} Role-authorized widgets remain available above.</p> : analytics ? (
             <>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <p className="text-xs text-slate-500">Headcount</p>
-                <p className="text-xl font-bold text-slate-900">{analytics?.headcount ?? 0}</p>
-                <p className="text-xs text-slate-400">{analytics?.activeEmployees ?? 0} active</p>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <p className="text-xs text-slate-500">Attendance Rate</p>
-                <p className="text-xl font-bold text-slate-900">{analytics?.attendanceRate ?? 0}%</p>
-                <p className="text-xs text-slate-400">{analytics?.latePercent ?? 0}% late • {analytics?.absentPercent ?? 0}% absent</p>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <p className="text-xs text-slate-500">Payroll Cost</p>
-                <p className="text-xl font-bold text-slate-900">৳{Number(analytics?.payrollCost||0).toLocaleString()}</p>
-                <p className="text-xs text-slate-400">This month</p>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <p className="text-xs text-slate-500">Probation</p>
-                <p className="text-xl font-bold text-slate-900">{analytics?.probationEmployees ?? 0}</p>
-                <p className="text-xs text-slate-400">{analytics?.upcomingConfirmation ?? 0} upcoming confirmations</p>
-              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Headcount</p><p className="text-xl font-bold text-slate-900">{analytics.headcount}</p><p className="text-xs text-slate-400">{analytics.activeEmployees} active</p></div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Attendance Rate</p><p className="text-sm font-bold text-slate-900">{analytics.attendanceRate == null ? 'Not calculated' : `${analytics.attendanceRate}%`}</p><p className="text-xs text-slate-400">{analytics.attendanceNote}</p></div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Payroll Cost</p><p className="text-xl font-bold text-slate-900">{analytics.payrollCost == null ? 'Restricted' : `৳${Number(analytics.payrollCost).toLocaleString()}`}</p><p className="text-xs text-slate-400">Paid payroll records</p></div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Probation</p><p className="text-xl font-bold text-slate-900">{analytics.probationEmployees}</p><p className="text-xs text-slate-400">{analytics.upcomingConfirmation} upcoming confirmations</p></div>
             </>
-          )}
+          ) : <p className="col-span-4 text-xs text-slate-400">No analytics response is available.</p>}
         </CardContent>
       </Card>
 
@@ -113,12 +107,12 @@ export default function CrmHrmHubPage() {
         </TabsList>
         <TabsContent value="birthdays" className="mt-3">
           <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {analytics?.upcomingBirthday?.length ? analytics.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{b.fullName}</span><span className="text-xs bg-orange-50 text-[#E8501A] px-2 py-0.5 rounded">{b.daysLeft}d left • {b.dob}</span></div>) : <span className="text-xs text-slate-400">No birthdays in next 30 days</span>}
+            {!analytics ? <span className="text-xs text-slate-400">Analytics unavailable.</span> : analytics.upcomingBirthday == null ? <span className="text-xs text-slate-400">Individual birthday data is omitted from this endpoint for privacy.</span> : analytics.upcomingBirthday.length ? analytics.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{b.fullName}</span><span className="text-xs bg-orange-50 text-[#E8501A] px-2 py-0.5 rounded">{b.daysLeft}d left • {b.dob}</span></div>) : <span className="text-xs text-slate-400">No birthdays in next 30 days.</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="anniversary" className="mt-3">
           <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {analytics?.upcomingWorkAnniversary?.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#0057B8] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days</span>}
+            {!analytics ? <span className="text-xs text-slate-400">Analytics unavailable.</span> : analytics.upcomingWorkAnniversary == null ? <span className="text-xs text-slate-400">Individual work-anniversary dates are omitted from this endpoint for privacy.</span> : analytics.upcomingWorkAnniversary.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#0057B8] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days.</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="confirmation" className="mt-3">

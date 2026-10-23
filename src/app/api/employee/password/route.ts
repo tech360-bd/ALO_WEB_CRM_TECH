@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { withAuth } from "@/lib/auth-middleware";
+import { withAuth, logAuditAction } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
@@ -10,6 +10,9 @@ export async function POST(request: Request) {
     if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
       return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
     }
+    if (auth.actingAsSessionId) return NextResponse.json({ success: false, error: "Password changes are not allowed while Acting-As." }, { status: 403 });
+    const employee = await db.employee.findUnique({ where: { userId: auth.userId }, select: { status: true } });
+    if (!employee || employee.status.toLowerCase() !== "active") return NextResponse.json({ success: false, error: "An active employee account is required." }, { status: 403 });
     try {
       const body = await req.json();
       const { currentPassword, newPassword } = body;
@@ -32,9 +35,10 @@ export async function POST(request: Request) {
       await db.portalUser.update({ where: { id: auth.userId }, data: { passwordHash: hashed, firstLoginRequired: false } });
       
       // Revoke other sessions
-      await db.portalSession.updateMany({ where: { userId: auth.userId, id: { not: auth.sessionId } }, data: { revokedAt: new Date() } }).catch(() => null);
+      await db.portalSession.updateMany({ where: { userId: auth.userId, id: { not: auth.sessionId }, revokedAt: null }, data: { revokedAt: new Date() } });
+      await logAuditAction(auth, 'EMPLOYEE_PASSWORD_CHANGED', 'PortalUser', auth.userId, { otherSessionsRevoked: true });
       
-      return NextResponse.json({ success: true, message: "Password updated successfully" });
+      return NextResponse.json({ success: true, message: "Password updated successfully; other sessions were revoked." });
     } catch (e) {
       return NextResponse.json({ success: false, error: "Failed to update password" }, { status: 500 });
     }
