@@ -12,6 +12,7 @@ import {
   GraduationCap,
   FileText,
   ShieldCheck,
+  ShieldAlert,
   DollarSign,
   Megaphone,
   Briefcase,

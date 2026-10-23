@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Sparkles, Send, RotateCcw, ArrowRight, Loader2, RefreshCw
+  Sparkles, Send, RotateCcw, ArrowRight, Loader2, RefreshCw, Award, Play
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
