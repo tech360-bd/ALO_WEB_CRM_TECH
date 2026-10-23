@@ -37,20 +37,24 @@ function auditData(auth: AuthContext, action: string, entityId: string, caseId: 
   };
 }
 
-async function loadScopedTask(auth: AuthContext, taskId: unknown) {
-  if (typeof taskId !== 'string' || !taskId.trim()) return { error: NextResponse.json({ success: false, error: 'Task ID required.' }, { status: 400 }) };
+type ScopedTaskResult =
+  | { ok: false; response: NextResponse }
+  | { ok: true; task: NonNullable<Awaited<ReturnType<typeof db.visaTask.findUnique>>>; visaCase: NonNullable<Awaited<ReturnType<typeof db.visaCase.findUnique>>> };
+
+async function loadScopedTask(auth: AuthContext, taskId: unknown): Promise<ScopedTaskResult> {
+  if (typeof taskId !== 'string' || !taskId.trim()) return { ok: false, response: NextResponse.json({ success: false, error: 'Task ID required.' }, { status: 400 }) };
   const task = await db.visaTask.findUnique({ where: { id: taskId } });
-  if (!task || !task.caseId) return { error: NextResponse.json({ success: false, error: 'Visa task not found.' }, { status: 404 }) };
+  if (!task || !task.caseId) return { ok: false, response: NextResponse.json({ success: false, error: 'Visa task not found.' }, { status: 404 }) };
   const visaCase = await db.visaCase.findUnique({ where: { id: task.caseId } });
-  if (!visaCase || visaCase.studentId !== task.studentId) return { error: NextResponse.json({ success: false, error: 'Visa task not found.' }, { status: 404 }) };
-  if (!canManageVisaPermission(auth, 'visa.tasks.view', visaCase)) return { error: NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.view permission required.' }, { status: 403 }) };
-  return { task, visaCase };
+  if (!visaCase || visaCase.studentId !== task.studentId) return { ok: false, response: NextResponse.json({ success: false, error: 'Visa task not found.' }, { status: 404 }) };
+  if (!canManageVisaPermission(auth, 'visa.tasks.view', visaCase)) return { ok: false, response: NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.view permission required.' }, { status: 403 }) };
+  return { ok: true, task, visaCase };
 }
 
 export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: any) => {
   try {
     const result = await loadScopedTask(auth, context?.params?.id);
-    if ('error' in result) return result.error;
+    if (!result.ok) return result.response;
     const { task, visaCase } = result;
     await db.portalAuditLog.create({
       data: auditData(auth, 'VISA_TASK_VIEW', task.id, visaCase.id, visaCase.studentId, { status: task.status }),
@@ -64,7 +68,7 @@ export const GET = withAuth(async (_req: Request, auth: AuthContext, context?: a
 export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
     const result = await loadScopedTask(auth, context?.params?.id);
-    if ('error' in result) return result.error;
+    if (!result.ok) return result.response;
     const { task, visaCase } = result;
     if (!canManageVisaPermission(auth, 'visa.tasks.update', visaCase)) {
       return NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.update permission required.' }, { status: 403 });
@@ -118,7 +122,7 @@ export const DELETE = withAuth(async (_req: Request, auth: AuthContext, context?
   try {
     if (!isVisaSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Only SUPER_ADMIN may archive a task.' }, { status: 403 });
     const result = await loadScopedTask(auth, context?.params?.id);
-    if ('error' in result) return result.error;
+    if (!result.ok) return result.response;
     const { task, visaCase } = result;
     const archived = await db.$transaction(async (tx) => {
       const saved = await tx.visaTask.update({ where: { id: task.id }, data: { status: 'cancelled', archivedAt: new Date() } });

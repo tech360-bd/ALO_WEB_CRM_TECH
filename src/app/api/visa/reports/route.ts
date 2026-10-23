@@ -22,7 +22,7 @@ export const GET = withAuth(async (req: Request, auth: AuthContext) => {
     const where: any = canViewAll ? {} : { generatedBy: auth.actorUserId };
     if (reportType) where.reportType = reportType;
     const candidates = await db.visaReport.findMany({ where, orderBy: { createdAt: 'desc' }, take: Math.min(500, page * limit + 100), select: { id: true, reportType: true, generatedBy: true, generatedByName: true, format: true, status: true, createdAt: true, filters: true } });
-    const allowed = [];
+    const allowed: typeof candidates = [];
     for (const report of candidates) if (await isVisaReportInCurrentScope(auth, report)) allowed.push(report);
     const total = allowed.length;
     const reports = allowed.slice((page - 1) * limit, page * limit).map(({ filters: _filters, ...report }) => ({ ...report, downloadUrl: `/api/visa/reports/${encodeURIComponent(report.id)}/download` }));

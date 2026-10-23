@@ -80,13 +80,13 @@ export const PATCH = withAuth(async (req: Request, auth: AuthContext, context?: 
     if (!parsed.success || Object.keys(parsed.data || {}).length === 0) return NextResponse.json({ success: false, error: 'Invalid restricted review update.', details: parsed.success ? undefined : parsed.error.flatten() }, { status: 400 });
 
     const existing = await db.visaSensitiveReview.findUnique({ where: { caseId } });
-    const documentIds = [parsed.data.medicalDocumentId, parsed.data.criminalDocumentId].filter((id): id is string => Boolean(id));
-    if (documentIds.length) {
+    const submittedDocumentIds = [parsed.data.medicalDocumentId, parsed.data.criminalDocumentId].filter((id): id is string => Boolean(id));
+    if (submittedDocumentIds.length) {
       if (!canManageVisaPermission(auth, 'visa.documents.view', visaCase) || !canViewVisaSensitive(auth, visaCase)) {
         return NextResponse.json({ success: false, error: 'Sensitive-view and visa.documents.view permissions are required to link restricted evidence.' }, { status: 403 });
       }
-      const documents = await db.studentDocument.findMany({ where: { id: { in: documentIds }, studentId: visaCase.studentId, caseId: { in: [caseId, ''] }, isArchived: false, storagePath: { not: null }, mimeType: { not: null }, fileHash: { not: null } }, select: { id: true, category: true } });
-      if (documents.length !== new Set(documentIds).size) return NextResponse.json({ success: false, error: 'Sensitive evidence must be a stored private document belonging to this student.' }, { status: 400 });
+      const documents = await db.studentDocument.findMany({ where: { id: { in: submittedDocumentIds }, studentId: visaCase.studentId, caseId: { in: [caseId, ''] }, isArchived: false, storagePath: { not: null }, mimeType: { not: null }, fileHash: { not: null } }, select: { id: true, category: true } });
+      if (documents.length !== new Set(submittedDocumentIds).size) return NextResponse.json({ success: false, error: 'Sensitive evidence must be a stored private document belonging to this student.' }, { status: 400 });
       const categoryById = new Map(documents.map((document) => [document.id, document.category.toLowerCase()]));
       const medicalCategory = parsed.data.medicalDocumentId ? categoryById.get(parsed.data.medicalDocumentId) || '' : '';
       const criminalCategory = parsed.data.criminalDocumentId ? categoryById.get(parsed.data.criminalDocumentId) || '' : '';

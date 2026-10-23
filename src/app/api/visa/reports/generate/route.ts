@@ -51,6 +51,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
     const filteredCases = caseIds.length ? await db.visaCase.findMany({ where: caseWhere, select: { id: true, caseCode: true, studentName: true, destinationCountry: true, currentStage: true, createdAt: true } }) : [];
     const scopedCaseIds = filteredCases.map((visaCase) => visaCase.id);
     let rows: any[] = [];
+    let reportTruncated = false;
 
     if (reportType === 'daily_interview') {
       rows = scopedCaseIds.length ? await db.visaInterview.findMany({ where: { caseId: { in: scopedCaseIds }, ...(hasDate ? { scheduledAt: createdAt } : {}) }, select: { id: true, caseId: true, interviewType: true, status: true, scheduledAt: true, officerId: true }, orderBy: { scheduledAt: 'desc' }, take: 500 }) : [];
@@ -67,14 +68,37 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
     } else if (reportType === 'refusal') {
       rows = scopedCaseIds.length ? await db.visaRefusalReview.findMany({ where: { caseId: { in: scopedCaseIds }, hasVisaRefusal: true, ...(hasDate ? { updatedAt: createdAt } : {}) }, select: { caseId: true, previousRefusalCount: true, humanReviewStatus: true, updatedAt: true }, orderBy: { updatedAt: 'desc' }, take: 500 }) : [];
     } else if (reportType === 'officer_performance') {
-      rows = scopedCaseIds.length ? await db.visaInterview.groupBy({ by: ['officerId'], where: { caseId: { in: scopedCaseIds }, status: 'completed', ...(hasDate ? { completedAt: createdAt } : {}) }, _count: { _all: true } }) : [];
+      const completedInterviews = scopedCaseIds.length ? await db.visaInterview.findMany({
+        where: { caseId: { in: scopedCaseIds }, status: 'completed', ...(hasDate ? { completedAt: createdAt } : {}) },
+        select: { officerId: true },
+        orderBy: { completedAt: 'desc' },
+        take: 5000,
+      }) : [];
+      reportTruncated = completedInterviews.length === 5000;
+      const countByOfficer = new Map<string | null, number>();
+      for (const interview of completedInterviews) countByOfficer.set(interview.officerId, (countByOfficer.get(interview.officerId) || 0) + 1);
+      rows = [...countByOfficer].sort(([left], [right]) => String(left || '').localeCompare(String(right || ''))).map(([officerId, count]) => ({ officerId, _count: { _all: count } }));
     } else if (reportType === 'counselor_pending') {
       rows = scopedCaseIds.length ? await db.visaTask.findMany({ where: { caseId: { in: scopedCaseIds }, archivedAt: null, status: { notIn: ['completed', 'cancelled', 'archived'] }, assignedTo: { contains: 'counselor' }, ...(hasDate ? { createdAt } : {}) }, select: { id: true, caseId: true, status: true, priority: true, dueDate: true, updatedAt: true }, orderBy: { dueDate: 'asc' }, take: 500 }) : [];
     } else {
-      rows = scopedCaseIds.length ? await db.visaCase.groupBy({ by: ['currentStage'], where: { id: { in: scopedCaseIds }, ...(hasDate ? { createdAt } : {}) }, _count: { id: true } }) : [];
+      const summaryCases = hasDate
+        ? filteredCases.filter((visaCase) => (!from || visaCase.createdAt >= from) && (!to || visaCase.createdAt <= to))
+        : filteredCases;
+      const countByStage = new Map<string, number>();
+      for (const visaCase of summaryCases) countByStage.set(visaCase.currentStage, (countByStage.get(visaCase.currentStage) || 0) + 1);
+      rows = [...countByStage].sort(([left], [right]) => left.localeCompare(right)).map(([currentStage, count]) => ({ currentStage, _count: { id: count } }));
     }
 
-    const reportData = { scope: 'assigned_visa_cases', reportType, rowCount: rows.length, rows, note: 'Recorded operational data only. It does not predict visa eligibility, approval, or outcomes.' };
+    const reportData = {
+      scope: 'assigned_visa_cases',
+      reportType,
+      rowCount: rows.length,
+      rows,
+      truncated: reportTruncated,
+      note: reportTruncated
+        ? 'Recorded operational data only. The officer-performance source rows are capped at 5,000; results may be truncated. This does not predict visa eligibility, approval, or outcomes.'
+        : 'Recorded operational data only. It does not predict visa eligibility, approval, or outcomes.',
+    };
     const storedFilters = JSON.stringify({ ...filters, scopeCaseIds: scopedCaseIds, scopeCaseCount: scopedCaseIds.length });
     const report = await db.$transaction(async (tx) => {
       const created = await tx.visaReport.create({ data: { reportType, generatedBy: auth.actorUserId, generatedByName: auth.actorName || auth.name || 'Visa Team', filters: storedFilters, data: JSON.stringify(reportData), format: parsed.data.format, status: 'ready' } });

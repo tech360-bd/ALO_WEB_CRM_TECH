@@ -11,7 +11,7 @@ function csvCell(value: unknown): string {
 function toCsv(value: any): string {
   const rows = Array.isArray(value?.rows) ? value.rows : [];
   if (!rows.length) return 'reportType,rowCount\r\n' + [csvCell(value?.reportType), csvCell(value?.rowCount)].join(',') + '\r\n';
-  const keys = [...new Set(rows.flatMap((row: any) => row && typeof row === 'object' ? Object.keys(row) : ['value']))];
+  const keys: string[] = [...new Set<string>(rows.flatMap((row: any): string[] => row && typeof row === 'object' ? Object.keys(row) : ['value']))];
   const header = keys.map(csvCell).join(',');
   const body = rows.map((row: any) => keys.map((key) => csvCell(row && typeof row === 'object' ? row[key] : row)).join(',')).join('\r\n');
   return `${header}\r\n${body}\r\n`;
