@@ -203,7 +203,7 @@ const portalNav: Record<string, NavGroup[]> = {
   ],
   data: [
     { title:'Data', items: [
-      { label:'Data Overview', icon: Database, view:'crm-course-finder' },
+      { label:'International Data Catalogue', icon: Database, view:'crm-data-catalogue' },
       { label:'Universities', icon: Building2, view:'crm-universities' },
       { label:'Campuses', icon: Building2, view:'crm-universities' },
       { label:'Courses', icon: BookOpen, view:'crm-course-finder' },
@@ -292,7 +292,7 @@ const portalNav: Record<string, NavGroup[]> = {
       { label:'Users & Roles', icon: Users, view:'crm-users' },
       { label:'Departments/Branches', icon: Building2, view:'crm-roles' },
       { label:'Workflow Settings', icon: Settings, view:'crm-roles' },
-      { label:'Data Management', icon: Database, view:'crm-course-finder' },
+      { label:'International Data Catalogue', icon: Database, view:'crm-data-catalogue' },
       { label:'Integrations', icon: Globe, view:'crm-social' },
       { label:'AI Command Center', icon: Bot, view:'crm-ai-command' },
       { label:'Audit Logs', icon: ScrollText, view:'crm-audit-logs' },

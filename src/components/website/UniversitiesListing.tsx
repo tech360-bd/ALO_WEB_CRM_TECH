@@ -25,7 +25,10 @@ interface UniversityListingItem {
 
 const PAGE_SIZE = 24;
 
-export default function UniversitiesListing() {
+export default function UniversitiesListing({
+  title = 'University Directory Worldwide',
+  description = 'Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.',
+}: { title?: string; description?: string } = {}) {
   const [universities, setUniversities] = useState<UniversityListingItem[]>([]);
   const [countries, setCountries] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,8 +85,9 @@ export default function UniversitiesListing() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         <div className="border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] rounded-[20px] p-6 md:p-10">
           <Badge className="bg-card text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] uppercase tracking-[0.07em] font-semibold mb-4">{total ? `${total} published university records` : 'Published university directory'}</Badge>
-          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">University Directory Worldwide</h1>
-          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.</p>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">{title}</h1>
+          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">{description}</p>
+          {title !== 'All University Information' && <Link href="/all-university-information" className="mt-3 inline-flex text-sm font-semibold text-[var(--alo-brand)] underline">All University Information</Link>}
           <div className="flex gap-2 mt-4">
 
 

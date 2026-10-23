@@ -101,9 +101,9 @@ export default function PublicLayoutWrapper({
 }) {
   const isAuthenticated = usePortalStore((s) => s.isAuthenticated);
   const pathname = usePathname();
-  // One navbar and one footer for every public page. Login, registration,
-  // reset and every authenticated portal route render standalone: the public
-  // chrome is suppressed by route (see public-chrome-policy.ts) and by session.
+  // One navbar and footer for every pre-login page, including auth entry
+  // screens. Authenticated portal shells suppress public chrome by route
+  // (see public-chrome-policy.ts) and by session.
   const showPublicChrome = !isAuthenticated && isPublicChromeRoute(pathname);
   return (
     <>

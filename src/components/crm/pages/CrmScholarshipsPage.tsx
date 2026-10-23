@@ -1,123 +1,84 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+
+import { useEffect, useState } from 'react';
+import { Award, ExternalLink, RefreshCw, Search } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Search, Award, GraduationCap, Globe, DollarSign, Calendar, Filter } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
-const COUNTRIES = ['All', 'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany', 'Malaysia', 'New Zealand', 'Ireland', 'Netherlands'];
+interface ScholarshipRecord {
+  id: string;
+  scholarshipName: string;
+  universityName: string;
+  scholarshipAmount: number;
+  scholarshipCurrency: string;
+  awardPercentage: number;
+  eligibleCountries: string;
+  eligibleLevels: string;
+  deadline: string;
+  verificationStatus: string;
+  officialScholarshipUrl: string;
+}
 
-interface Scholarship {
-  id: string; university: string; course: string; name: string; amount: number; currency: string;
-  eligibility: string; deadline: string; level: string; country: string; status: string;
+function sourceLink(value: string): string | null {
+  try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password ? url.href : null; } catch { return null; }
 }
 
 export default function CrmScholarshipsPage() {
-  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [records, setRecords] = useState<ScholarshipRecord[]>([]);
   const [search, setSearch] = useState('');
-  const [countryFilter, setCountryFilter] = useState('All');
-  const [levelFilter, setLevelFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState<number | null>(null);
+  const [pages, setPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/crm/courses?level=Master%27s&limit=50').then(r => r.json()).catch(() => ({ data: [] })),
-      fetch('/api/crm/courses?level=PhD&limit=50').then(r => r.json()).catch(() => ({ data: [] })),
-    ]).then(([masters, phd]) => {
-      const items: Scholarship[] = [];
-      const process = (data: any[], level: string) => {
-        data.forEach((c: any) => {
-          if (c.tuition > 0 && c.university) {
-            items.push({
-              id: c.courseId, university: c.university?.name || 'Unknown', course: c.courseTitle,
-              name: `${c.university?.name?.split(' ').slice(0, 2).join(' ')} ${level === "Master's" ? 'International Merit' : 'PhD Research'} Scholarship`,
-              amount: Math.round(c.tuition * (level === "Master's" ? 0.2 : 0.5)), currency: c.tuitionCurrency || 'GBP',
-              eligibility: level === "Master's" ? 'Minimum 2:1 or equivalent GPA 3.3+' : 'Masters degree with research proposal',
-              deadline: 'Rolling admissions', level, country: c.university?.country || 'Unknown', status: 'Active',
-            });
-          }
-        });
-      };
-      process(masters?.data || [], "Master's");
-      process(phd?.data || [], 'PhD');
-      setScholarships(items.slice(0, 100));
-      setLoading(false);
-    });
-  }, []);
+    const controller = new AbortController();
+    setLoading(true); setError(false); setRecords([]); setTotal(null); setPages(0);
+    const timer = setTimeout(async () => {
+      try {
+        const params = new URLSearchParams({ page: String(page), limit: '24', search: search.trim() });
+        const response = await fetch(`/api/crm/scholarships?${params}`, { credentials: 'include', cache: 'no-store', signal: controller.signal });
+        const body = await response.json();
+        if (!response.ok || !body.success || !Array.isArray(body.data) || !Number.isSafeInteger(body.total) || !Number.isSafeInteger(body.totalPages)) throw new Error('Unavailable');
+        if (!controller.signal.aborted) { setRecords(body.data); setTotal(body.total); setPages(body.totalPages); }
+      } catch {
+        if (!controller.signal.aborted) setError(true);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, 250);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [page, search, reload]);
 
-  const filtered = useMemo(() => scholarships.filter(s => {
-    const matchSearch = !search || s.name.toLowerCase().includes(search.toLowerCase()) || s.university.toLowerCase().includes(search.toLowerCase()) || s.course.toLowerCase().includes(search.toLowerCase());
-    const matchCountry = countryFilter === 'All' || s.country === countryFilter;
-    const matchLevel = !levelFilter || s.level === levelFilter;
-    return matchSearch && matchCountry && matchLevel;
-  }), [scholarships, search, countryFilter, levelFilter]);
-
-  const stats = useMemo(() => ({
-    total: scholarships.length, active: scholarships.filter(s => s.status === 'Active').length,
-    countries: new Set(scholarships.map(s => s.country)).size, avgAmount: scholarships.length ? Math.round(scholarships.reduce((s, x) => s + x.amount, 0) / scholarships.length) : 0,
-  }), [scholarships]);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-[var(--alo-text)]">Scholarships</h1><p className="text-[var(--alo-text-muted)]">Browse and manage scholarship opportunities for students</p></div>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Award className="w-4 h-4 mr-2" />Add Scholarship</Button>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Scholarships', value: stats.total, icon: Award, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
-          { label: 'Active', value: stats.active, icon: GraduationCap, color: 'text-green-600 bg-green-50' },
-          { label: 'Countries', value: stats.countries, icon: Globe, color: 'text-amber-600 bg-amber-50' },
-          { label: 'Avg. Award', value: `${stats.avgAmount.toLocaleString()}`, icon: DollarSign, color: 'text-purple-600 bg-purple-50' },
-        ].map(s => (
-          <Card key={s.label}><CardContent className="p-4 flex items-center gap-3"><div className={`p-2 rounded-lg ${s.color}`}><s.icon className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-[var(--alo-text-muted)]">{s.label}</p></div></CardContent></Card>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" /><Input placeholder="Search scholarships..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
-        <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
-          {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-        </select>
-        <select value={levelFilter} onChange={e => setLevelFilter(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
-          <option value="">All Levels</option>
-          <option value="Master's">Master's</option>
-          <option value="PhD">PhD</option>
-        </select>
-      </div>
-
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <Card key={i}><CardContent className="p-6"><div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 rounded w-3/4" /><div className="h-3 bg-gray-200 rounded w-1/2" /><div className="h-3 bg-gray-200 rounded w-2/3" /></div></CardContent></Card>)}</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.slice(0, 24).map(s => (
-            <Card key={s.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-5 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="font-semibold text-[var(--alo-text)] text-sm leading-tight">{s.name}</p>
-                    <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{s.university}</p>
-                  </div>
-                  <Badge className={s.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}>{s.status}</Badge>
-                </div>
-                <p className="text-xs text-[var(--alo-brand)] font-medium">{s.course}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-lg font-bold text-[var(--alo-cta-active)]"><DollarSign className="w-4 h-4" />{s.amount.toLocaleString()} <span className="text-xs text-[var(--alo-text-muted)] font-normal">{s.currency}</span></div>
-                  <div className="flex items-center gap-1 text-xs text-[var(--alo-text-muted)]"><Calendar className="w-3 h-3" />{s.deadline}</div>
-                </div>
-                <div className="pt-2 border-t space-y-1">
-                  <div className="flex items-center gap-2 text-xs"><Globe className="w-3 h-3 text-[var(--alo-text-muted)]" /><span>{s.country}</span><span className="text-[var(--alo-placeholder)]">|</span><GraduationCap className="w-3 h-3 text-[var(--alo-text-muted)]" /><span>{s.level}</span></div>
-                  <p className="text-xs text-[var(--alo-text-muted)]"><Filter className="w-3 h-3 inline mr-1" />{s.eligibility}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-      {!loading && filtered.length === 0 && <Card><CardContent className="p-12 text-center text-[var(--alo-text-muted)]"><Award className="w-12 h-12 mx-auto mb-3 opacity-30" /><p>No scholarships found</p></CardContent></Card>}
-      {filtered.length > 24 && <div className="text-center py-4"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline">Load More ({filtered.length - 24} remaining)</Button></div>}
-    </div>
-  );
+  return <div className="space-y-6">
+    <header className="flex flex-wrap items-start justify-between gap-4">
+      <div><h1 className="text-2xl font-bold text-[var(--alo-text)]">Scholarship catalogue</h1><p className="mt-2 max-w-3xl text-sm text-[var(--alo-body)]">Actual CRM scholarship records only. Awards are not inferred from tuition fees. Review the recorded verification status and official evidence before advising a student.</p></div>
+      <Button variant="outline" onClick={() => setReload((value) => value + 1)} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button>
+    </header>
+    <div className="max-w-xl"><label htmlFor="crm-scholarship-search" className="mb-2 block text-sm font-medium">Search scholarship records</label><div className="relative"><Search className="absolute left-3 top-4 h-4 w-4 text-[var(--alo-text-muted)]" /><Input id="crm-scholarship-search" value={search} maxLength={200} placeholder="Scholarship name, university ID or course ID" className="pl-10" onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></div></div>
+    {loading ? <p role="status">Loading scholarship records…</p> : error ? <Card><CardContent className="space-y-3 p-6"><p role="alert">Scholarship records could not be loaded. This is not evidence that no scholarships exist.</p><Button variant="outline" onClick={() => setReload((value) => value + 1)}>Retry</Button></CardContent></Card> : <>
+      <p role="status" className="text-sm text-[var(--alo-text-muted)]">{total} matching stored records. Verification is shown per record.</p>
+      {!records.length && <Card><CardContent className="p-8 text-center"><Award className="mx-auto mb-3 h-8 w-8 text-[var(--alo-text-muted)]" /><p>No matching scholarship records.</p><p className="mt-2 text-sm text-[var(--alo-text-muted)]">No estimated awards have been added. Missing records do not prove that funding is unavailable.</p></CardContent></Card>}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{records.map((record) => {
+        const source = sourceLink(record.officialScholarshipUrl);
+        return <Card key={record.id}><CardContent className="space-y-3 p-5">
+          <h2 className="font-semibold">{record.scholarshipName || 'Name not recorded'}</h2>
+          <p className="text-sm text-[var(--alo-body)]">{record.universityName}</p>
+          <Badge variant="outline">{(record.verificationStatus || 'NEEDS_REVIEW').replace(/_/g, ' ')}</Badge>
+          <dl className="space-y-2 text-sm">
+            <div><dt className="text-[var(--alo-text-muted)]">Recorded award</dt><dd>{record.scholarshipAmount > 0 ? `${record.scholarshipAmount.toLocaleString()} ${record.scholarshipCurrency || '(currency not recorded)'}` : record.awardPercentage > 0 ? `${record.awardPercentage}%` : 'Not recorded'}</dd></div>
+            <div><dt className="text-[var(--alo-text-muted)]">Deadline</dt><dd>{record.deadline || 'Not recorded'}</dd></div>
+            <div><dt className="text-[var(--alo-text-muted)]">Eligible countries</dt><dd>{record.eligibleCountries && record.eligibleCountries !== '[]' ? record.eligibleCountries : 'Not recorded'}</dd></div>
+            <div><dt className="text-[var(--alo-text-muted)]">Eligible study levels</dt><dd>{record.eligibleLevels && record.eligibleLevels !== '[]' ? record.eligibleLevels : 'Not recorded'}</dd></div>
+          </dl>
+          {source ? <a href={source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-[var(--alo-brand)] underline">Recorded official source<ExternalLink className="h-4 w-4" /></a> : <p className="text-sm text-amber-700">Official HTTPS source not recorded.</p>}
+        </CardContent></Card>;
+      })}</div>
+      <nav aria-label="Scholarship pagination" className="flex items-center justify-between gap-3"><Button variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><p className="text-sm">Page {page} of {Math.max(1, pages)}</p><Button variant="outline" disabled={page >= pages} onClick={() => setPage((value) => value + 1)}>Next</Button></nav>
+    </>}
+  </div>;
 }

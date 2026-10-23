@@ -1,5 +1,6 @@
 'use client';
 
+import { requiredFormBDocumentCategories } from '@/lib/forms/form-b-documents';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Clock, FileText, Info, Loader2, RefreshCw, Upload, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -151,9 +152,11 @@ function humanSize(bytes: number) {
 
 export default function FormBDocumentsSection({
   token,
+  formValues = {},
   onSummaryChange,
 }: {
   token?: string | null;
+  formValues?: Record<string, unknown>;
   onSummaryChange?: (summary: { loaded: boolean; complete: boolean; pending: number; missing: number; rejected: number }) => void;
 }) {
   const [documents, setDocuments] = useState<StudentDocument[]>([]);
@@ -190,7 +193,7 @@ export default function FormBDocumentsSection({
   const latestByCategory = useMemo(() => {
     const map = new Map<string, StudentDocument>();
     for (const document of documents) {
-      const key = document.category || '';
+      const key = (document.category || '').toUpperCase();
       const current = map.get(key);
       if (!current || (document.version || 0) > (current.version || 0)) map.set(key, document);
     }
@@ -201,7 +204,7 @@ export default function FormBDocumentsSection({
     const counts = { pending: 0, missing: 0, rejected: 0, verified: 0 };
     for (const group of REQUIRED_DOCUMENTS) {
       for (const required of group.documents) {
-        if (required.hint?.startsWith('Optional')) continue;
+        if (!requiredFormBDocumentCategories(formValues).includes(required.category)) continue;
         const document = latestByCategory.get(required.category);
         const tone = chipFor(document?.status).tone;
         if (tone === 'verified') counts.verified += 1;
@@ -211,7 +214,7 @@ export default function FormBDocumentsSection({
       }
     }
     return counts;
-  }, [latestByCategory]);
+  }, [latestByCategory, formValues]);
 
   useEffect(() => {
     onSummaryChange?.({

@@ -119,7 +119,7 @@ export async function authorizeMonitoringAdmin(req: Request): Promise<Monitoring
     return { ok: false, response: session };
   }
 
-  if (!hasAnyRole(session, SUPER_ADMIN_ROLES)) {
+  if (DENIED_USER_TYPES.includes(session.userType) || !hasAnyRole(session, SUPER_ADMIN_ROLES) || (session.actorUserId && session.actorUserId !== session.userId)) {
     return {
       ok: false,
       response: NextResponse.json(

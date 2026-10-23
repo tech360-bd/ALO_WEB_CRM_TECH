@@ -6,15 +6,14 @@
  * Brand specification implemented here:
  *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
  *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
- *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
- *   • CTA: "Book Free Counseling" (ALO Orange #E8501A button)
- *   • Education Blue #0057B8 for navigation/links, #FFB347 accent, #000/#555
+ *     Resources ▾ · Portal ▾ · AI SUPPORT ▾
+ *   • CTA: "Book Free Counseling" (ALO Orange #F37021 button)
+ *   • Education Blue #0066CC for navigation/links, #FFB347 accent, #000/#555
  *     neutral text — all values come from the design tokens in globals.css.
  *
  * The footer and this header are mounted once for the whole public site by
  * src/components/website/PublicLayoutWrapper.tsx (root layout), so a single
- * component covers every pre-login route. Authenticated portals and the auth
- * entry screens render standalone — see public-chrome-policy.ts.
+ * component covers every pre-login route. Authenticated portals render standalone — see public-chrome-policy.ts.
  *
  * Nothing here is invented: destinations, when unpublished in the CMS, come
  * from the countries table (`/api/website/homepage`) and fall back to the

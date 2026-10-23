@@ -1363,11 +1363,6 @@ export function CourseFinderEnhanced() {
             </div>
           </div>
         </section>
-        <footer className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] py-6 text-[var(--alo-text-muted)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs">
-            © {new Date().getFullYear()} ALO Education. All rights reserved.
-          </div>
-        </footer>
       </div>
     );
   }
@@ -1523,9 +1518,6 @@ export function CourseFinderEnhanced() {
           </p>
         </div>
 
-        <footer className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] py-6 text-[var(--alo-text-muted)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs">© {new Date().getFullYear()} ALO Education. All rights reserved.</div>
-        </footer>
       </div>
     );
   }
@@ -1658,9 +1650,6 @@ export function CourseFinderEnhanced() {
         </p>
       </div>
 
-      <footer className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] py-6 text-[var(--alo-text-muted)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs">© {new Date().getFullYear()} ALO Education. All rights reserved.</div>
-      </footer>
     </div>
   );
 }

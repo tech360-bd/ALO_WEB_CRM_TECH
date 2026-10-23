@@ -273,7 +273,7 @@ export async function startMonitoringRun(
       lastRunCompletedAt: new Date(),
       lastRunStatus: 'FAILED',
       failedRuns: { increment: 1 },
-      nextRunAt: computeNextRunAt(),
+      nextRunAt: new Date(Date.now() + Math.max(60_000, job.retryDelayMs || 60_000)),
     }).catch(() => undefined);
     await db.monitoringLog.create({
       data: { jobId: job.id, level: 'ERROR', message: `Monitoring run ${runKey} could not be initialized: ${message}` },

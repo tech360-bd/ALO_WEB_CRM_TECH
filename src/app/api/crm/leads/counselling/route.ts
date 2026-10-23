@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 import { APPLICATION_FORM_SECTIONS, type FormSectionKey } from '@/lib/forms/application-form-schema';
+import { isFormSectionComplete } from '@/lib/forms/form-section-validation';
 import { allocateIdentifier } from '@/lib/identity/student-id';
 import { acquireStudentCreateLock, releaseStudentCreateLock, studentLockKey } from '@/lib/identity/student-create-lock';
 
@@ -194,6 +195,9 @@ export const POST = withAuth(async (req, auth) => {
         // StudentProfileSection has no compound unique index on every deployed
         // database, so a counselor's captured answer is written with an explicit
         // find-then-write: update the existing row, otherwise create it.
+        const complete = isFormSectionComplete(sectionKey, payload);
+        const status = complete ? 'complete' : 'incomplete';
+        const completedAt = complete ? now : null;
         const data = JSON.stringify({ ...payload, capturedBy: auth.userId, capturedAt: now.toISOString() });
         const existingSection = await tx.studentProfileSection.findFirst({
           where: { studentId, section: sectionKey },
@@ -202,11 +206,11 @@ export const POST = withAuth(async (req, auth) => {
         if (existingSection) {
           await tx.studentProfileSection.update({
             where: { id: existingSection.id },
-            data: { status: 'complete', data, completedAt: now },
+            data: { status, data, completedAt },
           });
         } else {
           await tx.studentProfileSection.create({
-            data: { studentId, section: sectionKey, status: 'complete', data, completedAt: now },
+            data: { studentId, section: sectionKey, status, data, completedAt },
           });
         }
         written.push(sectionKey);

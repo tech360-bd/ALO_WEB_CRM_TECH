@@ -1,18 +1,14 @@
 /**
  * Route policy for the public marketing chrome (navbar, footer, CMS bars).
  *
- * Authentication entry points and every authenticated shell must render
- * standalone: no public navbar, no public footer, no marketing bars. Public
- * marketing routes keep the single shared navbar and footer.
+ * Signed-out authentication entry points and marketing pages share the brand
+ * header/footer. Authenticated portal shells remain standalone. Session-based
+ * suppression is handled by PublicLayoutWrapper.
  *
  * Matching is by path segment, so `/student-journey` (public) is not treated
  * as `/student` (portal).
  */
 const NON_PUBLIC_PREFIXES = [
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
   '/portal',
   '/student',
   '/employee',
@@ -33,5 +29,7 @@ function matchesPrefix(pathname: string, prefix: string): boolean {
 export function isPublicChromeRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return true;
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  // Portal sign-in / registration screens are pre-login pages too.
+  if (/\/(login|register|forgot-password|reset-password|verify-email)$/.test(path)) return true;
   return !NON_PUBLIC_PREFIXES.some((prefix) => matchesPrefix(path, prefix));
 }

@@ -12,12 +12,12 @@ const hero = readFileSync(join(process.cwd(), 'src/components/website/HomepagePa
  * guard the whole site + CRM, not just one screen.
  */
 describe('ALO master design tokens', () => {
-  it('uses the exact master brand palette', () => {
+  it('uses the current user-specified brand palette', () => {
     for (const token of [
-      '--alo-brand: #0057B8', '--alo-brand-hover: #003F87',
+      '--alo-brand: #0066CC', '--alo-brand-hover: #003F87',
       '--alo-brand-light: #EAF3FF', '--alo-brand-pale: #F4F8FF',
-      '--alo-cta: #E8501A', '--alo-cta-hover: #C93D13', '--alo-cta-soft: #FFF1EA',
-      '--alo-text: #0F172A', '--alo-body: #334155', '--alo-text-muted: #64748B',
+      '--alo-cta: #F37021', '--alo-cta-hover: #C93D13', '--alo-cta-soft: #FFF1EA',
+      '--alo-text: #000000', '--alo-body: #555555', '--alo-text-muted: #64748B',
       '--alo-border: #E2E8F0', '--alo-border-strong: #CBD5E1',
       '--alo-success: #10B981', '--alo-warning: #F59E0B', '--alo-error: #EF4444',
       '--alo-info: #0284C7',
@@ -59,7 +59,7 @@ describe('ALO master design tokens', () => {
     // The accent is now expressed through the shared token rather than raw
     // hex, so the hero follows the theme layer (and any future palette swap).
     expect(heroBlock).toContain('var(--alo-brand)');
-    expect(heroBlock).not.toMatch(/text-\[#0057B8\]/);
+    expect(heroBlock).not.toMatch(/text-\[#0066CC\]/);
   });
 });
 
@@ -73,9 +73,9 @@ describe('image asset integrity (redesign §6)', () => {
   });
 
   it('legacy purple/violet/indigo utilities resolve to the master info-blue family', () => {
-    expect(css).toContain('--color-purple-600: #0057B8');
+    expect(css).toContain('--color-purple-600: #0066CC');
     expect(css).toContain('--color-violet-500: #0284C7');
-    expect(css).toContain('--color-indigo-600: #0057B8');
+    expect(css).toContain('--color-indigo-600: #0066CC');
   });
 });
 
@@ -191,7 +191,7 @@ describe('redesign guardrails', () => {
   it('expresses the brand palette through tokens, not raw hex classes (Master §03)', () => {
     // Social brand colours and pure white are legitimately literal.
     const allowed = ['bg-[#FFFFFF]', 'bg-[#1877F2]', 'text-[#1877F2]'];
-    const hits = scan(/\b(?:bg|text|border)-\[#0057B8\]|\b(?:bg|text|border)-\[#E8501A\]/);
+    const hits = scan(/\b(?:bg|text|border)-\[#0066CC\]|\b(?:bg|text|border)-\[#F37021\]/);
     expect(hits.filter((h) => !allowed.some((a) => h.match.startsWith(a)))).toEqual([]);
   });
 

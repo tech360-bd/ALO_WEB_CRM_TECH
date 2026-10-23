@@ -5,6 +5,8 @@
 // university/course production records. AI output is always a review candidate,
 // not verification.
 
+import { publicCourseWhere, publicUniversityWhere } from '@/lib/public-catalog';
+import { monitorCatalogueBatch } from '@/lib/official-crawlers/catalogue-monitoring';
 import { createHash } from 'node:crypto';
 import { db } from '@/lib/db';
 import { getZai, extractJson } from '@/lib/ai';
@@ -101,6 +103,7 @@ interface MonitoringSource {
   id: string;
   sourceUrl: string;
   sourceName: string;
+  category?: string | null;
   sourceType: string;
   entityType: string;
   universitySlug?: string | null;
@@ -181,7 +184,7 @@ export async function runMonitoringCycle(runId: string, options: RunOptions = {}
   const verifiedUniversitySlugs = new Set<string>();
   const verifiedCourseSlugs = new Set<string>();
   if (scope === 'verified-only') {
-    const [universities, courses] = await Promise.all([
+    const [universities, courses, crmUniversities, crmCourses] = await Promise.all([
       db.universityPage.findMany({
         where: { verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED' },
         select: { slug: true },
@@ -190,9 +193,11 @@ export async function runMonitoringCycle(runId: string, options: RunOptions = {}
         where: { verificationStatus: 'VERIFIED', approvalStatus: 'PUBLISHED' },
         select: { slug: true },
       }),
+      db.crmUniversity.findMany({ where: publicUniversityWhere(), select: { slug: true } }),
+      db.crmCourse.findMany({ where: publicCourseWhere(), select: { slug: true } }),
     ]);
-    for (const university of universities) verifiedUniversitySlugs.add(university.slug);
-    for (const course of courses) verifiedCourseSlugs.add(course.slug);
+    for (const university of [...universities, ...crmUniversities]) verifiedUniversitySlugs.add(university.slug);
+    for (const course of [...courses, ...crmCourses]) verifiedCourseSlugs.add(course.slug);
   }
 
   const now = new Date();
@@ -219,9 +224,33 @@ export async function runMonitoringCycle(runId: string, options: RunOptions = {}
   counts.sourcesDeferred = Math.max(0, dueSources.length - sources.length);
   await log(runId, 'INFO', `Monitoring batch started: ${sources.length} due verified official sources; ${counts.sourcesDeferred} due source(s) deferred to a later batch (scope: ${scope}).`);
 
+  let catalogueBatches = 0;
   const outcomes = await mapWithConcurrency(sources, FETCH_CONCURRENCY, async (source) => {
+    const isCatalogue = source.entityType === 'UNIVERSITY' && source.category === 'CATALOGUE';
     try {
-      return await checkSource(runId, source);
+      const outcome = await checkSource(runId, source);
+      if (outcome.success && isCatalogue) {
+        const discover = catalogueBatches++ < 2;
+        if (discover) {
+          const { report } = await monitorCatalogueBatch(source, runId, fetchSourceContent);
+          if (report.status === 'IN_PROGRESS') counts.sourcesDeferred++;
+          if (report.status !== 'IN_PROGRESS') {
+            const summary = JSON.stringify({ status: report.status, candidateCount: report.discovered.length, candidateSetHash: digest(report.discovered.map((link) => link.url).sort().join('\n')), blockers: report.blockers, failedPages: report.failures.length });
+            const created = await createChange({
+              runId, source, changeType: 'NEEDS_MANUAL_REVIEW', fieldName: 'catalogue_discovery',
+              oldValue: null, newValue: summary, sourceUrl: source.sourceUrl, sourcePageTitle: source.sourceName,
+              previousVerifiedAt: source.lastVerifiedAt || null, newSourceDate: null,
+              aiExplanation: 'Catalogue link discovery finished its current frontier. Candidate programme links, documents, faculty and department pages require independent verification. No university or course was created or marked verified. See the catalogue traversal report.',
+              confidence: 0, impactLevel: 'MEDIUM', evidenceQuote: null, previousHash: '', currentHash: digest(summary),
+            });
+            if (created) { counts.changesDetected++; counts.manualReviewItems++; }
+          }
+        } else {
+          counts.sourcesDeferred++;
+          await db.officialSource.update({ where: { id: source.id }, data: { lastCheckedAt: null } });
+        }
+      }
+      return outcome;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       await log(runId, 'ERROR', `Source check failed: ${source.sourceUrl} — ${message}`, source);

@@ -137,6 +137,7 @@ import SocialMediaManagementHub from '@/components/social/SocialMediaManagementH
 import CrmCommunicationsPage from '@/components/crm/pages/CrmCommunicationsPage';
 import CrmAgentOperationsPage from '@/components/crm/pages/CrmAgentOperationsPage';
 import CrmAnalyticsPage from '@/components/crm/pages/CrmAnalyticsPage';
+import InternationalDataCataloguePage from '@/components/crm/pages/InternationalDataCataloguePage';
 import CrmUniversitiesPage from '@/components/crm/pages/CrmUniversitiesPage';
 
 // ---- Marketing Hub ----
@@ -427,6 +428,7 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'crm-scholarships': <CrmScholarshipsPage />,
   // Course & University
   'crm-course-finder': <CrmCourseFinderPage />,
+  'crm-data-catalogue': <InternationalDataCataloguePage />,
   'crm-universities': <CrmUniversitiesPage />,
   // Communication
   'crm-inbox': <CrmInboxPage />,

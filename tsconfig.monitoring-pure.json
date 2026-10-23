@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": ["src/lib/official-crawlers/catalogue-traversal.ts", "src/lib/university-monitoring-source-policy.ts", "src/lib/public-catalog.ts"],
+  "exclude": ["node_modules"]
+}
