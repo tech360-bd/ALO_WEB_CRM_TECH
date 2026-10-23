@@ -77,9 +77,9 @@ export async function PUT(request: Request) {
     }
 
     const suppliedFields = Object.keys(body);
-    const protected = suppliedFields.filter((field) => PROTECTED_FIELDS.has(field));
-    if (protected.length) {
-      return NextResponse.json({ success: false, error: 'Employment role, department, branch, manager, and scope fields can only be changed through an authorized HR workflow.', fields: protected }, { status: 403 });
+    const protectedFields = suppliedFields.filter((field) => PROTECTED_FIELDS.has(field));
+    if (protectedFields.length) {
+      return NextResponse.json({ success: false, error: 'Employment role, department, branch, manager, and scope fields can only be changed through an authorized HR workflow.', fields: protectedFields }, { status: 403 });
     }
     const unknown = suppliedFields.filter((field) => !SELF_EDITABLE_FIELDS.has(field));
     if (unknown.length) {
