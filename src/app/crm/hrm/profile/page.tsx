@@ -76,7 +76,7 @@ export default function HrmProfilePage() {
   if (!data) return <div className="min-h-screen bg-white p-6 text-sm">No accessible HR profile found. Contact HR.</div>;
 
   const safeValue = (value: unknown) => value === null || value === undefined ? '' : String(value);
-  const renderInputs = (fields: Array<[string, string]>, editable: boolean) => fields.map(([key, label]) => (
+  const renderInputs = (fields: Array<[string, string, boolean?]>, editable: boolean) => fields.map(([key, label]) => (
     <div key={key} className={key.toLowerCase().includes('address') ? 'md:col-span-2 lg:col-span-3' : ''}>
       <Label htmlFor={key} className="text-xs text-slate-600">{label}</Label>
       <Input id={key} name={key} defaultValue={safeValue(data[key])} readOnly={!editable || !EDITABLE_FIELDS.has(key)} className="h-9 text-sm bg-white border-slate-200 read-only:bg-slate-50" />

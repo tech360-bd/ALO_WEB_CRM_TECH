@@ -36,6 +36,7 @@ export type PermissionAction =
   | "archive"
   | "send"
   | "generate"
+  | "finish"
   // Student module — scoped view/update
   | "view_assigned"
   | "view_all"
