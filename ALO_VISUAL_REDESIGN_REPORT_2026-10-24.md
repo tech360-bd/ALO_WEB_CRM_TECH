@@ -40,9 +40,10 @@ specified floor, defines every referenced utility, converts dark/black panels to
 brand surfaces, unifies the hero system, and repairs public copy — with all
 existing behaviour intact.
 
-Scope across the whole change set: **>1,000 file-touches in three sweeps** (theme
-tokenisation, typography floor, button/CTA normalisation), a rewritten hero
-system, and a new CSS-completeness gate.
+Scope across the whole change set (branch vs `main`@`cead8141`): **595 files,
++19,387 / −16,906 lines** — three sweeps (theme tokenisation, typography floor,
+button/CTA normalisation), a rewritten hero system, and a new CSS-completeness
+gate.
 
 Result: `tsc` clean, ESLint clean, **2,725 tests passing / 75 skipped / 0 failing**
 (six guardrail tests added in the final pass), **0 undefined Tailwind classes**
