@@ -121,14 +121,14 @@ export default function CrmAccountingPage() {
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Accounting Center</h1>
-          <p className="text-xs text-slate-500">Real double-entry ledger • Chart of accounts, journals, trial balance, fiscal periods</p>
+          <h1 className="text-xl font-bold text-[var(--alo-text)]">Accounting Center</h1>
+          <p className="text-xs text-[var(--alo-text-muted)]">Real double-entry ledger • Chart of accounts, journals, trial balance, fiscal periods</p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={loadAll} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} Refresh
           </Button>
-          <Button size="sm" className="bg-[#E8501A] hover:bg-[#D04010] text-white" onClick={seedChart} disabled={busy}>
+          <Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" onClick={seedChart} disabled={busy}>
             <ListTree className="h-4 w-4" /> Seed canonical chart
           </Button>
         </div>
@@ -150,31 +150,31 @@ export default function CrmAccountingPage() {
       {/* KPI cards — straight from the trial balance API */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium text-slate-600"><Scale className="h-4 w-4" /> Ledger balanced</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2 text-sm font-medium text-[var(--alo-body)]"><Scale className="h-4 w-4" /> Ledger balanced</CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">{trial?.totals?.balanced === true ? 'Yes' : trial?.totals ? 'No' : '—'}</div>
-            <p className="text-xs text-slate-500">{trial ? `${trial.rows?.length ?? 0} accounts with activity` : 'No data yet'}</p>
+            <div className="text-2xl font-bold text-[var(--alo-text)]">{trial?.totals?.balanced === true ? 'Yes' : trial?.totals ? 'No' : '—'}</div>
+            <p className="text-xs text-[var(--alo-text-muted)]">{trial ? `${trial.rows?.length ?? 0} accounts with activity` : 'No data yet'}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Total debits</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Total debits</CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">{trial ? money(trial.totals?.totalDebit) : '—'}</div>
-            <p className="text-xs text-slate-500">{trial?.integrity ? `${trial.integrity.entriesChecked} POSTED entries verified` : ''}</p>
+            <div className="text-2xl font-bold text-[var(--alo-text)]">{trial ? money(trial.totals?.totalDebit) : '—'}</div>
+            <p className="text-xs text-[var(--alo-text-muted)]">{trial?.integrity ? `${trial.integrity.entriesChecked} POSTED entries verified` : ''}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Total credits</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Total credits</CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">{trial ? money(trial.totals?.totalCredit) : '—'}</div>
-            <p className="text-xs text-slate-500">{trial?.integrity?.balanced === false ? '⚠ integrity check failed' : 'Integrity verified'}</p>
+            <div className="text-2xl font-bold text-[var(--alo-text)]">{trial ? money(trial.totals?.totalCredit) : '—'}</div>
+            <p className="text-xs text-[var(--alo-text-muted)]">{trial?.integrity?.balanced === false ? '⚠ integrity check failed' : 'Integrity verified'}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Net A/R (acct 1100)</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Net A/R (acct 1100)</CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">{trial?.accountsReceivable ? money(Math.round(trial.accountsReceivable.netReceivable * 100)) : '—'}</div>
-            <p className="text-xs text-slate-500">Journal movements, POSTED only</p>
+            <div className="text-2xl font-bold text-[var(--alo-text)]">{trial?.accountsReceivable ? money(Math.round(trial.accountsReceivable.netReceivable * 100)) : '—'}</div>
+            <p className="text-xs text-[var(--alo-text-muted)]">Journal movements, POSTED only</p>
           </CardContent>
         </Card>
       </div>
@@ -191,14 +191,14 @@ export default function CrmAccountingPage() {
           <Card>
             <CardContent className="pt-4">
               {loading ? (
-                <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading trial balance…</div>
+                <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading trial balance…</div>
               ) : (trial?.rows ?? []).length === 0 ? (
-                <p className="text-sm text-slate-500">No posted journals yet. Post a journal to see the trial balance.</p>
+                <p className="text-sm text-[var(--alo-text-muted)]">No posted journals yet. Post a journal to see the trial balance.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b text-left text-xs uppercase text-slate-500">
+                      <tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]">
                         <th className="py-2 pr-4">Code</th><th className="py-2 pr-4">Account</th><th className="py-2 pr-4">Type</th>
                         <th className="py-2 pr-4 text-right">Debits</th><th className="py-2 pr-4 text-right">Credits</th><th className="py-2 text-right">Balance</th>
                       </tr>
@@ -226,21 +226,21 @@ export default function CrmAccountingPage() {
           <Card>
             <CardContent className="pt-4">
               {loading ? (
-                <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading journals…</div>
+                <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading journals…</div>
               ) : entries.length === 0 ? (
-                <p className="text-sm text-slate-500">No journal entries yet.</p>
+                <p className="text-sm text-[var(--alo-text-muted)]">No journal entries yet.</p>
               ) : (
                 <div className="space-y-3">
                   {entries.map((entry: any) => (
                     <div key={entry.id} className="rounded-lg border p-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <span className="font-mono text-xs text-slate-500">{entry.id}</span>
-                          <p className="font-medium text-slate-900">{entry.memo}</p>
-                          <p className="text-xs text-slate-500">{new Date(entry.entryDate).toISOString().slice(0, 10)} • source: {entry.source} • currency: {entry.currency}</p>
+                          <span className="font-mono text-xs text-[var(--alo-text-muted)]">{entry.id}</span>
+                          <p className="font-medium text-[var(--alo-text)]">{entry.memo}</p>
+                          <p className="text-xs text-[var(--alo-text-muted)]">{new Date(entry.entryDate).toISOString().slice(0, 10)} • source: {entry.source} • currency: {entry.currency}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge className={entry.status === 'POSTED' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}>{entry.status}</Badge>
+                          <Badge className={entry.status === 'POSTED' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{entry.status}</Badge>
                           {entry.status === 'POSTED' && !entry.reversalOfId && (
                             <Button size="sm" variant="outline" onClick={() => reverseEntry(entry.id)}>
                               <Ban className="h-3 w-3 mr-1" /> Reverse
@@ -251,7 +251,7 @@ export default function CrmAccountingPage() {
                       <div className="mt-2 overflow-x-auto">
                         <table className="w-full text-xs">
                           <thead>
-                            <tr className="text-left text-slate-500"><th className="pr-4">Account</th><th className="pr-4 text-right">Debit</th><th className="text-right">Credit</th></tr>
+                            <tr className="text-left text-[var(--alo-text-muted)]"><th className="pr-4">Account</th><th className="pr-4 text-right">Debit</th><th className="text-right">Credit</th></tr>
                           </thead>
                           <tbody>
                             {(entry.lines ?? []).map((line: any) => (
@@ -278,37 +278,37 @@ export default function CrmAccountingPage() {
             <CardContent className="space-y-3">
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-600">Memo</label>
+                  <label className="text-xs font-medium text-[var(--alo-body)]">Memo</label>
                   <Input value={memo} onChange={(e) => setMemo(e.target.value)} placeholder="e.g. Owner capital contribution" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-600">Date</label>
+                  <label className="text-xs font-medium text-[var(--alo-body)]">Date</label>
                   <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-600">Debit account</label>
+                  <label className="text-xs font-medium text-[var(--alo-body)]">Debit account</label>
                   <select className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={debitAccount} onChange={(e) => setDebitAccount(e.target.value)}>
                     <option value="">Select account…</option>
                     {postable.map((a) => <option key={a.code} value={a.code}>{a.code} — {a.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-600">Credit account</label>
+                  <label className="text-xs font-medium text-[var(--alo-body)]">Credit account</label>
                   <select className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={creditAccount} onChange={(e) => setCreditAccount(e.target.value)}>
                     <option value="">Select account…</option>
                     {postable.map((a) => <option key={a.code} value={a.code}>{a.code} — {a.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-medium text-slate-600">Amount</label>
+                  <label className="text-xs font-medium text-[var(--alo-body)]">Amount</label>
                   <Input type="number" min="0" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
                 </div>
               </div>
-              <Button className="bg-[#E8501A] hover:bg-[#D04010] text-white" onClick={postManualJournal}>
+              <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" onClick={postManualJournal}>
                 <BookOpen className="h-4 w-4" /> Post journal
               </Button>
               {postable.length === 0 && (
-                <p className="text-xs text-slate-500">Seed the canonical chart first to enable account selection.</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Seed the canonical chart first to enable account selection.</p>
               )}
             </CardContent>
           </Card>
@@ -318,14 +318,14 @@ export default function CrmAccountingPage() {
           <Card>
             <CardContent className="pt-4">
               {loading ? (
-                <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading periods…</div>
+                <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading periods…</div>
               ) : periods.length === 0 ? (
-                <p className="text-sm text-slate-500">No fiscal periods defined. Periods are optional; when defined and CLOSED, posting into them is rejected by the ledger.</p>
+                <p className="text-sm text-[var(--alo-text-muted)]">No fiscal periods defined. Periods are optional; when defined and CLOSED, posting into them is rejected by the ledger.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b text-left text-xs uppercase text-slate-500">
+                      <tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]">
                         <th className="py-2 pr-4">Period</th><th className="py-2 pr-4">Start</th><th className="py-2 pr-4">End</th><th className="py-2">Status</th>
                       </tr>
                     </thead>
@@ -335,7 +335,7 @@ export default function CrmAccountingPage() {
                           <td className="py-2 pr-4 font-medium">{p.name}</td>
                           <td className="py-2 pr-4">{new Date(p.startDate).toISOString().slice(0, 10)}</td>
                           <td className="py-2 pr-4">{new Date(p.endDate).toISOString().slice(0, 10)}</td>
-                          <td className="py-2"><Badge className={p.status === 'OPEN' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}>{p.status}</Badge></td>
+                          <td className="py-2"><Badge className={p.status === 'OPEN' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{p.status}</Badge></td>
                         </tr>
                       ))}
                     </tbody>

@@ -23,7 +23,7 @@ interface RealUser {
 const roleColors: Record<string, string> = {
   super_admin: 'bg-red-100 text-red-700', ceo: 'bg-red-50 text-red-600', branch_manager: 'bg-amber-100 text-amber-700',
   counselor: 'bg-blue-100 text-blue-700', application_team: 'bg-green-100 text-green-700', visa_officer: 'bg-purple-100 text-purple-700',
-  finance: 'bg-teal-100 text-teal-700', marketing_manager: 'bg-pink-100 text-pink-700', front_desk: 'bg-gray-100 text-gray-600',
+  finance: 'bg-teal-100 text-teal-700', marketing_manager: 'bg-pink-100 text-pink-700', front_desk: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   hr: 'bg-indigo-100 text-indigo-700', partner_manager: 'bg-orange-100 text-orange-700', document_officer: 'bg-cyan-100 text-cyan-700',
   data_manager: 'bg-lime-100 text-lime-700', support_agent: 'bg-sky-100 text-sky-700', ai_manager: 'bg-violet-100 text-violet-700',
   student: 'bg-emerald-100 text-emerald-700', SUPER_ADMIN: 'bg-red-100 text-red-700', ADMIN: 'bg-red-50 text-red-600',
@@ -126,7 +126,7 @@ export default function CrmUsersPage() {
       });
       if (res.ok) {
         setUsers(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));
-        toast({ title: 'Status Updated', description: `User ${newStatus} — real DB, audit logged` });
+        toast({ title: 'Status Updated', description: `User ${newStatus}, audit logged` });
       } else {
         // Local fallback if API not exist
         setUsers(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));
@@ -139,10 +139,10 @@ export default function CrmUsersPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div><h1 className="text-2xl font-bold text-gray-900">User Management</h1><p className="text-gray-500 text-sm">Manage all system users and their access — real PortalUser + Employee data, audit logged, RBAC protected, mobile PWA ready</p></div>
+        <div><h1 className="text-2xl font-bold text-[var(--alo-text)]">User Management</h1><p className="text-[var(--alo-text-muted)] text-sm">Manage every user account and its access, with audit logging and role-based permissions.</p></div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchUsers} className="text-xs">🔄 Refresh Real Data</Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0057B8] hover:bg-[#003F87] text-xs"><Plus className="w-4 h-4 mr-1" />Invite User</Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-xs"><Plus className="w-4 h-4 mr-1" />Invite User</Button>
         </div>
       </div>
 
@@ -153,12 +153,12 @@ export default function CrmUsersPage() {
           { label: 'Suspended', value: stats.suspended, icon: UserX, color: 'text-red-600 bg-red-50' },
           { label: 'Roles', value: stats.roles, icon: Shield, color: 'text-purple-600 bg-purple-50' },
         ].map(s => (
-          <Card key={s.label}><CardContent className="p-4 flex items-center gap-3"><div className={`p-2 rounded-lg ${s.color}`}><s.icon className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-gray-500">{s.label}</p></div></CardContent></Card>
+          <Card key={s.label}><CardContent className="p-4 flex items-center gap-3"><div className={`p-2 rounded-lg ${s.color}`}><s.icon className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-[var(--alo-text-muted)]">{s.label}</p></div></CardContent></Card>
         ))}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search real users by name or email..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" /><Input placeholder="Search real users by name or email..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
         <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
           <option value="">All Roles</option>
           {Object.entries(roleLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
@@ -168,30 +168,30 @@ export default function CrmUsersPage() {
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="border-b bg-gray-50"><tr>
-              {['Name', 'Email', 'Phone', 'Role', 'Status', 'Last Login', 'Actions'].map(h => <th key={h} className="text-left p-3 font-medium text-gray-600">{h}</th>)}
+            <thead className="border-b bg-[var(--alo-page)]"><tr>
+              {['Name', 'Email', 'Phone', 'Role', 'Status', 'Last Login', 'Actions'].map(h => <th key={h} className="text-left p-3 font-medium text-[var(--alo-body)]">{h}</th>)}
             </tr></thead>
             <tbody>
               {filtered.map(u => (
-                <tr key={u.id} className="border-b hover:bg-gray-50 transition-colors">
-                  <td className="p-3 font-medium text-gray-900">{u.name}</td>
-                  <td className="p-3 text-gray-600"><Mail className="w-3 h-3 inline mr-1" />{u.email}</td>
-                  <td className="p-3 text-gray-600"><Phone className="w-3 h-3 inline mr-1" />{u.phone || 'N/A'}</td>
-                  <td className="p-3"><Badge variant="outline" className={roleColors[u.role] || 'bg-slate-100 text-slate-700'}>{roleLabels[u.role] || u.role}</Badge></td>
+                <tr key={u.id} className="border-b hover:bg-[var(--alo-page)] transition-colors">
+                  <td className="p-3 font-medium text-[var(--alo-text)]">{u.name}</td>
+                  <td className="p-3 text-[var(--alo-body)]"><Mail className="w-3 h-3 inline mr-1" />{u.email}</td>
+                  <td className="p-3 text-[var(--alo-body)]"><Phone className="w-3 h-3 inline mr-1" />{u.phone || 'N/A'}</td>
+                  <td className="p-3"><Badge variant="outline" className={roleColors[u.role] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{roleLabels[u.role] || u.role}</Badge></td>
                   <td className="p-3">
                     <button onClick={() => toggleStatus(u.id)} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${u.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`} />{u.status}
                     </button>
                   </td>
-                  <td className="p-3 text-gray-500"><Clock className="w-3 h-3 inline mr-1" />{u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}</td>
-                  <td className="p-3"><div className="flex gap-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-blue-600 text-xs">Edit</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-gray-600 text-xs">View</Button></div></td>
+                  <td className="p-3 text-[var(--alo-text-muted)]"><Clock className="w-3 h-3 inline mr-1" />{u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}</td>
+                  <td className="p-3"><div className="flex gap-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-blue-600 text-xs">Edit</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[var(--alo-body)] text-xs">View</Button></div></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        {loading && <CardContent className="p-8 text-center text-gray-400 text-sm">Loading real users from DB...</CardContent>}
-        {!loading && filtered.length === 0 && <CardContent className="p-8 text-center text-gray-400 text-sm">No users found — real DB query returned 0</CardContent>}
+        {loading && <CardContent className="p-8 text-center text-[var(--alo-text-muted)] text-sm">Loading real users from DB...</CardContent>}
+        {!loading && filtered.length === 0 && <CardContent className="p-8 text-center text-[var(--alo-text-muted)] text-sm">No users found — query returned 0</CardContent>}
       </Card>
 
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-800">

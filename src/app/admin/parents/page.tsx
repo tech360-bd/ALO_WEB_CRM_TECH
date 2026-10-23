@@ -99,7 +99,7 @@ interface Parent {
 const ACCESS_STYLE: Record<string, string> = {
   FULL_JOURNEY: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   LIMITED: 'border-blue-200 bg-blue-50 text-blue-800',
-  NONE: 'border-slate-300 bg-slate-100 text-slate-600',
+  NONE: 'border-[var(--alo-border-strong)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 const ACCESS_CONSEQUENCE: Record<string, string> = {
@@ -359,17 +359,17 @@ export default function ParentsAdminPage() {
   return (
     <div className="space-y-5 p-6">
       <div>
-        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-          <Users className="size-5 text-[#0057B8]" />
+        <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+          <Users className="size-5 text-[var(--alo-brand)]" />
           Parents &amp; Guardians
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="mt-1 text-sm text-[var(--alo-body)]">
           Managed per student. Consent records are append-only and access levels are enforced
           server-side.
         </p>
       </div>
 
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardContent className="flex flex-wrap items-end gap-2 pt-5 pb-5">
           <div className="min-w-[260px] flex-1 space-y-1.5">
             <Label htmlFor="student-id" className="text-xs font-semibold">Student id</Label>
@@ -411,13 +411,13 @@ export default function ParentsAdminPage() {
       )}
 
       {state === 'loaded' && message && parents.length === 0 && (
-        <Card className="rounded-2xl border-2 border-slate-200">
-          <CardContent className="py-8 text-center text-sm text-slate-500">{message}</CardContent>
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
+          <CardContent className="py-8 text-center text-sm text-[var(--alo-text-muted)]">{message}</CardContent>
         </Card>
       )}
 
       {showCreate && (
-        <Card className="rounded-2xl border-2 border-[#0057B8]/30">
+        <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30">
           <CardHeader>
             <CardTitle className="text-sm font-bold">Add parent or guardian</CardTitle>
           </CardHeader>
@@ -432,7 +432,7 @@ export default function ParentsAdminPage() {
                 <select
                   value={form.relationship}
                   onChange={(e) => setForm({ ...form, relationship: e.target.value })}
-                  className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs"
+                  className="h-9 w-full rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
                 >
                   {RELATIONSHIPS.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
@@ -442,7 +442,7 @@ export default function ParentsAdminPage() {
                 <select
                   value={form.accessLevel}
                   onChange={(e) => setForm({ ...form, accessLevel: e.target.value })}
-                  className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs"
+                  className="h-9 w-full rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
                 >
                   {ACCESS_LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
                 </select>
@@ -490,8 +490,8 @@ export default function ParentsAdminPage() {
                             : [...form.communicationPrefs, channel],
                         })
                       }
-                      className={`rounded-md border px-2 py-1 text-[10px] font-semibold transition-colors ${
-                        on ? 'border-[#0057B8] bg-[#0057B8] text-white' : 'border-slate-200 bg-white text-slate-600'
+                      className={`rounded-md border px-2 py-1 text-[11px] font-semibold transition-colors ${
+                        on ? 'border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white' : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)]'
                       }`}
                     >
                       {channel}
@@ -542,26 +542,26 @@ export default function ParentsAdminPage() {
           : [];
 
         return (
-          <Card key={parent.id} className="rounded-2xl border-2 border-slate-200">
+          <Card key={parent.id} className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardContent className="space-y-3 pt-5 pb-5">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-slate-900">
+                  <p className="text-sm font-bold text-[var(--alo-text)]">
                     {parent.fullName}
-                    <span className="ml-2 text-[11px] font-normal text-slate-500">{parent.relationship}</span>
+                    <span className="ml-2 text-[11px] font-normal text-[var(--alo-text-muted)]">{parent.relationship}</span>
                   </p>
-                  <p className="mt-0.5 text-[11px] text-slate-600">
+                  <p className="mt-0.5 text-[11px] text-[var(--alo-body)]">
                     {[parent.email, parent.phone].filter(Boolean).join(' · ') || 'No contact details recorded'}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <Badge variant="outline" className={`text-[10px] ${ACCESS_STYLE[parent.accessLevel] ?? ''}`}>
+                  <Badge variant="outline" className={`text-[11px] ${ACCESS_STYLE[parent.accessLevel] ?? ''}`}>
                     {parent.accessLevel}
                   </Badge>
-                  {parent.portalEnabled && <Badge variant="outline" className="text-[10px]">portal on</Badge>}
-                  {parent.isPrimaryContact && <Badge variant="outline" className="text-[10px]">primary</Badge>}
-                  {parent.isFinancialSponsor && <Badge variant="outline" className="text-[10px]">sponsor</Badge>}
-                  <Badge variant="outline" className={parent.status === 'ACTIVE' ? 'text-[10px]' : 'border-red-200 bg-red-50 text-[10px] text-red-700'}>
+                  {parent.portalEnabled && <Badge variant="outline" className="text-[11px]">portal on</Badge>}
+                  {parent.isPrimaryContact && <Badge variant="outline" className="text-[11px]">primary</Badge>}
+                  {parent.isFinancialSponsor && <Badge variant="outline" className="text-[11px]">sponsor</Badge>}
+                  <Badge variant="outline" className={parent.status === 'ACTIVE' ? 'text-[11px]' : 'border-red-200 bg-red-50 text-[11px] text-red-700'}>
                     {parent.status}
                   </Badge>
                   <Button variant="ghost" size="sm" onClick={() => setExpanded(isOpen ? null : parent.id)}>
@@ -572,15 +572,15 @@ export default function ParentsAdminPage() {
 
               {/* Channels actually permitted, not just recorded */}
               <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                <span className="font-semibold text-slate-600">Contactable via:</span>
+                <span className="font-semibold text-[var(--alo-body)]">Contactable via:</span>
                 {permittedChannels.length === 0 ? (
-                  <span className="inline-flex items-center gap-1 text-slate-500">
+                  <span className="inline-flex items-center gap-1 text-[var(--alo-text-muted)]">
                     <EyeOff className="size-3" />
                     none — {communicationConsent ? 'no channel preference recorded' : 'COMMUNICATION consent not active'}
                   </span>
                 ) : (
                   permittedChannels.map((channel) => (
-                    <Badge key={channel} variant="outline" className="text-[9px]">{channel}</Badge>
+                    <Badge key={channel} variant="outline" className="text-[11px]">{channel}</Badge>
                   ))
                 )}
               </div>
@@ -588,18 +588,18 @@ export default function ParentsAdminPage() {
               {isOpen && (
                 <>
                   {/* Access control */}
-                  <div className="space-y-2 rounded-xl border border-slate-200 p-3">
-                    <p className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                      <ShieldCheck className="size-3.5 text-[#0057B8]" />
+                  <div className="space-y-2 rounded-xl border border-[var(--alo-border)] p-3">
+                    <p className="flex items-center gap-1.5 text-xs font-bold text-[var(--alo-text)]">
+                      <ShieldCheck className="size-3.5 text-[var(--alo-brand)]" />
                       Access control
                     </p>
-                    <p className="text-[11px] text-slate-600">{ACCESS_CONSEQUENCE[parent.accessLevel]}</p>
+                    <p className="text-[11px] text-[var(--alo-body)]">{ACCESS_CONSEQUENCE[parent.accessLevel]}</p>
                     <div className="flex flex-wrap items-center gap-2">
                       <select
                         value={parent.accessLevel}
                         onChange={(e) => void patchParent(parent, { accessLevel: e.target.value })}
                         disabled={busyId === parent.id}
-                        className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs"
+                        className="h-8 rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
                         aria-label={`Access level for ${parent.fullName}`}
                       >
                         {ACCESS_LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
@@ -629,7 +629,7 @@ export default function ParentsAdminPage() {
                     {parent.capabilities.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {parent.capabilities.map((capability) => (
-                          <span key={capability} className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[9px] text-slate-600">
+                          <span key={capability} className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--alo-body)]">
                             {capability}
                           </span>
                         ))}
@@ -638,9 +638,9 @@ export default function ParentsAdminPage() {
                   </div>
 
                   {/* Consents — append-only */}
-                  <div className="space-y-2 rounded-xl border border-slate-200 p-3">
-                    <p className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                      <FileSignature className="size-3.5 text-[#0057B8]" />
+                  <div className="space-y-2 rounded-xl border border-[var(--alo-border)] p-3">
+                    <p className="flex items-center gap-1.5 text-xs font-bold text-[var(--alo-text)]">
+                      <FileSignature className="size-3.5 text-[var(--alo-brand)]" />
                       Consent records ({parent.consents.length} total, append-only)
                     </p>
                     <div className="space-y-1.5">
@@ -648,17 +648,17 @@ export default function ParentsAdminPage() {
                         const current = consents[type];
                         const active = isConsentActive(current);
                         return (
-                          <div key={type} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-100 bg-slate-50 px-2.5 py-1.5">
+                          <div key={type} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] px-2.5 py-1.5">
                             <div className="min-w-0">
-                              <p className="font-mono text-[11px] font-semibold text-slate-800">{type}</p>
-                              <p className="text-[10px] text-slate-500">
+                              <p className="font-mono text-[11px] font-semibold text-[var(--alo-text)]">{type}</p>
+                              <p className="text-[11px] text-[var(--alo-text-muted)]">
                                 {current
                                   ? `${active ? 'granted' : 'not active'} via ${current.method || 'unspecified'} · v${current.version} · ${new Date(current.createdAt).toLocaleDateString()}`
                                   : 'no record — treated as not consented'}
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Badge variant="outline" className={active ? 'border-emerald-200 bg-emerald-50 text-[9px] text-emerald-800' : 'border-slate-200 bg-white text-[9px] text-slate-500'}>
+                              <Badge variant="outline" className={active ? 'border-emerald-200 bg-emerald-50 text-[11px] text-emerald-800' : 'border-[var(--alo-border)] bg-white text-[11px] text-[var(--alo-text-muted)]'}>
                                 {active ? 'ACTIVE' : 'INACTIVE'}
                               </Badge>
                               <Button variant="outline" size="sm" disabled={busyId === parent.id} onClick={() => void setConsent(parent, type, true)}>
@@ -672,16 +672,16 @@ export default function ParentsAdminPage() {
                         );
                       })}
                     </div>
-                    <p className="text-[10px] text-slate-500">
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">
                       Revoking never deletes history: a new record is appended and the latest one governs.
                     </p>
                   </div>
 
                   {/* Payment responsibilities */}
-                  <div className="space-y-2 rounded-xl border border-slate-200 p-3">
+                  <div className="space-y-2 rounded-xl border border-[var(--alo-border)] p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                        <Wallet className="size-3.5 text-[#0057B8]" />
+                      <p className="flex items-center gap-1.5 text-xs font-bold text-[var(--alo-text)]">
+                        <Wallet className="size-3.5 text-[var(--alo-brand)]" />
                         Payment responsibilities ({parent.responsibilities.length})
                       </p>
                       <Button variant="outline" size="sm" disabled={busyId === parent.id} onClick={() => void addResponsibility(parent)}>
@@ -690,12 +690,12 @@ export default function ParentsAdminPage() {
                       </Button>
                     </div>
                     {parent.responsibilities.length === 0 ? (
-                      <p className="text-[11px] text-slate-500">None recorded.</p>
+                      <p className="text-[11px] text-[var(--alo-text-muted)]">None recorded.</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full text-[11px]">
                           <thead>
-                            <tr className="border-b border-slate-200 text-left font-bold text-slate-600">
+                            <tr className="border-b border-[var(--alo-border)] text-left font-bold text-[var(--alo-body)]">
                               <th className="p-1.5">Scope</th>
                               <th className="p-1.5">Amount</th>
                               <th className="p-1.5">Paid</th>
@@ -706,14 +706,14 @@ export default function ParentsAdminPage() {
                           </thead>
                           <tbody>
                             {parent.responsibilities.map((item) => (
-                              <tr key={item.id} className="border-b border-slate-100">
+                              <tr key={item.id} className="border-b border-[var(--alo-border)]">
                                 <td className="p-1.5">{item.scope}</td>
                                 <td className="p-1.5 font-mono">{item.amount} {item.currency}</td>
                                 <td className="p-1.5 font-mono">{item.paidAmount}</td>
                                 <td className="p-1.5 font-mono font-semibold">
                                   {Math.max(0, item.amount - item.paidAmount)}
                                 </td>
-                                <td className="p-1.5"><Badge variant="outline" className="text-[9px]">{item.status}</Badge></td>
+                                <td className="p-1.5"><Badge variant="outline" className="text-[11px]">{item.status}</Badge></td>
                                 <td className="p-1.5">
                                   {item.amount - item.paidAmount > 0 && (
                                     <Button
@@ -740,14 +740,14 @@ export default function ParentsAdminPage() {
       })}
 
       {payFor && (
-        <Card className="rounded-2xl border-2 border-[#0057B8]/30">
+        <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30">
           <CardHeader>
             <CardTitle className="text-sm font-bold">
               Record payment — {payFor.responsibility.scope}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-[var(--alo-body)]">
               Owed {payFor.responsibility.amount} {payFor.responsibility.currency}, already paid{' '}
               {payFor.responsibility.paidAmount}, outstanding{' '}
               {Math.max(0, payFor.responsibility.amount - payFor.responsibility.paidAmount)}.

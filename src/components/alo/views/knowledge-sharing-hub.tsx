@@ -45,7 +45,7 @@ interface KnowledgePost {
 }
 
 const CATEGORIES = [
-  { value: "general", label: "General", icon: "FileText", color: "bg-slate-100 text-slate-700" },
+  { value: "general", label: "General", icon: "FileText", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
   { value: "university_update", label: "University Update", icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
   { value: "visa_update", label: "Visa Update", icon: "Plane", color: "bg-blue-100 text-blue-700" },
   { value: "scholarship", label: "Scholarship", icon: "Award", color: "bg-emerald-100 text-emerald-700" },
@@ -234,7 +234,7 @@ export function KnowledgeSharingHub() {
         subtitle={`Share information, updates, and insights — accessible from every dashboard. Anyone can upload, everyone can learn. ${total} posts shared.`}
         icon="Share2"
         action={
-          <Button onClick={() => setCreateOpen(true)} className="h-10 bg-[#0057B8] text-white hover:bg-[#003F87]">
+          <Button onClick={() => setCreateOpen(true)} className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">
             <Icon name="Plus" className="size-4" />
             Share Knowledge
           </Button>
@@ -252,7 +252,7 @@ export function KnowledgeSharingHub() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
-              <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+              <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
               <Input placeholder="Search knowledge — e.g. UK visa, scholarship, partnership strategy…" value={q} onChange={(e) => setQ(e.target.value)} className="h-10 rounded-xl pl-9" />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -267,9 +267,9 @@ export function KnowledgeSharingHub() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button onClick={() => setCategoryFilter("all")} className={cn("rounded-full px-3 py-1 text-xs font-medium", categoryFilter === "all" ? "bg-[#0057B8] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>All</button>
+            <button onClick={() => setCategoryFilter("all")} className={cn("rounded-full px-3 py-1 text-xs font-medium", categoryFilter === "all" ? "bg-[var(--alo-brand)] text-white" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200")}>All</button>
             {CATEGORIES.map((c) => (
-              <button key={c.value} onClick={() => setCategoryFilter(c.value)} className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium", categoryFilter === c.value ? "bg-[#0057B8] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}>
+              <button key={c.value} onClick={() => setCategoryFilter(c.value)} className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium", categoryFilter === c.value ? "bg-[var(--alo-brand)] text-white" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200")}>
                 <Icon name={c.icon} className="size-3" />{c.label} {stats[c.value] ? `(${stats[c.value]})` : ""}
               </button>
             ))}
@@ -284,42 +284,42 @@ export function KnowledgeSharingHub() {
               const meta = categoryMeta(post.category);
               const tags = parseTags(post.tags);
               return (
-                <Card key={post.id} className="flex flex-col rounded-2xl border border-[#E2E8F0] bg-white hover:shadow-lg transition-all cursor-pointer" onClick={() => openDetail(post)}>
+                <Card key={post.id} className="flex flex-col rounded-2xl border border-[var(--alo-border)] bg-white hover:shadow-lg transition-all cursor-pointer" onClick={() => openDetail(post)}>
                   <CardContent className="flex flex-1 flex-col gap-3 pt-5">
                     <div className="flex items-start justify-between gap-2">
-                      <span className={cn("inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold", meta.color)}>
+                      <span className={cn("inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-bold", meta.color)}>
                         <Icon name={meta.icon} className="size-3" />{meta.label}
                       </span>
                       <div className="flex gap-1">
-                        {post.isPinned && <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px]"><Icon name="Pin" className="size-3" />Pinned</Badge>}
-                        {post.isFeatured && <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-[10px]"><Icon name="Star" className="size-3" />Featured</Badge>}
-                        {post.status === "PENDING" && <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">Pending</Badge>}
+                        {post.isPinned && <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[11px]"><Icon name="Pin" className="size-3" />Pinned</Badge>}
+                        {post.isFeatured && <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-[11px]"><Icon name="Star" className="size-3" />Featured</Badge>}
+                        {post.status === "PENDING" && <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">Pending</Badge>}
                       </div>
                     </div>
                     <div>
-                      <p className="card-title line-clamp-2 text-[#0F172A]">{post.title}</p>
-                      <p className="mt-1 line-clamp-2 text-sm text-[#64748B]">{post.summary || post.content.slice(0, 120)}</p>
+                      <p className="card-title line-clamp-2 text-[var(--alo-text)]">{post.title}</p>
+                      <p className="mt-1 line-clamp-2 text-sm text-[var(--alo-text-muted)]">{post.summary || post.content.slice(0, 120)}</p>
                     </div>
                     {tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {tags.slice(0, 4).map((t, i) => (
-                          <span key={i} className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">#{t}</span>
+                          <span key={i} className="rounded-md bg-[var(--alo-surface-muted)] px-1.5 py-0.5 text-[11px] text-[var(--alo-body)]">#{t}</span>
                         ))}
                       </div>
                     )}
-                    <div className="mt-auto flex items-center justify-between border-t border-[#E2E8F0] pt-3 text-xs text-[#64748B]">
+                    <div className="mt-auto flex items-center justify-between border-t border-[var(--alo-border)] pt-3 text-xs text-[var(--alo-text-muted)]">
                       <div className="flex items-center gap-3">
                         <span className="inline-flex items-center gap-1"><Icon name="Eye" className="size-3.5" />{post.views}</span>
                         <span className="inline-flex items-center gap-1"><Icon name="ThumbsUp" className="size-3.5" />{post.upvotes}</span>
                         <span className="inline-flex items-center gap-1"><Icon name="MessageCircle" className="size-3.5" />{post._count?.comments ?? 0}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" className="h-7 text-[#0057B8]" onClick={(e) => { e.stopPropagation(); handleUpvote(post.id); }} disabled={upvoting === post.id}>
+                        <Button size="sm" variant="ghost" className="h-7 text-[var(--alo-brand)]" onClick={(e) => { e.stopPropagation(); handleUpvote(post.id); }} disabled={upvoting === post.id}>
                           <Icon name="ThumbsUp" className="size-3.5" />
                         </Button>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-[#94A3B8]">
+                    <div className="flex items-center justify-between text-[11px] text-[var(--alo-placeholder)]">
                       <span>{post.authorName} • {post.authorRole}</span>
                       <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                     </div>
@@ -338,37 +338,37 @@ export function KnowledgeSharingHub() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Icon name={categoryMeta(selectedPost.category).icon} className="size-5 text-[#0057B8]" />
+                  <Icon name={categoryMeta(selectedPost.category).icon} className="size-5 text-[var(--alo-brand)]" />
                   {selectedPost.title}
                 </DialogTitle>
                 <DialogDescription className="flex flex-wrap gap-2 mt-2">
                   <Badge variant="outline">{selectedPost.category}</Badge>
                   <Badge variant="outline">{selectedPost.visibility}</Badge>
                   <Badge variant="outline">{selectedPost.status}</Badge>
-                  <span className="text-xs text-slate-500">{selectedPost.authorName} • {selectedPost.authorRole} • {new Date(selectedPost.createdAt).toLocaleString()}</span>
+                  <span className="text-xs text-[var(--alo-text-muted)]">{selectedPost.authorName} • {selectedPost.authorRole} • {new Date(selectedPost.createdAt).toLocaleString()}</span>
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-2">
-                <div className="whitespace-pre-wrap text-sm leading-relaxed text-[#1E293B]">{selectedPost.content}</div>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--alo-surface-muted)]">{selectedPost.content}</div>
                 {selectedPost.fileUrl && (
-                  <div className="rounded-lg border p-3 bg-slate-50">
+                  <div className="rounded-lg border p-3 bg-[var(--alo-page)]">
                     <a href={selectedPost.fileUrl} target="_blank" rel="noreferrer" className="text-sm text-blue-600 hover:underline inline-flex items-center gap-1"><Icon name="Paperclip" className="size-4" />Attachment: {selectedPost.fileType || "file"}</a>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
                   <Button size="sm" onClick={() => handleUpvote(selectedPost.id)} disabled={upvoting === selectedPost.id} className="h-8"><Icon name="ThumbsUp" className="size-4" />Upvote ({selectedPost.upvotes})</Button>
-                  <span className="text-xs text-slate-500">{selectedPost.views} views</span>
+                  <span className="text-xs text-[var(--alo-text-muted)]">{selectedPost.views} views</span>
                 </div>
                 <div className="border-t pt-4">
                   <p className="font-semibold text-sm mb-2">Comments ({comments.length})</p>
                   <div className="space-y-2 max-h-[200px] overflow-y-auto">
                     {comments.map((c) => (
                       <div key={c.id} className="rounded-lg border p-2 bg-white">
-                        <div className="flex justify-between text-xs text-slate-500"><span>{c.authorName} • {c.authorRole}</span><span>{new Date(c.createdAt).toLocaleString()}</span></div>
+                        <div className="flex justify-between text-xs text-[var(--alo-text-muted)]"><span>{c.authorName} • {c.authorRole}</span><span>{new Date(c.createdAt).toLocaleString()}</span></div>
                         <p className="text-sm mt-1">{c.content}</p>
                       </div>
                     ))}
-                    {comments.length === 0 && <p className="text-xs text-slate-400">No comments yet — be first to comment.</p>}
+                    {comments.length === 0 && <p className="text-xs text-[var(--alo-text-muted)]">No comments yet — be first to comment.</p>}
                   </div>
                   <div className="flex gap-2 mt-3">
                     <Input placeholder="Add a comment…" value={newComment} onChange={(e) => setNewComment(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleComment()} className="h-9" />
@@ -385,7 +385,7 @@ export function KnowledgeSharingHub() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Icon name="Share2" className="size-5 text-[#0057B8]" />Share Knowledge</DialogTitle>
+            <DialogTitle className="flex items-center gap-2"><Icon name="Share2" className="size-5 text-[var(--alo-brand)]" />Share Knowledge</DialogTitle>
             <DialogDescription>Share information, updates, or insights that others can view and utilize. Anyone (student, partner, employee) can upload.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
@@ -420,7 +420,7 @@ export function KnowledgeSharingHub() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={creating} className="h-10">Cancel</Button>
-            <Button onClick={handleCreate} disabled={creating} className="h-10 bg-[#0057B8] text-white hover:bg-[#003F87]">{creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Share2" className="size-4" />}{creating ? "Sharing…" : "Share Knowledge"}</Button>
+            <Button onClick={handleCreate} disabled={creating} className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">{creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Share2" className="size-4" />}{creating ? "Sharing…" : "Share Knowledge"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

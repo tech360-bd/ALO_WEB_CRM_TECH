@@ -19,21 +19,21 @@ export function PublicOffices({ onNavigate }: Props) {
       <PageHeader title="Our Offices" subtitle="Visit us at our offices across Bangladesh" icon="MapPin" />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {offices.map((office) => (
-          <Card key={office.city} className="rounded-2xl border border-[#DCE8F5] bg-white shadow-sm">
+          <Card key={office.city} className="rounded-2xl border border-[var(--alo-brand-border)] bg-white shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0057B8]">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                   <Icon name="MapPin" className="size-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-[#0B2447]">{office.city}</h3>
-                  {office.isMain && <Badge className="mt-1 bg-[#EAF3FF] text-[#0057B8]">Main Office</Badge>}
+                  <h3 className="text-lg font-bold text-[var(--alo-text)]">{office.city}</h3>
+                  {office.isMain && <Badge className="mt-1 bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">Main Office</Badge>}
                 </div>
               </div>
               <div className="mt-4 space-y-2 text-sm">
-                <p className="text-[#5A7299]">{office.address}</p>
-                <p className="text-[#0B2447] font-medium"><Icon name="Phone" className="mr-1 inline size-3.5" />{office.phone}</p>
-                <p className="text-[#5A7299]"><Icon name="Clock" className="mr-1 inline size-3.5" />{office.hours}</p>
+                <p className="text-[var(--alo-text-muted)]">{office.address}</p>
+                <p className="text-[var(--alo-text)] font-medium"><Icon name="Phone" className="mr-1 inline size-3.5" />{office.phone}</p>
+                <p className="text-[var(--alo-text-muted)]"><Icon name="Clock" className="mr-1 inline size-3.5" />{office.hours}</p>
               </div>
               <Button onClick={() => onNavigate("public-contact")} className="mt-4 w-full" variant="outline">Contact Office</Button>
             </CardContent>

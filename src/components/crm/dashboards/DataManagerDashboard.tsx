@@ -117,14 +117,14 @@ export default function DataManagerDashboard() {
                   <TableBody>
                     {approvalQueue.map((a: any, idx: number) => (
                       <TableRow key={a.name + idx}>
-                        <TableCell><Badge variant="muted" className="text-[10px]">{a.type}</Badge></TableCell>
+                        <TableCell><Badge variant="muted" className="text-[11px]">{a.type}</Badge></TableCell>
                         <TableCell className="text-sm font-medium text-alo-text">{a.name}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary">{a.submittedBy}</TableCell>
                         <TableCell className="text-sm text-alo-text-muted text-right">{a.date}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex gap-1 justify-end">
-                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
-                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[10px] h-6 px-2">Review</Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[11px] h-6 px-2">Approve</Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[11px] h-6 px-2">Review</Button>
                           </div>
                         </TableCell>
                       </TableRow>

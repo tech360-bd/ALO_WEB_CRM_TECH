@@ -157,21 +157,21 @@ type AccessControlData = {
 // ---------------------------------------------------------------------------
 
 const PROFILE_STATUS_COLORS: Record<string, string> = {
-  INCOMPLETE: "bg-slate-100 text-slate-700",
+  INCOMPLETE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   SUBMITTED: "bg-amber-100 text-amber-700",
   UNDER_REVIEW: "bg-sky-100 text-sky-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   CORRECTION_REQUIRED: "bg-rose-100 text-rose-700",
   SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-500",
-  TERMINATED: "bg-slate-200 text-slate-600",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
+  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
 };
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
   SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-500",
-  TERMINATED: "bg-slate-200 text-slate-600",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
+  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
 };
 
 const QUOTA_REQUEST_COLORS: Record<string, string> = {
@@ -190,9 +190,9 @@ const QUOTA_TYPE_LABELS: Record<string, string> = {
 const MODULE_COLORS: Record<string, string> = {
   Employee: "bg-sky-100 text-sky-700 border-sky-200",
   Partner: "bg-violet-100 text-violet-700 border-violet-200",
-  Marketing: "bg-[#fdece4] text-[#E8501A] border-[#E8501A]/30",
+  Marketing: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border-[var(--alo-cta)]/30",
   Communication: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  System: "bg-[#e8f0fb] text-[#0057B8] border-[#0057B8]/30",
+  System: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)] border-[var(--alo-brand)]/30",
 };
 
 const MODULE_ORDER = ["Employee", "Partner", "Marketing", "Communication", "System"];
@@ -691,12 +691,12 @@ export function AccessControlCenter() {
           <TabsTrigger value="employees" className="gap-1.5">
             <Icon name="Users" className="size-4" />
             Employee Roles
-            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">{employees.length}</Badge>
+            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">{employees.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="packages" className="gap-1.5">
             <Icon name="Package" className="size-4" />
             Partner Packages
-            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">{packages.length}</Badge>
+            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">{packages.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="features" className="gap-1.5">
             <Icon name="ToggleLeft" className="size-4" />
@@ -705,7 +705,7 @@ export function AccessControlCenter() {
           <TabsTrigger value="quota" className="gap-1.5">
             <Icon name="Inbox" className="size-4" />
             Quota Requests
-            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">
+            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">
               {summary?.pendingQuotaRequests ?? 0}
             </Badge>
           </TabsTrigger>
@@ -725,7 +725,7 @@ export function AccessControlCenter() {
               title="No employees yet"
               description="Create your first employee account to assign roles and packages."
               action={
-                <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => setCreateOpen(true)}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setCreateOpen(true)}>
                   <Icon name="Plus" className="size-4" />
                   Create Employee
                 </Button>
@@ -737,7 +737,7 @@ export function AccessControlCenter() {
               description="All ALO employees — designations, profile status, and account state."
               icon="Users"
               action={
-                <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
                   <Icon name="Plus" className="size-4" />
                   Create Employee
                 </Button>
@@ -760,17 +760,17 @@ export function AccessControlCenter() {
                   <TableBody>
                     {employees.map((emp) => (
                       <TableRow key={emp.id}>
-                        <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">
+                        <TableCell className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                           {emp.employeeCode}
                         </TableCell>
                         <TableCell>
                           <div className="font-medium">{emp.fullName}</div>
                           {emp.role && (
-                            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{emp.role}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{emp.role}</div>
                           )}
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
-                          <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                          <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                             {emp.designation}
                           </Badge>
                         </TableCell>
@@ -832,7 +832,7 @@ export function AccessControlCenter() {
               title="No partner packages defined"
               description="Create Starter, Growth, and Premium packages to assign to B2B partners."
               action={
-                <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => setNewPkgOpen(true)}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setNewPkgOpen(true)}>
                   <Icon name="Plus" className="size-4" />
                   Create New Package
                 </Button>
@@ -841,7 +841,7 @@ export function AccessControlCenter() {
           ) : (
             <>
               <div className="flex items-center justify-end">
-                <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => setNewPkgOpen(true)}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setNewPkgOpen(true)}>
                   <Icon name="Plus" className="size-4" />
                   Create New Package
                 </Button>
@@ -905,8 +905,8 @@ export function AccessControlCenter() {
             ) : (
               <div className="space-y-6">
                 {MODULE_ORDER.filter((m) => featureDefinitionsByModule[m]?.length).map((module) => (
-                  <div key={module} className="rounded-xl border-2 border-[#0057B8]/15">
-                    <div className="flex items-center gap-2 border-b border-border/60 bg-[#e8f0fb]/40 px-4 py-2.5">
+                  <div key={module} className="rounded-xl border-2 border-[var(--alo-brand)]/15">
+                    <div className="flex items-center gap-2 border-b border-border/60 bg-[var(--alo-brand-light)]/40 px-4 py-2.5">
                       <Badge variant="outline" className={cn("border", MODULE_COLORS[module])}>
                         {module}
                       </Badge>
@@ -948,7 +948,7 @@ export function AccessControlCenter() {
                             <div className="flex items-center gap-3 sm:shrink-0">
                               {limit !== null && (
                                 <div className="flex items-center gap-1.5">
-                                  <Label className="text-[10px] uppercase tracking-wide text-muted-foreground">Limit</Label>
+                                  <Label className="text-[11px] uppercase tracking-wide text-muted-foreground">Limit</Label>
                                   <Input
                                     type="number"
                                     min={0}
@@ -963,7 +963,7 @@ export function AccessControlCenter() {
                                   {pending !== undefined && pending !== String(limit) && (
                                     <Button
                                       size="sm"
-                                      className="h-8 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
+                                      className="h-8 bg-[var(--alo-brand)] px-2 text-xs text-white hover:bg-[var(--alo-brand)]/90"
                                       disabled={ruleSavingKey === fd.key}
                                       onClick={() => handleSaveLimit(fd, pending)}
                                     >
@@ -990,8 +990,8 @@ export function AccessControlCenter() {
                     </div>
                   </div>
                 ))}
-                <div className="flex items-start gap-2 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                <div className="flex items-start gap-2 rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                   <p>
                     Changes apply immediately. Backend re-validates permissions on every action —
                     frontend toggles only hide buttons, they don’t grant access.
@@ -1013,7 +1013,7 @@ export function AccessControlCenter() {
               icon="Inbox"
               action={
                 <Button
-                  className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12"
+                  className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12"
                   onClick={() => setNewReqOpen(true)}
                   disabled={partners.length === 0}
                 >
@@ -1047,17 +1047,17 @@ export function AccessControlCenter() {
                         <TableRow key={req.id}>
                           <TableCell>
                             <div className="font-medium">{req.employee?.fullName || "—"}</div>
-                            <div className="font-mono text-[10px] text-muted-foreground">
+                            <div className="font-mono text-[11px] text-muted-foreground">
                               {req.employee?.employeeCode || req.partnerId.slice(-6)}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                            <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                               {QUOTA_TYPE_LABELS[req.requestType] || req.requestType}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right font-mono tabular-nums">{req.currentLimit}</TableCell>
-                          <TableCell className="text-right font-mono font-semibold tabular-nums text-[#E8501A]">
+                          <TableCell className="text-right font-mono font-semibold tabular-nums text-[var(--alo-cta)]">
                             {req.requestedLimit}
                           </TableCell>
                           <TableCell className="hidden max-w-[280px] truncate text-xs text-muted-foreground md:table-cell">
@@ -1142,7 +1142,7 @@ export function AccessControlCenter() {
               {usageLoading ? (
                 <div className="h-24 animate-pulse rounded-xl bg-muted" />
               ) : usageRows.length === 0 ? (
-                <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
+                <p className="rounded-lg border border-dashed border-[var(--alo-brand)]/20 px-4 py-3 text-xs text-muted-foreground">
                   No quota-bearing features enabled for this partner yet.
                 </p>
               ) : (
@@ -1151,10 +1151,10 @@ export function AccessControlCenter() {
                     const color =
                       u.percentage >= 90 ? "#E8501A" : u.percentage >= 70 ? "#f59e0b" : "#0057B8";
                     return (
-                      <div key={u.featureKey} className="rounded-xl border-2 border-[#0057B8]/15 p-3">
+                      <div key={u.featureKey} className="rounded-xl border-2 border-[var(--alo-brand)]/15 p-3">
                         <div className="flex items-center justify-between gap-2">
                           <code className="font-mono text-[11px] text-foreground">{u.featureKey}</code>
-                          <Badge variant="outline" className="text-[10px]">
+                          <Badge variant="outline" className="text-[11px]">
                             {u.percentage}%
                           </Badge>
                         </div>
@@ -1198,21 +1198,21 @@ export function AccessControlCenter() {
                         <TableRow key={log.id}>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                              <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                                 {log.ownerType}
                               </Badge>
-                              <code className="font-mono text-[10px] text-muted-foreground">{log.ownerId.slice(-8)}</code>
+                              <code className="font-mono text-[11px] text-muted-foreground">{log.ownerId.slice(-8)}</code>
                             </div>
                           </TableCell>
                           <TableCell>
                             <code className="font-mono text-[11px] text-foreground">{log.featureKey}</code>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary" className="font-mono text-[10px]">{log.action}</Badge>
+                            <Badge variant="secondary" className="font-mono text-[11px]">{log.action}</Badge>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             {meta ? (
-                              <code className="font-mono text-[10px] text-muted-foreground">
+                              <code className="font-mono text-[11px] text-muted-foreground">
                                 {JSON.stringify(meta).slice(0, 80)}
                               </code>
                             ) : (
@@ -1234,13 +1234,13 @@ export function AccessControlCenter() {
       </Tabs>
 
       {/* Security note */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
         <CardContent className="flex items-start gap-3 pt-5">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#0057B8] text-white">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-brand)] text-white">
             <Icon name="ShieldCheck" className="size-5" />
           </div>
           <div className="text-sm">
-            <p className="font-semibold text-[#0057B8]">Security &amp; audit policy</p>
+            <p className="font-semibold text-[var(--alo-brand)]">Security &amp; audit policy</p>
             <p className="mt-1 text-foreground/80">
               All access checks are enforced in the backend. The frontend PermissionGate only hides
               buttons — the backend is the final authority. Every permission change, salary view,
@@ -1254,7 +1254,7 @@ export function AccessControlCenter() {
       <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) setCreateResult(null); }}>
         <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-2xl">
           <DialogHeader className="border-b border-border/60 px-6 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="UserPlus" className="size-5" />
               Create Employee Account
             </DialogTitle>
@@ -1360,7 +1360,7 @@ export function AccessControlCenter() {
                 <Button type="button" variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={creating}>
+                <Button type="submit" className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
                   {creating ? (
                     <>
                       <Icon name="Loader2" className="size-4 animate-spin" /> Creating…
@@ -1399,7 +1399,7 @@ export function AccessControlCenter() {
       <Dialog open={!!reviewReq} onOpenChange={(o) => { if (!o) setReviewReq(null); }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="ClipboardCheck" className="size-5" />
               {reviewDecision === "APPROVED" ? "Approve Quota Request" : "Reject Quota Request"}
             </DialogTitle>
@@ -1409,7 +1409,7 @@ export function AccessControlCenter() {
                   <strong>{reviewReq.employee?.fullName || "Partner"}</strong> requested{" "}
                   {QUOTA_TYPE_LABELS[reviewReq.requestType] || reviewReq.requestType} increase from{" "}
                   <span className="font-mono">{reviewReq.currentLimit}</span> to{" "}
-                  <span className="font-mono font-semibold text-[#E8501A]">{reviewReq.requestedLimit}</span>.
+                  <span className="font-mono font-semibold text-[var(--alo-cta)]">{reviewReq.requestedLimit}</span>.
                 </>
               )}
             </DialogDescription>
@@ -1425,8 +1425,8 @@ export function AccessControlCenter() {
                 className="mt-1 min-h-[80px]"
               />
             </div>
-            <div className="flex items-center gap-2 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2 text-xs text-foreground/80">
-              <Icon name="ShieldCheck" className="size-3.5 shrink-0 text-[#0057B8]" />
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2 text-xs text-foreground/80">
+              <Icon name="ShieldCheck" className="size-3.5 shrink-0 text-[var(--alo-brand)]" />
               <span>This review action will be audit-logged and the partner notified by email.</span>
             </div>
           </div>
@@ -1471,16 +1471,16 @@ export function AccessControlCenter() {
 function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void }) {
   const assignments = pkg.assignments ?? [];
   return (
-    <Card className="flex flex-col rounded-2xl border-2 border-[#0057B8]/20">
+    <Card className="flex flex-col rounded-2xl border-2 border-[var(--alo-brand)]/20">
       <CardContent className="flex flex-1 flex-col pt-5">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3 className="text-base font-bold text-[#0057B8]">{pkg.name}</h3>
+            <h3 className="text-base font-bold text-[var(--alo-brand)]">{pkg.name}</h3>
             {pkg.description && (
               <p className="mt-0.5 text-xs text-muted-foreground">{pkg.description}</p>
             )}
           </div>
-          <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+          <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
             {pkg._count?.assignments ?? assignments.length} assigned
           </Badge>
         </div>
@@ -1500,7 +1500,7 @@ function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void 
             className={cn(
               pkg.autoPublishAllowed
                 ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                : "border-slate-200 bg-slate-50 text-slate-500"
+                : "border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]"
             )}
           >
             <Icon name={pkg.autoPublishAllowed ? "Globe" : "Lock"} className="mr-1 size-3" />
@@ -1521,7 +1521,7 @@ function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void 
 
         {assignments.length > 0 && (
           <div className="mt-3 rounded-lg border border-border/60 bg-muted/30 p-2.5">
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Assigned partners
             </p>
             <div className="max-h-24 overflow-y-auto pr-1">
@@ -1529,11 +1529,11 @@ function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void 
                 {assignments.slice(0, 5).map((a, i) => (
                   <li key={i} className="flex items-center justify-between text-xs">
                     <span className="font-medium text-foreground">{a.employee.fullName}</span>
-                    <code className="font-mono text-[10px] text-muted-foreground">{a.employee.employeeCode}</code>
+                    <code className="font-mono text-[11px] text-muted-foreground">{a.employee.employeeCode}</code>
                   </li>
                 ))}
                 {assignments.length > 5 && (
-                  <li className="text-[10px] text-muted-foreground">+{assignments.length - 5} more…</li>
+                  <li className="text-[11px] text-muted-foreground">+{assignments.length - 5} more…</li>
                 )}
               </ul>
             </div>
@@ -1589,14 +1589,14 @@ function CreateEmployeeSuccess({
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Activation Link
           </p>
-          <div className="mt-1.5 flex items-center gap-2 rounded-lg border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40 p-2.5">
-            <code className="flex-1 truncate font-mono text-xs text-[#0057B8]">{result.activationLink}</code>
-            <Button size="sm" className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={onCopy}>
+          <div className="mt-1.5 flex items-center gap-2 rounded-lg border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40 p-2.5">
+            <code className="flex-1 truncate font-mono text-xs text-[var(--alo-brand)]">{result.activationLink}</code>
+            <Button size="sm" className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={onCopy}>
               <Icon name="Copy" className="size-3.5" />
               Copy
             </Button>
           </div>
-          <p className="mt-1 text-[10px] text-muted-foreground">
+          <p className="mt-1 text-[11px] text-muted-foreground">
             Link expires in 7 days. After that, HR must resend.
           </p>
         </div>
@@ -1624,7 +1624,7 @@ function CreateEmployeeSuccess({
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" onClick={onClose}>
+        <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>
@@ -1664,7 +1664,7 @@ function EditPackageDialog({
     <Dialog open onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-xl">
         <DialogHeader className="border-b border-border/60 px-6 py-4">
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="Pencil" className="size-5" />
             Edit Package — {pkg.name}
           </DialogTitle>
@@ -1725,7 +1725,7 @@ function EditPackageDialog({
         <DialogFooter className="border-t border-border/60 px-6 py-4">
           <Button variant="outline" className="h-11" onClick={onClose}>Cancel</Button>
           <Button
-            className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+            className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
             disabled={saving}
             onClick={() => onSave(pkg, form)}
           >
@@ -1791,7 +1791,7 @@ function NewPackageDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-xl">
         <DialogHeader className="border-b border-border/60 px-6 py-4">
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="PackagePlus" className="size-5" />
             Create Partner Package
           </DialogTitle>
@@ -1849,7 +1849,7 @@ function NewPackageDialog({
         </ScrollArea>
         <DialogFooter className="border-t border-border/60 px-6 py-4">
           <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={saving || !form.name.trim()} onClick={submit}>
+          <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !form.name.trim()} onClick={submit}>
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
             ) : (
@@ -1901,7 +1901,7 @@ function NewQuotaRequestDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="Inbox" className="size-5" />
             Request Extra Quota
           </DialogTitle>
@@ -1948,7 +1948,7 @@ function NewQuotaRequestDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={saving || !partnerId} onClick={submit}>
+          <Button className="h-11 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !partnerId} onClick={submit}>
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting…</>
             ) : (

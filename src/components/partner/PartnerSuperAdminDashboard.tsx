@@ -73,7 +73,7 @@ interface LoadState {
 
 const VOUCHER_STATUS_CLS: Record<string, string> = {
   available: 'bg-emerald-100 text-emerald-800',
-  used: 'bg-slate-100 text-slate-600',
+  used: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   expired: 'bg-amber-100 text-amber-800',
   revoked: 'bg-red-100 text-red-700',
 };
@@ -136,20 +136,20 @@ export default function PartnerSuperAdminDashboard() {
     : [];
 
   return (
-    <div className="bg-slate-50/50 min-h-screen space-y-6 p-4 lg:p-6">
+    <div className="bg-[var(--alo-page)]/50 min-h-screen space-y-6 p-4 lg:p-6">
       {/* ── Header ── */}
-      <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-xl border border-[var(--alo-border)] bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-bold text-slate-900">Partner Administration</h1>
+            <h1 className="text-xl font-bold text-[var(--alo-text)]">Partner Administration</h1>
             <Badge className="border-indigo-200 bg-indigo-100 font-mono text-xs text-indigo-800">
               B2B PARTNER SUPER ADMIN
             </Badge>
             {partnerId ? (
-              <span className="font-mono text-xs text-slate-500">{partnerId}</span>
+              <span className="font-mono text-xs text-[var(--alo-text-muted)]">{partnerId}</span>
             ) : null}
           </div>
-          <p className="mt-0.5 text-xs text-slate-500">
+          <p className="mt-0.5 text-xs text-[var(--alo-text-muted)]">
             Applications, marketing quota, counsellor seats and student vouchers on record for this
             partner.
           </p>
@@ -166,7 +166,7 @@ export default function PartnerSuperAdminDashboard() {
           <Button
             variant="outline"
             size="sm"
-            className="h-8 border-slate-300 text-xs text-slate-700"
+            className="h-8 border-[var(--alo-border-strong)] text-xs text-[var(--alo-body)]"
             onClick={() => setView('partner-admin-users')}
           >
             <Plus className="mr-1 h-3.5 w-3.5" /> Request extra seats
@@ -197,16 +197,16 @@ export default function PartnerSuperAdminDashboard() {
       )}
 
       {state.loading && !kpis && (
-        <Card className="border-slate-200 bg-white">
-          <CardContent className="py-10 text-center text-sm text-slate-500">
+        <Card className="border-[var(--alo-border)] bg-white">
+          <CardContent className="py-10 text-center text-sm text-[var(--alo-text-muted)]">
             Loading partner dashboard…
           </CardContent>
         </Card>
       )}
 
       {!state.loading && !kpis && !state.error && (
-        <Card className="border-slate-200 bg-white">
-          <CardContent className="py-10 text-center text-sm text-slate-500">
+        <Card className="border-[var(--alo-border)] bg-white">
+          <CardContent className="py-10 text-center text-sm text-[var(--alo-text-muted)]">
             No partner data is available for this account.
           </CardContent>
         </Card>
@@ -217,10 +217,10 @@ export default function PartnerSuperAdminDashboard() {
           {/* ── KPI cards ── */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {kpiCards.map((card) => (
-              <Card key={card.label} className="border-slate-200 bg-white shadow-2xs">
+              <Card key={card.label} className="border-[var(--alo-border)] bg-white shadow-2xs">
                 <CardContent className="p-3">
-                  <p className="text-[11px] font-medium text-slate-500">{card.label}</p>
-                  <p className="mt-0.5 text-xl font-bold text-slate-900">{card.value}</p>
+                  <p className="text-[11px] font-medium text-[var(--alo-text-muted)]">{card.label}</p>
+                  <p className="mt-0.5 text-xl font-bold text-[var(--alo-text)]">{card.value}</p>
                 </CardContent>
               </Card>
             ))}
@@ -232,10 +232,10 @@ export default function PartnerSuperAdminDashboard() {
               <Card className="border-indigo-200 bg-white shadow-xs">
                 <CardHeader className="flex flex-row items-center justify-between border-b border-indigo-100 bg-indigo-50/30 pb-3">
                   <div>
-                    <CardTitle className="text-sm font-bold text-slate-900">
+                    <CardTitle className="text-sm font-bold text-[var(--alo-text)]">
                       Marketing quota this month
                     </CardTitle>
-                    <CardDescription className="text-xs text-slate-500">
+                    <CardDescription className="text-xs text-[var(--alo-text-muted)]">
                       Generated images and short videos against your monthly allowance.
                     </CardDescription>
                   </div>
@@ -244,8 +244,8 @@ export default function PartnerSuperAdminDashboard() {
                 <CardContent className="space-y-4 p-4">
                   <div>
                     <div className="mb-1 flex items-center justify-between text-xs">
-                      <span className="text-slate-600">Images</span>
-                      <span className="font-medium text-slate-800">
+                      <span className="text-[var(--alo-body)]">Images</span>
+                      <span className="font-medium text-[var(--alo-text)]">
                         {quota?.imagesUsed ?? 0} of {quota?.monthlyImageLimit ?? 0} used ·{' '}
                         {quota?.imagesRemaining ?? 0} remaining
                       </span>
@@ -262,10 +262,10 @@ export default function PartnerSuperAdminDashboard() {
 
                   <div>
                     <div className="mb-1 flex items-center justify-between text-xs">
-                      <span className="text-slate-600">
+                      <span className="text-[var(--alo-body)]">
                         Videos ({quota?.videoDurationLimitSeconds ?? 30}s max)
                       </span>
-                      <span className="font-medium text-slate-800">
+                      <span className="font-medium text-[var(--alo-text)]">
                         {quota?.videosUsed ?? 0} of {quota?.monthlyVideoLimit ?? 0} used ·{' '}
                         {quota?.videosRemaining ?? 0} remaining
                       </span>
@@ -293,34 +293,34 @@ export default function PartnerSuperAdminDashboard() {
               </Card>
 
               {/* ── Seat requests ── */}
-              <Card className="border-slate-200 bg-white shadow-xs">
-                <CardHeader className="border-b border-slate-100 pb-3">
-                  <CardTitle className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <Card className="border-[var(--alo-border)] bg-white shadow-xs">
+                <CardHeader className="border-b border-[var(--alo-border)] pb-3">
+                  <CardTitle className="flex items-center gap-2 text-sm font-bold text-[var(--alo-text)]">
                     <Users className="h-4 w-4 text-indigo-600" />
                     Counsellor seats
                   </CardTitle>
-                  <CardDescription className="text-xs text-slate-500">
+                  <CardDescription className="text-xs text-[var(--alo-text-muted)]">
                     {seats ? `${seats.used} of ${seats.limit} seats in use · ${seats.available} available · ${seats.pendingSeatRequests} requests pending` : 'Seat limits unavailable'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
                   {seatRequests.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-slate-500">
+                    <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">
                       No seat request has been raised yet.
                     </p>
                   ) : (
-                    <ul className="divide-y divide-slate-100">
+                    <ul className="divide-y divide-[var(--alo-border)]">
                       {seatRequests.map((request) => (
                         <li key={request.id} className="p-3">
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <p className="text-xs font-medium text-slate-900">
+                            <p className="text-xs font-medium text-[var(--alo-text)]">
                               +{request.requestedExtraSeats} seat
                               {request.requestedExtraSeats === 1 ? '' : 's'}
                               {request.requestedBy ? ` · ${request.requestedBy}` : ''}
                             </p>
                             <Badge
                               variant="outline"
-                              className={`text-[10px] ${
+                              className={`text-[11px] ${
                                 request.status === 'approved'
                                   ? 'bg-emerald-100 text-emerald-800'
                                   : request.status === 'rejected'
@@ -332,14 +332,14 @@ export default function PartnerSuperAdminDashboard() {
                             </Badge>
                           </div>
                           {request.reason ? (
-                            <p className="mt-1 text-[11px] text-slate-600">{request.reason}</p>
+                            <p className="mt-1 text-[11px] text-[var(--alo-body)]">{request.reason}</p>
                           ) : null}
                           {request.reviewNote ? (
-                            <p className="mt-1 text-[11px] text-slate-500">
+                            <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
                               Review note: {request.reviewNote}
                             </p>
                           ) : null}
-                          <p className="mt-1 text-[10px] text-slate-400">
+                          <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
                             Requested {formatTimestamp(request.createdAt)}
                           </p>
                         </li>
@@ -352,43 +352,43 @@ export default function PartnerSuperAdminDashboard() {
 
             {/* ── Vouchers ── */}
             <div className="space-y-6 lg:col-span-5">
-              <Card className="border-slate-200 bg-white shadow-xs">
-                <CardHeader className="border-b border-slate-100 pb-3">
+              <Card className="border-[var(--alo-border)] bg-white shadow-xs">
+                <CardHeader className="border-b border-[var(--alo-border)] pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-bold text-slate-900">
+                    <CardTitle className="text-sm font-bold text-[var(--alo-text)]">
                       Student benefit vouchers
                     </CardTitle>
                     <Ticket className="h-4 w-4 text-emerald-600" />
                   </div>
-                  <CardDescription className="text-xs text-slate-500">
+                  <CardDescription className="text-xs text-[var(--alo-text-muted)]">
                     Mock test vouchers issued to students with an active application.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 p-4">
                   {vouchers.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-slate-500">
+                    <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">
                       No voucher has been issued yet.
                     </p>
                   ) : (
                     vouchers.map((voucher) => (
                       <div
                         key={voucher.id}
-                        className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs"
+                        className="space-y-1 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-mono font-bold text-slate-900">
+                          <span className="font-mono font-bold text-[var(--alo-text)]">
                             {voucher.voucherCode}
                           </span>
                           <Badge
-                            className={`text-[9px] ${VOUCHER_STATUS_CLS[voucher.status] || 'bg-slate-100 text-slate-600'}`}
+                            className={`text-[11px] ${VOUCHER_STATUS_CLS[voucher.status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}
                           >
                             {(voucher.status || 'unknown').toUpperCase()}
                           </Badge>
                         </div>
-                        <p className="text-slate-600">
+                        <p className="text-[var(--alo-body)]">
                           Student {voucher.studentId} · {(voucher.testType || '').replace(/_/g, ' ')}
                         </p>
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-[11px] text-[var(--alo-text-muted)]">
                           {voucher.usedCount} of {voucher.usageLimit} used · expires{' '}
                           {voucher.expiresAt ? formatTimestamp(voucher.expiresAt) : 'no expiry set'}
                         </p>
@@ -402,8 +402,8 @@ export default function PartnerSuperAdminDashboard() {
         </>
       )}
 
-      <Card className="border-slate-200 bg-white">
-        <CardContent className="flex items-start gap-2 p-4 text-xs text-slate-500">
+      <Card className="border-[var(--alo-border)] bg-white">
+        <CardContent className="flex items-start gap-2 p-4 text-xs text-[var(--alo-text-muted)]">
           <Info className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             Figures are read from this partner&apos;s own records. Seat usage counts active user

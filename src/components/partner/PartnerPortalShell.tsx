@@ -293,7 +293,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
             <span className="text-sm font-semibold text-alo-text">ALO Education</span>
           </div>
           <div className="hidden sm:flex items-center gap-2 ml-4">
-            <Badge variant="secondary" className="font-mono text-xs bg-slate-100 text-slate-600">
+            <Badge variant="secondary" className="font-mono text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">
               {user?.id}
             </Badge>
             <Badge variant="brand" className="text-xs">
@@ -311,7 +311,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}

@@ -677,7 +677,7 @@ export function CommCommandCenter() {
                         </span>
                       </div>
                       {needsConfig && (
-                        <Badge variant="warning" className="gap-1 text-[10px]">
+                        <Badge variant="warning" className="gap-1 text-[11px]">
                           <Icon name="Settings2" className="size-2.5" />
                           Configuration required
                         </Badge>
@@ -946,7 +946,7 @@ const inboxColumns: Column<InboxRow>[] = [
         accent === "amber" ? "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)] border-[var(--alo-warning)]" :
         "bg-[var(--alo-danger-soft)] text-[var(--alo-danger-strong)] border-[var(--alo-danger)]";
       return (
-        <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide", cls)}>
+        <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide", cls)}>
           <SlaStatusDot severity={sev} />
           {sev}
         </span>
@@ -1034,7 +1034,7 @@ const inboxColumns: Column<InboxRow>[] = [
       else if (/deadline|intake|apply|application/.test(body)) intent = "APPLICATION";
       else if (/interview|mock/.test(body)) intent = "INTERVIEW";
       return (
-        <Badge variant="blue" className="text-[10px]">
+        <Badge variant="blue" className="text-[11px]">
           {intent}
         </Badge>
       );
@@ -1146,7 +1146,7 @@ const taskColumns: Column<CommunicationTask>[] = [
     header: "Source",
     width: "120px",
     cell: (row) => (
-      <Badge variant="neutral" className="text-[10px]">
+      <Badge variant="neutral" className="text-[11px]">
         {row.source || "—"}
       </Badge>
     ),

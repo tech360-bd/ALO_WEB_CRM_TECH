@@ -255,20 +255,20 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             <span className="text-sm font-semibold text-alo-text">ALO Education</span>
           </div>
           <div className="hidden sm:flex items-center gap-2 ml-4">
-            <Badge variant="secondary" className="font-mono text-xs bg-slate-100 text-slate-600">
+            <Badge variant="secondary" className="font-mono text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">
               {actingAs?.userId || serverIdentity?.id || user?.id || '—'}
             </Badge>
             <Badge variant="brand" className="text-xs">
               {designation}
             </Badge>
-            <span className="hidden lg:inline text-xs text-slate-500">{branch || 'Branch scope not assigned'}{country ? ` • ${country}` : ''}</span>
+            <span className="hidden lg:inline text-xs text-[var(--alo-text-muted)]">{branch || 'Branch scope not assigned'}{country ? ` • ${country}` : ''}</span>
             <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full font-medium">{taskCount == null ? '—' : taskCount} open tasks</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <div className="hidden md:flex relative">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-            <input placeholder="Search students, leads..." className="pl-9 pr-3 h-9 text-xs bg-slate-50 border border-slate-200 rounded-lg w-56 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-200" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--alo-text-muted)]" />
+            <input placeholder="Search students, leads..." className="pl-9 pr-3 h-9 text-xs bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-lg w-56 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-200" />
           </div>
           <div className="relative" ref={notifRef}>
             <Button
@@ -279,7 +279,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}

@@ -32,21 +32,21 @@ export function StatCard({
   trend?: string;
 }) {
   const accentMap: Record<string, string> = {
-    blue: "bg-[#EFF6FF] text-[#0057B8]",
-    orange: "bg-[#FFF7ED] text-[#C93D13]",
-    emerald: "bg-[#DCFCE7] text-[#047857]",
-    amber: "bg-[#FEF3C7] text-[#92400E]",
+    blue: "bg-[var(--alo-info-bg)] text-[var(--alo-brand)]",
+    orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-hover)]",
+    emerald: "bg-[#DCFCE7] text-[var(--alo-success-dark)]",
+    amber: "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)]",
     violet: "bg-violet-50 text-violet-600",
-    rose: "bg-[#FEE2E2] text-[#991B1B]",
+    rose: "bg-[var(--alo-error-soft)] text-[var(--alo-danger-strong)]",
   };
   return (
-    <Card className="alo-card rounded-2xl border border-[#E2E8F0] bg-white alo-shadow transition-all hover:alo-shadow-lg">
+    <Card className="alo-card rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow transition-all hover:alo-shadow-lg">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">{label}</p>
-            <p className="mt-1.5 text-2xl font-bold text-[#0F172A] tabular-nums">{value}</p>
-            {hint && <p className="mt-1 body-text text-[#64748B]">{hint}</p>}
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">{label}</p>
+            <p className="mt-1.5 text-2xl font-bold text-[var(--alo-text)] tabular-nums">{value}</p>
+            {hint && <p className="mt-1 body-text text-[var(--alo-text-muted)]">{hint}</p>}
           </div>
           <div className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", accentMap[accent])}>
             <Icon name={icon} className="size-5" />
@@ -54,8 +54,8 @@ export function StatCard({
         </div>
         {trend && (
           <div className="mt-3 flex items-center gap-1.5 body-text">
-            <Icon name="TrendingUp" className="size-3.5 text-[#047857]" />
-            <span className="font-medium text-[#047857]">{trend}</span>
+            <Icon name="TrendingUp" className="size-3.5 text-[var(--alo-success-dark)]" />
+            <span className="font-medium text-[var(--alo-success-dark)]">{trend}</span>
           </div>
         )}
       </CardContent>
@@ -65,7 +65,7 @@ export function StatCard({
 
 // ─── StatusBadge — Semantic status colors (not branding) ────────────────────
 export function StatusBadge({ status, colorMap, labels }: { status: string; colorMap: Record<string, string>; labels?: Record<string, string> }) {
-  const cls = colorMap[status] || "bg-slate-100 text-slate-700 border border-slate-200";
+  const cls = colorMap[status] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border)]";
   const label = labels?.[status] || status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 badge-text capitalize", cls)}>{label}</span>;
 }
@@ -76,7 +76,7 @@ export function SemanticBadge({ type, children }: { type: "success" | "warning" 
     success: "badge-success",
     warning: "badge-warning",
     danger: "badge-danger",
-    info: "bg-[#EFF6FF] text-[#0057B8] border border-[#0057B8]",
+    info: "bg-[var(--alo-info-bg)] text-[var(--alo-brand)] border border-[var(--alo-brand)]",
   };
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 badge-text", cls[type])}>{children}</span>;
 }
@@ -97,18 +97,18 @@ export function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className={cn("rounded-2xl border border-[#E2E8F0] bg-white alo-shadow", className)}>
+    <Card className={cn("rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow", className)}>
       {(title || action) && (
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-2.5">
             {icon && (
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#0057B8]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-info-bg)] text-[var(--alo-brand)]">
                 <Icon name={icon} className="size-4" />
               </div>
             )}
             <div>
-              {title && <CardTitle className="crm-section-title text-[#0F172A]">{title}</CardTitle>}
-              {description && <CardDescription className="body-text text-[#64748B]">{description}</CardDescription>}
+              {title && <CardTitle className="crm-section-title text-[var(--alo-text)]">{title}</CardTitle>}
+              {description && <CardDescription className="body-text text-[var(--alo-text-muted)]">{description}</CardDescription>}
             </div>
           </div>
           {action}
@@ -121,12 +121,12 @@ export function SectionCard({
 
 export function EmptyState({ icon = "Inbox", title, description, action }: { icon?: string; title: string; description?: string; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#E2E8F0] bg-white px-6 py-12 text-center">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#0057B8]">
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--alo-border)] bg-white px-6 py-12 text-center">
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-[var(--alo-info-bg)] text-[var(--alo-brand)]">
         <Icon name={icon} className="size-7" />
       </div>
-      <p className="mt-4 card-title text-[#0F172A]">{title}</p>
-      {description && <p className="mt-1 max-w-sm body-text text-[#64748B]">{description}</p>}
+      <p className="mt-4 card-title text-[var(--alo-text)]">{title}</p>
+      {description && <p className="mt-1 max-w-sm body-text text-[var(--alo-text-muted)]">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
@@ -136,7 +136,7 @@ export function LoadingGrid({ count = 6 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
-        <Card key={i} className="rounded-2xl border border-[#E2E8F0] bg-white">
+        <Card key={i} className="rounded-2xl border border-[var(--alo-border)] bg-white">
           <CardContent className="pt-5">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="mt-3 h-8 w-16" />
@@ -149,9 +149,9 @@ export function LoadingGrid({ count = 6 }: { count?: number }) {
 
 export function InfoRow({ label, value, mono }: { label: string; value?: React.ReactNode; mono?: boolean }) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-[#E2E8F0] py-2 last:border-0">
-      <span className="body-text font-medium text-[#64748B]">{label}</span>
-      <span className={cn("text-right body-text font-medium text-[#0F172A]", mono && "font-mono")}>{value || "—"}</span>
+    <div className="flex items-start justify-between gap-3 border-b border-[var(--alo-border)] py-2 last:border-0">
+      <span className="body-text font-medium text-[var(--alo-text-muted)]">{label}</span>
+      <span className={cn("text-right body-text font-medium text-[var(--alo-text)]", mono && "font-mono")}>{value || "—"}</span>
     </div>
   );
 }
@@ -170,7 +170,7 @@ export function CompletionRing({ value, size = 64, label }: { value: number; siz
       <span className="absolute inset-0 flex items-center justify-center body-text font-bold" style={{ fontSize: size / 4 }}>
         {value}%
       </span>
-      {label && <span className="mt-1 badge-text text-[#64748B]">{label}</span>}
+      {label && <span className="mt-1 badge-text text-[var(--alo-text-muted)]">{label}</span>}
     </div>
   );
 }
@@ -178,7 +178,7 @@ export function CompletionRing({ value, size = 64, label }: { value: number; siz
 export function MiniBar({ value, max, color = "#0057B8" }: { value: number; max: number; color?: string }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-[#F1F5F9]">
+    <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--alo-surface-muted)]">
       <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
     </div>
   );
@@ -194,8 +194,8 @@ export function PageHeader({ title, subtitle, icon, action }: { title: string; s
           </div>
         )}
         <div>
-          <h1 className="crm-page-title text-[#0F172A]">{title}</h1>
-          {subtitle && <p className="body-text text-[#64748B]">{subtitle}</p>}
+          <h1 className="crm-page-title text-[var(--alo-text)]">{title}</h1>
+          {subtitle && <p className="body-text text-[var(--alo-text-muted)]">{subtitle}</p>}
         </div>
       </div>
       {action}

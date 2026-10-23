@@ -112,10 +112,10 @@ export default function MarketingDashboard() {
             ].map((s) => (
               <div key={s.label} className="flex-1 flex flex-col items-center gap-1">
                 <span className="text-xs font-semibold text-alo-text">{s.value}</span>
-                <div className="w-full rounded-t-md bg-gray-100 overflow-hidden" style={{ height: '80px' }}>
+                <div className="w-full rounded-t-md bg-[var(--alo-surface-muted)] overflow-hidden" style={{ height: '80px' }}>
                   <div className={`w-full ${s.color} rounded-t-md transition-all`} style={{ height: `${(s.value / s.max) * 100}%`, marginTop: `${100 - (s.value / s.max) * 100}%` }} />
                 </div>
-                <span className="text-[10px] text-alo-text-muted">{s.label}</span>
+                <span className="text-[11px] text-alo-text-muted">{s.label}</span>
               </div>
             ))}
           </div>
@@ -158,7 +158,7 @@ export default function MarketingDashboard() {
                         <TableCell className="text-sm text-alo-text-secondary text-right">{c.leads}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary text-right">{c.conversions}</TableCell>
                         <TableCell className="text-sm font-semibold text-emerald-600 text-right">{c.roi}</TableCell>
-                        <TableCell className="text-right"><Badge variant={c.status === 'active' ? 'success' : 'muted'} className="text-[10px]">{c.status}</Badge></TableCell>
+                        <TableCell className="text-right"><Badge variant={c.status === 'active' ? 'success' : 'muted'} className="text-[11px]">{c.status}</Badge></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -183,7 +183,7 @@ export default function MarketingDashboard() {
                   <div key={e.event} className="p-2.5 rounded-lg border border-alo-border hover:bg-alo-brand-light/20 transition-colors">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{e.event}</p>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${typeMap[e.type] || 'bg-gray-100 text-gray-600'}`}>{e.type}</span>
+                      <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${typeMap[e.type] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{e.type}</span>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{e.location} · {e.date}</p>
                   </div>
@@ -204,11 +204,11 @@ export default function MarketingDashboard() {
                 {aiContentQueue.map((c, i) => (
                   <div key={i} className="p-2.5 rounded-lg border border-purple-200 bg-purple-50">
                     <div className="flex items-center justify-between mb-0.5">
-                      <Badge variant="muted" className="text-[10px]">{c.type}</Badge>
-                      <Badge variant={c.status === 'approved' ? 'success' : c.status === 'ready' ? 'warning' : 'muted'} className="text-[10px]">{c.status}</Badge>
+                      <Badge variant="muted" className="text-[11px]">{c.type}</Badge>
+                      <Badge variant={c.status === 'approved' ? 'success' : c.status === 'ready' ? 'warning' : 'muted'} className="text-[11px]">{c.status}</Badge>
                     </div>
                     <p className="text-xs text-alo-text">{c.title}</p>
-                    <p className="text-[10px] text-alo-text-muted mt-0.5">{c.words} words</p>
+                    <p className="text-[11px] text-alo-text-muted mt-0.5">{c.words} words</p>
                   </div>
                 ))}
               </div>

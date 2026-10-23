@@ -95,7 +95,7 @@ const STATUS_STYLE: Record<string, string> = {
   PENDING: 'bg-blue-100 text-blue-800 border-blue-200',
   FAILED: 'bg-amber-100 text-amber-800 border-amber-200',
   DEAD: 'bg-red-100 text-red-800 border-red-200',
-  SKIPPED: 'bg-slate-100 text-slate-700 border-slate-200',
+  SKIPPED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
 function parseEvents(raw: string): string[] {
@@ -344,11 +344,11 @@ export default function WebhooksAdminPage() {
     <div className="space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-            <Webhook className="size-5 text-[#0057B8]" />
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+            <Webhook className="size-5 text-[var(--alo-brand)]" />
             Outbound Webhooks
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Signed event delivery to external systems, with retry, dead-lettering and replay.
           </p>
         </div>
@@ -424,12 +424,12 @@ export default function WebhooksAdminPage() {
       {tab === 'subscriptions' && (
         <>
           {!configured && !failure && (
-            <Card className="rounded-2xl border-2 border-slate-300 bg-slate-50">
+            <Card className="rounded-2xl border-2 border-[var(--alo-border-strong)] bg-[var(--alo-page)]">
               <CardContent className="flex items-start gap-3 pt-6 pb-6">
-                <Info className="mt-0.5 size-5 shrink-0 text-slate-500" />
+                <Info className="mt-0.5 size-5 shrink-0 text-[var(--alo-text-muted)]" />
                 <div>
-                  <p className="text-sm font-bold text-slate-800">NOT CONFIGURED</p>
-                  <p className="mt-0.5 text-xs text-slate-600">
+                  <p className="text-sm font-bold text-[var(--alo-text)]">NOT CONFIGURED</p>
+                  <p className="mt-0.5 text-xs text-[var(--alo-body)]">
                     No outbound webhook subscription exists, so no events are being delivered to any
                     external system. Create one below to enable delivery.
                   </p>
@@ -446,7 +446,7 @@ export default function WebhooksAdminPage() {
           </div>
 
           {showCreate && (
-            <Card className="rounded-2xl border-2 border-[#0057B8]/30">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30">
               <CardHeader>
                 <CardTitle className="text-sm font-bold">Create subscription</CardTitle>
               </CardHeader>
@@ -478,7 +478,7 @@ export default function WebhooksAdminPage() {
                   <Label className="text-xs font-semibold">
                     Events ({selectedEvents.length} selected)
                   </Label>
-                  <div className="flex max-h-40 flex-wrap gap-1.5 overflow-y-auto rounded-lg border border-slate-200 p-2">
+                  <div className="flex max-h-40 flex-wrap gap-1.5 overflow-y-auto rounded-lg border border-[var(--alo-border)] p-2">
                     {allEvents.map((event) => {
                       const on = selectedEvents.includes(event);
                       return (
@@ -490,10 +490,10 @@ export default function WebhooksAdminPage() {
                               on ? current.filter((item) => item !== event) : [...current, event],
                             )
                           }
-                          className={`rounded-md border px-2 py-1 font-mono text-[10px] transition-colors ${
+                          className={`rounded-md border px-2 py-1 font-mono text-[11px] transition-colors ${
                             on
-                              ? 'border-[#0057B8] bg-[#0057B8] text-white'
-                              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                              ? 'border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white'
+                              : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
                           }`}
                         >
                           {event}
@@ -501,10 +501,10 @@ export default function WebhooksAdminPage() {
                       );
                     })}
                     {allEvents.length === 0 && (
-                      <span className="text-[11px] text-slate-500">Event catalogue unavailable.</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)]">Event catalogue unavailable.</span>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-[var(--alo-text-muted)]">
                     A namespace wildcard such as <code className="font-mono">application.*</code> is
                     accepted when the namespace exists in the catalogue.
                   </p>
@@ -529,27 +529,27 @@ export default function WebhooksAdminPage() {
           )}
 
           {loading ? (
-            <p className="py-8 text-center text-sm text-slate-500">Loading subscriptions…</p>
+            <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">Loading subscriptions…</p>
           ) : subscriptions.length === 0 ? (
-            !failure && <p className="py-8 text-center text-sm text-slate-500">No subscriptions yet.</p>
+            !failure && <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">No subscriptions yet.</p>
           ) : (
             <div className="space-y-2.5">
               {subscriptions.map((subscription) => {
                 const events = parseEvents(subscription.events);
                 return (
-                  <Card key={subscription.id} className="rounded-2xl border-2 border-slate-200">
+                  <Card key={subscription.id} className="rounded-2xl border-2 border-[var(--alo-border)]">
                     <CardContent className="space-y-2.5 pt-5 pb-5">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-bold text-slate-900">{subscription.name}</p>
-                          <p className="truncate font-mono text-[11px] text-slate-500">{subscription.targetUrl}</p>
+                          <p className="truncate text-sm font-bold text-[var(--alo-text)]">{subscription.name}</p>
+                          <p className="truncate font-mono text-[11px] text-[var(--alo-text-muted)]">{subscription.targetUrl}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <Badge variant="outline" className={subscription.active ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-slate-50 text-slate-600'}>
+                          <Badge variant="outline" className={subscription.active ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]'}>
                             {subscription.active ? 'ACTIVE' : 'PAUSED'}
                           </Badge>
-                          <Badge variant="outline" className="text-[10px]">{subscription.environment}</Badge>
-                          <Badge variant="outline" className={subscription.secretConfigured ? 'text-[10px]' : 'border-red-200 bg-red-50 text-[10px] text-red-700'}>
+                          <Badge variant="outline" className="text-[11px]">{subscription.environment}</Badge>
+                          <Badge variant="outline" className={subscription.secretConfigured ? 'text-[11px]' : 'border-red-200 bg-red-50 text-[11px] text-red-700'}>
                             {subscription.secretConfigured ? 'signed' : 'NO SECRET'}
                           </Badge>
                         </div>
@@ -557,17 +557,17 @@ export default function WebhooksAdminPage() {
 
                       <div className="flex flex-wrap gap-1">
                         {events.map((event) => (
-                          <span key={event} className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-600">
+                          <span key={event} className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--alo-body)]">
                             {event}
                           </span>
                         ))}
                       </div>
 
                       {subscription.description && (
-                        <p className="text-[11px] text-slate-600">{subscription.description}</p>
+                        <p className="text-[11px] text-[var(--alo-body)]">{subscription.description}</p>
                       )}
 
-                      <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-2.5">
+                      <div className="flex flex-wrap items-center gap-1.5 border-t border-[var(--alo-border)] pt-2.5">
                         <Button variant="outline" size="sm" onClick={() => void sendTest(subscription)} disabled={testingId === subscription.id}>
                           <Send className="mr-1.5 size-3.5" />
                           {testingId === subscription.id ? 'Testing…' : 'Send test'}
@@ -584,7 +584,7 @@ export default function WebhooksAdminPage() {
                           <Trash2 className="mr-1.5 size-3.5 text-red-600" />
                           Delete
                         </Button>
-                        <span className="ml-auto font-mono text-[10px] text-slate-400">
+                        <span className="ml-auto font-mono text-[11px] text-[var(--alo-text-muted)]">
                           retries {subscription.maxRetries} · timeout {subscription.timeoutMs}ms
                         </span>
                       </div>
@@ -607,7 +607,7 @@ export default function WebhooksAdminPage() {
                 { label: 'Pending', value: stats.pending, className: 'border-blue-200 bg-blue-50 text-blue-800' },
                 { label: 'Failed', value: stats.failed, className: 'border-amber-200 bg-amber-50 text-amber-800' },
                 { label: 'Dead-lettered', value: stats.dead, className: 'border-red-200 bg-red-50 text-red-800' },
-                { label: 'Total (7d)', value: stats.total, className: 'border-slate-200 bg-slate-50 text-slate-800' },
+                { label: 'Total (7d)', value: stats.total, className: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text)]' },
               ].map((item) => (
                 <Card key={item.label} className={`rounded-2xl border-2 ${item.className}`}>
                   <CardContent className="pt-5 pb-5">
@@ -623,7 +623,7 @@ export default function WebhooksAdminPage() {
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
-              className="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs"
+              className="h-9 rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
               aria-label="Filter deliveries by status"
             >
               <option value="">All statuses</option>
@@ -635,13 +635,13 @@ export default function WebhooksAdminPage() {
               <RefreshCw className="mr-1.5 size-3.5" />
               Refresh
             </Button>
-            <span className="text-[11px] text-slate-500">{deliveryTotal} matching deliveries</span>
+            <span className="text-[11px] text-[var(--alo-text-muted)]">{deliveryTotal} matching deliveries</span>
           </div>
 
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardContent className="pt-5 pb-5">
               {deliveries.length === 0 ? (
-                <p className="py-6 text-center text-sm text-slate-500">
+                <p className="py-6 text-center text-sm text-[var(--alo-text-muted)]">
                   No deliveries recorded{statusFilter ? ` for ${statusFilter}` : ''}. A delivery row is
                   created only when an event is actually emitted.
                 </p>
@@ -649,7 +649,7 @@ export default function WebhooksAdminPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[11px]">
                     <thead>
-                      <tr className="border-b border-slate-200 text-left font-bold text-slate-600">
+                      <tr className="border-b border-[var(--alo-border)] text-left font-bold text-[var(--alo-body)]">
                         <th className="p-2">Event</th>
                         <th className="p-2">Status</th>
                         <th className="p-2">HTTP</th>
@@ -662,10 +662,10 @@ export default function WebhooksAdminPage() {
                     </thead>
                     <tbody>
                       {deliveries.map((delivery) => (
-                        <tr key={delivery.id} className="border-b border-slate-100 hover:bg-slate-50">
+                        <tr key={delivery.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)]">
                           <td className="p-2 font-mono">{delivery.eventType}</td>
                           <td className="p-2">
-                            <Badge variant="outline" className={`text-[9px] ${STATUS_STYLE[delivery.status] ?? ''}`}>
+                            <Badge variant="outline" className={`text-[11px] ${STATUS_STYLE[delivery.status] ?? ''}`}>
                               {delivery.status}
                             </Badge>
                           </td>
@@ -700,51 +700,51 @@ export default function WebhooksAdminPage() {
       {/* ---------------- CATALOGUE ---------------- */}
       {tab === 'catalogue' && (
         <div className="grid gap-4 lg:grid-cols-2">
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-bold">
-                <ListTree className="size-4 text-[#0057B8]" />
+                <ListTree className="size-4 text-[var(--alo-brand)]" />
                 Event catalogue ({allEvents.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-1.5">
               {allEvents.map((event) => (
-                <span key={event} className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-[10px] text-slate-700">
+                <span key={event} className="rounded-md border border-[var(--alo-border)] bg-[var(--alo-page)] px-2 py-1 font-mono text-[11px] text-[var(--alo-body)]">
                   {event}
                 </span>
               ))}
               {allEvents.length === 0 && (
-                <p className="text-xs text-slate-500">Catalogue could not be loaded.</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Catalogue could not be loaded.</p>
               )}
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-bold">
-                <Activity className="size-4 text-[#0057B8]" />
+                <Activity className="size-4 text-[var(--alo-brand)]" />
                 Signing &amp; delivery contract
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-xs text-slate-700">
+            <CardContent className="space-y-3 text-xs text-[var(--alo-body)]">
               {catalogue ? (
                 <>
                   <div>
                     <p className="font-bold">Signature</p>
                     <p className="mt-0.5 font-mono text-[11px]">{catalogue.signing.algorithm}</p>
-                    <p className="mt-0.5 font-mono text-[11px] text-slate-500">
+                    <p className="mt-0.5 font-mono text-[11px] text-[var(--alo-text-muted)]">
                       signed payload = {catalogue.signing.signedPayload}
                     </p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {catalogue.signing.headers.map((header) => (
-                        <span key={header} className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px]">
+                        <span key={header} className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono text-[11px]">
                           {header}
                         </span>
                       ))}
                     </div>
-                    <p className="mt-1.5 text-[11px] text-slate-600">{catalogue.signing.note}</p>
+                    <p className="mt-1.5 text-[11px] text-[var(--alo-body)]">{catalogue.signing.note}</p>
                   </div>
-                  <div className="border-t border-slate-100 pt-2.5">
+                  <div className="border-t border-[var(--alo-border)] pt-2.5">
                     <p className="font-bold">Retries</p>
                     <p className="mt-0.5 text-[11px]">{catalogue.delivery.retries}</p>
                     <p className="mt-1.5 font-bold">Dead letter</p>
@@ -754,7 +754,7 @@ export default function WebhooksAdminPage() {
                   </div>
                 </>
               ) : (
-                <p className="text-slate-500">Contract documentation unavailable.</p>
+                <p className="text-[var(--alo-text-muted)]">Contract documentation unavailable.</p>
               )}
             </CardContent>
           </Card>

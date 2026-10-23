@@ -292,7 +292,7 @@ export default function EmployeeMessagesPage() {
                         {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
                       </p>
                       {thread.unreadCount && thread.unreadCount > 0 ? (
-                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[10px]">
+                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[11px]">
                           {thread.unreadCount}
                         </Badge>
                       ) : null}
@@ -301,7 +301,7 @@ export default function EmployeeMessagesPage() {
                       {thread.threadCode || 'No thread code'}
                       {thread.studentId ? ` · Student ${thread.studentId}` : ''}
                     </p>
-                    <p className="text-muted-foreground mt-1 flex items-center gap-1 text-[10px]">
+                    <p className="text-muted-foreground mt-1 flex items-center gap-1 text-[11px]">
                       <Clock className="h-3 w-3" />
                       {formatTimestamp(thread.lastMessageAt)}
                     </p>
@@ -384,12 +384,12 @@ export default function EmployeeMessagesPage() {
                               {message.senderName || (mine ? 'You' : 'Student')}
                             </span>
                             {message.isInternal ? (
-                              <Badge variant="outline" className="text-[10px]">Internal</Badge>
+                              <Badge variant="outline" className="text-[11px]">Internal</Badge>
                             ) : null}
                             {message.isAiGenerated ? (
-                              <Badge variant="outline" className="text-[10px]">AI drafted</Badge>
+                              <Badge variant="outline" className="text-[11px]">AI drafted</Badge>
                             ) : null}
-                            <span className="text-muted-foreground text-[10px]">
+                            <span className="text-muted-foreground text-[11px]">
                               {formatTimestamp(message.createdAt)}
                             </span>
                           </div>

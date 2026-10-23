@@ -108,7 +108,7 @@ function getTypeBadgeClasses(type: string | null | undefined): string {
     case 'PUBLIC': return 'bg-emerald-100 text-emerald-700';
     case 'PRIVATE': return 'bg-violet-100 text-violet-700';
     case 'SPECIALISED': return 'bg-amber-100 text-amber-700';
-    default: return 'bg-slate-100 text-slate-600';
+    default: return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
 
@@ -140,7 +140,7 @@ function formatDate(iso: string | null | undefined): string {
 // ─── Skeletons ─────────────────────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <div className="bg-gradient-to-br from-[#0057B8] to-[#003A7D] text-white">
+    <div className="bg-gradient-to-br from-[var(--alo-brand)] to-[#003A7D] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Skeleton className="h-8 w-72 mb-4 bg-white/20" />
         <Skeleton className="h-5 w-96 mb-8 bg-white/15" />
@@ -198,7 +198,7 @@ function FilterSidebarContent({
     <div className="space-y-6 p-1">
       {/* Country Checkboxes */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">Country</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">Country</Label>
         <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
           {COUNTRIES_LIST.map((country) => {
             const flag = COUNTRY_FLAGS[country] || '';
@@ -219,7 +219,7 @@ function FilterSidebarContent({
                 />
                 <label
                   htmlFor={`country-${country}`}
-                  className="text-sm text-slate-600 cursor-pointer flex items-center gap-1.5"
+                  className="text-sm text-[var(--alo-body)] cursor-pointer flex items-center gap-1.5"
                 >
                   <span>{flag}</span> {country}
                 </label>
@@ -233,7 +233,7 @@ function FilterSidebarContent({
 
       {/* City Input */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-2 block">City</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-2 block">City</Label>
         <Input
           placeholder="e.g. London, Melbourne..."
           value={filters.city}
@@ -246,7 +246,7 @@ function FilterSidebarContent({
 
       {/* Institution Type */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">Institution Type</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">Institution Type</Label>
         <div className="space-y-2">
           {INSTITUTION_TYPES.map((type) => (
             <div key={type} className="flex items-center gap-2">
@@ -262,7 +262,7 @@ function FilterSidebarContent({
                   }));
                 }}
               />
-              <label htmlFor={`type-${type}`} className="text-sm text-slate-600 cursor-pointer">
+              <label htmlFor={`type-${type}`} className="text-sm text-[var(--alo-body)] cursor-pointer">
                 {type}
               </label>
             </div>
@@ -274,7 +274,7 @@ function FilterSidebarContent({
 
       {/* Ranking Range */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">Ranking Range</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">Ranking Range</Label>
         <div className="flex items-center gap-2">
           <Input
             type="number"
@@ -284,7 +284,7 @@ function FilterSidebarContent({
             className="h-9"
             min={1}
           />
-          <span className="text-slate-400 text-sm">to</span>
+          <span className="text-[var(--alo-text-muted)] text-sm">to</span>
           <Input
             type="number"
             placeholder="Max"
@@ -300,7 +300,7 @@ function FilterSidebarContent({
 
       {/* Tuition Range */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">Tuition Range</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">Tuition Range</Label>
         <div className="flex items-center gap-2">
           <Input
             type="number"
@@ -310,7 +310,7 @@ function FilterSidebarContent({
             className="h-9"
             min={0}
           />
-          <span className="text-slate-400 text-sm">to</span>
+          <span className="text-[var(--alo-text-muted)] text-sm">to</span>
           <Input
             type="number"
             placeholder="Max"
@@ -326,7 +326,7 @@ function FilterSidebarContent({
 
       {/* Scholarship Toggle */}
       <div className="flex items-center justify-between">
-        <Label className="text-sm font-semibold text-slate-800">Scholarships Available</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)]">Scholarships Available</Label>
         <Switch
           checked={filters.scholarshipOnly}
           onCheckedChange={(checked) =>
@@ -337,7 +337,7 @@ function FilterSidebarContent({
 
       {/* ALO Partner Toggle */}
       <div className="flex items-center justify-between">
-        <Label className="text-sm font-semibold text-slate-800">ALO Partner Only</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)]">ALO Partner Only</Label>
         <Switch
           checked={filters.aloPartnerOnly}
           onCheckedChange={(checked) =>
@@ -350,7 +350,7 @@ function FilterSidebarContent({
 
       {/* Study Level Availability */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">Study Level</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">Study Level</Label>
         <div className="flex flex-wrap gap-2">
           {STUDY_LEVELS.map((level) => (
             <Badge
@@ -359,7 +359,7 @@ function FilterSidebarContent({
               className={`cursor-pointer text-xs px-3 py-1 transition-colors ${
                 filters.studyLevels.includes(level)
                   ? 'text-white'
-                  : 'hover:bg-slate-100'
+                  : 'hover:bg-[var(--alo-surface-muted)]'
               }`}
               style={
                 filters.studyLevels.includes(level)
@@ -385,7 +385,7 @@ function FilterSidebarContent({
 
       {/* Intake Period */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">Intake Period</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">Intake Period</Label>
         <Select
           value={filters.intakePeriod}
           onValueChange={(v) => setFilters((prev) => ({ ...prev, intakePeriod: v }))}
@@ -408,7 +408,7 @@ function FilterSidebarContent({
 
       {/* English Test Flexibility */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block">English Test Flexibility</Label>
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block">English Test Flexibility</Label>
         <Select
           value={filters.englishTest}
           onValueChange={(v) => setFilters((prev) => ({ ...prev, englishTest: v }))}
@@ -430,7 +430,7 @@ function FilterSidebarContent({
 
       {/* Sort By */}
       <div>
-        <Label className="text-sm font-semibold text-slate-800 mb-3 block flex items-center gap-1.5">
+        <Label className="text-sm font-semibold text-[var(--alo-text)] mb-3 block flex items-center gap-1.5">
           <ArrowUpDown className="size-3.5" /> Sort By
         </Label>
         <Select
@@ -496,7 +496,7 @@ function UniversityCard({
   const flag = COUNTRY_FLAGS[uni.country] || '';
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 border-slate-200 group">
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 border-[var(--alo-border)] group">
       <CardContent className="p-5 space-y-4">
         {/* Header Row */}
         <div className="flex items-start justify-between gap-3">
@@ -525,10 +525,10 @@ function UniversityCard({
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate group-hover:text-[#0057B8] transition-colors">
+              <h3 className="font-semibold text-[var(--alo-text)] text-sm leading-snug truncate group-hover:text-[var(--alo-brand)] transition-colors">
                 {flag} {uni.officialName || uni.name}
               </h3>
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+              <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)] mt-0.5">
                 <MapPin className="size-3" />
                 <span>{[uni.city, uni.country].filter(Boolean).join(', ')}</span>
               </div>
@@ -539,14 +539,14 @@ function UniversityCard({
             {uni.institutionType && (
               <Badge
                 variant="secondary"
-                className={`text-[10px] font-medium px-2 py-0.5 ${getTypeBadgeClasses(uni.institutionType)}`}
+                className={`text-[11px] font-medium px-2 py-0.5 ${getTypeBadgeClasses(uni.institutionType)}`}
               >
                 {uni.institutionType}
               </Badge>
             )}
             {uni.isPartner && (
               <Badge
-                className="text-[10px] font-medium px-2 py-0.5 text-white"
+                className="text-[11px] font-medium px-2 py-0.5 text-white"
                 style={{ backgroundColor: ALO_ORANGE }}
               >
                 <Handshake className="size-2.5 mr-0.5" />
@@ -562,33 +562,33 @@ function UniversityCard({
           <div className="flex items-center gap-1.5">
             <Trophy className="size-3.5 text-amber-500 flex-shrink-0" />
             {ranking.show ? (
-              <span className="font-medium text-slate-700 truncate" title={ranking.label}>
+              <span className="font-medium text-[var(--alo-body)] truncate" title={ranking.label}>
                 {ranking.label}
               </span>
             ) : (
-              <span className="text-slate-400 italic">Ranking unavailable</span>
+              <span className="text-[var(--alo-text-muted)] italic">Ranking unavailable</span>
             )}
           </div>
 
           {/* Course Count */}
           <div className="flex items-center gap-1.5">
-            <BookOpen className="size-3.5 text-slate-400 flex-shrink-0" />
-            <span className="text-slate-600">{courseCount} courses</span>
+            <BookOpen className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
+            <span className="text-[var(--alo-body)]">{courseCount} courses</span>
           </div>
 
           {/* Key Intakes */}
           {uni.keyIntakes && (
             <div className="flex items-center gap-1.5 col-span-2">
-              <Calendar className="size-3.5 text-slate-400 flex-shrink-0" />
-              <span className="text-slate-600 truncate">{uni.keyIntakes}</span>
+              <Calendar className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
+              <span className="text-[var(--alo-body)] truncate">{uni.keyIntakes}</span>
             </div>
           )}
 
           {/* Last Verified */}
           {uni.lastVerifiedAt && (
             <div className="flex items-center gap-1.5 col-span-2">
-              <ShieldCheck className="size-3.5 text-slate-400 flex-shrink-0" />
-              <span className="text-slate-500">Verified {formatDate(uni.lastVerifiedAt)}</span>
+              <ShieldCheck className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
+              <span className="text-[var(--alo-text-muted)]">Verified {formatDate(uni.lastVerifiedAt)}</span>
             </div>
           )}
         </div>
@@ -634,7 +634,7 @@ function UniversityCard({
           <Button
             variant="outline"
             size="sm"
-            className="h-8 text-xs col-span-1 text-[#E8501A] border-[#E8501A]/30 hover:bg-[#E8501A]/5"
+            className="h-8 text-xs col-span-1 text-[var(--alo-cta)] border-[var(--alo-cta)]/30 hover:bg-[var(--alo-cta)]/5"
             onClick={() => onAskCounsellor(uni.name)}
           >
             <MessageCircle className="size-3 mr-1" />
@@ -946,7 +946,7 @@ export function UniversityDirectoryEnhanced() {
   return (
     <div className="min-h-screen bg-white">
       {/* ═══ HERO SECTION ═══ */}
-      <div className="bg-gradient-to-br from-[#0057B8] to-[#003A7D] text-white">
+      <div className="bg-gradient-to-br from-[var(--alo-brand)] to-[#003A7D] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* Title */}
           <div className="flex items-center gap-2.5 mb-3">
@@ -1065,15 +1065,15 @@ export function UniversityDirectoryEnhanced() {
               {sidebarOpen ? 'Hide Filters' : 'Show Filters'}
             </Button>
 
-            <span className="text-sm text-slate-500">
-              <span className="font-semibold text-slate-700">{total}</span>{' '}
+            <span className="text-sm text-[var(--alo-text-muted)]">
+              <span className="font-semibold text-[var(--alo-body)]">{total}</span>{' '}
               {total === 1 ? 'university' : 'universities'} found
             </span>
           </div>
 
           {/* Desktop sort */}
           <div className="hidden sm:flex items-center gap-2">
-            <Label className="text-xs text-slate-500">Sort:</Label>
+            <Label className="text-xs text-[var(--alo-text-muted)]">Sort:</Label>
             <Select
               value={filters.sortBy}
               onValueChange={(v) => setFilters((prev) => ({ ...prev, sortBy: v }))}
@@ -1097,16 +1097,16 @@ export function UniversityDirectoryEnhanced() {
           {/* Desktop Sidebar */}
           {sidebarOpen && (
             <aside className="hidden lg:block w-72 flex-shrink-0">
-              <div className="sticky top-4 bg-slate-50 rounded-xl border border-slate-200 p-5 max-h-[calc(100vh-2rem)] overflow-y-auto">
+              <div className="sticky top-4 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] p-5 max-h-[calc(100vh-2rem)] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-1.5">
+                  <h3 className="font-semibold text-[var(--alo-text)] text-sm flex items-center gap-1.5">
                     <SlidersHorizontal className="size-4" />
                     Filters
                   </h3>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 text-xs text-slate-500 hover:text-[#E8501A]"
+                    className="h-7 text-xs text-[var(--alo-text-muted)] hover:text-[var(--alo-cta)]"
                     onClick={handleResetFilters}
                   >
                     Clear All
@@ -1133,11 +1133,11 @@ export function UniversityDirectoryEnhanced() {
               </div>
             ) : universities.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                  <SearchX className="size-10 text-slate-300" />
+                <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-4">
+                  <SearchX className="size-10 text-[var(--alo-placeholder)]" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-700 mb-2">No universities found</h3>
-                <p className="text-sm text-slate-500 mb-6 max-w-md">
+                <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">No universities found</h3>
+                <p className="text-sm text-[var(--alo-text-muted)] mb-6 max-w-md">
                   Try adjusting your search criteria or filters. We are constantly adding new verified universities to our directory.
                 </p>
                 <Button variant="outline" onClick={handleResetFilters}>
@@ -1177,10 +1177,10 @@ export function UniversityDirectoryEnhanced() {
 
         {/* ═══ Disclaimer ═══ */}
         <div className="mt-12 mb-8">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-5">
+          <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-4 sm:p-5">
             <div className="flex items-start gap-3">
-              <Info className="size-5 text-slate-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              <Info className="size-5 text-[var(--alo-text-muted)] flex-shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm text-[var(--alo-text-muted)] leading-relaxed">
                 University information is sourced from official university websites and verified ranking
                 publishers. Always check the official university website for the most current information.
                 Rankings shown are from the latest published edition of each provider and may change between

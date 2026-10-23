@@ -161,8 +161,8 @@ export default function CrmAnalyticsPage() {
             <BarChart3 className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Analytics</h1>
-            <p className="text-sm text-gray-500">Comprehensive performance dashboard</p>
+            <h1 className="text-xl font-bold text-[var(--alo-text)]">Analytics</h1>
+            <p className="text-sm text-[var(--alo-text-muted)]">Comprehensive performance dashboard</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -184,7 +184,7 @@ export default function CrmAnalyticsPage() {
                   <button
                     key={dr.value}
                     onClick={() => { setDateRange(dr.value); setShowDateDropdown(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors ${dateRange === dr.value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}
+                    className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--alo-page)] transition-colors ${dateRange === dr.value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-[var(--alo-body)]'}`}
                   >
                     {dr.label}
                   </button>
@@ -213,8 +213,8 @@ export default function CrmAnalyticsPage() {
                   <span className="bg-green-50 text-green-600 px-1.5 py-0.5 rounded">{kpi.change}</span>
                 </div>
               </div>
-              <p className="text-2xl font-bold text-gray-900 mt-3">{kpi.value}</p>
-              <p className="text-xs text-gray-500">{kpi.label}</p>
+              <p className="text-2xl font-bold text-[var(--alo-text)] mt-3">{kpi.value}</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">{kpi.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -237,19 +237,19 @@ export default function CrmAnalyticsPage() {
             {leadSources.map(source => (
               <div key={source.name} className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">{source.name}</span>
+                  <span className="text-sm text-[var(--alo-body)]">{source.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-gray-900">{source.count}</span>
-                    <span className="text-xs text-gray-400">({source.percentage}%)</span>
+                    <span className="text-sm font-semibold text-[var(--alo-text)]">{source.count}</span>
+                    <span className="text-xs text-[var(--alo-text-muted)]">({source.percentage}%)</span>
                   </div>
                 </div>
-                <div className="w-full h-6 bg-gray-100 rounded-full overflow-hidden">
+                <div className="w-full h-6 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${source.color} flex items-center justify-end pr-2 transition-all duration-500`}
                     style={{ width: `${source.percentage}%` }}
                   >
                     {source.percentage > 12 && (
-                      <span className="text-[10px] text-white font-medium">{source.percentage}%</span>
+                      <span className="text-[11px] text-white font-medium">{source.percentage}%</span>
                     )}
                   </div>
                 </div>
@@ -287,13 +287,13 @@ export default function CrmAnalyticsPage() {
                   <span className="text-lg">{c.flag}</span>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-sm text-gray-700">{c.country}</span>
+                      <span className="text-sm text-[var(--alo-body)]">{c.country}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-900">{c.students}</span>
-                        <span className="text-xs text-gray-400">{c.percentage}%</span>
+                        <span className="text-sm font-semibold text-[var(--alo-text)]">{c.students}</span>
+                        <span className="text-xs text-[var(--alo-text-muted)]">{c.percentage}%</span>
                       </div>
                     </div>
-                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${c.color} transition-all duration-500`}
                         style={{ width: `${c.percentage}%` }}
@@ -318,15 +318,15 @@ export default function CrmAnalyticsPage() {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-full bg-blue-600" />
-                <span className="text-xs text-gray-500">Leads</span>
+                <span className="text-xs text-[var(--alo-text-muted)]">Leads</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-xs text-gray-500">Conversions</span>
+                <span className="text-xs text-[var(--alo-text-muted)]">Conversions</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-full bg-orange-500" />
-                <span className="text-xs text-gray-500">Revenue</span>
+                <span className="text-xs text-[var(--alo-text-muted)]">Revenue</span>
               </div>
             </div>
           </div>
@@ -335,7 +335,7 @@ export default function CrmAnalyticsPage() {
           <div className="relative">
             {/* Y-axis labels and grid */}
             <div className="flex">
-              <div className="w-12 flex flex-col justify-between text-[10px] text-gray-400 pr-2 text-right">
+              <div className="w-12 flex flex-col justify-between text-[11px] text-[var(--alo-text-muted)] pr-2 text-right">
                 <span>{maxLeads}</span>
                 <span>{Math.round(maxLeads * 0.75)}</span>
                 <span>{Math.round(maxLeads * 0.5)}</span>
@@ -347,7 +347,7 @@ export default function CrmAnalyticsPage() {
                 {[0, 0.25, 0.5, 0.75, 1].map(fraction => (
                   <div
                     key={fraction}
-                    className="border-b border-gray-100 absolute w-full"
+                    className="border-b border-[var(--alo-border)] absolute w-full"
                     style={{ bottom: `${fraction * 100}%` }}
                   />
                 ))}
@@ -375,7 +375,7 @@ export default function CrmAnalyticsPage() {
                           title={`${trend.month}: ${trend.conversions} conversions`}
                         />
                       </div>
-                      <span className="text-[10px] text-gray-500 mt-1">{trend.month}</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)] mt-1">{trend.month}</span>
                     </div>
                   ))}
                 </div>
@@ -399,28 +399,28 @@ export default function CrmAnalyticsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b bg-gray-50/50">
-                    <th className="text-center px-3 py-2.5 text-xs font-medium text-gray-500">#</th>
-                    <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-500">University</th>
-                    <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-500">Country</th>
-                    <th className="text-center px-3 py-2.5 text-xs font-medium text-gray-500">Apps</th>
-                    <th className="text-center px-3 py-2.5 text-xs font-medium text-gray-500">Offers</th>
-                    <th className="text-center px-3 py-2.5 text-xs font-medium text-gray-500">Rate</th>
+                  <tr className="border-b bg-[var(--alo-page)]/50">
+                    <th className="text-center px-3 py-2.5 text-xs font-medium text-[var(--alo-text-muted)]">#</th>
+                    <th className="text-left px-3 py-2.5 text-xs font-medium text-[var(--alo-text-muted)]">University</th>
+                    <th className="text-left px-3 py-2.5 text-xs font-medium text-[var(--alo-text-muted)]">Country</th>
+                    <th className="text-center px-3 py-2.5 text-xs font-medium text-[var(--alo-text-muted)]">Apps</th>
+                    <th className="text-center px-3 py-2.5 text-xs font-medium text-[var(--alo-text-muted)]">Offers</th>
+                    <th className="text-center px-3 py-2.5 text-xs font-medium text-[var(--alo-text-muted)]">Rate</th>
                   </tr>
                 </thead>
                 <tbody>
                   {topUniversities.map(uni => (
-                    <tr key={uni.rank} className="border-b hover:bg-gray-50/50 transition-colors">
+                    <tr key={uni.rank} className="border-b hover:bg-[var(--alo-page)]/50 transition-colors">
                       <td className="text-center px-3 py-2.5">
-                        <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold ${uni.rank <= 3 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                        <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center text-xs font-bold ${uni.rank <= 3 ? 'bg-blue-600 text-white' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
                           {uni.rank}
                         </span>
                       </td>
-                      <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{uni.name}</td>
+                      <td className="px-3 py-2.5 text-sm font-medium text-[var(--alo-text)]">{uni.name}</td>
                       <td className="px-3 py-2.5">
-                        <Badge variant="outline" className="text-[10px]">{uni.country}</Badge>
+                        <Badge variant="outline" className="text-[11px]">{uni.country}</Badge>
                       </td>
-                      <td className="px-3 py-2.5 text-center text-sm text-gray-700">{uni.applications}</td>
+                      <td className="px-3 py-2.5 text-center text-sm text-[var(--alo-body)]">{uni.applications}</td>
                       <td className="px-3 py-2.5 text-center text-sm font-medium text-green-700">{uni.offers}</td>
                       <td className="px-3 py-2.5 text-center">
                         <div className="flex items-center justify-center gap-1.5">
@@ -430,7 +430,7 @@ export default function CrmAnalyticsPage() {
                               style={{ width: `${uni.acceptanceRate}%` }}
                             />
                           </div>
-                          <span className="text-xs text-gray-600">{uni.acceptanceRate}%</span>
+                          <span className="text-xs text-[var(--alo-body)]">{uni.acceptanceRate}%</span>
                         </div>
                       </td>
                     </tr>
@@ -454,8 +454,8 @@ export default function CrmAnalyticsPage() {
               {funnelStages.map((stage, index) => (
                 <div key={stage.label} className="flex items-center gap-3">
                   <div className="w-24 text-right">
-                    <p className="text-xs font-medium text-gray-700">{stage.label}</p>
-                    <p className="text-sm font-bold text-gray-900">{stage.count.toLocaleString()}</p>
+                    <p className="text-xs font-medium text-[var(--alo-body)]">{stage.label}</p>
+                    <p className="text-sm font-bold text-[var(--alo-text)]">{stage.count.toLocaleString()}</p>
                   </div>
                   <div className="flex-1 relative">
                     <div
@@ -467,7 +467,7 @@ export default function CrmAnalyticsPage() {
                       <span className="text-white text-xs font-semibold relative z-10">{stage.percentage}%</span>
                     </div>
                     {index < funnelStages.length - 1 && (
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 text-[11px] text-[var(--alo-text-muted)]">
                         ↓ {((1 - stage.count / (funnelStages[index]?.count || 1)) * 100).toFixed(0)}% drop
                       </div>
                     )}
@@ -481,15 +481,15 @@ export default function CrmAnalyticsPage() {
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center p-2 bg-blue-50 rounded-lg">
                 <p className="text-lg font-bold text-blue-700">3.3x</p>
-                <p className="text-[10px] text-gray-500">Inquiry to Application</p>
+                <p className="text-[11px] text-[var(--alo-text-muted)]">Inquiry to Application</p>
               </div>
               <div className="text-center p-2 bg-orange-50 rounded-lg">
                 <p className="text-lg font-bold text-orange-700">71.7%</p>
-                <p className="text-[10px] text-gray-500">Application to Offer</p>
+                <p className="text-[11px] text-[var(--alo-text-muted)]">Application to Offer</p>
               </div>
               <div className="text-center p-2 bg-green-50 rounded-lg">
                 <p className="text-lg font-bold text-green-700">86.7%</p>
-                <p className="text-[10px] text-gray-500">Visa Approval</p>
+                <p className="text-[11px] text-[var(--alo-text-muted)]">Visa Approval</p>
               </div>
             </div>
           </CardContent>
@@ -519,14 +519,14 @@ export default function CrmAnalyticsPage() {
               const height = (trend.revenue / maxRev) * 100;
               return (
                 <div key={trend.month} className="flex-1 flex flex-col items-center gap-1 group">
-                  <span className="text-[9px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-[11px] text-[var(--alo-text-muted)] opacity-0 group-hover:opacity-100 transition-opacity">
                     {formatRevenue(trend.revenue)}
                   </span>
                   <div
                     className={`w-full rounded-t transition-all duration-500 ${i === monthlyTrends.length - 1 ? 'bg-green-500' : 'bg-green-300 hover:bg-green-400'}`}
                     style={{ height: `${height}%` }}
                   />
-                  <span className="text-[9px] text-gray-500">{trend.month}</span>
+                  <span className="text-[11px] text-[var(--alo-text-muted)]">{trend.month}</span>
                 </div>
               );
             })}

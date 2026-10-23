@@ -192,7 +192,7 @@ export function NexAbroadDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] text-[#F8FAFC]">
+    <div className="min-h-screen bg-[#0A0E1A] text-[var(--alo-page)]">
       {/* ═══ GLOBAL NAVIGATION ═══ */}
       <NexAbroadNav />
 
@@ -207,21 +207,21 @@ export function NexAbroadDashboard() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="nx-pulse flex size-3 rounded-full bg-[#E8501A]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">70% AI Engine Active</span>
+                  <span className="nx-pulse flex size-3 rounded-full bg-[var(--alo-cta)]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">70% AI Engine Active</span>
                 </div>
                 <h1 className="mt-2 text-3xl font-black tracking-tight lg:text-4xl">
                   Your AI Co-Pilot is{" "}
-                  <span className="bg-gradient-to-r from-[#E8501A] to-[#C93D13] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[var(--alo-cta)] to-[var(--alo-cta-hover)] bg-clip-text text-transparent">
                     working
                   </span>
                 </h1>
-                <p className="mt-1 text-sm text-[#94A3B8]">
+                <p className="mt-1 text-sm text-[var(--alo-placeholder)]">
                   {AI_PIPELINE_STATS.ocrProcessed} documents OCR'd · {AI_PIPELINE_STATS.sopsDrafted} SOPs drafted · {AI_PIPELINE_STATS.matchesGenerated} university matches generated
                 </p>
               </div>
               <div className="flex gap-3">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="nx-btn-glow bg-gradient-to-r from-[#E8501A] to-[#C93D13] text-white hover:opacity-90 rounded-2xl px-6">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="nx-btn-glow bg-gradient-to-r from-[var(--alo-cta)] to-[var(--alo-cta-hover)] text-white hover:opacity-90 rounded-2xl px-6">
                   <Icon name="Sparkles" className="mr-2 size-4" />
                   Run AI Pipeline
                 </Button>
@@ -278,41 +278,41 @@ function NexAbroadNav() {
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E8501A] to-[#1E40AF] text-lg font-black text-white">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-cta)] to-[var(--alo-brand-hover)] text-lg font-black text-white">
             N
           </div>
           <div>
             <p className="text-base font-black tracking-tight">NexAbroad</p>
-            <p className="text-[10px] font-medium uppercase tracking-wider text-[#64748B]">AI EdTech Platform</p>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--alo-text-muted)]">AI EdTech Platform</p>
           </div>
         </div>
 
         {/* Search */}
         <div className="hidden flex-1 px-8 lg:block">
           <div className="relative max-w-md">
-            <Icon name="Search" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+            <Icon name="Search" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
             <input
               type="text"
               placeholder="Search students, universities, applications..."
-              className="h-9 w-full rounded-xl border border-white/5 bg-white/5 pl-9 pr-16 text-sm text-white placeholder:text-[#64748B] focus:border-[#E8501A]/40 focus:outline-none focus:ring-2 focus:ring-[#E8501A]/20"
+              className="h-9 w-full rounded-xl border border-white/5 bg-white/5 pl-9 pr-16 text-sm text-white placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-cta)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--alo-cta)]/20"
             />
-            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-[#64748B]">⌘K</kbd>
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-text-muted)]">⌘K</kbd>
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <div className="nx-ai-active hidden items-center gap-2 rounded-full border border-[#E8501A]/20 px-3 py-1.5 sm:flex">
-            <span className="nx-pulse flex size-2 rounded-full bg-[#E8501A]" />
-            <span className="text-xs font-semibold text-[#E8501A]">AI Engine Active</span>
+          <div className="nx-ai-active hidden items-center gap-2 rounded-full border border-[var(--alo-cta)]/20 px-3 py-1.5 sm:flex">
+            <span className="nx-pulse flex size-2 rounded-full bg-[var(--alo-cta)]" />
+            <span className="text-xs font-semibold text-[var(--alo-cta)]">AI Engine Active</span>
           </div>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative text-[#94A3B8] hover:bg-white/5 hover:text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative text-[var(--alo-placeholder)] hover:bg-white/5 hover:text-white">
             <Icon name="Bell" className="size-5" />
-            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#E8501A]" />
+            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[var(--alo-cta)]" />
           </Button>
           <Avatar className="size-9 border border-white/10">
             <AvatarImage src="/images/testimonials/default.png" />
-            <AvatarFallback className="bg-[#1E40AF] text-xs font-bold text-white">RA</AvatarFallback>
+            <AvatarFallback className="bg-[var(--alo-brand-hover)] text-xs font-bold text-white">RA</AvatarFallback>
           </Avatar>
         </div>
       </div>
@@ -325,22 +325,22 @@ function NexAbroadNav() {
 // ════════════════════════════════════════════════════════════════
 function AIPipelineBar({ stats }: { stats: typeof AI_PIPELINE_STATS }) {
   const items = [
-    { label: "OCR Processed", value: stats.ocrProcessed, icon: "ScanText", color: "text-[#0284C7]" },
-    { label: "SOPs Drafted", value: stats.sopsDrafted, icon: "FileText", color: "text-[#E8501A]" },
-    { label: "Matches Generated", value: stats.matchesGenerated, icon: "Target", color: "text-[#22C55E]" },
-    { label: "Applications Staged", value: stats.applicationsStaged, icon: "Send", color: "text-[#0284C7]" },
-    { label: "Human Approvals Pending", value: stats.humanApprovalsPending, icon: "UserCheck", color: "text-[#FBBF24]" },
+    { label: "OCR Processed", value: stats.ocrProcessed, icon: "ScanText", color: "text-[var(--alo-info)]" },
+    { label: "SOPs Drafted", value: stats.sopsDrafted, icon: "FileText", color: "text-[var(--alo-cta)]" },
+    { label: "Matches Generated", value: stats.matchesGenerated, icon: "Target", color: "text-[var(--alo-success)]" },
+    { label: "Applications Staged", value: stats.applicationsStaged, icon: "Send", color: "text-[var(--alo-info)]" },
+    { label: "Human Approvals Pending", value: stats.humanApprovalsPending, icon: "UserCheck", color: "text-[var(--alo-warning)]" },
   ];
 
   return (
-    <div className="border-b border-white/5 bg-[#0F172A]/50">
+    <div className="border-b border-white/5 bg-[var(--alo-text)]/50">
       <div className="mx-auto flex max-w-[1400px] items-center gap-6 overflow-x-auto px-4 py-2.5 lg:px-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-[#64748B] whitespace-nowrap">AI Pipeline</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)] whitespace-nowrap">AI Pipeline</span>
         {items.map((item) => (
           <div key={item.label} className="flex items-center gap-2 whitespace-nowrap">
             <Icon name={item.icon} className={cn("size-3.5", item.color)} />
             <span className="text-sm font-bold text-white">{item.value}</span>
-            <span className="text-xs text-[#64748B]">{item.label}</span>
+            <span className="text-xs text-[var(--alo-text-muted)]">{item.label}</span>
           </div>
         ))}
       </div>
@@ -357,15 +357,15 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E8501A] to-[#C93D13]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-cta)] to-[var(--alo-cta-hover)]">
             <Icon name="BrainCircuit" className="size-5 text-white" />
           </div>
           <div>
             <h3 className="text-base font-bold text-white">AI Eligibility Engine</h3>
-            <p className="text-xs text-[#64748B]">Predictive match against 12,000+ universities</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Predictive match against 12,000+ universities</p>
           </div>
         </div>
-        <Badge className="border-[#22C55E]/20 bg-[#22C55E]/10 text-[#22C55E]">
+        <Badge className="border-[var(--alo-success)]/20 bg-[var(--alo-success)]/10 text-[var(--alo-success)]">
           <Icon name="Zap" className="mr-1 size-3" />
           Live
         </Badge>
@@ -376,7 +376,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
         {universities.map((uni, i) => (
           <div
             key={uni.name}
-            className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-3 transition-all hover:border-[#E8501A]/20 hover:bg-white/8"
+            className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-3 transition-all hover:border-[var(--alo-cta)]/20 hover:bg-white/8"
           >
             {/* Match Score Circle */}
             <div className="relative flex size-14 shrink-0 items-center justify-center">
@@ -400,17 +400,17 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
                 <span className="text-sm">{uni.flag}</span>
                 <p className="truncate text-sm font-bold text-white">{uni.name}</p>
               </div>
-              <p className="text-xs text-[#64748B]">{uni.tuition} · {uni.deadline}</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">{uni.tuition} · {uni.deadline}</p>
               <div className="mt-1 flex items-center gap-1">
-                <Icon name="Award" className="size-3 text-[#E8501A]" />
-                <span className="text-xs font-medium text-[#E8501A]">{uni.scholarship}</span>
+                <Icon name="Award" className="size-3 text-[var(--alo-cta)]" />
+                <span className="text-xs font-medium text-[var(--alo-cta)]">{uni.scholarship}</span>
               </div>
             </div>
 
             {/* 1-Click Apply */}
             <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
               size="sm"
-              className="shrink-0 bg-gradient-to-r from-[#E8501A] to-[#C93D13] text-white hover:opacity-90 rounded-xl"
+              className="shrink-0 bg-gradient-to-r from-[var(--alo-cta)] to-[var(--alo-cta-hover)] text-white hover:opacity-90 rounded-xl"
             >
               <Icon name="Zap" className="mr-1 size-3" />
               1-Click Apply
@@ -421,8 +421,8 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
 
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
-        <span className="text-xs text-[#64748B]">Visa probability calculated from 847 data points</span>
-        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-xs font-semibold text-[#0284C7] hover:underline">
+        <span className="text-xs text-[var(--alo-text-muted)]">Visa probability calculated from 847 data points</span>
+        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-xs font-semibold text-[var(--alo-info)] hover:underline">
           View all 156 matches →
         </button>
       </div>
@@ -460,24 +460,24 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
         {/* Tuition Breakdown */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[#94A3B8]">Tuition</span>
+            <span className="text-[var(--alo-placeholder)]">Tuition</span>
             <span className="font-bold text-white">{university.tuition}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[#94A3B8]">Scholarship</span>
-            <span className="font-bold text-[#E8501A]">{university.scholarship}</span>
+            <span className="text-[var(--alo-placeholder)]">Scholarship</span>
+            <span className="font-bold text-[var(--alo-cta)]">{university.scholarship}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[#94A3B8]">Net Cost</span>
-            <span className="font-bold text-[#22C55E]">£19,000/year</span>
+            <span className="text-[var(--alo-placeholder)]">Net Cost</span>
+            <span className="font-bold text-[var(--alo-success)]">£19,000/year</span>
           </div>
         </div>
 
         {/* Deadline */}
-        <div className="mt-4 flex items-center gap-2 rounded-xl border border-[#FBBF24]/20 bg-[#FBBF24]/5 p-3">
-          <Icon name="CalendarClock" className="size-4 text-[#FBBF24]" />
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-[var(--alo-warning)]/20 bg-[var(--alo-warning)]/5 p-3">
+          <Icon name="CalendarClock" className="size-4 text-[var(--alo-warning)]" />
           <div>
-            <p className="text-xs font-semibold text-[#FBBF24]">Application Deadline</p>
+            <p className="text-xs font-semibold text-[var(--alo-warning)]">Application Deadline</p>
             <p className="text-sm font-bold text-white">{university.deadline}</p>
           </div>
         </div>
@@ -488,7 +488,7 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
             <Icon name="MapPin" className="mr-1 size-3" />
             Campus Tour
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[#1E40AF] text-white hover:bg-[#1E3A8A] rounded-xl">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand-hover)] text-white hover:bg-[#1E3A8A] rounded-xl">
             <Icon name="BookOpen" className="mr-1 size-3" />
             Courses
           </Button>
@@ -513,15 +513,15 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
     <div className="nx-glass h-full p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0284C7] to-[#1E40AF]">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-info)] to-[var(--alo-brand-hover)]">
             <Icon name="ScanText" className="size-4 text-white" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">OCR Vault</h3>
-            <p className="text-[10px] text-[#64748B]">AI-extracted & verified</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)]">AI-extracted & verified</p>
           </div>
         </div>
-        <Badge className="border-[#22C55E]/20 bg-[#22C55E]/10 text-[#22C55E]">
+        <Badge className="border-[var(--alo-success)]/20 bg-[var(--alo-success)]/10 text-[var(--alo-success)]">
           <Icon name="ShieldCheck" className="mr-1 size-2.5" />
           {documents.length} verified
         </Badge>
@@ -537,21 +537,21 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
             <div className="flex items-center gap-2.5">
               {/* Document Icon */}
               <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                <Icon name={typeIcons[doc.type] || "File"} className="size-4 text-[#0284C7]" />
+                <Icon name={typeIcons[doc.type] || "File"} className="size-4 text-[var(--alo-info)]" />
               </div>
 
               {/* Name + Confidence */}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-semibold text-white">{doc.name}</p>
                 <div className="mt-0.5 flex items-center gap-1">
-                  <span className="text-[10px] text-[#22C55E]">{doc.confidence}% confidence</span>
+                  <span className="text-[11px] text-[var(--alo-success)]">{doc.confidence}% confidence</span>
                 </div>
               </div>
 
               {/* Verified Badge */}
               {doc.verified && (
-                <div className="flex size-5 items-center justify-center rounded-full bg-[#22C55E]/20">
-                  <Icon name="Check" className="size-3 text-[#22C55E]" />
+                <div className="flex size-5 items-center justify-center rounded-full bg-[var(--alo-success)]/20">
+                  <Icon name="Check" className="size-3 text-[var(--alo-success)]" />
                 </div>
               )}
             </div>
@@ -559,9 +559,9 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
             {/* Extracted Data Preview */}
             <div className="mt-2 grid grid-cols-2 gap-1">
               {doc.extractedData.slice(0, 2).map((data) => (
-                <div key={data.label} className="text-[10px]">
-                  <span className="text-[#64748B]">{data.label}: </span>
-                  <span className="font-semibold text-[#94A3B8]">{data.value}</span>
+                <div key={data.label} className="text-[11px]">
+                  <span className="text-[var(--alo-text-muted)]">{data.label}: </span>
+                  <span className="font-semibold text-[var(--alo-placeholder)]">{data.value}</span>
                 </div>
               ))}
             </div>
@@ -570,7 +570,7 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
       </div>
 
       {/* Upload */}
-      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[#64748B] transition-colors hover:border-[#E8501A]/30 hover:text-[#E8501A]">
+      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[var(--alo-text-muted)] transition-colors hover:border-[var(--alo-cta)]/30 hover:text-[var(--alo-cta)]">
         <Icon name="Upload" className="size-3.5" />
         Upload new document
       </button>
@@ -594,15 +594,15 @@ function FinTechCard() {
     <div className="nx-glass h-full p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#22C55E] to-[#047857]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-success)] to-[var(--alo-success-dark)]">
             <Icon name="Wallet" className="size-5 text-white" />
           </div>
           <div>
             <h3 className="text-base font-bold text-white">FinTech & Blocked Account</h3>
-            <p className="text-xs text-[#64748B]">Germany Blocked Account + UK CAS financial readiness</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Germany Blocked Account + UK CAS financial readiness</p>
           </div>
         </div>
-        <Badge className="border-[#22C55E]/20 bg-[#22C55E]/10 text-[#22C55E]">
+        <Badge className="border-[var(--alo-success)]/20 bg-[var(--alo-success)]/10 text-[var(--alo-success)]">
           <Icon name="CheckCircle2" className="mr-1 size-3" />
           Ready
         </Badge>
@@ -616,54 +616,54 @@ function FinTechCard() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-white">🇩🇪 Germany Blocked Account</span>
               {blockedPct === 100 && (
-                <Badge className="border-[#22C55E]/20 bg-[#22C55E]/10 px-1.5 py-0 text-[9px] text-[#22C55E]">Verified</Badge>
+                <Badge className="border-[var(--alo-success)]/20 bg-[var(--alo-success)]/10 px-1.5 py-0 text-[11px] text-[var(--alo-success)]">Verified</Badge>
               )}
             </div>
-            <span className="text-sm font-bold text-[#22C55E]">{blockedAccount.currency}{blockedAccount.current.toLocaleString()}</span>
+            <span className="text-sm font-bold text-[var(--alo-success)]">{blockedAccount.currency}{blockedAccount.current.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
             <div className="nx-progress-fill" style={{ width: `${blockedPct}%`, background: "linear-gradient(90deg, #22C55E, #047857)" }} />
           </div>
-          <p className="mt-1 text-[10px] text-[#64748B]">Target: €11,208 (Fintiba verified) · 100% complete</p>
+          <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">Target: €11,208 (Fintiba verified) · 100% complete</p>
         </div>
 
         {/* UK Tuition Deposit */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <span className="text-sm font-semibold text-white">🇬🇧 UK Tuition Deposit</span>
-            <span className="text-sm font-bold text-[#E8501A]">£{tuitionDeposit.current.toLocaleString()} / £{tuitionDeposit.target.toLocaleString()}</span>
+            <span className="text-sm font-bold text-[var(--alo-cta)]">£{tuitionDeposit.current.toLocaleString()} / £{tuitionDeposit.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
             <div className="nx-progress-fill nx-progress-gradient" style={{ width: `${tuitionPct}%` }} />
           </div>
-          <p className="mt-1 text-[10px] text-[#64748B]">50% complete · CAS pending deposit confirmation</p>
+          <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">50% complete · CAS pending deposit confirmation</p>
         </div>
 
         {/* Living Cost */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <span className="text-sm font-semibold text-white">🏠 Living Cost Proof</span>
-            <span className="text-sm font-bold text-[#0284C7]">£{livingCost.current.toLocaleString()} / £{livingCost.target.toLocaleString()}</span>
+            <span className="text-sm font-bold text-[var(--alo-info)]">£{livingCost.current.toLocaleString()} / £{livingCost.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
             <div className="nx-progress-fill" style={{ width: `${livingPct}%`, background: "linear-gradient(90deg, #0284C7, #1E40AF)" }} />
           </div>
-          <p className="mt-1 text-[10px] text-[#64748B]">50% complete · Bank statement uploaded, awaiting verification</p>
+          <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">50% complete · Bank statement uploaded, awaiting verification</p>
         </div>
       </div>
 
       {/* Summary */}
       <div className="mt-5 grid grid-cols-3 gap-3 border-t border-white/5 pt-4">
         <div className="text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748B]">Total Ready</p>
-          <p className="mt-0.5 text-lg font-bold text-[#22C55E]">€17,208</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">Total Ready</p>
+          <p className="mt-0.5 text-lg font-bold text-[var(--alo-success)]">€17,208</p>
         </div>
         <div className="text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748B]">Pending</p>
-          <p className="mt-0.5 text-lg font-bold text-[#E8501A]">£18,000</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">Pending</p>
+          <p className="mt-0.5 text-lg font-bold text-[var(--alo-cta)]">£18,000</p>
         </div>
         <div className="text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748B]">Visa Readiness</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">Visa Readiness</p>
           <p className="mt-0.5 text-lg font-bold text-white">67%</p>
         </div>
       </div>
@@ -685,15 +685,15 @@ function CounselorApprovalCard({
     <div className="nx-glass nx-glass-glow-orange h-full p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E8501A] to-[#C93D13]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-cta)] to-[var(--alo-cta-hover)]">
             <Icon name="UserCheck" className="size-5 text-white" />
           </div>
           <div>
             <h3 className="text-base font-bold text-white">Counselor Approval Panel</h3>
-            <p className="text-xs text-[#64748B]">AI-prepared files ready for human review</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">AI-prepared files ready for human review</p>
           </div>
         </div>
-        <Badge className="border-[#FBBF24]/20 bg-[#FBBF24]/10 text-[#FBBF24]">
+        <Badge className="border-[var(--alo-warning)]/20 bg-[var(--alo-warning)]/10 text-[var(--alo-warning)]">
           <Icon name="Clock" className="mr-1 size-3" />
           {approvals.length} pending
         </Badge>
@@ -703,11 +703,11 @@ function CounselorApprovalCard({
       <div className="mt-5 space-y-4">
         {approvals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="flex size-12 items-center justify-center rounded-full bg-[#22C55E]/10">
-              <Icon name="CheckCircle2" className="size-6 text-[#22C55E]" />
+            <div className="flex size-12 items-center justify-center rounded-full bg-[var(--alo-success)]/10">
+              <Icon name="CheckCircle2" className="size-6 text-[var(--alo-success)]" />
             </div>
             <p className="mt-3 text-sm font-semibold text-white">All caught up!</p>
-            <p className="text-xs text-[#64748B]">No applications pending approval.</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">No applications pending approval.</p>
           </div>
         ) : (
           approvals.map((app) => (
@@ -716,18 +716,18 @@ function CounselorApprovalCard({
               <div className="flex items-center gap-3">
                 <Avatar className="size-10 border border-white/10">
                   <AvatarImage src={app.studentAvatar} />
-                  <AvatarFallback className="bg-[#1E40AF] text-xs font-bold text-white">
+                  <AvatarFallback className="bg-[var(--alo-brand-hover)] text-xs font-bold text-white">
                     {app.studentName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold text-white">{app.studentName}</p>
-                  <p className="text-xs text-[#64748B]">{app.university} · {app.course}</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">{app.university} · {app.course}</p>
                 </div>
                 {/* Overall Confidence */}
                 <div className="text-right">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[#64748B]">Confidence</p>
-                  <p className="text-lg font-bold text-[#22C55E]">{app.overallConfidence}%</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">Confidence</p>
+                  <p className="text-lg font-bold text-[var(--alo-success)]">{app.overallConfidence}%</p>
                 </div>
               </div>
 
@@ -739,7 +739,7 @@ function CounselorApprovalCard({
                   { label: "Match", value: app.matchConfidence, color: "#22C55E" },
                 ].map((item) => (
                   <div key={item.label} className="rounded-lg bg-white/5 p-2 text-center">
-                    <p className="text-[9px] font-semibold uppercase tracking-wide text-[#64748B]">{item.label}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">{item.label}</p>
                     <p className="text-sm font-bold" style={{ color: item.color }}>{item.value}%</p>
                   </div>
                 ))}
@@ -758,7 +758,7 @@ function CounselorApprovalCard({
                 <Button
                   size="sm"
                   onClick={() => onApprove(app.id)}
-                  className="nx-btn-glow ml-auto bg-gradient-to-r from-[#E8501A] to-[#C93D13] text-white hover:opacity-90 rounded-xl"
+                  className="nx-btn-glow ml-auto bg-gradient-to-r from-[var(--alo-cta)] to-[var(--alo-cta-hover)] text-white hover:opacity-90 rounded-xl"
                 >
                   <Icon name="Check" className="mr-1 size-3" />
                   Approve & Submit
@@ -771,7 +771,7 @@ function CounselorApprovalCard({
 
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
-        <span className="text-xs text-[#64748B]">
+        <span className="text-xs text-[var(--alo-text-muted)]">
           <Icon name="Info" className="mr-1 inline size-3" />
           AI prepares 70% · You approve the final 30%
         </span>

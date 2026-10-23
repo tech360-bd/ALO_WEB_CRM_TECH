@@ -25,7 +25,7 @@ function TaskStatusBadge({ status }: { status: string }) {
     pending: 'warning',
     rejected: 'danger',
   };
-  return <Badge variant={map[status] || 'muted'} className="text-[10px]">{status}</Badge>;
+  return <Badge variant={map[status] || 'muted'} className="text-[11px]">{status}</Badge>;
 }
 
 function TypeBadge({ type }: { type: string }) {
@@ -36,7 +36,7 @@ function TypeBadge({ type }: { type: string }) {
     'Doc Check': 'bg-amber-100 text-amber-700',
     'Visa Risk': 'bg-red-100 text-red-700',
   };
-  return <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${colors[type] || 'bg-gray-100'}`}>{type}</span>;
+  return <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${colors[type] || 'bg-[var(--alo-surface-muted)]'}`}>{type}</span>;
 }
 
 export default function AiCommandDashboard() {
@@ -121,7 +121,7 @@ export default function AiCommandDashboard() {
                 <m.icon className="w-5 h-5 text-alo-brand mx-auto mb-1.5" />
                 <p className="text-lg font-bold text-alo-text">{m.value}</p>
                 <p className="text-[11px] text-alo-text-muted">{m.metric}</p>
-                <span className="text-[10px] text-emerald-600 font-medium">{m.trend}</span>
+                <span className="text-[11px] text-emerald-600 font-medium">{m.trend}</span>
               </div>
             ))}
           </div>
@@ -188,13 +188,13 @@ export default function AiCommandDashboard() {
                   <div key={p.task} className={`p-2.5 rounded-lg border ${p.priority === 'high' ? 'border-amber-200 bg-amber-50' : 'border-alo-border'}`}>
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-xs font-medium text-alo-text truncate">{p.task}</p>
-                      <Badge variant={p.priority === 'high' ? 'danger' : p.priority === 'medium' ? 'warning' : 'muted'} className="text-[10px] shrink-0 ml-1">{p.priority}</Badge>
+                      <Badge variant={p.priority === 'high' ? 'danger' : p.priority === 'medium' ? 'warning' : 'muted'} className="text-[11px] shrink-0 ml-1">{p.priority}</Badge>
                     </div>
                     <div className="flex items-center justify-between mt-1.5">
                       <TypeBadge type={p.type} />
                       <div className="flex gap-1">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[10px] h-6 px-2">Reject</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[11px] h-6 px-2">Approve</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[11px] h-6 px-2">Reject</Button>
                       </div>
                     </div>
                   </div>
@@ -218,9 +218,9 @@ export default function AiCommandDashboard() {
                   <div key={i} className="p-2.5 rounded-lg border border-purple-200 bg-purple-50">
                     <p className="text-xs text-alo-text">{l.action}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="muted" className="text-[9px]">{l.model}</Badge>
-                      <span className="text-[10px] text-alo-text-muted">{l.tokens} tokens</span>
-                      <span className="text-[10px] text-alo-text-muted">{l.time}</span>
+                      <Badge variant="muted" className="text-[11px]">{l.model}</Badge>
+                      <span className="text-[11px] text-alo-text-muted">{l.tokens} tokens</span>
+                      <span className="text-[11px] text-alo-text-muted">{l.time}</span>
                     </div>
                   </div>
                 ))}

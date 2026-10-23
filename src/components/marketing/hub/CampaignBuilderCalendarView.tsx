@@ -74,8 +74,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   active: { label: 'Active', color: 'bg-green-100 text-green-700 border-green-200' },
   paused: { label: 'Paused', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
   draft: { label: 'Draft', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  completed: { label: 'Completed', color: 'bg-gray-100 text-gray-600 border-gray-200' },
-  archived: { label: 'Archived', color: 'bg-gray-200 text-gray-400 border-gray-300' },
+  completed: { label: 'Completed', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
+  archived: { label: 'Archived', color: 'bg-gray-200 text-[var(--alo-text-muted)] border-[var(--alo-border-strong)]' },
 };
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -238,16 +238,16 @@ function KpiCards({ campaigns }: { campaigns: CampaignRow[] }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       {cards.map((card) => (
-        <Card key={card.label} className="border border-gray-100 shadow-sm">
+        <Card key={card.label} className="border border-[var(--alo-border)] shadow-sm">
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-2">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${card.color}`}>
                 <card.icon className="w-4 h-4" />
               </div>
             </div>
-            <p className="text-lg font-bold text-gray-900">{card.value}</p>
-            <p className="text-[11px] text-gray-500 font-medium">{card.label}</p>
-            <p className="text-[10px] text-emerald-600 mt-1">{card.change}</p>
+            <p className="text-lg font-bold text-[var(--alo-text)]">{card.value}</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)] font-medium">{card.label}</p>
+            <p className="text-[11px] text-emerald-600 mt-1">{card.change}</p>
           </CardContent>
         </Card>
       ))}
@@ -261,25 +261,25 @@ function KpiCards({ campaigns }: { campaigns: CampaignRow[] }) {
 
 function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
   return (
-    <Card className="border border-gray-100 shadow-sm">
+    <Card className="border border-[var(--alo-border)] shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold text-gray-800">
+        <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
           All Campaigns ({campaigns.length})
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50/80">
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Campaign</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Platform</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Status</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">Leads</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">Cost (BDT)</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">ROI</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">Conv. Rate</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Dates</TableHead>
-              <TableHead className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</TableHead>
+            <TableRow className="bg-[var(--alo-page)]/80">
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Campaign</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Platform</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Status</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider text-right">Leads</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider text-right">Cost (BDT)</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider text-right">ROI</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider text-right">Conv. Rate</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Dates</TableHead>
+              <TableHead className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -287,62 +287,62 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
               <TableRow key={c.id} className="hover:bg-orange-50/30 transition-colors">
                 <TableCell className="py-3">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{c.name}</p>
-                    <p className="text-[11px] text-gray-400">{c.goal}</p>
+                    <p className="text-sm font-medium text-[var(--alo-text)]">{c.name}</p>
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">{c.goal}</p>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1.5">
                     <span className={`w-2 h-2 rounded-full ${PLATFORM_DOT_COLORS[c.platform] || 'bg-gray-400'}`} />
-                    <span className="text-xs text-gray-600">{c.platform}</span>
+                    <span className="text-xs text-[var(--alo-body)]">{c.platform}</span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className={`text-[10px] font-semibold px-2 py-0.5 ${STATUS_CONFIG[c.status]?.color || ''}`}>
+                  <Badge variant="outline" className={`text-[11px] font-semibold px-2 py-0.5 ${STATUS_CONFIG[c.status]?.color || ''}`}>
                     {STATUS_CONFIG[c.status]?.label || c.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className="text-sm font-semibold text-gray-900">{c.leads}</span>
+                  <span className="text-sm font-semibold text-[var(--alo-text)]">{c.leads}</span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className="text-sm text-gray-600">{formatBDT(c.cost)}</span>
+                  <span className="text-sm text-[var(--alo-body)]">{formatBDT(c.cost)}</span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className={`text-sm font-semibold ${c.roi >= 3 ? 'text-emerald-600' : c.roi >= 2 ? 'text-amber-600' : 'text-gray-400'}`}>
+                  <span className={`text-sm font-semibold ${c.roi >= 3 ? 'text-emerald-600' : c.roi >= 2 ? 'text-amber-600' : 'text-[var(--alo-text-muted)]'}`}>
                     {c.roi > 0 ? `${c.roi}x` : '—'}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className="text-sm text-gray-600">{c.conversionRate > 0 ? `${c.conversionRate}%` : '—'}</span>
+                  <span className="text-sm text-[var(--alo-body)]">{c.conversionRate > 0 ? `${c.conversionRate}%` : '—'}</span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-[11px] text-gray-500">
+                  <span className="text-[11px] text-[var(--alo-text-muted)]">
                     {c.startDate} → {c.endDate}
                   </span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1 justify-end">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-blue-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-blue-600">
                       <Eye className="w-3.5 h-3.5" />
                     </Button>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-orange-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-orange-600">
                       <Edit className="w-3.5 h-3.5" />
                     </Button>
                     {c.status === 'active' && (
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-yellow-600">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-yellow-600">
                         <Pause className="w-3.5 h-3.5" />
                       </Button>
                     )}
                     {c.status === 'paused' && (
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-green-600">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-green-600">
                         <Play className="w-3.5 h-3.5" />
                       </Button>
                     )}
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-gray-600">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">
                       <Copy className="w-3.5 h-3.5" />
                     </Button>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-red-500">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-red-500">
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>
@@ -394,10 +394,10 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* Calendar Grid */}
-      <Card className="lg:col-span-2 border border-gray-100 shadow-sm">
+      <Card className="lg:col-span-2 border border-[var(--alo-border)] shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-gray-800">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
               <Calendar className="w-4 h-4 inline mr-2 text-orange-500" />
               {monthNames[month]} {year}
             </CardTitle>
@@ -416,7 +416,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
             {Object.entries(PLATFORM_COLORS).map(([name, color]) => (
               <div key={name} className="flex items-center gap-1">
                 <span className={`w-2 h-2 rounded-full ${color}`} />
-                <span className="text-[10px] text-gray-500">{name}</span>
+                <span className="text-[11px] text-[var(--alo-text-muted)]">{name}</span>
               </div>
             ))}
           </div>
@@ -425,7 +425,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-1">
             {dayNames.map((d) => (
-              <div key={d} className="text-center text-[10px] font-semibold text-gray-400 uppercase py-1">
+              <div key={d} className="text-center text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase py-1">
                 {d}
               </div>
             ))}
@@ -433,7 +433,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
           {/* Calendar grid */}
           <div className="grid grid-cols-7 gap-1">
             {calendarCells.map((day, idx) => {
-              if (day === null) return <div key={`empty-${idx}`} className="h-20 rounded-lg bg-gray-50/50" />;
+              if (day === null) return <div key={`empty-${idx}`} className="h-20 rounded-lg bg-[var(--alo-page)]/50" />;
 
               const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
               const dayEvents = eventsByDate[dateStr] || [];
@@ -449,23 +449,23 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
                       ? 'border-orange-400 bg-orange-50/50 shadow-sm'
                       : isToday
                       ? 'border-orange-200 bg-orange-50/30'
-                      : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
+                      : 'border-[var(--alo-border)] hover:border-[var(--alo-border)] hover:bg-[var(--alo-page)]/50'
                   }`}
                 >
-                  <span className={`text-[11px] font-medium ${isToday ? 'text-orange-600 font-bold' : 'text-gray-700'}`}>
+                  <span className={`text-[11px] font-medium ${isToday ? 'text-orange-600 font-bold' : 'text-[var(--alo-body)]'}`}>
                     {day}
                   </span>
                   <div className="mt-0.5 space-y-0.5">
                     {dayEvents.slice(0, 2).map((ev) => (
                       <div
                         key={ev.id}
-                        className={`text-[8px] leading-tight px-1 py-0.5 rounded truncate ${PLATFORM_COLORS[ev.platform]} text-white font-medium`}
+                        className={`text-[11px] leading-tight px-1 py-0.5 rounded truncate ${PLATFORM_COLORS[ev.platform]} text-white font-medium`}
                       >
                         {ev.title.length > 18 ? ev.title.slice(0, 18) + '...' : ev.title}
                       </div>
                     ))}
                     {dayEvents.length > 2 && (
-                      <p className="text-[8px] text-gray-400 px-1">+{dayEvents.length - 2} more</p>
+                      <p className="text-[11px] text-[var(--alo-text-muted)] px-1">+{dayEvents.length - 2} more</p>
                     )}
                   </div>
                 </button>
@@ -478,9 +478,9 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
       {/* Sidebar: Selected date details + upcoming */}
       <div className="space-y-4">
         {/* Selected Date Details */}
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-gray-800">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
               {selectedDate
                 ? new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
                 : 'Select a date'}
@@ -488,24 +488,24 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
           </CardHeader>
           <CardContent>
             {selectedEvents.length === 0 ? (
-              <p className="text-xs text-gray-400 py-4 text-center">No events scheduled for this date.</p>
+              <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No events scheduled for this date.</p>
             ) : (
               <div className="space-y-2">
                 {selectedEvents.map((ev) => (
-                  <div key={ev.id} className="flex items-start gap-2 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                  <div key={ev.id} className="flex items-start gap-2 p-2 rounded-lg bg-[var(--alo-page)] border border-[var(--alo-border)]">
                     <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${PLATFORM_COLORS[ev.platform]}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-gray-800 truncate">{ev.title}</p>
+                      <p className="text-xs font-medium text-[var(--alo-text)] truncate">{ev.title}</p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] text-gray-400">{ev.platform}</span>
-                        <span className="text-[10px] text-gray-300">•</span>
-                        <span className="text-[10px] text-gray-400">{ev.time}</span>
-                        <Badge variant="outline" className="text-[9px] px-1 py-0">
+                        <span className="text-[11px] text-[var(--alo-text-muted)]">{ev.platform}</span>
+                        <span className="text-[11px] text-[var(--alo-placeholder)]">•</span>
+                        <span className="text-[11px] text-[var(--alo-text-muted)]">{ev.time}</span>
+                        <Badge variant="outline" className="text-[11px] px-1 py-0">
                           {ev.type}
                         </Badge>
                       </div>
                     </div>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 w-6 p-0 text-gray-400 shrink-0">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 w-6 p-0 text-[var(--alo-text-muted)] shrink-0">
                       <Eye className="w-3 h-3" />
                     </Button>
                   </div>
@@ -516,9 +516,9 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
         </Card>
 
         {/* Upcoming Events */}
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-gray-800">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
               <Zap className="w-4 h-4 inline mr-1 text-amber-500" />
               Upcoming Events
             </CardTitle>
@@ -527,23 +527,23 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
             <div className="space-y-2">
               {upcomingEvents.map((ev) => (
                 <div key={ev.id} className="flex items-center gap-2 py-1.5 group">
-                  <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex flex-col items-center justify-center shrink-0">
-                    <span className="text-[10px] font-bold text-gray-700">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--alo-page)] border border-[var(--alo-border)] flex flex-col items-center justify-center shrink-0">
+                    <span className="text-[11px] font-bold text-[var(--alo-body)]">
                       {new Date(ev.date + 'T00:00:00').getDate()}
                     </span>
-                    <span className="text-[8px] text-gray-400 uppercase">
+                    <span className="text-[11px] text-[var(--alo-text-muted)] uppercase">
                       {new Date(ev.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium text-gray-700 truncate group-hover:text-orange-600 transition-colors">
+                    <p className="text-[11px] font-medium text-[var(--alo-body)] truncate group-hover:text-orange-600 transition-colors">
                       {ev.title}
                     </p>
-                    <p className="text-[10px] text-gray-400">
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">
                       {ev.platform} · {ev.time}
                     </p>
                   </div>
-                  <ArrowRight className="w-3 h-3 text-gray-300 group-hover:text-orange-400 transition-colors shrink-0" />
+                  <ArrowRight className="w-3 h-3 text-[var(--alo-placeholder)] group-hover:text-orange-400 transition-colors shrink-0" />
                 </div>
               ))}
             </div>
@@ -554,7 +554,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
         <div className="rounded-lg border border-dashed border-orange-200 bg-orange-50/30 p-3 text-center">
           <Globe className="w-5 h-5 text-orange-400 mx-auto mb-1" />
           <p className="text-[11px] text-orange-600 font-medium">Drag events to reschedule</p>
-          <p className="text-[10px] text-orange-400">Visual drag & drop coming soon</p>
+          <p className="text-[11px] text-orange-400">Visual drag & drop coming soon</p>
         </div>
       </div>
     </div>
@@ -610,16 +610,16 @@ function CampaignBuilder() {
       {/* Main Builder Form */}
       <div className="lg:col-span-2 space-y-4">
         {/* Basic Info */}
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
               <Megaphone className="w-4 h-4 text-orange-500" />
               Campaign Details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Campaign Name</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Campaign Name</Label>
               <Input
                 placeholder="e.g., UK Fall 2025 — Facebook Lead Gen"
                 value={form.name}
@@ -628,7 +628,7 @@ function CampaignBuilder() {
               />
             </div>
             <div>
-              <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Campaign Goal</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Campaign Goal</Label>
               <Select value={form.goal} onValueChange={(v) => updateField('goal', v)}>
                 <SelectTrigger className="h-9 text-sm">
                   <SelectValue placeholder="Select a goal..." />
@@ -644,16 +644,16 @@ function CampaignBuilder() {
         </Card>
 
         {/* Platform & Targeting */}
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
               <Globe className="w-4 h-4 text-blue-500" />
               Platform & Targeting
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-xs font-medium text-gray-600 mb-2 block">Platforms (Multi-select)</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-2 block">Platforms (Multi-select)</Label>
               <div className="flex flex-wrap gap-2">
                 {ALL_PLATFORMS.map((p) => {
                   const selected = form.platforms.includes(p);
@@ -664,7 +664,7 @@ function CampaignBuilder() {
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                         selected
                           ? 'border-orange-300 bg-orange-50 text-orange-700'
-                          : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+                          : 'border-[var(--alo-border)] bg-white text-[var(--alo-text-muted)] hover:border-[var(--alo-border-strong)]'
                       }`}
                     >
                       <span className={`w-2 h-2 rounded-full ${PLATFORM_DOT_COLORS[p]}`} />
@@ -680,7 +680,7 @@ function CampaignBuilder() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Target Country</Label>
+                <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Target Country</Label>
                 <Select value={form.country} onValueChange={(v) => updateField('country', v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="Select country..." />
@@ -693,7 +693,7 @@ function CampaignBuilder() {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Student Type</Label>
+                <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Student Type</Label>
                 <Select value={form.studentType} onValueChange={(v) => updateField('studentType', v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="Select type..." />
@@ -706,7 +706,7 @@ function CampaignBuilder() {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Budget Range</Label>
+                <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Budget Range</Label>
                 <Select value={form.budgetRange} onValueChange={(v) => updateField('budgetRange', v)}>
                   <SelectTrigger className="h-9 text-sm">
                     <SelectValue placeholder="Select range..." />
@@ -723,18 +723,18 @@ function CampaignBuilder() {
         </Card>
 
         {/* Budget & Schedule */}
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-emerald-500" />
               Budget & Schedule
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Budget (BDT)</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Budget (BDT)</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">৳</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--alo-text-muted)] font-medium">৳</span>
                 <Input
                   type="number"
                   placeholder="e.g., 50000"
@@ -746,7 +746,7 @@ function CampaignBuilder() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs font-medium text-gray-600 mb-1.5 block">Start Date</Label>
+                <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Start Date</Label>
                 <Input
                   type="date"
                   value={form.startDate}
@@ -755,7 +755,7 @@ function CampaignBuilder() {
                 />
               </div>
               <div>
-                <Label className="text-xs font-medium text-gray-600 mb-1.5 block">End Date</Label>
+                <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">End Date</Label>
                 <Input
                   type="date"
                   value={form.endDate}
@@ -768,9 +768,9 @@ function CampaignBuilder() {
         </Card>
 
         {/* Content Requirements */}
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
               <Zap className="w-4 h-4 text-purple-500" />
               Content Requirements
             </CardTitle>
@@ -788,14 +788,14 @@ function CampaignBuilder() {
                   checked={form.autoSchedule}
                   onCheckedChange={(v) => updateField('autoSchedule', v)}
                 />
-                <Label className="text-xs text-gray-600">Auto-schedule posts</Label>
+                <Label className="text-xs text-[var(--alo-body)]">Auto-schedule posts</Label>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
                   checked={form.notifyOnComplete}
                   onCheckedChange={(v) => updateField('notifyOnComplete', v)}
                 />
-                <Label className="text-xs text-gray-600">Notify on completion</Label>
+                <Label className="text-xs text-[var(--alo-body)]">Notify on completion</Label>
               </div>
             </div>
           </CardContent>
@@ -816,9 +816,9 @@ function CampaignBuilder() {
 
       {/* Sidebar: Quick Info */}
       <div className="space-y-4">
-        <Card className="border border-gray-100 shadow-sm bg-gradient-to-br from-orange-50 to-amber-50">
+        <Card className="border border-[var(--alo-border)] shadow-sm bg-gradient-to-br from-orange-50 to-amber-50">
           <CardContent className="p-4">
-            <h4 className="text-sm font-semibold text-gray-800 mb-3">Quick Tips</h4>
+            <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-3">Quick Tips</h4>
             <ul className="space-y-2">
               {[
                 'Set a clear goal before creating a campaign',
@@ -829,19 +829,19 @@ function CampaignBuilder() {
                 'Track ROI weekly for optimal performance',
               ].map((tip, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="w-4 h-4 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                  <span className="w-4 h-4 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
                     {i + 1}
                   </span>
-                  <span className="text-[11px] text-gray-600 leading-relaxed">{tip}</span>
+                  <span className="text-[11px] text-[var(--alo-body)] leading-relaxed">{tip}</span>
                 </li>
               ))}
             </ul>
           </CardContent>
         </Card>
 
-        <Card className="border border-gray-100 shadow-sm">
+        <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-gray-800">Recent Campaigns</CardTitle>
+            <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">Recent Campaigns</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -849,10 +849,10 @@ function CampaignBuilder() {
                 <div key={c.id} className="flex items-center gap-2 py-1">
                   <span className={`w-2 h-2 rounded-full ${STATUS_CONFIG[c.status]?.color.split(' ')[0] || 'bg-gray-300'}`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium text-gray-700 truncate">{c.name}</p>
-                    <p className="text-[10px] text-gray-400">{c.platform} · {c.leads} leads</p>
+                    <p className="text-[11px] font-medium text-[var(--alo-body)] truncate">{c.name}</p>
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">{c.platform} · {c.leads} leads</p>
                   </div>
-                  <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${STATUS_CONFIG[c.status]?.color || ''}`}>
+                  <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${STATUS_CONFIG[c.status]?.color || ''}`}>
                     {STATUS_CONFIG[c.status]?.label || c.status}
                   </Badge>
                 </div>
@@ -885,15 +885,15 @@ export default function CampaignBuilderCalendarView() {
     <div className="space-y-5">
       {/* Page Header */}
       <div>
-        <h1 className="text-crm-page text-gray-900">Campaign Builder & Calendar</h1>
-        <p className="text-body-sm text-gray-500 mt-1">
+        <h1 className="text-crm-page text-[var(--alo-text)]">Campaign Builder & Calendar</h1>
+        <p className="text-body-sm text-[var(--alo-text-muted)] mt-1">
           Create, manage, and schedule marketing campaigns across all platforms for ALO Education.
         </p>
       </div>
 
       {/* Main Tabs */}
       <Tabs defaultValue="campaigns" className="space-y-4">
-        <TabsList className="bg-gray-100 p-0.5 h-9">
+        <TabsList className="bg-[var(--alo-surface-muted)] p-0.5 h-9">
           <TabsTrigger value="campaigns" className="text-xs font-medium h-8 px-3 data-[state=active]:bg-white data-[state=active]:text-orange-700 data-[state=active]:shadow-sm">
             <Megaphone className="w-3.5 h-3.5 mr-1.5" />
             Campaigns
@@ -914,12 +914,12 @@ export default function CampaignBuilderCalendarView() {
           <KpiCards campaigns={MOCK_CAMPAIGNS} />
 
           {/* Filters */}
-          <Card className="border border-gray-100 shadow-sm">
+          <Card className="border border-[var(--alo-border)] shadow-sm">
             <CardContent className="p-3">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-gray-400" />
-                  <span className="text-[11px] font-medium text-gray-500">Filters:</span>
+                  <Filter className="w-4 h-4 text-[var(--alo-text-muted)]" />
+                  <span className="text-[11px] font-medium text-[var(--alo-text-muted)]">Filters:</span>
                 </div>
                 <Input
                   placeholder="Search campaigns..."
@@ -952,7 +952,7 @@ export default function CampaignBuilderCalendarView() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 text-[11px] text-gray-500 hover:text-gray-700"
+                  className="h-8 text-[11px] text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                   onClick={() => { setPlatformFilter('all'); setStatusFilter('all'); setSearchQuery(''); }}
                 >
                   Reset

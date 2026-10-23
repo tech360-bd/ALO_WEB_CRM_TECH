@@ -80,33 +80,33 @@ export default function UniversitiesListing() {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">{total ? `${total} published university records` : 'Published university directory'}</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">University Directory Worldwide</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.</p>
+        <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-8 md:p-12 shadow-sm">
+          <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs mb-4">{total ? `${total} published university records` : 'Published university directory'}</Badge>
+          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] tracking-tight mb-4">University Directory Worldwide</h1>
+          <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">Browse available published, source-linked university records. Search or filter by country, then review the facts and verified course records currently in the database.</p>
           <div className="flex gap-2 mt-4">
 
 
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">{total ? `${total} Universities` : 'Live Directory'}</Badge>
+            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">{total ? `${total} Universities` : 'Live Directory'}</Badge>
           </div>
         </div>
 
-        <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+        <Card className="p-4 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" aria-hidden="true" />
               <Input
                 placeholder="Search university, city, or country…"
                 value={search}
                 onChange={event => changeSearch(event.target.value)}
-                className="pl-9 bg-white border-[#E2E8F0] h-11"
+                className="pl-9 bg-white border-[var(--alo-border)] h-11"
                 aria-label="Search universities"
               />
             </div>
             <select
               value={countryFilter}
               onChange={event => changeCountry(event.target.value)}
-              className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-11"
+              className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-11"
               aria-label="Filter universities by country"
             >
               <option value="">All countries</option>
@@ -117,7 +117,7 @@ export default function UniversitiesListing() {
 
         {loading && universities.length === 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Loading universities" aria-busy="true">
-            {[...Array(6)].map((_, index) => <div key={index} className="h-48 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse" />)}
+            {[...Array(6)].map((_, index) => <div key={index} className="h-48 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse" />)}
           </div>
         ) : error ? (
           <Card className="p-10 bg-red-50 border-red-200 rounded-2xl text-center" role="alert">
@@ -126,33 +126,33 @@ export default function UniversitiesListing() {
             <p className="text-sm text-red-800 mt-1">{error}</p>
           </Card>
         ) : universities.length === 0 ? (
-          <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center">
-            <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-600">No university records matched these filters.</p>
-            <p className="text-xs text-gray-500 mt-2">Try a different search or country filter.</p>
+          <Card className="p-12 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center">
+            <Building2 className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" />
+            <p className="text-sm text-[var(--alo-body)]">No university records matched these filters.</p>
+            <p className="text-xs text-[var(--alo-text-muted)] mt-2">Try a different search or country filter.</p>
           </Card>
         ) : (
           <>
-            <p className="text-sm text-gray-500">{total !== null && total > universities.length ? `Showing ${universities.length} of ${total} universities` : `${universities.length} universities found`}</p>
+            <p className="text-sm text-[var(--alo-text-muted)]">{total !== null && total > universities.length ? `Showing ${universities.length} of ${total} universities` : `${universities.length} universities found`}</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {universities.map(university => {
                 const ranking = university.worldRanking ?? university.ranking ?? 0;
                 return (
                 <Link key={university.id} href={`/universities/${university.slug || university.id}`}>
-                  <Card className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                  <Card className="p-6 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
-                        <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">{university.country}</Badge>
-                        {ranking > 0 ? <span className="text-[11px] text-gray-500">{university.rankingProvider || 'Ranking'} {university.rankingYear || ''} #{ranking}</span> : <span className="text-[11px] text-gray-500">Ranking not recorded</span>}
+                        <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-[11px]">{university.country}</Badge>
+                        {ranking > 0 ? <span className="text-[11px] text-[var(--alo-text-muted)]">{university.rankingProvider || 'Ranking'} {university.rankingYear || ''} #{ranking}</span> : <span className="text-[11px] text-[var(--alo-text-muted)]">Ranking not recorded</span>}
                       </div>
-                      <h2 className="font-bold text-[#0F172A] mb-1 line-clamp-2">{university.name}</h2>
-                      <p className="text-xs text-gray-500 flex items-center gap-1 mb-3"><MapPin className="w-3 h-3" aria-hidden="true" />{university.city || 'City not recorded'}, {university.country} • {university.type || 'Type not recorded'}</p>
-                      <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 space-y-1 text-xs">
-                        <div className="flex justify-between gap-2"><span className="text-gray-500">Verified courses in directory</span><span className="font-medium">{university._count?.courses ?? 'Not reported'}</span></div>
-                        <div className="flex justify-between gap-2"><span className="text-gray-500">Last verified</span><span className="font-medium">{university.lastVerifiedAt ? new Date(university.lastVerifiedAt).toLocaleDateString() : 'Not recorded'}</span></div>
+                      <h2 className="font-bold text-[var(--alo-text)] mb-1 line-clamp-2">{university.name}</h2>
+                      <p className="text-xs text-[var(--alo-text-muted)] flex items-center gap-1 mb-3"><MapPin className="w-3 h-3" aria-hidden="true" />{university.city || 'City not recorded'}, {university.country} • {university.type || 'Type not recorded'}</p>
+                      <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 space-y-1 text-xs">
+                        <div className="flex justify-between gap-2"><span className="text-[var(--alo-text-muted)]">Verified courses in directory</span><span className="font-medium">{university._count?.courses ?? 'Not reported'}</span></div>
+                        <div className="flex justify-between gap-2"><span className="text-[var(--alo-text-muted)]">Last verified</span><span className="font-medium">{university.lastVerifiedAt ? new Date(university.lastVerifiedAt).toLocaleDateString() : 'Not recorded'}</span></div>
                       </div>
                     </div>
-                    <span className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-[#0057B8] text-white h-11 text-xs font-bold">
+                    <span className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--alo-brand)] text-white h-11 text-xs font-bold">
                       View University Information <ArrowRight className="w-4 h-4" aria-hidden="true" />
                     </span>
                   </Card>
@@ -163,7 +163,7 @@ export default function UniversitiesListing() {
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-3 pt-2">
                 <Button type="button" variant="outline" disabled={page <= 1 || loading} onClick={() => setPage(current => Math.max(1, current - 1))} aria-label="Previous universities page"><ChevronLeft className="size-4" />Previous</Button>
-                <span className="text-xs text-gray-600">Page {page} of {totalPages}</span>
+                <span className="text-xs text-[var(--alo-body)]">Page {page} of {totalPages}</span>
                 <Button type="button" variant="outline" disabled={page >= totalPages || loading} onClick={() => setPage(current => Math.min(totalPages, current + 1))} aria-label="Next universities page">Next<ChevronRight className="size-4" /></Button>
               </div>
             )}

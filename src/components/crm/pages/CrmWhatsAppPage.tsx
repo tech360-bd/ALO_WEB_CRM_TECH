@@ -67,13 +67,13 @@ const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
   urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
   medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
   low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
-  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+  normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
 function priorityBadge(priority?: string) {
   const key = (priority || 'normal').toLowerCase();
   const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function formatTimestamp(value?: string | null): string {
@@ -314,7 +314,7 @@ export default function CrmWhatsAppPage() {
                         {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
                       </p>
                       {thread.unreadCount && thread.unreadCount > 0 ? (
-                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[10px]">
+                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[11px]">
                           {thread.unreadCount}
                         </Badge>
                       ) : null}
@@ -325,10 +325,10 @@ export default function CrmWhatsAppPage() {
                     </p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                       {priorityBadge(thread.priority)}
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[11px]">
                         {thread.status || 'unknown'}
                       </Badge>
-                      <span className="text-muted-foreground flex items-center gap-1 text-[10px]">
+                      <span className="text-muted-foreground flex items-center gap-1 text-[11px]">
                         <Clock className="h-3 w-3" />
                         {formatTimestamp(thread.lastMessageAt)}
                       </span>
@@ -463,7 +463,7 @@ export default function CrmWhatsAppPage() {
                     <p className="font-medium">
                       {template.templateName || template.templateCode || 'Untitled template'}
                     </p>
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-[11px]">
                       {template.status || 'draft'}
                     </Badge>
                   </div>

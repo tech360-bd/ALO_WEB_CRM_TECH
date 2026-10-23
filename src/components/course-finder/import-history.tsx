@@ -41,7 +41,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   completed: { label: 'Completed', color: 'bg-emerald-100 text-emerald-700' },
   failed: { label: 'Failed', color: 'bg-red-100 text-red-700' },
   in_progress: { label: 'In Progress', color: 'bg-amber-100 text-amber-700' },
-  rolled_back: { label: 'Rolled Back', color: 'bg-slate-100 text-slate-600' },
+  rolled_back: { label: 'Rolled Back', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
 };
 
 /** DEMO SAMPLE VALUES — invented, never live counts. */
@@ -140,14 +140,14 @@ function StatCard({
   color: string;
 }) {
   return (
-    <Card className="border-slate-200">
+    <Card className="border-[var(--alo-border)]">
       <CardContent className="p-4 flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center shrink-0`}>
           <Icon className="size-5 text-white" />
         </div>
         <div>
-          <p className="text-2xl font-bold text-slate-900 leading-none">{value.toLocaleString()}</p>
-          <p className="text-xs text-slate-500 mt-1">{label}</p>
+          <p className="text-2xl font-bold text-[var(--alo-text)] leading-none">{value.toLocaleString()}</p>
+          <p className="text-xs text-[var(--alo-text-muted)] mt-1">{label}</p>
         </div>
       </CardContent>
     </Card>
@@ -183,8 +183,8 @@ function ErrorDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-3 mt-2">
-          <div className="flex gap-4 text-sm text-slate-500 mb-2">
-            <span>File: <strong className="text-slate-700">{batch.fileName}</strong></span>
+          <div className="flex gap-4 text-sm text-[var(--alo-text-muted)] mb-2">
+            <span>File: <strong className="text-[var(--alo-body)]">{batch.fileName}</strong></span>
             <span>Failed: <strong className="text-red-600">{batch.rowsFailed}</strong> rows</span>
           </div>
           <ScrollArea className="max-h-64">
@@ -198,8 +198,8 @@ function ErrorDialog({
                     {err.row}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-700">{err.field}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{err.message}</p>
+                    <p className="text-sm font-medium text-[var(--alo-body)]">{err.field}</p>
+                    <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{err.message}</p>
                   </div>
                 </div>
               ))}
@@ -265,10 +265,10 @@ export function ImportHistory() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-slate-900 text-white">
+      <div className="border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)] text-[var(--alo-text)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <h1 className="text-2xl sm:text-3xl font-bold">Import History (demo)</h1>
-          <p className="text-slate-400 mt-1 text-sm">
+          <p className="text-[var(--alo-text-muted)] mt-1 text-sm">
             Track all CSV imports and manage your course data
           </p>
           <p role="note" className="mt-3 rounded-md bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900">
@@ -291,7 +291,7 @@ export function ImportHistory() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <div className="relative flex-1 w-full sm:max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
             <Input
               placeholder="Search by batch ID, file name, or type..."
               value={searchQuery}
@@ -301,7 +301,7 @@ export function ImportHistory() {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-44">
-              <Filter className="size-4 mr-1.5 text-slate-400" />
+              <Filter className="size-4 mr-1.5 text-[var(--alo-text-muted)]" />
               <SelectValue placeholder="Filter status" />
             </SelectTrigger>
             <SelectContent>
@@ -315,7 +315,7 @@ export function ImportHistory() {
         </div>
 
         {/* Batches Table */}
-        <Card className="border-slate-200 overflow-hidden">
+        <Card className="border-[var(--alo-border)] overflow-hidden">
           {loading ? (
             <CardContent className="p-6 space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -330,8 +330,8 @@ export function ImportHistory() {
             </CardContent>
           ) : filteredBatches.length === 0 ? (
             <div className="text-center py-12">
-              <Clock className="size-10 text-slate-300 mx-auto mb-3" />
-              <p className="text-sm text-slate-500">No import history found</p>
+              <Clock className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+              <p className="text-sm text-[var(--alo-text-muted)]">No import history found</p>
             </div>
           ) : (
             <>
@@ -339,32 +339,32 @@ export function ImportHistory() {
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                    <tr className="bg-[var(--alo-page)] border-b border-[var(--alo-border)]">
+                      <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Batch ID
                       </th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Type
                       </th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         File
                       </th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Date
                       </th>
-                      <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-right text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Received
                       </th>
-                      <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-right text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Imported
                       </th>
-                      <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-right text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Failed
                       </th>
-                      <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Status
                       </th>
-                      <th className="text-right text-xs font-medium text-slate-500 uppercase tracking-wider p-4">
+                      <th className="text-right text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4">
                         Actions
                       </th>
                     </tr>
@@ -375,26 +375,26 @@ export function ImportHistory() {
                       return (
                         <tr
                           key={batch.batchId}
-                          className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer"
+                          className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] cursor-pointer"
                           onClick={() => handleViewErrors(batch)}
                         >
                           <td className="p-4">
-                            <code className="text-xs font-mono font-medium text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded">
+                            <code className="text-xs font-mono font-medium text-[var(--alo-text)] bg-[var(--alo-surface-muted)] px-1.5 py-0.5 rounded">
                               {batch.batchId}
                             </code>
                           </td>
-                          <td className="p-4 text-slate-700 max-w-[180px] truncate">
+                          <td className="p-4 text-[var(--alo-body)] max-w-[180px] truncate">
                             {batch.type}
                           </td>
-                          <td className="p-4 text-slate-600 max-w-[160px] truncate">
+                          <td className="p-4 text-[var(--alo-body)] max-w-[160px] truncate">
                             {batch.fileName}
                           </td>
-                          <td className="p-4 text-slate-500 whitespace-nowrap">
+                          <td className="p-4 text-[var(--alo-text-muted)] whitespace-nowrap">
                             {new Date(batch.date).toLocaleDateString('en-GB', {
                               day: '2-digit', month: 'short', year: 'numeric',
                             })}
                           </td>
-                          <td className="p-4 text-right text-slate-700">
+                          <td className="p-4 text-right text-[var(--alo-body)]">
                             {batch.rowsReceived}
                           </td>
                           <td className="p-4 text-right text-emerald-600 font-medium">
@@ -404,7 +404,7 @@ export function ImportHistory() {
                             {batch.rowsFailed}
                           </td>
                           <td className="p-4">
-                            <Badge className={`text-[10px] ${statusConfig.color}`}>
+                            <Badge className={`text-[11px] ${statusConfig.color}`}>
                               {statusConfig.label}
                             </Badge>
                           </td>
@@ -413,7 +413,7 @@ export function ImportHistory() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-7 w-7 p-0 text-slate-500 hover:text-slate-700"
+                                className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                                 onClick={() => handleViewErrors(batch)}
                                 title="View Errors"
                               >
@@ -423,7 +423,7 @@ export function ImportHistory() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-7 w-7 p-0 text-slate-500 hover:text-red-600"
+                                  className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-red-600"
                                   onClick={() => handleRollback(batch)}
                                   title="Rollback"
                                 >
@@ -433,7 +433,7 @@ export function ImportHistory() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-7 w-7 p-0 text-slate-500 hover:text-slate-700"
+                                className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                                 onClick={() => handleDownload(batch)}
                                 title="Download"
                               >
@@ -449,7 +449,7 @@ export function ImportHistory() {
               </div>
 
               {/* Mobile Cards */}
-              <div className="md:hidden divide-y divide-slate-100">
+              <div className="md:hidden divide-y divide-[var(--alo-border)]">
                 {filteredBatches.map((batch) => {
                   const statusConfig = STATUS_CONFIG[batch.status] || STATUS_CONFIG.completed;
                   return (
@@ -460,16 +460,16 @@ export function ImportHistory() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="min-w-0">
-                          <code className="text-xs font-mono font-medium text-slate-800">
+                          <code className="text-xs font-mono font-medium text-[var(--alo-text)]">
                             {batch.batchId}
                           </code>
-                          <p className="text-xs text-slate-500 mt-0.5 truncate">{batch.type}</p>
+                          <p className="text-xs text-[var(--alo-text-muted)] mt-0.5 truncate">{batch.type}</p>
                         </div>
-                        <Badge className={`text-[10px] shrink-0 ${statusConfig.color}`}>
+                        <Badge className={`text-[11px] shrink-0 ${statusConfig.color}`}>
                           {statusConfig.label}
                         </Badge>
                       </div>
-                      <div className="flex gap-4 text-xs text-slate-500">
+                      <div className="flex gap-4 text-xs text-[var(--alo-text-muted)]">
                         <span className="truncate">{batch.fileName}</span>
                         <span className="shrink-0">
                           {new Date(batch.date).toLocaleDateString('en-GB', {
@@ -478,15 +478,15 @@ export function ImportHistory() {
                         </span>
                       </div>
                       <div className="flex gap-4 text-xs">
-                        <span className="text-slate-700">
-                          <span className="text-slate-400">Received:</span> {batch.rowsReceived}
+                        <span className="text-[var(--alo-body)]">
+                          <span className="text-[var(--alo-text-muted)]">Received:</span> {batch.rowsReceived}
                         </span>
                         <span className="text-emerald-600 font-medium">
-                          <span className="text-slate-400">Imported:</span> {batch.rowsImported}
+                          <span className="text-[var(--alo-text-muted)]">Imported:</span> {batch.rowsImported}
                         </span>
                         {batch.rowsFailed > 0 && (
                           <span className="text-red-600 font-medium">
-                            <span className="text-slate-400">Failed:</span> {batch.rowsFailed}
+                            <span className="text-[var(--alo-text-muted)]">Failed:</span> {batch.rowsFailed}
                           </span>
                         )}
                       </div>

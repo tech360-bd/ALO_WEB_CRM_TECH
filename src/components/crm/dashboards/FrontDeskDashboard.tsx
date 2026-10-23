@@ -22,7 +22,7 @@ function StatusBadge({ status }: { status: string }) {
     pending: 'muted',
     cancelled: 'danger',
   };
-  return <Badge variant={map[status] || 'muted'} className="text-[10px]">{status}</Badge>;
+  return <Badge variant={map[status] || 'muted'} className="text-[11px]">{status}</Badge>;
 }
 
 function AvailDot({ status }: { status: string }) {
@@ -148,9 +148,9 @@ export default function FrontDeskDashboard() {
                       <p className="text-[11px] text-alo-text-muted">{w.time} · {w.interest}</p>
                     </div>
                     {w.assigned ? (
-                      <Badge variant="muted" className="text-[10px]">{w.assigned}</Badge>
+                      <Badge variant="muted" className="text-[11px]">{w.assigned}</Badge>
                     ) : (
-                      <Badge variant="warning" className="text-[10px]">Unassigned</Badge>
+                      <Badge variant="warning" className="text-[11px]">Unassigned</Badge>
                     )}
                   </div>
                 ))}
@@ -198,7 +198,7 @@ export default function FrontDeskDashboard() {
                       <p className="text-sm font-medium text-alo-text">{v.visitor}</p>
                       <p className="text-[11px] text-alo-text-muted">{v.time} · {v.type}</p>
                     </div>
-                    <Badge variant={v.status === 'In Session' ? 'success' : 'warning'} className="text-[10px]">{v.status}</Badge>
+                    <Badge variant={v.status === 'In Session' ? 'success' : 'warning'} className="text-[11px]">{v.status}</Badge>
                   </div>
                 ))}
               </div>

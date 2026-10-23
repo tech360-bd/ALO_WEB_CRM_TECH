@@ -162,7 +162,7 @@ export function ManagedContentManager() {
       case "banner":
         return <>{area("message", "Banner text")}{inp("href", "Optional link")}</>;
       case "crm-label":
-        return <>{area("note", "Notes (optional)", 2)}<div className="md:col-span-2 text-xs text-slate-500">The item <b>Key</b> below is the lookup id used by the CRM UI (e.g. <code>crm.kpi.myLeads</code>); <b>Label</b> is the display text.</div></>;
+        return <>{area("note", "Notes (optional)", 2)}<div className="md:col-span-2 text-xs text-[var(--alo-text-muted)]">The item <b>Key</b> below is the lookup id used by the CRM UI (e.g. <code>crm.kpi.myLeads</code>); <b>Label</b> is the display text.</div></>;
       case "crm-template":
         return <>{area("body", "Template body (supports {firstName}, {university} variables)", 5)}{inp("channel", "Channel (whatsapp | email | sms")}</>;
       case "crm-widget":
@@ -176,25 +176,25 @@ export function ManagedContentManager() {
     <div className="space-y-5">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Site-Wide &amp; CRM Content</h2>
-          <p className="text-sm text-slate-600 mt-1">Navigation, footer, SEO, announcements, banners and CRM content — draft → publish → rollback, fully revision-tracked.</p>
+          <h2 className="text-2xl font-bold text-[var(--alo-text)]">Site-Wide &amp; CRM Content</h2>
+          <p className="text-sm text-[var(--alo-body)] mt-1">Navigation, footer, SEO, announcements, banners and CRM content — draft → publish → rollback, fully revision-tracked.</p>
         </div>
-        <button onClick={openCreate} className="px-4 py-2 bg-[#0057B8] hover:bg-[#003F87] text-white rounded-lg text-sm font-semibold">+ New {activeType}</button>
+        <button onClick={openCreate} className="px-4 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-lg text-sm font-semibold">+ New {activeType}</button>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {MANAGED_TYPES.map((t) => (
           <button key={t.key} onClick={() => setActiveType(t.key)}
-            className={`px-3 py-2 rounded-xl text-sm font-medium border transition ${activeType === t.key ? "bg-[#0057B8] text-white border-[#0057B8]" : "bg-white hover:bg-slate-50 border-slate-200"}`}>
+            className={`px-3 py-2 rounded-xl text-sm font-medium border transition ${activeType === t.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)]" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)]"}`}>
             {t.icon} {t.label}
           </button>
         ))}
       </div>
-      <p className="text-xs text-slate-500">{MANAGED_TYPES.find((t) => t.key === activeType)?.desc}</p>
+      <p className="text-xs text-[var(--alo-text-muted)]">{MANAGED_TYPES.find((t) => t.key === activeType)?.desc}</p>
 
       <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-600 text-xs uppercase">
+          <thead className="bg-[var(--alo-page)] text-[var(--alo-body)] text-xs uppercase">
             <tr>
               <th className="text-left px-4 py-2">Label / Key</th>
               <th className="text-left px-4 py-2">Section</th>
@@ -204,21 +204,21 @@ export function ManagedContentManager() {
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={5} className="px-4 py-10 text-center text-slate-400">Loading…</td></tr>}
+            {loading && <tr><td colSpan={5} className="px-4 py-10 text-center text-[var(--alo-text-muted)]">Loading…</td></tr>}
             {!loading && items.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-10 text-center text-slate-400">No {activeType} items yet — create one. Nothing renders publicly until it is published.</td></tr>
+              <tr><td colSpan={5} className="px-4 py-10 text-center text-[var(--alo-text-muted)]">No {activeType} items yet — create one. Nothing renders publicly until it is published.</td></tr>
             )}
             {items.map((item) => (
-              <tr key={item.id} className="border-t hover:bg-slate-50">
+              <tr key={item.id} className="border-t hover:bg-[var(--alo-page)]">
                 <td className="px-4 py-2.5">
-                  <div className="font-medium text-slate-900 truncate max-w-[240px]">{item.label || "(no label)"}</div>
-                  <div className="text-xs text-slate-400 font-mono">{item.key || item.id.slice(0, 10)}</div>
+                  <div className="font-medium text-[var(--alo-text)] truncate max-w-[240px]">{item.label || "(no label)"}</div>
+                  <div className="text-xs text-[var(--alo-text-muted)] font-mono">{item.key || item.id.slice(0, 10)}</div>
                 </td>
-                <td className="px-4 py-2.5 text-xs text-slate-600">{item.section || "—"}</td>
+                <td className="px-4 py-2.5 text-xs text-[var(--alo-body)]">{item.section || "—"}</td>
                 <td className="px-4 py-2.5">
                   <span className={`text-xs px-2 py-1 rounded-full ${item.status === "published" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>{item.status}</span>
                 </td>
-                <td className="px-4 py-2.5 text-xs text-slate-500">
+                <td className="px-4 py-2.5 text-xs text-[var(--alo-text-muted)]">
                   {item.publishedAt ? (
                     <>by {item.publishedBy?.slice(0, 14) || "—"}<br />{new Date(item.publishedAt).toLocaleString()}</>
                   ) : "—"}
@@ -230,7 +230,7 @@ export function ManagedContentManager() {
                   ) : (
                     <button onClick={() => post({ action: "publish", id: item.id }, "Published — now live")} disabled={busy} className="px-2.5 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-xs font-semibold">Publish</button>
                   )}
-                  <button onClick={() => openHistory(item)} className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">🕘 History</button>
+                  <button onClick={() => openHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
                   <button onClick={() => { if (confirm("Delete this item? A revision snapshot is retained, so it can be restored from History.")) post({ action: "delete", id: item.id }, "Deleted (snapshot retained)"); }} disabled={busy} className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium">Delete</button>
                 </td>
               </tr>
@@ -243,8 +243,8 @@ export function ManagedContentManager() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
-              <h3 className="font-bold text-slate-900">{editing ? "Edit" : "New"} {activeType} {editing ? "(a revision snapshot is taken before saving)" : "(starts as draft)"}</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <h3 className="font-bold text-[var(--alo-text)]">{editing ? "Edit" : "New"} {activeType} {editing ? "(a revision snapshot is taken before saving)" : "(starts as draft)"}</h3>
+              <button onClick={() => setShowForm(false)} className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">✕</button>
             </div>
             <div className="p-5 overflow-y-auto flex-1 space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -258,11 +258,11 @@ export function ManagedContentManager() {
                   <input type="number" className="w-full border rounded-lg px-3 py-2 text-sm" value={form.sortOrder} onChange={(e) => setForm({ ...form, sortOrder: parseInt(e.target.value) || 0 })} /></div>
                 {dataFields()}
               </div>
-              <p className="text-xs text-slate-400">Content is sanitized automatically — scripts, event handlers and javascript: URLs are stripped.</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">Content is sanitized automatically — scripts, event handlers and javascript: URLs are stripped.</p>
             </div>
-            <div className="p-4 border-t bg-slate-50 flex justify-end gap-2">
+            <div className="p-4 border-t bg-[var(--alo-page)] flex justify-end gap-2">
               <button onClick={() => setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
-              <button onClick={handleSave} disabled={busy} className="px-5 py-2 bg-[#0057B8] hover:bg-[#003F87] disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save</button>
+              <button onClick={handleSave} disabled={busy} className="px-5 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save</button>
             </div>
           </div>
         </div>
@@ -273,21 +273,21 @@ export function ManagedContentManager() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-900">Revision History — {historyFor.label || historyFor.key}</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Every edit keeps a snapshot; rollbacks snapshot the current state first (reversible).</p>
+                <h3 className="font-bold text-[var(--alo-text)]">Revision History — {historyFor.label || historyFor.key}</h3>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">Every edit keeps a snapshot; rollbacks snapshot the current state first (reversible).</p>
               </div>
-              <button onClick={() => setHistoryFor(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={() => setHistoryFor(null)} className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">✕</button>
             </div>
             <div className="p-5 overflow-y-auto flex-1 space-y-2">
-              {revisions.length === 0 && <p className="text-sm text-slate-400 text-center py-8">No revisions yet.</p>}
+              {revisions.length === 0 && <p className="text-sm text-[var(--alo-text-muted)] text-center py-8">No revisions yet.</p>}
               {revisions.map((rev) => (
                 <div key={rev.id} className="border rounded-xl p-3 flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "PUBLISHED" ? "bg-green-100 text-green-700" : rev.kind === "ROLLBACK" ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-600"}`}>{rev.kind}</span>
-                      <span className="text-sm text-slate-800 truncate">{rev.label || "—"}</span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "PUBLISHED" ? "bg-green-100 text-green-700" : rev.kind === "ROLLBACK" ? "bg-purple-100 text-purple-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{rev.kind}</span>
+                      <span className="text-sm text-[var(--alo-text)] truncate">{rev.label || "—"}</span>
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">{new Date(rev.createdAt).toLocaleString()} · by {rev.createdBy?.slice(0, 18)}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">{new Date(rev.createdAt).toLocaleString()} · by {rev.createdBy?.slice(0, 18)}</div>
                   </div>
                   <button onClick={() => rollback(rev.id)} disabled={busy} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 disabled:opacity-50 text-blue-700 rounded-lg text-xs font-semibold whitespace-nowrap">Rollback here</button>
                 </div>

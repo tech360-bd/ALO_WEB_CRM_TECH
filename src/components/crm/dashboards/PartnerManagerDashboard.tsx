@@ -182,12 +182,12 @@ export default function PartnerManagerDashboard() {
                   <div key={p.name} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{p.name}</p>
-                      <Badge variant={p.documents === 'Complete' ? 'success' : p.documents === 'Incomplete' ? 'danger' : 'warning'} className="text-[10px]">{p.documents}</Badge>
+                      <Badge variant={p.documents === 'Complete' ? 'success' : p.documents === 'Incomplete' ? 'danger' : 'warning'} className="text-[11px]">{p.documents}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{p.location} · Submitted: {p.submitted}</p>
                     <div className="flex gap-1 mt-1.5">
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[10px] h-6 px-2">Review</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[11px] h-6 px-2">Approve</Button>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[11px] h-6 px-2">Review</Button>
                     </div>
                   </div>
                 ))}
@@ -211,7 +211,7 @@ export default function PartnerManagerDashboard() {
                   <div key={c.partner} className={`p-2.5 rounded-lg border ${c.severity === 'high' ? 'border-red-200 bg-red-50' : c.severity === 'medium' ? 'border-amber-200 bg-amber-50' : 'border-alo-border'}`}>
                     <p className="text-sm font-medium text-alo-text">{c.partner}</p>
                     <p className="text-[11px] text-alo-text-muted">{c.issue}</p>
-                    <p className="text-[10px] text-alo-brand mt-0.5">Due: {c.due}</p>
+                    <p className="text-[11px] text-alo-brand mt-0.5">Due: {c.due}</p>
                   </div>
                 ))}
               </div>

@@ -228,13 +228,13 @@ export default function CrmLeadsPage() {
                     {leads.map((lead) => {
                       const status = lead.hotLead && !['converted', 'lost'].includes(lead.status) ? 'hot' : lead.status;
                       return (
-                        <tr key={lead.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                        <tr key={lead.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                           <td className="py-3 font-medium text-alo-text">{lead.name}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.phone}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.email}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.source}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.destination}</td>
-                          <td className="py-3"><Badge className={statusColors[status] || 'bg-gray-100 text-gray-700'}>{status}</Badge></td>
+                          <td className="py-3"><Badge className={statusColors[status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{status}</Badge></td>
                           <td className="py-3 text-alo-text-secondary">{lead.counselorName}</td>
                           <td className="py-3 text-alo-text-muted">{lead.createdAt?.substring(0, 10)}</td>
                           <td className="py-3 text-right">

@@ -158,7 +158,7 @@ export default function OAuthIntegrationWizard() {
   const statusConfig: Record<string, { label: string; className: string; icon: React.ReactNode }> = {
     connected: { label: 'Connected', className: 'bg-emerald-100 text-emerald-700', icon: <CheckCircle2 className="w-3 h-3" /> },
     connecting: { label: 'Connecting', className: 'bg-blue-100 text-blue-700', icon: <RefreshCw className="w-3 h-3 animate-spin" /> },
-    disconnected: { label: 'Not Connected', className: 'bg-slate-100 text-slate-500', icon: <WifiOff className="w-3 h-3" /> },
+    disconnected: { label: 'Not Connected', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]', icon: <WifiOff className="w-3 h-3" /> },
     expired: { label: 'Token Expired', className: 'bg-red-100 text-red-600', icon: <AlertTriangle className="w-3 h-3" /> },
     error: { label: 'Error', className: 'bg-red-100 text-red-600', icon: <AlertCircle className="w-3 h-3" /> },
   };
@@ -168,18 +168,18 @@ export default function OAuthIntegrationWizard() {
     : PROVIDERS.filter((p) => p.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-6" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div className="min-h-screen bg-[var(--alo-page)] p-6" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       <div className="max-w-5xl mx-auto space-y-6">
 
         {/* Page Header */}
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 shadow-sm">
+        <div className="bg-white border border-[var(--alo-border)] rounded-2xl p-6 shadow-sm">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-[#0057B8] rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 bg-[var(--alo-brand)] rounded-xl flex items-center justify-center flex-shrink-0">
               <Lock className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-[#0F172A]">Official Integration Center</h1>
-              <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+              <h1 className="text-xl font-bold text-[var(--alo-text)]">Official Integration Center</h1>
+              <p className="text-xs text-[var(--alo-text-muted)] mt-1 max-w-2xl">
                 All integrations use official provider OAuth 2.0 and sanctioned APIs only.
                 No password scraping, unofficial APIs, or automation of personal accounts is permitted.
                 Connection status reflects real provider verification.
@@ -188,7 +188,7 @@ export default function OAuthIntegrationWizard() {
             <button
               onClick={fetchIntegrations}
               disabled={loading}
-              className="p-2 rounded-xl hover:bg-[#F8FAFC] border border-[#E2E8F0] transition text-slate-400"
+              className="p-2 rounded-xl hover:bg-[var(--alo-page)] border border-[var(--alo-border)] transition text-[var(--alo-text-muted)]"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -220,8 +220,8 @@ export default function OAuthIntegrationWizard() {
               onClick={() => setActiveCategory(cat)}
               className={`text-xs font-semibold px-4 py-2 rounded-xl transition ${
                 activeCategory === cat
-                  ? 'bg-[#0057B8] text-white shadow-sm'
-                  : 'bg-white border border-[#E2E8F0] text-slate-500 hover:border-[#0057B8] hover:text-[#0057B8]'
+                  ? 'bg-[var(--alo-brand)] text-white shadow-sm'
+                  : 'bg-white border border-[var(--alo-border)] text-[var(--alo-text-muted)] hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)]'
               }`}
             >
               {cat}
@@ -242,7 +242,7 @@ export default function OAuthIntegrationWizard() {
               <div
                 key={provider.id}
                 className={`bg-white border rounded-2xl p-5 space-y-4 hover:shadow-md transition-all ${
-                  status === 'connected' ? 'border-emerald-200' : 'border-[#E2E8F0]'
+                  status === 'connected' ? 'border-emerald-200' : 'border-[var(--alo-border)]'
                 }`}
               >
                 {/* Provider header */}
@@ -252,8 +252,8 @@ export default function OAuthIntegrationWizard() {
                       <Icon className={`w-5 h-5 text-${provider.colorClass}-600`} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-sm text-[#0F172A]">{provider.name}</h3>
-                      <div className={`flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full w-fit mt-0.5 ${statusCfg.className}`}>
+                      <h3 className="font-bold text-sm text-[var(--alo-text)]">{provider.name}</h3>
+                      <div className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full w-fit mt-0.5 ${statusCfg.className}`}>
                         {statusCfg.icon}
                         {statusCfg.label}
                       </div>
@@ -263,18 +263,18 @@ export default function OAuthIntegrationWizard() {
                     href={provider.officialDocs}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-slate-300 hover:text-[#0057B8] transition"
+                    className="text-[var(--alo-placeholder)] hover:text-[var(--alo-brand)] transition"
                     title="Official documentation"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
 
-                <p className="text-[10px] text-slate-500 leading-relaxed">{provider.description}</p>
+                <p className="text-[11px] text-[var(--alo-text-muted)] leading-relaxed">{provider.description}</p>
 
                 {/* Last sync */}
                 {integration?.lastSyncAt && (
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1">
+                  <div className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     Last synced: {new Date(integration.lastSyncAt).toLocaleString()}
                   </div>
@@ -282,11 +282,11 @@ export default function OAuthIntegrationWizard() {
 
                 {/* Required env vars */}
                 <div className="space-y-1">
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Required Environment Variables</p>
+                  <p className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase tracking-wider">Required Environment Variables</p>
                   {provider.envVars.map((v) => (
-                    <div key={v} className="flex items-center gap-1.5 text-[10px]">
-                      <Shield className="w-3 h-3 text-slate-300" />
-                      <code className="font-mono text-slate-600 bg-slate-50 px-1.5 py-0.5 rounded text-[9px]">{v}</code>
+                    <div key={v} className="flex items-center gap-1.5 text-[11px]">
+                      <Shield className="w-3 h-3 text-[var(--alo-placeholder)]" />
+                      <code className="font-mono text-[var(--alo-body)] bg-[var(--alo-page)] px-1.5 py-0.5 rounded text-[11px]">{v}</code>
                     </div>
                   ))}
                 </div>
@@ -299,7 +299,7 @@ export default function OAuthIntegrationWizard() {
                     className={`w-full py-2.5 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition ${
                       status === 'connected'
                         ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                        : 'bg-[#0057B8] text-white hover:bg-blue-700 shadow-sm'
+                        : 'bg-[var(--alo-brand)] text-white hover:bg-blue-700 shadow-sm'
                     } disabled:opacity-50`}
                   >
                     {isConnecting ? (
@@ -311,7 +311,7 @@ export default function OAuthIntegrationWizard() {
                     )}
                   </button>
                 ) : (
-                  <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2.5 text-xs font-bold rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#0057B8] hover:text-[#0057B8] flex items-center justify-center gap-2 transition">
+                  <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2.5 text-xs font-bold rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)] hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)] flex items-center justify-center gap-2 transition">
                     Configure Credentials <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 )}
@@ -321,12 +321,12 @@ export default function OAuthIntegrationWizard() {
         </div>
 
         {/* Security notice */}
-        <div className="bg-[#0057B8]/5 border border-[#0057B8]/20 rounded-2xl p-5">
+        <div className="bg-[var(--alo-brand)]/5 border border-[var(--alo-brand)]/20 rounded-2xl p-5">
           <div className="flex items-start gap-3">
-            <Shield className="w-5 h-5 text-[#0057B8] flex-shrink-0 mt-0.5" />
+            <Shield className="w-5 h-5 text-[var(--alo-brand)] flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-bold text-sm text-[#0057B8] mb-2">Security Guarantees</h3>
-              <ul className="text-[10px] text-slate-600 space-y-1 list-disc pl-4">
+              <h3 className="font-bold text-sm text-[var(--alo-brand)] mb-2">Security Guarantees</h3>
+              <ul className="text-[11px] text-[var(--alo-body)] space-y-1 list-disc pl-4">
                 <li>All OAuth access tokens are encrypted at rest using AES-256-GCM before database storage.</li>
                 <li>Tokens are never returned in API responses — only masked previews are shown.</li>
                 <li>Webhook signatures are cryptographically validated on every inbound event.</li>

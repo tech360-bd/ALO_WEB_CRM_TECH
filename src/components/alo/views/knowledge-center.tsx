@@ -199,7 +199,7 @@ const NEWS_CATEGORY_COLORS: Record<string, string> = {
   COUNTRY_UPDATE: "bg-cyan-100 text-cyan-700 border-cyan-200",
   IMMIGRATION_UPDATE: "bg-orange-100 text-orange-700 border-orange-200",
   TRAINING_NEWS: "bg-amber-100 text-amber-700 border-amber-200",
-  MEETING_NOTES: "bg-slate-100 text-slate-700 border-slate-200",
+  MEETING_NOTES: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]",
   POLICY_UPDATE: "bg-rose-100 text-rose-700 border-rose-200",
   HR_NOTICE: "bg-pink-100 text-pink-700 border-pink-200",
   MARKETING_NOTICE: "bg-purple-100 text-purple-700 border-purple-200",
@@ -257,11 +257,11 @@ function safeParseTags(raw?: string | null): string[] {
 }
 
 function fileTypeMeta(ft: string) {
-  return FILE_TYPE_META[ft?.toUpperCase()] || { label: ft || "FILE", icon: "File", color: "bg-slate-100 text-slate-700 border-slate-200" };
+  return FILE_TYPE_META[ft?.toUpperCase()] || { label: ft || "FILE", icon: "File", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]" };
 }
 
 function newsCategoryColor(cat: string) {
-  return NEWS_CATEGORY_COLORS[cat] || "bg-slate-100 text-slate-700 border-slate-200";
+  return NEWS_CATEGORY_COLORS[cat] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]";
 }
 
 function newsCategoryLabel(cat: string) {
@@ -269,7 +269,7 @@ function newsCategoryLabel(cat: string) {
 }
 
 function trainingTypeMeta(t: string) {
-  return TRAINING_TYPE_META[t] || { label: t.replace(/_/g, " "), icon: "GraduationCap", color: "bg-slate-100 text-slate-700 border-slate-200" };
+  return TRAINING_TYPE_META[t] || { label: t.replace(/_/g, " "), icon: "GraduationCap", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]" };
 }
 
 function fmtBytes(n?: number | null): string {
@@ -291,7 +291,7 @@ function truncate(s: string, n = 180): string {
 function FileTypeBadge({ ft }: { ft: string }) {
   const m = fileTypeMeta(ft);
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold", m.color)}>
+    <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-bold", m.color)}>
       <Icon name={m.icon} className="size-3" />
       {m.label}
     </span>
@@ -301,7 +301,7 @@ function FileTypeBadge({ ft }: { ft: string }) {
 function CountryBadge({ country }: { country?: string | null }) {
   if (!country) return null;
   return (
-    <span className="inline-flex items-center gap-1 rounded-md border border-cyan-200 bg-cyan-50 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-700">
+    <span className="inline-flex items-center gap-1 rounded-md border border-cyan-200 bg-cyan-50 px-1.5 py-0.5 text-[11px] font-semibold text-cyan-700">
       <Icon name="Globe" className="size-3" />
       {country}
     </span>
@@ -313,12 +313,12 @@ function TagPills({ tags }: { tags: string[] }) {
   return (
     <div className="mt-2 flex flex-wrap gap-1">
       {tags.slice(0, 5).map((t, i) => (
-        <span key={`${t}-${i}`} className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
+        <span key={`${t}-${i}`} className="rounded-md bg-[var(--alo-surface-muted)] px-1.5 py-0.5 text-[11px] font-medium text-[var(--alo-body)]">
           #{t}
         </span>
       ))}
       {tags.length > 5 && (
-        <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+        <span className="rounded-md bg-[var(--alo-surface-muted)] px-1.5 py-0.5 text-[11px] font-medium text-[var(--alo-text-muted)]">
           +{tags.length - 5}
         </span>
       )}
@@ -578,7 +578,7 @@ export function KnowledgeCenter() {
         <LoadingGrid count={4} />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="rounded-2xl border border-[#E2E8F0] bg-white">
+            <Card key={i} className="rounded-2xl border border-[var(--alo-border)] bg-white">
               <CardContent className="space-y-3 pt-5">
                 <Skeleton className="h-5 w-2/3" />
                 <Skeleton className="h-4 w-full" />
@@ -614,7 +614,7 @@ export function KnowledgeCenter() {
       </div>
 
       <Tabs defaultValue="documents" className="space-y-4">
-        <TabsList className="flex h-auto w-full max-w-full flex-wrap gap-1 rounded-2xl border border-[#E2E8F0] bg-white p-1 sm:inline-flex sm:w-auto">
+        <TabsList className="flex h-auto w-full max-w-full flex-wrap gap-1 rounded-2xl border border-[var(--alo-border)] bg-white p-1 sm:inline-flex sm:w-auto">
           <TabsTrigger value="documents" className="rounded-xl">
             <Icon name="Files" className="size-4" />
             Documents
@@ -640,7 +640,7 @@ export function KnowledgeCenter() {
             description="Browse internal SOPs, templates, country guides, and policy documents."
             icon="FolderOpen"
             action={
-              <Button onClick={() => setUploadOpen(true)} className="h-10 bg-[#C93D13] text-white hover:bg-[#9A3412]">
+              <Button onClick={() => setUploadOpen(true)} className="h-10 bg-[var(--alo-cta-hover)] text-white hover:bg-[#9A3412]">
                 <Icon name="Upload" className="size-4" />
                 Upload Document
               </Button>
@@ -649,24 +649,24 @@ export function KnowledgeCenter() {
             {/* Filters */}
             <div className="space-y-3">
               <div className="relative">
-                <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+                <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
                 <Input
                   placeholder="Search document title or description…"
                   value={docSearch}
                   onChange={(e) => setDocSearch(e.target.value)}
-                  className="h-10 rounded-xl border-[#E2E8F0] pl-9"
+                  className="h-10 rounded-xl border-[var(--alo-border)] pl-9"
                 />
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <span className="badge-text text-[#64748B]">Category:</span>
+                <span className="badge-text text-[var(--alo-text-muted)]">Category:</span>
                 <button
                   onClick={() => setDocCategoryFilter("all")}
                   className={cn(
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     docCategoryFilter === "all"
-                      ? "bg-[#0057B8] text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      ? "bg-[var(--alo-brand)] text-white"
+                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
                   )}
                 >
                   All
@@ -678,8 +678,8 @@ export function KnowledgeCenter() {
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors",
                       docCategoryFilter === c.id
-                        ? "bg-[#0057B8] text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        ? "bg-[var(--alo-brand)] text-white"
+                        : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
                     )}
                   >
                     {c.icon && <Icon name={c.icon} className="size-3" />}
@@ -689,14 +689,14 @@ export function KnowledgeCenter() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <span className="badge-text text-[#64748B]">File type:</span>
+                <span className="badge-text text-[var(--alo-text-muted)]">File type:</span>
                 <button
                   onClick={() => setDocFileTypeFilter("all")}
                   className={cn(
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     docFileTypeFilter === "all"
-                      ? "bg-[#0057B8] text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      ? "bg-[var(--alo-brand)] text-white"
+                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
                   )}
                 >
                   All
@@ -708,8 +708,8 @@ export function KnowledgeCenter() {
                     className={cn(
                       "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                       docFileTypeFilter === ft
-                        ? "bg-[#0057B8] text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        ? "bg-[var(--alo-brand)] text-white"
+                        : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
                     )}
                   >
                     {ft}
@@ -717,8 +717,8 @@ export function KnowledgeCenter() {
                 ))}
               </div>
 
-              <div className="body-text text-[#64748B]">
-                Showing <span className="font-semibold text-[#0F172A]">{filteredDocuments.length}</span> of {documents.length} documents
+              <div className="body-text text-[var(--alo-text-muted)]">
+                Showing <span className="font-semibold text-[var(--alo-text)]">{filteredDocuments.length}</span> of {documents.length} documents
               </div>
             </div>
 
@@ -739,20 +739,20 @@ export function KnowledgeCenter() {
                   return (
                     <Card
                       key={doc.id}
-                      className="flex flex-col rounded-2xl border border-[#E2E8F0] bg-white alo-shadow transition-all hover:alo-shadow-lg"
+                      className="flex flex-col rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow transition-all hover:alo-shadow-lg"
                     >
                       <CardContent className="flex flex-1 flex-col gap-3 pt-5">
                         <div className="flex items-start justify-between gap-2">
                           <FileTypeBadge ft={doc.fileType} />
                           <div className="flex flex-wrap gap-1">
                             {doc.isFeatured && (
-                              <span className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[10px] font-bold text-orange-700">
+                              <span className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold text-orange-700">
                                 <Icon name="Star" className="size-3" />
                                 Featured
                               </span>
                             )}
                             {doc.isPinned && (
-                              <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">
+                              <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700">
                                 <Icon name="Pin" className="size-3" />
                                 Pinned
                               </span>
@@ -761,9 +761,9 @@ export function KnowledgeCenter() {
                         </div>
 
                         <div>
-                          <p className="card-title line-clamp-2 text-[#0F172A]">{doc.title}</p>
+                          <p className="card-title line-clamp-2 text-[var(--alo-text)]">{doc.title}</p>
                           {cat && (
-                            <p className="mt-0.5 inline-flex items-center gap-1 body-text text-[#64748B]">
+                            <p className="mt-0.5 inline-flex items-center gap-1 body-text text-[var(--alo-text-muted)]">
                               <Icon name="Folder" className="size-3.5" />
                               {cat.name}
                             </p>
@@ -776,18 +776,18 @@ export function KnowledgeCenter() {
                               <Icon name="Sparkles" className="size-3" />
                               AI Summary
                             </p>
-                            <p className="mt-1 line-clamp-2 body-text text-[#475569]">{doc.aiSummary}</p>
+                            <p className="mt-1 line-clamp-2 body-text text-[var(--alo-text-secondary)]">{doc.aiSummary}</p>
                           </div>
                         )}
 
                         {!doc.aiSummary && doc.description && (
-                          <p className="line-clamp-2 body-text text-[#64748B]">{doc.description}</p>
+                          <p className="line-clamp-2 body-text text-[var(--alo-text-muted)]">{doc.description}</p>
                         )}
 
                         <TagPills tags={allTags} />
 
-                        <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
-                          <div className="flex items-center gap-3 body-text text-[#64748B]">
+                        <div className="mt-auto flex items-center justify-between gap-2 border-t border-[var(--alo-border)] pt-3">
+                          <div className="flex items-center gap-3 body-text text-[var(--alo-text-muted)]">
                             <span className="inline-flex items-center gap-1">
                               <Icon name="Download" className="size-3.5" />
                               {doc.downloadCount ?? 0}
@@ -804,7 +804,7 @@ export function KnowledgeCenter() {
                           <Button
                             size="sm"
                             onClick={() => handleDownload(doc)}
-                            className="h-8 bg-[#0057B8] text-white hover:bg-[#003F87]"
+                            className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                           >
                             <Icon name="Download" className="size-3.5" />
                             Download
@@ -827,14 +827,14 @@ export function KnowledgeCenter() {
             icon="Newspaper"
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="badge-text text-[#64748B]">Category:</span>
+              <span className="badge-text text-[var(--alo-text-muted)]">Category:</span>
               <button
                 onClick={() => setNewsCategoryFilter("all")}
                 className={cn(
                   "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                   newsCategoryFilter === "all"
-                    ? "bg-[#0057B8] text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    ? "bg-[var(--alo-brand)] text-white"
+                    : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
                 )}
               >
                 All
@@ -846,8 +846,8 @@ export function KnowledgeCenter() {
                   className={cn(
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     newsCategoryFilter === c
-                      ? "bg-[#0057B8] text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      ? "bg-[var(--alo-brand)] text-white"
+                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
                   )}
                 >
                   {newsCategoryLabel(c)}
@@ -855,8 +855,8 @@ export function KnowledgeCenter() {
               ))}
             </div>
 
-            <div className="mt-3 body-text text-[#64748B]">
-              Showing <span className="font-semibold text-[#0F172A]">{filteredNews.length}</span> of {news.length} news items
+            <div className="mt-3 body-text text-[var(--alo-text-muted)]">
+              Showing <span className="font-semibold text-[var(--alo-text)]">{filteredNews.length}</span> of {news.length} news items
             </div>
 
             {filteredNews.length === 0 ? (
@@ -866,34 +866,34 @@ export function KnowledgeCenter() {
                 {filteredNews.map((n) => {
                   const tags = safeParseTags(n.tags);
                   return (
-                    <Card key={n.id} className="flex flex-col rounded-2xl border border-[#E2E8F0] bg-white alo-shadow transition-all hover:alo-shadow-lg">
+                    <Card key={n.id} className="flex flex-col rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow transition-all hover:alo-shadow-lg">
                       <CardContent className="flex flex-1 flex-col gap-2 pt-5">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold", newsCategoryColor(n.category))}>
+                          <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-bold", newsCategoryColor(n.category))}>
                             <Icon name="Tag" className="size-3" />
                             {newsCategoryLabel(n.category)}
                           </span>
                           <CountryBadge country={n.country} />
                           {n.isPinned && (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">
+                            <span className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700">
                               <Icon name="Pin" className="size-3" />
                               Pinned
                             </span>
                           )}
                           {n.isFeatured && (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[10px] font-bold text-orange-700">
+                            <span className="inline-flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[11px] font-bold text-orange-700">
                               <Icon name="Star" className="size-3" />
                               Featured
                             </span>
                           )}
                         </div>
 
-                        <p className="card-title text-[#0F172A]">{n.title}</p>
-                        <p className="line-clamp-3 body-text text-[#475569]">{n.content}</p>
+                        <p className="card-title text-[var(--alo-text)]">{n.title}</p>
+                        <p className="line-clamp-3 body-text text-[var(--alo-text-secondary)]">{n.content}</p>
 
                         <TagPills tags={tags} />
 
-                        <div className="mt-auto flex items-center gap-1.5 border-t border-[#E2E8F0] pt-3 body-text text-[#64748B]">
+                        <div className="mt-auto flex items-center gap-1.5 border-t border-[var(--alo-border)] pt-3 body-text text-[var(--alo-text-muted)]">
                           <Icon name="Calendar" className="size-3.5" />
                           {n.publishedAt ? fmtDate(n.publishedAt) : "—"}
                           <span className="mx-1">·</span>
@@ -927,15 +927,15 @@ export function KnowledgeCenter() {
                     ? Math.round(((t.completedCount ?? 0) / t.enrolledCount) * 100)
                     : 0;
                   return (
-                    <Card key={t.id} className="flex flex-col rounded-2xl border border-[#E2E8F0] bg-white alo-shadow transition-all hover:alo-shadow-lg">
+                    <Card key={t.id} className="flex flex-col rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow transition-all hover:alo-shadow-lg">
                       <CardContent className="flex flex-1 flex-col gap-3 pt-5">
                         <div className="flex items-start justify-between gap-2">
-                          <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold", m.color)}>
+                          <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-bold", m.color)}>
                             <Icon name={m.icon} className="size-3" />
                             {m.label}
                           </span>
                           {t.certificateEnabled && (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700">
+                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700">
                               <Icon name="Award" className="size-3" />
                               Certificate
                             </span>
@@ -943,29 +943,29 @@ export function KnowledgeCenter() {
                         </div>
 
                         <div>
-                          <p className="card-title line-clamp-2 text-[#0F172A]">{t.title}</p>
-                          {t.description && <p className="mt-1 line-clamp-2 body-text text-[#64748B]">{t.description}</p>}
+                          <p className="card-title line-clamp-2 text-[var(--alo-text)]">{t.title}</p>
+                          {t.description && <p className="mt-1 line-clamp-2 body-text text-[var(--alo-text-muted)]">{t.description}</p>}
                         </div>
 
                         <TagPills tags={tags} />
 
                         {/* Enrollment progress */}
-                        <div className="rounded-lg border border-[#E2E8F0] bg-slate-50/60 p-2.5">
+                        <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)]/60 p-2.5">
                           <div className="flex items-center justify-between body-text">
-                            <span className="text-[#64748B]">Enrollment</span>
-                            <span className="font-semibold text-[#0F172A]">
+                            <span className="text-[var(--alo-text-muted)]">Enrollment</span>
+                            <span className="font-semibold text-[var(--alo-text)]">
                               {t.completedCount ?? 0} / {t.enrolledCount ?? 0}
                             </span>
                           </div>
                           <Progress value={completionPct} className="mt-1.5 h-1.5" indicatorColor="#0057B8" />
-                          <div className="mt-1 flex items-center justify-between badge-text text-[#64748B]">
+                          <div className="mt-1 flex items-center justify-between badge-text text-[var(--alo-text-muted)]">
                             <span>{completionPct}% completed</span>
                             {t.passScore != null && <span>Pass score: {t.passScore}%</span>}
                           </div>
                         </div>
 
-                        <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
-                          <div className="flex items-center gap-3 body-text text-[#64748B]">
+                        <div className="mt-auto flex items-center justify-between gap-2 border-t border-[var(--alo-border)] pt-3">
+                          <div className="flex items-center gap-3 body-text text-[var(--alo-text-muted)]">
                             {t.duration != null && (
                               <span className="inline-flex items-center gap-1">
                                 <Icon name="Clock" className="size-3.5" />
@@ -985,7 +985,7 @@ export function KnowledgeCenter() {
                                 description: `${t.title} — your progress will be tracked in your employee profile.`,
                               })
                             }
-                            className="h-8 bg-[#C93D13] text-white hover:bg-[#9A3412]"
+                            className="h-8 bg-[var(--alo-cta-hover)] text-white hover:bg-[#9A3412]"
                           >
                             <Icon name="PlayCircle" className="size-3.5" />
                             Start Training
@@ -1010,7 +1010,7 @@ export function KnowledgeCenter() {
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="relative flex-1">
-                <Icon name="MessageCircleQuestion" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+                <Icon name="MessageCircleQuestion" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
                 <Input
                   placeholder="e.g. What documents are required for UK student visa?"
                   value={aiQuestion}
@@ -1018,13 +1018,13 @@ export function KnowledgeCenter() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleAskAi();
                   }}
-                  className="h-11 rounded-xl border-[#E2E8F0] pl-9"
+                  className="h-11 rounded-xl border-[var(--alo-border)] pl-9"
                 />
               </div>
               <Button
                 onClick={() => handleAskAi()}
                 disabled={aiSearching}
-                className="h-11 bg-[#0057B8] text-white hover:bg-[#003F87]"
+                className="h-11 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               >
                 {aiSearching ? (
                   <Icon name="Loader2" className="size-4 animate-spin" />
@@ -1037,12 +1037,12 @@ export function KnowledgeCenter() {
 
             {/* Example chips */}
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="badge-text text-[#64748B]">Try:</span>
+              <span className="badge-text text-[var(--alo-text-muted)]">Try:</span>
               {EXAMPLE_QUESTIONS.map((q) => (
                 <button
                   key={q}
                   onClick={() => handleAskAi(q)}
-                  className="inline-flex items-center gap-1 rounded-full border border-[#E2E8F0] bg-white px-3 py-1 text-xs font-medium text-[#0057B8] transition-colors hover:bg-[#EFF6FF]"
+                  className="inline-flex items-center gap-1 rounded-full border border-[var(--alo-border)] bg-white px-3 py-1 text-xs font-medium text-[var(--alo-brand)] transition-colors hover:bg-[var(--alo-info-bg)]"
                 >
                   <Icon name="Lightbulb" className="size-3" />
                   {q}
@@ -1055,7 +1055,7 @@ export function KnowledgeCenter() {
               <div className="mt-4 space-y-3 rounded-2xl border border-violet-200 bg-violet-50/40 p-4">
                 <div className="flex items-center gap-2">
                   <Icon name="Loader2" className="size-4 animate-spin text-violet-600" />
-                  <span className="card-title text-[#0F172A]">AI is searching the knowledge base…</span>
+                  <span className="card-title text-[var(--alo-text)]">AI is searching the knowledge base…</span>
                 </div>
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-4/5" />
@@ -1071,34 +1071,34 @@ export function KnowledgeCenter() {
                       <Icon name="Sparkles" className="size-4" />
                     </div>
                     <div>
-                      <p className="card-title text-[#0F172A]">AI Answer</p>
-                      <p className="badge-text text-[#64748B]">{aiAnswer.totalResults} sources referenced</p>
+                      <p className="card-title text-[var(--alo-text)]">AI Answer</p>
+                      <p className="badge-text text-[var(--alo-text-muted)]">{aiAnswer.totalResults} sources referenced</p>
                     </div>
                   </div>
-                  <div className="mt-3 whitespace-pre-wrap body-text leading-relaxed text-[#1E293B]">
+                  <div className="mt-3 whitespace-pre-wrap body-text leading-relaxed text-[var(--alo-surface-muted)]">
                     {aiAnswer.answer}
                   </div>
                 </div>
 
                 {aiAnswer.documents.length > 0 && (
                   <div>
-                    <p className="card-title flex items-center gap-1.5 text-[#0F172A]">
-                      <Icon name="Files" className="size-4 text-[#0057B8]" />
+                    <p className="card-title flex items-center gap-1.5 text-[var(--alo-text)]">
+                      <Icon name="Files" className="size-4 text-[var(--alo-brand)]" />
                       Matching Documents
                     </p>
                     <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
                       {aiAnswer.documents.map((d) => (
                         <div
                           key={d.id}
-                          className="flex items-center justify-between gap-2 rounded-xl border border-[#E2E8F0] bg-white p-3"
+                          className="flex items-center justify-between gap-2 rounded-xl border border-[var(--alo-border)] bg-white p-3"
                         >
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
                               <FileTypeBadge ft={d.fileType} />
-                              <p className="card-title truncate text-[#0F172A]">{d.title}</p>
+                              <p className="card-title truncate text-[var(--alo-text)]">{d.title}</p>
                             </div>
                             {d.summary && (
-                              <p className="mt-1 line-clamp-2 body-text text-[#64748B]">{d.summary}</p>
+                              <p className="mt-1 line-clamp-2 body-text text-[var(--alo-text-muted)]">{d.summary}</p>
                             )}
                           </div>
                           <Button
@@ -1122,7 +1122,7 @@ export function KnowledgeCenter() {
 
                 {aiAnswer.news.length > 0 && (
                   <div>
-                    <p className="card-title flex items-center gap-1.5 text-[#0F172A]">
+                    <p className="card-title flex items-center gap-1.5 text-[var(--alo-text)]">
                       <Icon name="Newspaper" className="size-4 text-violet-600" />
                       Matching News
                     </p>
@@ -1130,10 +1130,10 @@ export function KnowledgeCenter() {
                       {aiAnswer.news.map((n) => (
                         <div
                           key={n.id}
-                          className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white p-3"
+                          className="flex items-center gap-2 rounded-xl border border-[var(--alo-border)] bg-white p-3"
                         >
-                          <Icon name="ChevronRight" className="size-4 shrink-0 text-[#64748B]" />
-                          <p className="body-text font-medium text-[#0F172A]">{n.title}</p>
+                          <Icon name="ChevronRight" className="size-4 shrink-0 text-[var(--alo-text-muted)]" />
+                          <p className="body-text font-medium text-[var(--alo-text)]">{n.title}</p>
                         </div>
                       ))}
                     </div>
@@ -1151,7 +1151,7 @@ export function KnowledgeCenter() {
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="relative flex-1">
-                <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+                <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
                 <Input
                   placeholder="Search keywords, e.g. SOP, visa, scholarship…"
                   value={esQuery}
@@ -1159,14 +1159,14 @@ export function KnowledgeCenter() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleEnterpriseSearch();
                   }}
-                  className="h-11 rounded-xl border-[#E2E8F0] pl-9"
+                  className="h-11 rounded-xl border-[var(--alo-border)] pl-9"
                 />
               </div>
               <Button
                 onClick={() => handleEnterpriseSearch()}
                 disabled={esSearching}
                 variant="outline"
-                className="h-11 border-[#0057B8] text-[#0057B8] hover:bg-[#EFF6FF]"
+                className="h-11 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
               >
                 {esSearching ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Search" className="size-4" />}
                 Search
@@ -1184,39 +1184,39 @@ export function KnowledgeCenter() {
             {!esSearching && esResults && (
               <div className="mt-4 space-y-4">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                    <p className="badge-text text-[#64748B]">Total</p>
-                    <p className="text-xl font-bold text-[#0F172A]">{esResults.results.total}</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Total</p>
+                    <p className="text-xl font-bold text-[var(--alo-text)]">{esResults.results.total}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                    <p className="badge-text text-[#64748B]">Documents</p>
-                    <p className="text-xl font-bold text-[#0057B8]">{esResults.results.documents}</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Documents</p>
+                    <p className="text-xl font-bold text-[var(--alo-brand)]">{esResults.results.documents}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                    <p className="badge-text text-[#64748B]">News</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                    <p className="badge-text text-[var(--alo-text-muted)]">News</p>
                     <p className="text-xl font-bold text-violet-600">{esResults.results.news}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                    <p className="badge-text text-[#64748B]">Training</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Training</p>
                     <p className="text-xl font-bold text-emerald-600">{esResults.results.trainings}</p>
                   </div>
                 </div>
 
                 {esResults.documents.length > 0 && (
                   <div>
-                    <p className="card-title text-[#0F172A]">Documents</p>
+                    <p className="card-title text-[var(--alo-text)]">Documents</p>
                     <div className="mt-2 space-y-2">
                       {esResults.documents.map((d) => (
-                        <div key={d.id} className="flex items-center justify-between gap-2 rounded-xl border border-[#E2E8F0] bg-white p-3">
+                        <div key={d.id} className="flex items-center justify-between gap-2 rounded-xl border border-[var(--alo-border)] bg-white p-3">
                           <div className="flex min-w-0 items-center gap-2">
                             <FileTypeBadge ft={d.fileType} />
-                            <p className="body-text font-medium text-[#0F172A] truncate">{d.title}</p>
+                            <p className="body-text font-medium text-[var(--alo-text)] truncate">{d.title}</p>
                           </div>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => handleDownload(d)}
-                            className="h-8 shrink-0 text-[#0057B8]"
+                            className="h-8 shrink-0 text-[var(--alo-brand)]"
                           >
                             <Icon name="Download" className="size-3.5" />
                           </Button>
@@ -1228,18 +1228,18 @@ export function KnowledgeCenter() {
 
                 {esResults.news.length > 0 && (
                   <div>
-                    <p className="card-title text-[#0F172A]">News</p>
+                    <p className="card-title text-[var(--alo-text)]">News</p>
                     <div className="mt-2 space-y-2">
                       {esResults.news.map((n) => (
-                        <div key={n.id} className="rounded-xl border border-[#E2E8F0] bg-white p-3">
+                        <div key={n.id} className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold", newsCategoryColor(n.category))}>
+                            <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-bold", newsCategoryColor(n.category))}>
                               {newsCategoryLabel(n.category)}
                             </span>
                             <CountryBadge country={n.country} />
                           </div>
-                          <p className="mt-1 body-text font-medium text-[#0F172A]">{n.title}</p>
-                          <p className="line-clamp-2 body-text text-[#64748B]">{n.content}</p>
+                          <p className="mt-1 body-text font-medium text-[var(--alo-text)]">{n.title}</p>
+                          <p className="line-clamp-2 body-text text-[var(--alo-text-muted)]">{n.content}</p>
                         </div>
                       ))}
                     </div>
@@ -1248,17 +1248,17 @@ export function KnowledgeCenter() {
 
                 {esResults.trainings.length > 0 && (
                   <div>
-                    <p className="card-title text-[#0F172A]">Training Materials</p>
+                    <p className="card-title text-[var(--alo-text)]">Training Materials</p>
                     <div className="mt-2 space-y-2">
                       {esResults.trainings.map((t) => {
                         const m = trainingTypeMeta(t.type);
                         return (
-                          <div key={t.id} className="flex items-center justify-between gap-2 rounded-xl border border-[#E2E8F0] bg-white p-3">
+                          <div key={t.id} className="flex items-center justify-between gap-2 rounded-xl border border-[var(--alo-border)] bg-white p-3">
                             <div className="flex min-w-0 items-center gap-2">
-                              <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold", m.color)}>
+                              <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-bold", m.color)}>
                                 {m.label}
                               </span>
-                              <p className="body-text font-medium text-[#0F172A] truncate">{t.title}</p>
+                              <p className="body-text font-medium text-[var(--alo-text)] truncate">{t.title}</p>
                             </div>
                             <Button
                               size="sm"
@@ -1269,7 +1269,7 @@ export function KnowledgeCenter() {
                                   description: `${t.title} — your progress will be tracked.`,
                                 })
                               }
-                              className="h-8 shrink-0 text-[#C93D13]"
+                              className="h-8 shrink-0 text-[var(--alo-cta-hover)]"
                             >
                               <Icon name="PlayCircle" className="size-3.5" />
                             </Button>
@@ -1300,13 +1300,13 @@ export function KnowledgeCenter() {
             <div className="flex items-start gap-2.5">
               <Icon name="ShieldAlert" className="mt-0.5 size-5 shrink-0 text-amber-600" />
               <div>
-                <p className="card-title text-[#0F172A]">Employees Only</p>
-                <p className="mt-1 body-text text-[#475569]">
+                <p className="card-title text-[var(--alo-text)]">Employees Only</p>
+                <p className="mt-1 body-text text-[var(--alo-text-secondary)]">
                   This Knowledge Center is only for ALO Education employees. Students, partners, and public users cannot access it.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {VISIBILITY_OPTIONS.map((v) => (
-                    <span key={v} className="rounded-md border border-[#E2E8F0] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-[#64748B]">
+                    <span key={v} className="rounded-md border border-[var(--alo-border)] bg-white px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-text-muted)]">
                       {v.replace(/_/g, " ")}
                     </span>
                   ))}
@@ -1321,8 +1321,8 @@ export function KnowledgeCenter() {
             <div className="flex items-start gap-2.5">
               <Icon name="Sparkles" className="mt-0.5 size-5 shrink-0 text-violet-600" />
               <div>
-                <p className="card-title text-[#0F172A]">AI Indexing Pipeline</p>
-                <p className="mt-1 body-text text-[#475569]">
+                <p className="card-title text-[var(--alo-text)]">AI Indexing Pipeline</p>
+                <p className="mt-1 body-text text-[var(--alo-text-secondary)]">
                   When new documents, news, or updates are added, AI automatically categorizes, tags, summarizes, and indexes them for search.
                 </p>
                 <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
@@ -1334,7 +1334,7 @@ export function KnowledgeCenter() {
                   ].map((s) => (
                     <div key={s.label} className="flex items-center gap-1.5 rounded-md border border-violet-100 bg-white px-2 py-1">
                       <Icon name={s.icon} className="size-3.5 text-violet-600" />
-                      <span className="badge-text text-[#475569]">{s.label}</span>
+                      <span className="badge-text text-[var(--alo-text-secondary)]">{s.label}</span>
                     </div>
                   ))}
                 </div>
@@ -1349,7 +1349,7 @@ export function KnowledgeCenter() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Icon name="Upload" className="size-5 text-[#0057B8]" />
+              <Icon name="Upload" className="size-5 text-[var(--alo-brand)]" />
               Upload Document
             </DialogTitle>
             <DialogDescription>
@@ -1459,7 +1459,7 @@ export function KnowledgeCenter() {
             <Button variant="outline" onClick={() => setUploadOpen(false)} disabled={uploading} className="h-10">
               Cancel
             </Button>
-            <Button onClick={handleUpload} disabled={uploading} className="h-10 bg-[#0057B8] text-white hover:bg-[#003F87]">
+            <Button onClick={handleUpload} disabled={uploading} className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">
               {uploading ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="Upload" className="size-4" />}
               {uploading ? "Uploading…" : "Upload & AI-process"}
             </Button>

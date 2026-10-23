@@ -31,8 +31,8 @@ export default function ServiceDetailHub({ slug }: Props) {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
-  if (error || !service) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/services"><Button className="mt-4 bg-[#0057B8] text-white h-12">Browse Services</Button></Link></Card></div>;
+  if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
+  if (error || !service) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/services"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Services</Button></Link></Card></div>;
 
   const title = service.title;
   const benefits = (()=>{ try{ return typeof service.benefits === 'string' ? JSON.parse(service.benefits) : service.benefits || []; }catch{ return service.benefits ? [service.benefits] : []; } })();
@@ -44,19 +44,19 @@ export default function ServiceDetailHub({ slug }: Props) {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-          <Link href="/" className="hover:text-[#0057B8]">Home</Link><span>›</span><Link href="/services" className="hover:text-[#0057B8]">Services</Link><span>›</span><span className="text-[#0057B8] font-bold">{title}</span>
+        <nav className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] font-medium">
+          <Link href="/" className="hover:text-[var(--alo-brand)]">Home</Link><span>›</span><Link href="/services" className="hover:text-[var(--alo-brand)]">Services</Link><span>›</span><span className="text-[var(--alo-brand)] font-bold">{title}</span>
         </nav>
 
         {/* 1. Hero */}
-        <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl p-8 md:p-12 text-white shadow-xl">
-          <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1 mb-4 uppercase">ALO Comprehensive Service</Badge>
+        <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl p-8 md:p-12 text-white shadow-xl">
+          <Badge className="bg-[var(--alo-cta)] text-black font-bold text-xs px-3 py-1 mb-4 uppercase">ALO Comprehensive Service</Badge>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">{service.heroTitle || title}</h1>
           <p className="text-base md:text-lg text-blue-100 max-w-3xl leading-relaxed">{service.heroSubtitle || service.shortDescription || service.longDescription?.substring(0, 200) || ''}</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/book-consultation"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-6 font-bold">Book Free Consultation</Button></Link>
+            <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Book Free Consultation</Button></Link>
             {(service.hasStartApplication || slug.includes('application') || slug.includes('course')) && (
-              <Link href="/register"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Start Application</Button></Link>
+              <Link href="/register"><Button className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-6 font-bold">Start Application</Button></Link>
             )}
             <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
           </div>
@@ -66,53 +66,53 @@ export default function ServiceDetailHub({ slug }: Props) {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* 2. What This Service Is */}
-            <Card className="p-6 md:p-8 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h2 className="text-2xl font-bold text-[#0F172A] mb-4">What This Service Is</h2><p className="text-sm text-gray-700 leading-relaxed">{service.whatIs || service.longDescription || service.description || 'Information not currently verified. Please check with an ALO Education counselor.'}</p></Card>
+            <Card className="p-6 md:p-8 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h2 className="text-2xl font-bold text-[var(--alo-text)] mb-4">What This Service Is</h2><p className="text-sm text-[var(--alo-body)] leading-relaxed">{service.whatIs || service.longDescription || service.description || 'Information not currently verified. Please check with an ALO Education counselor.'}</p></Card>
 
             {/* 3. Why Students Need It */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Why Students Need It</h3><p className="text-sm text-gray-700 leading-relaxed">{service.whyNeeded || service.longDescription || 'Helps students understand process, avoid mistakes, and move from information → eligibility → application.'}</p></Card>
+            <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3">Why Students Need It</h3><p className="text-sm text-[var(--alo-body)] leading-relaxed">{service.whyNeeded || service.longDescription || 'Helps students understand process, avoid mistakes, and move from information → eligibility → application.'}</p></Card>
 
             {/* 4. Who It Is For */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><Users className="w-5 h-5 text-[#0057B8]" />Who It Is For</h3><ul className="space-y-2 text-sm text-gray-700 list-disc list-inside">{(whoFor.length > 0 ? whoFor : ['HSC/A-Level graduates', 'Bachelor holders for Master/MBA/PhD', 'Students seeking destination guidance']).map((w:any, i:number)=><li key={i}>{typeof w === 'string' ? w : w.title || JSON.stringify(w)}</li>)}</ul></Card>
+            <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3 flex items-center gap-2"><Users className="w-5 h-5 text-[var(--alo-brand)]" />Who It Is For</h3><ul className="space-y-2 text-sm text-[var(--alo-body)] list-disc list-inside">{(whoFor.length > 0 ? whoFor : ['HSC/A-Level graduates', 'Bachelor holders for Master/MBA/PhD', 'Students seeking destination guidance']).map((w:any, i:number)=><li key={i}>{typeof w === 'string' ? w : w.title || JSON.stringify(w)}</li>)}</ul></Card>
 
             {/* 5. What ALO Does */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-[#0057B8]" />What ALO Does</h3><p className="text-sm text-gray-700 leading-relaxed">{service.whatAloDoes || service.longDescription || 'ALO provides structured guidance, document checking, eligibility review, and application support.'}</p></Card>
+            <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-[var(--alo-brand)]" />What ALO Does</h3><p className="text-sm text-[var(--alo-body)] leading-relaxed">{service.whatAloDoes || service.longDescription || 'ALO provides structured guidance, document checking, eligibility review, and application support.'}</p></Card>
 
             {/* 6. Step-by-Step Process */}
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-4 flex items-center gap-2"><Clock className="w-5 h-5 text-[#0057B8]" />Step-by-Step Process</h3><div className="grid sm:grid-cols-2 gap-4">{(steps.length > 0 ? steps : [{step:1, title:'Profile Assessment', desc:'Evaluate academic, English, budget'}, {step:2, title:'Destination Matching', desc:'Match country, university, course'}, {step:3, title:'Application', desc:'Submit via official portal'}, {step:4, title:'Follow-up', desc:'Track offer, deposit, CAS/I-20/COE'}]).map((s:any, i:number)=><div key={i} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-4"><span className="text-lg font-black text-[#0057B8]">{s.step || `0${i+1}`}</span><h4 className="font-bold text-sm mt-1">{s.title}</h4><p className="text-xs text-gray-600 mt-1">{s.desc}</p></div>)}</div></Card>
+            <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2"><Clock className="w-5 h-5 text-[var(--alo-brand)]" />Step-by-Step Process</h3><div className="grid sm:grid-cols-2 gap-4">{(steps.length > 0 ? steps : [{step:1, title:'Profile Assessment', desc:'Evaluate academic, English, budget'}, {step:2, title:'Destination Matching', desc:'Match country, university, course'}, {step:3, title:'Application', desc:'Submit via official portal'}, {step:4, title:'Follow-up', desc:'Track offer, deposit, CAS/I-20/COE'}]).map((s:any, i:number)=><div key={i} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-4"><span className="text-lg font-black text-[var(--alo-brand)]">{s.step || `0${i+1}`}</span><h4 className="font-bold text-sm mt-1">{s.title}</h4><p className="text-xs text-[var(--alo-body)] mt-1">{s.desc}</p></div>)}</div></Card>
 
             {/* 7. Required Information + 8. Documents Needed + 9. Timeline */}
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">Required Information</h4><p className="text-xs text-gray-600">{service.requiredInfo ? (typeof service.requiredInfo === 'string' ? (()=>{try{return JSON.parse(service.requiredInfo).join(', ')}catch{return service.requiredInfo}})() : service.requiredInfo.join(', ')) : 'Academic transcripts, English scores, budget, intake, destination preferences'}</p></Card>
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4" />Documents Needed</h4><ul className="text-xs text-gray-600 list-disc list-inside space-y-1">{(docs.length > 0 ? docs : ['Passport', 'Academic Certificates', 'Transcripts', 'English Test Score', 'CV', 'SOP']).map((d:any, i:number)=><li key={i}>{typeof d === 'string' ? d : d.title || JSON.stringify(d)}</li>)}</ul></Card>
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Calendar className="w-4 h-4" />Timeline</h4><p className="text-xs text-gray-600">{service.timeline || '6-12 months before intake recommended. September intake applications typically Jan-Mar.'}</p></Card>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">Required Information</h4><p className="text-xs text-[var(--alo-body)]">{service.requiredInfo ? (typeof service.requiredInfo === 'string' ? (()=>{try{return JSON.parse(service.requiredInfo).join(', ')}catch{return service.requiredInfo}})() : service.requiredInfo.join(', ')) : 'Academic transcripts, English scores, budget, intake, destination preferences'}</p></Card>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><FileText className="w-4 h-4" />Documents Needed</h4><ul className="text-xs text-[var(--alo-body)] list-disc list-inside space-y-1">{(docs.length > 0 ? docs : ['Passport', 'Academic Certificates', 'Transcripts', 'English Test Score', 'CV', 'SOP']).map((d:any, i:number)=><li key={i}>{typeof d === 'string' ? d : d.title || JSON.stringify(d)}</li>)}</ul></Card>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Calendar className="w-4 h-4" />Timeline</h4><p className="text-xs text-[var(--alo-body)]">{service.timeline || '6-12 months before intake recommended. September intake applications typically Jan-Mar.'}</p></Card>
             </div>
 
             {/* Eligibility / Requirements + Fees (spec §7) — fees only when publicly approved */}
             <div className="grid md:grid-cols-2 gap-4">
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Shield className="w-4 h-4 text-[#0057B8]" />Eligibility / Requirements</h4>
-                <p className="text-xs text-gray-600 leading-relaxed">{service.eligibility || 'Open to students at any stage. Your counselor confirms service-specific requirements (e.g., document readiness for Document Checking, an offer letter for Interview Preparation) during the Initial Consultation.'}</p>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Shield className="w-4 h-4 text-[var(--alo-brand)]" />Eligibility / Requirements</h4>
+                <p className="text-xs text-[var(--alo-body)] leading-relaxed">{service.eligibility || 'Open to students at any stage. Your counselor confirms service-specific requirements (e.g., document readiness for Document Checking, an offer letter for Interview Preparation) during the Initial Consultation.'}</p>
               </Card>
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[#0057B8]" />Fees</h4>
-                <p className="text-xs text-gray-600 leading-relaxed">{service.fees || 'Contact ALO for current service pricing.'} <span className="text-gray-500">Fees are confirmed in writing before any engagement — ALO never invents or hides pricing.</span></p>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-[var(--alo-brand)]" />Fees</h4>
+                <p className="text-xs text-[var(--alo-body)] leading-relaxed">{service.fees || 'Contact ALO for current service pricing.'} <span className="text-[var(--alo-text-muted)]">Fees are confirmed in writing before any engagement — ALO never invents or hides pricing.</span></p>
               </Card>
             </div>
             {/* Processing-time disclaimer (spec §7): shown whenever a timeline is displayed */}
-            <p className="text-[11px] text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Processing times vary by institution, country, intake and applicant circumstances. Confirm your individual timeline with an ALO counselor.</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)] bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3">Processing times vary by institution, country, intake and applicant circumstances. Confirm your individual timeline with an ALO counselor.</p>
 
             {/* 10. What Students Receive + 11. What ALO Does Not Guarantee + 12. Common Mistakes */}
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">What Students Receive</h4><p className="text-xs text-gray-600">{service.whatStudentsReceive ? (typeof service.whatStudentsReceive === 'string' ? (()=>{try{return JSON.parse(service.whatStudentsReceive).join(', ')}catch{return service.whatStudentsReceive}})() : service.whatStudentsReceive.join(', ')) : 'Personalized counseling, eligibility check, document guidance, application support'}</p></Card>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">What Students Receive</h4><p className="text-xs text-[var(--alo-body)]">{service.whatStudentsReceive ? (typeof service.whatStudentsReceive === 'string' ? (()=>{try{return JSON.parse(service.whatStudentsReceive).join(', ')}catch{return service.whatStudentsReceive}})() : service.whatStudentsReceive.join(', ')) : 'Personalized counseling, eligibility check, document guidance, application support'}</p></Card>
               <Card className="p-5 bg-amber-50 border-amber-200 rounded-2xl"><h4 className="font-bold text-sm mb-2 text-amber-800 flex items-center gap-2"><Shield className="w-4 h-4" />What ALO Does Not Guarantee</h4><p className="text-xs text-amber-700">{service.whatNotGuaranteed || 'ALO does NOT guarantee university admission, scholarship award, or visa approval. All decisions are made by universities and government authorities. Official requirements apply.'}</p></Card>
-              <Card className="p-5 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">Common Mistakes</h4><p className="text-xs text-gray-600">{service.commonMistakes ? (typeof service.commonMistakes === 'string' ? (()=>{try{return JSON.parse(service.commonMistakes).join(', ')}catch{return service.commonMistakes}})() : service.commonMistakes.join(', ')) : 'Incomplete documents, missing deadlines, incorrect English scores, inconsistent financial evidence'}</p></Card>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">Common Mistakes</h4><p className="text-xs text-[var(--alo-body)]">{service.commonMistakes ? (typeof service.commonMistakes === 'string' ? (()=>{try{return JSON.parse(service.commonMistakes).join(', ')}catch{return service.commonMistakes}})() : service.commonMistakes.join(', ')) : 'Incomplete documents, missing deadlines, incorrect English scores, inconsistent financial evidence'}</p></Card>
             </div>
 
             {/* Visa Guidance specific */}
             {(slug.includes('visa') || service.documentPreparation) && (
-              <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h3 className="font-bold text-[#0F172A] mb-3">Visa Guidance — Document Preparation, Checklist, Financial, Credibility</h3>
-                <div className="space-y-3 text-xs text-gray-700">
+              <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+                <h3 className="font-bold text-[var(--alo-text)] mb-3">Visa Guidance — Document Preparation, Checklist, Financial, Credibility</h3>
+                <div className="space-y-3 text-xs text-[var(--alo-body)]">
                   <p><strong>Document Preparation:</strong> {service.documentPreparation || 'Check official government source for document checklist'}</p>
                   <p><strong>Checklist:</strong> {service.checklist ? (typeof service.checklist === 'string' ? (()=>{try{return JSON.parse(service.checklist).join(', ')}catch{return service.checklist}})() : service.checklist.join(', ')) : 'Passport, CAS/I-20/COE, Financial Evidence, Academic Documents, English Test, TB Test where required'}</p>
                   <p><strong>Financial Documentation:</strong> {service.financialGuidance || 'Bank statement, solvency, source of funds — must be consistent'}</p>
@@ -126,50 +126,50 @@ export default function ServiceDetailHub({ slug }: Props) {
 
             {/* Scholarship Guidance */}
             {(slug.includes('scholarship') || service.findingScholarships) && (
-              <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h3 className="font-bold text-[#0F172A] mb-3">Scholarship Guidance — Finding, Eligibility, Deadline, Application</h3>
-                <div className="space-y-2 text-xs text-gray-700">
+              <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+                <h3 className="font-bold text-[var(--alo-text)] mb-3">Scholarship Guidance — Finding, Eligibility, Deadline, Application</h3>
+                <div className="space-y-2 text-xs text-[var(--alo-body)]">
                   <p><strong>Finding Scholarships:</strong> {service.findingScholarships || 'Database of government and university scholarships'}</p>
                   <p><strong>Eligibility Review:</strong> {service.eligibilityReview || 'Check academic, English, nationality, course eligibility'}</p>
                   <p><strong>Deadline Tracking:</strong> {service.deadlineTracking || 'Track opening/closing dates, never miss deadline'}</p>
                   <p><strong>Statement Support:</strong> {service.statementSupport || 'SOP and scholarship essay guidance'}</p>
-                  <p className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Do NOT guarantee scholarship awards — selection by scholarship provider.</strong></p>
+                  <p className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>Do NOT guarantee scholarship awards — selection by scholarship provider.</strong></p>
                 </div>
               </Card>
             )}
 
             {/* Course Matching */}
             {(slug.includes('course') || slug.includes('selection') || service.profileAssessment) && (
-              <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h3 className="font-bold text-[#0F172A] mb-3">Course Matching — Profile, Academic, English, Budget, Destination, Intake, Career</h3>
+              <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+                <h3 className="font-bold text-[var(--alo-text)] mb-3">Course Matching — Profile, Academic, English, Budget, Destination, Intake, Career</h3>
                 <div className="grid sm:grid-cols-2 gap-3 text-xs">
-                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Profile Assessment:</strong> {service.profileAssessment || 'Academic, English, budget, career goals'}</div>
-                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Academic Matching:</strong> {service.academicMatching || 'GPA, qualifications, prerequisites'}</div>
-                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>English Matching:</strong> {service.englishMatching || 'IELTS/PTE/TOEFL/Duolingo/MOI'}</div>
-                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Budget Matching:</strong> {service.budgetMatching || 'Tuition, living cost, scholarship'}</div>
-                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Destination Matching:</strong> {service.destinationMatching || 'UK, USA, Canada, Australia, Germany, etc'}</div>
-                  <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><strong>Intake Matching:</strong> {service.intakeMatching || 'September, January, May'} • <strong>Career:</strong> {service.careerGoalMatching || 'Career outcomes, placement'}</div>
+                  <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>Profile Assessment:</strong> {service.profileAssessment || 'Academic, English, budget, career goals'}</div>
+                  <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>Academic Matching:</strong> {service.academicMatching || 'GPA, qualifications, prerequisites'}</div>
+                  <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>English Matching:</strong> {service.englishMatching || 'IELTS/PTE/TOEFL/Duolingo/MOI'}</div>
+                  <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>Budget Matching:</strong> {service.budgetMatching || 'Tuition, living cost, scholarship'}</div>
+                  <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>Destination Matching:</strong> {service.destinationMatching || 'UK, USA, Canada, Australia, Germany, etc'}</div>
+                  <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><strong>Intake Matching:</strong> {service.intakeMatching || 'September, January, May'} • <strong>Career:</strong> {service.careerGoalMatching || 'Career outcomes, placement'}</div>
                 </div>
               </Card>
             )}
 
             {/* English Test Preparation (spec §8): direct connection to the Language Preparation system */}
             {service.slug === 'english-test-preparation' && (
-              <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-                <h3 className="font-bold text-[#0F172A] mb-3">English Tests We Prepare You For</h3>
+              <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+                <h3 className="font-bold text-[var(--alo-text)] mb-3">English Tests We Prepare You For</h3>
                 <div className="grid sm:grid-cols-3 gap-3 text-xs mb-4">
                   {['IELTS', 'IELTS UKVI', 'PTE Academic', 'TOEFL iBT', 'Duolingo English Test', 'OET', 'Other supported tests'].map((t) => (
-                    <div key={t} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 font-semibold text-[#0F172A]">{t}</div>
+                    <div key={t} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 font-semibold text-[var(--alo-text)]">{t}</div>
                   ))}
                 </div>
-                <Link href="/language-prep" className="inline-flex items-center gap-1 text-sm font-bold text-[#0057B8] hover:underline">Open the Language Preparation system — modules, practice and level diagnosis <ArrowRight className="w-4 h-4" /></Link>
+                <Link href="/language-prep" className="inline-flex items-center gap-1 text-sm font-bold text-[var(--alo-brand)] hover:underline">Open the Language Preparation system — modules, practice and level diagnosis <ArrowRight className="w-4 h-4" /></Link>
               </Card>
             )}
 
             {/* Scholarship Guidance (spec §8): direct link to the Scholarships directory */}
             {service.slug === 'scholarship-guidance' && (
-              <Card className="p-5 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl">
-                <p className="text-xs text-gray-700">Ready to explore? Browse the scholarship directory: <Link href="/scholarships" className="font-bold text-[#0057B8] hover:underline">/scholarships — verified scholarships only</Link></p>
+              <Card className="p-5 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl">
+                <p className="text-xs text-[var(--alo-body)]">Ready to explore? Browse the scholarship directory: <Link href="/scholarships" className="font-bold text-[var(--alo-brand)] hover:underline">/scholarships — verified scholarships only</Link></p>
               </Card>
             )}
 
@@ -194,15 +194,15 @@ export default function ServiceDetailHub({ slug }: Props) {
                 : SPEC_SERVICES.slice(0, 3);
               return (
                 <section aria-label="Related Services">
-                  <h2 className="text-xl font-bold text-[#0F172A] mb-4">Related Services</h2>
+                  <h2 className="text-xl font-bold text-[var(--alo-text)] mb-4">Related Services</h2>
                   <div className="grid sm:grid-cols-3 gap-4">
                     {siblings.map((s) => (
                       <Link key={s.slug} href={`/services/${s.slug}`} className="group">
-                        <Card className="p-5 h-full bg-white border-[#E2E8F0] rounded-2xl hover:border-[#0057B8] hover:shadow-md transition-all">
-                          <Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[10px] mb-2">{s.category}</Badge>
-                          <h3 className="font-bold text-sm text-[#0F172A] group-hover:text-[#0057B8]">{s.title}</h3>
-                          <p className="text-xs text-gray-600 mt-1.5 line-clamp-2">{s.shortDescription}</p>
-                          <span className="text-xs font-bold text-[#0057B8] mt-2 inline-flex items-center gap-1">View details <ArrowRight className="w-3 h-3" /></span>
+                        <Card className="p-5 h-full bg-white border-[var(--alo-border)] rounded-2xl hover:border-[var(--alo-brand)] hover:shadow-md transition-all">
+                          <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px] mb-2">{s.category}</Badge>
+                          <h3 className="font-bold text-sm text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{s.title}</h3>
+                          <p className="text-xs text-[var(--alo-body)] mt-1.5 line-clamp-2">{s.shortDescription}</p>
+                          <span className="text-xs font-bold text-[var(--alo-brand)] mt-2 inline-flex items-center gap-1">View details <ArrowRight className="w-3 h-3" /></span>
                         </Card>
                       </Link>
                     ))}
@@ -212,12 +212,12 @@ export default function ServiceDetailHub({ slug }: Props) {
             })()}
 
             {/* Final CTA (spec §12): Ready to Take the Next Step? */}
-            <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
+            <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Ready to Take the Next Step?</h3>
               <p className="text-sm text-blue-100 mb-6">Consultation is free — move from information to eligibility to application with an ALO counselor.</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <Link href="/book-consultation"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
-                <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Start Course Finder</Button></Link>
+                <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-blue-50 h-12 px-6 font-bold">Start Course Finder</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
                 <a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer"><Button className="bg-emerald-500 text-white hover:bg-emerald-600 h-12 px-6 font-bold">WhatsApp: +880 180 502 0101</Button></a>
@@ -227,8 +227,8 @@ export default function ServiceDetailHub({ slug }: Props) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="p-6 bg-white border-[#E2E8F0] rounded-2xl shadow-sm"><h3 className="font-bold text-[#0F172A] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/book-consultation" className="block"><Button className="w-full bg-[#E8501A] text-black h-12">Book Consultation</Button></Link><Link href="/contact" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Contact Counselor</Button></Link><Link href="/course-finder" className="block"><Button variant="outline" className="w-full border-[#E2E8F0] h-12">Find Courses</Button></Link></div></Card>
-            <Card className="p-6 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Source:</strong> {service.sourceUrl ? <a href={service.sourceUrl} target="_blank" className="text-[#0057B8] underline break-all">{service.sourceUrl}</a> : 'ALO Editorial'}</p><p><strong>Status:</strong> <Badge className={`${service.verificationStatus === 'VERIFIED' || service.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{service.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {service.lastVerifiedAt ? new Date(service.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
+            <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/book-consultation" className="block"><Button className="w-full bg-[var(--alo-cta)] text-black h-12">Book Consultation</Button></Link><Link href="/contact" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Contact Counselor</Button></Link><Link href="/course-finder" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Find Courses</Button></Link></div></Card>
+            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Source:</strong> {service.sourceUrl ? <a href={service.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{service.sourceUrl}</a> : 'ALO Editorial'}</p><p><strong>Status:</strong> <Badge className={`${service.verificationStatus === 'VERIFIED' || service.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{service.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {service.lastVerifiedAt ? new Date(service.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
           </div>
         </div>
       </div>

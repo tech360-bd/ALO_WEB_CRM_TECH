@@ -258,7 +258,7 @@ export default function MasterSuperAdminDashboard() {
     : [];
 
   return (
-    <div className="bg-slate-50/50 min-h-screen space-y-6 p-4 font-sans text-slate-900 lg:p-6">
+    <div className="bg-[var(--alo-page)]/50 min-h-screen space-y-6 p-4 font-sans text-[var(--alo-text)] lg:p-6">
       <DashboardCommunicationWidget
         role="SUPER_ADMIN"
         unreadCount={null}
@@ -277,7 +277,7 @@ export default function MasterSuperAdminDashboard() {
           </div>
           <Button
             size="sm"
-            className="h-7 bg-slate-950 text-xs font-semibold text-amber-400 hover:bg-slate-900"
+            className="h-9 bg-crm-warning-bg text-xs font-semibold text-crm-warning-text border border-crm-warning-border hover:bg-[#FFF7E6]"
             onClick={() => void handleExitActingAs()}
             disabled={actingAsBusy}
           >
@@ -287,14 +287,14 @@ export default function MasterSuperAdminDashboard() {
       )}
 
       {/* ── HEADER ── */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-5 text-white shadow-lg lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 rounded-[16px] border border-[var(--alo-brand-border)] bg-[var(--alo-blue-soft)] p-5 text-[var(--alo-text)] shadow-[var(--alo-shadow-xs)] lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-orange-500" />
             <h1 className="text-xl font-extrabold tracking-tight text-white">Super Admin Control</h1>
-            <Badge className="bg-orange-500 font-mono text-[10px] text-white">SUPER_ADMIN</Badge>
+            <Badge className="bg-orange-500 font-mono text-[11px] text-white">SUPER_ADMIN</Badge>
           </div>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-[var(--alo-text-muted)]">
             {metrics
               ? `${metrics.activeStudents} students · ${metrics.totalLeads} leads · ${metrics.visaCases} visa cases`
               : metricsState.loading
@@ -305,7 +305,7 @@ export default function MasterSuperAdminDashboard() {
 
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--alo-text-muted)]" />
             <input
               type="text"
               placeholder="Filter employees by name, ID or department"
@@ -318,7 +318,7 @@ export default function MasterSuperAdminDashboard() {
           <Button
             variant="outline"
             size="sm"
-            className="h-8 border-slate-200 bg-white text-xs"
+            className="h-8 border-[var(--alo-border)] bg-white text-xs"
             onClick={() => void refreshAll()}
           >
             <RefreshCw
@@ -343,10 +343,10 @@ export default function MasterSuperAdminDashboard() {
       </div>
 
       {/* ── LOCKDOWN PANEL ── */}
-      <Card className="border-slate-200 bg-white">
-        <CardHeader className="border-b border-slate-100 pb-3">
-          <CardTitle className="text-sm font-bold text-slate-900">Emergency lockdown</CardTitle>
-          <CardDescription className="text-xs text-slate-500">
+      <Card className="border-[var(--alo-border)] bg-white">
+        <CardHeader className="border-b border-[var(--alo-border)] pb-3">
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Emergency lockdown</CardTitle>
+          <CardDescription className="text-xs text-[var(--alo-text-muted)]">
             Restricts non-administrator access. Activating requires a reason and is written to the
             audit trail with the administrator who did it.
           </CardDescription>
@@ -357,12 +357,12 @@ export default function MasterSuperAdminDashboard() {
               {lockdown?.active ? 'ACTIVE' : 'INACTIVE'}
             </Badge>
             {lockdown?.active && (
-              <span className="text-xs text-slate-600">
+              <span className="text-xs text-[var(--alo-body)]">
                 Reason: {lockdown.reason || 'Not recorded'} · activated {formatTimestamp(lockdown.activatedAt)}
               </span>
             )}
             {lockdown?.deactivatedAt && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-[var(--alo-text-muted)]">
                 Last disengaged {formatTimestamp(lockdown.deactivatedAt)}
               </span>
             )}
@@ -394,10 +394,10 @@ export default function MasterSuperAdminDashboard() {
 
       {/* ── QUICK ACTIONS ── */}
       <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-2">
-        <Button variant="outline" size="sm" className="h-8 border-slate-200 bg-white text-xs" onClick={() => setActiveTab('employees')}>
+        <Button variant="outline" size="sm" className="h-8 border-[var(--alo-border)] bg-white text-xs" onClick={() => setActiveTab('employees')}>
           <Users className="mr-1 h-3.5 w-3.5 text-indigo-600" /> Employee control
         </Button>
-        <Button variant="outline" size="sm" className="h-8 border-slate-200 bg-white text-xs" onClick={() => setActiveTab('ai-command')}>
+        <Button variant="outline" size="sm" className="h-8 border-[var(--alo-border)] bg-white text-xs" onClick={() => setActiveTab('ai-command')}>
           <Bot className="mr-1 h-3.5 w-3.5 text-orange-600" /> AI Command Center
         </Button>
       </div>
@@ -419,27 +419,27 @@ export default function MasterSuperAdminDashboard() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {kpis.map((kpi) => (
-          <Card key={kpi.label} className="border-slate-200 bg-white shadow-2xs">
+          <Card key={kpi.label} className="border-[var(--alo-border)] bg-white shadow-2xs">
             <CardContent className="p-3.5">
-              <p className="text-[11px] font-medium text-slate-500">{kpi.label}</p>
-              <p className="mt-0.5 text-xl font-bold text-slate-900">{kpi.value}</p>
+              <p className="text-[11px] font-medium text-[var(--alo-text-muted)]">{kpi.label}</p>
+              <p className="mt-0.5 text-xl font-bold text-[var(--alo-text)]">{kpi.value}</p>
             </CardContent>
           </Card>
         ))}
         {metricsState.loading && kpis.length === 0 && (
-          <Card className="border-slate-200 bg-white">
-            <CardContent className="p-3.5 text-xs text-slate-500">Loading counts…</CardContent>
+          <Card className="border-[var(--alo-border)] bg-white">
+            <CardContent className="p-3.5 text-xs text-[var(--alo-text-muted)]">Loading counts…</CardContent>
           </Card>
         )}
       </div>
 
       {/* ── EMPLOYEE CONTROL ── */}
       {activeTab === 'employees' && (
-        <Card className="border-slate-200 bg-white shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 pb-3">
+        <Card className="border-[var(--alo-border)] bg-white shadow-xs">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-[var(--alo-border)] pb-3">
             <div>
-              <CardTitle className="text-sm font-bold text-slate-900">Employee control center</CardTitle>
-              <CardDescription className="text-xs text-slate-500">
+              <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Employee control center</CardTitle>
+              <CardDescription className="text-xs text-[var(--alo-text-muted)]">
                 Employees on record, and the acting-as sessions available to you.
               </CardDescription>
             </div>
@@ -463,16 +463,16 @@ export default function MasterSuperAdminDashboard() {
             )}
 
             {employeeState.loading ? (
-              <p className="py-10 text-center text-sm text-slate-500">Loading employees…</p>
+              <p className="py-10 text-center text-sm text-[var(--alo-text-muted)]">Loading employees…</p>
             ) : filteredEmployees.length === 0 && !employeeState.error ? (
-              <p className="py-10 text-center text-sm text-slate-500">
+              <p className="py-10 text-center text-sm text-[var(--alo-text-muted)]">
                 {employees.length === 0
                   ? 'No employee record has been created yet.'
                   : 'No employee matches that filter.'}
               </p>
             ) : (
               <Table>
-                <TableHeader className="bg-slate-50">
+                <TableHeader className="bg-[var(--alo-page)]">
                   <TableRow>
                     <TableHead className="text-xs font-semibold">Employee ID / Name</TableHead>
                     <TableHead className="text-xs font-semibold">Designation</TableHead>
@@ -486,39 +486,39 @@ export default function MasterSuperAdminDashboard() {
                   {filteredEmployees.map((employee) => (
                     <TableRow key={employee.id}>
                       <TableCell>
-                        <div className="text-xs font-bold text-slate-900">
+                        <div className="text-xs font-bold text-[var(--alo-text)]">
                           {employee.name || 'Unnamed employee'}
                         </div>
-                        <div className="font-mono text-[10px] text-slate-400">{employee.employeeId}</div>
+                        <div className="font-mono text-[11px] text-[var(--alo-text-muted)]">{employee.employeeId}</div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-slate-50 text-[10px]">
+                        <Badge variant="outline" className="bg-[var(--alo-page)] text-[11px]">
                           {employee.designation || employee.role || 'Unspecified'}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs text-slate-600">
+                      <TableCell className="text-xs text-[var(--alo-body)]">
                         {employee.department || '—'}
                       </TableCell>
-                      <TableCell className="text-xs text-slate-600">
+                      <TableCell className="text-xs text-[var(--alo-body)]">
                         {employee.branch || '—'}
                       </TableCell>
                       <TableCell>
                         <Badge
-                          className={`text-[10px] ${
+                          className={`text-[11px] ${
                             employee.status === 'active'
                               ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-slate-100 text-slate-600'
+                              : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'
                           }`}
                         >
                           {(employee.status || 'unknown').toUpperCase()}
                         </Badge>
                         {employee.isOnline ? (
-                          <Badge className="ml-1 bg-sky-100 text-sky-700 text-[10px]">Online</Badge>
+                          <Badge className="ml-1 bg-sky-100 text-sky-700 text-[11px]">Online</Badge>
                         ) : null}
                       </TableCell>
                       <TableCell className="text-right">
                         {actingAsName === employee.name ? (
-                          <span className="text-[10px] text-amber-700">In session</span>
+                          <span className="text-[11px] text-amber-700">In session</span>
                         ) : (
                           <Button
                             size="sm"
@@ -552,7 +552,7 @@ export default function MasterSuperAdminDashboard() {
             <Button
               size="sm"
               variant="outline"
-              className="h-8 border-slate-200 bg-white text-xs"
+              className="h-8 border-[var(--alo-border)] bg-white text-xs"
               onClick={() => {
                 const registry = document.getElementById('agent-registry-container');
                 const console_ = document.getElementById('ai-command-container');
@@ -575,8 +575,8 @@ export default function MasterSuperAdminDashboard() {
         </div>
       )}
 
-      <Card className="border-slate-200 bg-white">
-        <CardContent className="flex items-start gap-2 p-4 text-xs text-slate-500">
+      <Card className="border-[var(--alo-border)] bg-white">
+        <CardContent className="flex items-start gap-2 p-4 text-xs text-[var(--alo-text-muted)]">
           <Info className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             The five counts above are the only platform figures this API exposes, and each is a

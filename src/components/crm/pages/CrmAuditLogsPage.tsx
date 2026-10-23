@@ -11,7 +11,7 @@ import { Search, Download, Eye, Loader2 } from 'lucide-react';
 
 const actionColors: Record<string, string> = {
   create: 'bg-emerald-100 text-emerald-700', update: 'bg-blue-100 text-blue-700',
-  delete: 'bg-red-100 text-red-700', login: 'bg-gray-100 text-gray-700',
+  delete: 'bg-red-100 text-red-700', login: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   export: 'bg-purple-100 text-purple-700', status_change: 'bg-orange-100 text-orange-700',
   assign: 'bg-cyan-100 text-cyan-700', upload: 'bg-amber-100 text-amber-700',
   import_batch_completed: 'bg-emerald-100 text-emerald-700', import_batch_rolled_back: 'bg-red-100 text-red-700',
@@ -118,7 +118,7 @@ export default function CrmAuditLogsPage() {
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={7} className="py-8 text-center text-gray-400">No audit logs found</td></tr>
+                  <tr><td colSpan={7} className="py-8 text-center text-[var(--alo-text-muted)]">No audit logs found</td></tr>
                 ) : filtered.map((l) => {
                   let details = l.metadata || '';
                   if (typeof details === 'string') {
@@ -126,11 +126,11 @@ export default function CrmAuditLogsPage() {
                   }
                   const detailStr = typeof details === 'object' ? Object.entries(details as Record<string, unknown>).map(([k,v]) => `${k}: ${v}`).join(', ') : String(details);
                   return (
-                    <tr key={l.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                    <tr key={l.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                       <td className="py-3 text-xs text-alo-text-muted font-mono">{l.createdAt ? new Date(l.createdAt).toLocaleString() : 'N/A'}</td>
                       <td className="py-3 font-medium text-alo-text">{l.actorUserId || 'System'}</td>
                       <td className="py-3 text-alo-text-secondary">{l.actorRole || 'Automated'}</td>
-                      <td className="py-3"><Badge className={actionColors[(l.action || '').toLowerCase()] || 'bg-gray-100 text-gray-700'}>{l.action || 'unknown'}</Badge></td>
+                      <td className="py-3"><Badge className={actionColors[(l.action || '').toLowerCase()] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{l.action || 'unknown'}</Badge></td>
                       <td className="py-3 text-alo-text-secondary">{l.entityType || '—'}</td>
                       <td className="py-3 text-alo-text-secondary max-w-[200px] truncate" title={detailStr}>{detailStr || '—'}</td>
                       <td className="py-3 text-xs text-alo-text-muted">{l.ipAddress || '—'}</td>

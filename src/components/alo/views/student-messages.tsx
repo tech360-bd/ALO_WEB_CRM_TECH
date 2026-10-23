@@ -120,7 +120,7 @@ export function StudentMessages() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : conversations.length === 0 ? (
         <EmptyState
           icon="MessageSquare"
@@ -130,38 +130,38 @@ export function StudentMessages() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {/* Conversation list */}
-          <Card className="rounded-2xl border border-[#DCE8F5] bg-white lg:col-span-1">
+          <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white lg:col-span-1">
             <CardContent className="p-0">
-              <div className="border-b border-[#DCE8F5] px-4 py-3">
-                <h3 className="font-bold text-[#0B2447]">Conversations</h3>
-                <p className="text-xs text-[#5A7299]">{conversations.length} total</p>
+              <div className="border-b border-[var(--alo-brand-border)] px-4 py-3">
+                <h3 className="font-bold text-[var(--alo-text)]">Conversations</h3>
+                <p className="text-xs text-[var(--alo-text-muted)]">{conversations.length} total</p>
               </div>
-              <div className="max-h-[36rem] divide-y divide-[#DCE8F5] overflow-y-auto">
+              <div className="max-h-[36rem] divide-y divide-[var(--alo-brand-border)] overflow-y-auto">
                 {conversations.map((c) => (
                   <button
                     key={c.key}
                     onClick={() => setSelected(c)}
                     className={cn(
-                      "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[#EAF3FF]",
-                      selected?.key === c.key && "bg-[#EAF3FF]"
+                      "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--alo-brand-light)]",
+                      selected?.key === c.key && "bg-[var(--alo-brand-light)]"
                     )}
                   >
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0057B8]">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name="User" className="size-5" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="truncate text-sm font-semibold text-[#0B2447]">
+                        <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                           {c.studentName || c.fromName || "Unknown"}
                         </p>
                         {c.unread && c.unread > 0 && (
-                          <Badge className="bg-[#E8501A] text-white">{c.unread}</Badge>
+                          <Badge className="bg-[var(--alo-cta)] text-white">{c.unread}</Badge>
                         )}
                       </div>
-                      <p className="truncate text-xs text-[#5A7299]">
+                      <p className="truncate text-xs text-[var(--alo-text-muted)]">
                         {c.messages?.[c.messages.length - 1]?.body?.slice(0, 50) || "—"}
                       </p>
-                      <Badge variant="outline" className="mt-1 text-[10px] text-[#5A7299]">
+                      <Badge variant="outline" className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
                         {c.channel}
                       </Badge>
                     </div>
@@ -172,24 +172,24 @@ export function StudentMessages() {
           </Card>
 
           {/* Thread */}
-          <Card className="rounded-2xl border border-[#DCE8F5] bg-white lg:col-span-2">
+          <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white lg:col-span-2">
             <CardContent className="flex h-[36rem] flex-col p-0">
               {selected ? (
                 <>
-                  <div className="flex items-center justify-between border-b border-[#DCE8F5] px-4 py-3">
+                  <div className="flex items-center justify-between border-b border-[var(--alo-brand-border)] px-4 py-3">
                     <div>
-                      <p className="font-bold text-[#0B2447]">
+                      <p className="font-bold text-[var(--alo-text)]">
                         {selected.studentName || selected.fromName || "Conversation"}
                       </p>
-                      <p className="text-xs text-[#5A7299]">
+                      <p className="text-xs text-[var(--alo-text-muted)]">
                         {selected.fromPhone || selected.fromEmail || `via ${selected.channel}`}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-[#5A7299]">
+                    <Badge variant="outline" className="text-[var(--alo-text-muted)]">
                       {selected.channel}
                     </Badge>
                   </div>
-                  <div className="flex-1 space-y-3 overflow-y-auto bg-[#F7FAFE] p-4">
+                  <div className="flex-1 space-y-3 overflow-y-auto bg-[var(--alo-page)] p-4">
                     {(selected.messages || []).map((m) => (
                       <div
                         key={m.id}
@@ -202,15 +202,15 @@ export function StudentMessages() {
                           className={cn(
                             "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
                             m.direction === "OUTBOUND"
-                              ? "bg-[#0057B8] text-white"
-                              : "bg-white text-[#0B2447]"
+                              ? "bg-[var(--alo-brand)] text-white"
+                              : "bg-white text-[var(--alo-text)]"
                           )}
                         >
                           <p>{m.body}</p>
                           <p
                             className={cn(
-                              "mt-1 text-[10px]",
-                              m.direction === "OUTBOUND" ? "text-blue-100" : "text-[#5A7299]"
+                              "mt-1 text-[11px]",
+                              m.direction === "OUTBOUND" ? "text-blue-100" : "text-[var(--alo-text-muted)]"
                             )}
                           >
                             {m.receivedAt
@@ -227,19 +227,19 @@ export function StudentMessages() {
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-[#DCE8F5] p-3">
+                  <div className="border-t border-[var(--alo-brand-border)] p-3">
                     <div className="flex gap-2">
                       <Textarea
                         value={reply}
                         onChange={(e) => setReply(e.target.value)}
                         placeholder="Type your reply..."
                         rows={2}
-                        className="resize-none border-[#DCE8F5]"
+                        className="resize-none border-[var(--alo-brand-border)]"
                       />
                       <Button
                         onClick={handleSend}
                         disabled={sending || !reply.trim()}
-                        className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+                        className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                       >
                         <Icon name="Send" className="size-4" />
                       </Button>
@@ -247,7 +247,7 @@ export function StudentMessages() {
                   </div>
                 </>
               ) : (
-                <div className="flex h-full items-center justify-center text-[#5A7299]">
+                <div className="flex h-full items-center justify-center text-[var(--alo-text-muted)]">
                   Select a conversation
                 </div>
               )}

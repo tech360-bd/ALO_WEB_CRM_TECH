@@ -144,7 +144,7 @@ export default function BranchManagerDashboard() {
                       <p className="text-sm font-medium text-alo-text">{s.stage}</p>
                     </div>
                     <div className="flex-1">
-                      <div className="relative h-8 rounded-lg bg-gray-100 overflow-hidden">
+                      <div className="relative h-8 rounded-lg bg-[var(--alo-surface-muted)] overflow-hidden">
                         <div className={`h-full ${s.color} rounded-lg flex items-center justify-end pr-3 transition-all duration-500`} style={{ width: `${s.pct}%` }}>
                           <span className="text-xs font-bold text-white">{s.count}</span>
                         </div>
@@ -177,7 +177,7 @@ export default function BranchManagerDashboard() {
                       <p className="text-sm font-medium text-alo-text truncate">{l.name}</p>
                       <p className="text-[11px] text-alo-text-muted">{l.interest} · {l.time}</p>
                     </div>
-                    <Badge variant="muted" className="text-[10px] shrink-0 ml-2">{l.source}</Badge>
+                    <Badge variant="muted" className="text-[11px] shrink-0 ml-2">{l.source}</Badge>
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export default function BranchManagerDashboard() {
                   <div key={f.student} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{f.student}</p>
-                      <Badge variant="danger" className="text-[10px]">{f.type}</Badge>
+                      <Badge variant="danger" className="text-[11px]">{f.type}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">Counselor: {f.counselor} · Due: {f.due}</p>
                   </div>

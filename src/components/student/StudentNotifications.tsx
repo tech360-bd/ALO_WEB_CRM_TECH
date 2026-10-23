@@ -66,7 +66,7 @@ const TYPE_CONFIG: Record<
   deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-50' },
   scholarship: { icon: Award, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   payment: { icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50' },
-  system: { icon: Settings, color: 'text-slate-500', bg: 'bg-slate-50' },
+  system: { icon: Settings, color: 'text-[var(--alo-text-muted)]', bg: 'bg-[var(--alo-page)]' },
 };
 
 /* ================================================================== */
@@ -130,7 +130,7 @@ function NotificationCard({
           <div className="flex items-start justify-between gap-2">
             <h4
               className={cn(
-                'text-sm font-medium leading-snug text-slate-900',
+                'text-sm font-medium leading-snug text-[var(--alo-text)]',
                 !notification.isRead && 'font-semibold'
               )}
             >
@@ -140,7 +140,7 @@ function NotificationCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="shrink-0 h-7 px-2 text-xs text-slate-500 hover:text-blue-600"
+                className="shrink-0 h-7 px-2 text-xs text-[var(--alo-text-muted)] hover:text-blue-600"
                 onClick={(e) => {
                   e.stopPropagation();
                   onMarkRead(notification.id);
@@ -151,10 +151,10 @@ function NotificationCard({
               </Button>
             )}
           </div>
-          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+          <p className="mt-1 text-sm text-[var(--alo-body)] line-clamp-2">
             {notification.description}
           </p>
-          <p className="mt-1.5 text-xs text-slate-400">{notification.timeAgo}</p>
+          <p className="mt-1.5 text-xs text-[var(--alo-text-muted)]">{notification.timeAgo}</p>
         </div>
       </CardContent>
     </Card>
@@ -304,7 +304,7 @@ export function StudentNotifications() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-slate-900">Notifications</h1>
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">Notifications</h1>
           {unreadCount > 0 && (
             <Badge className="bg-blue-600 text-white hover:bg-blue-700 px-2.5 py-0.5 text-xs font-semibold">
               {unreadCount} unread
@@ -315,7 +315,7 @@ export function StudentNotifications() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-slate-600 hover:text-blue-600"
+            className="text-[var(--alo-body)] hover:text-blue-600"
             onClick={handleMarkAllRead}
           >
             <CheckCheck className="size-4 mr-1.5" />
@@ -345,7 +345,7 @@ export function StudentNotifications() {
               >
                 {tab.label}
                 {tabCounts[tab.key] > 0 && (
-                  <span className="ml-1 text-[10px] opacity-70">({tabCounts[tab.key]})</span>
+                  <span className="ml-1 text-[11px] opacity-70">({tabCounts[tab.key]})</span>
                 )}
               </TabsTrigger>
             ))}
@@ -362,11 +362,11 @@ export function StudentNotifications() {
             <Card className="border-2 border-amber-200">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <AlertTriangle className="size-12 text-amber-500 mb-3" />
-                <p className="text-sm font-medium text-slate-800">
+                <p className="text-sm font-medium text-[var(--alo-text)]">
                   Notifications could not be loaded
                 </p>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm">{loadError}</p>
-                <p className="text-xs text-slate-400 mt-2 max-w-sm">
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1 max-w-sm">{loadError}</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-2 max-w-sm">
                   This does not mean you have no notifications. Retry, and contact
                   your counselor if it keeps failing.
                 </p>
@@ -384,9 +384,9 @@ export function StudentNotifications() {
           ) : filtered.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <CheckCheck className="size-12 text-slate-300 mb-3" />
-                <p className="text-sm font-medium text-slate-500">No notifications</p>
-                <p className="text-xs text-slate-400 mt-1">
+                <CheckCheck className="size-12 text-[var(--alo-placeholder)] mb-3" />
+                <p className="text-sm font-medium text-[var(--alo-text-muted)]">No notifications</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">
                   You&apos;re all caught up!
                 </p>
               </CardContent>
@@ -399,7 +399,7 @@ export function StudentNotifications() {
                   if (!items || items.length === 0) return null;
                   return (
                     <div key={group}>
-                      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 px-1">
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--alo-text-muted)] mb-3 px-1">
                         {GROUP_LABELS[group]}
                       </h3>
                       <div className="space-y-2">

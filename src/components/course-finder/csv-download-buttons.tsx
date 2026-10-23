@@ -36,7 +36,7 @@ function DownloadButton({ label, url, filename, icon: Icon = Download }: Downloa
     <Button
       variant="outline"
       onClick={handleClick}
-      className="border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 h-10 px-4"
+      className="border-[var(--alo-border)] hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 text-[var(--alo-body)] h-10 px-4"
     >
       <Icon className="size-4 mr-2" />
       {label}

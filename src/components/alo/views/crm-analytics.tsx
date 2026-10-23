@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Icon, PageHeader, EmptyState, StatCard, MiniBar } from "@/components/alo/shared";
 
 const STATUS_COLORS: Record<string, string> = {
-  NEW: "bg-[#EAF3FF] text-[#0057B8]",
+  NEW: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   CONTACTED: "bg-amber-100 text-amber-700",
   QUALIFIED: "bg-violet-100 text-violet-700",
   CONVERTED: "bg-emerald-100 text-emerald-700",
   LOST: "bg-rose-100 text-rose-700",
-  DUPLICATE: "bg-slate-100 text-slate-500",
+  DUPLICATE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
 export function CrmAnalytics() {
@@ -39,7 +39,7 @@ export function CrmAnalytics() {
           subtitle="Conversion rates, pipeline health, and counselor performance"
           icon="TrendingUp"
         />
-        <div className="text-center text-[#5A7299]">Loading analytics...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading analytics...</div>
       </div>
     );
   }
@@ -118,22 +118,22 @@ export function CrmAnalytics() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Lead Status Pipeline */}
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0057B8]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name="Filter" className="size-4" />
               </div>
-              <h3 className="font-bold text-[#0B2447]">Lead Pipeline</h3>
+              <h3 className="font-bold text-[var(--alo-text)]">Lead Pipeline</h3>
             </div>
             <div className="space-y-3">
               {statusEntries.map(([status, count]) => (
                 <div key={status}>
                   <div className="mb-1 flex items-center justify-between">
-                    <Badge className={STATUS_COLORS[status] || "bg-slate-100"}>
+                    <Badge className={STATUS_COLORS[status] || "bg-[var(--alo-surface-muted)]"}>
                       {status}
                     </Badge>
-                    <span className="text-sm font-semibold text-[#0B2447]">
+                    <span className="text-sm font-semibold text-[var(--alo-text)]">
                       {count as number}
                     </span>
                   </div>
@@ -149,22 +149,22 @@ export function CrmAnalytics() {
         </Card>
 
         {/* Lead Sources */}
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#FFF3EA] text-[#E8501A]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                 <Icon name="Megaphone" className="size-4" />
               </div>
-              <h3 className="font-bold text-[#0B2447]">Leads by Source</h3>
+              <h3 className="font-bold text-[var(--alo-text)]">Leads by Source</h3>
             </div>
             <div className="space-y-3">
               {sourceEntries.map(([source, count]) => (
                 <div key={source}>
                   <div className="mb-1 flex items-center justify-between">
-                    <span className="text-sm font-medium text-[#0B2447]">
+                    <span className="text-sm font-medium text-[var(--alo-text)]">
                       {source.replace(/_/g, " ")}
                     </span>
-                    <span className="text-sm font-semibold text-[#0B2447]">
+                    <span className="text-sm font-semibold text-[var(--alo-text)]">
                       {count as number}
                     </span>
                   </div>
@@ -176,22 +176,22 @@ export function CrmAnalytics() {
         </Card>
 
         {/* Application Stages */}
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
               <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
                 <Icon name="ClipboardList" className="size-4" />
               </div>
-              <h3 className="font-bold text-[#0B2447]">Applications by Stage</h3>
+              <h3 className="font-bold text-[var(--alo-text)]">Applications by Stage</h3>
             </div>
             <div className="max-h-80 space-y-2 overflow-y-auto">
               {stageEntries.map(([stage, count]) => (
                 <div key={stage}>
                   <div className="mb-1 flex items-center justify-between">
-                    <span className="text-xs font-medium text-[#0B2447]">
+                    <span className="text-xs font-medium text-[var(--alo-text)]">
                       {stage.replace(/_/g, " ")}
                     </span>
-                    <span className="text-xs font-semibold text-[#0B2447]">
+                    <span className="text-xs font-semibold text-[var(--alo-text)]">
                       {count as number}
                     </span>
                   </div>
@@ -203,43 +203,43 @@ export function CrmAnalytics() {
         </Card>
 
         {/* Marketing Performance */}
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
               <div className="flex size-8 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
                 <Icon name="BarChart3" className="size-4" />
               </div>
-              <h3 className="font-bold text-[#0B2447]">Marketing Performance</h3>
+              <h3 className="font-bold text-[var(--alo-text)]">Marketing Performance</h3>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg bg-[#F7FAFE] p-3">
-                <p className="text-xs text-[#5A7299]">Total Budget</p>
-                <p className="mt-1 text-lg font-bold text-[#0B2447]">
+              <div className="rounded-lg bg-[var(--alo-page)] p-3">
+                <p className="text-xs text-[var(--alo-text-muted)]">Total Budget</p>
+                <p className="mt-1 text-lg font-bold text-[var(--alo-text)]">
                   {(stats.marketing?.totalBudget || 0).toLocaleString()} BDT
                 </p>
               </div>
-              <div className="rounded-lg bg-[#F7FAFE] p-3">
-                <p className="text-xs text-[#5A7299]">Total Spent</p>
-                <p className="mt-1 text-lg font-bold text-[#E8501A]">
+              <div className="rounded-lg bg-[var(--alo-page)] p-3">
+                <p className="text-xs text-[var(--alo-text-muted)]">Total Spent</p>
+                <p className="mt-1 text-lg font-bold text-[var(--alo-cta)]">
                   {(stats.marketing?.totalSpent || 0).toLocaleString()} BDT
                 </p>
               </div>
-              <div className="rounded-lg bg-[#F7FAFE] p-3">
-                <p className="text-xs text-[#5A7299]">Leads Generated</p>
-                <p className="mt-1 text-lg font-bold text-[#0057B8]">
+              <div className="rounded-lg bg-[var(--alo-page)] p-3">
+                <p className="text-xs text-[var(--alo-text-muted)]">Leads Generated</p>
+                <p className="mt-1 text-lg font-bold text-[var(--alo-brand)]">
                   {stats.marketing?.totalLeadsFromCampaigns || 0}
                 </p>
               </div>
-              <div className="rounded-lg bg-[#F7FAFE] p-3">
-                <p className="text-xs text-[#5A7299]">Cost Per Lead</p>
-                <p className="mt-1 text-lg font-bold text-[#0B2447]">
+              <div className="rounded-lg bg-[var(--alo-page)] p-3">
+                <p className="text-xs text-[var(--alo-text-muted)]">Cost Per Lead</p>
+                <p className="mt-1 text-lg font-bold text-[var(--alo-text)]">
                   {stats.marketing?.costPerLead || 0} BDT
                 </p>
               </div>
             </div>
-            <div className="mt-3 rounded-lg border border-[#DCE8F5] bg-[#EAF3FF] p-3">
-              <p className="text-xs text-[#5A7299]">Campaign Conversion Rate</p>
-              <p className="mt-1 text-2xl font-bold text-[#0057B8]">
+            <div className="mt-3 rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-brand-light)] p-3">
+              <p className="text-xs text-[var(--alo-text-muted)]">Campaign Conversion Rate</p>
+              <p className="mt-1 text-2xl font-bold text-[var(--alo-brand)]">
                 {stats.marketing?.conversionRate || 0}%
               </p>
             </div>
@@ -249,22 +249,22 @@ export function CrmAnalytics() {
 
       {/* AI Agents by Department */}
       {stats.agentsByDept && Object.keys(stats.agentsByDept).length > 0 && (
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
               <div className="flex size-8 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
                 <Icon name="Bot" className="size-4" />
               </div>
-              <h3 className="font-bold text-[#0B2447]">AI Agents by Department</h3>
+              <h3 className="font-bold text-[var(--alo-text)]">AI Agents by Department</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {Object.entries(stats.agentsByDept).map(([dept, count]) => (
                 <div
                   key={dept}
-                  className="flex items-center gap-2 rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] px-3 py-2"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] px-3 py-2"
                 >
                   <Icon name="Bot" className="size-4 text-violet-600" />
-                  <span className="text-sm font-medium text-[#0B2447]">{dept}</span>
+                  <span className="text-sm font-medium text-[var(--alo-text)]">{dept}</span>
                   <Badge className="bg-violet-100 text-violet-700">{count as number}</Badge>
                 </div>
               ))}

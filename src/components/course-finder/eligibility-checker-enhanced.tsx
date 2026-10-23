@@ -254,9 +254,9 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   INSUFFICIENT_INFO: {
     label: 'Info Needed',
     color: '#6B7280',
-    bgClass: 'bg-gray-100 dark:bg-gray-800',
-    textClass: 'text-gray-700 dark:text-gray-300',
-    borderClass: 'border-gray-300 dark:border-gray-600',
+    bgClass: 'bg-[var(--alo-surface-muted)] dark:bg-gray-800',
+    textClass: 'text-[var(--alo-body)] dark:text-[var(--alo-placeholder)]',
+    borderClass: 'border-[var(--alo-border-strong)] dark:border-gray-600',
     icon: <Info className="h-4 w-4" />,
   },
   COUNSELLOR_REVIEW_REQUIRED: {
@@ -273,7 +273,7 @@ const REQ_RESULT_STYLES: Record<string, { label: string; bgClass: string; textCl
   MET: { label: 'MET', bgClass: 'bg-green-100 dark:bg-green-900/40', textClass: 'text-green-700 dark:text-green-300' },
   NOT_MET: { label: 'NOT MET', bgClass: 'bg-red-100 dark:bg-red-900/40', textClass: 'text-red-700 dark:text-red-300' },
   CONDITION: { label: 'CONDITION', bgClass: 'bg-yellow-100 dark:bg-yellow-900/40', textClass: 'text-yellow-700 dark:text-yellow-300' },
-  MISSING_INFO: { label: 'MISSING', bgClass: 'bg-gray-100 dark:bg-gray-800', textClass: 'text-gray-600 dark:text-gray-400' },
+  MISSING_INFO: { label: 'MISSING', bgClass: 'bg-[var(--alo-surface-muted)] dark:bg-gray-800', textClass: 'text-[var(--alo-body)] dark:text-[var(--alo-text-muted)]' },
 };
 
 // ─── Empty factories ──────────────────────────────────────────────────────────
@@ -563,7 +563,7 @@ export function EligibilityCheckerEnhanced() {
             Get preliminary guidance on your eligibility for courses worldwide. Our engine evaluates your academic profile, English scores, and preferences against verified course data.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={goNext} className="bg-white text-[#0057B8] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
+            <Button size="lg" onClick={goNext} className="bg-white text-[var(--alo-brand)] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
               <ClipboardCheck className="h-5 w-5 mr-2" />
               Start Eligibility Check
             </Button>
@@ -628,7 +628,7 @@ export function EligibilityCheckerEnhanced() {
                       )}
                     >
                       <div className={cn('text-lg font-bold', cfg.textClass)}>{count}</div>
-                      <div className={cn('text-[10px] font-medium text-center leading-tight', cfg.textClass)}>{cfg.label}</div>
+                      <div className={cn('text-[11px] font-medium text-center leading-tight', cfg.textClass)}>{cfg.label}</div>
                     </button>
                   );
                 })}
@@ -702,7 +702,7 @@ export function EligibilityCheckerEnhanced() {
         <Progress value={stepProgress} className="h-2" />
         <div className="flex justify-between mt-2">
           {stepLabels.map((label, i) => (
-            <span key={i} className={cn('text-[10px] hidden sm:block', i + 1 === step ? 'font-semibold' : 'text-muted-foreground')} style={i + 1 === step ? { color: ALO_BLUE } : {}}>
+            <span key={i} className={cn('text-[11px] hidden sm:block', i + 1 === step ? 'font-semibold' : 'text-muted-foreground')} style={i + 1 === step ? { color: ALO_BLUE } : {}}>
               {label}
             </span>
           ))}
@@ -1144,7 +1144,7 @@ export function EligibilityCheckerEnhanced() {
                   'px-3 py-1.5 rounded-full text-sm border-2 transition-all',
                   preferences.preferredCountries.includes(country)
                     ? 'text-white shadow-sm'
-                    : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                    : 'border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:border-gray-400'
                 )}
                 style={preferences.preferredCountries.includes(country) ? { background: ALO_BLUE, borderColor: ALO_BLUE } : {}}
               >
@@ -1362,7 +1362,7 @@ function ResultCard({ result, expanded, onToggle }: {
                         <TableCell className="text-xs whitespace-normal min-w-[120px]">{req.universityRequirement || '—'}</TableCell>
                         <TableCell className="text-xs whitespace-normal min-w-[100px]">{req.studentValue || '—'}</TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className={cn('text-[10px] font-semibold', rs.bgClass, rs.textClass)}>
+                          <Badge variant="secondary" className={cn('text-[11px] font-semibold', rs.bgClass, rs.textClass)}>
                             {rs.label}
                           </Badge>
                         </TableCell>
@@ -1480,7 +1480,7 @@ function ResultCard({ result, expanded, onToggle }: {
                     <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-gradient-to-r from-red-400 to-red-600" style={{ width: '40%' }} />
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Your value: {req.studentValue || 'Not provided'}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Your value: {req.studentValue || 'Not provided'}</p>
                   </div>
                 ))}
               </div>
@@ -1521,15 +1521,15 @@ function ResultCard({ result, expanded, onToggle }: {
 
           {/* INSUFFICIENT INFO */}
           {isInsufficient && (
-            <div className="rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30 p-4">
-              <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-gray-700 dark:text-gray-300">
+            <div className="rounded-lg border-2 border-[var(--alo-border-strong)] dark:border-gray-600 bg-[var(--alo-page)] dark:bg-gray-900/30 p-4">
+              <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-[var(--alo-body)] dark:text-[var(--alo-placeholder)]">
                 <Info className="h-4 w-4" /> Missing Information
               </h4>
               <p className="text-sm text-muted-foreground mb-3">We could not fully evaluate your eligibility because the following information is missing or incomplete:</p>
               <ul className="space-y-1 mb-4">
                 {result.requirements.filter(r => r.result === 'MISSING_INFO').map((req, i) => (
                   <li key={i} className="text-sm flex items-start gap-2">
-                    <AlertCircle className="h-3.5 w-3.5 mt-0.5 text-gray-500 shrink-0" />
+                    <AlertCircle className="h-3.5 w-3.5 mt-0.5 text-[var(--alo-text-muted)] shrink-0" />
                     <span><strong>{req.name}:</strong> {req.action || 'Please provide this information'}</span>
                   </li>
                 ))}
@@ -1557,7 +1557,7 @@ function ResultCard({ result, expanded, onToggle }: {
 
           {/* Last verified info */}
           {result.requirements.some(r => r.lastVerifiedAt) && (
-            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" />
               Last verified: {result.requirements.find(r => r.lastVerifiedAt)?.lastVerifiedAt ? new Date(result.requirements.find(r => r.lastVerifiedAt)!.lastVerifiedAt!).toLocaleDateString() : 'Unknown'}
             </p>

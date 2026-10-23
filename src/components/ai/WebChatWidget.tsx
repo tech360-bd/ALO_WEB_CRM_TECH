@@ -43,27 +43,27 @@ export default function WebChatWidget({ channel = 'webchat' }: { senderId?: stri
 
   return (
     <>
-      {!open && <Button onClick={() => setOpen(true)} className="fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full bg-[#0057B8] text-white shadow-xl"><MessageSquare className="h-5 w-5" /></Button>}
+      {!open && <Button onClick={() => setOpen(true)} className="fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full bg-[var(--alo-brand)] text-white shadow-xl"><MessageSquare className="h-5 w-5" /></Button>}
       {open && (
-        <Card className="fixed bottom-4 right-4 z-50 flex h-[480px] w-[360px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border-[#E2E8F0] bg-white shadow-2xl">
-          <div className="flex items-center justify-between bg-[#0F172A] px-3 py-2 text-white">
+        <Card className="fixed bottom-4 right-4 z-50 flex h-[480px] w-[360px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border-[var(--alo-border)] bg-white shadow-2xl">
+          <div className="flex items-center justify-between bg-[var(--alo-text)] px-3 py-2 text-white">
             <p className="text-xs font-bold">ALO Education — General Guidance</p>
             <button onClick={() => setOpen(false)} className="p-1" aria-label="Close chat"><X className="h-4 w-4" /></button>
           </div>
-          <div className="flex-1 space-y-2 overflow-auto bg-[#F8FAFC] p-3" aria-live="polite">
+          <div className="flex-1 space-y-2 overflow-auto bg-[var(--alo-page)] p-3" aria-live="polite">
             {messages.map((message, index) => (
               <div key={index} className={message.role === 'user'
-                ? 'ml-auto max-w-[78%] rounded-2xl rounded-br-sm bg-[#0057B8] px-3 py-2 text-xs text-white'
-                : 'mr-auto max-w-[82%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-[#E2E8F0] bg-white px-3 py-2 text-xs'}>{message.text}</div>
+                ? 'ml-auto max-w-[78%] rounded-2xl rounded-br-sm bg-[var(--alo-brand)] px-3 py-2 text-xs text-white'
+                : 'mr-auto max-w-[82%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-[var(--alo-border)] bg-white px-3 py-2 text-xs'}>{message.text}</div>
             ))}
-            {busy && <div className="mr-auto rounded-2xl border border-[#E2E8F0] bg-white px-3 py-2 text-xs text-gray-400">Preparing a safe response…</div>}
+            {busy && <div className="mr-auto rounded-2xl border border-[var(--alo-border)] bg-white px-3 py-2 text-xs text-[var(--alo-text-muted)]">Preparing a safe response…</div>}
           </div>
-          <p className="px-3 pb-2 text-[10px] text-amber-800">General guidance only, not current admission/visa requirements. Do not share personal identifiers or documents. <Link className="underline" href="/student/login">Student Portal</Link></p>
-          <div className="flex items-center gap-2 border-t border-[#E2E8F0] p-2">
+          <p className="px-3 pb-2 text-[11px] text-amber-800">General guidance only, not current admission/visa requirements. Do not share personal identifiers or documents. <Link className="underline" href="/student/login">Student Portal</Link></p>
+          <div className="flex items-center gap-2 border-t border-[var(--alo-border)] p-2">
             <Input value={input} maxLength={5000} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void send(); } }} placeholder="Write a general question…" aria-label="Message" className="h-9 flex-1 text-xs" />
-            <Button disabled={busy || !input.trim()} onClick={() => void send()} className="h-9 bg-[#E8501A] text-white" aria-label="Send message"><Send className="h-4 w-4" /></Button>
+            <Button disabled={busy || !input.trim()} onClick={() => void send()} className="h-9 bg-[var(--alo-cta)] text-white" aria-label="Send message"><Send className="h-4 w-4" /></Button>
           </div>
-          <div className="px-2 pb-1 text-center text-[10px] text-gray-400">Rule-based replies · Bangla / English · secure session · no document uploads</div>
+          <div className="px-2 pb-1 text-center text-[11px] text-[var(--alo-text-muted)]">Rule-based replies · Bangla / English · secure session · no document uploads</div>
         </Card>
       )}
     </>

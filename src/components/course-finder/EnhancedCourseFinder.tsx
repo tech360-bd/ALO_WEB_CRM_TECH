@@ -219,29 +219,29 @@ export default function EnhancedCourseFinder() {
   const firstResult = ready && ready.total > 0 ? (page - 1) * PAGE_SIZE + 1 : 0;
   const lastResult = ready ? Math.min(page * PAGE_SIZE, ready.total) : 0;
 
-  const field = 'bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm h-11 w-full';
-  const label = 'text-xs font-medium text-gray-600 mb-1 block';
+  const field = 'bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-sm h-11 w-full';
+  const label = 'text-xs font-medium text-[var(--alo-body)] mb-1 block';
 
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-6">
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 md:p-12 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs mb-4">Verified, source-linked courses</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Find Your Course</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">
+        <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-6 md:p-12 shadow-sm">
+          <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs mb-4">Verified, source-linked courses</Badge>
+          <h1 className="text-3xl md:text-5xl font-bold text-[var(--alo-text)] tracking-tight mb-4">Find Your Course</h1>
+          <p className="text-base md:text-lg text-[var(--alo-body)] max-w-3xl leading-relaxed">
             Search verified course records across our partner destinations. Only courses with a published, verified record and a source link are listed. Where a fee, intake, or requirement is not recorded, the course page says so.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-6">
-          <Card className="p-5 lg:col-span-1 h-fit bg-white border-[#E2E8F0] rounded-2xl shadow-sm" aria-label="Course filters">
-            <h2 className="font-semibold text-sm text-[#0F172A] mb-4 flex items-center gap-2"><Filter className="w-4 h-4 text-[#0057B8]" aria-hidden="true" />Filters{activeCount > 0 ? ` (${activeCount} active)` : ''}</h2>
+          <Card className="p-5 lg:col-span-1 h-fit bg-white border-[var(--alo-border)] rounded-2xl shadow-sm" aria-label="Course filters">
+            <h2 className="font-semibold text-sm text-[var(--alo-text)] mb-4 flex items-center gap-2"><Filter className="w-4 h-4 text-[var(--alo-brand)]" aria-hidden="true" />Filters{activeCount > 0 ? ` (${activeCount} active)` : ''}</h2>
             <div className="space-y-4">
               <div>
                 <label htmlFor="cf-search" className={label}>Course, subject or university</label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
-                  <Input id="cf-search" value={filters.search} onChange={(e) => updateFilter('search', e.target.value)} placeholder="Course, university…" className="pl-9 bg-white border-[#E2E8F0] h-11" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" aria-hidden="true" />
+                  <Input id="cf-search" value={filters.search} onChange={(e) => updateFilter('search', e.target.value)} placeholder="Course, university…" className="pl-9 bg-white border-[var(--alo-border)] h-11" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -254,12 +254,12 @@ export default function EnhancedCourseFinder() {
                 </div>
                 <div>
                   <label htmlFor="cf-city" className={label}>City</label>
-                  <Input id="cf-city" value={filters.city} onChange={(e) => updateFilter('city', e.target.value)} placeholder="London…" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                  <Input id="cf-city" value={filters.city} onChange={(e) => updateFilter('city', e.target.value)} placeholder="London…" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
                 </div>
               </div>
               <div>
                 <label htmlFor="cf-campus" className={label}>Campus</label>
-                <Input id="cf-campus" value={filters.campus} onChange={(e) => updateFilter('campus', e.target.value)} placeholder="Main campus…" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                <Input id="cf-campus" value={filters.campus} onChange={(e) => updateFilter('campus', e.target.value)} placeholder="Main campus…" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -275,16 +275,16 @@ export default function EnhancedCourseFinder() {
                 </div>
                 <div>
                   <label htmlFor="cf-subject" className={label}>Subject</label>
-                  <Input id="cf-subject" value={filters.subject} onChange={(e) => updateFilter('subject', e.target.value)} placeholder="Business…" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                  <Input id="cf-subject" value={filters.subject} onChange={(e) => updateFilter('subject', e.target.value)} placeholder="Business…" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
                 </div>
               </div>
               <div>
                 <label htmlFor="cf-discipline" className={label}>Discipline</label>
-                <Input id="cf-discipline" value={filters.discipline} onChange={(e) => updateFilter('discipline', e.target.value)} placeholder="Computer Science…" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                <Input id="cf-discipline" value={filters.discipline} onChange={(e) => updateFilter('discipline', e.target.value)} placeholder="Computer Science…" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
               </div>
               <div>
                 <label htmlFor="cf-university" className={label}>University</label>
-                <Input id="cf-university" value={filters.university} onChange={(e) => updateFilter('university', e.target.value)} placeholder="University name or slug…" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                <Input id="cf-university" value={filters.university} onChange={(e) => updateFilter('university', e.target.value)} placeholder="University name or slug…" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -308,11 +308,11 @@ export default function EnhancedCourseFinder() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="cf-tmin" className={label}>Tuition min / yr</label>
-                  <Input id="cf-tmin" type="number" min={0} inputMode="numeric" value={filters.tuitionMin} onChange={(e) => updateFilter('tuitionMin', e.target.value)} placeholder="0" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                  <Input id="cf-tmin" type="number" min={0} inputMode="numeric" value={filters.tuitionMin} onChange={(e) => updateFilter('tuitionMin', e.target.value)} placeholder="0" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
                 </div>
                 <div>
                   <label htmlFor="cf-tmax" className={label}>Tuition max / yr</label>
-                  <Input id="cf-tmax" type="number" min={0} inputMode="numeric" value={filters.tuitionMax} onChange={(e) => updateFilter('tuitionMax', e.target.value)} placeholder="No limit" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                  <Input id="cf-tmax" type="number" min={0} inputMode="numeric" value={filters.tuitionMax} onChange={(e) => updateFilter('tuitionMax', e.target.value)} placeholder="No limit" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -366,20 +366,20 @@ export default function EnhancedCourseFinder() {
                 </div>
                 <div>
                   <label htmlFor="cf-ielts" className={label}>My IELTS overall</label>
-                  <Input id="cf-ielts" type="number" min={0} max={9} step={0.5} value={filters.ieltsMin} onChange={(e) => updateFilter('ieltsMin', e.target.value)} placeholder="e.g. 6.5" className="bg-white border-[#E2E8F0] h-11 text-sm" />
+                  <Input id="cf-ielts" type="number" min={0} max={9} step={0.5} value={filters.ieltsMin} onChange={(e) => updateFilter('ieltsMin', e.target.value)} placeholder="e.g. 6.5" className="bg-white border-[var(--alo-border)] h-11 text-sm" />
                 </div>
               </div>
-              <p className="text-[11px] text-gray-500">IELTS: shows courses whose verified IELTS requirement is at or below your score.</p>
-              <Button variant="outline" onClick={clearAll} disabled={activeCount === 0} className="w-full border-[#E2E8F0] h-12">Clear all filters</Button>
+              <p className="text-[11px] text-[var(--alo-text-muted)]">IELTS: shows courses whose verified IELTS requirement is at or below your score.</p>
+              <Button variant="outline" onClick={clearAll} disabled={activeCount === 0} className="w-full border-[var(--alo-border)] h-12">Clear all filters</Button>
               <TestPreparationMiniCard compact contextTitle="Prepare for English proficiency tests for this course" />
-              <p className="text-[11px] text-gray-500 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3">Commission, internal notes and partner information are never shown on this page.</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3">Commission, internal notes and partner information are never shown on this page.</p>
             </div>
           </Card>
 
           <div className="lg:col-span-3 space-y-4" aria-live="polite">
             {state.status === 'loading' && (
               <div className="grid sm:grid-cols-2 gap-4" aria-label="Loading courses" aria-busy="true">
-                {[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse" />)}
+                {[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse" />)}
               </div>
             )}
 
@@ -388,71 +388,71 @@ export default function EnhancedCourseFinder() {
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" aria-hidden="true" />
                 <p className="font-semibold text-red-900">Courses could not be loaded.</p>
                 <p className="text-sm text-red-800 mt-1">{state.message}</p>
-                <Button onClick={() => setRetryNonce((n) => n + 1)} className="mt-4 bg-[#0057B8] text-white h-12">Try again</Button>
+                <Button onClick={() => setRetryNonce((n) => n + 1)} className="mt-4 bg-[var(--alo-brand)] text-white h-12">Try again</Button>
               </Card>
             )}
 
             {ready && ready.total === 0 && (
-              <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center">
-                <Search className="w-12 h-12 text-gray-300 mx-auto mb-3" aria-hidden="true" />
-                <p className="text-sm font-semibold text-gray-700">No courses match your current filters.</p>
-                <p className="text-xs text-gray-500 mt-2">Try removing a filter. Only verified, source-linked courses are listed.</p>
-                {activeCount > 0 && <Button variant="outline" onClick={clearAll} className="mt-4 border-[#E2E8F0] h-12">Clear all filters</Button>}
+              <Card className="p-12 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center">
+                <Search className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" aria-hidden="true" />
+                <p className="text-sm font-semibold text-[var(--alo-body)]">No courses match your current filters.</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-2">Try removing a filter. Only verified, source-linked courses are listed.</p>
+                {activeCount > 0 && <Button variant="outline" onClick={clearAll} className="mt-4 border-[var(--alo-border)] h-12">Clear all filters</Button>}
               </Card>
             )}
 
             {ready && ready.total > 0 && (
               <>
-                <p className="text-sm text-gray-600">Showing {firstResult}–{lastResult} of {ready.total} courses</p>
+                <p className="text-sm text-[var(--alo-body)]">Showing {firstResult}–{lastResult} of {ready.total} courses</p>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {ready.courses.map((c) => (
-                    <Card key={c.courseId} className="p-5 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                    <Card key={c.courseId} className="p-5 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-2">
-                          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">{c.studyLevel || 'Level not recorded'}</Badge>
+                          <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-[11px]">{c.studyLevel || 'Level not recorded'}</Badge>
                           {c.yearlyTuition > 0
-                            ? <span className="text-xs font-bold text-[#0F172A]">{c.tuitionCurrency} {c.yearlyTuition.toLocaleString()}/yr</span>
-                            : <span className="text-[11px] text-gray-500">Fee information requires counselor verification</span>}
+                            ? <span className="text-xs font-bold text-[var(--alo-text)]">{c.tuitionCurrency} {c.yearlyTuition.toLocaleString()}/yr</span>
+                            : <span className="text-[11px] text-[var(--alo-text-muted)]">Fee information requires counselor verification</span>}
                         </div>
-                        <h2 className="font-bold text-sm text-[#0F172A] line-clamp-2 mb-1">{c.courseTitle}</h2>
-                        <p className="text-xs text-gray-600 flex items-center gap-1 mb-2">
+                        <h2 className="font-bold text-sm text-[var(--alo-text)] line-clamp-2 mb-1">{c.courseTitle}</h2>
+                        <p className="text-xs text-[var(--alo-body)] flex items-center gap-1 mb-2">
                           <Building2 className="w-3 h-3" aria-hidden="true" />
                           {c.universitySlug
-                            ? <Link href={`/universities/${encodeURIComponent(c.universitySlug)}`} className="text-[#0057B8] underline">{c.universityName}</Link>
+                            ? <Link href={`/universities/${encodeURIComponent(c.universitySlug)}`} className="text-[var(--alo-brand)] underline">{c.universityName}</Link>
                             : c.universityName}
                           {' · '}{[c.city, c.country].filter(Boolean).join(', ') || 'Location not recorded'}
                         </p>
-                        <div className="flex flex-wrap gap-2 text-[11px] text-gray-500">
+                        <div className="flex flex-wrap gap-2 text-[11px] text-[var(--alo-text-muted)]">
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" aria-hidden="true" />{c.durationMonths ? `${Math.round((c.durationMonths / 12) * 10) / 10} yr` : 'Duration not recorded'}</span>
                           <span className="flex items-center gap-1"><Calendar className="w-3 h-3" aria-hidden="true" />{c.intakeMonth ? `${c.intakeMonth}${c.intakeYear ? ` ${c.intakeYear}` : ''}` : 'Intake not recorded'}</span>
                           <span className="flex items-center gap-1"><Globe className="w-3 h-3" aria-hidden="true" />{c.country || 'Country not recorded'}</span>
                         </div>
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {c.scholarships && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]"><Award className="w-3 h-3 mr-1" aria-hidden="true" />Scholarship recorded</Badge>}
-                          {c.applicationDeadline && <Badge className="bg-[#F8FAFC] text-slate-700 border-[#E2E8F0] text-[10px]">Deadline: {c.applicationDeadline}</Badge>}
+                          {c.scholarships && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]"><Award className="w-3 h-3 mr-1" aria-hidden="true" />Scholarship recorded</Badge>}
+                          {c.applicationDeadline && <Badge className="bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] text-[11px]">Deadline: {c.applicationDeadline}</Badge>}
                         </div>
-                        <p className="text-[10px] text-gray-500 mt-2">
-                          Source: {c.courseSourceUrl ? <a href={c.courseSourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] underline">Official record</a> : 'not recorded'}
+                        <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">
+                          Source: {c.courseSourceUrl ? <a href={c.courseSourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--alo-brand)] underline">Official record</a> : 'not recorded'}
                           {' · '}Last verified: {c.courseLastVerifiedAt ? new Date(c.courseLastVerifiedAt).toLocaleDateString() : 'not recorded'}
                         </p>
                       </div>
                       <div className="mt-4 grid grid-cols-2 gap-2">
                         <Link href={`/course/${encodeURIComponent(c.slug || c.courseId)}`} className="block col-span-1">
-                          <Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] h-12 text-xs font-bold">View course</Button>
+                          <Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 text-xs font-bold">View course</Button>
                         </Link>
                         <Link href="/eligibility-check" className="block col-span-1">
-                          <Button variant="outline" className="w-full h-12 text-xs border-[#E2E8F0]">Check eligibility</Button>
+                          <Button variant="outline" className="w-full h-12 text-xs border-[var(--alo-border)]">Check eligibility</Button>
                         </Link>
                         <CompareToggle id={c.slug || c.courseId} title={c.courseTitle} />
                       </div>
                     </Card>
                   ))}
                 </div>
-                <nav className="flex justify-between items-center pt-4 text-xs text-gray-600" aria-label="Course results pages">
+                <nav className="flex justify-between items-center pt-4 text-xs text-[var(--alo-body)]" aria-label="Course results pages">
                   <span>Page {page} of {Math.max(1, totalPages)}</span>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-12 px-4" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
-                    <Button size="sm" variant="outline" className="border-[#E2E8F0] h-12 px-4" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
+                    <Button size="sm" variant="outline" className="border-[var(--alo-border)] h-12 px-4" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+                    <Button size="sm" variant="outline" className="border-[var(--alo-border)] h-12 px-4" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
                   </div>
                 </nav>
               </>
@@ -479,7 +479,7 @@ function CompareToggle({ id, title }: { id: string; title: string }) {
       <Button
         type="button"
         variant="outline"
-        className="h-11 px-4 text-xs border-[#E2E8F0]"
+        className="h-11 px-4 text-xs border-[var(--alo-border)]"
         aria-pressed={inList}
         aria-label={inList ? `Remove ${title} from comparison` : `Add ${title} to comparison`}
         onClick={() => {
@@ -493,7 +493,7 @@ function CompareToggle({ id, title }: { id: string; title: string }) {
       </Button>
       {full && <span role="status" className="text-red-700">You can compare up to {COMPARE_MAX} courses.</span>}
       {list.length > 0 && !full && (
-        <Link href={`/compare?courses=${encodeURIComponent(list.join(','))}`} className="text-[#0057B8] underline">Compare ({list.length})</Link>
+        <Link href={`/compare?courses=${encodeURIComponent(list.join(','))}`} className="text-[var(--alo-brand)] underline">Compare ({list.length})</Link>
       )}
     </div>
   );

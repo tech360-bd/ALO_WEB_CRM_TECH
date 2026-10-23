@@ -184,8 +184,8 @@ export function StudentReferrals() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Refer & Earn</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-[var(--alo-text)]">Refer & Earn</h1>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1">
           Share your referral code and earn rewards for every successful enrollment.
         </p>
       </div>
@@ -193,9 +193,9 @@ export function StudentReferrals() {
       {/* Referral Code Card */}
       <Card className="border-blue-200 bg-blue-50/40">
         <CardContent className="p-6">
-          <p className="text-sm font-medium text-slate-700 mb-3">Your Referral Code</p>
+          <p className="text-sm font-medium text-[var(--alo-body)] mb-3">Your Referral Code</p>
           <div className="flex items-center gap-3">
-            <div className="flex-1 bg-white rounded-lg border border-blue-200 px-4 py-3 font-mono text-lg font-bold text-slate-900 tracking-wider">
+            <div className="flex-1 bg-white rounded-lg border border-blue-200 px-4 py-3 font-mono text-lg font-bold text-[var(--alo-text)] tracking-wider">
               {loading ? 'Loading…' : referralCode || 'No referral code issued yet'}
             </div>
             <Button
@@ -265,8 +265,8 @@ export function StudentReferrals() {
           <Card key={stat.label}>
             <CardContent className="p-4 text-center">
               <stat.icon className={cn('size-5 mx-auto mb-2', stat.color)} />
-              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-              <p className="text-xs text-slate-500 mt-1">{stat.label}</p>
+              <p className="text-2xl font-bold text-[var(--alo-text)]">{stat.value}</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mt-1">{stat.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -275,16 +275,16 @@ export function StudentReferrals() {
       {/* Referral History */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">Referral History</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">Referral History</CardTitle>
         </CardHeader>
         <CardContent>
           {loadError && (
             <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{loadError}</p>
           )}
           {loading ? (
-            <p className="py-8 text-center text-sm text-slate-500">Loading referrals…</p>
+            <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">Loading referrals…</p>
           ) : referrals.length === 0 && !loadError ? (
-            <p className="py-8 text-center text-sm text-slate-500">
+            <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">
               You have not referred anyone yet. Share your code to get started.
             </p>
           ) : (
@@ -301,27 +301,27 @@ export function StudentReferrals() {
               <TableBody>
                 {referrals.map((referral) => (
                   <TableRow key={referral.id}>
-                    <TableCell className="font-medium text-slate-900">
+                    <TableCell className="font-medium text-[var(--alo-text)]">
                       {referral.referredName || 'Name not provided'}
                     </TableCell>
-                    <TableCell className="text-slate-500">{formatDate(referral.createdAt)}</TableCell>
+                    <TableCell className="text-[var(--alo-text-muted)]">{formatDate(referral.createdAt)}</TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
                         className={cn(
                           'text-xs font-medium',
-                          STATUS_STYLES[referral.status] || 'bg-slate-100 text-slate-500',
+                          STATUS_STYLES[referral.status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
                         )}
                       >
                         {(referral.status || 'UNKNOWN').replace(/_/g, ' ')}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-700">
+                    <TableCell className="text-[var(--alo-body)]">
                       {referral.rewardOffered
                         ? `${referral.rewardOffered}${referral.rewardStatus ? ` · ${referral.rewardStatus}` : ''}`
                         : 'None recorded'}
                     </TableCell>
-                    <TableCell className="text-right text-slate-500">
+                    <TableCell className="text-right text-[var(--alo-text-muted)]">
                       {referral.source || '—'}
                     </TableCell>
                   </TableRow>
@@ -335,7 +335,7 @@ export function StudentReferrals() {
       {/* How It Works */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">How It Works</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">How It Works</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -364,8 +364,8 @@ export function StudentReferrals() {
                   {item.step}
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-slate-900">{item.title}</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                  <h4 className="text-sm font-semibold text-[var(--alo-text)]">{item.title}</h4>
+                  <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -378,8 +378,8 @@ export function StudentReferrals() {
         <CardContent className="p-4 flex items-start gap-3">
           <Info className="size-5 text-orange-600 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-slate-900">Referral Rules</p>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-sm font-semibold text-[var(--alo-text)]">Referral Rules</p>
+            <p className="text-xs text-[var(--alo-body)] mt-1">
               Each referral you make is recorded against your code with its current status. Any
               reward is shown per referral only when one has been agreed and recorded on that
               record — reward amounts, eligibility conditions and expiry periods are set by your
@@ -405,7 +405,7 @@ const HELP_CATEGORIES = [
   { icon: Search, title: 'Course Finder', count: 6, color: 'text-green-600', bg: 'bg-green-50' },
   { icon: GraduationCap, title: 'English Tests', count: 9, color: 'text-cyan-600', bg: 'bg-cyan-50' },
   { icon: Award, title: 'Scholarship Guide', count: 11, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { icon: Headphones, title: 'Technical Support', count: 7, color: 'text-slate-600', bg: 'bg-slate-50' },
+  { icon: Headphones, title: 'Technical Support', count: 7, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)]' },
 ];
 
 const FAQ_DATA = [
@@ -438,15 +438,15 @@ export function StudentHelpCenter() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Help Center</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-[var(--alo-text)]">Help Center</h1>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1">
           Find answers, guides, and get support for your study abroad journey.
         </p>
       </div>
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
         <Input
           placeholder="Search help articles..."
           className="pl-9 h-11"
@@ -457,7 +457,7 @@ export function StudentHelpCenter() {
 
       {/* Category Cards */}
       <div>
-        <h2 className="text-sm font-semibold text-slate-900 mb-3">Browse by Category</h2>
+        <h2 className="text-sm font-semibold text-[var(--alo-text)] mb-3">Browse by Category</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {HELP_CATEGORIES.map((cat) => (
             <Card
@@ -468,10 +468,10 @@ export function StudentHelpCenter() {
                 <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', cat.bg)}>
                   <cat.icon className={cn('size-5', cat.color)} />
                 </div>
-                <h3 className="text-sm font-medium text-slate-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm font-medium text-[var(--alo-text)] group-hover:text-blue-600 transition-colors">
                   {cat.title}
                 </h3>
-                <p className="text-xs text-slate-400">{cat.count} articles</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">{cat.count} articles</p>
               </CardContent>
             </Card>
           ))}
@@ -481,17 +481,17 @@ export function StudentHelpCenter() {
       {/* FAQ */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">Frequently Asked Questions</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">Frequently Asked Questions</CardTitle>
           <CardDescription>Quick answers to common questions</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             {FAQ_DATA.map((faq, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
-                <AccordionTrigger className="text-sm font-medium text-slate-900 hover:text-blue-600 hover:no-underline">
+                <AccordionTrigger className="text-sm font-medium text-[var(--alo-text)] hover:text-blue-600 hover:no-underline">
                   {faq.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-sm text-slate-600 leading-relaxed">
+                <AccordionContent className="text-sm text-[var(--alo-body)] leading-relaxed">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>
@@ -504,12 +504,12 @@ export function StudentHelpCenter() {
       <Card className="border-blue-200 bg-blue-50/40">
         <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
           <div className="flex-1">
-            <h3 className="text-base font-semibold text-slate-900">Still need help?</h3>
-            <p className="text-sm text-slate-600 mt-1">
+            <h3 className="text-base font-semibold text-[var(--alo-text)]">Still need help?</h3>
+            <p className="text-sm text-[var(--alo-body)] mt-1">
               Reach your assigned counsellor through the Messages section, where the thread carries
               their name.
             </p>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-[var(--alo-text-muted)] mt-0.5">
               Published support numbers and opening hours are not shown here because none has been
               verified against a current source.
             </p>
@@ -559,8 +559,8 @@ export function StudentSettings() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-[var(--alo-text)]">Settings</h1>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1">
           Manage your account, notifications, and preferences.
         </p>
       </div>
@@ -568,15 +568,15 @@ export function StudentSettings() {
       {/* Account Settings */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">Account Settings</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">Account Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-slate-500">Email</Label>
-            <Input value="rahim.alam@email.com" readOnly className="bg-slate-50 text-slate-500" />
+            <Label className="text-xs font-medium text-[var(--alo-text-muted)]">Email</Label>
+            <Input value="rahim.alam@email.com" readOnly className="bg-[var(--alo-page)] text-[var(--alo-text-muted)]" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-slate-500">Phone</Label>
+            <Label className="text-xs font-medium text-[var(--alo-text-muted)]">Phone</Label>
             <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1XXX-XXXXXX" />
           </div>
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
@@ -594,7 +594,7 @@ export function StudentSettings() {
       {/* Notification Settings */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">Notification Settings</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">Notification Settings</CardTitle>
           <CardDescription>Choose how and when you want to be notified</CardDescription>
         </CardHeader>
         <CardContent className="space-y-1">
@@ -602,11 +602,11 @@ export function StudentSettings() {
             <div key={setting.key}>
               <div className="flex items-center justify-between py-3">
                 <div className="pr-4">
-                  <Label className="text-sm font-medium text-slate-900 cursor-pointer" htmlFor={setting.key}>
+                  <Label className="text-sm font-medium text-[var(--alo-text)] cursor-pointer" htmlFor={setting.key}>
                     {setting.label}
                   </Label>
                   {setting.description && (
-                    <p className="text-xs text-slate-500 mt-0.5">{setting.description}</p>
+                    <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{setting.description}</p>
                   )}
                 </div>
                 <Switch
@@ -630,18 +630,18 @@ export function StudentSettings() {
       {/* Privacy Settings */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">Privacy Settings</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">Privacy Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1">
           {PRIVACY_SETTINGS.map((setting, i) => (
             <div key={setting.key}>
               <div className="flex items-center justify-between py-3">
                 <div className="pr-4">
-                  <Label className="text-sm font-medium text-slate-900 cursor-pointer" htmlFor={setting.key}>
+                  <Label className="text-sm font-medium text-[var(--alo-text)] cursor-pointer" htmlFor={setting.key}>
                     {setting.label}
                   </Label>
                   {setting.description && (
-                    <p className="text-xs text-slate-500 mt-0.5">{setting.description}</p>
+                    <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{setting.description}</p>
                   )}
                 </div>
                 <Switch
@@ -665,11 +665,11 @@ export function StudentSettings() {
       {/* Language */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-slate-900">Language</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--alo-text)]">Language</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-3 max-w-xs">
-            <Languages className="size-4 text-slate-500" />
+            <Languages className="size-4 text-[var(--alo-text-muted)]" />
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="w-full">
                 <SelectValue />
@@ -692,8 +692,8 @@ export function StudentSettings() {
         <CardContent className="space-y-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-2">
             <div>
-              <p className="text-sm font-medium text-slate-900">Request Data Export</p>
-              <p className="text-xs text-slate-500">Download all your data in a portable format.</p>
+              <p className="text-sm font-medium text-[var(--alo-text)]">Request Data Export</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">Download all your data in a portable format.</p>
             </div>
             <Button variant="outline" size="sm" className="shrink-0" onClick={() => toast.success('Data export requested. You will receive an email shortly.')}>
               <Download className="size-3.5 mr-1.5" />
@@ -703,8 +703,8 @@ export function StudentSettings() {
           <Separator />
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-2">
             <div>
-              <p className="text-sm font-medium text-slate-900">Deactivate Account</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-sm font-medium text-[var(--alo-text)]">Deactivate Account</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">
                 Permanently delete your account and all associated data.
               </p>
             </div>
@@ -833,8 +833,8 @@ export function StudentAIAdvisor() {
           <Sparkles className="size-5 text-white" />
         </div>
         <div>
-          <h1 className="text-lg font-bold text-slate-900">AI Study Coach</h1>
-          <p className="text-xs text-slate-500">Ask me anything about studying abroad</p>
+          <h1 className="text-lg font-bold text-[var(--alo-text)]">AI Study Coach</h1>
+          <p className="text-xs text-[var(--alo-text-muted)]">Ask me anything about studying abroad</p>
         </div>
       </div>
 
@@ -883,7 +883,7 @@ export function StudentAIAdvisor() {
                   className={cn(
                     'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
                     msg.role === 'ai'
-                      ? 'bg-slate-100 text-slate-800 rounded-tl-sm'
+                      ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-sm'
                       : 'bg-blue-600 text-white rounded-tr-sm'
                   )}
                 >
@@ -895,7 +895,7 @@ export function StudentAIAdvisor() {
 
           {/* Disclaimer */}
           <div className="px-4 pb-2">
-            <p className="text-[10px] text-slate-400 text-center">
+            <p className="text-[11px] text-[var(--alo-text-muted)] text-center">
               AI suggestions are for guidance only. Always verify with your counselor.
             </p>
           </div>
@@ -986,8 +986,8 @@ export function StudentRecommendations() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Your shortlist</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-[var(--alo-text)]">Your shortlist</h1>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1">
           Courses you have saved. Nothing is ranked or scored here: eligibility still has to be
           checked against each course&apos;s published requirements.
         </p>
@@ -1002,23 +1002,23 @@ export function StudentRecommendations() {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <GraduationCap className="size-5 text-blue-600" />
-          <h2 className="text-base font-semibold text-slate-900">
+          <h2 className="text-base font-semibold text-[var(--alo-text)]">
             Saved courses{!loading ? ` (${courses.length})` : ''}
           </h2>
         </div>
 
         {loading ? (
           <Card>
-            <CardContent className="py-10 text-center text-sm text-slate-500">
+            <CardContent className="py-10 text-center text-sm text-[var(--alo-text-muted)]">
               Loading your shortlist…
             </CardContent>
           </Card>
         ) : courses.length === 0 && !loadError ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <Search className="size-8 mx-auto mb-3 text-slate-300" />
-              <p className="text-sm text-slate-600 font-medium">You have not saved any course yet.</p>
-              <p className="text-xs text-slate-500 mt-1">
+              <Search className="size-8 mx-auto mb-3 text-[var(--alo-placeholder)]" />
+              <p className="text-sm text-[var(--alo-body)] font-medium">You have not saved any course yet.</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mt-1">
                 Use the course finder to search verified courses, then save the ones you want to
                 compare.
               </p>
@@ -1031,10 +1031,10 @@ export function StudentRecommendations() {
                 <CardContent className="p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className="text-sm font-semibold text-[var(--alo-text)]">
                         {course.courseName || 'Course name not recorded'}
                       </p>
-                      <p className="text-xs text-slate-600 mt-0.5">
+                      <p className="text-xs text-[var(--alo-body)] mt-0.5">
                         {course.universityName || 'University not recorded'}
                         {course.country ? ` · ${course.country}` : ''}
                       </p>
@@ -1046,25 +1046,25 @@ export function StudentRecommendations() {
 
                   <div className="grid grid-cols-2 gap-3 mt-3 text-xs">
                     <div>
-                      <p className="text-slate-500">Department</p>
-                      <p className="text-slate-800">{course.department || '—'}</p>
+                      <p className="text-[var(--alo-text-muted)]">Department</p>
+                      <p className="text-[var(--alo-text)]">{course.department || '—'}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Intake</p>
-                      <p className="text-slate-800">{course.intake || '—'}</p>
+                      <p className="text-[var(--alo-text-muted)]">Intake</p>
+                      <p className="text-[var(--alo-text)]">{course.intake || '—'}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Tuition fee</p>
-                      <p className="text-slate-800">{course.tuitionFee || 'Not recorded'}</p>
+                      <p className="text-[var(--alo-text-muted)]">Tuition fee</p>
+                      <p className="text-[var(--alo-text)]">{course.tuitionFee || 'Not recorded'}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Saved</p>
-                      <p className="text-slate-800">{shortlistDate(course.createdAt)}</p>
+                      <p className="text-[var(--alo-text-muted)]">Saved</p>
+                      <p className="text-[var(--alo-text)]">{shortlistDate(course.createdAt)}</p>
                     </div>
                   </div>
 
                   {course.notes ? (
-                    <p className="text-xs text-slate-600 mt-3 border-t border-slate-100 pt-2">
+                    <p className="text-xs text-[var(--alo-body)] mt-3 border-t border-[var(--alo-border)] pt-2">
                       {course.notes}
                     </p>
                   ) : null}
@@ -1079,8 +1079,8 @@ export function StudentRecommendations() {
         <CardContent className="p-4 flex items-start gap-3">
           <Info className="size-5 text-orange-600 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-slate-900">About eligibility and scholarships</p>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-sm font-semibold text-[var(--alo-text)]">About eligibility and scholarships</p>
+            <p className="text-xs text-[var(--alo-body)] mt-1">
               This page does not score a match, quote a scholarship amount or state a deadline,
               because none of those figures is verified here. Before you rely on an entry
               requirement, fee or funding amount, check the course record and the source recorded

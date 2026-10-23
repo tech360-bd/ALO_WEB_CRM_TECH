@@ -134,7 +134,7 @@ function chipClass(tone: ChipTone) {
   if (tone === 'verified') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
   if (tone === 'rejected') return 'bg-red-50 text-red-700 border-red-200';
   if (tone === 'pending') return 'bg-amber-50 text-amber-700 border-amber-200';
-  return 'bg-slate-100 text-slate-600 border-slate-200';
+  return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]';
 }
 
 function humanSize(bytes: number) {
@@ -250,7 +250,7 @@ export default function FormBDocumentsSection({
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-500">
+      <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]">
         <Loader2 className="size-4 animate-spin" /> Loading your documents…
       </div>
     );
@@ -260,13 +260,13 @@ export default function FormBDocumentsSection({
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-[#0F172A]">E) Documents Upload &amp; Verification</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-lg font-bold text-[var(--alo-text)]">E) Documents Upload &amp; Verification</h2>
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Upload what you have — every file starts as <strong>Pending review</strong>. Only your counselor can mark a
             document <strong>Verified</strong> or <strong>Rejected</strong>, and any comment they leave appears here.
           </p>
         </div>
-        <Button variant="outline" onClick={() => void load()} className="h-9 gap-2 border-slate-200 text-xs">
+        <Button variant="outline" onClick={() => void load()} className="h-9 gap-2 border-[var(--alo-border)] text-xs">
           <RefreshCw className="size-3.5" /> Refresh status
         </Button>
       </div>
@@ -290,15 +290,15 @@ export default function FormBDocumentsSection({
           <p className="text-[11px] font-semibold uppercase text-red-700">Rejected</p>
           <p className="text-xl font-bold text-red-800">{summary.rejected}</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-[11px] font-semibold uppercase text-slate-600">Not uploaded</p>
-          <p className="text-xl font-bold text-slate-800">{summary.missing}</p>
+        <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+          <p className="text-[11px] font-semibold uppercase text-[var(--alo-body)]">Not uploaded</p>
+          <p className="text-xl font-bold text-[var(--alo-text)]">{summary.missing}</p>
         </div>
       </div>
 
       {REQUIRED_DOCUMENTS.map((group) => (
-        <Card key={group.section} className="rounded-xl border border-slate-200 bg-white p-4">
-          <h3 className="text-sm font-bold text-[#0F172A]">{group.sectionLabel}</h3>
+        <Card key={group.section} className="rounded-xl border border-[var(--alo-border)] bg-white p-4">
+          <h3 className="text-sm font-bold text-[var(--alo-text)]">{group.sectionLabel}</h3>
           <div className="mt-3 space-y-3">
             {group.documents.map((required) => {
               const document = latestByCategory.get(required.category);
@@ -306,24 +306,24 @@ export default function FormBDocumentsSection({
               const comment = document?.reviewerNote || document?.rejectionReason || '';
               const busy = uploading === required.category;
               return (
-                <div key={required.category} className="rounded-lg border border-slate-200 p-3">
+                <div key={required.category} className="rounded-lg border border-[var(--alo-border)] p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[#0F172A]">
-                        <FileText className="size-4 text-[#0057B8]" />
+                      <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[var(--alo-text)]">
+                        <FileText className="size-4 text-[var(--alo-brand)]" />
                         {required.label}
                         {required.conditional === 'visaRefusal' && (
-                          <span className="text-[11px] font-normal text-slate-500">(if you answered Yes to visa refusal)</span>
+                          <span className="text-[11px] font-normal text-[var(--alo-text-muted)]">(if you answered Yes to visa refusal)</span>
                         )}
                         {required.conditional === 'workExperience' && (
-                          <span className="text-[11px] font-normal text-slate-500">(if you recorded work experience)</span>
+                          <span className="text-[11px] font-normal text-[var(--alo-text-muted)]">(if you recorded work experience)</span>
                         )}
                       </p>
-                      {required.hint && <p className="mt-0.5 text-[11px] text-slate-500">{required.hint}</p>}
+                      {required.hint && <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">{required.hint}</p>}
                       {document && (
-                        <p className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                        <p className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-[var(--alo-text-muted)]">
                           <span className="truncate">{document.fileName}{document.fileSize ? ` · ${humanSize(document.fileSize)}` : ''}</span>
-                          <span className="rounded bg-slate-100 px-1.5 py-0.5">v{document.version}</span>
+                          <span className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5">v{document.version}</span>
                           {document.reviewedAt && <span>reviewed {new Date(document.reviewedAt).toLocaleDateString()}{document.reviewedBy ? ` by ${document.reviewedBy}` : ''}</span>}
                         </p>
                       )}
@@ -349,19 +349,19 @@ export default function FormBDocumentsSection({
                       }}
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,.webp,.gif"
-                      className="max-w-full text-xs text-slate-600"
+                      className="max-w-full text-xs text-[var(--alo-body)]"
                     />
                     <Button
                       type="button"
                       onClick={() => void upload(required.category)}
                       disabled={busy}
-                      className="h-9 gap-2 bg-[#0057B8] text-xs font-semibold text-white"
+                      className="h-9 gap-2 bg-[var(--alo-brand)] text-xs font-semibold text-white"
                     >
                       {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Upload className="size-3.5" />}
                       {document ? 'Upload new version' : 'Upload'}
                     </Button>
                     {document && (
-                      <a href={document.downloadUrl} className="text-xs font-semibold text-[#0057B8] underline" target="_blank" rel="noopener noreferrer">
+                      <a href={document.downloadUrl} className="text-xs font-semibold text-[var(--alo-brand)] underline" target="_blank" rel="noopener noreferrer">
                         Download current file
                       </a>
                     )}
@@ -376,7 +376,7 @@ export default function FormBDocumentsSection({
         </Card>
       ))}
 
-      <p className="flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
+      <p className="flex items-start gap-2 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-[11px] text-[var(--alo-body)]">
         <Info className="mt-0.5 size-3.5 shrink-0" />
         PDF, JPG, PNG, WEBP or GIF up to 20 MB. Files are stored privately — the download link is only valid for your own
         signed-in session, and your counselor sees the same version history. A newer upload never deletes an older

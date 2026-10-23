@@ -116,19 +116,19 @@ export default function MasterLanguagePrepLandingView() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans">
+    <div className="min-h-screen bg-white text-[var(--alo-text)] font-sans">
       
       {/* ============================================================ */}
       {/* 1. HERO SECTION */}
       {/* ============================================================ */}
-      <section className="bg-gradient-to-br from-[#0057B8] via-[#003F87] to-[#002d62] text-white pt-24 pb-20 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-[var(--alo-brand)] via-[var(--alo-brand-hover)] to-[var(--alo-brand-hover)] text-white pt-24 pb-20 relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             {/* LEFT HERO TEXT */}
             <div className="lg:col-span-7 space-y-6">
-              <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3.5 py-1.5 uppercase tracking-wider shadow-md">
+              <Badge className="bg-[var(--alo-cta)] text-black font-bold text-xs px-3.5 py-1.5 uppercase tracking-wider shadow-md">
                 ALO LANGUAGE PREPARATION CENTRE
               </Badge>
 
@@ -146,7 +146,7 @@ export default function MasterLanguagePrepLandingView() {
 
               {/* QUICK HERO BUTTONS */}
               <div className="flex flex-wrap gap-4 pt-2">
-                <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
+                <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
                     Book Free Counselling <ArrowRight className="h-4 w-4" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">
@@ -160,19 +160,19 @@ export default function MasterLanguagePrepLandingView() {
               {/* FLOATING BENEFIT BADGES */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-white/15 text-xs">
                 <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Target Score</p>
+                  <p className="text-blue-200 text-[11px] uppercase font-semibold">Target Score</p>
                   <p className="font-bold text-white text-sm">Band 6.5 - 7.5+</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Fast Results</p>
-                  <p className="font-bold text-[#FFB347] text-sm">48h - 5 Days</p>
+                  <p className="text-blue-200 text-[11px] uppercase font-semibold">Fast Results</p>
+                  <p className="font-bold text-[var(--alo-cta-accent)] text-sm">48h - 5 Days</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Mock Tests</p>
+                  <p className="text-blue-200 text-[11px] uppercase font-semibold">Mock Tests</p>
                   <p className="font-bold text-white text-sm">Exam Conditions</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl">
-                  <p className="text-blue-200 text-[10px] uppercase font-semibold">Expert Review</p>
+                  <p className="text-blue-200 text-[11px] uppercase font-semibold">Expert Review</p>
                   <p className="font-bold text-white text-sm">Certified Coaches</p>
                 </div>
               </div>
@@ -181,12 +181,12 @@ export default function MasterLanguagePrepLandingView() {
 
             {/* RIGHT HERO INTERACTIVE QUICK CARD */}
             <div className="lg:col-span-5" id="book-counseling">
-              <Card className="p-6 md:p-8 bg-white text-slate-900 shadow-2xl rounded-3xl border-0">
+              <Card className="p-6 md:p-8 bg-white text-[var(--alo-text)] shadow-2xl rounded-3xl border-0">
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-5 w-5 text-[#E8501A]" />
-                  <h3 className="text-xl font-bold text-[#0F172A]">Book Free Test Consultation</h3>
+                  <Sparkles className="h-5 w-5 text-[var(--alo-cta)]" />
+                  <h3 className="text-xl font-bold text-[var(--alo-text)]">Book Free Test Consultation</h3>
                 </div>
-                <p className="text-xs text-slate-600 mb-6">
+                <p className="text-xs text-[var(--alo-body)] mb-6">
                   Get a personalized test recommendation and score plan from ALO certified advisors.
                 </p>
 
@@ -201,7 +201,7 @@ export default function MasterLanguagePrepLandingView() {
                 ) : (
                   <form onSubmit={handleLeadSubmit} className="space-y-4 text-xs">
                     <div>
-                      <label className="font-semibold text-slate-700 block mb-1">Full Name</label>
+                      <label className="font-semibold text-[var(--alo-body)] block mb-1">Full Name</label>
                       <Input
                         placeholder="e.g. Arif Rahman"
                         value={leadForm.name}
@@ -212,7 +212,7 @@ export default function MasterLanguagePrepLandingView() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="font-semibold text-slate-700 block mb-1">Phone Number</label>
+                        <label className="font-semibold text-[var(--alo-body)] block mb-1">Phone Number</label>
                         <Input
                           placeholder="017XXXXXXXX"
                           value={leadForm.phone}
@@ -222,7 +222,7 @@ export default function MasterLanguagePrepLandingView() {
                         />
                       </div>
                       <div>
-                        <label className="font-semibold text-slate-700 block mb-1">Email Address</label>
+                        <label className="font-semibold text-[var(--alo-body)] block mb-1">Email Address</label>
                         <Input
                           placeholder="name@email.com"
                           type="email"
@@ -234,9 +234,9 @@ export default function MasterLanguagePrepLandingView() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="font-semibold text-slate-700 block mb-1">Preferred Test</label>
+                        <label className="font-semibold text-[var(--alo-body)] block mb-1">Preferred Test</label>
                         <select
-                          className="w-full h-11 border border-slate-200 rounded-xl px-3 bg-white text-slate-900"
+                          className="w-full h-11 border border-[var(--alo-border)] rounded-xl px-3 bg-white text-[var(--alo-text)]"
                           value={leadForm.test}
                           onChange={(e) => setLeadForm({ ...leadForm, test: e.target.value })}
                         >
@@ -249,7 +249,7 @@ export default function MasterLanguagePrepLandingView() {
                         </select>
                       </div>
                       <div>
-                        <label className="font-semibold text-slate-700 block mb-1">Target Score</label>
+                        <label className="font-semibold text-[var(--alo-body)] block mb-1">Target Score</label>
                         <Input
                           placeholder="e.g. Band 7.0 or PTE 65"
                           value={leadForm.targetScore}
@@ -262,7 +262,7 @@ export default function MasterLanguagePrepLandingView() {
                     <Button
                       type="submit"
                       disabled={submittingLead}
-                      className="w-full bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
+                      className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
                     >
                       {submittingLead ? 'Scheduling Session...' : 'Get Free Test Score Plan →'}
                     </Button>
@@ -279,29 +279,29 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 2. TEST DISCOVERY SECTION */}
       {/* ============================================================ */}
-      <section className="py-16 bg-[#F8FAFC] border-b border-slate-200" id="test-discovery">
+      <section className="py-16 bg-[var(--alo-page)] border-b border-[var(--alo-border)]" id="test-discovery">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-blue-100 text-[#0057B8] font-bold text-xs px-3 py-1 mb-3 uppercase">
+            <Badge className="bg-blue-100 text-[var(--alo-brand)] font-bold text-xs px-3 py-1 mb-3 uppercase">
               INTERACTIVE TEST FINDER
             </Badge>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--alo-text)] tracking-tight">
               Which English Test Is Right for You?
             </h2>
-            <p className="text-sm text-slate-600 mt-2">
+            <p className="text-sm text-[var(--alo-body)] mt-2">
               The right test depends on your destination, university entry criteria, visa pathway, timeline, and personal strengths.
             </p>
           </div>
 
-          <Card className="p-8 bg-white border border-slate-200 shadow-lg rounded-3xl max-w-4xl mx-auto">
+          <Card className="p-8 bg-white border border-[var(--alo-border)] shadow-lg rounded-3xl max-w-4xl mx-auto">
             <div className="grid sm:grid-cols-3 gap-6 mb-6 text-xs">
               <div>
-                <label className="font-bold text-slate-700 block mb-2">Target Study Destination</label>
+                <label className="font-bold text-[var(--alo-body)] block mb-2">Target Study Destination</label>
                 <select
                   value={targetDestination}
                   onChange={(e) => setTargetDestination(e.target.value)}
-                  className="w-full h-12 border border-slate-200 rounded-xl px-3 bg-slate-50 font-medium"
+                  className="w-full h-12 border border-[var(--alo-border)] rounded-xl px-3 bg-[var(--alo-page)] font-medium"
                 >
                   <option value="UK">United Kingdom (UK)</option>
                   <option value="Australia">Australia</option>
@@ -313,11 +313,11 @@ export default function MasterLanguagePrepLandingView() {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-2">Target Study Level</label>
+                <label className="font-bold text-[var(--alo-body)] block mb-2">Target Study Level</label>
                 <select
                   value={studyLevel}
                   onChange={(e) => setStudyLevel(e.target.value)}
-                  className="w-full h-12 border border-slate-200 rounded-xl px-3 bg-slate-50 font-medium"
+                  className="w-full h-12 border border-[var(--alo-border)] rounded-xl px-3 bg-[var(--alo-page)] font-medium"
                 >
                   <option value="Postgraduate">Master's / Postgraduate</option>
                   <option value="Undergraduate">Bachelor's / Undergraduate</option>
@@ -327,11 +327,11 @@ export default function MasterLanguagePrepLandingView() {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-2">Preferred Format</label>
+                <label className="font-bold text-[var(--alo-body)] block mb-2">Preferred Format</label>
                 <select
                   value={preferredFormat}
                   onChange={(e) => setPreferredFormat(e.target.value)}
-                  className="w-full h-12 border border-slate-200 rounded-xl px-3 bg-slate-50 font-medium"
+                  className="w-full h-12 border border-[var(--alo-border)] rounded-xl px-3 bg-[var(--alo-page)] font-medium"
                 >
                   <option value="Computer">Computer-delivered (Fast Results)</option>
                   <option value="Paper">Paper-based (Handwritten)</option>
@@ -342,22 +342,22 @@ export default function MasterLanguagePrepLandingView() {
 
             <Button
               onClick={handleRecommendTest}
-              className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] font-bold text-sm h-12 rounded-xl shadow-md"
+              className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold text-sm h-12 rounded-xl shadow-md"
             >
               Analyze & Recommend Optimal Test →
             </Button>
 
             {recommendedResult && (
               <div className="mt-6 p-5 bg-blue-50 border border-blue-200 rounded-2xl text-xs space-y-2">
-                <div className="flex items-center gap-2 text-[#0057B8] font-bold text-sm">
+                <div className="flex items-center gap-2 text-[var(--alo-brand)] font-bold text-sm">
                   <CheckCircle2 className="h-5 w-5" /> Recommendation Output:
                 </div>
-                <p className="text-slate-800 leading-relaxed font-medium">{recommendedResult}</p>
+                <p className="text-[var(--alo-text)] leading-relaxed font-medium">{recommendedResult}</p>
                 <div className="pt-2 flex gap-3">
-                  <Button asChild size="sm" className="bg-[#0057B8] text-white text-xs h-12"><a href="/language-prep/ielts">
+                  <Button asChild size="sm" className="bg-[var(--alo-brand)] text-white text-xs h-12"><a href="/language-prep/ielts">
                       Explore IELTS
                     </a></Button>
-                  <Button asChild size="sm" variant="outline" className="text-xs h-12 border-[#0057B8] text-[#0057B8]"><a href="/language-prep/pte-academic">
+                  <Button asChild size="sm" variant="outline" className="text-xs h-12 border-[var(--alo-brand)] text-[var(--alo-brand)]"><a href="/language-prep/pte-academic">
                       Explore PTE
                     </a></Button>
                 </div>
@@ -376,43 +376,43 @@ export default function MasterLanguagePrepLandingView() {
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-6 space-y-4">
-              <Badge className="bg-orange-100 text-[#E8501A] font-bold text-xs px-3 py-1 uppercase">
+              <Badge className="bg-orange-100 text-[var(--alo-cta)] font-bold text-xs px-3 py-1 uppercase">
                 ACADEMIC & IMMIGRATION READINESS
               </Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A]">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--alo-text)]">
                 Why English Language Proficiency Matters
               </h2>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-[var(--alo-body)] text-sm leading-relaxed">
                 English proficiency is an essential part of international university admission and, depending on the destination and study route, may also be required for visa issuance.
               </p>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-[var(--alo-body)] text-sm leading-relaxed">
                 ALO Education guides students through university prerequisites, course-specific benchmarks, destination visa compliance, and test selection to ensure you invest your preparation time strategically.
               </p>
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 italic">
+              <div className="p-4 bg-[var(--alo-page)] rounded-2xl border border-[var(--alo-border)] text-xs text-[var(--alo-body)] italic">
                 * Note: Requirements vary by country, immigration route, university, and specific course level. Always check official prerequisites.
               </div>
             </div>
 
             <div className="lg:col-span-6 grid sm:grid-cols-2 gap-4">
-              <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <Award className="h-8 w-8 text-[#0057B8] mb-3" />
-                <h4 className="font-bold text-sm text-[#0F172A] mb-1">Meet Admission Criteria</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">Fulfill direct unconditional entry thresholds without pre-sessional English costs.</p>
+              <Card className="p-5 border-[var(--alo-border)] bg-[var(--alo-page)] rounded-2xl">
+                <Award className="h-8 w-8 text-[var(--alo-brand)] mb-3" />
+                <h4 className="font-bold text-sm text-[var(--alo-text)] mb-1">Meet Admission Criteria</h4>
+                <p className="text-xs text-[var(--alo-body)] leading-relaxed">Fulfill direct unconditional entry thresholds without pre-sessional English costs.</p>
               </Card>
-              <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <ShieldCheck className="h-8 w-8 text-[#E8501A] mb-3" />
-                <h4 className="font-bold text-sm text-[#0F172A] mb-1">Strengthen Visa Files</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">Satisfy official immigration credibility checks for UK, Australia, Canada, and USA.</p>
+              <Card className="p-5 border-[var(--alo-border)] bg-[var(--alo-page)] rounded-2xl">
+                <ShieldCheck className="h-8 w-8 text-[var(--alo-cta)] mb-3" />
+                <h4 className="font-bold text-sm text-[var(--alo-text)] mb-1">Strengthen Visa Files</h4>
+                <p className="text-xs text-[var(--alo-body)] leading-relaxed">Satisfy official immigration credibility checks for UK, Australia, Canada, and USA.</p>
               </Card>
-              <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <GraduationCap className="h-8 w-8 text-[#0057B8] mb-3" />
-                <h4 className="font-bold text-sm text-[#0F172A] mb-1">Scholarship Eligibility</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">High test bands unlock university merit scholarships from £1,000 up to 50% tuition.</p>
+              <Card className="p-5 border-[var(--alo-border)] bg-[var(--alo-page)] rounded-2xl">
+                <GraduationCap className="h-8 w-8 text-[var(--alo-brand)] mb-3" />
+                <h4 className="font-bold text-sm text-[var(--alo-text)] mb-1">Scholarship Eligibility</h4>
+                <p className="text-xs text-[var(--alo-body)] leading-relaxed">High test bands unlock university merit scholarships from £1,000 up to 50% tuition.</p>
               </Card>
-              <Card className="p-5 border-slate-200 bg-[#F8FAFC] rounded-2xl">
-                <Laptop className="h-8 w-8 text-[#E8501A] mb-3" />
-                <h4 className="font-bold text-sm text-[#0F172A] mb-1">Academic Success</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">Excel in international lectures, research dissertations, and oral seminar debates.</p>
+              <Card className="p-5 border-[var(--alo-border)] bg-[var(--alo-page)] rounded-2xl">
+                <Laptop className="h-8 w-8 text-[var(--alo-cta)] mb-3" />
+                <h4 className="font-bold text-sm text-[var(--alo-text)] mb-1">Academic Success</h4>
+                <p className="text-xs text-[var(--alo-body)] leading-relaxed">Excel in international lectures, research dissertations, and oral seminar debates.</p>
               </Card>
             </div>
 
@@ -423,18 +423,18 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 4. ENGLISH TEST CARDS GRID (ALL 15 TESTS) */}
       {/* ============================================================ */}
-      <section className="py-16 bg-[#F8FAFC] border-t border-slate-200" id="test-cards">
+      <section className="py-16 bg-[var(--alo-page)] border-t border-[var(--alo-border)]" id="test-cards">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
             <div>
-              <Badge className="bg-blue-100 text-[#0057B8] font-bold text-xs px-3 py-1 mb-2 uppercase">
+              <Badge className="bg-blue-100 text-[var(--alo-brand)] font-bold text-xs px-3 py-1 mb-2 uppercase">
                 COMPLETE DIRECTORY
               </Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A]">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--alo-text)]">
                 Explore Verified English & Admission Tests
               </h2>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-[var(--alo-body)] mt-1">
                 Select any test below for complete module breakdowns, scoring systems, test fee guidelines, and preparation plans.
               </p>
             </div>
@@ -444,40 +444,40 @@ export default function MasterLanguagePrepLandingView() {
             {tests.map((t) => (
               <Card
                 key={t.id}
-                className="p-6 bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between rounded-3xl"
+                className="p-6 bg-white hover:shadow-xl transition-all border-[var(--alo-border)] hover:border-[var(--alo-brand)] flex flex-col justify-between rounded-3xl"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <Badge className="bg-blue-50 text-[#0057B8] font-bold text-[11px]">
+                    <Badge className="bg-blue-50 text-[var(--alo-brand)] font-bold text-[11px]">
                       {t.logoBadge}
                     </Badge>
-                    <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
+                    <span className="text-xs font-semibold text-[var(--alo-text-muted)]">{t.quickInfo.duration}</span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-[#0F172A] mb-1">{t.name}</h3>
-                  <p className="text-xs text-[#E8501A] font-semibold mb-3">{t.officialOwner}</p>
-                  <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">
+                  <h3 className="text-xl font-bold text-[var(--alo-text)] mb-1">{t.name}</h3>
+                  <p className="text-xs text-[var(--alo-cta)] font-semibold mb-3">{t.officialOwner}</p>
+                  <p className="text-xs text-[var(--alo-body)] mb-4 line-clamp-3 leading-relaxed">
                     {t.overview.whatIsIt}
                   </p>
 
                   <div className="space-y-1.5 mb-4 text-xs">
-                    <div className="flex justify-between text-slate-700">
-                      <span className="text-slate-500 font-medium">Exam Fee in BD:</span>
-                      <span className="font-bold text-slate-900">{t.quickInfo.cost}</span>
+                    <div className="flex justify-between text-[var(--alo-body)]">
+                      <span className="text-[var(--alo-text-muted)] font-medium">Exam Fee in BD:</span>
+                      <span className="font-bold text-[var(--alo-text)]">{t.quickInfo.cost}</span>
                     </div>
-                    <div className="flex justify-between text-slate-700">
-                      <span className="text-slate-500 font-medium">Result Timeline:</span>
+                    <div className="flex justify-between text-[var(--alo-body)]">
+                      <span className="text-[var(--alo-text-muted)] font-medium">Result Timeline:</span>
                       <span className="font-bold text-emerald-600">{t.quickInfo.resultTime}</span>
                     </div>
-                    <div className="flex justify-between text-slate-700">
-                      <span className="text-slate-500 font-medium">Target Score:</span>
-                      <span className="font-bold text-[#0057B8]">{t.expectedScore}</span>
+                    <div className="flex justify-between text-[var(--alo-body)]">
+                      <span className="text-[var(--alo-text-muted)] font-medium">Target Score:</span>
+                      <span className="font-bold text-[var(--alo-brand)]">{t.expectedScore}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex gap-2">
-                  <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl"><a href={`/language-prep/${t.slug}`} className="flex-1">
+                <div className="pt-4 border-t border-[var(--alo-border)] flex gap-2">
+                  <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold h-12 rounded-xl"><a href={`/language-prep/${t.slug}`} className="flex-1">
                       Explore Modules & Plan →
                     </a></Button>
                 </div>
@@ -491,20 +491,20 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 5. TEST COMPARISON MODULE */}
       {/* ============================================================ */}
-      <section className="py-16 bg-white border-t border-slate-200">
+      <section className="py-16 bg-white border-t border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-10">
-            <h2 className="text-3xl font-extrabold text-[#0F172A]">Compare English Proficiency Tests</h2>
-            <p className="text-xs text-slate-600 mt-2">
+            <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Compare English Proficiency Tests</h2>
+            <p className="text-xs text-[var(--alo-body)] mt-2">
               Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats.
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+          <div className="overflow-x-auto rounded-2xl border border-[var(--alo-border)] shadow-sm">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-100 text-slate-900">
+                <tr className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)]">
                   <th className="p-3.5 font-bold">Test Name</th>
                   <th className="p-3.5 font-bold">Duration</th>
                   <th className="p-3.5 font-bold">Result Time</th>
@@ -513,17 +513,17 @@ export default function MasterLanguagePrepLandingView() {
                   <th className="p-3.5 font-bold">Best For Destination</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[var(--alo-border)]">
                 {tests.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50">
-                    <td className="p-3.5 font-bold text-[#0057B8]">
+                  <tr key={t.id} className="hover:bg-[var(--alo-page)]">
+                    <td className="p-3.5 font-bold text-[var(--alo-brand)]">
                       <a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a>
                     </td>
-                    <td className="p-3.5 text-slate-700">{t.quickInfo.duration}</td>
+                    <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.duration}</td>
                     <td className="p-3.5 font-semibold text-emerald-600">{t.quickInfo.resultTime}</td>
-                    <td className="p-3.5 text-slate-700">{t.quickInfo.scoreScale}</td>
-                    <td className="p-3.5 text-slate-600">{t.quickInfo.format}</td>
-                    <td className="p-3.5 text-slate-700">{t.quickInfo.bestFor}</td>
+                    <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.scoreScale}</td>
+                    <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.format}</td>
+                    <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.bestFor}</td>
                   </tr>
                 ))}
               </tbody>
@@ -536,15 +536,15 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 6. 8-STEP PREPARATION ROADMAP */}
       {/* ============================================================ */}
-      <section className="py-16 bg-[#F8FAFC] border-t border-slate-200">
+      <section className="py-16 bg-[var(--alo-page)] border-t border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-[#E8501A] text-black font-bold text-xs px-3 py-1 mb-3 uppercase">
+            <Badge className="bg-[var(--alo-cta)] text-black font-bold text-xs px-3 py-1 mb-3 uppercase">
               STRUCTURED SUCCESS METHOD
             </Badge>
-            <h2 className="text-3xl font-extrabold text-[#0F172A]">8-Step English Preparation Roadmap</h2>
-            <p className="text-xs text-slate-600 mt-2">
+            <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">8-Step English Preparation Roadmap</h2>
+            <p className="text-xs text-[var(--alo-body)] mt-2">
               From baseline assessment to final test-day readiness with ALO Education coaches.
             </p>
           </div>
@@ -560,10 +560,10 @@ export default function MasterLanguagePrepLandingView() {
               { step: '07', title: 'Mentor Feedback', desc: 'Detailed essay evaluation and 1-on-1 speaking polish.' },
               { step: '08', title: 'Test Day Confidence', desc: 'Final score validation and university admission submission.' },
             ].map((s, idx) => (
-              <Card key={idx} className="p-5 bg-white border-slate-200 rounded-2xl relative">
+              <Card key={idx} className="p-5 bg-white border-[var(--alo-border)] rounded-2xl relative">
                 <span className="text-2xl font-black text-slate-200 absolute top-3 right-4">{s.step}</span>
-                <h4 className="font-bold text-sm text-[#0057B8] mb-1.5">{s.title}</h4>
-                <p className="text-slate-600 leading-relaxed">{s.desc}</p>
+                <h4 className="font-bold text-sm text-[var(--alo-brand)] mb-1.5">{s.title}</h4>
+                <p className="text-[var(--alo-body)] leading-relaxed">{s.desc}</p>
               </Card>
             ))}
           </div>
@@ -574,29 +574,29 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 7. FAQ ACCORDION SECTION */}
       {/* ============================================================ */}
-      <section className="py-16 bg-white border-t border-slate-200">
+      <section className="py-16 bg-white border-t border-[var(--alo-border)]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-extrabold text-[#0F172A]">Frequently Asked Questions</h2>
-            <p className="text-xs text-slate-600 mt-1">Common questions about English language tests for international students</p>
+            <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Frequently Asked Questions</h2>
+            <p className="text-xs text-[var(--alo-body)] mt-1">Common questions about English language tests for international students</p>
           </div>
 
           <div className="space-y-3">
             {FAQS.map((faq, idx) => (
               <div
                 key={idx}
-                className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/50 transition-colors"
+                className="border border-[var(--alo-border)] rounded-2xl overflow-hidden bg-[var(--alo-page)]/50 transition-colors"
               >
                 <button
                   onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
-                  className="w-full p-4 text-left font-bold text-sm text-[#0F172A] flex justify-between items-center"
+                  className="w-full p-4 text-left font-bold text-sm text-[var(--alo-text)] flex justify-between items-center"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={`h-4 w-4 text-[#0057B8] transition-transform ${openFaqIndex === idx ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 text-[var(--alo-brand)] transition-transform ${openFaqIndex === idx ? 'rotate-180' : ''}`} />
                 </button>
                 {openFaqIndex === idx && (
-                  <div className="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-white">
+                  <div className="p-4 pt-0 text-xs text-[var(--alo-body)] leading-relaxed border-t border-[var(--alo-border)] bg-white">
                     {faq.a}
                   </div>
                 )}
@@ -610,7 +610,7 @@ export default function MasterLanguagePrepLandingView() {
       {/* ============================================================ */}
       {/* 8. FINAL CTA BANNER */}
       {/* ============================================================ */}
-      <section className="py-16 bg-gradient-to-r from-[#0057B8] to-[#003F87] text-white">
+      <section className="py-16 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Not Sure Which English Test You Need?
@@ -619,7 +619,7 @@ export default function MasterLanguagePrepLandingView() {
             Tell us your target destination, university and study intake. Our senior counselors evaluate your background and provide the fastest, most cost-effective preparation pathway.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
+            <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
                 Book Free Test Counselling →
               </a></Button>
             <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">

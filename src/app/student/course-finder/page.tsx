@@ -18,7 +18,7 @@ import StudentCourseFinder from '@/components/student/StudentCourseFinder';
 
 export default function StudentCourseFinderPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 pt-20 pb-16 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 pt-20 pb-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <StudentCourseFinder />
       </div>

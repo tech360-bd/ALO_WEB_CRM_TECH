@@ -207,7 +207,7 @@ export function CourseCard({ title, university, level, duration, tuition, intake
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--alo-blue-soft)] text-xs font-bold text-[var(--alo-blue)]">
                 {matchScore}%
               </div>
-              <p className="mt-0.5 text-[10px] text-[var(--alo-muted)]">AI Match</p>
+              <p className="mt-0.5 text-[11px] text-[var(--alo-muted)]">AI Match</p>
             </div>
           )}
         </div>
@@ -366,7 +366,7 @@ export function LeadCard({ leadId, name, destination, course, intake, aiMatch, l
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs text-[var(--alo-muted)]">{leadId}</span>
               {isHot && (
-                <Badge variant="orange" className="gap-1 text-[10px]">
+                <Badge variant="orange" className="gap-1 text-[11px]">
                   <Icon name="Flame" className="size-2.5" />HOT
                 </Badge>
               )}
@@ -433,7 +433,7 @@ export function StudentCard({ name, studentId, avatar, destination, course, stag
             <p className="text-sm font-bold text-[var(--alo-text)] truncate">{name}</p>
             <p className="font-mono text-xs text-[var(--alo-muted)]">{studentId}</p>
           </div>
-          {stage && <Badge variant="blue" className="text-[10px]">{stage}</Badge>}
+          {stage && <Badge variant="blue" className="text-[11px]">{stage}</Badge>}
         </div>
         <div className="mt-3 space-y-1 text-xs">
           {destination && <div className="flex items-center gap-1.5"><Icon name="Globe" className="size-3 text-[var(--alo-muted)]" /><span className="text-[var(--alo-text-secondary)]">{destination}</span></div>}
@@ -522,7 +522,7 @@ export function ApplicationCard({ applicationId, university, course, stage, stat
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <span className="font-mono text-xs text-[var(--alo-muted)]">{applicationId}</span>
-          {status && <Badge variant={status === "APPROVED" ? "success" : status === "REJECTED" ? "danger" : "info"} className="text-[10px]">{status}</Badge>}
+          {status && <Badge variant={status === "APPROVED" ? "success" : status === "REJECTED" ? "danger" : "info"} className="text-[11px]">{status}</Badge>}
         </div>
         <p className="mt-1 text-sm font-bold text-[var(--alo-text)]">{university}</p>
         <p className="text-xs text-[var(--alo-muted)]">{course}</p>
@@ -570,7 +570,7 @@ export function AIRecommendCard({ title, recommendation, confidence, reasoning, 
           </div>
           {confidence !== undefined && (
             <div className="shrink-0 text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">Confidence</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">Confidence</p>
               <p className={cn("text-sm font-bold", confidence >= 80 ? "text-[var(--alo-success)]" : confidence >= 50 ? "text-[var(--alo-warning)]" : "text-[var(--alo-danger)]")}>{confidence}%</p>
             </div>
           )}

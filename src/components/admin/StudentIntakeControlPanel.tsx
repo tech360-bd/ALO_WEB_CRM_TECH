@@ -31,10 +31,10 @@ export default function StudentIntakeControlPanel() {
 
 
   return (
-    <Card className="bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
-      <CardHeader className="pb-3 border-b border-[#E2E8F0]">
+    <Card className="bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
+      <CardHeader className="pb-3 border-b border-[var(--alo-border)]">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-[#E8501A]" />Secure General Intake — Website / WhatsApp / Facebook</CardTitle>
+          <CardTitle className="text-sm font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-[var(--alo-cta)]" />Secure General Intake — Website / WhatsApp / Facebook</CardTitle>
           <Badge className={health?.officeHours ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}>
             {health?.officeHours ? 'During office hours' : 'Outside office hours'}
           </Badge>
@@ -43,24 +43,24 @@ export default function StudentIntakeControlPanel() {
       </CardHeader>
       <CardContent className="p-4 space-y-4 text-xs">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-[11px] text-gray-500">Channels</p><p className="font-bold flex gap-1 mt-1"><Globe className="w-3 h-3"/> website <Phone className="w-3 h-3"/> WhatsApp <MessageSquare className="w-3 h-3"/> Facebook</p><p className="text-[11px] text-gray-500 mt-1">Shared safety policy; sender IDs are pseudonymized</p></div>
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-[11px] text-gray-500">Language</p><p className="font-bold flex gap-1 mt-1"><Languages className="w-3 h-3"/> Bangla + English + Banglish auto</p><p className="text-[11px] text-gray-500 mt-1">+ no public voice transcription</p></div>
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-[11px] text-gray-500">Public inputs</p><p className="font-bold flex gap-1 mt-1"><FileText className="w-3 h-3"/> public uploads disabled <Mic className="w-3 h-3"/> voice disabled</p></div>
-          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3"><p className="text-[11px] text-gray-500">Office</p><p className="font-bold flex gap-1 mt-1"><Clock className="w-3 h-3"/> {officeCfg.window}</p><p className="text-[11px] text-gray-500 mt-1">{health?.memory || 'pseudonymized, time-limited memory when configured'}</p></div>
+          <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[11px] text-[var(--alo-text-muted)]">Channels</p><p className="font-bold flex gap-1 mt-1"><Globe className="w-3 h-3"/> website <Phone className="w-3 h-3"/> WhatsApp <MessageSquare className="w-3 h-3"/> Facebook</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Shared safety policy; sender IDs are pseudonymized</p></div>
+          <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[11px] text-[var(--alo-text-muted)]">Language</p><p className="font-bold flex gap-1 mt-1"><Languages className="w-3 h-3"/> Bangla + English + Banglish auto</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">+ no public voice transcription</p></div>
+          <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[11px] text-[var(--alo-text-muted)]">Public inputs</p><p className="font-bold flex gap-1 mt-1"><FileText className="w-3 h-3"/> public uploads disabled <Mic className="w-3 h-3"/> voice disabled</p></div>
+          <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[11px] text-[var(--alo-text-muted)]">Office</p><p className="font-bold flex gap-1 mt-1"><Clock className="w-3 h-3"/> {officeCfg.window}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{health?.memory || 'pseudonymized, time-limited memory when configured'}</p></div>
         </div>
-        <div className="bg-[#0F172A] text-white rounded-xl p-3">
+        <div className="bg-[var(--alo-text)] text-white rounded-xl p-3">
           <p className="font-bold text-[12px]">Contract</p>
-          <p className="text-[11px] text-gray-300 mt-1"><code className="bg-white/10 px-1 rounded">POST /api/ai/student-intake</code> {'{'} channel, senderId, text, mediaType, mediaInfo {'}'}</p>
-          <p className="text-[11px] text-gray-300">Webhooks: <code className="bg-white/10 px-1 rounded">POST /api/whatsapp/webhook</code> and <code className="bg-white/10 px-1 rounded">POST /api/facebook/webhook</code> (Messenger) → shared safe general-intake handler.</p>
-          <p className="text-[11px] text-gray-300 mt-1">This public chat does not accept files or verify voice transcripts. Use the authenticated Student Portal Documents area or an authorized staff workflow; never send private documents here.</p>
+          <p className="text-[11px] text-[var(--alo-placeholder)] mt-1"><code className="bg-white/10 px-1 rounded">POST /api/ai/student-intake</code> {'{'} channel, senderId, text, mediaType, mediaInfo {'}'}</p>
+          <p className="text-[11px] text-[var(--alo-placeholder)]">Webhooks: <code className="bg-white/10 px-1 rounded">POST /api/whatsapp/webhook</code> and <code className="bg-white/10 px-1 rounded">POST /api/facebook/webhook</code> (Messenger) → shared safe general-intake handler.</p>
+          <p className="text-[11px] text-[var(--alo-placeholder)] mt-1">This public chat does not accept files or verify voice transcripts. Use the authenticated Student Portal Documents area or an authorized staff workflow; never send private documents here.</p>
         </div>
         <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[11px] text-amber-900">
           Public intake replies are rule-based and are not a substitute for current university or government requirements. AI-generated staff replies remain drafts for human review; this panel does not send test or customer messages.
         </p>
         <div className="flex gap-2">
-          <Link href="/super-admin/dashboard"><Button variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">Super-Admin Dashboard</Button></Link>
-          <Link href="/admin/ai-command-center"><Button variant="outline" className="h-8 text-[11px] border-[#E2E8F0]">AI Command Center</Button></Link>
-          <Button asChild variant="outline" className="h-8 text-[11px] border-[#E2E8F0]"><a href="/admin/document-security">Document Security</a></Button>
+          <Link href="/super-admin/dashboard"><Button variant="outline" className="h-8 text-[11px] border-[var(--alo-border)]">Super-Admin Dashboard</Button></Link>
+          <Link href="/admin/ai-command-center"><Button variant="outline" className="h-8 text-[11px] border-[var(--alo-border)]">AI Command Center</Button></Link>
+          <Button asChild variant="outline" className="h-8 text-[11px] border-[var(--alo-border)]"><a href="/admin/document-security">Document Security</a></Button>
         </div>
       </CardContent>
     </Card>

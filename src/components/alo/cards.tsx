@@ -77,7 +77,7 @@ export function ApprovalCard({
           <dl className="mt-3 grid grid-cols-2 gap-2 rounded-lg bg-[var(--alo-surface-muted)] p-3">
             {metadata.map((m, i) => (
               <div key={i}>
-                <dt className="text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">{m.label}</dt>
+                <dt className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">{m.label}</dt>
                 <dd className="text-sm font-medium text-[var(--alo-text)]">{m.value}</dd>
               </div>
             ))}
@@ -139,7 +139,7 @@ export function AISuggestionCard({
           </div>
           {confidence !== undefined && (
             <div className="shrink-0 text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">Confidence</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">Confidence</p>
               <p className={cn(
                 "text-sm font-bold",
                 confidence >= 80 ? "text-[var(--alo-success-strong)]" : confidence >= 50 ? "text-[var(--alo-warning-strong)]" : "text-[var(--alo-danger-strong)]"
@@ -365,7 +365,7 @@ export function DocumentCard({
             </button>
           )}
         </div>
-        <Badge variant="neutral" className="absolute left-2 top-2 bg-white/90 font-mono text-[10px]">{ext}</Badge>
+        <Badge variant="neutral" className="absolute left-2 top-2 bg-white/90 font-mono text-[11px]">{ext}</Badge>
       </div>
       <CardContent className="p-3">
         <div className="flex items-start justify-between gap-2">
@@ -383,7 +383,7 @@ export function DocumentCard({
           <div className="mt-2 flex items-center gap-1.5">
             <Avatar className="size-5">
               <AvatarImage src={uploadedBy.avatar} />
-              <AvatarFallback className="text-[10px]">{uploadedBy.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="text-[11px]">{uploadedBy.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-xs text-[var(--alo-muted)]">{uploadedBy.name}</span>
           </div>
@@ -477,7 +477,7 @@ export function UniversityCard({
         {tags && tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {tags.slice(0, 3).map((t, i) => (
-              <Badge key={i} variant="neutral" className="text-[10px]">{t}</Badge>
+              <Badge key={i} variant="neutral" className="text-[11px]">{t}</Badge>
             ))}
           </div>
         )}
@@ -559,7 +559,7 @@ export function CourseCard({
         {tags && tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {tags.slice(0, 3).map((t, i) => (
-              <Badge key={i} variant="neutral" className="text-[10px]">{t}</Badge>
+              <Badge key={i} variant="neutral" className="text-[11px]">{t}</Badge>
             ))}
           </div>
         )}
@@ -650,7 +650,7 @@ export function ScholarshipCard({
         {countries && countries.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-1">
             {countries.slice(0, 4).map((c, i) => (
-              <Badge key={i} variant="neutral" className="text-[10px]">{c}</Badge>
+              <Badge key={i} variant="neutral" className="text-[11px]">{c}</Badge>
             ))}
           </div>
         )}
@@ -658,7 +658,7 @@ export function ScholarshipCard({
         {tags && tags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             {tags.slice(0, 3).map((t, i) => (
-              <Badge key={i} variant="blue" className="text-[10px]">{t}</Badge>
+              <Badge key={i} variant="blue" className="text-[11px]">{t}</Badge>
             ))}
           </div>
         )}
@@ -911,7 +911,7 @@ export function ReviewCard({
             </div>
           </div>
           {src && (
-            <Badge variant="neutral" className="gap-1 text-[10px]">
+            <Badge variant="neutral" className="gap-1 text-[11px]">
               <Icon name={src.icon} className="size-3" />
               {src.label}
             </Badge>
@@ -988,8 +988,8 @@ export function AuditCard({
               <span className="text-sm font-semibold text-[var(--alo-text)]">{actor.name}</span>
               {actor.role && <span className="text-xs text-[var(--alo-muted)]">({actor.role})</span>}
               <span className="text-sm text-[var(--alo-text-secondary)]">{action}</span>
-              {entity && <Badge variant="neutral" className="text-[10px]">{entity}{entityId ? `#${entityId.slice(-6)}` : ""}</Badge>}
-              <Badge variant={sev.variant} className="gap-0.5 text-[10px]">
+              {entity && <Badge variant="neutral" className="text-[11px]">{entity}{entityId ? `#${entityId.slice(-6)}` : ""}</Badge>}
+              <Badge variant={sev.variant} className="gap-0.5 text-[11px]">
                 <Icon name={sev.icon} className="size-2.5" />
                 {severity}
               </Badge>

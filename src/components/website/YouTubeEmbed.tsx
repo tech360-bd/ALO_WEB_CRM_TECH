@@ -134,7 +134,7 @@ export default function YouTubeEmbed({
   const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?${srcParams.toString()}`;
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-slate-200 bg-black ${className}`}>
+    <div className={`overflow-hidden rounded-xl border border-[var(--alo-border)] bg-black ${className}`}>
       <div className="relative w-full" style={{ paddingBottom: ASPECT_PADDING[aspect] }}>
         {activated ? (
           <iframe
@@ -170,7 +170,7 @@ export default function YouTubeEmbed({
               className="absolute inset-0 size-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
             />
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex size-16 items-center justify-center rounded-full bg-[#E8501A] shadow-lg transition-transform group-hover:scale-110">
+              <span className="flex size-16 items-center justify-center rounded-full bg-[var(--alo-cta)] shadow-lg transition-transform group-hover:scale-110">
                 <svg viewBox="0 0 24 24" className="ml-1 size-7 fill-white" aria-hidden="true">
                   <path d="M8 5v14l11-7z" />
                 </svg>
@@ -221,15 +221,15 @@ export function YouTubeVideoSection({
 
   return (
     <section className={className} aria-label={heading}>
-      <h2 className="text-2xl font-bold text-slate-900">{heading}</h2>
-      {subheading ? <p className="mt-1 text-sm text-slate-600">{subheading}</p> : null}
+      <h2 className="text-2xl font-bold text-[var(--alo-text)]">{heading}</h2>
+      {subheading ? <p className="mt-1 text-sm text-[var(--alo-body)]">{subheading}</p> : null}
       <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((video) => (
           <figure key={video.videoId} className="space-y-2">
             <YouTubeEmbed videoId={video.videoId} title={video.title} />
             <figcaption className="space-y-1">
-              <p className="text-sm font-semibold text-slate-900">{video.title}</p>
-              {video.description ? <p className="text-xs text-slate-600">{video.description}</p> : null}
+              <p className="text-sm font-semibold text-[var(--alo-text)]">{video.title}</p>
+              {video.description ? <p className="text-xs text-[var(--alo-body)]">{video.description}</p> : null}
             </figcaption>
           </figure>
         ))}

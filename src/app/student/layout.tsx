@@ -126,12 +126,12 @@ export default function StudentPortalLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--alo-text)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center animate-pulse">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] flex items-center justify-center animate-pulse">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <p className="text-gray-400 text-sm">Loading your portal...</p>
+          <p className="text-[var(--alo-text-muted)] text-sm">Loading your portal...</p>
         </div>
       </div>
     );
@@ -139,7 +139,7 @@ export default function StudentPortalLayout({
 
   return (
     <StudentAuthContext.Provider value={{ student, token, loading, logout }}>
-      <div className="min-h-screen bg-[#0a0f1e] flex">
+      <div className="min-h-screen bg-[var(--alo-text)] flex">
         {/* Sidebar Overlay (mobile) */}
         {sidebarOpen && (
           <div
@@ -150,28 +150,28 @@ export default function StudentPortalLayout({
 
         {/* Sidebar */}
         <aside className={`
-          fixed left-0 top-0 h-full w-64 bg-[#0d1526] border-r border-white/5 z-40 transform transition-transform duration-300
+          fixed left-0 top-0 h-full w-64 bg-[var(--alo-text)] border-r border-white/5 z-40 transform transition-transform duration-300
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:static lg:block
         `}>
           {/* Logo */}
           <div className="p-6 border-b border-white/5">
             <Link href="/student/dashboard" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
                 <GraduationCap className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="text-white font-bold text-sm">Student Portal</p>
-                <p className="text-[#0057B8] text-xs font-medium">ALO Education</p>
+                <p className="text-[var(--alo-brand)] text-xs font-medium">ALO Education</p>
               </div>
             </Link>
           </div>
 
           {/* Student ID Card */}
           {student && (
-            <div className="p-4 mx-3 mt-4 bg-gradient-to-br from-[#0057B8]/20 to-[#E8501A]/10 rounded-xl border border-[#0057B8]/30">
+            <div className="p-4 mx-3 mt-4 bg-gradient-to-br from-[var(--alo-brand)]/20 to-[var(--alo-cta)]/10 rounded-xl border border-[var(--alo-brand)]/30">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">{student.name.charAt(0).toUpperCase()}</span>
                 </div>
                 <div className="min-w-0">
@@ -181,13 +181,13 @@ export default function StudentPortalLayout({
               </div>
               {student.profileComplete < 100 && (
                 <div className="mt-3">
-                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                  <div className="flex justify-between text-xs text-[var(--alo-text-muted)] mb-1">
                     <span>Profile Complete</span>
                     <span>{student.profileComplete}%</span>
                   </div>
                   <div className="h-1.5 bg-white/10 rounded-full">
                     <div
-                      className="h-full bg-gradient-to-r from-[#0057B8] to-[#E8501A] rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-cta)] rounded-full transition-all"
                       style={{ width: `${student.profileComplete}%` }}
                     />
                   </div>
@@ -209,15 +209,15 @@ export default function StudentPortalLayout({
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group
                     ${isActive
-                      ? 'bg-[#0057B8] text-white shadow-lg shadow-[#0057B8]/20'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-[var(--alo-brand)] text-white shadow-lg shadow-[#0057B8]/20'
+                      : 'text-[var(--alo-text-muted)] hover:text-white hover:bg-white/5'
                     }
                   `}
                 >
-                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`} />
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-[var(--alo-text-muted)] group-hover:text-[var(--alo-placeholder)]'}`} />
                   <span>{item.label}</span>
                   {item.href === '/student/messages' && unreadCount > 0 && (
-                    <span className="ml-auto bg-[#E8501A] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="ml-auto bg-[var(--alo-cta)] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
@@ -231,7 +231,7 @@ export default function StudentPortalLayout({
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/5">
             <button
               onClick={logout}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[var(--alo-text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-all"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>
@@ -242,29 +242,29 @@ export default function StudentPortalLayout({
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen lg:min-w-0">
           {/* Top Header */}
-          <header className="sticky top-0 z-20 bg-[#0d1526]/90 backdrop-blur border-b border-white/5 px-4 py-3 flex items-center justify-between">
+          <header className="sticky top-0 z-20 bg-[var(--alo-text)]/90 backdrop-blur border-b border-white/5 px-4 py-3 flex items-center justify-between">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5"
+              className="lg:hidden p-2 rounded-lg text-[var(--alo-text-muted)] hover:text-white hover:bg-white/5"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
             <div className="flex items-center gap-2 lg:ml-auto">
-              <Link href="/student/messages" aria-label={unreadCount > 0 ? `Messages, ${unreadCount} unread` : 'Messages'} className="relative p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+              <Link href="/student/messages" aria-label={unreadCount > 0 ? `Messages, ${unreadCount} unread` : 'Messages'} className="relative p-2 rounded-lg text-[var(--alo-text-muted)] hover:text-white hover:bg-white/5 transition-all">
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#E8501A] rounded-full" />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-[var(--alo-cta)] rounded-full" />
                 )}
               </Link>
               {student && (
                 <div className="flex items-center gap-2 pl-2 border-l border-white/10">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003d82] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] flex items-center justify-center">
                     <span className="text-white text-sm font-bold">{student.name.charAt(0).toUpperCase()}</span>
                   </div>
                   <div className="hidden sm:block">
                     <p className="text-white text-sm font-medium leading-none">{student.name}</p>
-                    <p className="text-gray-500 text-xs mt-0.5">{student.studentId}</p>
+                    <p className="text-[var(--alo-text-muted)] text-xs mt-0.5">{student.studentId}</p>
                   </div>
                 </div>
               )}

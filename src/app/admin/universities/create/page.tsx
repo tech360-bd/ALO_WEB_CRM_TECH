@@ -80,27 +80,27 @@ export default function AdminCreateUniversityPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 pb-16 pt-20 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[var(--alo-page)] px-4 pb-16 pt-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
-        <header className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <header className="rounded-3xl border border-[var(--alo-border)] bg-white p-6 shadow-sm sm:p-8">
           <Badge className="mb-3 border-blue-200 bg-blue-50 text-blue-800">University research workflow</Badge>
           <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Add a university</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--alo-body)]">
             Save a sourced research draft for review. The server generates its university ID; this form never publishes or marks facts verified.
           </p>
           <ol className="mt-6 grid gap-2 sm:grid-cols-3" aria-label="University creation steps">
             {STEPS.map((step, index) => (
-              <li key={step} aria-current={activeStep === index ? 'step' : undefined} className={`rounded-xl border px-3 py-2 text-sm ${activeStep === index ? 'border-blue-300 bg-blue-50 font-semibold text-blue-900' : index < activeStep ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-slate-50 text-slate-500'}`}>
+              <li key={step} aria-current={activeStep === index ? 'step' : undefined} className={`rounded-xl border px-3 py-2 text-sm ${activeStep === index ? 'border-blue-300 bg-blue-50 font-semibold text-blue-900' : index < activeStep ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}`}>
                 <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-white text-xs font-bold">{index + 1}</span>{step}
               </li>
             ))}
           </ol>
         </header>
 
-        <Card className="rounded-2xl border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <Card className="rounded-2xl border-[var(--alo-border)] bg-white p-5 shadow-sm sm:p-7">
           {activeStep === 0 && (
             <section className="space-y-5" aria-labelledby="details-heading">
-              <div><h2 id="details-heading" className="text-lg font-semibold text-slate-900">University details</h2><p className="mt-1 text-sm text-slate-500">Provide the entity name and location used for deduplication and the public-page slug.</p></div>
+              <div><h2 id="details-heading" className="text-lg font-semibold text-[var(--alo-text)]">University details</h2><p className="mt-1 text-sm text-[var(--alo-text-muted)]">Provide the entity name and location used for deduplication and the public-page slug.</p></div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2"><Label htmlFor="university-name">University name <span className="text-red-600">*</span></Label><Input id="university-name" autoComplete="organization" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="University of Example" maxLength={180} required /></div>
                 <div className="space-y-2"><Label htmlFor="university-country">Country <span className="text-red-600">*</span></Label><Input id="university-country" autoComplete="country-name" value={form.country} onChange={(event) => update('country', event.target.value)} placeholder="Canada" maxLength={120} required /></div>
@@ -112,23 +112,23 @@ export default function AdminCreateUniversityPage() {
 
           {activeStep === 1 && (
             <section className="space-y-5" aria-labelledby="sources-heading">
-              <div><h2 id="sources-heading" className="text-lg font-semibold text-slate-900">Sources and facts</h2><p className="mt-1 text-sm text-slate-500">Facts remain research-required until an authorized reviewer checks the source.</p></div>
-              <div className="space-y-2"><Label htmlFor="official-source">Official or authoritative source URL</Label><Input id="official-source" type="url" inputMode="url" value={form.sourceUrl} onChange={(event) => update('sourceUrl', event.target.value)} placeholder="https://www.example.edu/admissions" maxLength={500} /><p className="text-xs text-slate-500">Only HTTPS links are accepted. Do not enter a fact unless its source can be traced.</p></div>
-              <div className="space-y-2"><Label htmlFor="university-ranking">Ranking (optional)</Label><Input id="university-ranking" type="number" min="0" step="1" value={form.ranking} onChange={(event) => update('ranking', event.target.value)} placeholder="Leave blank if unknown" /><p className="text-xs text-slate-500">A ranking without a source will still be stored as an unverified draft value.</p></div>
-              <div className="space-y-2"><Label htmlFor="university-overview">Research notes / overview</Label><Textarea id="university-overview" value={form.overview} onChange={(event) => update('overview', event.target.value)} placeholder="Add concise notes and cite the source in the URL above." maxLength={5000} rows={6} /><p className="text-right text-xs text-slate-400">{form.overview.length}/5,000</p></div>
+              <div><h2 id="sources-heading" className="text-lg font-semibold text-[var(--alo-text)]">Sources and facts</h2><p className="mt-1 text-sm text-[var(--alo-text-muted)]">Facts remain research-required until an authorized reviewer checks the source.</p></div>
+              <div className="space-y-2"><Label htmlFor="official-source">Official or authoritative source URL</Label><Input id="official-source" type="url" inputMode="url" value={form.sourceUrl} onChange={(event) => update('sourceUrl', event.target.value)} placeholder="https://www.example.edu/admissions" maxLength={500} /><p className="text-xs text-[var(--alo-text-muted)]">Only HTTPS links are accepted. Do not enter a fact unless its source can be traced.</p></div>
+              <div className="space-y-2"><Label htmlFor="university-ranking">Ranking (optional)</Label><Input id="university-ranking" type="number" min="0" step="1" value={form.ranking} onChange={(event) => update('ranking', event.target.value)} placeholder="Leave blank if unknown" /><p className="text-xs text-[var(--alo-text-muted)]">A ranking without a source will still be stored as an unverified draft value.</p></div>
+              <div className="space-y-2"><Label htmlFor="university-overview">Research notes / overview</Label><Textarea id="university-overview" value={form.overview} onChange={(event) => update('overview', event.target.value)} placeholder="Add concise notes and cite the source in the URL above." maxLength={5000} rows={6} /><p className="text-right text-xs text-[var(--alo-text-muted)]">{form.overview.length}/5,000</p></div>
             </section>
           )}
 
           {activeStep === 2 && (
             <section className="space-y-5" aria-labelledby="review-heading">
-              <div><h2 id="review-heading" className="text-lg font-semibold text-slate-900">Review before saving</h2><p className="mt-1 text-sm text-slate-500">Saving creates an inactive research record only. Verification and publication require separate approval workflows.</p></div>
-              <dl className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2">
-                <div><dt className="text-xs font-medium uppercase tracking-wide text-slate-500">University</dt><dd className="mt-1 font-medium text-slate-900">{form.name || '—'}</dd></div>
-                <div><dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Country / city</dt><dd className="mt-1 text-slate-900">{[form.country, form.city].filter(Boolean).join(' · ') || '—'}</dd></div>
-                <div className="sm:col-span-2"><dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Official website</dt><dd className="mt-1 break-all text-slate-900">{form.website || 'Not provided'}</dd></div>
-                <div className="sm:col-span-2"><dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Source</dt><dd className="mt-1 break-all text-slate-900">{form.sourceUrl || 'Not provided — any facts must remain unverified'}</dd></div>
-                <div><dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Ranking</dt><dd className="mt-1 text-slate-900">{form.ranking || 'Unknown'}</dd></div>
-                <div><dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Initial status</dt><dd className="mt-1 text-slate-900">RESEARCH_REQUIRED · draft · inactive</dd></div>
+              <div><h2 id="review-heading" className="text-lg font-semibold text-[var(--alo-text)]">Review before saving</h2><p className="mt-1 text-sm text-[var(--alo-text-muted)]">Saving creates an inactive research record only. Verification and publication require separate approval workflows.</p></div>
+              <dl className="grid gap-3 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-4 sm:grid-cols-2">
+                <div><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">University</dt><dd className="mt-1 font-medium text-[var(--alo-text)]">{form.name || '—'}</dd></div>
+                <div><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">Country / city</dt><dd className="mt-1 text-[var(--alo-text)]">{[form.country, form.city].filter(Boolean).join(' · ') || '—'}</dd></div>
+                <div className="sm:col-span-2"><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">Official website</dt><dd className="mt-1 break-all text-[var(--alo-text)]">{form.website || 'Not provided'}</dd></div>
+                <div className="sm:col-span-2"><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">Source</dt><dd className="mt-1 break-all text-[var(--alo-text)]">{form.sourceUrl || 'Not provided — any facts must remain unverified'}</dd></div>
+                <div><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">Ranking</dt><dd className="mt-1 text-[var(--alo-text)]">{form.ranking || 'Unknown'}</dd></div>
+                <div><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">Initial status</dt><dd className="mt-1 text-[var(--alo-text)]">RESEARCH_REQUIRED · draft · inactive</dd></div>
               </dl>
               {result?.success && result.university && (
                 <div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950">
@@ -149,8 +149,8 @@ export default function AdminCreateUniversityPage() {
 
           {formError && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{formError}</p>}
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
-            <Link href="/admin/universities" className="text-sm font-medium text-slate-600 underline-offset-4 hover:text-slate-900 hover:underline">Back to universities</Link>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--alo-border)] pt-5">
+            <Link href="/admin/universities" className="text-sm font-medium text-[var(--alo-body)] underline-offset-4 hover:text-[var(--alo-text)] hover:underline">Back to universities</Link>
             <div className="flex gap-2">
               {result?.success ? (
                 <Button type="button" variant="outline" onClick={resetForm}>Create another draft</Button>

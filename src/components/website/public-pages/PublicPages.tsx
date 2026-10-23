@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,6 +25,21 @@ import { ALO_CONTACT } from '@/lib/alo-site-info';
 // ============================================================
 // SHARED PUBLIC SHELL
 // ============================================================
+const HERO_ACCENTS: Record<string, { dot: string; text: string; ring: string }> = {
+  '#0057B8': { dot: 'bg-[var(--alo-brand)]', text: 'text-[var(--alo-brand)]', ring: 'ring-[var(--alo-brand-border)]' },
+  '#E8501A': { dot: 'bg-[var(--alo-cta)]', text: 'text-[var(--alo-cta)]', ring: 'ring-[var(--alo-cta)]/30' },
+};
+
+/**
+ * Shared inner-page shell — Master §08 Variant E.
+ *
+ * Every public sub-page (course finder, destinations, universities,
+ * scholarships, services, about, team, FAQs, contact, legal, resources…)
+ * renders through this one component, so the inner-page hero is defined once:
+ * a pale-blue band, a back link, a 11px uppercase eyebrow with a status dot,
+ * a 30–42px Montserrat H1 and a 15–16px body deck capped at 62ch. No dark
+ * panel, no photograph overlay, no per-page hero copy invented here.
+ */
 function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }: {
   title: string;
   subtitle?: string;
@@ -33,33 +48,43 @@ function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }
   heroColor?: string;
 }) {
   const setView = usePortalStore((s) => s.setView);
+  const accent = HERO_ACCENTS[heroColor] ?? HERO_ACCENTS['#0057B8'];
+  const reduceMotion = useReducedMotion();
   return (
-    <div className="min-h-screen bg-white">
-      <main className="pt-8 pb-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-card">
+      <section className="border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)]">
+        <div className="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pb-14 lg:pt-8">
           <button
             onClick={() => setView('website')}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] mb-6 transition-colors"
+            className="mb-7 inline-flex items-center gap-1.5 rounded-[10px] text-[13px] font-semibold text-[var(--alo-text-muted)] transition-colors hover:text-[var(--alo-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to Home
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to home
           </button>
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-10"
+            transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.22, 0.61, 0.36, 1] }}
+            className="max-w-3xl"
           >
             {badge && (
-              <span
-                className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold mb-4"
-                style={{ backgroundColor: `${heroColor}15`, color: heroColor }}
-              >
-                {badge}
+              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-secondary)] ring-1 ring-inset ring-[var(--alo-border)]">
+                <span className={`size-1.5 rounded-full ${accent.dot}`} aria-hidden="true" />
+                <span className={accent.text}>{badge}</span>
               </span>
             )}
-            <h1 className="text-4xl md:text-5xl font-bold text-[#0F172A] mb-4">{title}</h1>
-            {subtitle && <p className="text-lg text-slate-600 max-w-3xl">{subtitle}</p>}
+            <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px]">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="mt-4 max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">
+                {subtitle}
+              </p>
+            )}
           </motion.div>
+        </div>
+      </section>
+      <main className="pb-20 pt-8 lg:pt-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {children}
         </div>
       </main>
@@ -68,7 +93,7 @@ function PublicShell({ title, subtitle, badge, children, heroColor = '#0057B8' }
 }
 
 // ============================================================
-// PUBLIC COURSE FINDER — Uses /api/course-finder (real DB)
+// PUBLIC COURSE FINDER — reads /api/course-finder
 // ============================================================
 export function PublicCourseFinderPage() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -115,12 +140,12 @@ export function PublicCourseFinderPage() {
     >
       <div className="grid lg:grid-cols-4 gap-6">
         <Card className="p-5 lg:col-span-1 h-fit">
-          <h3 className="font-semibold text-[#0F172A] mb-4 flex items-center gap-2">
-            <Search className="h-4 w-4 text-[#0057B8]" /> Filters
+          <h3 className="font-semibold text-[var(--alo-text)] mb-4 flex items-center gap-2">
+            <Search className="h-4 w-4 text-[var(--alo-brand)]" /> Filters
           </h3>
           <div className="space-y-4">
             <div>
-              <Label className="text-xs font-medium text-slate-600 mb-1.5 block">Search</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Search</Label>
               <Input
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
@@ -129,7 +154,7 @@ export function PublicCourseFinderPage() {
               />
             </div>
             <div>
-              <Label className="text-xs font-medium text-slate-600 mb-1.5 block">Country</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Country</Label>
               <Select value={filters.country} onValueChange={(v) => setFilters({ ...filters, country: v === 'all' ? '' : v })}>
                 <SelectTrigger className="h-10"><SelectValue placeholder="All countries" /></SelectTrigger>
                 <SelectContent>
@@ -141,7 +166,7 @@ export function PublicCourseFinderPage() {
               </Select>
             </div>
             <div>
-              <Label className="text-xs font-medium text-slate-600 mb-1.5 block">Study Level</Label>
+              <Label className="text-xs font-medium text-[var(--alo-body)] mb-1.5 block">Study Level</Label>
               <Select value={filters.level} onValueChange={(v) => setFilters({ ...filters, level: v === 'all' ? '' : v })}>
                 <SelectTrigger className="h-10"><SelectValue placeholder="All levels" /></SelectTrigger>
                 <SelectContent>
@@ -157,24 +182,24 @@ export function PublicCourseFinderPage() {
 
         <div className="lg:col-span-3">
           {loading ? (
-            <div className="text-center py-20 text-slate-500">Loading courses...</div>
+            <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading courses...</div>
           ) : error ? (
             <div className="text-center py-20" role="alert">
               <Search className="h-12 w-12 mx-auto mb-3 text-red-300" />
-              <p className="text-slate-700 font-medium mb-1">Something went wrong</p>
-              <p className="text-sm text-slate-500 mb-4">{error}</p>
+              <p className="text-[var(--alo-body)] font-medium mb-1">Something went wrong</p>
+              <p className="text-sm text-[var(--alo-text-muted)] mb-4">{error}</p>
               <Button variant="outline" size="sm" onClick={() => setFilters({ ...filters })}>
                 Try again
               </Button>
             </div>
           ) : courses.length === 0 ? (
-            <div className="text-center py-20 text-slate-500">
-              <Search className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+            <div className="text-center py-20 text-[var(--alo-text-muted)]">
+              <Search className="h-12 w-12 mx-auto mb-3 text-[var(--alo-placeholder)]" />
               No courses found. Try adjusting your filters.
             </div>
           ) : (
             <>
-              <p className="text-sm text-slate-500 mb-4">{courses.length} courses found</p>
+              <p className="text-sm text-[var(--alo-text-muted)] mb-4">{courses.length} courses found</p>
               <div className="grid sm:grid-cols-2 gap-4">
                 {courses.map((c: any, i) => (
                   <motion.div
@@ -185,24 +210,24 @@ export function PublicCourseFinderPage() {
                   >
                     <Card className="p-5 hover:shadow-md transition-shadow h-full">
                       <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary" className="bg-blue-50 text-[#0057B8]">
+                        <Badge variant="secondary" className="bg-blue-50 text-[var(--alo-brand)]">
                           {c.studyLevel || c.programLevel || c.level || 'Course'}
                         </Badge>
                         {(c.yearlyTuition || c.tuitionFee) > 0 && (
-                          <span className="text-xs font-semibold text-slate-700">
+                          <span className="text-xs font-semibold text-[var(--alo-body)]">
                             {currencySymbol(c.tuitionCurrency || c.currency)}
                             {Math.round((c.yearlyTuition || c.tuitionFee) / 1000)}k/yr
                           </span>
                         )}
                       </div>
-                      <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-2">
+                      <h3 className="font-semibold text-[var(--alo-text)] mb-1 line-clamp-2">
                         {c.courseTitle || c.name || c.title}
                       </h3>
-                      <p className="text-sm text-slate-600 mb-3 flex items-center gap-1">
+                      <p className="text-sm text-[var(--alo-body)] mb-3 flex items-center gap-1">
                         <Building2 className="h-3.5 w-3.5" />
                         {c.universityName || c.university || 'University'}
                       </p>
-                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                      <div className="flex items-center gap-3 text-xs text-[var(--alo-text-muted)]">
                         <span className="flex items-center gap-1">
                           <MapPin className="h-3 w-3" /> {c.country || '—'}
                         </span>
@@ -247,14 +272,14 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {all.map((country) => (
             <Card key={country.slug} className="p-6 hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-bold text-[#0F172A] mb-1">{country.name}</h3>
-              <p className="text-sm text-slate-600 mb-3 line-clamp-3">{country.whyStudySummary}</p>
-              <p className="text-xs text-slate-500 mb-3">
+              <h3 className="text-xl font-bold text-[var(--alo-text)] mb-1">{country.name}</h3>
+              <p className="text-sm text-[var(--alo-body)] mb-3 line-clamp-3">{country.whyStudySummary}</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mb-3">
                 {country.lastVerifiedAt ? `Verified ${country.lastVerifiedAt}` : 'Verification date not recorded'}
               </p>
               <a
                 href={`/destinations/${country.slug}`}
-                className="text-xs text-[#0057B8] font-semibold hover:underline"
+                className="text-xs text-[var(--alo-brand)] font-semibold hover:underline"
               >
                 View {country.name} guide
               </a>
@@ -275,7 +300,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
       badge="DESTINATION GUIDE"
       subtitle={data.whyStudySummary}
     >
-      <p className="text-xs text-slate-500 mb-6">
+      <p className="text-xs text-[var(--alo-text-muted)] mb-6">
         {data.lastVerifiedAt
           ? `Figures verified ${data.lastVerifiedAt} against the official sources listed below.`
           : 'Verification date not recorded for this destination.'}
@@ -283,62 +308,62 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
 
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
+          <div className="flex items-center gap-2 text-[var(--alo-brand)] mb-2">
             <GraduationCap className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Tuition Range</span>
           </div>
-          <p className="text-lg font-bold text-[#0F172A]">{data.tuitionRange}</p>
+          <p className="text-lg font-bold text-[var(--alo-text)]">{data.tuitionRange}</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
+          <div className="flex items-center gap-2 text-[var(--alo-brand)] mb-2">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Living Cost</span>
           </div>
-          <p className="text-lg font-bold text-[#0F172A]">{data.livingCost}</p>
+          <p className="text-lg font-bold text-[var(--alo-text)]">{data.livingCost}</p>
         </Card>
         <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#0057B8] mb-2">
+          <div className="flex items-center gap-2 text-[var(--alo-brand)] mb-2">
             <Clock className="h-4 w-4" />
             <span className="text-xs font-semibold uppercase">Work Rights</span>
           </div>
-          <p className="text-lg font-bold text-[#0F172A]">{data.workRights}</p>
+          <p className="text-lg font-bold text-[var(--alo-text)]">{data.workRights}</p>
         </Card>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 mb-10">
         <Card className="p-6">
-          <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-[#0057B8]" /> Visa Information
+          <h3 className="font-bold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <FileText className="h-4 w-4 text-[var(--alo-brand)]" /> Visa Information
           </h3>
-          <p className="text-sm text-slate-600 mb-2">Visa route:</p>
-          <p className="font-semibold text-[#0F172A] mb-3">{data.visaType}</p>
-          <p className="text-sm text-slate-600 mb-2">Popular intakes:</p>
-          <p className="font-semibold text-[#0F172A]">{data.popularIntakes.join(', ') || 'Not recorded'}</p>
+          <p className="text-sm text-[var(--alo-body)] mb-2">Visa route:</p>
+          <p className="font-semibold text-[var(--alo-text)] mb-3">{data.visaType}</p>
+          <p className="text-sm text-[var(--alo-body)] mb-2">Popular intakes:</p>
+          <p className="font-semibold text-[var(--alo-text)]">{data.popularIntakes.join(', ') || 'Not recorded'}</p>
         </Card>
         <Card className="p-6">
-          <h3 className="font-bold text-[#0F172A] mb-3 flex items-center gap-2">
-            <Globe className="h-4 w-4 text-[#0057B8]" /> Country Info
+          <h3 className="font-bold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <Globe className="h-4 w-4 text-[var(--alo-brand)]" /> Country Info
           </h3>
-          <p className="text-sm text-slate-600 mb-2">Currency:</p>
-          <p className="font-semibold text-[#0F172A] mb-3">{data.currency}</p>
-          <p className="text-sm text-slate-600 mb-2">Capital:</p>
-          <p className="font-semibold text-[#0F172A]">{data.capital}</p>
+          <p className="text-sm text-[var(--alo-body)] mb-2">Currency:</p>
+          <p className="font-semibold text-[var(--alo-text)] mb-3">{data.currency}</p>
+          <p className="text-sm text-[var(--alo-body)] mb-2">Capital:</p>
+          <p className="font-semibold text-[var(--alo-text)]">{data.capital}</p>
         </Card>
       </div>
 
       <Card className="p-6 mb-10">
-        <h3 className="font-bold text-[#0F172A] mb-3">Overview</h3>
-        <p className="text-sm text-slate-700 leading-relaxed">{data.overview}</p>
+        <h3 className="font-bold text-[var(--alo-text)] mb-3">Overview</h3>
+        <p className="text-sm text-[var(--alo-body)] leading-relaxed">{data.overview}</p>
       </Card>
 
       {cityUniversities.length > 0 && (
         <>
-          <h3 className="text-2xl font-bold text-[#0F172A] mb-4">Universities by city</h3>
+          <h3 className="text-2xl font-bold text-[var(--alo-text)] mb-4">Universities by city</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             {cityUniversities.map(({ university, city }) => (
               <Card key={`${city}-${university}`} className="p-5">
-                <p className="font-semibold text-[#0F172A] text-sm">{university}</p>
-                <p className="text-xs text-slate-500">{city}</p>
+                <p className="font-semibold text-[var(--alo-text)] text-sm">{university}</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">{city}</p>
               </Card>
             ))}
           </div>
@@ -346,31 +371,31 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
       )}
 
       <Card className="p-6 mb-10">
-        <h3 className="font-bold text-[#0F172A] mb-3">Official sources</h3>
+        <h3 className="font-bold text-[var(--alo-text)] mb-3">Official sources</h3>
         <ul className="space-y-2">
           {data.sources.map((source) => (
             <li key={`${source.section}-${source.sourceUrl}`} className="text-sm">
-              <span className="text-slate-500">{source.section}: </span>
+              <span className="text-[var(--alo-text-muted)]">{source.section}: </span>
               <a
                 href={source.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0057B8] hover:underline"
+                className="text-[var(--alo-brand)] hover:underline"
               >
                 {source.sourceName}
               </a>
-              <span className="text-slate-400"> · checked {source.lastVerifiedAt}</span>
+              <span className="text-[var(--alo-text-muted)]"> · checked {source.lastVerifiedAt}</span>
             </li>
           ))}
         </ul>
       </Card>
 
-      <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-2xl p-8 text-white text-center">
+      <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Ready to study in {data.name}?</h3>
         <p className="text-blue-100 mb-5">
           Fees and visa rules change. A counselor confirms the current requirements for your case.
         </p>
-        <Button asChild className="bg-[#E8501A] text-black hover:brightness-110">
+        <Button asChild className="bg-[var(--alo-cta)] text-black hover:brightness-110">
           <a href="/book-consultation">Book Free Consultation</a>
         </Button>
       </div>
@@ -416,7 +441,7 @@ export function PublicUniversitiesPage() {
     >
       <Card className="p-4 mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--alo-text-muted)]" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -427,19 +452,19 @@ export function PublicUniversitiesPage() {
       </Card>
 
       {loading ? (
-        <div className="text-center py-20 text-slate-500">Loading universities...</div>
+        <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading universities...</div>
       ) : error ? (
         <div className="text-center py-20" role="alert">
           <Building2 className="h-12 w-12 mx-auto mb-3 text-red-300" />
-          <p className="text-slate-700 font-medium mb-1">Something went wrong</p>
-          <p className="text-sm text-slate-500 mb-4">{error}</p>
+          <p className="text-[var(--alo-body)] font-medium mb-1">Something went wrong</p>
+          <p className="text-sm text-[var(--alo-text-muted)] mb-4">{error}</p>
           <Button variant="outline" size="sm" onClick={() => setReloadKey((k) => k + 1)}>
             Try again
           </Button>
         </div>
       ) : universities.length === 0 ? (
-        <div className="text-center py-20 text-slate-500">
-          <Building2 className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+        <div className="text-center py-20 text-[var(--alo-text-muted)]">
+          <Building2 className="h-12 w-12 mx-auto mb-3 text-[var(--alo-placeholder)]" />
           {search
             ? `No universities match “${search}”. Try a different search.`
             : 'No universities are published yet. Verified partner universities will appear here as soon as their official data is loaded.'}
@@ -457,23 +482,23 @@ export function PublicUniversitiesPage() {
                     {u.name?.[0] || 'U'}
                   </div>
                   {u.worldRanking && (
-                    <Badge variant="secondary" className="bg-orange-50 text-[#E8501A]">
+                    <Badge variant="secondary" className="bg-orange-50 text-[var(--alo-cta)]">
                       Rank #{u.worldRanking}
                     </Badge>
                   )}
                 </div>
-                <h3 className="font-semibold text-[#0F172A] mb-1 line-clamp-2">{u.name}</h3>
-                <p className="text-sm text-slate-600 mb-3 flex items-center gap-1">
+                <h3 className="font-semibold text-[var(--alo-text)] mb-1 line-clamp-2">{u.name}</h3>
+                <p className="text-sm text-[var(--alo-body)] mb-3 flex items-center gap-1">
                   <MapPin className="h-3.5 w-3.5" /> {u.city}, {u.country}
                 </p>
-                <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
+                <div className="flex items-center gap-3 text-xs text-[var(--alo-text-muted)] mb-3">
                   {u.founded && <span>Est. {u.founded}</span>}
                   {u.students && <span>{u.students} students</span>}
                 </div>
                 {u.ieltsMin && (
                   <div className="text-xs">
-                    <span className="text-slate-500">IELTS min: </span>
-                    <span className="font-semibold text-[#0057B8]">{u.ieltsMin}</span>
+                    <span className="text-[var(--alo-text-muted)]">IELTS min: </span>
+                    <span className="font-semibold text-[var(--alo-brand)]">{u.ieltsMin}</span>
                   </div>
                 )}
               </Card>
@@ -514,34 +539,34 @@ export function PublicScholarshipsPage() {
       heroColor="#E8501A"
     >
       {loading ? (
-        <div className="text-center py-20 text-slate-500 font-medium">Loading verified global scholarships...</div>
+        <div className="text-center py-20 text-[var(--alo-text-muted)] font-medium">Loading verified global scholarships...</div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayData.map((s: any, i: number) => {
             const slug = s.slug || (s.title ? s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `scholarship-${i}`);
             return (
               <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-slate-200 hover:border-[#0057B8]">
+                <Card className="p-6 hover:shadow-lg transition-all h-full flex flex-col justify-between border-[var(--alo-border)] hover:border-[var(--alo-brand)]">
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <Badge className="bg-orange-50 text-[#E8501A] border-orange-200 font-semibold text-[11px]">
+                      <Badge className="bg-orange-50 text-[var(--alo-cta)] border-orange-200 font-semibold text-[11px]">
                         {s.coverageType || 'Merit Scholarship'}
                       </Badge>
-                      <span className="text-xs font-semibold text-slate-500">
+                      <span className="text-xs font-semibold text-[var(--alo-text-muted)]">
                         {s.flag} {s.country || s.countryCode || 'Global'}
                       </span>
                     </div>
-                    <h3 className="font-bold text-[#0F172A] text-lg mb-2 line-clamp-2">{s.title || s.name}</h3>
-                    <p className="text-xs text-[#0057B8] font-semibold mb-3">{s.provider || 'University Partner'}</p>
-                    <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{s.description || s.eligibility}</p>
+                    <h3 className="font-bold text-[var(--alo-text)] text-lg mb-2 line-clamp-2">{s.title || s.name}</h3>
+                    <p className="text-xs text-[var(--alo-brand)] font-semibold mb-3">{s.provider || 'University Partner'}</p>
+                    <p className="text-xs text-[var(--alo-body)] mb-4 line-clamp-3 leading-relaxed">{s.description || s.eligibility}</p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 space-y-3">
-                    <div className="bg-slate-50 p-2.5 rounded-lg text-xs font-bold text-slate-900 line-clamp-1">
+                  <div className="pt-4 border-t border-[var(--alo-border)] space-y-3">
+                    <div className="bg-[var(--alo-page)] p-2.5 rounded-lg text-xs font-bold text-[var(--alo-text)] line-clamp-1">
                       Award: {s.awardAmount || s.amount || 'Varies by degree'}
                     </div>
                     <div className="flex gap-2">
-                      <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
+                      <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-semibold py-2"><a href={`/scholarships/${slug}`} className="w-full">
                           View Full Details & Apply →
                         </a></Button>
                     </div>
@@ -586,7 +611,7 @@ export function PublicServicesPage() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {MASTER_SERVICES_DATA.map((s: any, i: number) => (
           <motion.div key={s.id || i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <Card className="bg-white hover:shadow-xl transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
+            <Card className="bg-white hover:shadow-xl transition-all border-[var(--alo-border)] hover:border-[var(--alo-brand)] flex flex-col justify-between overflow-hidden rounded-2xl h-full">
               <div>
                 <div className="h-44 w-full overflow-hidden relative">
                   <img src={s.heroImage} alt={s.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
@@ -598,13 +623,13 @@ export function PublicServicesPage() {
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-[#0F172A] mb-2">{s.title}</h3>
-                  <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{s.shortDesc}</p>
+                  <h3 className="text-xl font-bold text-[var(--alo-text)] mb-2">{s.title}</h3>
+                  <p className="text-xs text-[var(--alo-body)] mb-4 line-clamp-3 leading-relaxed">{s.shortDesc}</p>
                 </div>
               </div>
 
               <div className="p-6 pt-0">
-                <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
+                <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5"><a href={`/services/${s.slug}`} className="block w-full">
                     Explore Full Service Details & Process →
                   </a></Button>
               </div>
@@ -613,10 +638,10 @@ export function PublicServicesPage() {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-2xl p-8 text-white text-center shadow-lg">
+      <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-blue-100 mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
-        <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
+        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-xs px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
             Book Free Consultation
           </a></Button>
       </div>
@@ -649,8 +674,8 @@ export function PublicAboutPage() {
       {/* Who We Are — 2-column: text + visual motif */}
       <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14 mb-14">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-5">Who We Are</h2>
-          <div className="space-y-4 text-base text-slate-700 leading-relaxed">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)] mb-5">Who We Are</h2>
+          <div className="space-y-4 text-base text-[var(--alo-body)] leading-relaxed">
             <p>
               In February 2023, Taslima Akter founded ALO Education with a vision to connect ambitious
               Bangladeshi students with world-class education opportunities abroad. Her personal
@@ -673,8 +698,8 @@ export function PublicAboutPage() {
           </div>
           <ul className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {strengths.map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm font-medium text-[#0F172A]">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#E8501A]" aria-hidden="true" />
+              <li key={item} className="flex items-start gap-2 text-sm font-medium text-[var(--alo-text)]">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--alo-cta)]" aria-hidden="true" />
                 {item}
               </li>
             ))}
@@ -689,13 +714,13 @@ export function PublicAboutPage() {
               loading="lazy"
             />
           </div>
-          <div className="absolute -bottom-4 left-4 flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xl">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E8501A]">
+          <div className="absolute -bottom-4 left-4 flex items-center gap-3 rounded-2xl border border-[var(--alo-border)] bg-white p-4 shadow-xl">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--alo-cta)]">
               <Heart className="h-5 w-5 text-white" aria-hidden="true" />
             </span>
             <span>
-              <span className="block text-sm font-bold text-[#0F172A]">Student-First</span>
-              <span className="block text-xs text-slate-500">Since February 2023 · Dhaka, Bangladesh</span>
+              <span className="block text-sm font-bold text-[var(--alo-text)]">Student-First</span>
+              <span className="block text-xs text-[var(--alo-text-muted)]">Since February 2023 · Dhaka, Bangladesh</span>
             </span>
           </div>
         </div>
@@ -703,20 +728,20 @@ export function PublicAboutPage() {
 
       {/* Our Purpose */}
       <div className="mb-6 text-center">
-        <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.18em] bg-[#FFF1EA] text-[#E8501A] mb-4">
+        <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.18em] bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] mb-4">
           Our Purpose
         </span>
-        <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A]">
+        <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">
           Our Commitment to Your Study-Abroad Dream
         </h2>
       </div>
       <div className="grid md:grid-cols-2 gap-6 mb-12">
         <Card className="p-8 bg-gradient-to-br from-blue-50 to-white border-blue-100">
-          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0057B8]">
+          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--alo-brand)]">
             <Target className="h-6 w-6 text-white" aria-hidden="true" />
           </span>
-          <h3 className="text-xl font-bold text-[#0057B8] mb-3">Our Mission</h3>
-          <div className="space-y-3 text-slate-700 leading-relaxed">
+          <h3 className="text-xl font-bold text-[var(--alo-brand)] mb-3">Our Mission</h3>
+          <div className="space-y-3 text-[var(--alo-body)] leading-relaxed">
             <p>
               At ALO Education, our mission is simple yet powerful — turning student dreams into global
               opportunities. We strive to be a trusted pathway to world-class education, guiding every
@@ -730,11 +755,11 @@ export function PublicAboutPage() {
           </div>
         </Card>
         <Card className="p-8 bg-gradient-to-br from-orange-50 to-white border-orange-100">
-          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E8501A]">
+          <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--alo-cta)]">
             <Eye className="h-6 w-6 text-white" aria-hidden="true" />
           </span>
-          <h3 className="text-xl font-bold text-[#E8501A] mb-3">Our Vision</h3>
-          <div className="space-y-3 text-slate-700 leading-relaxed">
+          <h3 className="text-xl font-bold text-[var(--alo-cta)] mb-3">Our Vision</h3>
+          <div className="space-y-3 text-[var(--alo-body)] leading-relaxed">
             <p>
               The vision of ALO Education is to become a globally recognized education consultancy that
               inspires trust, integrity, and excellence in everything we do. We aspire to guide students
@@ -792,28 +817,28 @@ export function PublicSuccessStoriesPage() {
       heroColor="#E8501A"
     >
       {loading ? (
-        <div className="text-center py-20 text-slate-500">Loading stories...</div>
+        <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading stories...</div>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {data.map((s: any, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
               <Card className="p-7 h-full">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003F87] flex items-center justify-center text-white font-bold text-lg shrink-0">
+                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] flex items-center justify-center text-white font-bold text-lg shrink-0">
                     {s.name?.[0] || 'S'}
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#0F172A]">{s.name}</h3>
-                    <p className="text-sm text-[#0057B8]">{s.course || s.program}</p>
-                    <p className="text-xs text-slate-500">Now studying at {s.university}</p>
+                    <h3 className="font-bold text-[var(--alo-text)]">{s.name}</h3>
+                    <p className="text-sm text-[var(--alo-brand)]">{s.course || s.program}</p>
+                    <p className="text-xs text-[var(--alo-text-muted)]">Now studying at {s.university}</p>
                   </div>
                 </div>
                 <div className="flex gap-0.5 mb-3">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-[#E8501A] text-[#E8501A]" />
+                    <Star key={star} className="h-4 w-4 fill-[var(--alo-cta)] text-[var(--alo-cta)]" />
                   ))}
                 </div>
-                <p className="text-sm text-slate-700 italic leading-relaxed">"{s.quote || s.testimonial}"</p>
+                <p className="text-sm text-[var(--alo-body)] italic leading-relaxed">"{s.quote || s.testimonial}"</p>
               </Card>
             </motion.div>
           ))}
@@ -856,12 +881,12 @@ export function PublicTeamPage() {
         {data.map((m: any, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
             <Card className="p-6 text-center hover:shadow-md transition-shadow h-full">
-              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003F87] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+              <div className="h-20 w-20 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
                 {m.name?.[0] || 'A'}
               </div>
-              <h3 className="font-bold text-[#0F172A]">{m.name}</h3>
-              <p className="text-sm text-[#0057B8] mb-3">{m.role || m.position}</p>
-              <p className="text-xs text-slate-600">{m.bio || m.description}</p>
+              <h3 className="font-bold text-[var(--alo-text)]">{m.name}</h3>
+              <p className="text-sm text-[var(--alo-brand)] mb-3">{m.role || m.position}</p>
+              <p className="text-xs text-[var(--alo-body)]">{m.bio || m.description}</p>
             </Card>
           </motion.div>
         ))}
@@ -905,16 +930,16 @@ export function PublicFaqsPage() {
       subtitle="Find answers to common questions about studying abroad with ALO Education."
     >
       {loading ? (
-        <div className="text-center py-20 text-slate-500">Loading FAQs...</div>
+        <div className="text-center py-20 text-[var(--alo-text-muted)]">Loading FAQs...</div>
       ) : (
         <Card className="p-6 max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="w-full">
             {data.map((f: any, i) => (
               <AccordionItem key={i} value={`item-${i}`}>
-                <AccordionTrigger className="text-left text-base font-semibold text-[#0F172A]">
+                <AccordionTrigger className="text-left text-base font-semibold text-[var(--alo-text)]">
                   {f.question || f.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-sm text-slate-700 leading-relaxed">
+                <AccordionContent className="text-sm text-[var(--alo-body)] leading-relaxed">
                   {f.answer || f.a}
                 </AccordionContent>
               </AccordionItem>
@@ -938,35 +963,35 @@ export function PublicContactPage() {
     >
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <Card className="p-8">
-          <Phone className="h-8 w-8 text-[#0057B8] mb-4" />
-          <h3 className="font-bold text-[#0F172A] mb-2">Phone</h3>
-          <a href={ALO_CONTACT.mobileHref} className="mb-1 block text-2xl font-bold text-[#0057B8]">
+          <Phone className="h-8 w-8 text-[var(--alo-brand)] mb-4" />
+          <h3 className="font-bold text-[var(--alo-text)] mb-2">Phone</h3>
+          <a href={ALO_CONTACT.mobileHref} className="mb-1 block text-2xl font-bold text-[var(--alo-brand)]">
             {ALO_CONTACT.mobileDisplay}
           </a>
-          <p className="text-sm text-slate-600">{ALO_CONTACT.officeHours}</p>
+          <p className="text-sm text-[var(--alo-body)]">{ALO_CONTACT.officeHours}</p>
         </Card>
         <Card className="p-8">
-          <Mail className="h-8 w-8 text-[#E8501A] mb-4" />
-          <h3 className="font-bold text-[#0F172A] mb-2">Email</h3>
-          <a href={ALO_CONTACT.emailHref} className="mb-1 block break-all text-2xl font-bold text-[#E8501A]">
+          <Mail className="h-8 w-8 text-[var(--alo-cta)] mb-4" />
+          <h3 className="font-bold text-[var(--alo-text)] mb-2">Email</h3>
+          <a href={ALO_CONTACT.emailHref} className="mb-1 block break-all text-2xl font-bold text-[var(--alo-cta)]">
             {ALO_CONTACT.email}
           </a>
-          <p className="text-sm text-slate-600">Email us anytime</p>
+          <p className="text-sm text-[var(--alo-body)]">Email us anytime</p>
         </Card>
       </div>
 
       <Card className="p-8 mb-8">
         <div className="flex items-start gap-4">
-          <MapPin className="h-8 w-8 text-[#0057B8] shrink-0" />
+          <MapPin className="h-8 w-8 text-[var(--alo-brand)] shrink-0" />
           <div>
-            <h3 className="font-bold text-[#0F172A] mb-2">Bangladesh Office</h3>
-            <p className="text-slate-700 leading-relaxed">{ALO_CONTACT.address}</p>
-            <p className="text-sm text-slate-500 mt-3">Hours: {ALO_CONTACT.officeHours}</p>
+            <h3 className="font-bold text-[var(--alo-text)] mb-2">Bangladesh Office</h3>
+            <p className="text-[var(--alo-body)] leading-relaxed">{ALO_CONTACT.address}</p>
+            <p className="text-sm text-[var(--alo-text-muted)] mt-3">Hours: {ALO_CONTACT.officeHours}</p>
             <a
               href={ALO_CONTACT.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-block text-sm font-semibold text-[#0057B8] underline underline-offset-2"
+              className="mt-3 inline-block text-sm font-semibold text-[var(--alo-brand)] underline underline-offset-2"
             >
               Open in Google Maps
             </a>
@@ -976,13 +1001,13 @@ export function PublicContactPage() {
 
       <Card className="p-8 bg-green-50 border-green-200">
         <div className="flex items-start gap-4">
-          <Phone className="h-8 w-8 text-[#25D366] shrink-0" />
+          <Phone className="h-8 w-8 text-[var(--alo-whatsapp)] shrink-0" />
           <div className="flex-1">
             <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
             <p className="text-sm text-green-800 mb-4">
               Quick response on WhatsApp: {ALO_CONTACT.whatsappDisplay}
             </p>
-            <Button asChild className="bg-[#25D366] text-white hover:brightness-110"><a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer">
+            <Button asChild className="bg-[var(--alo-whatsapp)] text-white hover:brightness-110"><a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer">
                 Chat Now
               </a></Button>
           </div>
@@ -1082,13 +1107,13 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
         <div className="space-y-6">
           {content.sections.map((s, i) => (
             <div key={i}>
-              <h3 className="font-bold text-[#0F172A] mb-2 flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-blue-50 text-[#0057B8] text-xs font-bold flex items-center justify-center">
+              <h3 className="font-bold text-[var(--alo-text)] mb-2 flex items-center gap-2">
+                <span className="h-6 w-6 rounded-full bg-blue-50 text-[var(--alo-brand)] text-xs font-bold flex items-center justify-center">
                   {i + 1}
                 </span>
                 {s.h}
               </h3>
-              <p className="text-sm text-slate-700 leading-relaxed pl-8">{s.p}</p>
+              <p className="text-sm text-[var(--alo-body)] leading-relaxed pl-8">{s.p}</p>
             </div>
           ))}
         </div>
@@ -1122,39 +1147,39 @@ export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
     >
       <div className="flex justify-between items-center mb-8 bg-blue-50 p-4 rounded-2xl border border-blue-100">
         <div>
-          <h3 className="font-bold text-[#0057B8] text-base">Comprehensive Test Preparation Directory</h3>
-          <p className="text-xs text-slate-600">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
+          <h3 className="font-bold text-[var(--alo-brand)] text-base">Comprehensive Test Preparation Directory</h3>
+          <p className="text-xs text-[var(--alo-body)]">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
         </div>
-        <Button asChild className="bg-[#E8501A] text-black hover:bg-[#C93D13] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
+        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
             View All Test Prep →
           </a></Button>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tests.map((t: any) => (
-          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-slate-200 hover:border-[#0057B8] flex flex-col justify-between">
+          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-[var(--alo-border)] hover:border-[var(--alo-brand)] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge className="bg-orange-50 text-[#E8501A] font-semibold text-[11px]">
+                <Badge className="bg-orange-50 text-[var(--alo-cta)] font-semibold text-[11px]">
                   {t.logoBadge}
                 </Badge>
-                <span className="text-xs font-semibold text-slate-500">{t.quickInfo.duration}</span>
+                <span className="text-xs font-semibold text-[var(--alo-text-muted)]">{t.quickInfo.duration}</span>
               </div>
-              <h3 className="font-bold text-[#0F172A] text-lg mb-1">{t.name}</h3>
-              <p className="text-xs text-[#0057B8] font-semibold mb-3">{t.officialOwner}</p>
-              <p className="text-xs text-slate-600 mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
+              <h3 className="font-bold text-[var(--alo-text)] text-lg mb-1">{t.name}</h3>
+              <p className="text-xs text-[var(--alo-brand)] font-semibold mb-3">{t.officialOwner}</p>
+              <p className="text-xs text-[var(--alo-body)] mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 space-y-3">
+            <div className="pt-4 border-t border-[var(--alo-border)] space-y-3">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Exam Fee in BD:</span>
-                <span className="font-bold text-slate-900">{t.quickInfo.cost}</span>
+                <span className="text-[var(--alo-text-muted)] font-medium">Exam Fee in BD:</span>
+                <span className="font-bold text-[var(--alo-text)]">{t.quickInfo.cost}</span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-500 font-medium">Target Score:</span>
-                <span className="font-bold text-[#0057B8]">{t.expectedScore}</span>
+                <span className="text-[var(--alo-text-muted)] font-medium">Target Score:</span>
+                <span className="font-bold text-[var(--alo-brand)]">{t.expectedScore}</span>
               </div>
-              <Button asChild className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
+              <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] text-xs font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
                   Explore Full Test Prep & Modules →
                 </a></Button>
             </div>
@@ -1193,10 +1218,10 @@ export function PublicResourcesPage() {
           return (
             <Card key={i} className="p-6 hover:shadow-md transition-shadow">
               <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                <Icon className="h-6 w-6 text-[#0057B8]" />
+                <Icon className="h-6 w-6 text-[var(--alo-brand)]" />
               </div>
-              <h3 className="font-bold text-[#0F172A] mb-2">{r.title}</h3>
-              <p className="text-sm text-slate-600">{r.desc}</p>
+              <h3 className="font-bold text-[var(--alo-text)] mb-2">{r.title}</h3>
+              <p className="text-sm text-[var(--alo-body)]">{r.desc}</p>
             </Card>
           );
         })}
@@ -1232,8 +1257,8 @@ export function PublicVisaReadinessPage() {
     >
       {destinations.length === 0 ? (
         <Card className="p-8 text-center">
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Visa information is currently being verified</h3>
-          <p className="text-sm text-slate-600">
+          <h3 className="text-lg font-bold text-[var(--alo-text)] mb-2">Visa information is currently being verified</h3>
+          <p className="text-sm text-[var(--alo-body)]">
             We only publish visa guidance once it has been checked against an official source. Talk to a counselor
             about your destination in the meantime.
           </p>
@@ -1246,31 +1271,31 @@ export function PublicVisaReadinessPage() {
             );
             return (
               <Card key={country.slug} className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-slate-900">{country.name}</h3>
-                <p className="text-xs text-slate-500 mb-4">
+                <h3 className="text-xl font-bold mb-1 text-[var(--alo-text)]">{country.name}</h3>
+                <p className="text-xs text-[var(--alo-text-muted)] mb-4">
                   {country.lastVerifiedAt
                     ? `Verified ${country.lastVerifiedAt}`
                     : 'Verification date not recorded'}
                 </p>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <span className="text-slate-500">Visa route: </span>
+                    <span className="text-[var(--alo-text-muted)]">Visa route: </span>
                     <span className="font-semibold">{country.visaType}</span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Steps recorded: </span>
+                    <span className="text-[var(--alo-text-muted)]">Steps recorded: </span>
                     <span className="font-semibold">{country.visaSteps.length}</span>
                   </div>
                   {country.workRights && (
                     <div>
-                      <span className="text-slate-500">Work rights: </span>
+                      <span className="text-[var(--alo-text-muted)]">Work rights: </span>
                       <span className="font-semibold">{country.workRights}</span>
                     </div>
                   )}
                 </div>
                 {visaSources.length > 0 && (
-                  <div className="mt-4 pt-3 border-t border-slate-100">
-                    <p className="text-xs font-semibold text-slate-500 mb-1.5">Official sources</p>
+                  <div className="mt-4 pt-3 border-t border-[var(--alo-border)]">
+                    <p className="text-xs font-semibold text-[var(--alo-text-muted)] mb-1.5">Official sources</p>
                     <ul className="space-y-1">
                       {visaSources.slice(0, 3).map((source) => (
                         <li key={source.sourceUrl} className="text-xs">
@@ -1278,11 +1303,11 @@ export function PublicVisaReadinessPage() {
                             href={source.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[#0057B8] hover:underline"
+                            className="text-[var(--alo-brand)] hover:underline"
                           >
                             {source.sourceName}
                           </a>
-                          <span className="text-slate-400"> · checked {source.lastVerifiedAt}</span>
+                          <span className="text-[var(--alo-text-muted)]"> · checked {source.lastVerifiedAt}</span>
                         </li>
                       ))}
                     </ul>
@@ -1290,7 +1315,7 @@ export function PublicVisaReadinessPage() {
                 )}
                 <a
                   href={`/destinations/${country.slug}`}
-                  className="mt-4 inline-block text-sm font-semibold text-[#0057B8] hover:underline"
+                  className="mt-4 inline-block text-sm font-semibold text-[var(--alo-brand)] hover:underline"
                 >
                   View full {country.name} guide
                 </a>
@@ -1301,20 +1326,20 @@ export function PublicVisaReadinessPage() {
       )}
 
       {unverifiedCount > 0 && (
-        <p className="text-xs text-slate-500 mb-6">
+        <p className="text-xs text-[var(--alo-text-muted)] mb-6">
           {unverifiedCount} other destination{unverifiedCount === 1 ? '' : 's'} we work with{' '}
           {unverifiedCount === 1 ? 'is' : 'are'} not listed here yet because the visa information has not been
           verified against an official source.
         </p>
       )}
 
-      <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] text-white text-center">
+      <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white text-center">
         <h3 className="text-2xl font-bold mb-2">Need Visa Help?</h3>
         <p className="text-blue-100 mb-5">
           Fees, processing times and document rules change and differ by nationality. A counselor checks the current
           requirements for your case against the official source.
         </p>
-        <Button asChild className="bg-[#E8501A] text-black hover:brightness-110">
+        <Button asChild className="bg-[var(--alo-cta)] text-black hover:brightness-110">
           <a href="/book-consultation">Book Visa Consultation</a>
         </Button>
       </Card>
@@ -1332,33 +1357,33 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Program Overview</h3>
-            <p className="text-slate-700 text-sm leading-relaxed mb-4">
+            <h3 className="text-xl font-bold text-[var(--alo-text)] mb-3">Program Overview</h3>
+            <p className="text-[var(--alo-body)] text-sm leading-relaxed mb-4">
               Detailed entry requirements, academic prerequisites, English language waivers, deposit requirements, and post-study career opportunities for international students.
             </p>
-            <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+            <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--alo-border)]">
               <div>
-                <p className="text-xs text-slate-500 font-medium">Study Level</p>
-                <p className="text-sm font-semibold text-slate-900">Undergraduate / Postgraduate Taught</p>
+                <p className="text-xs text-[var(--alo-text-muted)] font-medium">Study Level</p>
+                <p className="text-sm font-semibold text-[var(--alo-text)]">Undergraduate / Postgraduate Taught</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 font-medium">Duration</p>
-                <p className="text-sm font-semibold text-slate-900">1 to 3 Years (Full-Time)</p>
+                <p className="text-xs text-[var(--alo-text-muted)] font-medium">Duration</p>
+                <p className="text-sm font-semibold text-[var(--alo-text)]">1 to 3 Years (Full-Time)</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 font-medium">English Language Requirement</p>
-                <p className="text-sm font-semibold text-[#0057B8]">IELTS 6.5 (Min 6.0 components)</p>
+                <p className="text-xs text-[var(--alo-text-muted)] font-medium">English Language Requirement</p>
+                <p className="text-sm font-semibold text-[var(--alo-brand)]">IELTS 6.5 (Min 6.0 components)</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 font-medium">Application Deadline</p>
-                <p className="text-sm font-semibold text-[#E8501A]">Open for Upcoming Intake</p>
+                <p className="text-xs text-[var(--alo-text-muted)] font-medium">Application Deadline</p>
+                <p className="text-sm font-semibold text-[var(--alo-cta)]">Open for Upcoming Intake</p>
               </div>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-3">Academic Entry Requirements</h3>
-            <ul className="space-y-2 text-sm text-slate-700 list-disc list-inside">
+            <h3 className="text-lg font-bold text-[var(--alo-text)] mb-3">Academic Entry Requirements</h3>
+            <ul className="space-y-2 text-sm text-[var(--alo-body)] list-disc list-inside">
               <li>High School Certificate (HSC) / A-Levels or Bachelor's Degree from a recognized institution.</li>
               <li>Minimum GPA equivalent: 3.0 / 4.0 or 60% overall score.</li>
               <li>Proof of English Proficiency (IELTS Academic, PTE, Duolingo, or MOI letter where accepted).</li>
@@ -1368,16 +1393,16 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
         </div>
 
         <div className="space-y-6">
-          <Card className="p-6 border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/30 to-white">
-            <h3 className="font-bold text-[#0F172A] mb-2 text-lg">Apply for this Course</h3>
-            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+          <Card className="p-6 border-2 border-[var(--alo-brand)]/20 bg-gradient-to-br from-blue-50/30 to-white">
+            <h3 className="font-bold text-[var(--alo-text)] mb-2 text-lg">Apply for this Course</h3>
+            <p className="text-xs text-[var(--alo-body)] mb-4 leading-relaxed">
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
-              <Button asChild className="w-full bg-[#E8501A] text-black hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
+              <Button asChild className="w-full bg-[var(--alo-cta)] text-black hover:brightness-110 text-xs py-2.5"><a href="/eligibility-check" className="block w-full">
                   Check Your Eligibility
                 </a></Button>
-              <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[#0057B8] text-[#0057B8] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
+              <Button asChild variant="outline" className="w-full text-xs py-2.5 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-blue-50"><a href="/book-consultation" className="block w-full">
                   Talk to ALO Counselor
                 </a></Button>
             </div>
@@ -1402,12 +1427,12 @@ export function PublicComparePage() {
       subtitle="Compare up to 4 courses side-by-side on tuition, IELTS scores, duration, and post-study work rights."
     >
       <Card className="p-8 space-y-4">
-        <h3 className="text-xl font-bold text-slate-900">Side-by-Side Comparison</h3>
-        <p className="text-slate-600 text-sm">
+        <h3 className="text-xl font-bold text-[var(--alo-text)]">Side-by-Side Comparison</h3>
+        <p className="text-[var(--alo-body)] text-sm">
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <Button asChild className="bg-[#E8501A] text-black text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
+          <Button asChild className="bg-[var(--alo-cta)] text-black text-xs"><a href="/course-finder">Add Courses to Compare</a></Button>
         </div>
       </Card>
     </PublicShell>

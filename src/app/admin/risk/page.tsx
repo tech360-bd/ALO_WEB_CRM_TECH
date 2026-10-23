@@ -82,7 +82,7 @@ const BAND_STYLE: Record<SuccessBand, string> = {
 const SEVERITY_STYLE: Record<string, string> = {
   HIGH: 'bg-red-100 text-red-700',
   MEDIUM: 'bg-amber-100 text-amber-800',
-  LOW: 'bg-slate-100 text-slate-700',
+  LOW: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 export default function RiskDashboardPage() {
@@ -179,11 +179,11 @@ export default function RiskDashboardPage() {
     <div className="space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-            <ShieldAlert className="size-5 text-[#0057B8]" />
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+            <ShieldAlert className="size-5 text-[var(--alo-brand)]" />
             Application Risk &amp; Student Success
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Operational scores computed from live application data. Never a guarantee of admission or
             visa outcome.
           </p>
@@ -211,12 +211,12 @@ export default function RiskDashboardPage() {
       </div>
 
       {notConfigured && (
-        <Card className="rounded-2xl border-2 border-slate-300 bg-slate-50">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border-strong)] bg-[var(--alo-page)]">
           <CardContent className="flex items-start gap-3 pt-6 pb-6">
-            <Info className="mt-0.5 size-5 shrink-0 text-slate-500" />
+            <Info className="mt-0.5 size-5 shrink-0 text-[var(--alo-text-muted)]" />
             <div>
-              <p className="text-sm font-bold text-slate-800">NOT CONFIGURED</p>
-              <p className="mt-0.5 text-xs text-slate-600">{notConfigured}</p>
+              <p className="text-sm font-bold text-[var(--alo-text)]">NOT CONFIGURED</p>
+              <p className="mt-0.5 text-xs text-[var(--alo-body)]">{notConfigured}</p>
             </div>
           </CardContent>
         </Card>
@@ -243,10 +243,10 @@ export default function RiskDashboardPage() {
       {data && (
         <>
           {/* ---------------- Application risk (s111) ---------------- */}
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-bold">
-                <AlertTriangle className="size-4 text-[#0057B8]" />
+                <AlertTriangle className="size-4 text-[var(--alo-brand)]" />
                 Application risk distribution
               </CardTitle>
             </CardHeader>
@@ -261,8 +261,8 @@ export default function RiskDashboardPage() {
               </div>
 
               {/* Unassessed rows are stated, never hidden inside a band (s92). */}
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs">
-                <p className="font-semibold text-slate-800">
+              <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs">
+                <p className="font-semibold text-[var(--alo-text)]">
                   {assessed} of {totalApplications} applications scored ({assessedPct}%)
                 </p>
                 {unassessed > 0 && (
@@ -281,10 +281,10 @@ export default function RiskDashboardPage() {
           </Card>
 
           {/* ---------------- Student success (s112) ---------------- */}
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-bold">
-                <TrendingUp className="size-4 text-[#0057B8]" />
+                <TrendingUp className="size-4 text-[var(--alo-brand)]" />
                 Student success bands
               </CardTitle>
             </CardHeader>
@@ -301,12 +301,12 @@ export default function RiskDashboardPage() {
               </div>
 
               {data.students.students === 0 ? (
-                <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                <p className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]">
                   No student has been scored yet, so every band reads zero. This is an absence of
                   assessments, not an absence of risk.
                 </p>
               ) : (
-                <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                <p className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]">
                   {data.students.students} student{data.students.students === 1 ? '' : 's'} scored from
                   their latest assessment.
                 </p>
@@ -319,10 +319,10 @@ export default function RiskDashboardPage() {
           </Card>
 
           {/* ---------------- Drill-down ---------------- */}
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-sm font-bold">
-                <Search className="size-4 text-[#0057B8]" />
+                <Search className="size-4 text-[var(--alo-brand)]" />
                 Inspect one application
               </CardTitle>
             </CardHeader>
@@ -344,7 +344,7 @@ export default function RiskDashboardPage() {
                 </Button>
               </div>
 
-              {lookupState === 'loading' && <p className="text-xs text-slate-500">Scoring…</p>}
+              {lookupState === 'loading' && <p className="text-xs text-[var(--alo-text-muted)]">Scoring…</p>}
               {lookupState === 'none' && (
                 <p className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900">
                   {lookupMessage}
@@ -370,31 +370,31 @@ export default function RiskDashboardPage() {
                   </div>
 
                   {assessment.factors.length === 0 ? (
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-[var(--alo-body)]">
                       No risk factors fired for this application on its current data.
                     </p>
                   ) : (
                     <div className="space-y-1.5">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">
                         Factors ({assessment.factors.length})
                       </p>
                       {assessment.factors.map((factor) => (
                         <div
                           key={factor.code}
-                          className="flex items-start justify-between gap-2 rounded-lg border border-slate-200 p-2.5"
+                          className="flex items-start justify-between gap-2 rounded-lg border border-[var(--alo-border)] p-2.5"
                         >
                           <div className="min-w-0">
-                            <p className="text-xs font-semibold text-slate-900">{factor.label}</p>
-                            <p className="font-mono text-[10px] text-slate-500">{factor.code}</p>
+                            <p className="text-xs font-semibold text-[var(--alo-text)]">{factor.label}</p>
+                            <p className="font-mono text-[11px] text-[var(--alo-text-muted)]">{factor.code}</p>
                             {factor.detail && (
-                              <p className="mt-0.5 text-[11px] text-slate-600">{factor.detail}</p>
+                              <p className="mt-0.5 text-[11px] text-[var(--alo-body)]">{factor.detail}</p>
                             )}
                           </div>
                           <div className="flex shrink-0 items-center gap-1.5">
-                            <Badge variant="outline" className={`text-[9px] ${SEVERITY_STYLE[factor.severity] ?? ''}`}>
+                            <Badge variant="outline" className={`text-[11px] ${SEVERITY_STYLE[factor.severity] ?? ''}`}>
                               {factor.severity}
                             </Badge>
-                            <span className="font-mono text-xs font-bold text-slate-700">
+                            <span className="font-mono text-xs font-bold text-[var(--alo-body)]">
                               +{factor.points}
                             </span>
                           </div>
@@ -417,7 +417,7 @@ export default function RiskDashboardPage() {
                   )}
 
                   {assessment.evaluatedAt && (
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">
                       Scored {new Date(assessment.evaluatedAt).toLocaleString()}
                       {assessment.evaluatedBy ? ` by ${assessment.evaluatedBy}` : ''}
                     </p>

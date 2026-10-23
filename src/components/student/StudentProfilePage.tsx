@@ -315,7 +315,7 @@ function FormField({
 }) {
   return (
     <div className={className}>
-      <Label className="text-sm font-medium text-slate-700 mb-1.5 block">
+      <Label className="text-sm font-medium text-[var(--alo-body)] mb-1.5 block">
         {label}
       </Label>
       {children}
@@ -325,13 +325,13 @@ function FormField({
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-lg font-semibold text-slate-900 mb-1">{children}</h3>
+    <h3 className="text-lg font-semibold text-[var(--alo-text)] mb-1">{children}</h3>
   );
 }
 
 function SectionDesc({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-sm text-slate-500 mb-6">{children}</p>
+    <p className="text-sm text-[var(--alo-text-muted)] mb-6">{children}</p>
   );
 }
 
@@ -356,7 +356,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
             value={(form.givenName as string) || ''}
             onChange={(e) => set('givenName', e.target.value)}
             placeholder="Rahim"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Family Name">
@@ -364,7 +364,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
             value={(form.familyName as string) || ''}
             onChange={(e) => set('familyName', e.target.value)}
             placeholder="Hossain"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
       </div>
@@ -375,7 +375,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
           value={(form.leadEmail as string) || ''}
           onChange={(e) => set('leadEmail', e.target.value)}
           placeholder="rahim.hossain@email.com"
-          className="border-slate-200"
+          className="border-[var(--alo-border)]"
         />
       </FormField>
 
@@ -385,7 +385,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
             value={(form.countryCode as string) || '+880'}
             onValueChange={(v) => set('countryCode', v)}
           >
-            <SelectTrigger className="w-28 border-slate-200">
+            <SelectTrigger className="w-28 border-[var(--alo-border)]">
               <SelectValue placeholder="+880" />
             </SelectTrigger>
             <SelectContent>
@@ -400,7 +400,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
             value={(form.mobile as string) || ''}
             onChange={(e) => set('mobile', e.target.value)}
             placeholder="1712-345678"
-            className="border-slate-200 flex-1"
+            className="border-[var(--alo-border)] flex-1"
           />
         </div>
       </FormField>
@@ -411,7 +411,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
             value={(form.nationality as string) || 'Bangladeshi'}
             onValueChange={(v) => set('nationality', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -428,7 +428,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
             value={(form.gender as string) || ''}
             onValueChange={(v) => set('gender', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -446,7 +446,7 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
           value={(form.preferredDestination as string) || ''}
           onValueChange={(v) => set('preferredDestination', v)}
         >
-          <SelectTrigger className="w-full border-slate-200">
+          <SelectTrigger className="w-full border-[var(--alo-border)]">
             <SelectValue placeholder="Select destination" />
           </SelectTrigger>
           <SelectContent>
@@ -465,14 +465,14 @@ function LeadSection({ form, setForm }: { form: Record<string, unknown>; setForm
           onChange={(e) => set('remarks', e.target.value)}
           placeholder="Any additional notes about this lead..."
           rows={3}
-          className="border-slate-200 resize-none"
+          className="border-[var(--alo-border)] resize-none"
         />
       </FormField>
 
-      <div className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
+      <div className="flex items-center justify-between rounded-lg border border-[var(--alo-border)] p-4">
         <div>
-          <Label className="text-sm font-medium text-slate-700">Welcome Email</Label>
-          <p className="text-xs text-slate-500 mt-0.5">Send welcome email to this student</p>
+          <Label className="text-sm font-medium text-[var(--alo-body)]">Welcome Email</Label>
+          <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">Send welcome email to this student</p>
         </div>
         <Switch
           checked={(form.welcomeEmail as boolean) || false}
@@ -504,7 +504,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.givenName as string) || ''}
             onChange={(e) => set('givenName', e.target.value)}
             placeholder="Rahim"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Family Name">
@@ -512,7 +512,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.familyName as string) || ''}
             onChange={(e) => set('familyName', e.target.value)}
             placeholder="Hossain"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
       </div>
@@ -524,7 +524,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.personalEmail as string) || ''}
             onChange={(e) => set('personalEmail', e.target.value)}
             placeholder="rahim.hossain@email.com"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Mobile">
@@ -532,7 +532,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.personalPhone as string) || ''}
             onChange={(e) => set('personalPhone', e.target.value)}
             placeholder="+880 1712-345678"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
       </div>
@@ -543,7 +543,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             type="date"
             value={(form.dateOfBirth as string) || ''}
             onChange={(e) => set('dateOfBirth', e.target.value)}
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Nationality">
@@ -551,7 +551,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.personalNationality as string) || 'Bangladeshi'}
             onValueChange={(v) => set('personalNationality', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -571,7 +571,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.personalGender as string) || ''}
             onValueChange={(v) => set('personalGender', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -587,7 +587,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             value={(form.maritalStatus as string) || ''}
             onValueChange={(v) => set('maritalStatus', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -606,7 +606,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
           onChange={(e) => set('presentAddress', e.target.value)}
           placeholder="House 12, Road 5, Dhanmondi, Dhaka-1205"
           rows={3}
-          className="border-slate-200 resize-none"
+          className="border-[var(--alo-border)] resize-none"
         />
       </FormField>
 
@@ -616,7 +616,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
           onChange={(e) => set('permanentAddress', e.target.value)}
           placeholder="Village: Balia, Post: Balia, Police Station: Savar, District: Dhaka"
           rows={3}
-          className="border-slate-200 resize-none"
+          className="border-[var(--alo-border)] resize-none"
         />
       </FormField>
 
@@ -631,7 +631,7 @@ function PersonalSection({ form, setForm }: { form: Record<string, unknown>; set
             }
           }}
         />
-        <Label htmlFor="sameAsPresent" className="text-sm text-slate-700 cursor-pointer">
+        <Label htmlFor="sameAsPresent" className="text-sm text-[var(--alo-body)] cursor-pointer">
           Same as Present Address
         </Label>
       </div>
@@ -673,7 +673,7 @@ function FundingSection({ form, setForm }: { form: Record<string, unknown>; setF
           value={(form.fundingStatus as string) || ''}
           onValueChange={(v) => set('fundingStatus', v)}
         >
-          <SelectTrigger className="w-full border-slate-200">
+          <SelectTrigger className="w-full border-[var(--alo-border)]">
             <SelectValue placeholder="Select funding status" />
           </SelectTrigger>
           <SelectContent>
@@ -691,7 +691,7 @@ function FundingSection({ form, setForm }: { form: Record<string, unknown>; setF
           value={(form.sponsorType as string) || ''}
           onValueChange={(v) => set('sponsorType', v)}
         >
-          <SelectTrigger className="w-full border-slate-200">
+          <SelectTrigger className="w-full border-[var(--alo-border)]">
             <SelectValue placeholder="Select sponsor" />
           </SelectTrigger>
           <SelectContent>
@@ -713,7 +713,7 @@ function FundingSection({ form, setForm }: { form: Record<string, unknown>; setF
                 checked={fundSources.includes(source)}
                 onCheckedChange={() => toggleFundSource(source)}
               />
-              <Label htmlFor={`fund-${source}`} className="text-sm text-slate-700 cursor-pointer">
+              <Label htmlFor={`fund-${source}`} className="text-sm text-[var(--alo-body)] cursor-pointer">
                 {source}
               </Label>
             </div>
@@ -723,8 +723,8 @@ function FundingSection({ form, setForm }: { form: Record<string, unknown>; setF
 
       {isMarried && (
         <>
-          <div className="border-t border-slate-200 pt-4 mt-2">
-            <p className="text-sm font-medium text-slate-700 mb-3">Married Applicant Details</p>
+          <div className="border-t border-[var(--alo-border)] pt-4 mt-2">
+            <p className="text-sm font-medium text-[var(--alo-body)] mb-3">Married Applicant Details</p>
           </div>
 
           <FormField label="Applicant Status">
@@ -732,7 +732,7 @@ function FundingSection({ form, setForm }: { form: Record<string, unknown>; setF
               value={(form.applicantStatus as string) || ''}
               onValueChange={(v) => set('applicantStatus', v)}
             >
-              <SelectTrigger className="w-full border-slate-200">
+              <SelectTrigger className="w-full border-[var(--alo-border)]">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
@@ -749,7 +749,7 @@ function FundingSection({ form, setForm }: { form: Record<string, unknown>; setF
               min={0}
               value={(form.noOfDependents as number) || 0}
               onChange={(e) => set('noOfDependents', parseInt(e.target.value) || 0)}
-              className="border-slate-200 w-32"
+              className="border-[var(--alo-border)] w-32"
             />
           </FormField>
         </>
@@ -780,7 +780,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.primaryEmail as string) || ''}
             onChange={(e) => set('primaryEmail', e.target.value)}
             placeholder="rahim.hossain@email.com"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Alternative Email">
@@ -789,7 +789,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.altEmail as string) || ''}
             onChange={(e) => set('altEmail', e.target.value)}
             placeholder="rahim.alt@email.com"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
       </div>
@@ -800,7 +800,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.contactPhone as string) || ''}
             onChange={(e) => set('contactPhone', e.target.value)}
             placeholder="+880 1712-345678"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Alternative Number">
@@ -808,13 +808,13 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.altPhone as string) || ''}
             onChange={(e) => set('altPhone', e.target.value)}
             placeholder="+880 1800-123456"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
       </div>
 
-      <div className="border-t border-slate-200 pt-4">
-        <p className="text-sm font-medium text-slate-700 mb-4">Emergency Contact</p>
+      <div className="border-t border-[var(--alo-border)] pt-4">
+        <p className="text-sm font-medium text-[var(--alo-body)] mb-4">Emergency Contact</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -823,7 +823,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.emergencyName as string) || ''}
             onChange={(e) => set('emergencyName', e.target.value)}
             placeholder="Abdul Hossain"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Relation">
@@ -831,7 +831,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.emergencyRelation as string) || ''}
             onValueChange={(v) => set('emergencyRelation', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select relation" />
             </SelectTrigger>
             <SelectContent>
@@ -852,7 +852,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.emergencyEmail as string) || ''}
             onChange={(e) => set('emergencyEmail', e.target.value)}
             placeholder="abdul.hossain@email.com"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Emergency Mobile">
@@ -860,7 +860,7 @@ function ContactSection({ form, setForm }: { form: Record<string, unknown>; setF
             value={(form.emergencyPhone as string) || ''}
             onChange={(e) => set('emergencyPhone', e.target.value)}
             placeholder="+880 1812-987654"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
       </div>
@@ -950,14 +950,14 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
         <Button
           type="button"
           onClick={addEducation}
-          className="bg-[#0057B8] hover:bg-[#003d82] text-white shrink-0"
+          className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white shrink-0"
         >
           <Plus className="size-4 mr-1.5" />
           Add Education
         </Button>
       </div>
 
-      <Card className="border border-slate-200 rounded-xl p-4 bg-slate-50">
+      <Card className="border border-[var(--alo-border)] rounded-xl p-4 bg-[var(--alo-page)]">
         <FormField label="Highest Qualification">
           <Select
             value={(form.highestQualification as string) || ''}
@@ -966,7 +966,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
               seedForQualification(value);
             }}
           >
-            <SelectTrigger className="w-full border-slate-200 bg-white">
+            <SelectTrigger className="w-full border-[var(--alo-border)] bg-white">
               <SelectValue placeholder="Select your highest completed (or expected) qualification" />
             </SelectTrigger>
             <SelectContent>
@@ -976,23 +976,23 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
             </SelectContent>
           </Select>
         </FormField>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-[var(--alo-text-muted)]">
           Selecting a level opens the matching sections below automatically. You can still add another qualification
           (unlimited) or remove any row.
         </p>
       </Card>
 
       {educations.length === 0 && (
-        <div className="border border-dashed border-slate-300 rounded-xl p-8 text-center">
-          <GraduationCap className="size-10 text-slate-300 mx-auto mb-3" />
-          <p className="text-sm text-slate-500">No education entries yet. Click &quot;Add Education&quot; to get started.</p>
+        <div className="border border-dashed border-[var(--alo-border-strong)] rounded-xl p-8 text-center">
+          <GraduationCap className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+          <p className="text-sm text-[var(--alo-text-muted)]">No education entries yet. Click &quot;Add Education&quot; to get started.</p>
         </div>
       )}
 
       {educations.map((edu) => (
-        <Card key={edu.id} className="border border-slate-200 rounded-xl p-5 bg-white">
+        <Card key={edu.id} className="border border-[var(--alo-border)] rounded-xl p-5 bg-white">
           <div className="flex items-start justify-between mb-4">
-            <Badge variant="outline" className="text-xs font-medium border-[#0057B8] text-[#0057B8]">
+            <Badge variant="outline" className="text-xs font-medium border-[var(--alo-brand)] text-[var(--alo-brand)]">
               {edu.academicLevel || 'New Entry'}
             </Badge>
             <Button
@@ -1012,7 +1012,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.academicLevel}
                 onValueChange={(v) => updateEducation(edu.id, 'academicLevel', v)}
               >
-                <SelectTrigger className="w-full border-slate-200">
+                <SelectTrigger className="w-full border-[var(--alo-border)]">
                   <SelectValue placeholder="Select level" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1029,7 +1029,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.institution}
                 onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
                 placeholder="Institution name"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Group / Subject">
@@ -1037,7 +1037,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.groupSubject}
                 onChange={(e) => updateEducation(edu.id, 'groupSubject', e.target.value)}
                 placeholder="e.g. Science, Business"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Result Type">
@@ -1045,7 +1045,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.resultType}
                 onValueChange={(v) => updateEducation(edu.id, 'resultType', v)}
               >
-                <SelectTrigger className="w-full border-slate-200">
+                <SelectTrigger className="w-full border-[var(--alo-border)]">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1062,7 +1062,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.resultScore}
                 onChange={(e) => updateEducation(edu.id, 'resultScore', e.target.value)}
                 placeholder="e.g. 5.00 or 85%"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Duration">
@@ -1070,7 +1070,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.duration}
                 onChange={(e) => updateEducation(edu.id, 'duration', e.target.value)}
                 placeholder="e.g. 2 Years"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Start Year">
@@ -1078,7 +1078,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.startYear}
                 onChange={(e) => updateEducation(edu.id, 'startYear', e.target.value)}
                 placeholder="2019"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Start Month">
@@ -1086,7 +1086,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.startMonth}
                 onValueChange={(v) => updateEducation(edu.id, 'startMonth', v)}
               >
-                <SelectTrigger className="w-full border-slate-200">
+                <SelectTrigger className="w-full border-[var(--alo-border)]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1103,7 +1103,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.endYear}
                 onChange={(e) => updateEducation(edu.id, 'endYear', e.target.value)}
                 placeholder="2020"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="End Month">
@@ -1111,7 +1111,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.endMonth}
                 onValueChange={(v) => updateEducation(edu.id, 'endMonth', v)}
               >
-                <SelectTrigger className="w-full border-slate-200">
+                <SelectTrigger className="w-full border-[var(--alo-border)]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1128,7 +1128,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.countryOfStudy}
                 onChange={(e) => updateEducation(edu.id, 'countryOfStudy', e.target.value)}
                 placeholder="Bangladesh"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="City of Study">
@@ -1136,7 +1136,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.cityOfStudy}
                 onChange={(e) => updateEducation(edu.id, 'cityOfStudy', e.target.value)}
                 placeholder="Dhaka"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Board Name">
@@ -1144,7 +1144,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.boardName}
                 onChange={(e) => updateEducation(edu.id, 'boardName', e.target.value)}
                 placeholder="Dhaka Board"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Primary Language">
@@ -1152,12 +1152,12 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 value={edu.primaryLanguage}
                 onChange={(e) => updateEducation(edu.id, 'primaryLanguage', e.target.value)}
                 placeholder="English"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <div className="col-span-full">
               <div className="flex items-center gap-3 mt-1">
-                <Label className="text-sm font-medium text-slate-700">Study Gap</Label>
+                <Label className="text-sm font-medium text-[var(--alo-body)]">Study Gap</Label>
                 <RadioGroup
                   value={edu.studyGap}
                   onValueChange={(v) => updateEducation(edu.id, 'studyGap', v)}
@@ -1165,11 +1165,11 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
                 >
                   <div className="flex items-center gap-1.5">
                     <RadioGroupItem value="yes" id={`gap-yes-${edu.id}`} />
-                    <Label htmlFor={`gap-yes-${edu.id}`} className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+                    <Label htmlFor={`gap-yes-${edu.id}`} className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <RadioGroupItem value="no" id={`gap-no-${edu.id}`} />
-                    <Label htmlFor={`gap-no-${edu.id}`} className="text-sm text-slate-600 cursor-pointer">No</Label>
+                    <Label htmlFor={`gap-no-${edu.id}`} className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -1199,7 +1199,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
       </div>
 
       <div>
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Do you have a passport?
         </Label>
         <RadioGroup
@@ -1209,11 +1209,11 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="yes" id="passport-yes" />
-            <Label htmlFor="passport-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+            <Label htmlFor="passport-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="no" id="passport-no" />
-            <Label htmlFor="passport-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+            <Label htmlFor="passport-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
           </div>
         </RadioGroup>
       </div>
@@ -1225,7 +1225,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               value={(form.passportNumber as string) || ''}
               onChange={(e) => set('passportNumber', e.target.value)}
               placeholder="AB1234567"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Place of Issue">
@@ -1233,7 +1233,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               value={(form.passportIssuePlace as string) || ''}
               onChange={(e) => set('passportIssuePlace', e.target.value)}
               placeholder="Dhaka"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Issue Date">
@@ -1241,7 +1241,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               type="date"
               value={(form.passportIssueDate as string) || ''}
               onChange={(e) => set('passportIssueDate', e.target.value)}
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Expiry Date">
@@ -1249,7 +1249,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               type="date"
               value={(form.passportExpiry as string) || ''}
               onChange={(e) => set('passportExpiry', e.target.value)}
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Issue Country">
@@ -1257,7 +1257,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               value={(form.passportIssueCountry as string) || ''}
               onChange={(e) => set('passportIssueCountry', e.target.value)}
               placeholder="Bangladesh"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="City of Birth">
@@ -1265,7 +1265,7 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               value={(form.cityOfBirth as string) || ''}
               onChange={(e) => set('cityOfBirth', e.target.value)}
               placeholder="Dhaka"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Country of Birth">
@@ -1273,23 +1273,23 @@ function PassportSection({ form, setForm }: { form: Record<string, unknown>; set
               value={(form.countryOfBirth as string) || ''}
               onChange={(e) => set('countryOfBirth', e.target.value)}
               placeholder="Bangladesh"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
         </div>
       ) : (
         <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-[#0057B8] mt-0.5 shrink-0" />
+            <AlertCircle className="size-5 text-[var(--alo-brand)] mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-slate-900 mb-1">Apply for Passport</p>
-              <p className="text-sm text-slate-600 mb-4">
+              <p className="text-sm font-medium text-[var(--alo-text)] mb-1">Apply for Passport</p>
+              <p className="text-sm text-[var(--alo-body)] mb-4">
                 You will need a valid passport to apply for a student visa. We recommend applying as soon as possible as it can take 2-4 weeks to process.
               </p>
               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 type="button"
                 variant="outline"
-                className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8] hover:text-white"
+                className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)] hover:text-white"
               >
                 <Bell className="size-4 mr-1.5" />
                 Set Reminder
@@ -1324,7 +1324,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
       </div>
 
       <div>
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Do you have an English Proficiency Test?
         </Label>
         <RadioGroup
@@ -1335,7 +1335,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
           {['Yes', 'Yet to Receive', 'Planning For', 'No'].map((opt) => (
             <div key={opt} className="flex items-center gap-1.5">
               <RadioGroupItem value={opt} id={`eng-${opt.replace(/\s/g, '')}`} />
-              <Label htmlFor={`eng-${opt.replace(/\s/g, '')}`} className="text-sm text-slate-600 cursor-pointer">
+              <Label htmlFor={`eng-${opt.replace(/\s/g, '')}`} className="text-sm text-[var(--alo-body)] cursor-pointer">
                 {opt}
               </Label>
             </div>
@@ -1350,7 +1350,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
               value={testName}
               onValueChange={(v) => set('englishTestName', v)}
             >
-              <SelectTrigger className="w-full border-slate-200">
+              <SelectTrigger className="w-full border-[var(--alo-border)]">
                 <SelectValue placeholder="Select test" />
               </SelectTrigger>
               <SelectContent>
@@ -1371,7 +1371,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
             type="date"
             value={(form.plannedTestDate as string) || ''}
             onChange={(e) => set('plannedTestDate', e.target.value)}
-            className="border-slate-200 w-full sm:w-auto"
+            className="border-[var(--alo-border)] w-full sm:w-auto"
           />
         </FormField>
       )}
@@ -1384,7 +1384,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 type="date"
                 value={(form.englishTestDate as string) || ''}
                 onChange={(e) => set('englishTestDate', e.target.value)}
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Expiration Date">
@@ -1392,7 +1392,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 type="date"
                 value={(form.englishExpDate as string) || ''}
                 onChange={(e) => set('englishExpDate', e.target.value)}
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Certificate ID">
@@ -1400,13 +1400,13 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 value={(form.englishCertId as string) || ''}
                 onChange={(e) => set('englishCertId', e.target.value)}
                 placeholder="Certificate ID"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
           </div>
 
-          <div className="border-t border-slate-200 pt-4">
-            <p className="text-sm font-medium text-slate-700 mb-4">Test Scores</p>
+          <div className="border-t border-[var(--alo-border)] pt-4">
+            <p className="text-sm font-medium text-[var(--alo-body)] mb-4">Test Scores</p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -1417,7 +1417,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 value={(form.englishOverall as number) || ''}
                 onChange={(e) => set('englishOverall', parseFloat(e.target.value) || 0)}
                 placeholder="7.0"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Listening">
@@ -1427,7 +1427,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 value={(form.englishListening as number) || ''}
                 onChange={(e) => set('englishListening', parseFloat(e.target.value) || 0)}
                 placeholder="7.5"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Speaking">
@@ -1437,7 +1437,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 value={(form.englishSpeaking as number) || ''}
                 onChange={(e) => set('englishSpeaking', parseFloat(e.target.value) || 0)}
                 placeholder="7.0"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Writing">
@@ -1447,7 +1447,7 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 value={(form.englishWriting as number) || ''}
                 onChange={(e) => set('englishWriting', parseFloat(e.target.value) || 0)}
                 placeholder="6.5"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
             <FormField label="Reading">
@@ -1457,28 +1457,28 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
                 value={(form.englishReading as number) || ''}
                 onChange={(e) => set('englishReading', parseFloat(e.target.value) || 0)}
                 placeholder="7.5"
-                className="border-slate-200"
+                className="border-[var(--alo-border)]"
               />
             </FormField>
           </div>
 
           {isGmat && (
             <>
-              <div className="border-t border-slate-200 pt-4">
-                <p className="text-sm font-medium text-slate-700 mb-4">GMAT Additional Scores</p>
+              <div className="border-t border-[var(--alo-border)] pt-4">
+                <p className="text-sm font-medium text-[var(--alo-body)] mb-4">GMAT Additional Scores</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <FormField label="AWA">
-                  <Input type="number" step="0.5" value={(form.gmatAwa as number) || ''} onChange={(e) => set('gmatAwa', parseFloat(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="0.5" value={(form.gmatAwa as number) || ''} onChange={(e) => set('gmatAwa', parseFloat(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="IR">
-                  <Input type="number" step="1" value={(form.gmatIr as number) || ''} onChange={(e) => set('gmatIr', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="1" value={(form.gmatIr as number) || ''} onChange={(e) => set('gmatIr', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Quantitative">
-                  <Input type="number" step="1" value={(form.gmatQuant as number) || ''} onChange={(e) => set('gmatQuant', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="1" value={(form.gmatQuant as number) || ''} onChange={(e) => set('gmatQuant', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Verbal">
-                  <Input type="number" step="1" value={(form.gmatVerbal as number) || ''} onChange={(e) => set('gmatVerbal', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="1" value={(form.gmatVerbal as number) || ''} onChange={(e) => set('gmatVerbal', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
               </div>
             </>
@@ -1486,21 +1486,21 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
 
           {isDet && (
             <>
-              <div className="border-t border-slate-200 pt-4">
-                <p className="text-sm font-medium text-slate-700 mb-4">DET Duolingo Additional Scores</p>
+              <div className="border-t border-[var(--alo-border)] pt-4">
+                <p className="text-sm font-medium text-[var(--alo-body)] mb-4">DET Duolingo Additional Scores</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <FormField label="Literacy">
-                  <Input type="number" step="5" value={(form.detLiteracy as number) || ''} onChange={(e) => set('detLiteracy', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="5" value={(form.detLiteracy as number) || ''} onChange={(e) => set('detLiteracy', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Comprehension">
-                  <Input type="number" step="5" value={(form.detComprehension as number) || ''} onChange={(e) => set('detComprehension', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="5" value={(form.detComprehension as number) || ''} onChange={(e) => set('detComprehension', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Conversation">
-                  <Input type="number" step="5" value={(form.detConversation as number) || ''} onChange={(e) => set('detConversation', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="5" value={(form.detConversation as number) || ''} onChange={(e) => set('detConversation', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Production">
-                  <Input type="number" step="5" value={(form.detProduction as number) || ''} onChange={(e) => set('detProduction', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="5" value={(form.detProduction as number) || ''} onChange={(e) => set('detProduction', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
               </div>
             </>
@@ -1508,21 +1508,21 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
 
           {isSat && (
             <>
-              <div className="border-t border-slate-200 pt-4">
-                <p className="text-sm font-medium text-slate-700 mb-4">SAT Additional Scores</p>
+              <div className="border-t border-[var(--alo-border)] pt-4">
+                <p className="text-sm font-medium text-[var(--alo-body)] mb-4">SAT Additional Scores</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <FormField label="Reading">
-                  <Input type="number" step="10" value={(form.satReading as number) || ''} onChange={(e) => set('satReading', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="10" value={(form.satReading as number) || ''} onChange={(e) => set('satReading', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Writing">
-                  <Input type="number" step="10" value={(form.satWriting as number) || ''} onChange={(e) => set('satWriting', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="10" value={(form.satWriting as number) || ''} onChange={(e) => set('satWriting', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Math">
-                  <Input type="number" step="10" value={(form.satMath as number) || ''} onChange={(e) => set('satMath', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="10" value={(form.satMath as number) || ''} onChange={(e) => set('satMath', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Essay">
-                  <Input type="number" step="1" value={(form.satEssay as number) || ''} onChange={(e) => set('satEssay', parseInt(e.target.value) || 0)} className="border-slate-200" />
+                  <Input type="number" step="1" value={(form.satEssay as number) || ''} onChange={(e) => set('satEssay', parseInt(e.target.value) || 0)} className="border-[var(--alo-border)]" />
                 </FormField>
               </div>
             </>
@@ -1533,10 +1533,10 @@ function EnglishSection({ form, setForm }: { form: Record<string, unknown>; setF
       {testStatus === 'No' && (
         <Card className="border border-blue-200 bg-blue-50 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-[#0057B8] mt-0.5 shrink-0" />
+            <AlertCircle className="size-5 text-[var(--alo-brand)] mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-slate-900 mb-1">English Test Required</p>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm font-medium text-[var(--alo-text)] mb-1">English Test Required</p>
+              <p className="text-sm text-[var(--alo-body)]">
                 Most universities require an English proficiency test score (IELTS, TOEFL, PTE, etc.) for admission. Please plan to take one as part of your application.
               </p>
             </div>
@@ -1591,7 +1591,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
       </div>
 
       <div>
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Do you have work experience?
         </Label>
         <RadioGroup
@@ -1601,11 +1601,11 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="yes" id="work-yes" />
-            <Label htmlFor="work-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+            <Label htmlFor="work-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="no" id="work-no" />
-            <Label htmlFor="work-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+            <Label htmlFor="work-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
           </div>
         </RadioGroup>
       </div>
@@ -1615,23 +1615,23 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
           <Button
             type="button"
             onClick={addWorkExp}
-            className="bg-[#0057B8] hover:bg-[#003d82] text-white"
+            className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
           >
             <Plus className="size-4 mr-1.5" />
             Add Work Experience
           </Button>
 
           {workExps.length === 0 && (
-            <div className="border border-dashed border-slate-300 rounded-xl p-8 text-center">
-              <Briefcase className="size-10 text-slate-300 mx-auto mb-3" />
-              <p className="text-sm text-slate-500">No work experience entries yet. Click &quot;Add Work Experience&quot; to get started.</p>
+            <div className="border border-dashed border-[var(--alo-border-strong)] rounded-xl p-8 text-center">
+              <Briefcase className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+              <p className="text-sm text-[var(--alo-text-muted)]">No work experience entries yet. Click &quot;Add Work Experience&quot; to get started.</p>
             </div>
           )}
 
           {workExps.map((exp) => (
-            <Card key={exp.id} className="border border-slate-200 rounded-xl p-5 bg-white">
+            <Card key={exp.id} className="border border-[var(--alo-border)] rounded-xl p-5 bg-white">
               <div className="flex items-start justify-between mb-4">
-                <Badge variant="outline" className="text-xs font-medium border-[#0057B8] text-[#0057B8]">
+                <Badge variant="outline" className="text-xs font-medium border-[var(--alo-brand)] text-[var(--alo-brand)]">
                   {exp.companyName || 'New Entry'}
                 </Badge>
                 <Button
@@ -1651,7 +1651,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     value={exp.companyName}
                     onChange={(e) => updateWorkExp(exp.id, 'companyName', e.target.value)}
                     placeholder="Company name"
-                    className="border-slate-200"
+                    className="border-[var(--alo-border)]"
                   />
                 </FormField>
                 <FormField label="Designation">
@@ -1659,7 +1659,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     value={exp.designation}
                     onChange={(e) => updateWorkExp(exp.id, 'designation', e.target.value)}
                     placeholder="Job title"
-                    className="border-slate-200"
+                    className="border-[var(--alo-border)]"
                   />
                 </FormField>
                 <FormField label="Start Date">
@@ -1667,7 +1667,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     type="date"
                     value={exp.startDate}
                     onChange={(e) => updateWorkExp(exp.id, 'startDate', e.target.value)}
-                    className="border-slate-200"
+                    className="border-[var(--alo-border)]"
                   />
                 </FormField>
                 <FormField label="End Date">
@@ -1675,7 +1675,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     type="date"
                     value={exp.endDate}
                     onChange={(e) => updateWorkExp(exp.id, 'endDate', e.target.value)}
-                    className="border-slate-200"
+                    className="border-[var(--alo-border)]"
                     disabled={exp.currentlyWorking}
                   />
                 </FormField>
@@ -1685,7 +1685,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     checked={exp.currentlyWorking}
                     onCheckedChange={(v) => updateWorkExp(exp.id, 'currentlyWorking', v)}
                   />
-                  <Label htmlFor={`current-${exp.id}`} className="text-sm text-slate-700 cursor-pointer">
+                  <Label htmlFor={`current-${exp.id}`} className="text-sm text-[var(--alo-body)] cursor-pointer">
                     Currently Working Here
                   </Label>
                 </div>
@@ -1694,7 +1694,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     value={exp.salaryMode}
                     onValueChange={(v) => updateWorkExp(exp.id, 'salaryMode', v)}
                   >
-                    <SelectTrigger className="w-full border-slate-200">
+                    <SelectTrigger className="w-full border-[var(--alo-border)]">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1709,7 +1709,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                     value={exp.jobRole}
                     onChange={(e) => updateWorkExp(exp.id, 'jobRole', e.target.value)}
                     placeholder="e.g. Software Engineer"
-                    className="border-slate-200"
+                    className="border-[var(--alo-border)]"
                   />
                 </FormField>
               </div>
@@ -1739,7 +1739,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
       </div>
 
       <div>
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Do you have a reference?
         </Label>
         <RadioGroup
@@ -1749,11 +1749,11 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="yes" id="ref-yes" />
-            <Label htmlFor="ref-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+            <Label htmlFor="ref-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="no" id="ref-no" />
-            <Label htmlFor="ref-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+            <Label htmlFor="ref-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
           </div>
         </RadioGroup>
       </div>
@@ -1765,7 +1765,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.refName as string) || ''}
               onChange={(e) => set('refName', e.target.value)}
               placeholder="Dr. Anwarul Islam"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Designation">
@@ -1773,7 +1773,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.refDesignation as string) || ''}
               onChange={(e) => set('refDesignation', e.target.value)}
               placeholder="Professor"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Department">
@@ -1781,7 +1781,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.refDepartment as string) || ''}
               onChange={(e) => set('refDepartment', e.target.value)}
               placeholder="Computer Science & Engineering"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Organization">
@@ -1789,7 +1789,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.refOrganization as string) || ''}
               onChange={(e) => set('refOrganization', e.target.value)}
               placeholder="University of Dhaka"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Email">
@@ -1798,7 +1798,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.refEmail as string) || ''}
               onChange={(e) => set('refEmail', e.target.value)}
               placeholder="anwarul@du.ac.bd"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <FormField label="Contact Number">
@@ -1806,7 +1806,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.refPhone as string) || ''}
               onChange={(e) => set('refPhone', e.target.value)}
               placeholder="+880 1711-234567"
-              className="border-slate-200"
+              className="border-[var(--alo-border)]"
             />
           </FormField>
           <div className="sm:col-span-2">
@@ -1816,7 +1816,7 @@ function ReferenceSection({ form, setForm }: { form: Record<string, unknown>; se
                 onChange={(e) => set('refAddress', e.target.value)}
                 placeholder="Department of CSE, University of Dhaka, Dhaka-1000"
                 rows={2}
-                className="border-slate-200 resize-none"
+                className="border-[var(--alo-border)] resize-none"
               />
             </FormField>
           </div>
@@ -1905,7 +1905,7 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
 
       {/* Has Visa */}
       <div>
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Do you have any visa?
         </Label>
         <RadioGroup
@@ -1915,31 +1915,31 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="yes" id="bg-visa-yes" />
-            <Label htmlFor="bg-visa-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+            <Label htmlFor="bg-visa-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="no" id="bg-visa-no" />
-            <Label htmlFor="bg-visa-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+            <Label htmlFor="bg-visa-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
           </div>
         </RadioGroup>
       </div>
 
       {hasVisa === 'yes' && (
         <div className="space-y-4">
-          <Button type="button" variant="outline" onClick={addVisa} className="border-slate-200">
+          <Button type="button" variant="outline" onClick={addVisa} className="border-[var(--alo-border)]">
             <Plus className="size-4 mr-1.5" /> Add Visa
           </Button>
           {visas.map((v, idx) => (
-            <Card key={idx} className="border border-slate-200 rounded-xl p-4 bg-white">
+            <Card key={idx} className="border border-[var(--alo-border)] rounded-xl p-4 bg-white">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField label="Country">
-                  <Input value={v.country} onChange={(e) => updateVisa(idx, 'country', e.target.value)} placeholder="Country" className="border-slate-200" />
+                  <Input value={v.country} onChange={(e) => updateVisa(idx, 'country', e.target.value)} placeholder="Country" className="border-[var(--alo-border)]" />
                 </FormField>
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
                     <FormField label="Visa Type">
                       <Select value={v.visaType} onValueChange={(val) => updateVisa(idx, 'visaType', val)}>
-                        <SelectTrigger className="w-full border-slate-200">
+                        <SelectTrigger className="w-full border-[var(--alo-border)]">
                           <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1961,8 +1961,8 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
       )}
 
       {/* Visa Refusal */}
-      <div className="border-t border-slate-200 pt-4">
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+      <div className="border-t border-[var(--alo-border)] pt-4">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Do you have any visa refusal?
         </Label>
         <RadioGroup
@@ -1972,22 +1972,22 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="yes" id="bg-refusal-yes" />
-            <Label htmlFor="bg-refusal-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+            <Label htmlFor="bg-refusal-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="no" id="bg-refusal-no" />
-            <Label htmlFor="bg-refusal-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+            <Label htmlFor="bg-refusal-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
           </div>
         </RadioGroup>
       </div>
 
       {hasVisaRefusal === 'yes' && (
         <div className="space-y-4">
-          <Button type="button" variant="outline" onClick={addRefusal} className="border-slate-200">
+          <Button type="button" variant="outline" onClick={addRefusal} className="border-[var(--alo-border)]">
             <Plus className="size-4 mr-1.5" /> Add Refusal
           </Button>
           {visaRefusals.map((r) => (
-            <Card key={r.id} className="border border-slate-200 rounded-xl p-4 bg-white">
+            <Card key={r.id} className="border border-[var(--alo-border)] rounded-xl p-4 bg-white">
               <div className="flex items-start justify-between mb-3">
                 <Badge variant="outline" className="text-xs font-medium border-red-300 text-red-600">
                   {r.country || 'Refusal Entry'}
@@ -1998,16 +1998,16 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField label="Country">
-                  <Input value={r.country} onChange={(e) => updateRefusal(r.id, 'country', e.target.value)} placeholder="Country" className="border-slate-200" />
+                  <Input value={r.country} onChange={(e) => updateRefusal(r.id, 'country', e.target.value)} placeholder="Country" className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Visa Type">
-                  <Input value={r.visaType} onChange={(e) => updateRefusal(r.id, 'visaType', e.target.value)} placeholder="Visa type" className="border-slate-200" />
+                  <Input value={r.visaType} onChange={(e) => updateRefusal(r.id, 'visaType', e.target.value)} placeholder="Visa type" className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Rejection Date">
-                  <Input type="date" value={r.rejectionDate} onChange={(e) => updateRefusal(r.id, 'rejectionDate', e.target.value)} className="border-slate-200" />
+                  <Input type="date" value={r.rejectionDate} onChange={(e) => updateRefusal(r.id, 'rejectionDate', e.target.value)} className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Reason">
-                  <Input value={r.reason} onChange={(e) => updateRefusal(r.id, 'reason', e.target.value)} placeholder="Reason for refusal" className="border-slate-200" />
+                  <Input value={r.reason} onChange={(e) => updateRefusal(r.id, 'reason', e.target.value)} placeholder="Reason for refusal" className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Evidence (refusal letter / decision notice)">
                   <div className="space-y-1">
@@ -2015,10 +2015,10 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,.webp,.gif"
                       onChange={(e) => void uploadRefusalEvidence(r.id, e.target.files?.[0])}
-                      className="block w-full text-xs text-slate-600"
+                      className="block w-full text-xs text-[var(--alo-body)]"
                     />
                     {evidenceState[r.id] === 'uploading' && (
-                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500"><Loader2 className="size-3 animate-spin" /> Uploading…</span>
+                      <span className="inline-flex items-center gap-1 text-[11px] text-[var(--alo-text-muted)]"><Loader2 className="size-3 animate-spin" /> Uploading…</span>
                     )}
                     {r.evidenceFileName && evidenceState[r.id] !== 'error' && (
                       <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700"><CheckCircle2 className="size-3" /> {r.evidenceFileName}</span>
@@ -2033,22 +2033,22 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
       )}
 
       {/* Immigration history — optional free text, always visible (spec A) */}
-      <div className="border-t border-slate-200 pt-4">
+      <div className="border-t border-[var(--alo-border)] pt-4">
         <FormField label="Immigration history (optional)">
           <Textarea
             value={(form.immigrationHistory as string) || ''}
             onChange={(e) => set('immigrationHistory', e.target.value)}
             placeholder="Any travel, study or immigration history you want your counselor to know — including earlier applications, refusals, overstays or cancelled visas."
             rows={3}
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
-        <p className="mt-1 text-[11px] text-slate-500">Always visible. Leave it empty if nothing applies.</p>
+        <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">Always visible. Leave it empty if nothing applies.</p>
       </div>
 
       {/* Immigration */}
-      <div className="border-t border-slate-200 pt-4">
-        <Label className="text-sm font-medium text-slate-700 mb-3 block">
+      <div className="border-t border-[var(--alo-border)] pt-4">
+        <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
           Have you applied for any program / immigration?
         </Label>
         <RadioGroup
@@ -2058,39 +2058,39 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
         >
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="yes" id="bg-imm-yes" />
-            <Label htmlFor="bg-imm-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+            <Label htmlFor="bg-imm-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
           </div>
           <div className="flex items-center gap-1.5">
             <RadioGroupItem value="no" id="bg-imm-no" />
-            <Label htmlFor="bg-imm-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+            <Label htmlFor="bg-imm-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
           </div>
         </RadioGroup>
       </div>
 
       {hasImmigration === 'yes' && (
         <div className="space-y-4">
-          <Button type="button" variant="outline" onClick={addImmigration} className="border-slate-200">
+          <Button type="button" variant="outline" onClick={addImmigration} className="border-[var(--alo-border)]">
             <Plus className="size-4 mr-1.5" /> Add Application
           </Button>
           {immigrations.map((im, idx) => (
-            <Card key={idx} className="border border-slate-200 rounded-xl p-4 bg-white">
+            <Card key={idx} className="border border-[var(--alo-border)] rounded-xl p-4 bg-white">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField label="Country">
-                  <Input value={im.country} onChange={(e) => updateImmigration(idx, 'country', e.target.value)} placeholder="Country" className="border-slate-200" />
+                  <Input value={im.country} onChange={(e) => updateImmigration(idx, 'country', e.target.value)} placeholder="Country" className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Visa Type">
-                  <Input value={im.visaType} onChange={(e) => updateImmigration(idx, 'visaType', e.target.value)} placeholder="Visa type" className="border-slate-200" />
+                  <Input value={im.visaType} onChange={(e) => updateImmigration(idx, 'visaType', e.target.value)} placeholder="Visa type" className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Program Title">
-                  <Input value={im.programTitle} onChange={(e) => updateImmigration(idx, 'programTitle', e.target.value)} placeholder="Program title" className="border-slate-200" />
+                  <Input value={im.programTitle} onChange={(e) => updateImmigration(idx, 'programTitle', e.target.value)} placeholder="Program title" className="border-[var(--alo-border)]" />
                 </FormField>
                 <FormField label="Institute">
-                  <Input value={im.institute} onChange={(e) => updateImmigration(idx, 'institute', e.target.value)} placeholder="Institute name" className="border-slate-200" />
+                  <Input value={im.institute} onChange={(e) => updateImmigration(idx, 'institute', e.target.value)} placeholder="Institute name" className="border-[var(--alo-border)]" />
                 </FormField>
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
                     <FormField label="Intake">
-                      <Input value={im.intake} onChange={(e) => updateImmigration(idx, 'intake', e.target.value)} placeholder="e.g. September 2025" className="border-slate-200" />
+                      <Input value={im.intake} onChange={(e) => updateImmigration(idx, 'intake', e.target.value)} placeholder="e.g. September 2025" className="border-[var(--alo-border)]" />
                     </FormField>
                   </div>
                   <Button type="button" variant="ghost" size="sm" onClick={() => removeImmigration(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0 shrink-0 mb-0.5">
@@ -2104,35 +2104,35 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
       )}
 
       {/* Medical & Criminal */}
-      <div className="border-t border-slate-200 pt-4 space-y-4">
+      <div className="border-t border-[var(--alo-border)] pt-4 space-y-4">
         <div>
-          <Label className="text-sm font-medium text-slate-700 mb-3 block">
+          <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
             Do you have any medical condition?
           </Label>
           <RadioGroup value={hasMedical} onValueChange={(v) => set('hasMedical', v)} className="flex gap-4">
             <div className="flex items-center gap-1.5">
               <RadioGroupItem value="yes" id="bg-med-yes" />
-              <Label htmlFor="bg-med-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+              <Label htmlFor="bg-med-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
             </div>
             <div className="flex items-center gap-1.5">
               <RadioGroupItem value="no" id="bg-med-no" />
-              <Label htmlFor="bg-med-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+              <Label htmlFor="bg-med-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
             </div>
           </RadioGroup>
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-slate-700 mb-3 block">
+          <Label className="text-sm font-medium text-[var(--alo-body)] mb-3 block">
             Do you have any criminal offense?
           </Label>
           <RadioGroup value={hasCriminal} onValueChange={(v) => set('hasCriminal', v)} className="flex gap-4">
             <div className="flex items-center gap-1.5">
               <RadioGroupItem value="yes" id="bg-crim-yes" />
-              <Label htmlFor="bg-crim-yes" className="text-sm text-slate-600 cursor-pointer">Yes</Label>
+              <Label htmlFor="bg-crim-yes" className="text-sm text-[var(--alo-body)] cursor-pointer">Yes</Label>
             </div>
             <div className="flex items-center gap-1.5">
               <RadioGroupItem value="no" id="bg-crim-no" />
-              <Label htmlFor="bg-crim-no" className="text-sm text-slate-600 cursor-pointer">No</Label>
+              <Label htmlFor="bg-crim-no" className="text-sm text-[var(--alo-body)] cursor-pointer">No</Label>
             </div>
           </RadioGroup>
         </div>
@@ -2162,7 +2162,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.studyDestination as string) || ''}
             onValueChange={(v) => set('studyDestination', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -2177,7 +2177,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.studyLevel as string) || ''}
             onValueChange={(v) => set('studyLevel', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -2192,7 +2192,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.instituteType as string) || ''}
             onChange={(e) => set('instituteType', e.target.value)}
             placeholder="e.g. Public University"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Institute Name">
@@ -2200,7 +2200,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.instituteName as string) || ''}
             onChange={(e) => set('instituteName', e.target.value)}
             placeholder="e.g. University of Manchester"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Study Area">
@@ -2208,7 +2208,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.studyArea as string) || ''}
             onChange={(e) => set('studyArea', e.target.value)}
             placeholder="e.g. Computer Science"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Program Title">
@@ -2216,7 +2216,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.programTitle as string) || ''}
             onChange={(e) => set('programTitle', e.target.value)}
             placeholder="e.g. MSc Computer Science"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Intake">
@@ -2224,7 +2224,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.intake as string) || ''}
             onChange={(e) => set('intake', e.target.value)}
             placeholder="e.g. September 2025"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Enrollment Priority">
@@ -2232,7 +2232,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.enrollmentChoice as string) || ''}
             onValueChange={(v) => set('enrollmentChoice', v)}
           >
-            <SelectTrigger className="w-full border-slate-200">
+            <SelectTrigger className="w-full border-[var(--alo-border)]">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -2247,7 +2247,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.applicationPathway as string) || ''}
             onChange={(e) => set('applicationPathway', e.target.value)}
             placeholder="e.g. Direct, UCAS"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <FormField label="Pathway Provider">
@@ -2255,7 +2255,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
             value={(form.pathwayProvider as string) || ''}
             onChange={(e) => set('pathwayProvider', e.target.value)}
             placeholder="e.g. INTO, Kaplan"
-            className="border-slate-200"
+            className="border-[var(--alo-border)]"
           />
         </FormField>
         <div className="sm:col-span-2">
@@ -2264,7 +2264,7 @@ function AdmissionSection({ form, setForm }: { form: Record<string, unknown>; se
               value={(form.visaType as string) || ''}
               onValueChange={(v) => set('visaType', v)}
             >
-              <SelectTrigger className="w-full border-slate-200">
+              <SelectTrigger className="w-full border-[var(--alo-border)]">
                 <SelectValue placeholder="Select visa type" />
               </SelectTrigger>
               <SelectContent>
@@ -2591,15 +2591,15 @@ export default function StudentProfilePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-slate-200 bg-white sticky top-0 z-30">
+      <header className="border-b border-[var(--alo-border)] bg-white sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Student Profile</h1>
-            <p className="text-sm text-slate-500 mt-0.5">Complete your profile to unlock full features</p>
+            <h1 className="text-xl font-bold text-[var(--alo-text)]">Student Profile</h1>
+            <p className="text-sm text-[var(--alo-text-muted)] mt-0.5">Complete your profile to unlock full features</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 text-sm">
-              <span className="text-slate-500">Profile Completion</span>
+              <span className="text-[var(--alo-text-muted)]">Profile Completion</span>
               <Badge
                 className="text-white text-xs px-2.5 py-0.5"
                 style={{ backgroundColor: profileCompletion >= 80 ? '#10B981' : profileCompletion >= 50 ? '#C93D13' : '#64748b' }}
@@ -2633,8 +2633,8 @@ export default function StudentProfilePage() {
                       className={`
                         flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
                         ${isActive
-                          ? 'bg-[#0057B8] text-white shadow-sm'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          ? 'bg-[var(--alo-brand)] text-white shadow-sm'
+                          : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200'
                         }
                       `}
                     >
@@ -2660,8 +2660,8 @@ export default function StudentProfilePage() {
                       className={`
                         w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left
                         ${isActive
-                          ? 'bg-[#0057B8] text-white shadow-sm'
-                          : 'text-slate-600 hover:bg-slate-100'
+                          ? 'bg-[var(--alo-brand)] text-white shadow-sm'
+                          : 'text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]'
                         }
                       `}
                     >
@@ -2672,7 +2672,7 @@ export default function StudentProfilePage() {
                             ? 'bg-white/20 text-white'
                             : complete
                               ? 'bg-green-100 text-green-700'
-                              : 'bg-slate-100 text-slate-500'
+                              : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
                           }
                         `}
                       >
@@ -2689,12 +2689,12 @@ export default function StudentProfilePage() {
               </nav>
 
               {/* Progress Card */}
-              <Card className="mt-6 border border-slate-200 rounded-xl p-4 bg-white">
+              <Card className="mt-6 border border-[var(--alo-border)] rounded-xl p-4 bg-white">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-slate-500">Overall Progress</span>
-                  <span className="text-sm font-bold text-[#C93D13]">{profileCompletion}%</span>
+                  <span className="text-xs font-medium text-[var(--alo-text-muted)]">Overall Progress</span>
+                  <span className="text-sm font-bold text-[var(--alo-cta-hover)]">{profileCompletion}%</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-2">
+                <div className="w-full bg-[var(--alo-surface-muted)] rounded-full h-2">
                   <div
                     className="h-2 rounded-full transition-all duration-500"
                     style={{
@@ -2703,7 +2703,7 @@ export default function StudentProfilePage() {
                     }}
                   />
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-[var(--alo-text-muted)] mt-2">
                   {completedCount} of {SECTION_KEYS.length} sections complete
                 </p>
               </Card>
@@ -2712,7 +2712,7 @@ export default function StudentProfilePage() {
 
           {/* Tab Content */}
           <div className="flex-1 min-w-0">
-            <Card className="border border-slate-200 rounded-xl p-6 bg-white">
+            <Card className="border border-[var(--alo-border)] rounded-xl p-6 bg-white">
               <TabsContent value={activeTab} className="mt-0 outline-none">
                 {activeTab === 'lead' && <LeadSection form={form} setForm={setForm} />}
                 {activeTab === 'personal' && <PersonalSection form={form} setForm={setForm} />}
@@ -2733,14 +2733,14 @@ export default function StudentProfilePage() {
       </div>
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--alo-border)] shadow-lg z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <p className="text-sm text-slate-500 hidden sm:block">
-            Section <span className="font-semibold text-slate-900">{activeIndex + 1}</span> of <span className="font-semibold text-slate-900">11</span>
-            <span className="mx-2 text-slate-300">|</span>
+          <p className="text-sm text-[var(--alo-text-muted)] hidden sm:block">
+            Section <span className="font-semibold text-[var(--alo-text)]">{activeIndex + 1}</span> of <span className="font-semibold text-[var(--alo-text)]">11</span>
+            <span className="mx-2 text-[var(--alo-placeholder)]">|</span>
             Profile <span className="font-semibold" style={{ color: profileCompletion >= 80 ? '#10B981' : '#C93D13' }}>{profileCompletion}%</span> complete
           </p>
-          <p className="text-sm text-slate-500 sm:hidden">
+          <p className="text-sm text-[var(--alo-text-muted)] sm:hidden">
             {activeIndex + 1}/11 — {profileCompletion}%
           </p>
 
@@ -2750,7 +2750,7 @@ export default function StudentProfilePage() {
               variant="outline"
               onClick={goToPrev}
               disabled={activeIndex === 0}
-              className="border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
             >
               <ChevronLeft className="size-4 mr-1" />
               <span className="hidden sm:inline">Previous</span>
@@ -2760,7 +2760,7 @@ export default function StudentProfilePage() {
               variant="outline"
               onClick={handleSave}
               disabled={saving}
-              className="border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
             >
               <Save className="size-4 mr-1" />
               <span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
@@ -2770,7 +2770,7 @@ export default function StudentProfilePage() {
                 type="button"
                 onClick={handleSaveAndContinue}
                 disabled={saving}
-                className="bg-[#C93D13] hover:bg-[#9a3412] text-white"
+                className="bg-[var(--alo-cta-hover)] hover:bg-[#9a3412] text-white"
               >
                 Save &amp; Continue
                 <ChevronRight className="size-4 ml-1" />
@@ -2780,7 +2780,7 @@ export default function StudentProfilePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-[#C93D13] hover:bg-[#9a3412] text-white"
+                className="bg-[var(--alo-cta-hover)] hover:bg-[#9a3412] text-white"
               >
                 <Save className="size-4 mr-1" />
                 {saving ? 'Saving...' : 'Complete Profile'}

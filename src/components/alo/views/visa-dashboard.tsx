@@ -115,7 +115,7 @@ const CAS_BADGE: Record<string, string> = {
 };
 
 const INTERVIEW_BADGE: Record<string, string> = {
-  NOT_SCHEDULED: "bg-slate-100 text-slate-700",
+  NOT_SCHEDULED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   SCHEDULED: "bg-amber-100 text-amber-700",
   COMPLETED: "bg-emerald-100 text-emerald-700",
 };
@@ -138,7 +138,7 @@ const PRIORITY_BADGE: Record<string, string> = {
   URGENT: "bg-red-100 text-red-700",
   HIGH: "bg-orange-100 text-orange-700",
   NORMAL: "bg-blue-100 text-blue-700",
-  LOW: "bg-slate-100 text-slate-700",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const RISK_COLORS: Record<string, string> = {
@@ -152,14 +152,14 @@ function riskCount(cases: VisaCase[], field: "financialRisk" | "studyGapRisk" | 
 }
 
 function readinessColor(score: number | null) {
-  if (score == null) return "text-slate-400";
+  if (score == null) return "text-[var(--alo-text-muted)]";
   if (score >= 80) return "text-emerald-600";
   if (score >= 60) return "text-amber-600";
   return "text-red-600";
 }
 
 function readinessBg(score: number | null) {
-  if (score == null) return "bg-slate-100";
+  if (score == null) return "bg-[var(--alo-surface-muted)]";
   if (score >= 80) return "bg-emerald-50";
   if (score >= 60) return "bg-amber-50";
   return "bg-red-50";
@@ -372,7 +372,7 @@ export function VisaDashboard() {
           <Button
             onClick={() => loadCases()}
             variant="outline"
-            className="h-10 border-[#0057B8]/20 text-[#0057B8]"
+            className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
           >
             <Icon name="RefreshCw" className="size-4" />
             Refresh
@@ -468,7 +468,7 @@ export function VisaDashboard() {
                               </Button>
                               <Button
                                 size="sm"
-                                className="h-8 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
+                                className="h-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
                                 onClick={() => openStageDialog(c)}
                               >
                                 Update
@@ -491,12 +491,12 @@ export function VisaDashboard() {
                 <div className="space-y-3">
                   {todayInterviews.length > 0 && (
                     <div>
-                      <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-[#E8501A]">Today</p>
+                      <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-cta)]">Today</p>
                       <div className="space-y-2">
                         {todayInterviews.map((c) => (
-                          <div key={c.id} className="rounded-xl border-2 border-[#E8501A]/30 bg-[#fdece4] p-3">
+                          <div key={c.id} className="rounded-xl border-2 border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)] p-3">
                             <div className="flex items-center justify-between">
-                              <span className="font-mono text-xs font-semibold text-[#E8501A]">{c.caseId}</span>
+                              <span className="font-mono text-xs font-semibold text-[var(--alo-cta)]">{c.caseId}</span>
                               <span className="text-xs font-medium text-muted-foreground">
                                 {c.interviewDate ? new Date(c.interviewDate).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "—"}
                               </span>
@@ -512,17 +512,17 @@ export function VisaDashboard() {
                   )}
                   {upcomingInterviews.length > 0 && (
                     <div>
-                      <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Upcoming (7 days)</p>
+                      <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Upcoming (7 days)</p>
                       <div className="space-y-2">
                         {upcomingInterviews.map((c) => (
-                          <div key={c.id} className="flex items-center justify-between rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/50 p-3">
+                          <div key={c.id} className="flex items-center justify-between rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/50 p-3">
                             <div className="min-w-0">
                               <p className="truncate text-sm font-medium text-foreground">{c.student.fullName}</p>
                               <p className="truncate text-xs text-muted-foreground">
                                 {COUNTRY_FLAGS[c.country] || "🌐"} {c.country} · {fmtDate(c.interviewDate)}
                               </p>
                             </div>
-                            <Button size="sm" variant="ghost" className="h-7 text-[#0057B8]" onClick={() => scheduleInterview(c)}>
+                            <Button size="sm" variant="ghost" className="h-7 text-[var(--alo-brand)]" onClick={() => scheduleInterview(c)}>
                               <Icon name="MessageSquare" className="size-3.5" />
                             </Button>
                           </div>
@@ -543,7 +543,7 @@ export function VisaDashboard() {
             action={
               <div className="flex flex-wrap items-center gap-2">
                 <Select value={filterCountry} onValueChange={setFilterCountry}>
-                  <SelectTrigger className="h-9 w-[140px] border-[#0057B8]/20 text-xs">
+                  <SelectTrigger className="h-9 w-[140px] border-[var(--alo-brand)]/20 text-xs">
                     <SelectValue placeholder="Country" />
                   </SelectTrigger>
                   <SelectContent>
@@ -556,7 +556,7 @@ export function VisaDashboard() {
                   </SelectContent>
                 </Select>
                 <Select value={filterStage} onValueChange={setFilterStage}>
-                  <SelectTrigger className="h-9 w-[170px] border-[#0057B8]/20 text-xs">
+                  <SelectTrigger className="h-9 w-[170px] border-[var(--alo-brand)]/20 text-xs">
                     <SelectValue placeholder="Visa stage" />
                   </SelectTrigger>
                   <SelectContent>
@@ -569,7 +569,7 @@ export function VisaDashboard() {
                   </SelectContent>
                 </Select>
                 <Select value={filterPriority} onValueChange={setFilterPriority}>
-                  <SelectTrigger className="h-9 w-[130px] border-[#0057B8]/20 text-xs">
+                  <SelectTrigger className="h-9 w-[130px] border-[var(--alo-brand)]/20 text-xs">
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent>
@@ -591,7 +591,7 @@ export function VisaDashboard() {
                 action={
                   <Button
                     variant="outline"
-                    className="h-10 border-[#0057B8]/20 text-[#0057B8]"
+                    className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
                     onClick={() => {
                       setFilterCountry("ALL");
                       setFilterStage("ALL");
@@ -606,34 +606,34 @@ export function VisaDashboard() {
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[#0057B8]/10">
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Case</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Student</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Country</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">University / Course</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Intake</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">CAS</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Visa Stage</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Interview</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Docs</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Priority</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">AI Ready</TableHead>
-                      <TableHead className="text-xs font-semibold text-[#0057B8]">Deadline</TableHead>
-                      <TableHead className="text-right text-xs font-semibold text-[#0057B8]">Actions</TableHead>
+                    <TableRow className="border-[var(--alo-brand)]/10">
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Case</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Student</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Country</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">University / Course</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Intake</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">CAS</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Visa Stage</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Interview</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Docs</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Priority</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">AI Ready</TableHead>
+                      <TableHead className="text-xs font-semibold text-[var(--alo-brand)]">Deadline</TableHead>
+                      <TableHead className="text-right text-xs font-semibold text-[var(--alo-brand)]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filtered.map((c) => {
                       const past = isPast(c.deadline);
                       return (
-                        <TableRow key={c.id} className="border-[#0057B8]/5">
+                        <TableRow key={c.id} className="border-[var(--alo-brand)]/5">
                           <TableCell>
                             <span className="font-mono text-xs font-semibold text-foreground">{c.caseId}</span>
                           </TableCell>
                           <TableCell>
                             <div className="min-w-[140px]">
                               <p className="truncate text-sm font-medium text-foreground">{c.student.fullName}</p>
-                              <p className="font-mono text-[10px] text-muted-foreground">{c.student.studentId}</p>
+                              <p className="font-mono text-[11px] text-muted-foreground">{c.student.studentId}</p>
                             </div>
                           </TableCell>
                           <TableCell>
@@ -651,7 +651,7 @@ export function VisaDashboard() {
                             <span className="text-xs text-muted-foreground">{c.intake || "—"}</span>
                           </TableCell>
                           <TableCell>
-                            <Badge className={cn("border-0", CAS_BADGE[c.casStatus] || "bg-slate-100 text-slate-700")}>
+                            <Badge className={cn("border-0", CAS_BADGE[c.casStatus] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>
                               {c.casStatus}
                             </Badge>
                           </TableCell>
@@ -659,12 +659,12 @@ export function VisaDashboard() {
                             <StatusBadge status={c.visaStage} colorMap={VISA_STAGE_COLORS} labels={VISA_STAGE_LABELS} />
                           </TableCell>
                           <TableCell>
-                            <Badge className={cn("border-0", INTERVIEW_BADGE[c.interviewStatus] || "bg-slate-100 text-slate-700")}>
+                            <Badge className={cn("border-0", INTERVIEW_BADGE[c.interviewStatus] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>
                               {INTERVIEW_LABEL[c.interviewStatus] || c.interviewStatus}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge className={cn("border-0", DOC_BADGE[c.docStatus] || "bg-slate-100 text-slate-700")}>
+                            <Badge className={cn("border-0", DOC_BADGE[c.docStatus] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>
                               {c.docStatus}
                             </Badge>
                           </TableCell>
@@ -694,7 +694,7 @@ export function VisaDashboard() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 border-[#0057B8]/20 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                className="h-8 border-[var(--alo-brand)]/20 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                                 onClick={() => openStageDialog(c)}
                               >
                                 <Icon name="GitBranch" className="size-3.5" />
@@ -703,7 +703,7 @@ export function VisaDashboard() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 border-[#0057B8]/20 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                className="h-8 border-[var(--alo-brand)]/20 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                                 onClick={() => scheduleInterview(c)}
                               >
                                 <Icon name="CalendarPlus" className="size-3.5" />
@@ -712,7 +712,7 @@ export function VisaDashboard() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-8 text-[#0057B8]"
+                                className="h-8 text-[var(--alo-brand)]"
                                 onClick={() => setDetailsCase(c)}
                               >
                                 <Icon name="Eye" className="size-3.5" />
@@ -735,7 +735,7 @@ export function VisaDashboard() {
       <Dialog open={!!stageDialogCase} onOpenChange={(o) => !o && setStageDialogCase(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0057B8]">Update Visa Stage</DialogTitle>
+            <DialogTitle className="text-[var(--alo-brand)]">Update Visa Stage</DialogTitle>
             <DialogDescription>
               {stageDialogCase && (
                 <>
@@ -745,7 +745,7 @@ export function VisaDashboard() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
-            <div className="rounded-xl bg-[#e8f0fb]/60 p-3 text-xs">
+            <div className="rounded-xl bg-[var(--alo-brand-light)]/60 p-3 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Current stage</span>
                 <StatusBadge
@@ -758,7 +758,7 @@ export function VisaDashboard() {
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-foreground">New visa stage</label>
               <Select value={stageValue} onValueChange={setStageValue}>
-                <SelectTrigger className="h-11 w-full border-[#0057B8]/20">
+                <SelectTrigger className="h-11 w-full border-[var(--alo-brand)]/20">
                   <SelectValue placeholder="Select stage" />
                 </SelectTrigger>
                 <SelectContent>
@@ -776,7 +776,7 @@ export function VisaDashboard() {
               Cancel
             </Button>
             <Button
-              className="h-10 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
+              className="h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
               onClick={saveStage}
               disabled={savingStage || !stageValue}
             >
@@ -800,7 +800,7 @@ export function VisaDashboard() {
       <Dialog open={!!detailsCase} onOpenChange={(o) => !o && setDetailsCase(null)}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-[#0057B8]">Visa Case Details</DialogTitle>
+            <DialogTitle className="text-[var(--alo-brand)]">Visa Case Details</DialogTitle>
             <DialogDescription>
               {detailsCase && (
                 <>
@@ -834,20 +834,20 @@ export function VisaDashboard() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">CAS</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">CAS</p>
                     <p className="mt-1 text-sm font-semibold text-foreground">{detailsCase.casStatus}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Visa Stage</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Visa Stage</p>
                     <p className="mt-1 text-sm font-semibold text-foreground">{VISA_STAGE_LABELS[detailsCase.visaStage] || detailsCase.visaStage}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Interview</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Interview</p>
                     <p className="mt-1 text-sm font-semibold text-foreground">{INTERVIEW_LABEL[detailsCase.interviewStatus] || detailsCase.interviewStatus}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Docs</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Docs</p>
                     <p className="mt-1 text-sm font-semibold text-foreground">{detailsCase.docStatus}</p>
                   </div>
                 </div>
@@ -871,7 +871,7 @@ export function VisaDashboard() {
                             : "border-emerald-200 bg-emerald-50"
                         )}
                       >
-                        <p className="text-[10px] font-medium text-muted-foreground">{r.label}</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">{r.label}</p>
                         <p
                           className={cn(
                             "mt-0.5 text-sm font-bold",
@@ -885,7 +885,7 @@ export function VisaDashboard() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border-2 border-[#0057B8]/15 p-3">
+                <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 p-3">
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">AI Readiness Score</p>
                     <span className={cn("text-lg font-bold tabular-nums", readinessColor(detailsCase.aiReadinessScore))}>
@@ -910,7 +910,7 @@ export function VisaDashboard() {
                 </div>
 
                 {detailsCase.notes && (
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#f7f9fc] p-3">
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-3">
                     <p className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">Officer Notes</p>
                     <p className="text-sm text-foreground whitespace-pre-wrap">{detailsCase.notes}</p>
                   </div>
@@ -921,14 +921,14 @@ export function VisaDashboard() {
           <DialogFooter>
             <Button
               variant="outline"
-              className="h-10 border-[#0057B8]/20 text-[#0057B8]"
+              className="h-10 border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
               onClick={() => detailsCase && scheduleInterview(detailsCase)}
             >
               <Icon name="CalendarPlus" className="size-4" />
               Schedule Interview
             </Button>
             <Button
-              className="h-10 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
+              className="h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
               onClick={() => {
                 if (detailsCase) {
                   setStageDialogCase(detailsCase);

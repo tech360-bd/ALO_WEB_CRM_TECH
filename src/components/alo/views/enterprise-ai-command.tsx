@@ -176,7 +176,7 @@ const ENGINE_TYPE_META: Record<string, EngineTypeMeta> = {
 
 const STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  IDLE: "bg-slate-100 text-slate-700 border-slate-200",
+  IDLE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]",
   MAINTENANCE: "bg-amber-100 text-amber-700 border-amber-200",
 };
 
@@ -344,7 +344,7 @@ function pctBarColor(value: number, threshold: { pass: number; warn: number; mod
 
 function StatusPill({ status }: { status: string }) {
   return (
-    <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold", STATUS_COLORS[status] || "bg-slate-100 text-slate-700 border-slate-200")}>
+    <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold", STATUS_COLORS[status] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]")}>
       {status}
     </span>
   );
@@ -352,7 +352,7 @@ function StatusPill({ status }: { status: string }) {
 
 function HealthPill({ health }: { health: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold", HEALTH_COLORS[health] || "bg-slate-100 text-slate-700 border-slate-200")}>
+    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold", HEALTH_COLORS[health] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]")}>
       <span className={cn("size-1.5 rounded-full", HEALTH_DOT[health] || "bg-slate-400")} />
       {health}
     </span>
@@ -375,7 +375,7 @@ function MetricChip({ icon, label, value, color = "text-foreground" }: { icon: s
   return (
     <div className="flex items-center gap-1.5 rounded-lg border border-border/60 bg-muted/30 px-2 py-1">
       <Icon name={icon} className={cn("size-3.5", color)} />
-      <span className="text-[10px] text-muted-foreground">{label}</span>
+      <span className="text-[11px] text-muted-foreground">{label}</span>
       <span className="ml-auto text-xs font-semibold tabular-nums">{value}</span>
     </div>
   );
@@ -658,7 +658,7 @@ export function EnterpriseAiCommand() {
             <div className="space-y-3">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-[#0057B8]">
+                  <p className="text-3xl font-bold text-[var(--alo-brand)]">
                     {Math.round((summary.dccCertified / summary.totalDepartments) * 100)}%
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -728,13 +728,13 @@ export function EnterpriseAiCommand() {
                     <div key={d.id} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 truncate">
-                          <span className="flex size-5 items-center justify-center rounded bg-[#e8f0fb] text-[10px] font-bold text-[#0057B8]">
+                          <span className="flex size-5 items-center justify-center rounded bg-[var(--alo-brand-light)] text-[11px] font-bold text-[var(--alo-brand)]">
                             {idx + 1}
                           </span>
                           <span className="truncate font-medium">{d.name}</span>
-                          <span className="font-mono text-[10px] text-muted-foreground">{d.deptCode}</span>
+                          <span className="font-mono text-[11px] text-muted-foreground">{d.deptCode}</span>
                         </span>
-                        <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[#0057B8]">
+                        <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-[var(--alo-brand)]">
                           {fmt(d.aiEmployeeCount)} employees
                         </span>
                       </div>
@@ -773,12 +773,12 @@ export function EnterpriseAiCommand() {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#0057B8] shadow-sm">
+                          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[var(--alo-brand)] shadow-sm">
                             <Icon name={meta.icon} className="size-4" />
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold text-foreground">{meta.label}</p>
-                            <p className="font-mono text-[10px] text-muted-foreground">{eng.engineCode}</p>
+                            <p className="font-mono text-[11px] text-muted-foreground">{eng.engineCode}</p>
                           </div>
                         </div>
                         <HealthPill health={eng.healthStatus} />
@@ -787,10 +787,10 @@ export function EnterpriseAiCommand() {
                         <StatusPill status={eng.status} />
                         {m && (
                           <>
-                            <span className="rounded-md bg-white px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
+                            <span className="rounded-md bg-white px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
                               {m.uptime.toFixed(1)}% up
                             </span>
-                            <span className="rounded-md bg-white px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
+                            <span className="rounded-md bg-white px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
                               {fmt(m.requests)} req
                             </span>
                           </>
@@ -848,12 +848,12 @@ export function EnterpriseAiCommand() {
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {DCC_CRITERIA.map((c) => (
                   <div key={c.key} className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 p-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#e8f0fb] text-[#0057B8]">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name={c.icon} className="size-3.5" />
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-xs font-semibold text-foreground">{c.label}</p>
-                      <p className="font-mono text-[10px] text-muted-foreground">{c.threshold}</p>
+                      <p className="font-mono text-[11px] text-muted-foreground">{c.threshold}</p>
                     </div>
                   </div>
                 ))}
@@ -941,7 +941,7 @@ export function EnterpriseAiCommand() {
                     {filteredDepartments.map((d) => (
                       <TableRow key={d.id} className="hover:bg-muted/30">
                         <TableCell>
-                          <span className="font-mono text-xs font-semibold text-[#0057B8]">{d.deptCode}</span>
+                          <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{d.deptCode}</span>
                         </TableCell>
                         <TableCell>
                           <div className="font-medium text-foreground">{d.name}</div>
@@ -999,14 +999,14 @@ export function EnterpriseAiCommand() {
           </SectionCard>
 
           {/* DCC explanation */}
-          <Card className="rounded-2xl border-2 border-[#0057B8]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+          <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30 bg-gradient-to-br from-[var(--alo-brand-light)]/60 to-white">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
                   <Icon name="BadgeCheck" className="size-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-bold text-[#0057B8]">
+                  <h3 className="text-base font-bold text-[var(--alo-brand)]">
                     Department Capability Certification (DCC)
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -1017,7 +1017,7 @@ export function EnterpriseAiCommand() {
                     {DCC_CRITERIA.map((c) => (
                       <div key={c.key} className="flex items-center justify-between rounded-lg border border-border/60 bg-white px-3 py-1.5">
                         <span className="text-xs font-medium text-foreground">{c.label}</span>
-                        <span className="font-mono text-xs font-semibold text-[#0057B8]">{c.threshold}</span>
+                        <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{c.threshold}</span>
                       </div>
                     ))}
                   </div>
@@ -1062,12 +1062,12 @@ export function EnterpriseAiCommand() {
                       <CardContent className="pt-5">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                               <Icon name={meta.icon} className="size-5" />
                             </div>
                             <div className="min-w-0">
                               <p className="truncate text-sm font-bold text-foreground">{eng.name}</p>
-                              <p className="font-mono text-[10px] text-muted-foreground">{eng.engineCode}</p>
+                              <p className="font-mono text-[11px] text-muted-foreground">{eng.engineCode}</p>
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1">
@@ -1094,7 +1094,7 @@ export function EnterpriseAiCommand() {
                         )}
 
                         <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="text-[11px] text-muted-foreground">
                             Last check: {eng.lastHealthCheck ? timeAgo(eng.lastHealthCheck) : "never"}
                           </span>
                           <Button
@@ -1210,29 +1210,29 @@ export function EnterpriseAiCommand() {
                   {SAMPLE_RULES.map((r) => (
                     <TableRow key={r.ruleCode} className="hover:bg-muted/30">
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-[#0057B8]">{r.ruleCode}</span>
+                        <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{r.ruleCode}</span>
                       </TableCell>
                       <TableCell className="font-medium text-foreground">{r.title}</TableCell>
                       <TableCell>
-                        <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold", RULE_CATEGORY_COLORS[r.category])}>
+                        <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold", RULE_CATEGORY_COLORS[r.category])}>
                           {r.category}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold", ENFORCEMENT_COLORS[r.enforcement])}>
+                        <span className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold", ENFORCEMENT_COLORS[r.enforcement])}>
                           {r.enforcement}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
                         <span className={cn(
-                          "inline-flex size-6 items-center justify-center rounded-full text-[10px] font-bold",
-                          r.priority === 1 ? "bg-rose-100 text-rose-700" : r.priority === 2 ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-700",
+                          "inline-flex size-6 items-center justify-center rounded-full text-[11px] font-bold",
+                          r.priority === 1 ? "bg-rose-100 text-rose-700" : r.priority === 2 ? "bg-amber-100 text-amber-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                         )}>
                           P{r.priority}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
-                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
                           {r.status}
                         </span>
                       </TableCell>
@@ -1281,10 +1281,10 @@ export function EnterpriseAiCommand() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <Icon name={cap.icon} className="size-3.5 text-[#0057B8]" />
+                      <Icon name={cap.icon} className="size-3.5 text-[var(--alo-brand)]" />
                       <p className="truncate text-sm font-semibold text-foreground">{cap.title}</p>
                     </div>
-                    <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-700">{cap.engine}</p>
+                    <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-emerald-700">{cap.engine}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{cap.description}</p>
                   </div>
                 </div>
@@ -1292,14 +1292,14 @@ export function EnterpriseAiCommand() {
             </div>
           </SectionCard>
 
-          <Card className="rounded-2xl border-2 border-[#0057B8]/30 bg-gradient-to-br from-[#e8f0fb]/60 to-white">
+          <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30 bg-gradient-to-br from-[var(--alo-brand-light)]/60 to-white">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
                   <Icon name="Sparkles" className="size-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#0057B8]">Why this stack matters</h3>
+                  <h3 className="text-base font-bold text-[var(--alo-brand)]">Why this stack matters</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     The Enterprise AI Command Center is not a chatbot. It is a complete autonomous AI organisation — 100
                     departments, 2,000 AI employees, 20 enterprise engines, 500+ constitutional rules, and a Department
@@ -1319,11 +1319,11 @@ export function EnterpriseAiCommand() {
       <Dialog open={dccOpen} onOpenChange={(o) => { setDccOpen(o); if (!o) { setDccResult(null); setDccTarget(null); } }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="BadgeCheck" className="size-5" />
               DCC Certification Check
               {dccTarget && (
-                <span className="ml-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#0057B8]">
+                <span className="ml-1 rounded-full bg-[var(--alo-brand-light)] px-2 py-0.5 text-xs font-semibold text-[var(--alo-brand)]">
                   {dccTarget.deptCode}
                 </span>
               )}

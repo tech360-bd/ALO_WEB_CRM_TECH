@@ -30,19 +30,19 @@ export default function CrmHrmHubPage() {
     })();
   }, []);
 
-  if (roleStr === 'student') return <div className="p-8 text-center text-slate-600">HR module not available for Student Dashboard</div>;
+  if (roleStr === 'student') return <div className="p-8 text-center text-[var(--alo-body)]">HR module not available for Student Dashboard</div>;
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">HR Management Center</h1>
-          <p className="text-xs text-slate-500">Enterprise Employee HR System — integrated inside CRM • White / Orange • Asia/Dhaka</p>
+          <h1 className="text-xl font-bold text-[var(--alo-text)]">HR Management Center</h1>
+          <p className="text-xs text-[var(--alo-text-muted)]">Enterprise Employee HR System — integrated inside CRM • White / Orange • Asia/Dhaka</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-blue-50 text-[#0057B8] border-blue-200 capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
-          <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[#E8501A] hover:bg-[#D04010] text-white h-8 text-xs">My HR Profile</Button></Link>
+          <Badge className="bg-blue-50 text-[var(--alo-brand)] border-blue-200 capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
+          <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black h-8 text-xs">My HR Profile</Button></Link>
         </div>
       </div>
 
@@ -51,20 +51,20 @@ export default function CrmHrmHubPage() {
       <HrmQuickActions role={roleStr} />
 
       {/* KPI Grid (HR Analytics) */}
-      <Card className="bg-white border-slate-200">
-        <CardHeader className="p-4 border-b border-slate-100 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-bold text-slate-800">HR Analytics — Live from DB</CardTitle>
-          <Link href="/crm/hrm/analytics"><Button variant="ghost" size="sm" className="text-xs text-[#E8501A]">Detailed Analytics →</Button></Link>
+      <Card className="bg-white border-[var(--alo-border)]">
+        <CardHeader className="p-4 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">HR Analytics — Live from DB</CardTitle>
+          <Link href="/crm/hrm/analytics"><Button variant="ghost" size="sm" className="text-xs text-[var(--alo-cta)]">Detailed Analytics →</Button></Link>
         </CardHeader>
         <CardContent className="p-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {loading ? <div className="col-span-4 text-xs text-slate-400">Loading analytics...</div> : analyticsError ? <p role="alert" className="col-span-4 text-sm text-amber-800">{analyticsError} Role-authorized widgets remain available above.</p> : analytics ? (
+          {loading ? <div className="col-span-4 text-xs text-[var(--alo-text-muted)]">Loading analytics...</div> : analyticsError ? <p role="alert" className="col-span-4 text-sm text-amber-800">{analyticsError} Role-authorized widgets remain available above.</p> : analytics ? (
             <>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Headcount</p><p className="text-xl font-bold text-slate-900">{analytics.headcount}</p><p className="text-xs text-slate-400">{analytics.activeEmployees} active</p></div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Attendance Rate</p><p className="text-sm font-bold text-slate-900">{analytics.attendanceRate == null ? 'Not calculated' : `${analytics.attendanceRate}%`}</p><p className="text-xs text-slate-400">{analytics.attendanceNote}</p></div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Payroll Cost</p><p className="text-xl font-bold text-slate-900">{analytics.payrollCost == null ? 'Restricted' : `৳${Number(analytics.payrollCost).toLocaleString()}`}</p><p className="text-xs text-slate-400">Paid payroll records</p></div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200"><p className="text-xs text-slate-500">Probation</p><p className="text-xl font-bold text-slate-900">{analytics.probationEmployees}</p><p className="text-xs text-slate-400">{analytics.upcomingConfirmation} upcoming confirmations</p></div>
+              <div className="p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Headcount</p><p className="text-xl font-bold text-[var(--alo-text)]">{analytics.headcount}</p><p className="text-xs text-[var(--alo-text-muted)]">{analytics.activeEmployees} active</p></div>
+              <div className="p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Attendance Rate</p><p className="text-sm font-bold text-[var(--alo-text)]">{analytics.attendanceRate == null ? 'Not calculated' : `${analytics.attendanceRate}%`}</p><p className="text-xs text-[var(--alo-text-muted)]">{analytics.attendanceNote}</p></div>
+              <div className="p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Payroll Cost</p><p className="text-xl font-bold text-[var(--alo-text)]">{analytics.payrollCost == null ? 'Restricted' : `৳${Number(analytics.payrollCost).toLocaleString()}`}</p><p className="text-xs text-[var(--alo-text-muted)]">Paid payroll records</p></div>
+              <div className="p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Probation</p><p className="text-xl font-bold text-[var(--alo-text)]">{analytics.probationEmployees}</p><p className="text-xs text-[var(--alo-text-muted)]">{analytics.upcomingConfirmation} upcoming confirmations</p></div>
             </>
-          ) : <p className="col-span-4 text-xs text-slate-400">No analytics response is available.</p>}
+          ) : <p className="col-span-4 text-xs text-[var(--alo-text-muted)]">No analytics response is available.</p>}
         </CardContent>
       </Card>
 
@@ -84,15 +84,15 @@ export default function CrmHrmHubPage() {
           { title:'HR Analytics', desc:'Headcount • Late% • Dept Cost • Birthdays', href:'/crm/hrm/analytics', icon: Award, badge:'Live' },
         ].map(m=> (
           <Link key={m.title} href={m.href}>
-            <Card className="bg-white border-slate-200 hover:border-orange-200 hover:shadow-md transition-all h-full">
+            <Card className="bg-white border-[var(--alo-border)] hover:border-orange-200 hover:shadow-md transition-all h-full">
               <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center"><m.icon className="w-5 h-5 text-[#E8501A]" /></div>
-                <Badge variant="outline" className="text-xs bg-slate-50">{m.badge}</Badge>
+                <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center"><m.icon className="w-5 h-5 text-[var(--alo-cta)]" /></div>
+                <Badge variant="outline" className="text-xs bg-[var(--alo-page)]">{m.badge}</Badge>
               </CardHeader>
               <CardContent className="p-4 pt-2">
-                <p className="text-sm font-bold text-slate-900">{m.title}</p>
-                <p className="text-xs text-slate-500 mt-1 line-clamp-2">{m.desc}</p>
-                <p className="text-xs text-[#E8501A] font-medium mt-3">Open →</p>
+                <p className="text-sm font-bold text-[var(--alo-text)]">{m.title}</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1 line-clamp-2">{m.desc}</p>
+                <p className="text-xs text-[var(--alo-cta)] font-medium mt-3">Open →</p>
               </CardContent>
             </Card>
           </Link>
@@ -100,23 +100,23 @@ export default function CrmHrmHubPage() {
       </div>
 
       <Tabs defaultValue="birthdays" className="w-full">
-        <TabsList className="bg-slate-100 p-1 h-9">
-          <TabsTrigger value="birthdays" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Upcoming Birthdays</TabsTrigger>
-          <TabsTrigger value="anniversary" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Work Anniversary</TabsTrigger>
-          <TabsTrigger value="confirmation" className="text-xs data-[state=active]:bg-[#E8501A] data-[state=active]:text-white">Upcoming Confirmation</TabsTrigger>
+        <TabsList className="bg-[var(--alo-surface-muted)] p-1 h-9">
+          <TabsTrigger value="birthdays" className="text-xs data-[state=active]:bg-[var(--alo-cta)] data-[state=active]:text-white">Upcoming Birthdays</TabsTrigger>
+          <TabsTrigger value="anniversary" className="text-xs data-[state=active]:bg-[var(--alo-cta)] data-[state=active]:text-white">Work Anniversary</TabsTrigger>
+          <TabsTrigger value="confirmation" className="text-xs data-[state=active]:bg-[var(--alo-cta)] data-[state=active]:text-white">Upcoming Confirmation</TabsTrigger>
         </TabsList>
         <TabsContent value="birthdays" className="mt-3">
-          <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {!analytics ? <span className="text-xs text-slate-400">Analytics unavailable.</span> : analytics.upcomingBirthday == null ? <span className="text-xs text-slate-400">Individual birthday data is omitted from this endpoint for privacy.</span> : analytics.upcomingBirthday.length ? analytics.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{b.fullName}</span><span className="text-xs bg-orange-50 text-[#E8501A] px-2 py-0.5 rounded">{b.daysLeft}d left • {b.dob}</span></div>) : <span className="text-xs text-slate-400">No birthdays in next 30 days.</span>}
+          <Card className="bg-white border-[var(--alo-border)]"><CardContent className="p-4 text-sm text-[var(--alo-body)]">
+            {!analytics ? <span className="text-xs text-[var(--alo-text-muted)]">Analytics unavailable.</span> : analytics.upcomingBirthday == null ? <span className="text-xs text-[var(--alo-text-muted)]">Individual birthday data is omitted from this endpoint for privacy.</span> : analytics.upcomingBirthday.length ? analytics.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between py-2 border-b border-[var(--alo-border)] last:border-0"><span>{b.fullName}</span><span className="text-xs bg-orange-50 text-[var(--alo-cta)] px-2 py-0.5 rounded">{b.daysLeft}d left • {b.dob}</span></div>) : <span className="text-xs text-[var(--alo-text-muted)]">No birthdays in next 30 days.</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="anniversary" className="mt-3">
-          <Card className="bg-white border-slate-200"><CardContent className="p-4 text-sm text-slate-600">
-            {!analytics ? <span className="text-xs text-slate-400">Analytics unavailable.</span> : analytics.upcomingWorkAnniversary == null ? <span className="text-xs text-slate-400">Individual work-anniversary dates are omitted from this endpoint for privacy.</span> : analytics.upcomingWorkAnniversary.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-slate-100 last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[#0057B8] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-slate-400">No work anniversaries in next 30 days.</span>}
+          <Card className="bg-white border-[var(--alo-border)]"><CardContent className="p-4 text-sm text-[var(--alo-body)]">
+            {!analytics ? <span className="text-xs text-[var(--alo-text-muted)]">Analytics unavailable.</span> : analytics.upcomingWorkAnniversary == null ? <span className="text-xs text-[var(--alo-text-muted)]">Individual work-anniversary dates are omitted from this endpoint for privacy.</span> : analytics.upcomingWorkAnniversary.length ? analytics.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between py-2 border-b border-[var(--alo-border)] last:border-0"><span>{a.fullName}</span><span className="text-xs bg-blue-50 text-[var(--alo-brand)] px-2 py-0.5 rounded">{a.years} years • {a.joiningDate}</span></div>) : <span className="text-xs text-[var(--alo-text-muted)]">No work anniversaries in next 30 days.</span>}
           </CardContent></Card>
         </TabsContent>
         <TabsContent value="confirmation" className="mt-3">
-          <Card className="bg-white border-slate-200"><CardContent className="p-4 text-xs text-slate-600">{analytics?.upcomingConfirmation ?? 0} employees due for confirmation in 30 days</CardContent></Card>
+          <Card className="bg-white border-[var(--alo-border)]"><CardContent className="p-4 text-xs text-[var(--alo-body)]">{analytics?.upcomingConfirmation ?? 0} employees due for confirmation in 30 days</CardContent></Card>
         </TabsContent>
       </Tabs>
     </div>

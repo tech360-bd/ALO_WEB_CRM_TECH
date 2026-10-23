@@ -30,42 +30,42 @@ export default function IntegrationsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2"><Plug className="w-6 h-6 text-[#E8501A]" />Integrations</h2>
-        <p className="text-sm text-gray-500">Connect official APIs — health, sync status, token expiry alerts, webhook verification. Least privilege, secrets encrypted server-side, never in frontend/logs.</p>
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] flex items-center gap-2"><Plug className="w-6 h-6 text-[var(--alo-cta)]" />Integrations</h2>
+        <p className="text-sm text-[var(--alo-text-muted)]">Connect official APIs — health, sync status, token expiry alerts, webhook verification. Least privilege, secrets encrypted server-side, never in frontend/logs.</p>
       </div>
-      {loading ? <Loader2 className="w-5 h-5 animate-spin text-[#E8501A]" /> : (
+      {loading ? <Loader2 className="w-5 h-5 animate-spin text-[var(--alo-cta)]" /> : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {INTEGRATIONS.map(i=>{
             const st = getStatus(i.provider);
             const isConnected = st==='CONNECTED' || st==='connected';
             const isPending = st.includes('PENDING') || st.includes('REQUIRES');
             return (
-              <Card key={i.id} className={isConnected ? 'border-emerald-200 bg-emerald-50/30' : isPending ? 'border-amber-200 bg-amber-50/30' : 'border-gray-200'}>
+              <Card key={i.id} className={isConnected ? 'border-emerald-200 bg-emerald-50/30' : isPending ? 'border-amber-200 bg-amber-50/30' : 'border-[var(--alo-border)]'}>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    {i.id==='meta' ? <Globe className="w-4 h-4 text-blue-600" /> : i.id==='whatsapp' ? <MessageSquare className="w-4 h-4 text-emerald-600" /> : i.id==='email' ? <Mail className="w-4 h-4 text-blue-600" /> : i.id==='sms' ? <Smartphone className="w-4 h-4 text-[#E8501A]" /> : <Webhook className="w-4 h-4 text-[#0057B8]" />}
+                    {i.id==='meta' ? <Globe className="w-4 h-4 text-blue-600" /> : i.id==='whatsapp' ? <MessageSquare className="w-4 h-4 text-emerald-600" /> : i.id==='email' ? <Mail className="w-4 h-4 text-blue-600" /> : i.id==='sms' ? <Smartphone className="w-4 h-4 text-[var(--alo-cta)]" /> : <Webhook className="w-4 h-4 text-[var(--alo-brand)]" />}
                     {i.name}
                   </CardTitle>
-                  <Badge className={isConnected ? 'bg-emerald-100 text-emerald-700 border-emerald-200 w-fit mt-1' : isPending ? 'bg-amber-100 text-amber-700 border-amber-200 w-fit mt-1' : 'bg-gray-100 text-gray-600 border-gray-200 w-fit mt-1'}>
+                  <Badge className={isConnected ? 'bg-emerald-100 text-emerald-700 border-emerald-200 w-fit mt-1' : isPending ? 'bg-amber-100 text-amber-700 border-amber-200 w-fit mt-1' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)] w-fit mt-1'}>
                     {isConnected ? <CheckCircle2 className="w-3 h-3 mr-1" /> : <AlertTriangle className="w-3 h-3 mr-1" />}{st}
                   </Badge>
                 </CardHeader>
                 <CardContent className="space-y-2 text-xs">
-                  <p className="text-gray-500">Env: {i.env.join(', ')}</p>
-                  <p className="text-gray-400">Docs: {i.docs}</p>
+                  <p className="text-[var(--alo-text-muted)]">Env: {i.env.join(', ')}</p>
+                  <p className="text-[var(--alo-text-muted)]">Docs: {i.docs}</p>
                   <div className="flex gap-2 pt-2">
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[11px]"><Plug className="w-3 h-3 mr-1" />Connect</Button>
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Health Check</Button>
                   </div>
-                  <p className="text-[11px] text-gray-400 flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Tokens encrypted, webhook signature verified, rate limits respected.</p>
+                  <p className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Tokens encrypted, webhook signature verified, rate limits respected.</p>
                 </CardContent>
               </Card>
             );
           })}
         </div>
       )}
-      <Card className="bg-[#F8FAFC] border-dashed">
-        <CardContent className="p-4 text-xs text-gray-500">
+      <Card className="bg-[var(--alo-page)] border-dashed">
+        <CardContent className="p-4 text-xs text-[var(--alo-text-muted)]">
           Missing integration → UI shows “Integration not connected — connect in Integrations” and preserves task for completion. Official platform APIs only — respects permissions, rate limits, policies. No unauthorized account access, fake engagement, spam, or prohibited automation.
         </CardContent>
       </Card>

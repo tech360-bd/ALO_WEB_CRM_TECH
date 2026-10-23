@@ -24,8 +24,8 @@ import { Icon, PageHeader, EmptyState, StatCard } from "@/components/alo/shared"
 import { useToast } from "@/hooks/use-toast";
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-slate-100 text-slate-700",
-  NORMAL: "bg-[#EAF3FF] text-[#0057B8]",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  NORMAL: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -34,7 +34,7 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
   IN_PROGRESS: "bg-blue-100 text-blue-700",
   COMPLETED: "bg-emerald-100 text-emerald-700",
-  CANCELLED: "bg-slate-100 text-slate-500",
+  CANCELLED: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -162,7 +162,7 @@ export function CrmTasks() {
         action={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[#0057B8] text-white hover:bg-[#003F87]">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">
                 <Icon name="Plus" className="mr-1.5 size-4" /> New Task
               </Button>
             </DialogTrigger>
@@ -247,7 +247,7 @@ export function CrmTasks() {
                 </div>
                 <Button
                   onClick={handleCreate}
-                  className="w-full bg-[#0057B8] text-white hover:bg-[#003F87]"
+                  className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                 >
                   Create Task
                 </Button>
@@ -258,7 +258,7 @@ export function CrmTasks() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
@@ -291,8 +291,8 @@ export function CrmTasks() {
                 variant={filter === f ? "default" : "outline"}
                 className={
                   filter === f
-                    ? "bg-[#0057B8] text-white"
-                    : "border-[#DCE8F5] text-[#5A7299]"
+                    ? "bg-[var(--alo-brand)] text-white"
+                    : "border-[var(--alo-brand-border)] text-[var(--alo-text-muted)]"
                 }
                 onClick={() => setFilter(f)}
               >
@@ -316,23 +316,23 @@ export function CrmTasks() {
                   <Card
                     key={t.id}
                     className={`rounded-2xl border bg-white ${
-                      isOverdue ? "border-rose-200" : "border-[#DCE8F5]"
+                      isOverdue ? "border-rose-200" : "border-[var(--alo-brand-border)]"
                     }`}
                   >
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-bold text-[#0B2447]">{t.title}</h3>
-                        <Badge className={PRIORITY_COLORS[t.priority] || "bg-slate-100"}>
+                        <h3 className="font-bold text-[var(--alo-text)]">{t.title}</h3>
+                        <Badge className={PRIORITY_COLORS[t.priority] || "bg-[var(--alo-surface-muted)]"}>
                           {t.priority}
                         </Badge>
                       </div>
                       {t.description && (
-                        <p className="mt-2 text-sm text-[#5A7299]">{t.description}</p>
+                        <p className="mt-2 text-sm text-[var(--alo-text-muted)]">{t.description}</p>
                       )}
-                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#5A7299]">
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--alo-text-muted)]">
                         <Badge variant="outline">{TYPE_LABELS[t.type] || t.type}</Badge>
                         {t.student && (
-                          <Badge variant="outline" className="text-[#0057B8]">
+                          <Badge variant="outline" className="text-[var(--alo-brand)]">
                             <Icon name="User" className="mr-1 size-3" />
                             {t.student.fullName}
                           </Badge>
@@ -348,7 +348,7 @@ export function CrmTasks() {
                         )}
                       </div>
                       <div className="mt-4 flex items-center justify-between">
-                        <Badge className={STATUS_COLORS[t.status] || "bg-slate-100"}>
+                        <Badge className={STATUS_COLORS[t.status] || "bg-[var(--alo-surface-muted)]"}>
                           {t.status.replace(/_/g, " ")}
                         </Badge>
                         {t.status !== "COMPLETED" && (
@@ -357,7 +357,7 @@ export function CrmTasks() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-7 border-[#DCE8F5] text-xs"
+                                className="h-7 border-[var(--alo-brand-border)] text-xs"
                                 onClick={() => handleStatus(t.id, "IN_PROGRESS")}
                               >
                                 Start

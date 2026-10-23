@@ -216,12 +216,12 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
   }, [sequence]);
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" aria-label="Marketing kit library">
+    <section className="rounded-2xl border border-[var(--alo-border)] bg-white p-4 sm:p-6" aria-label="Marketing kit library">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">Marketing kit</p>
-          <h2 className="mt-1 text-base font-bold text-slate-900">Marketing content library</h2>
-          <p className="mt-1 max-w-3xl text-xs text-slate-500">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--alo-brand)]">Marketing kit</p>
+          <h2 className="mt-1 text-base font-bold text-[var(--alo-text)]">Marketing content library</h2>
+          <p className="mt-1 max-w-3xl text-xs text-[var(--alo-text-muted)]">
             Campaign kits, email sequences, lead magnets, SMS templates, a social calendar, and a CRO checklist — copy individual assets or download the complete library.
           </p>
           <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
@@ -230,7 +230,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
           </p>
         </div>
         <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-          <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">
+          <span className="rounded-full border border-[var(--alo-border)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-text-muted)]">
             {kits.length} campaign {kits.length === 1 ? 'kit' : 'kits'} · {EMAIL_SEQUENCES.length} sequences · {LEAD_MAGNETS.length} magnets
           </span>
           <Button
@@ -264,15 +264,15 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               tabIndex={isActive ? 0 : -1}
               onClick={() => setActiveTab(tab.id)}
               onKeyDown={(event) => handleTabKeyDown(event, index)}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
                 isActive
-                  ? 'border-[#0057B8] bg-[#EFF6FF] text-[#003F87]'
-                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                  ? 'border-[var(--alo-brand)] bg-[var(--alo-info-bg)] text-[var(--alo-brand-hover)]'
+                  : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
               }`}
             >
               <Icon className="h-3.5 w-3.5" aria-hidden="true" />
               {tab.label}
-              <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500" aria-hidden="true">
+              <span className="rounded-full bg-[var(--alo-surface-muted)] px-1.5 py-0.5 text-[11px] text-[var(--alo-text-muted)]" aria-hidden="true">
                 {tabCounts[tab.id]}
               </span>
             </button>
@@ -285,7 +285,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
         role="tabpanel"
         aria-labelledby={`${instanceId}-tab-${activeTab}`}
         tabIndex={0}
-        className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2"
+        className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
       >
       {/* Campaign kits */}
       {activeTab === 'campaigns' && kit ? (
@@ -297,26 +297,26 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 type="button"
                 aria-pressed={item.id === kit.id}
                 onClick={() => setActiveKit(item.id)}
-                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
+                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
                   item.id === kit.id
-                    ? 'border-[#E8501A] bg-[#FFF7ED] text-[#C93D13]'
-                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    ? 'border-[var(--alo-cta)] bg-[var(--alo-cta-soft)] text-[var(--alo-cta-hover)]'
+                    : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
                 }`}
               >
                 {item.name}
               </button>
             ))}
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <div className="rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-sm font-bold text-slate-900">{kit.name}</h3>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-800">
+                  <h3 className="text-sm font-bold text-[var(--alo-text)]">{kit.name}</h3>
+                  <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-800">
                     Draft only · not approved
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-slate-500">{kit.objective}</p>
+                <p className="mt-1 text-xs text-[var(--alo-text-muted)]">{kit.objective}</p>
               </div>
               <div className="flex gap-2">
                 <CopyButton id={`kit-${kit.id}`} label={`${kit.name} campaign kit`} text={kitAsText} copied={copied} onCopy={copyText} />
@@ -334,31 +334,31 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             </div>
             <dl className="space-y-3 text-xs">
               <div>
-                <dt className="font-bold uppercase tracking-[0.12em] text-slate-400">Audience</dt>
-                <dd className="mt-0.5 text-slate-700">{kit.audience}</dd>
+                <dt className="font-bold uppercase tracking-[0.12em] text-[var(--alo-text-muted)]">Audience</dt>
+                <dd className="mt-0.5 text-[var(--alo-body)]">{kit.audience}</dd>
               </div>
               <div>
-                <dt className="font-bold uppercase tracking-[0.12em] text-slate-400">Channels</dt>
+                <dt className="font-bold uppercase tracking-[0.12em] text-[var(--alo-text-muted)]">Channels</dt>
                 <dd className="mt-0.5 flex flex-wrap gap-1.5">
                   {kit.channels.map((channel) => (
-                    <span key={channel} className="rounded-full border border-slate-200 bg-white px-2 py-0.5 font-semibold text-slate-600">
+                    <span key={channel} className="rounded-full border border-[var(--alo-border)] bg-white px-2 py-0.5 font-semibold text-[var(--alo-body)]">
                       {channel}
                     </span>
                   ))}
                 </dd>
               </div>
               <div>
-                <dt className="font-bold uppercase tracking-[0.12em] text-slate-400">Hook</dt>
-                <dd className="mt-0.5 text-base font-bold text-slate-900">{kit.hook}</dd>
+                <dt className="font-bold uppercase tracking-[0.12em] text-[var(--alo-text-muted)]">Hook</dt>
+                <dd className="mt-0.5 text-base font-bold text-[var(--alo-text)]">{kit.hook}</dd>
               </div>
               <div>
-                <dt className="font-bold uppercase tracking-[0.12em] text-slate-400">Body copy</dt>
-                <dd className="mt-0.5 leading-relaxed text-slate-700">{kit.copy}</dd>
+                <dt className="font-bold uppercase tracking-[0.12em] text-[var(--alo-text-muted)]">Body copy</dt>
+                <dd className="mt-0.5 leading-relaxed text-[var(--alo-body)]">{kit.copy}</dd>
               </div>
               <div>
-                <dt className="font-bold uppercase tracking-[0.12em] text-slate-400">CTA</dt>
+                <dt className="font-bold uppercase tracking-[0.12em] text-[var(--alo-text-muted)]">CTA</dt>
                 <dd className="mt-0.5">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#E8501A] px-3 py-1.5 font-bold text-white">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--alo-cta)] px-3 py-1.5 font-bold text-white">
                     <Target className="h-3.5 w-3.5" />
                     {kit.cta}
                   </span>
@@ -373,12 +373,12 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             >
               <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h4 id={`${instanceId}-review-heading-${kit.id}`} className="text-sm font-bold text-slate-900">
+                  <h4 id={`${instanceId}-review-heading-${kit.id}`} className="text-sm font-bold text-[var(--alo-text)]">
                     Human review checklist
                   </h4>
-                  <p className="mt-1 text-xs text-slate-500">Check each item while preparing this draft for review.</p>
+                  <p className="mt-1 text-xs text-[var(--alo-text-muted)]">Check each item while preparing this draft for review.</p>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-600" role="status" aria-live="polite">
+                <span className="rounded-full border border-[var(--alo-border)] bg-[var(--alo-page)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-body)]" role="status" aria-live="polite">
                   {reviewedItemIds.length} of {MARKETING_KIT_REVIEW_CHECKLIST.length} checked
                 </span>
               </div>
@@ -387,17 +387,17 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                   const checkboxId = `${instanceId}-review-${kit.id}-${item.id}`;
                   return (
                     <li key={item.id}>
-                      <label htmlFor={checkboxId} className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-slate-100 p-3 hover:bg-slate-50">
+                      <label htmlFor={checkboxId} className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--alo-border)] p-3 hover:bg-[var(--alo-page)]">
                         <input
                           id={checkboxId}
                           type="checkbox"
                           checked={reviewedItemIds.includes(item.id)}
                           onChange={() => toggleReviewItem(item.id)}
-                          className="mt-0.5 h-4 w-4 shrink-0 accent-[#0057B8]"
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--alo-brand)]"
                         />
                         <span>
-                          <span className="block text-xs font-semibold text-slate-800">{item.label}</span>
-                          <span className="mt-0.5 block text-[11px] leading-relaxed text-slate-500">{item.detail}</span>
+                          <span className="block text-xs font-semibold text-[var(--alo-text)]">{item.label}</span>
+                          <span className="mt-0.5 block text-[11px] leading-relaxed text-[var(--alo-text-muted)]">{item.detail}</span>
                         </span>
                       </label>
                     </li>
@@ -412,9 +412,9 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
         </div>
       ) : null}
       {activeTab === 'campaigns' && !kit ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-          <h3 className="text-sm font-bold text-slate-900">No campaign kits are available</h3>
-          <p className="mt-1 text-xs text-slate-500">Add a kit through the marketing kit library configuration to make it available here.</p>
+        <div className="rounded-2xl border border-dashed border-[var(--alo-border-strong)] bg-[var(--alo-page)] p-8 text-center">
+          <h3 className="text-sm font-bold text-[var(--alo-text)]">No campaign kits are available</h3>
+          <p className="mt-1 text-xs text-[var(--alo-text-muted)]">Add a kit through the marketing kit library configuration to make it available here.</p>
         </div>
       ) : null}
 
@@ -428,14 +428,14 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 type="button"
                 aria-pressed={item.id === sequence.id}
                 onClick={() => setActiveSequence(item.id)}
-                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
+                className={`w-full rounded-xl border px-3 py-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
                   item.id === sequence.id
-                    ? 'border-[#0057B8] bg-[#EFF6FF] text-[#003F87]'
-                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    ? 'border-[var(--alo-brand)] bg-[var(--alo-info-bg)] text-[var(--alo-brand-hover)]'
+                    : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
                 }`}
               >
                 <span className="block">{item.name}</span>
-                <span className="mt-0.5 block text-[10px] font-medium text-slate-500">{item.emails.length} emails</span>
+                <span className="mt-0.5 block text-[11px] font-medium text-[var(--alo-text-muted)]">{item.emails.length} emails</span>
               </button>
             ))}
             <div className="flex gap-2 pt-2">
@@ -453,11 +453,11 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             </div>
           </div>
           <div className="space-y-3">
-            <p className="text-xs text-slate-500">{sequence.purpose}</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">{sequence.purpose}</p>
             {sequence.emails.map((email, index) => (
-              <article key={email.subject} className="rounded-2xl border border-slate-200 bg-white p-4">
+              <article key={email.subject} className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-600">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-surface-muted)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--alo-body)]">
                     <Mail className="h-3 w-3" />
                     Email {index + 1} · {email.timing}
                   </span>
@@ -469,10 +469,10 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                     onCopy={copyText}
                   />
                 </div>
-                <h4 className="text-sm font-bold text-slate-900">{email.subject}</h4>
-                <p className="text-xs italic text-slate-500">{email.preview}</p>
-                <p className="mt-2 text-xs leading-relaxed text-slate-700">{email.body}</p>
-                <p className="mt-2 text-xs font-bold text-[#C93D13]">CTA: {email.cta}</p>
+                <h4 className="text-sm font-bold text-[var(--alo-text)]">{email.subject}</h4>
+                <p className="text-xs italic text-[var(--alo-text-muted)]">{email.preview}</p>
+                <p className="mt-2 text-xs leading-relaxed text-[var(--alo-body)]">{email.body}</p>
+                <p className="mt-2 text-xs font-bold text-[var(--alo-cta-hover)]">CTA: {email.cta}</p>
               </article>
             ))}
           </div>
@@ -495,20 +495,20 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               `Sequence after capture: ${magnet.sequence}`,
             ].join('\n');
             return (
-              <article key={magnet.id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4">
+              <article key={magnet.id} className="flex flex-col rounded-2xl border border-[var(--alo-border)] bg-white p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF7ED] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#C93D13]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-cta-soft)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--alo-cta-hover)]">
                     <Gift className="h-3 w-3" />
                     {magnet.format}
                   </span>
-                  <span className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                  <span className="rounded-full border border-[var(--alo-border)] px-2 py-0.5 text-[11px] font-semibold text-[var(--alo-text-muted)]">
                     {magnet.sequence} sequence
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">{magnet.name}</h3>
-                <p className="mt-1 text-xs font-semibold text-[#003F87]">{magnet.hook}</p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-600">{magnet.description}</p>
-                <ul className="mt-3 space-y-1 text-xs text-slate-600">
+                <h3 className="text-sm font-bold text-[var(--alo-text)]">{magnet.name}</h3>
+                <p className="mt-1 text-xs font-semibold text-[var(--alo-brand-hover)]">{magnet.hook}</p>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--alo-body)]">{magnet.description}</p>
+                <ul className="mt-3 space-y-1 text-xs text-[var(--alo-body)]">
                   {magnet.deliverable.map((item) => (
                     <li key={item} className="flex items-start gap-1.5">
                       <Check className="mt-0.5 h-3 w-3 shrink-0 text-emerald-600" />
@@ -516,9 +516,9 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                     </li>
                   ))}
                 </ul>
-                <p className="mt-1 text-[11px] text-slate-500">Audience: {magnet.audience}</p>
+                <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">Audience: {magnet.audience}</p>
                 <div className="mt-auto flex items-center justify-between gap-2 pt-4">
-                  <span className="text-xs font-bold text-[#C93D13]">CTA: {magnet.cta}</span>
+                  <span className="text-xs font-bold text-[var(--alo-cta-hover)]">CTA: {magnet.cta}</span>
                   <CopyButton id={`magnet-${magnet.id}`} label={`${magnet.name} lead magnet`} text={magnetText} copied={copied} onCopy={copyText} />
                 </div>
               </article>
@@ -530,15 +530,15 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
       {/* SMS & WhatsApp */}
       {activeTab === 'sms' ? (
         <div className="space-y-3">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[var(--alo-text-muted)]">
             These are draft message templates, not outbound sends. Before use, confirm sender identity, documented consent, opt-out handling, and any local sending-hour limits with the live provider and applicable policy.
           </p>
           {SMS_TEMPLATES.map((template) => (
-            <article key={template.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <article key={template.id} className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">{template.name}</h3>
-                  <p className="text-[11px] text-slate-500">
+                  <h3 className="text-sm font-bold text-[var(--alo-text)]">{template.name}</h3>
+                  <p className="text-[11px] text-[var(--alo-text-muted)]">
                     {template.channel} · trigger: {template.trigger} · {template.timing}
                   </p>
                 </div>
@@ -550,7 +550,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                   onCopy={copyText}
                 />
               </div>
-              <p className="rounded-xl bg-slate-50 p-3 text-xs leading-relaxed text-slate-700">{template.body}</p>
+              <p className="rounded-xl bg-[var(--alo-page)] p-3 text-xs leading-relaxed text-[var(--alo-body)]">{template.body}</p>
               <p className="mt-2 flex items-start gap-1.5 text-[11px] text-amber-700">
                 <MessageCircle className="mt-0.5 h-3 w-3 shrink-0" />
                 {template.compliance}
@@ -563,21 +563,21 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
       {/* Social calendar */}
       {activeTab === 'social' ? (
         <div className="space-y-3">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[var(--alo-text-muted)]">
             Two weeks of draft social posts. One hook, one idea, one CTA per post — suggested times are Bangladesh local and must be checked against live audience analytics before scheduling.
           </p>
           {SOCIAL_CALENDAR.map((post) => (
-            <article key={`${post.day}-${post.platform}`} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <article key={`${post.day}-${post.platform}`} className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#003F87]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-info-bg)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--alo-brand-hover)]">
                     <CalendarDays className="h-3 w-3" />
                     Day {post.day}
                   </span>
-                  <span className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                  <span className="rounded-full border border-[var(--alo-border)] px-2 py-0.5 text-[11px] font-semibold text-[var(--alo-body)]">
                     {post.platform} · {post.format}
                   </span>
-                  <span className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                  <span className="rounded-full border border-[var(--alo-border)] px-2 py-0.5 text-[11px] font-semibold text-[var(--alo-text-muted)]">
                     {post.bestTime}
                   </span>
                 </div>
@@ -589,9 +589,9 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                   onCopy={copyText}
                 />
               </div>
-              <h3 className="text-sm font-bold text-slate-900">{post.hook}</h3>
-              <p className="mt-1 text-xs leading-relaxed text-slate-700">{post.copy}</p>
-              <p className="mt-2 text-xs font-bold text-[#C93D13]">CTA: {post.cta}</p>
+              <h3 className="text-sm font-bold text-[var(--alo-text)]">{post.hook}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--alo-body)]">{post.copy}</p>
+              <p className="mt-2 text-xs font-bold text-[var(--alo-cta-hover)]">CTA: {post.cta}</p>
             </article>
           ))}
         </div>
@@ -600,18 +600,18 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
       {/* CRO checklist */}
       {activeTab === 'cro' ? (
         <div className="space-y-3">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[var(--alo-text-muted)]">
             Planning prompts only — confirm traffic, measurement, consent, and experiment design before changing a live page.
           </p>
           {CRO_CHECKLIST.map((item) => (
-            <article key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <article key={item.id} className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-700">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-emerald-700">
                     <TrendingUp className="h-3 w-3" />
                     {item.page}
                   </span>
-                  <h3 className="text-sm font-bold text-slate-900">{item.principle}</h3>
+                  <h3 className="text-sm font-bold text-[var(--alo-text)]">{item.principle}</h3>
                 </div>
                 <CopyButton
                   id={`cro-${item.id}`}
@@ -621,11 +621,11 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                   onCopy={copyText}
                 />
               </div>
-              <p className="mt-1 flex items-start gap-1.5 text-xs leading-relaxed text-slate-700">
-                <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0057B8]" />
+              <p className="mt-1 flex items-start gap-1.5 text-xs leading-relaxed text-[var(--alo-body)]">
+                <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--alo-brand)]" />
                 {item.action}
               </p>
-              <p className="mt-1 text-[11px] italic text-slate-500">Experiment: {item.experiment}</p>
+              <p className="mt-1 text-[11px] italic text-[var(--alo-text-muted)]">Experiment: {item.experiment}</p>
             </article>
           ))}
         </div>

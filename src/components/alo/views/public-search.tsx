@@ -160,7 +160,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -169,14 +169,14 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="Search" className="mr-1 size-3" />
               Search 794 courses, 408 universities, 13 countries
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Search ALO <span className="text-[#0057B8]">Education</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Search ALO <span className="text-[var(--alo-brand)]">Education</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Find universities, courses, blog posts, news, events, countries, and English tests — all in one search.
             </p>
           </div>
@@ -184,17 +184,17 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
           {/* Search bar */}
           <form onSubmit={onSubmit} className="mt-6 flex gap-2">
             <div className="relative flex-1">
-              <Icon name="Search" className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[#5A7299]" />
+              <Icon name="Search" className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[var(--alo-text-muted)]" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search universities, courses, blog posts, news, events..."
-                className="h-14 w-full rounded-xl border-2 border-[#0057B8]/15 bg-white pl-12 pr-4 text-base text-[#0B2447] placeholder:text-[#5A7299] focus:border-[#0057B8] focus:outline-none focus:ring-4 focus:ring-[#0057B8]/10"
+                className="h-14 w-full rounded-xl border-2 border-[var(--alo-brand)]/15 bg-white pl-12 pr-4 text-base text-[var(--alo-text)] placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-brand)] focus:outline-none focus:ring-4 focus:ring-[var(--alo-brand)]/10"
                 autoFocus
               />
             </div>
-            <Button type="submit" disabled={loading || query.trim().length < 2} className="h-14 px-6 bg-[#E8501A] text-white hover:bg-[#c8451a]">
+            <Button type="submit" disabled={loading || query.trim().length < 2} className="h-14 px-6 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]">
               {loading ? <Icon name="Loader2" className="size-5 animate-spin" /> : <Icon name="Search" className="size-5" />}
               <span className="ml-2 font-semibold">Search</span>
             </Button>
@@ -203,13 +203,13 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
           {/* Popular searches */}
           {!searched && (
             <div className="mt-5">
-              <p className="text-xs font-semibold text-[#5A7299]">Popular searches:</p>
+              <p className="text-xs font-semibold text-[var(--alo-text-muted)]">Popular searches:</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {POPULAR_SEARCHES.map((q) => (
                   <button
                     key={q}
                     onClick={() => onPopular(q)}
-                    className="rounded-full border border-[#0057B8]/20 bg-white px-3 py-1.5 text-xs font-medium text-[#0057B8] transition-colors hover:bg-[#EAF3FF]"
+                    className="rounded-full border border-[var(--alo-brand)]/20 bg-white px-3 py-1.5 text-xs font-medium text-[var(--alo-brand)] transition-colors hover:bg-[var(--alo-brand-light)]"
                   >
                     {q}
                   </button>
@@ -241,7 +241,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                   <button
                     key={q}
                     onClick={() => onPopular(q)}
-                    className="rounded-full border border-[#0057B8]/20 bg-white px-3 py-1.5 text-xs font-medium text-[#0057B8] hover:bg-[#EAF3FF]"
+                    className="rounded-full border border-[var(--alo-brand)]/20 bg-white px-3 py-1.5 text-xs font-medium text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   >
                     {q}
                   </button>
@@ -251,9 +251,9 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
           />
         ) : (
           <>
-            <p className="mb-6 text-sm text-[#5A7299]">
-              <span className="font-semibold text-[#0B2447]">{results.total} results</span> found for{" "}
-              <span className="font-semibold text-[#0057B8]">"{query}"</span>
+            <p className="mb-6 text-sm text-[var(--alo-text-muted)]">
+              <span className="font-semibold text-[var(--alo-text)]">{results.total} results</span> found for{" "}
+              <span className="font-semibold text-[var(--alo-brand)]">"{query}"</span>
             </p>
 
             {/* Tabs */}
@@ -265,8 +265,8 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                   className={cn(
                     "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
                     activeTab === t.key
-                      ? "bg-[#0057B8] text-white"
-                      : "border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+                      ? "bg-[var(--alo-brand)] text-white"
+                      : "border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   )}
                 >
                   {t.label} ({t.count})
@@ -403,11 +403,11 @@ function ResultGroup({ title, icon, accent, children }: { title: string; icon: s
       <div className="mb-4 flex items-center gap-2">
         <div className={cn(
           "flex size-8 items-center justify-center rounded-xl",
-          accent === "blue" ? "bg-[#EAF3FF] text-[#0057B8]" : "bg-[#FFF3EA] text-[#E8501A]"
+          accent === "blue" ? "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" : "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
         )}>
           <Icon name={icon} className="size-4" />
         </div>
-        <h2 className="text-lg font-bold text-[#0B2447]">{title}</h2>
+        <h2 className="text-lg font-bold text-[var(--alo-text)]">{title}</h2>
       </div>
       {children}
     </div>
@@ -418,13 +418,13 @@ function ResultCard({ title, subtitle, description, onClick }: { title: string; 
   return (
     <Card
       onClick={onClick}
-      className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30 hover:shadow-lg"
+      className="alo-card-hover group cursor-pointer rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30 hover:shadow-lg"
     >
       <CardContent className="p-5">
-        <h3 className="line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0057B8]">{title}</h3>
-        <p className="mt-1 text-xs font-medium text-[#0057B8]">{subtitle}</p>
-        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{description}</p>
-        <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#0057B8]">
+        <h3 className="line-clamp-2 text-base font-bold text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{title}</h3>
+        <p className="mt-1 text-xs font-medium text-[var(--alo-brand)]">{subtitle}</p>
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--alo-text-muted)]">{description}</p>
+        <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[var(--alo-brand)]">
           View details
           <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </div>

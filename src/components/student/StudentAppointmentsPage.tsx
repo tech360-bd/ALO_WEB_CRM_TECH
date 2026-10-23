@@ -110,7 +110,7 @@ export default function StudentAppointmentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Appointments"
@@ -118,7 +118,7 @@ export default function StudentAppointmentsPage() {
           action={
             <Button
               type="button"
-              className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
+              className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
               onClick={() => setBooking((value) => !value)}
             >
               <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
@@ -131,7 +131,7 @@ export default function StudentAppointmentsPage() {
           <PortalCard className="mb-6" title="Request an appointment" description="We confirm the slot before it is booked">
             <form className="space-y-3 px-5 py-4" onSubmit={book}>
               <div className="space-y-1.5">
-                <Label htmlFor="apt-type" className="text-[12px] font-semibold text-slate-700">What do you need?</Label>
+                <Label htmlFor="apt-type" className="text-[12px] font-semibold text-[var(--alo-body)]">What do you need?</Label>
                 <Select value={form.type} onValueChange={(value) => setForm((prev) => ({ ...prev, type: value }))}>
                   <SelectTrigger id="apt-type" className="h-9 rounded-input"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -143,7 +143,7 @@ export default function StudentAppointmentsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="apt-title" className="text-[12px] font-semibold text-slate-700">
+                <Label htmlFor="apt-title" className="text-[12px] font-semibold text-[var(--alo-body)]">
                   Topic (optional)
                 </Label>
                 <Input
@@ -158,7 +158,7 @@ export default function StudentAppointmentsPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="apt-date" className="text-[12px] font-semibold text-slate-700">Preferred date</Label>
+                  <Label htmlFor="apt-date" className="text-[12px] font-semibold text-[var(--alo-body)]">Preferred date</Label>
                   <Input
                     id="apt-date"
                     type="date"
@@ -169,7 +169,7 @@ export default function StudentAppointmentsPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="apt-time" className="text-[12px] font-semibold text-slate-700">Preferred time</Label>
+                  <Label htmlFor="apt-time" className="text-[12px] font-semibold text-[var(--alo-body)]">Preferred time</Label>
                   <Input
                     id="apt-time"
                     type="time"
@@ -181,7 +181,7 @@ export default function StudentAppointmentsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="apt-notes" className="text-[12px] font-semibold text-slate-700">
+                <Label htmlFor="apt-notes" className="text-[12px] font-semibold text-[var(--alo-body)]">
                   Anything we should prepare? (optional)
                 </Label>
                 <Textarea
@@ -203,21 +203,21 @@ export default function StudentAppointmentsPage() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
+                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
                 >
                   {submitting ? 'Sending…' : 'Send Request'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold"
+                  className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
                   onClick={() => setBooking(false)}
                 >
                   Cancel
                 </Button>
               </div>
 
-              <p className="text-[12px] leading-relaxed text-slate-500">
+              <p className="text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                 This sends a request. Your counselor confirms the date and time, and the confirmed slot then appears
                 below.
               </p>
@@ -238,12 +238,12 @@ export default function StudentAppointmentsPage() {
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
                     type="button"
-                    className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
+                    className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
                     onClick={() => setBooking(true)}
                   >
                     Request Appointment
                   </Button>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/student/messages">Message Instead</Link>
                   </Button>
                 </div>
@@ -256,17 +256,17 @@ export default function StudentAppointmentsPage() {
           <div className="space-y-5">
             {upcoming.length > 0 && (
               <PortalCard title="Upcoming" description={`${upcoming.length} scheduled`}>
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {upcoming.map((appointment) => (
                     <li key={appointment.id} className="flex flex-wrap items-start gap-3 px-5 py-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-button bg-alo-blue/10 text-alo-blue">
                         <CalendarDays className="h-5 w-5" aria-hidden="true" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] font-semibold text-slate-900">
+                        <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                           {appointment.title || TYPE_LABELS[appointment.type] || 'Appointment'}
                         </p>
-                        <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-slate-500">
+                        <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[var(--alo-text-muted)]">
                           <span className="inline-flex items-center gap-1">
                             <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
                             {appointment.date || 'Date to confirm'}{appointment.time ? ` at ${appointment.time}` : ''}
@@ -280,7 +280,7 @@ export default function StudentAppointmentsPage() {
                           )}
                         </p>
                         {appointment.notes && (
-                          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">{appointment.notes}</p>
+                          <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{appointment.notes}</p>
                         )}
                       </div>
                       <StatusBadge value={appointment.status} />
@@ -292,14 +292,14 @@ export default function StudentAppointmentsPage() {
 
             {past.length > 0 && (
               <PortalCard title="Past appointments" description={`${past.length} completed or cancelled`}>
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {past.map((appointment) => (
                     <li key={appointment.id} className="flex flex-wrap items-start justify-between gap-3 px-5 py-3.5">
                       <div className="min-w-0">
-                        <p className="text-[13px] font-medium text-slate-700">
+                        <p className="text-[13px] font-medium text-[var(--alo-body)]">
                           {appointment.title || TYPE_LABELS[appointment.type] || 'Appointment'}
                         </p>
-                        <p className="mt-0.5 text-[12px] text-slate-500">
+                        <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
                           {appointment.date || 'No date recorded'}{appointment.time ? ` at ${appointment.time}` : ''}
                           {appointment.counselor ? ` · ${appointment.counselor}` : ''}
                         </p>

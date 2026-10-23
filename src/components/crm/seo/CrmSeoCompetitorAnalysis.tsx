@@ -95,14 +95,14 @@ const statusColor = (s: string) => {
 const priorityColor = (p: string) => {
   if (p === 'High') return 'bg-red-100 text-red-800';
   if (p === 'Medium') return 'bg-amber-100 text-amber-800';
-  return 'bg-slate-100 text-slate-700';
+  return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 };
 
 function CheckIcon({ val }: { val: boolean }) {
   return val ? (
     <span className="text-emerald-600 font-semibold text-sm">&#10003;</span>
   ) : (
-    <span className="text-slate-300 text-sm">&#8212;</span>
+    <span className="text-[var(--alo-placeholder)] text-sm">&#8212;</span>
   );
 }
 

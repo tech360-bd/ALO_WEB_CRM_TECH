@@ -110,8 +110,8 @@ interface StaleRule {
 const STATUS_STYLE: Record<RuleStatus, string> = {
   ACTIVE: 'bg-emerald-100 text-emerald-800 border-emerald-200',
   PENDING_APPROVAL: 'bg-blue-100 text-blue-800 border-blue-200',
-  DRAFT: 'bg-slate-100 text-slate-700 border-slate-200',
-  SUPERSEDED: 'bg-slate-100 text-slate-500 border-slate-200',
+  DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
+  SUPERSEDED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]',
   REJECTED: 'bg-red-100 text-red-800 border-red-200',
   EXPIRED: 'bg-amber-100 text-amber-800 border-amber-200',
 };
@@ -445,11 +445,11 @@ export default function RuleVersionsPage() {
     <div className="space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-            <ScrollText className="size-5 text-[#0057B8]" />
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+            <ScrollText className="size-5 text-[var(--alo-brand)]" />
             Regulatory Rules &amp; Policy Changes
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Versioned visa, entry, financial and university rules with provenance. History is never
             overwritten.
           </p>
@@ -470,7 +470,7 @@ export default function RuleVersionsPage() {
       {/* ---------------- RULE VERSIONS ---------------- */}
       {tab === 'rules' && (
         <>
-          <Card className="rounded-2xl border-2 border-slate-200">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
             <CardContent className="space-y-3 pt-5 pb-5">
               <div className="flex flex-wrap items-end gap-2">
                 <div className="min-w-[260px] flex-1 space-y-1.5">
@@ -502,7 +502,7 @@ export default function RuleVersionsPage() {
                   Propose version
                 </Button>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[var(--alo-text-muted)]">
                 Keys look like <code className="font-mono">country:GBR:VISA_REQUIREMENT:MASTERS</code> or{' '}
                 <code className="font-mono">university:&#123;id&#125;:APPLICATION_DEADLINE</code>. Setting a
                 past date shows what ALO believed then, not what it believes now.
@@ -511,7 +511,7 @@ export default function RuleVersionsPage() {
           </Card>
 
           {showPropose && (
-            <Card className="rounded-2xl border-2 border-[#0057B8]/30">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30">
               <CardHeader>
                 <CardTitle className="text-sm font-bold">Propose a new version</CardTitle>
               </CardHeader>
@@ -522,7 +522,7 @@ export default function RuleVersionsPage() {
                     <select
                       value={form.ruleType}
                       onChange={(event) => setForm({ ...form, ruleType: event.target.value })}
-                      className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs"
+                      className="h-9 w-full rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
                     >
                       {RULE_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
                     </select>
@@ -532,7 +532,7 @@ export default function RuleVersionsPage() {
                     <select
                       value={form.sourceType}
                       onChange={(event) => setForm({ ...form, sourceType: event.target.value })}
-                      className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs"
+                      className="h-9 w-full rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
                     >
                       {SOURCE_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
                     </select>
@@ -599,18 +599,18 @@ export default function RuleVersionsPage() {
               <CardContent className="space-y-2 text-xs">
                 {resolved ? (
                   <>
-                    <p className="text-slate-700">{resolved.summary || 'No summary recorded.'}</p>
-                    <pre className="overflow-x-auto rounded-lg bg-slate-50 p-2.5 font-mono text-[11px]">
+                    <p className="text-[var(--alo-body)]">{resolved.summary || 'No summary recorded.'}</p>
+                    <pre className="overflow-x-auto rounded-lg bg-[var(--alo-page)] p-2.5 font-mono text-[11px]">
                       {JSON.stringify(resolved.payload, null, 2)}
                     </pre>
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <Badge variant="outline" className="text-[10px]">{resolved.sourceType}</Badge>
-                      <Badge variant="outline" className="text-[10px]">{resolved.verificationStatus}</Badge>
-                      <span className="font-mono text-[10px] text-slate-500">
+                      <Badge variant="outline" className="text-[11px]">{resolved.sourceType}</Badge>
+                      <Badge variant="outline" className="text-[11px]">{resolved.verificationStatus}</Badge>
+                      <span className="font-mono text-[11px] text-[var(--alo-text-muted)]">
                         trust {resolved.trustWeight}
                       </span>
                       {resolved.sourceUrl && (
-                        <a href={resolved.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] text-[#0057B8] underline">
+                        <a href={resolved.sourceUrl} target="_blank" rel="noreferrer" className="text-[11px] text-[var(--alo-brand)] underline">
                           source
                         </a>
                       )}
@@ -623,7 +623,7 @@ export default function RuleVersionsPage() {
                     )}
                   </>
                 ) : (
-                  <p className="flex items-start gap-1.5 text-slate-600">
+                  <p className="flex items-start gap-1.5 text-[var(--alo-body)]">
                     <Info className="mt-0.5 size-3.5 shrink-0" />
                     {resolveNote}
                   </p>
@@ -633,33 +633,33 @@ export default function RuleVersionsPage() {
           )}
 
           {/* Full chain, oldest last so the current rule is on top */}
-          {historyState === 'loading' && <p className="py-6 text-center text-sm text-slate-500">Loading…</p>}
+          {historyState === 'loading' && <p className="py-6 text-center text-sm text-[var(--alo-text-muted)]">Loading…</p>}
           {(historyState === 'empty' || historyState === 'error') && (
-            <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">{historyMessage}</p>
+            <p className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]">{historyMessage}</p>
           )}
 
           {history.length > 0 && (
             <div className="space-y-2.5">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">
                 Full history — {history.length} version{history.length === 1 ? '' : 's'}, all retained
               </p>
               {[...history].reverse().map((version) => (
-                <Card key={version.id} className={`rounded-2xl border-2 ${version.status === 'ACTIVE' ? 'border-emerald-200' : 'border-slate-200'}`}>
+                <Card key={version.id} className={`rounded-2xl border-2 ${version.status === 'ACTIVE' ? 'border-emerald-200' : 'border-[var(--alo-border)]'}`}>
                   <CardContent className="space-y-2 pt-4 pb-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-slate-900">
+                        <p className="text-sm font-bold text-[var(--alo-text)]">
                           v{version.versionNumber}
-                          <span className="ml-2 font-mono text-[11px] font-normal text-slate-500">{version.ruleType}</span>
+                          <span className="ml-2 font-mono text-[11px] font-normal text-[var(--alo-text-muted)]">{version.ruleType}</span>
                         </p>
-                        <p className="mt-0.5 text-[11px] text-slate-600">{version.summary || 'No summary.'}</p>
+                        <p className="mt-0.5 text-[11px] text-[var(--alo-body)]">{version.summary || 'No summary.'}</p>
                       </div>
-                      <Badge variant="outline" className={`text-[10px] ${STATUS_STYLE[version.status] ?? ''}`}>
+                      <Badge variant="outline" className={`text-[11px] ${STATUS_STYLE[version.status] ?? ''}`}>
                         {version.status}
                       </Badge>
                     </div>
 
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] text-slate-500">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-[var(--alo-text-muted)]">
                       <span>from {new Date(version.effectiveFrom).toISOString().slice(0, 10)}</span>
                       <span>until {version.effectiveUntil ? new Date(version.effectiveUntil).toISOString().slice(0, 10) : 'open'}</span>
                       <span>src {version.sourceType}</span>
@@ -669,7 +669,7 @@ export default function RuleVersionsPage() {
                     </div>
 
                     {version.changeReason && (
-                      <p className="rounded-lg bg-slate-50 p-2 text-[11px] text-slate-700">
+                      <p className="rounded-lg bg-[var(--alo-page)] p-2 text-[11px] text-[var(--alo-body)]">
                         <strong className="font-semibold">Why:</strong> {version.changeReason}
                       </p>
                     )}
@@ -680,13 +680,13 @@ export default function RuleVersionsPage() {
                     )}
 
                     <details className="text-[11px]">
-                      <summary className="cursor-pointer font-semibold text-slate-600">Payload</summary>
-                      <pre className="mt-1.5 overflow-x-auto rounded-lg bg-slate-50 p-2.5 font-mono text-[10px]">
+                      <summary className="cursor-pointer font-semibold text-[var(--alo-body)]">Payload</summary>
+                      <pre className="mt-1.5 overflow-x-auto rounded-lg bg-[var(--alo-page)] p-2.5 font-mono text-[11px]">
                         {JSON.stringify(version.payload, null, 2)}
                       </pre>
                     </details>
 
-                    <div className="flex flex-wrap gap-1.5 border-t border-slate-100 pt-2.5">
+                    <div className="flex flex-wrap gap-1.5 border-t border-[var(--alo-border)] pt-2.5">
                       {(version.status === 'PENDING_APPROVAL' || version.status === 'DRAFT') && (
                         <>
                           <Button size="sm" onClick={() => void approve(version)} disabled={busyId === version.id}>
@@ -706,7 +706,7 @@ export default function RuleVersionsPage() {
                         </Button>
                       )}
                       {version.status === 'SUPERSEDED' && (
-                        <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <span className="flex items-center gap-1.5 text-[11px] text-[var(--alo-text-muted)]">
                           <History className="size-3.5" />
                           Retained history — immutable. Propose a new version to change this rule.
                         </span>
@@ -724,7 +724,7 @@ export default function RuleVersionsPage() {
       {tab === 'changes' && (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-[var(--alo-body)]">
               Changes detected on monitored sources. Detection never applies a change.
             </p>
             <Button variant="outline" size="sm" onClick={() => void loadAlerts()} disabled={alertLoading}>
@@ -734,42 +734,42 @@ export default function RuleVersionsPage() {
           </div>
 
           {alerts.length === 0 ? (
-            <Card className="rounded-2xl border-2 border-slate-200">
-              <CardContent className="py-8 text-center text-sm text-slate-500">
+            <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
+              <CardContent className="py-8 text-center text-sm text-[var(--alo-text-muted)]">
                 {alertLoading ? 'Loading…' : 'No open policy change alerts.'}
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-2.5">
               {alerts.map((alert) => (
-                <Card key={alert.id} className="rounded-2xl border-2 border-slate-200">
+                <Card key={alert.id} className="rounded-2xl border-2 border-[var(--alo-border)]">
                   <CardContent className="space-y-2 pt-4 pb-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-slate-900">{alert.title}</p>
-                        <p className="mt-0.5 font-mono text-[11px] text-slate-500">{alert.ruleKey || 'no rule key'}</p>
+                        <p className="text-sm font-bold text-[var(--alo-text)]">{alert.title}</p>
+                        <p className="mt-0.5 font-mono text-[11px] text-[var(--alo-text-muted)]">{alert.ruleKey || 'no rule key'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Badge variant="outline" className={`text-[10px] ${SEVERITY_STYLE[alert.severity] ?? ''}`}>
+                        <Badge variant="outline" className={`text-[11px] ${SEVERITY_STYLE[alert.severity] ?? ''}`}>
                           {alert.severity}
                         </Badge>
-                        <Badge variant="outline" className="text-[10px]">{alert.status}</Badge>
+                        <Badge variant="outline" className="text-[11px]">{alert.status}</Badge>
                       </div>
                     </div>
 
-                    {alert.description && <p className="text-[11px] text-slate-600">{alert.description}</p>}
+                    {alert.description && <p className="text-[11px] text-[var(--alo-body)]">{alert.description}</p>}
 
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[var(--alo-text-muted)]">
                       <span>source {alert.sourceType}</span>
                       {alert.sourceUrl && (
-                        <a href={alert.sourceUrl} target="_blank" rel="noreferrer" className="text-[#0057B8] underline">view source</a>
+                        <a href={alert.sourceUrl} target="_blank" rel="noreferrer" className="text-[var(--alo-brand)] underline">view source</a>
                       )}
                       <span>detected {new Date(alert.detectedAt).toLocaleString()}</span>
                     </div>
 
-                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-[11px]">
-                      <p className="font-semibold text-slate-700">Impact — {alert.impactCount} record(s)</p>
-                      <p className="mt-0.5 text-slate-600">
+                    <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-2.5 text-[11px]">
+                      <p className="font-semibold text-[var(--alo-body)]">Impact — {alert.impactCount} record(s)</p>
+                      <p className="mt-0.5 text-[var(--alo-body)]">
                         {alert.affectedStudentIds.length} student(s), {alert.affectedApplicationIds.length}{' '}
                         application(s), {alert.affectedCountryIds.length} country(ies)
                         {alert.affectedWorkflows.length > 0 && `, workflows: ${alert.affectedWorkflows.join(', ')}`}
@@ -789,7 +789,7 @@ export default function RuleVersionsPage() {
                       </p>
                     )}
 
-                    <div className="flex flex-wrap gap-1.5 border-t border-slate-100 pt-2.5">
+                    <div className="flex flex-wrap gap-1.5 border-t border-[var(--alo-border)] pt-2.5">
                       {alert.status !== 'APPROVED' && (
                         <>
                           <Button variant="outline" size="sm" onClick={() => {
@@ -819,7 +819,7 @@ export default function RuleVersionsPage() {
                         </>
                       )}
                       {alert.reviewTaskId && (
-                        <span className="flex items-center gap-1 text-[11px] text-slate-500">
+                        <span className="flex items-center gap-1 text-[11px] text-[var(--alo-text-muted)]">
                           <Clock className="size-3.5" />
                           review task {alert.reviewTaskId}
                         </span>
@@ -837,7 +837,7 @@ export default function RuleVersionsPage() {
       {tab === 'stale' && (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-[var(--alo-body)]">
               Active rules not verified against their source in the last 180 days.
             </p>
             <Button variant="outline" size="sm" onClick={() => void loadStale()} disabled={staleLoading}>
@@ -859,17 +859,17 @@ export default function RuleVersionsPage() {
           )}
 
           {stale.length === 0 ? (
-            <Card className="rounded-2xl border-2 border-slate-200">
-              <CardContent className="py-8 text-center text-sm text-slate-500">
+            <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
+              <CardContent className="py-8 text-center text-sm text-[var(--alo-text-muted)]">
                 {staleLoading ? 'Loading…' : 'No stale rules. Every active rule was verified within the window.'}
               </CardContent>
             </Card>
           ) : (
-            <Card className="rounded-2xl border-2 border-slate-200">
+            <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
               <CardContent className="overflow-x-auto pt-5 pb-5">
                 <table className="w-full text-[11px]">
                   <thead>
-                    <tr className="border-b border-slate-200 text-left font-bold text-slate-600">
+                    <tr className="border-b border-[var(--alo-border)] text-left font-bold text-[var(--alo-body)]">
                       <th className="p-2">Rule key</th>
                       <th className="p-2">v</th>
                       <th className="p-2">Source</th>
@@ -881,7 +881,7 @@ export default function RuleVersionsPage() {
                   </thead>
                   <tbody>
                     {stale.map((rule) => (
-                      <tr key={rule.id} className="border-b border-slate-100 hover:bg-slate-50">
+                      <tr key={rule.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)]">
                         <td className="p-2 font-mono">{rule.ruleKey}</td>
                         <td className="p-2 font-mono">{rule.versionNumber}</td>
                         <td className="p-2">{rule.sourceType}</td>
@@ -890,7 +890,7 @@ export default function RuleVersionsPage() {
                           {rule.daysSinceVerified === null ? 'never' : `${rule.daysSinceVerified}d ago`}
                         </td>
                         <td className="p-2">
-                          <Badge variant="outline" className={rule.authoritative ? 'border-emerald-200 bg-emerald-50 text-[9px] text-emerald-800' : 'border-red-200 bg-red-50 text-[9px] text-red-700'}>
+                          <Badge variant="outline" className={rule.authoritative ? 'border-emerald-200 bg-emerald-50 text-[11px] text-emerald-800' : 'border-red-200 bg-red-50 text-[11px] text-red-700'}>
                             {rule.authoritative ? 'yes' : 'NO'}
                           </Badge>
                         </td>

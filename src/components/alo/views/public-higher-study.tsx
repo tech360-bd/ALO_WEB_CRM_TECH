@@ -25,21 +25,21 @@ export function PublicHigherStudy({ onNavigate }: Props) {
       {/* Degree Level Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {DEGREE_LEVELS.map((level) => (
-          <Card key={level.slug} className="alo-card-hover cursor-pointer rounded-2xl border border-[#DCE8F5] bg-white shadow-sm" onClick={() => onNavigate("public-course-finder")}>
+          <Card key={level.slug} className="alo-card-hover cursor-pointer rounded-2xl border border-[var(--alo-brand-border)] bg-white shadow-sm" onClick={() => onNavigate("public-course-finder")}>
             <CardContent className="p-6">
-              <div className="flex size-12 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0057B8]">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name={level.icon} className="size-6" />
               </div>
-              <h3 className="mt-4 text-lg font-bold text-[#0B2447]">{level.title}</h3>
-              <p className="mt-2 text-sm text-[#5A7299]">{level.desc}</p>
+              <h3 className="mt-4 text-lg font-bold text-[var(--alo-text)]">{level.title}</h3>
+              <p className="mt-2 text-sm text-[var(--alo-text-muted)]">{level.desc}</p>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {level.levels.map((l) => (
-                  <Badge key={l} variant="outline" className="border-[#DCE8F5] text-[#5A7299]">{l}</Badge>
+                  <Badge key={l} variant="outline" className="border-[var(--alo-brand-border)] text-[var(--alo-text-muted)]">{l}</Badge>
                 ))}
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-[#5A7299]"><Icon name="Clock" className="mr-1 inline size-3.5" />{level.duration}</span>
-                <span className="text-sm font-semibold text-[#0057B8]">Find Courses <Icon name="ArrowRight" className="ml-1 inline size-3.5" /></span>
+                <span className="text-xs text-[var(--alo-text-muted)]"><Icon name="Clock" className="mr-1 inline size-3.5" />{level.duration}</span>
+                <span className="text-sm font-semibold text-[var(--alo-brand)]">Find Courses <Icon name="ArrowRight" className="ml-1 inline size-3.5" /></span>
               </div>
             </CardContent>
           </Card>
@@ -57,21 +57,21 @@ export function PublicHigherStudy({ onNavigate }: Props) {
             { icon: "Plane", label: "Visa Support", action: "public-visa-support" as ViewKey },
             { icon: "CalendarCheck", label: "Consultation", action: "public-contact" as ViewKey },
           ].map((item) => (
-            <button key={item.label} onClick={() => onNavigate(item.action)} className="flex flex-col items-center gap-2 rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4 transition-colors hover:bg-[#EAF3FF]">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-[#EAF3FF] text-[#0057B8]">
+            <button key={item.label} onClick={() => onNavigate(item.action)} className="flex flex-col items-center gap-2 rounded-xl border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4 transition-colors hover:bg-[var(--alo-brand-light)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name={item.icon} className="size-5" />
               </div>
-              <span className="text-xs font-medium text-[#0B2447]">{item.label}</span>
+              <span className="text-xs font-medium text-[var(--alo-text)]">{item.label}</span>
             </button>
           ))}
         </div>
       </SectionCard>
 
       {/* CTA */}
-      <div className="rounded-2xl bg-gradient-to-br from-[#0057B8] to-[#0284C7] p-8 text-center text-white">
+      <div className="rounded-2xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-info)] p-8 text-center text-white">
         <h2 className="text-2xl font-bold">Not Sure Which Degree Is Right for You?</h2>
         <p className="mt-2 text-white/90">Book a free consultation with our expert counselors to find your perfect study path.</p>
-        <Button onClick={() => onNavigate("public-contact")} className="mt-4 bg-white text-[#0057B8] hover:bg-[#EAF3FF]">Book Free Consultation</Button>
+        <Button onClick={() => onNavigate("public-contact")} className="mt-4 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">Book Free Consultation</Button>
       </div>
     </div>
   );

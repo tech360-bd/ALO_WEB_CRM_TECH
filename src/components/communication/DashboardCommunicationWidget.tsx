@@ -54,18 +54,18 @@ export default function DashboardCommunicationWidget({
 }: DashboardCommunicationWidgetProps) {
   return (
     <Card className="border border-indigo-100 shadow-sm bg-white rounded-xl">
-      <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between gap-3">
+      <CardHeader className="pb-3 border-b border-[var(--alo-border)] flex flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <MessageSquare className="w-5 h-5 text-indigo-600 shrink-0" />
-          <CardTitle className="text-sm font-bold text-gray-900">{getRoleTitle(role)}</CardTitle>
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">{getRoleTitle(role)}</CardTitle>
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-[11px]">
             {unreadCount == null ? 'Unread total unavailable' : `${Math.max(0, unreadCount)} unread`}
           </Badge>
           {role !== 'STUDENT' && (
-            <Badge variant="outline" className="text-[10px]">
+            <Badge variant="outline" className="text-[11px]">
               {slaOverdueCount == null ? 'SLA total unavailable' : `${Math.max(0, slaOverdueCount)} SLA overdue`}
             </Badge>
           )}
@@ -110,7 +110,7 @@ export default function DashboardCommunicationWidget({
         )}
 
         {role === 'APPLICATION_MANAGER' && (
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-[var(--alo-body)]">
             Application access is checked for each record. Open the authorized inbox to review current items.
           </p>
         )}
@@ -126,7 +126,7 @@ export default function DashboardCommunicationWidget({
           </div>
         )}
 
-        <p className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600" role="status">
+        <p className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]" role="status">
           Counts come from this dashboard's authorized scope when available. Message content and external provider delivery confirmations are not shown here; use the authorized inbox for message-level review.
         </p>
       </CardContent>

@@ -181,7 +181,7 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[var(--alo-brand)]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
@@ -329,7 +329,7 @@ function EnglishTestsSection() {
                           {test.name}
                         </h3>
                         {test.bestFor && (
-                          <Badge className="text-[10px] px-2 py-0.5 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#EFF6FF', color: C.blue }}>
+                          <Badge className="text-[11px] px-2 py-0.5 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#EFF6FF', color: C.blue }}>
                             {test.bestFor}
                           </Badge>
                         )}
@@ -371,7 +371,7 @@ function EnglishTestsSection() {
                       <div className="flex gap-2 mt-3">
                         <Button
                           variant="outline"
-                          className="flex-1 h-10 rounded-lg text-xs font-medium border-[#E2E8F0]"
+                          className="flex-1 h-10 rounded-lg text-xs font-medium border-[var(--alo-border)]"
                           style={{ color: C.blue }}
                           asChild
                         >
@@ -427,7 +427,7 @@ function EnglishTestsSection() {
             <h3 className="text-xl md:text-2xl font-bold" style={{ color: C.text }}>
               English Test Comparison
             </h3>
-            <Button asChild variant="outline" className="h-12 text-xs font-semibold rounded-lg border-[#0057B8] text-[#0057B8]"><Link href="/language-prep/comparison">
+            <Button asChild variant="outline" className="h-12 text-xs font-semibold rounded-lg border-[var(--alo-brand)] text-[var(--alo-brand)]"><Link href="/language-prep/comparison">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Link></Button>
           </div>
@@ -435,8 +435,8 @@ function EnglishTestsSection() {
             <Table>
               <TableHeader>
                 <TableRow style={{ backgroundColor: "#F8FAFC" }}>
-                  <TableHead className="text-[#64748B] font-semibold text-xs uppercase">Test</TableHead>
-                  <TableHead className="text-[#64748B] font-semibold text-xs uppercase">Accepted Destinations</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] font-semibold text-xs uppercase">Test</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] font-semibold text-xs uppercase">Accepted Destinations</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden md:table-cell">Format</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden lg:table-cell">Score Range</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden lg:table-cell">Result Time</TableHead>
@@ -474,7 +474,7 @@ function EnglishTestsSection() {
           <motion.div variants={staggerItem}>
             <EnglishExamButton
               location="homepage_english_tests"
-              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#E8501A] px-6 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[var(--alo-cta)] px-6 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
             >
               Take the English Test
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />

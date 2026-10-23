@@ -251,8 +251,8 @@ export function EligibilityChecker() {
             <ClipboardCheck className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Eligibility Checker</h1>
-            <p className="text-sm text-gray-500">Find courses that match your profile</p>
+            <h1 className="text-lg font-bold text-[var(--alo-text)]">Eligibility Checker</h1>
+            <p className="text-sm text-[var(--alo-text-muted)]">Find courses that match your profile</p>
           </div>
         </div>
       </div>
@@ -282,7 +282,7 @@ export function EligibilityChecker() {
                       'w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300',
                       isActive && 'border-transparent shadow-lg scale-110',
                       isCompleted && 'border-transparent',
-                      !isActive && !isCompleted && 'border-gray-300 bg-white',
+                      !isActive && !isCompleted && 'border-[var(--alo-border-strong)] bg-white',
                     )}
                     style={
                       isActive
@@ -295,13 +295,13 @@ export function EligibilityChecker() {
                     {isCompleted ? (
                       <CheckCircle2 className="w-5 h-5 text-white" />
                     ) : (
-                      <Icon className={cn('w-5 h-5', isActive ? 'text-white' : 'text-gray-400')} />
+                      <Icon className={cn('w-5 h-5', isActive ? 'text-white' : 'text-[var(--alo-text-muted)]')} />
                     )}
                   </div>
                   <span
                     className={cn(
                       'text-xs font-medium text-center hidden sm:block',
-                      isActive ? 'text-gray-900' : isCompleted ? 'text-green-600' : 'text-gray-400',
+                      isActive ? 'text-[var(--alo-text)]' : isCompleted ? 'text-green-600' : 'text-[var(--alo-text-muted)]',
                     )}
                   >
                     {s.title}
@@ -321,7 +321,7 @@ export function EligibilityChecker() {
         )}
 
         {/* ─── Step Content ───────────────────────────────────────────────── */}
-        <Card className="shadow-sm border-gray-200">
+        <Card className="shadow-sm border-[var(--alo-border)]">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl">{STEPS[step - 1].title}</CardTitle>
             <CardDescription>{STEPS[step - 1].description}</CardDescription>
@@ -464,7 +464,7 @@ export function EligibilityChecker() {
                       value={formData.englishScore}
                       onChange={(e) => updateField('englishScore', e.target.value)}
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[var(--alo-text-muted)]">
                       {formData.englishTest === 'IELTS' && 'Typical requirement: 6.0–7.5'}
                       {formData.englishTest === 'PTE' && 'Typical requirement: 50–79'}
                       {formData.englishTest === 'TOEFL' && 'Typical requirement: 72–100'}
@@ -548,7 +548,7 @@ export function EligibilityChecker() {
                     <Label>Budget Range (BDT)</Label>
                     <span className="text-sm font-semibold" style={{ color: ALO_BLUE }}>
                       Up to {formData.budgetMax} lakh{formData.budgetMax !== 1 ? 's' : ''}
-                      <span className="text-gray-400 font-normal ml-1">
+                      <span className="text-[var(--alo-text-muted)] font-normal ml-1">
                         (~£{Math.round(formData.budgetMax * 0.59).toLocaleString()})
                       </span>
                     </span>
@@ -561,7 +561,7 @@ export function EligibilityChecker() {
                     step={1}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-gray-400">
+                  <div className="flex justify-between text-xs text-[var(--alo-text-muted)]">
                     <span>0</span>
                     <span>10L</span>
                     <span>20L</span>
@@ -578,23 +578,23 @@ export function EligibilityChecker() {
               <div className="space-y-6">
                 {/* Summary bar */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-sm text-gray-500">{totalResults} course{totalResults !== 1 ? 's' : ''} found</span>
+                  <span className="text-sm text-[var(--alo-text-muted)]">{totalResults} course{totalResults !== 1 ? 's' : ''} found</span>
                   <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200">
                     {likelyResults.length} Likely Match
                   </Badge>
                   <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200">
                     {possibleResults.length} Possible
                   </Badge>
-                  <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200">
+                  <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)] border-[var(--alo-border)]">
                     {reviewResults.length} Needs Review
                   </Badge>
                 </div>
 
                 {totalResults === 0 && (
                   <div className="text-center py-12">
-                    <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No matching courses found</h3>
-                    <p className="text-sm text-gray-500 max-w-md mx-auto">
+                    <HelpCircle className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">No matching courses found</h3>
+                    <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto">
                       Try adjusting your preferences — different country, study level, or a higher budget — and run the check again.
                     </p>
                   </div>
@@ -662,17 +662,17 @@ export function EligibilityChecker() {
 
           {/* ─── Navigation Buttons (steps 1-3) ──────────────────────────── */}
           {step < 4 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50/50 rounded-b-lg">
+            <div className="flex items-center justify-between px-6 py-4 border-t bg-[var(--alo-page)]/50 rounded-b-lg">
               <Button
                 variant="ghost"
                 onClick={prevStep}
                 disabled={step === 1}
-                className="text-gray-600"
+                className="text-[var(--alo-body)]"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Previous
               </Button>
-              <div className="flex items-center gap-2 text-xs text-gray-400">
+              <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
                 Step {step} of 3
               </div>
               <Button
@@ -728,11 +728,11 @@ function ResultGroup({
       titleClass: 'text-yellow-800',
     },
     gray: {
-      border: 'border-gray-200',
-      bg: 'bg-gray-50',
-      badge: 'bg-gray-100 text-gray-600 border-gray-200',
-      icon: <HelpCircle className="w-5 h-5 text-gray-500" />,
-      titleClass: 'text-gray-700',
+      border: 'border-[var(--alo-border)]',
+      bg: 'bg-[var(--alo-page)]',
+      badge: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
+      icon: <HelpCircle className="w-5 h-5 text-[var(--alo-text-muted)]" />,
+      titleClass: 'text-[var(--alo-body)]',
     },
   };
   const theme = themeMap[color];
@@ -744,7 +744,7 @@ function ResultGroup({
         <h3 className={cn('font-semibold', theme.titleClass)}>{title}</h3>
         <Badge className={cn('text-xs', theme.badge)}>{results.length}</Badge>
       </div>
-      <p className="text-xs text-gray-500 mb-4">{description}</p>
+      <p className="text-xs text-[var(--alo-text-muted)] mb-4">{description}</p>
       <div className="space-y-3">
         {results.map((r) => (
           <ResultCard key={r.courseId} result={r} />
@@ -759,13 +759,13 @@ function ResultGroup({
 // ══════════════════════════════════════════════════════════════════════════════
 function ResultCard({ result }: { result: EligibilityResult }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-[var(--alo-border)] p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 text-sm leading-tight mb-1 line-clamp-2">
+          <h4 className="font-semibold text-[var(--alo-text)] text-sm leading-tight mb-1 line-clamp-2">
             {result.courseTitle}
           </h4>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--alo-text-muted)]">
             {result.universityName && (
               <span className="flex items-center gap-1">
                 <Building2 className="w-3.5 h-3.5" />
@@ -786,26 +786,26 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           <div className="text-right">
             {result.tuitionFee ? (
               <div>
-                <span className="text-sm font-bold text-gray-900">
+                <span className="text-sm font-bold text-[var(--alo-text)]">
                   {result.tuitionCurrency === 'GBP' ? '£' : result.tuitionCurrency === 'USD' ? '$' : result.tuitionCurrency === 'AUD' ? 'A$' : result.tuitionCurrency === 'EUR' ? '€' : result.tuitionCurrency + ' '}
                   {result.tuitionFee?.toLocaleString()}
                 </span>
-                <span className="text-xs text-gray-400 ml-1">/year</span>
+                <span className="text-xs text-[var(--alo-text-muted)] ml-1">/year</span>
               </div>
             ) : (
-              <span className="text-xs text-gray-400">Fee not listed</span>
+              <span className="text-xs text-[var(--alo-text-muted)]">Fee not listed</span>
             )}
-            <div className="text-xs text-gray-400 mt-0.5">
+            <div className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               Score: {result.matchScore}/100
             </div>
           </div>
           {result.slug && (
             <a
               href={`/courses/${result.slug}`}
-              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full bg-[var(--alo-surface-muted)] hover:bg-gray-200 flex items-center justify-center transition-colors"
               title="View course details"
             >
-              <ExternalLink className="w-4 h-4 text-gray-500" />
+              <ExternalLink className="w-4 h-4 text-[var(--alo-text-muted)]" />
             </a>
           )}
         </div>
@@ -813,10 +813,10 @@ function ResultCard({ result }: { result: EligibilityResult }) {
 
       {/* Match reasons */}
       {result.reasons && result.reasons.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
+        <div className="mt-3 pt-3 border-t border-[var(--alo-border)]">
           <ul className="space-y-1">
             {result.reasons.map((reason, i) => (
-              <li key={i} className="text-xs text-gray-500 flex items-start gap-1.5">
+              <li key={i} className="text-xs text-[var(--alo-text-muted)] flex items-start gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
                 {reason}
               </li>

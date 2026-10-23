@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Calendar, Plus, Search, Clock, User, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
-const typeColors: Record<string, string> = { counseling: 'bg-blue-100 text-blue-700', 'application_review': 'bg-green-100 text-green-700', 'visa_prep': 'bg-amber-100 text-amber-700', 'document_review': 'bg-purple-100 text-purple-700', 'internal_meeting': 'bg-gray-100 text-gray-700' };
-const statusBadge: Record<string, string> = { scheduled: 'bg-blue-50 text-blue-700 border-blue-200', completed: 'bg-green-50 text-green-700 border-green-200', cancelled: 'bg-gray-50 text-gray-600 border-gray-200', 'no_show': 'bg-red-50 text-red-700 border-red-200' };
+const typeColors: Record<string, string> = { counseling: 'bg-blue-100 text-blue-700', 'application_review': 'bg-green-100 text-green-700', 'visa_prep': 'bg-amber-100 text-amber-700', 'document_review': 'bg-purple-100 text-purple-700', 'internal_meeting': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
+const statusBadge: Record<string, string> = { scheduled: 'bg-blue-50 text-blue-700 border-blue-200', completed: 'bg-green-50 text-green-700 border-green-200', cancelled: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]', 'no_show': 'bg-red-50 text-red-700 border-red-200' };
 
 interface Appointment {
   id: string;
@@ -95,22 +95,22 @@ export default function CrmAppointmentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
-          <p className="text-gray-500">Manage counselling sessions, reviews, and meetings</p>
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">Appointments</h1>
+          <p className="text-[var(--alo-text-muted)]">Manage counselling sessions, reviews, and meetings</p>
         </div>
         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="w-4 h-4 mr-2" />New Appointment</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Calendar className="w-4 h-4 text-blue-500" /><span className="text-xs text-gray-500">Today</span></div><p className="text-2xl font-bold">{stats.today}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Clock className="w-4 h-4 text-amber-500" /><span className="text-xs text-gray-500">Upcoming</span></div><p className="text-2xl font-bold">{stats.upcoming}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-xs text-gray-500">Completed</span></div><p className="text-2xl font-bold">{stats.completed}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><User className="w-4 h-4 text-gray-500" /><span className="text-xs text-gray-500">Total</span></div><p className="text-2xl font-bold">{stats.total}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Calendar className="w-4 h-4 text-blue-500" /><span className="text-xs text-[var(--alo-text-muted)]">Today</span></div><p className="text-2xl font-bold">{stats.today}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Clock className="w-4 h-4 text-amber-500" /><span className="text-xs text-[var(--alo-text-muted)]">Upcoming</span></div><p className="text-2xl font-bold">{stats.upcoming}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-xs text-[var(--alo-text-muted)]">Completed</span></div><p className="text-2xl font-bold">{stats.completed}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><User className="w-4 h-4 text-[var(--alo-text-muted)]" /><span className="text-xs text-[var(--alo-text-muted)]">Total</span></div><p className="text-2xl font-bold">{stats.total}</p></CardContent></Card>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" />
           <Input placeholder="Search appointments..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
         </div>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="border rounded-md px-3 py-2 text-sm">
@@ -130,28 +130,28 @@ export default function CrmAppointmentsPage() {
 
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <Card className="p-8 text-center text-gray-400">No appointments found</Card>
+          <Card className="p-8 text-center text-[var(--alo-text-muted)]">No appointments found</Card>
         ) : filtered.map(apt => (
           <Card key={apt.id} className={`cursor-pointer transition-shadow hover:shadow-md ${selectedApt === apt.id ? 'ring-2 ring-blue-400' : ''}`} onClick={() => setSelectedApt(selectedApt === apt.id ? null : apt.id)}>
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <Badge className={typeColors[(apt.type || '').toLowerCase()] || 'bg-gray-100 text-gray-700'}>{apt.type || 'General'}</Badge>
-                    <Badge className={statusBadge[(apt.status || '').toLowerCase()] || 'bg-gray-50 text-gray-600 border-gray-200'}>{apt.status || 'Scheduled'}</Badge>
+                    <Badge className={typeColors[(apt.type || '').toLowerCase()] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{apt.type || 'General'}</Badge>
+                    <Badge className={statusBadge[(apt.status || '').toLowerCase()] || 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'}>{apt.status || 'Scheduled'}</Badge>
                   </div>
-                  <h3 className="font-semibold text-gray-900">{apt.title || 'Untitled Appointment'}</h3>
-                  <p className="text-sm text-gray-500 mt-1">Student: {apt.studentId || 'N/A'}</p>
-                  {apt.notes && <p className="text-xs text-gray-400 mt-1">{apt.notes}</p>}
+                  <h3 className="font-semibold text-[var(--alo-text)]">{apt.title || 'Untitled Appointment'}</h3>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">Student: {apt.studentId || 'N/A'}</p>
+                  {apt.notes && <p className="text-xs text-[var(--alo-text-muted)] mt-1">{apt.notes}</p>}
                 </div>
-                <div className="text-right text-sm text-gray-500">
+                <div className="text-right text-sm text-[var(--alo-text-muted)]">
                   {apt.scheduledAt ? new Date(apt.scheduledAt).toLocaleString() : 'TBD'}
                 </div>
               </div>
               {selectedApt === apt.id && (
                 <div className="flex gap-2 mt-3 pt-3 border-t">
                   {(apt.status || '') !== 'completed' && <Button size="sm" onClick={() => updateStatus(apt.id, 'completed')} className="text-green-600"><CheckCircle className="w-4 h-4 mr-1" />Complete</Button>}
-                  {(apt.status || '') !== 'cancelled' && <Button size="sm" onClick={() => updateStatus(apt.id, 'cancelled')} variant="ghost" className="text-gray-500"><XCircle className="w-4 h-4 mr-1" />Cancel</Button>}
+                  {(apt.status || '') !== 'cancelled' && <Button size="sm" onClick={() => updateStatus(apt.id, 'cancelled')} variant="ghost" className="text-[var(--alo-text-muted)]"><XCircle className="w-4 h-4 mr-1" />Cancel</Button>}
                 </div>
               )}
             </CardContent>

@@ -71,39 +71,39 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-50 border-t border-gray-200">
+    <div className="flex h-[calc(100vh-64px)] bg-[var(--alo-page)] border-t border-[var(--alo-border)]">
       {/* Sidebar: Conversations List */}
-      <div className="w-1/3 border-r border-gray-200 bg-white flex flex-col">
-        <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-          <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-[#0057B8]" />
+      <div className="w-1/3 border-r border-[var(--alo-border)] bg-white flex flex-col">
+        <div className="p-4 border-b border-[var(--alo-border)] bg-[var(--alo-page)] flex justify-between items-center">
+          <h2 className="font-bold text-[var(--alo-text)] text-lg flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-[var(--alo-brand)]" />
             Unified Inbox
           </h2>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {loading ? (
-            <div className="p-4 text-gray-500 text-center">Loading...</div>
+            <div className="p-4 text-[var(--alo-text-muted)] text-center">Loading...</div>
           ) : conversations.length === 0 ? (
-            <div className="p-4 text-gray-500 text-center">No active conversations.</div>
+            <div className="p-4 text-[var(--alo-text-muted)] text-center">No active conversations.</div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-[var(--alo-border)]">
               {conversations.map((c) => (
                 <div
                   key={c.id}
                   onClick={() => setActiveThreadId(c.id)}
-                  className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[#0057B8]' : 'border-l-4 border-transparent'}`}
+                  className={`p-4 cursor-pointer transition-colors hover:bg-[var(--alo-page)] ${activeThreadId === c.id ? 'bg-blue-50/50 border-l-4 border-[var(--alo-brand)]' : 'border-l-4 border-transparent'}`}
                 >
                   <div className="flex justify-between items-start mb-1">
-                    <span className="font-semibold text-gray-900 capitalize flex items-center gap-2">
-                      {c.channel === 'whatsapp' ? <Phone className="w-4 h-4 text-green-500" /> : <Mail className="w-4 h-4 text-gray-500" />}
+                    <span className="font-semibold text-[var(--alo-text)] capitalize flex items-center gap-2">
+                      {c.channel === 'whatsapp' ? <Phone className="w-4 h-4 text-green-500" /> : <Mail className="w-4 h-4 text-[var(--alo-text-muted)]" />}
                       {c.channel} Message
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-[var(--alo-text-muted)]">
                       {new Date(c.lastMessageAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 truncate">{c.lastMessagePreview || 'No preview available'}</p>
+                  <p className="text-sm text-[var(--alo-body)] truncate">{c.lastMessagePreview || 'No preview available'}</p>
                 </div>
               ))}
             </div>
@@ -112,19 +112,19 @@ export default function InboxPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="w-2/3 flex flex-col bg-gray-50/50">
+      <div className="w-2/3 flex flex-col bg-[var(--alo-page)]/50">
         {activeThreadId ? (
           <>
-            <div className="p-4 border-b border-gray-200 bg-white flex justify-between items-center shadow-sm">
+            <div className="p-4 border-b border-[var(--alo-border)] bg-white flex justify-between items-center shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-gray-500" />
+                  <User className="w-6 h-6 text-[var(--alo-text-muted)]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-800">
+                  <h3 className="font-bold text-[var(--alo-text)]">
                     {conversations.find(c => c.id === activeThreadId)?.channel === 'whatsapp' ? 'WhatsApp Contact' : 'Contact'}
                   </h3>
-                  <p className="text-xs text-gray-500">Thread ID: {activeThreadId.substring(0, 8)}...</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Thread ID: {activeThreadId.substring(0, 8)}...</p>
                 </div>
               </div>
             </div>
@@ -132,9 +132,9 @@ export default function InboxPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((m) => (
                 <div key={m.id} className={`flex ${m.direction === 'outbound' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[#0057B8] text-white rounded-tr-none shadow-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-none shadow-sm'}`}>
+                  <div className={`max-w-[70%] p-3 rounded-2xl ${m.direction === 'outbound' ? 'bg-[var(--alo-brand)] text-white rounded-tr-none shadow-sm' : 'bg-white border border-[var(--alo-border)] text-[var(--alo-text)] rounded-tl-none shadow-sm'}`}>
                     <p className="text-sm whitespace-pre-wrap">{m.content}</p>
-                    <div className={`text-xs mt-1 text-right ${m.direction === 'outbound' ? 'text-blue-200' : 'text-gray-400'}`}>
+                    <div className={`text-xs mt-1 text-right ${m.direction === 'outbound' ? 'text-blue-200' : 'text-[var(--alo-text-muted)]'}`}>
                       {new Date(m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   </div>
@@ -142,7 +142,7 @@ export default function InboxPage() {
               ))}
             </div>
 
-            <div className="p-4 bg-white border-t border-gray-200">
+            <div className="p-4 bg-white border-t border-[var(--alo-border)]">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -150,11 +150,11 @@ export default function InboxPage() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Type your message..."
-                  className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0057B8]/50 focus:border-[#0057B8] transition-all"
+                  className="flex-1 p-3 border border-[var(--alo-border-strong)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--alo-brand)]/50 focus:border-[var(--alo-brand)] transition-all"
                 />
                 <button
                   onClick={handleSend}
-                  className="bg-[#0057B8] hover:bg-[#003F87] text-white p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm"
+                  className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm"
                 >
                   <Send className="w-5 h-5" />
                 </button>
@@ -162,9 +162,9 @@ export default function InboxPage() {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-            <MessageSquare className="w-16 h-16 mb-4 text-gray-300" />
-            <p className="text-lg font-medium text-gray-500">Select a conversation to start messaging</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-[var(--alo-text-muted)]">
+            <MessageSquare className="w-16 h-16 mb-4 text-[var(--alo-placeholder)]" />
+            <p className="text-lg font-medium text-[var(--alo-text-muted)]">Select a conversation to start messaging</p>
           </div>
         )}
       </div>

@@ -93,22 +93,22 @@ const STATUS_CLS: Record<string, string> = {
   EXECUTED: 'bg-green-100 text-green-700 border-green-200',
   APPROVED: 'bg-sky-100 text-sky-700 border-sky-200',
   EXECUTING: 'bg-blue-100 text-blue-700 border-blue-200',
-  REJECTED: 'bg-gray-100 text-gray-600 border-gray-200',
+  REJECTED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
   FAILED: 'bg-red-100 text-red-700 border-red-200',
-  ROLLED_BACK: 'bg-gray-100 text-gray-600 border-gray-200',
+  ROLLED_BACK: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   ACTIVE: 'bg-green-100 text-green-700 border-green-200',
 };
 
 const RISK_CLS: Record<string, string> = {
   HIGH: 'bg-red-100 text-red-700 border-red-200',
   MEDIUM: 'bg-amber-100 text-amber-700 border-amber-200',
-  LOW: 'bg-gray-100 text-gray-600 border-gray-200',
+  LOW: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
 function statusBadge(status: string) {
   return (
-    <Badge variant="outline" className={`text-[10px] ${STATUS_CLS[status] || 'bg-gray-100 text-gray-600'}`}>
+    <Badge variant="outline" className={`text-[11px] ${STATUS_CLS[status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
       {status || 'UNKNOWN'}
     </Badge>
   );
@@ -116,7 +116,7 @@ function statusBadge(status: string) {
 
 function riskBadge(riskLevel: string) {
   return (
-    <Badge variant="outline" className={`text-[10px] ${RISK_CLS[riskLevel] || 'bg-gray-100 text-gray-600'}`}>
+    <Badge variant="outline" className={`text-[11px] ${RISK_CLS[riskLevel] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
       {riskLevel || 'UNRATED'}
     </Badge>
   );
@@ -388,13 +388,13 @@ export default function CrmAgentOperationsPage() {
                           <TableCell className="text-xs">
                             {agent.generation}
                             {agent.isTwoLoopModel ? (
-                              <Badge variant="outline" className="ml-1 text-[10px]">Two-loop</Badge>
+                              <Badge variant="outline" className="ml-1 text-[11px]">Two-loop</Badge>
                             ) : null}
                           </TableCell>
                           <TableCell className="text-xs">
                             {agent.cyclesCompleted} completed
                             {agent.hasActiveCycle ? (
-                              <Badge variant="outline" className="ml-1 bg-sky-100 text-sky-700 text-[10px]">
+                              <Badge variant="outline" className="ml-1 bg-sky-100 text-sky-700 text-[11px]">
                                 Active
                               </Badge>
                             ) : null}
@@ -469,7 +469,7 @@ export default function CrmAgentOperationsPage() {
                               {action.targetId ? ` · ${action.targetId}` : ''}
                             </p>
                             {action.lastError ? (
-                              <p className="mt-1 text-[10px] text-red-600">{action.lastError}</p>
+                              <p className="mt-1 text-[11px] text-red-600">{action.lastError}</p>
                             ) : null}
                           </TableCell>
                           <TableCell>{riskBadge(action.riskLevel)}</TableCell>
@@ -566,7 +566,7 @@ export default function CrmAgentOperationsPage() {
                           {failure.retryCount ? ` · ${failure.retryCount} retries` : ''}
                         </p>
                         {failure.lastError ? (
-                          <p className="mt-0.5 text-[10px] text-red-600">{failure.lastError}</p>
+                          <p className="mt-0.5 text-[11px] text-red-600">{failure.lastError}</p>
                         ) : null}
                       </div>
                       <span className="text-muted-foreground text-xs">

@@ -84,13 +84,13 @@ export default function StudentVisaReadiness() {
   const recommendations = parseList(assessment?.recommendations);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-5xl">
         <PortalPageHeader
           title="Visa Readiness"
           description="How prepared your visa file is, based on your documents, finances and interview preparation."
           action={
-            <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+            <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
               <Link href="/student/visa/checklist">View Full Checklist</Link>
             </Button>
           }
@@ -106,7 +106,7 @@ export default function StudentVisaReadiness() {
               title="No visa file yet"
               description="Your visa checklist is created once your application reaches the visa stage. Your counselor can start it earlier if you ask."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/applications">View Applications</Link>
                 </Button>
               }
@@ -117,8 +117,8 @@ export default function StudentVisaReadiness() {
         {state === 'ready' && (checklist.length > 0 || assessment) && (
           <>
             <div className="mb-6 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-                <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">
+              <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-5 py-4">
+                <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">
                   <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                   Preparation score
                 </p>
@@ -128,27 +128,27 @@ export default function StudentVisaReadiness() {
                 )}>
                   {data?.overallScore ?? 0}%
                 </p>
-                <p className="mt-2 text-[12px] leading-relaxed text-slate-400">
+                <p className="mt-2 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                   Preparation only. This is not a prediction of your visa outcome.
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Risk level</p>
-                <p className="mt-2 text-[20px] font-bold leading-tight text-slate-900">
+              <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-5 py-4">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Risk level</p>
+                <p className="mt-2 text-[20px] font-bold leading-tight text-[var(--alo-text)]">
                   {(data?.riskLevel ?? 'UNKNOWN').replace(/_/g, ' ')}
                 </p>
-                <p className="mt-2 text-[12px] text-slate-500">
+                <p className="mt-2 text-[12px] text-[var(--alo-text-muted)]">
                   {data?.blockingItems ?? 0} blocking item{(data?.blockingItems ?? 0) === 1 ? '' : 's'} of {data?.totalItems ?? 0}
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Last assessed</p>
-                <p className="mt-2 text-[20px] font-bold leading-tight text-slate-900">
+              <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-5 py-4">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Last assessed</p>
+                <p className="mt-2 text-[20px] font-bold leading-tight text-[var(--alo-text)]">
                   {assessment ? new Date(assessment.assessedAt).toLocaleDateString('en-GB') : 'Not assessed'}
                 </p>
-                <p className="mt-2 text-[12px] text-slate-500">
+                <p className="mt-2 text-[12px] text-[var(--alo-text-muted)]">
                   {checklist.filter((item) => item.status === 'completed').length} of {checklist.length} items complete
                 </p>
               </div>
@@ -156,13 +156,13 @@ export default function StudentVisaReadiness() {
 
             {assessment && (
               <PortalCard className="mb-6" title="Score breakdown" description="Where your file is strong and where it needs work">
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {SCORE_ROWS.map((row) => {
                     const value = Number(assessment[row.key] ?? 0);
                     return (
                       <li key={row.key} className="flex items-center gap-4 px-5 py-3">
-                        <span className="w-44 shrink-0 text-[13px] font-medium text-slate-700">{row.label}</span>
-                        <span className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                        <span className="w-44 shrink-0 text-[13px] font-medium text-[var(--alo-body)]">{row.label}</span>
+                        <span className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--alo-surface-muted)]">
                           <span
                             className={cn(
                               'block h-full rounded-full',
@@ -171,7 +171,7 @@ export default function StudentVisaReadiness() {
                             style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
                           />
                         </span>
-                        <span className="w-10 shrink-0 text-right text-[13px] font-semibold text-slate-900">{value}%</span>
+                        <span className="w-10 shrink-0 text-right text-[13px] font-semibold text-[var(--alo-text)]">{value}%</span>
                       </li>
                     );
                   })}
@@ -181,11 +181,11 @@ export default function StudentVisaReadiness() {
 
             {flags.length > 0 && (
               <PortalCard className="mb-6" title="Risk flags" description="Raised by your visa review">
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {flags.map((flag, index) => (
                     <li key={`${flag}-${index}`} className="flex gap-3 px-5 py-3">
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
-                      <span className="text-[13px] leading-relaxed text-slate-700">{flag}</span>
+                      <span className="text-[13px] leading-relaxed text-[var(--alo-body)]">{flag}</span>
                     </li>
                   ))}
                 </ul>
@@ -194,13 +194,13 @@ export default function StudentVisaReadiness() {
 
             {recommendations.length > 0 && (
               <PortalCard className="mb-6" title="What to do next">
-                <ol className="divide-y divide-slate-200">
+                <ol className="divide-y divide-[var(--alo-border)]">
                   {recommendations.map((rec, index) => (
                     <li key={`${rec}-${index}`} className="flex gap-3 px-5 py-3">
                       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
                         {index + 1}
                       </span>
-                      <span className="text-[13px] leading-relaxed text-slate-700">{rec}</span>
+                      <span className="text-[13px] leading-relaxed text-[var(--alo-body)]">{rec}</span>
                     </li>
                   ))}
                 </ol>
@@ -214,18 +214,18 @@ export default function StudentVisaReadiness() {
                   description="Items appear here as your visa file is prepared."
                 />
               ) : (
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {checklist.map((item) => {
                     const done = item.status === 'completed' || item.status === 'approved';
                     const Icon = done ? CheckCircle2 : CircleDashed;
                     return (
                       <li key={item.id} className="flex flex-wrap items-start gap-3 px-5 py-3.5">
-                        <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-emerald-600' : 'text-slate-400')} aria-hidden="true" />
+                        <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-emerald-600' : 'text-[var(--alo-text-muted)]')} aria-hidden="true" />
                         <div className="min-w-0 flex-1">
-                          <p className="text-[13px] font-semibold text-slate-900">{item.item}</p>
-                          {item.reason && <p className="mt-0.5 text-[12px] leading-relaxed text-slate-500">{item.reason}</p>}
+                          <p className="text-[13px] font-semibold text-[var(--alo-text)]">{item.item}</p>
+                          {item.reason && <p className="mt-0.5 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">{item.reason}</p>}
                           {item.deadline && (
-                            <p className="mt-1 text-[12px] text-slate-500">
+                            <p className="mt-1 text-[12px] text-[var(--alo-text-muted)]">
                               Due {new Date(item.deadline).toLocaleDateString('en-GB')}
                             </p>
                           )}
@@ -241,7 +241,7 @@ export default function StudentVisaReadiness() {
               )}
             </PortalCard>
 
-            <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
+            <p className="mt-4 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
               Readiness is an internal preparation measure. Visa decisions are made by the destination government, and
               no score here guarantees an outcome. Confirm current requirements with the official immigration source
               before you submit.

@@ -135,9 +135,9 @@ const STATUS_META: Record<
   MISSING_INFO: {
     label: "Missing Info",
     icon: "Info",
-    bg: "bg-slate-100",
-    text: "text-slate-700",
-    border: "border-slate-200",
+    bg: "bg-[var(--alo-surface-muted)]",
+    text: "text-[var(--alo-body)]",
+    border: "border-[var(--alo-border)]",
     dot: "bg-slate-500",
   },
 };
@@ -526,7 +526,7 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
 
   // ---------------------------------------------------------------------------
   return (
-    <div className="space-y-6 bg-[#f7f9fc] pb-32">
+    <div className="space-y-6 bg-[var(--alo-page)] pb-32">
       <PageHeader
         title="Smart Course Finder"
         subtitle="AI-powered course matching with eligibility scoring. Find your perfect fit."
@@ -592,7 +592,7 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                 <Label className="text-xs font-semibold text-muted-foreground">
                   Profile completion
                 </Label>
-                <span className="text-xs font-bold text-[#0057B8]">{profileCompletion}%</span>
+                <span className="text-xs font-bold text-[var(--alo-brand)]">{profileCompletion}%</span>
               </div>
               <Progress value={profileCompletion} className="h-2" />
               {profileCompletion < 80 && (
@@ -663,7 +663,7 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                   activeFilterCount > 0 ? (
                     <button
                       onClick={clearFilters}
-                      className="text-xs font-medium text-[#0057B8] hover:underline"
+                      className="text-xs font-medium text-[var(--alo-brand)] hover:underline"
                     >
                       Clear all ({activeFilterCount})
                     </button>
@@ -713,19 +713,19 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                     className={cn(
                       "flex cursor-pointer items-center gap-2.5 rounded-lg border-2 px-3 py-2.5 text-xs font-medium transition-colors",
                       shortlistOnly
-                        ? "border-[#E8501A] bg-[#fdece4] text-[#E8501A]"
+                        ? "border-[var(--alo-cta)] bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
                         : "border-muted text-foreground hover:bg-muted/40",
                     )}
                   >
                     <Checkbox
                       checked={shortlistOnly}
                       onCheckedChange={(v) => setShortlistOnly(v === true)}
-                      className="size-4 border-[#E8501A] data-[state=checked]:border-[#E8501A] data-[state=checked]:bg-[#E8501A]"
+                      className="size-4 border-[var(--alo-cta)] data-[state=checked]:border-[var(--alo-cta)] data-[state=checked]:bg-[var(--alo-cta)]"
                     />
                     <Icon name="Heart" className="size-3.5" />
                     Show shortlisted only
                     {shortlisted.length > 0 && (
-                      <Badge className="ml-auto bg-[#E8501A] text-white hover:bg-[#E8501A]">
+                      <Badge className="ml-auto bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]">
                         {shortlisted.length}
                       </Badge>
                     )}
@@ -733,7 +733,7 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                   <Button
                     onClick={clearFilters}
                     variant="outline"
-                    className="h-10 w-full border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                    className="h-10 w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   >
                     <Icon name="RotateCcw" className="size-4" />
                     Reset filters
@@ -775,7 +775,7 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                   action={
                     <Button
                       onClick={clearFilters}
-                      className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                      className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                     >
                       <Icon name="RotateCcw" className="size-4" />
                       Clear filters
@@ -808,15 +808,15 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
 
       {/* Floating compare bar */}
       {compared.length > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#0057B8]/15 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--alo-brand)]/15 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
           <div className="mx-auto max-w-[1280px] px-4 py-3 lg:px-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                   <Icon name="Scale" className="size-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-[#0057B8]">
+                  <p className="text-sm font-bold text-[var(--alo-brand)]">
                     Comparing {compared.length} of {COMPARE_LIMIT}
                   </p>
                   <div className="flex flex-wrap items-center gap-1.5">
@@ -826,12 +826,12 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                       return (
                         <span
                           key={slug}
-                          className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[11px] font-medium text-[#0057B8]"
+                          className="inline-flex items-center gap-1 rounded-full bg-[var(--alo-brand-light)] px-2 py-0.5 text-[11px] font-medium text-[var(--alo-brand)]"
                         >
                           <span className="max-w-[140px] truncate">{name}</span>
                           <button
                             onClick={() => removeCompare(slug)}
-                            className="hover:text-[#E8501A]"
+                            className="hover:text-[var(--alo-cta)]"
                             aria-label={`Remove ${name} from compare`}
                           >
                             <Icon name="X" className="size-3" />
@@ -846,14 +846,14 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
                 <Button
                   onClick={() => setCompared([])}
                   variant="ghost"
-                  className="h-10 text-muted-foreground hover:bg-[#e8f0fb] hover:text-[#0057B8]"
+                  className="h-10 text-muted-foreground hover:bg-[var(--alo-brand-light)] hover:text-[var(--alo-brand)]"
                 >
                   Clear
                 </Button>
                 <Button
                   onClick={() => setCompareOpen(true)}
                   disabled={compared.length < 2}
-                  className="h-10 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                  className="h-10 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                 >
                   <Icon name="Scale" className="size-4" />
                   Compare Now
@@ -867,8 +867,8 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
       {/* Compare dialog */}
       <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
         <DialogContent className="max-w-5xl overflow-hidden p-0">
-          <DialogHeader className="border-b border-[#0057B8]/10 px-5 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogHeader className="border-b border-[var(--alo-brand)]/10 px-5 py-4">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="Scale" className="size-5" />
               Course Comparison
             </DialogTitle>
@@ -1003,8 +1003,8 @@ function EligibilityCourseCard({
       className={cn(
         "flex flex-col rounded-2xl border-2 transition-all hover:-translate-y-0.5 hover:shadow-lg",
         isComparing
-          ? "border-[#0057B8] bg-[#e8f0fb]/40"
-          : "border-[#0057B8]/15 hover:border-[#0057B8]/40",
+          ? "border-[var(--alo-brand)] bg-[var(--alo-brand-light)]/40"
+          : "border-[var(--alo-brand)]/15 hover:border-[var(--alo-brand)]/40",
       )}
     >
       <CardContent className="flex flex-1 flex-col p-5">
@@ -1012,12 +1012,12 @@ function EligibilityCourseCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-wrap items-center gap-1.5">
             {course?.level && (
-              <Badge className="bg-[#e8f0fb] text-[#0057B8] hover:bg-[#e8f0fb]">
+              <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                 {course.level}
               </Badge>
             )}
             {course?.subject && (
-              <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
+              <Badge variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)]">
                 {course.subject}
               </Badge>
             )}
@@ -1034,7 +1034,7 @@ function EligibilityCourseCard({
             <span className={cn("text-2xl font-black leading-none tabular-nums", meta.text)}>
               {result.eligibilityScore}%
             </span>
-            <span className={cn("mt-0.5 text-[10px] font-semibold uppercase tracking-wide", meta.text)}>
+            <span className={cn("mt-0.5 text-[11px] font-semibold uppercase tracking-wide", meta.text)}>
               {meta.label}
             </span>
           </div>
@@ -1045,7 +1045,7 @@ function EligibilityCourseCard({
           onClick={() => onNavigate("public-course", result.courseSlug)}
           className="mt-3 text-left"
         >
-          <h3 className="line-clamp-2 text-base font-bold leading-snug text-[#0057B8] hover:underline">
+          <h3 className="line-clamp-2 text-base font-bold leading-snug text-[var(--alo-brand)] hover:underline">
             {result.courseName}
           </h3>
         </button>
@@ -1070,16 +1070,16 @@ function EligibilityCourseCard({
 
         {/* Tuition + duration */}
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="rounded-lg bg-[#e8f0fb]/60 p-2.5">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="rounded-lg bg-[var(--alo-brand-light)]/60 p-2.5">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               Tuition
             </p>
-            <p className="mt-0.5 text-base font-black text-[#0057B8]">
+            <p className="mt-0.5 text-base font-black text-[var(--alo-brand)]">
               {course?.tuition || "—"}
             </p>
           </div>
-          <div className="rounded-lg bg-[#f7f9fc] p-2.5">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="rounded-lg bg-[var(--alo-page)] p-2.5">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               Duration
             </p>
             <p className="mt-0.5 text-sm font-semibold text-foreground">
@@ -1094,7 +1094,7 @@ function EligibilityCourseCard({
             {intakeList.slice(0, 3).map((i) => (
               <span
                 key={i}
-                className="rounded-full bg-[#e8f0fb]/80 px-2 py-0.5 font-medium text-[#0057B8]"
+                className="rounded-full bg-[var(--alo-brand-light)]/80 px-2 py-0.5 font-medium text-[var(--alo-brand)]"
               >
                 {i}
               </span>
@@ -1109,7 +1109,7 @@ function EligibilityCourseCard({
         {reasons.length > 0 && (
           <div className="mt-3">
             <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              <Icon name="Sparkles" className="size-3 text-[#0057B8]" />
+              <Icon name="Sparkles" className="size-3 text-[var(--alo-brand)]" />
               Why this match
             </p>
             <ul className="space-y-1">
@@ -1146,7 +1146,7 @@ function EligibilityCourseCard({
           <Button
             onClick={() => onNavigate("public-course", result.courseSlug)}
             variant="outline"
-            className="h-10 flex-1 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-10 flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             size="sm"
           >
             <Icon name="Eye" className="size-4" />
@@ -1174,8 +1174,8 @@ function EligibilityCourseCard({
               className={cn(
                 "h-10",
                 isComparing
-                  ? "bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
-                  : "border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]",
+                  ? "bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+                  : "border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]",
                 compareDisabled && !isComparing && "opacity-50",
               )}
               size="sm"
@@ -1233,7 +1233,7 @@ function CompareTable({
     { label: "Level", icon: "GraduationCap", render: (c) => c.level },
     { label: "Duration", icon: "Clock", render: (c) => c.duration || "—" },
     { label: "Intake", icon: "Calendar", render: (c) => c.intake || "—" },
-    { label: "Tuition", icon: "CreditCard", render: (c) => <span className="font-bold text-[#0057B8]">{c.tuition}</span> },
+    { label: "Tuition", icon: "CreditCard", render: (c) => <span className="font-bold text-[var(--alo-brand)]">{c.tuition}</span> },
     { label: "Scholarship", icon: "Award", render: (c) => c.scholarship || "—" },
     { label: "English req.", icon: "Languages", render: (c) => c.englishRequirement || "—" },
     { label: "Academic req.", icon: "ClipboardCheck", render: (c) => c.academicRequirement || "—" },
@@ -1244,7 +1244,7 @@ function CompareTable({
     <ScrollArea className="max-h-[70vh]">
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-white">
-          <TableRow className="border-b border-[#0057B8]/15">
+          <TableRow className="border-b border-[var(--alo-brand)]/15">
             <TableHead className="sticky left-0 z-20 w-32 bg-white text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Attribute
             </TableHead>
@@ -1252,7 +1252,7 @@ function CompareTable({
               <TableHead key={c.slug} className="min-w-[180px] align-top">
                 <button
                   onClick={() => onNavigate(c.slug)}
-                  className="text-left text-sm font-bold text-[#0057B8] hover:underline"
+                  className="text-left text-sm font-bold text-[var(--alo-brand)] hover:underline"
                 >
                   {c.name}
                 </button>
@@ -1265,10 +1265,10 @@ function CompareTable({
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.label} className="border-b border-[#0057B8]/8">
-              <TableCell className="sticky left-0 z-10 bg-[#f7f9fc] align-top text-xs font-semibold text-muted-foreground">
+            <TableRow key={row.label} className="border-b border-[var(--alo-brand)]/8">
+              <TableCell className="sticky left-0 z-10 bg-[var(--alo-page)] align-top text-xs font-semibold text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <Icon name={row.icon} className="size-3.5 text-[#0057B8]" />
+                  <Icon name={row.icon} className="size-3.5 text-[var(--alo-brand)]" />
                   {row.label}
                 </span>
               </TableCell>

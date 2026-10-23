@@ -38,10 +38,10 @@ const TYPE_ICONS: Record<string, { icon: React.ElementType; color: string; bg: s
   application: { icon: FileText, color: 'text-purple-600', bg: 'bg-purple-100' },
   deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-100' },
   system: { icon: Shield, color: 'text-amber-600', bg: 'bg-amber-100' },
-  info: { icon: Bell, color: 'text-slate-600', bg: 'bg-slate-100' },
+  info: { icon: Bell, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-surface-muted)]' },
 };
 
-const DEFAULT_ICON = { icon: Bell, color: 'text-slate-600', bg: 'bg-slate-100' };
+const DEFAULT_ICON = { icon: Bell, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-surface-muted)]' };
 
 function startOfToday(): number {
   const now = new Date();
@@ -261,11 +261,11 @@ export default function EmployeeNotificationsPage() {
                             <p className="text-sm font-medium">
                               {notification.title || 'Untitled notification'}
                             </p>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {notification.type || 'info'}
                             </Badge>
                             {!notification.isRead ? (
-                              <Badge className="bg-blue-100 text-blue-700 text-[10px]">Unread</Badge>
+                              <Badge className="bg-blue-100 text-blue-700 text-[11px]">Unread</Badge>
                             ) : null}
                           </div>
 

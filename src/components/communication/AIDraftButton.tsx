@@ -37,10 +37,10 @@ export default function AIDraftButton({
       </Button>
       {draft && (
         <div className="border border-purple-200 rounded-lg bg-purple-50/40 p-3 space-y-2">
-          <div className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">{draft}</div>
-          {risks.length > 0 && <div className="flex flex-wrap gap-1">{risks.map((r:string)=><Badge key={r} variant="outline" className="text-[10px] bg-amber-50 text-amber-700 border-amber-200"><ShieldAlert className="w-3 h-3 mr-1" />{r}</Badge>)}</div>}
-          <div className="text-[10px] text-gray-500">AI draft respects visibility, never exposes B2B/internal data, never guarantees visa/admission, never sends without human approval unless safe automation enabled.</div>
-          {onApprove && <Button size="sm" className="h-7 text-xs bg-[#0057B8]" onClick={onApprove}>Approve & Send</Button>}
+          <div className="text-xs text-[var(--alo-body)] whitespace-pre-wrap leading-relaxed">{draft}</div>
+          {risks.length > 0 && <div className="flex flex-wrap gap-1">{risks.map((r:string)=><Badge key={r} variant="outline" className="text-[11px] bg-amber-50 text-amber-700 border-amber-200"><ShieldAlert className="w-3 h-3 mr-1" />{r}</Badge>)}</div>}
+          <div className="text-[11px] text-[var(--alo-text-muted)]">AI draft respects visibility, never exposes B2B/internal data, never guarantees visa/admission, never sends without human approval unless safe automation enabled.</div>
+          {onApprove && <Button size="sm" className="h-7 text-xs bg-[var(--alo-brand)]" onClick={onApprove}>Approve & Send</Button>}
         </div>
       )}
     </div>

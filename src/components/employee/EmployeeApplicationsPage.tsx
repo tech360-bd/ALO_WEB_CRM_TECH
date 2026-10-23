@@ -27,7 +27,7 @@ interface Application {
 const stages: Stage[] = ['New', 'Documents', 'Submitted', 'Offer', 'Visa', 'Enrolled'];
 
 const stageColors: Record<Stage, string> = {
-  New: 'bg-slate-100 text-slate-700 border-slate-200',
+  New: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   Documents: 'bg-amber-100 text-amber-700 border-amber-200',
   Submitted: 'bg-blue-100 text-blue-700 border-blue-200',
   Offer: 'bg-purple-100 text-purple-700 border-purple-200',

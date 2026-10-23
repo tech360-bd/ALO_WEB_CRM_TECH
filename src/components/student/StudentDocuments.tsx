@@ -158,9 +158,9 @@ function getDocStatusConfig(status: DocumentStatus) {
       };
     case 'Pending':
       return {
-        color: 'bg-gray-100 text-gray-600 border-gray-200',
+        color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
         icon: Clock,
-        iconColor: 'text-gray-400',
+        iconColor: 'text-[var(--alo-text-muted)]',
       };
     case 'Rejected':
       return {
@@ -279,7 +279,7 @@ function UploadDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-[#0F172A]">Upload Document</DialogTitle>
+          <DialogTitle className="text-[var(--alo-text)]">Upload Document</DialogTitle>
           <DialogDescription>
             Upload a document to your vault. It can be reused across multiple applications.
           </DialogDescription>
@@ -288,7 +288,7 @@ function UploadDialog({
         <div className="space-y-4">
           {/* Document Type */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#0F172A]">Document Type</label>
+            <label className="text-sm font-medium text-[var(--alo-text)]">Document Type</label>
             <Select value={docType} onValueChange={setDocType}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select document type" />
@@ -305,7 +305,7 @@ function UploadDialog({
 
           {/* File Upload Area */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#0F172A]">File</label>
+            <label className="text-sm font-medium text-[var(--alo-text)]">File</label>
             <div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -314,10 +314,10 @@ function UploadDialog({
               className={cn(
                 'flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-8 cursor-pointer transition-colors',
                 isDragging
-                  ? 'border-[#C93D13] bg-orange-50/50'
+                  ? 'border-[var(--alo-cta-hover)] bg-orange-50/50'
                   : file
                     ? 'border-emerald-300 bg-emerald-50/30'
-                    : 'border-[#0F172A]/15 bg-[#0F172A]/[0.01] hover:border-[#0F172A]/30 hover:bg-[#0F172A]/[0.02]'
+                    : 'border-[var(--alo-text)]/15 bg-[var(--alo-text)]/[0.01] hover:border-[var(--alo-text)]/30 hover:bg-[var(--alo-text)]/[0.02]'
               )}
             >
               <input
@@ -337,12 +337,12 @@ function UploadDialog({
                 </>
               ) : (
                 <>
-                  <Upload className={cn('size-10', isDragging ? 'text-[#C93D13]' : 'text-[#0F172A]/25')} />
+                  <Upload className={cn('size-10', isDragging ? 'text-[var(--alo-cta-hover)]' : 'text-[var(--alo-text)]/25')} />
                   <div className="text-center">
-                    <p className="text-sm font-medium text-[#0F172A]/70">
+                    <p className="text-sm font-medium text-[var(--alo-text)]/70">
                       {isDragging ? 'Drop your file here' : 'Drag files here or click to browse'}
                     </p>
-                    <p className="text-xs text-[#0F172A]/40 mt-1">PDF, JPG, PNG, GIF, or WEBP up to 20MB</p>
+                    <p className="text-xs text-[var(--alo-text)]/40 mt-1">PDF, JPG, PNG, GIF, or WEBP up to 20MB</p>
                   </div>
                 </>
               )}
@@ -416,12 +416,12 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
         {/* Top: icon + name + status */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
-            <div className="flex items-center justify-center size-10 rounded-lg bg-[#0F172A]/5 border border-[#0F172A]/10 shrink-0">
-              <FileTypeIcon className="size-5 text-[#0F172A]/40" />
+            <div className="flex items-center justify-center size-10 rounded-lg bg-[var(--alo-text)]/5 border border-[var(--alo-text)]/10 shrink-0">
+              <FileTypeIcon className="size-5 text-[var(--alo-text)]/40" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-[#0F172A] leading-tight truncate">{doc.name}</h3>
-              <p className="text-xs text-[#0F172A]/50 mt-0.5">{doc.type}</p>
+              <h3 className="text-sm font-semibold text-[var(--alo-text)] leading-tight truncate">{doc.name}</h3>
+              <p className="text-xs text-[var(--alo-text)]/50 mt-0.5">{doc.type}</p>
             </div>
           </div>
           <DocStatusBadge status={doc.status} />
@@ -433,14 +433,14 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
             <CategoryIcon className="size-3" />
             {doc.category}
           </Badge>
-          <span className="text-[11px] text-[#0F172A]/40">{doc.fileSize}</span>
-          <span className="text-[11px] text-[#0F172A]/20">•</span>
-          <span className="text-[11px] text-[#0F172A]/40">{doc.uploadedDate}</span>
+          <span className="text-[11px] text-[var(--alo-text)]/40">{doc.fileSize}</span>
+          <span className="text-[11px] text-[var(--alo-text)]/20">•</span>
+          <span className="text-[11px] text-[var(--alo-text)]/40">{doc.uploadedDate}</span>
         </div>
 
         {/* Reviewed by */}
         {doc.reviewedBy && (
-          <div className="flex items-center gap-1.5 text-xs text-[#0F172A]/50">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text)]/50">
             <CheckCircle2 className="size-3 text-emerald-500" />
             <span>Reviewed by {doc.reviewedBy} • {doc.reviewedDate}</span>
           </div>
@@ -464,11 +464,11 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
 
         {/* Used in applications */}
         {doc.usedInApplications.length > 0 && (
-          <div className="flex items-start gap-2 text-xs text-[#0F172A]/50">
+          <div className="flex items-start gap-2 text-xs text-[var(--alo-text)]/50">
             <FolderOpen className="size-3.5 shrink-0 mt-0.5" />
             <div className="flex flex-wrap gap-1">
               {doc.usedInApplications.map((app, idx) => (
-                <Badge key={idx} variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
+                <Badge key={idx} variant="secondary" className="text-[11px] font-normal px-1.5 py-0">
                   {app}
                 </Badge>
               ))}
@@ -478,15 +478,15 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1 border-t border-border/40 mt-1">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-text)]/5 text-xs h-8">
             <Eye className="size-3.5" />
             View
           </Button>
-          <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="sm" className="gap-1.5 text-[#0F172A]/60 hover:text-[#0F172A] hover:bg-[#0F172A]/5 text-xs h-8">
+          <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-text)]/5 text-xs h-8">
             <Download className="size-3.5" />
             Download
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[#C93D13] hover:text-[#C93D13] hover:bg-orange-50 text-xs h-8">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-cta-hover)] hover:text-[var(--alo-cta-hover)] hover:bg-orange-50 text-xs h-8">
             <RefreshCw className="size-3.5" />
             Replace
           </Button>
@@ -612,8 +612,8 @@ export default function StudentDocuments() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-[#0F172A]">My Documents</h1>
-          <Badge className="bg-[#0F172A] text-white hover:bg-[#0F172A]/90 text-sm px-2.5">
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">My Documents</h1>
+          <Badge className="bg-[var(--alo-text)] text-white hover:bg-[var(--alo-text)]/90 text-sm px-2.5">
             {uploadedCount}
           </Badge>
         </div>
@@ -635,10 +635,10 @@ export default function StudentDocuments() {
       {/* Live document summary — counts come only from the authenticated API response. */}
       <Card className="border-border/60">
         <CardContent className="p-5">
-          <p className="text-sm font-semibold text-[#0F172A]">{uploadedCount} documents in your vault</p>
+          <p className="text-sm font-semibold text-[var(--alo-text)]">{uploadedCount} documents in your vault</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs">
-            <span className="inline-flex items-center gap-1.5 text-[#0F172A]/70"><CheckCircle2 className="size-3 text-emerald-500" />{approvedCount} approved</span>
-            <span className="inline-flex items-center gap-1.5 text-[#0F172A]/70"><Clock className="size-3 text-gray-400" />{pendingCount} pending</span>
+            <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><CheckCircle2 className="size-3 text-emerald-500" />{approvedCount} approved</span>
+            <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><Clock className="size-3 text-[var(--alo-text-muted)]" />{pendingCount} pending</span>
             <span className="inline-flex items-center gap-1.5 text-red-600"><XCircle className="size-3 text-red-400" />{rejectedCount} rejected</span>
             {needsReviewCount > 0 && <span className="inline-flex items-center gap-1.5 text-amber-600"><AlertTriangle className="size-3 text-amber-400" />{needsReviewCount} needs review</span>}
           </div>
@@ -659,16 +659,16 @@ export default function StudentDocuments() {
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors shrink-0',
                   isActive
-                    ? 'bg-[#0F172A] text-white border-[#0F172A]'
-                    : 'bg-white text-[#0F172A]/60 border-[#0F172A]/10 hover:border-[#0F172A]/25 hover:text-[#0F172A]'
+                    ? 'bg-[var(--alo-text)] text-white border-[var(--alo-text)]'
+                    : 'bg-white text-[var(--alo-text)]/60 border-[var(--alo-text)]/10 hover:border-[var(--alo-text)]/25 hover:text-[var(--alo-text)]'
                 )}
               >
                 <CatIcon className="size-3.5" />
                 {cat === 'all' ? 'All Documents' : cat}
                 <span
                   className={cn(
-                    'ml-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
-                    isActive ? 'bg-white/20 text-white' : 'bg-[#0F172A]/5 text-[#0F172A]/40'
+                    'ml-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold',
+                    isActive ? 'bg-white/20 text-white' : 'bg-[var(--alo-text)]/5 text-[var(--alo-text)]/40'
                   )}
                 >
                   {categoryCounts[cat] || 0}
@@ -683,7 +683,7 @@ export default function StudentDocuments() {
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#0F172A]/30" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text)]/30" />
                 <Input
                   placeholder="Search documents..."
                   value={searchQuery}
@@ -704,12 +704,12 @@ export default function StudentDocuments() {
                   <SelectItem value="Needs Review">Needs Review</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center gap-1 border border-[#0F172A]/10 rounded-lg p-0.5">
+              <div className="flex items-center gap-1 border border-[var(--alo-text)]/10 rounded-lg p-0.5">
                 <button
                   onClick={() => setViewMode('card')}
                   className={cn(
                     'flex items-center justify-center rounded-md p-1.5 transition-colors',
-                    viewMode === 'card' ? 'bg-[#0F172A] text-white' : 'text-[#0F172A]/40 hover:text-[#0F172A]/70'
+                    viewMode === 'card' ? 'bg-[var(--alo-text)] text-white' : 'text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]/70'
                   )}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
@@ -718,7 +718,7 @@ export default function StudentDocuments() {
                   onClick={() => setViewMode('table')}
                   className={cn(
                     'flex items-center justify-center rounded-md p-1.5 transition-colors',
-                    viewMode === 'table' ? 'bg-[#0F172A] text-white' : 'text-[#0F172A]/40 hover:text-[#0F172A]/70'
+                    viewMode === 'table' ? 'bg-[var(--alo-text)] text-white' : 'text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]/70'
                   )}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
@@ -731,11 +731,11 @@ export default function StudentDocuments() {
 
       {/* Document List */}
       {filtered.length === 0 ? (
-        <Card className="border-dashed border-2 border-[#0F172A]/10">
+        <Card className="border-dashed border-2 border-[var(--alo-text)]/10">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <Search className="size-8 text-[#0F172A]/20 mb-3" />
-            <h3 className="text-base font-semibold text-[#0F172A] mb-1">No documents found</h3>
-            <p className="text-sm text-[#0F172A]/50 mb-4">
+            <Search className="size-8 text-[var(--alo-text)]/20 mb-3" />
+            <h3 className="text-base font-semibold text-[var(--alo-text)] mb-1">No documents found</h3>
+            <p className="text-sm text-[var(--alo-text)]/50 mb-4">
               {loadError ? 'Your document list is unavailable. Resolve the sign-in or service issue before uploading.' : documents.length === 0
                 ? 'No documents have been uploaded to your profile yet.'
                 : 'Try adjusting your search or filters'}
@@ -776,16 +776,16 @@ export default function StudentDocuments() {
                   <TableRow key={doc.id}>
                     <TableCell>
                       <div className="flex items-center gap-2.5">
-                        <div className="flex items-center justify-center size-8 rounded-md bg-[#0F172A]/5 border border-[#0F172A]/10 shrink-0">
+                        <div className="flex items-center justify-center size-8 rounded-md bg-[var(--alo-text)]/5 border border-[var(--alo-text)]/10 shrink-0">
                           {doc.fileType === 'PDF' ? (
-                            <FileText className="size-4 text-[#0F172A]/40" />
+                            <FileText className="size-4 text-[var(--alo-text)]/40" />
                           ) : (
-                            <ImageIcon className="size-4 text-[#0F172A]/40" />
+                            <ImageIcon className="size-4 text-[var(--alo-text)]/40" />
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-[#0F172A]">{doc.name}</p>
-                          <p className="text-xs text-[#0F172A]/40">{doc.type}</p>
+                          <p className="text-sm font-medium text-[var(--alo-text)]">{doc.name}</p>
+                          <p className="text-xs text-[var(--alo-text)]/40">{doc.type}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -799,20 +799,20 @@ export default function StudentDocuments() {
                       <DocStatusBadge status={doc.status} />
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <span className="text-xs text-[#0F172A]/50">{doc.fileSize}</span>
+                      <span className="text-xs text-[var(--alo-text)]/50">{doc.fileSize}</span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
-                      <span className="text-xs text-[#0F172A]/50">{doc.uploadedDate}</span>
+                      <span className="text-xs text-[var(--alo-text)]/50">{doc.uploadedDate}</span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
-                      <span className="text-xs text-[#0F172A]/50">
+                      <span className="text-xs text-[var(--alo-text)]/50">
                         {doc.reviewedBy ? (
                           <span className="inline-flex items-center gap-1">
                             <CheckCircle2 className="size-3 text-emerald-500" />
                             {doc.reviewedBy}
                           </span>
                         ) : (
-                          <span className="text-[#0F172A]/30">—</span>
+                          <span className="text-[var(--alo-text)]/30">—</span>
                         )}
                       </span>
                     </TableCell>
@@ -820,24 +820,24 @@ export default function StudentDocuments() {
                       <div className="flex flex-col gap-0.5">
                         {doc.usedInApplications.length > 0 ? (
                           doc.usedInApplications.map((app, idx) => (
-                            <span key={idx} className="text-[11px] text-[#0F172A]/50 truncate max-w-[180px]">
+                            <span key={idx} className="text-[11px] text-[var(--alo-text)]/50 truncate max-w-[180px]">
                               {app}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[11px] text-[#0F172A]/30">Not used yet</span>
+                          <span className="text-[11px] text-[var(--alo-text)]/30">Not used yet</span>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-0.5">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]">
                           <Eye className="size-4" />
                         </Button>
-                        <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="icon-sm" className="text-[#0F172A]/40 hover:text-[#0F172A]" aria-label="Download document">
+                        <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="icon-sm" className="text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]" aria-label="Download document">
                           <Download className="size-4" />
                         </Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[#C93D13]/60 hover:text-[#C93D13]">
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon-sm" className="text-[var(--alo-cta-hover)]/60 hover:text-[var(--alo-cta-hover)]">
                           <RefreshCw className="size-4" />
                         </Button>
                       </div>

@@ -107,10 +107,10 @@ export function PublicCookie({ onNavigate }: PublicCookieProps) {
       <div className="space-y-8">
         {SECTIONS.map((section) => (
           <section key={section.title}>
-            <h2 className="text-xl font-bold text-[#0B2447]">{section.title}</h2>
+            <h2 className="text-xl font-bold text-[var(--alo-text)]">{section.title}</h2>
             <div className="mt-3 space-y-2">
               {section.body.map((p, i) => (
-                <p key={i} className="text-sm leading-relaxed text-[#5A7299]">{p}</p>
+                <p key={i} className="text-sm leading-relaxed text-[var(--alo-text-muted)]">{p}</p>
               ))}
             </div>
           </section>

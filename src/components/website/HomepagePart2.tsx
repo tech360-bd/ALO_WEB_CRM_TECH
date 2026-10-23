@@ -212,7 +212,7 @@ function levelColor(level: string): string {
   if (l.includes('master') || l.includes('msc') || l.includes('ma ')) return 'bg-blue-100 text-blue-700';
   if (l.includes('bachelor') || l.includes('bsc') || l.includes('ba ')) return 'bg-green-100 text-green-700';
   if (l.includes('foundation') || l.includes('diploma') || l.includes('certificate')) return 'bg-amber-100 text-amber-700';
-  return 'bg-slate-100 text-slate-600';
+  return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 }
 
 function SectionLabel({ text, bg, color }: { text: string; bg: string; color: string }) {
@@ -308,7 +308,7 @@ function ServicesSection({ services }: { services: HomeService[] }) {
         {list.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-44 rounded-xl bg-slate-100 animate-pulse" />
+              <div key={i} className="h-44 rounded-xl bg-[var(--alo-surface-muted)] animate-pulse" />
             ))}
           </div>
         ) : (
@@ -532,8 +532,8 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.slice(0, 12).map((course) => (
                 <motion.div key={course.id} variants={staggerItemScale} className="h-full">
-                  <Card className="group h-full flex flex-col border hover:shadow-hover hover:border-[#BFDBFE] transition-all duration-300 overflow-hidden" style={{ borderColor: C.border }}>
-                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#F4F8FF]">
+                  <Card className="group h-full flex flex-col border hover:shadow-hover hover:border-[var(--alo-brand-border)] transition-all duration-300 overflow-hidden" style={{ borderColor: C.border }}>
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-[var(--alo-brand-pale)]">
                       <Image
                         src={subjectImage(course.subjectArea)}
                         alt={`${course.subjectArea || 'Course'} — ${course.courseTitle}`}

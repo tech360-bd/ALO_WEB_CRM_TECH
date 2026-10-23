@@ -59,35 +59,35 @@ export default function UniversityDataCenterPage() {
   }, [fetchData]);
 
   return (
-    <div className="p-6 space-y-6 bg-[#0a0f1e] min-h-screen text-white">
+    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
       {/* Top Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">University & Course Data Center</h1>
-              <p className="text-gray-400 text-sm">Master Catalog for Course Finder, Country Pages, CRM, and AI Agents</p>
+              <p className="text-[var(--alo-text-muted)] text-sm">Master Catalog for Course Finder, Country Pages, CRM, and AI Agents</p>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <Link href="/admin/university-data/updates">
-            <Button variant="outline" className="border-white/10 text-gray-300 hover:text-white flex items-center gap-2">
+            <Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>Weekly AI Updates</span>
             </Button>
           </Link>
           <Link href="/admin/university-data/duplicates">
-            <Button variant="outline" className="border-white/10 text-gray-300 hover:text-white flex items-center gap-2">
+            <Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white flex items-center gap-2">
               <Filter className="w-4 h-4 text-amber-400" />
               <span>Duplicate Center</span>
             </Button>
           </Link>
-          <Button onClick={fetchData} variant="outline" className="border-white/10 text-gray-300 hover:text-white">
+          <Button onClick={fetchData} variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
@@ -98,7 +98,7 @@ export default function UniversityDataCenterPage() {
         <button
           onClick={() => { setActiveTab('universities'); setSearch(''); }}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'universities' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'universities' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
           }`}
         >
           Universities ({universities.length})
@@ -106,7 +106,7 @@ export default function UniversityDataCenterPage() {
         <button
           onClick={() => { setActiveTab('courses'); setSearch(''); }}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'courses' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'courses' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
           }`}
         >
           Courses ({courses.length})
@@ -116,12 +116,12 @@ export default function UniversityDataCenterPage() {
       {/* Search & Filters */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" />
           <Input
             placeholder={activeTab === 'universities' ? 'Search universities, city, country...' : 'Search course title, discipline...'}
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="pl-9 bg-[#0d1526] border-white/10 text-white placeholder-gray-500"
+            className="pl-9 bg-[var(--alo-text)] border-white/10 text-white placeholder-gray-500"
           />
         </div>
 
@@ -129,7 +129,7 @@ export default function UniversityDataCenterPage() {
           <select
             value={countryFilter}
             onChange={e => setCountryFilter(e.target.value)}
-            className="bg-[#0d1526] border border-white/10 rounded-xl px-4 py-2 text-sm text-gray-300 focus:outline-none focus:border-[#0057B8]"
+            className="bg-[var(--alo-text)] border border-white/10 rounded-xl px-4 py-2 text-sm text-[var(--alo-placeholder)] focus:outline-none focus:border-[var(--alo-brand)]"
           >
             <option value="all">All Countries</option>
             <option value="UK">United Kingdom</option>
@@ -143,13 +143,13 @@ export default function UniversityDataCenterPage() {
       </div>
 
       {/* Content Table */}
-      <Card className="bg-[#0d1526] border-white/10 text-white">
+      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             {activeTab === 'universities' ? (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
+                  <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
                     <th className="p-3 font-medium">University</th>
                     <th className="p-3 font-medium">Country & City</th>
                     <th className="p-3 font-medium">Ranking</th>
@@ -162,7 +162,7 @@ export default function UniversityDataCenterPage() {
                 <tbody>
                   {universities.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-gray-500">
+                      <td colSpan={7} className="p-8 text-center text-[var(--alo-text-muted)]">
                         No universities found.
                       </td>
                     </tr>
@@ -170,9 +170,9 @@ export default function UniversityDataCenterPage() {
                     universities.map(u => (
                       <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-3 font-semibold text-white">{u.name}</td>
-                        <td className="p-3 text-gray-300">{u.country}{u.city ? `, ${u.city}` : ''}</td>
+                        <td className="p-3 text-[var(--alo-placeholder)]">{u.country}{u.city ? `, ${u.city}` : ''}</td>
                         <td className="p-3 font-mono text-xs text-blue-400">#{u.ranking || u.worldRanking || 'N/A'}</td>
-                        <td className="p-3 text-gray-300">{u._count?.courses || u.courses?.length || 0}</td>
+                        <td className="p-3 text-[var(--alo-placeholder)]">{u._count?.courses || u.courses?.length || 0}</td>
                         <td className="p-3">
                           <Badge className={
                             u.verificationStatus === 'HUMAN_APPROVED' || u.status === 'active'
@@ -189,11 +189,11 @@ export default function UniversityDataCenterPage() {
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           ) : (
-                            <span className="text-gray-500">No URL</span>
+                            <span className="text-[var(--alo-text-muted)]">No URL</span>
                           )}
                         </td>
                         <td className="p-3 text-right">
-                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-gray-300 hover:text-white">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[var(--alo-placeholder)] hover:text-white">
                             <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>
@@ -206,7 +206,7 @@ export default function UniversityDataCenterPage() {
             ) : (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
+                  <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
                     <th className="p-3 font-medium">Course Title</th>
                     <th className="p-3 font-medium">University</th>
                     <th className="p-3 font-medium">Level</th>
@@ -219,7 +219,7 @@ export default function UniversityDataCenterPage() {
                 <tbody>
                   {courses.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-gray-500">
+                      <td colSpan={7} className="p-8 text-center text-[var(--alo-text-muted)]">
                         No courses found.
                       </td>
                     </tr>
@@ -227,9 +227,9 @@ export default function UniversityDataCenterPage() {
                     courses.map(c => (
                       <tr key={c.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-3 font-semibold text-white">{c.courseTitle}</td>
-                        <td className="p-3 text-gray-300">{c.university?.name || c.universityId}</td>
+                        <td className="p-3 text-[var(--alo-placeholder)]">{c.university?.name || c.universityId}</td>
                         <td className="p-3 text-xs text-blue-400">{c.studyLevel || c.programLevel || 'Undergraduate'}</td>
-                        <td className="p-3 text-xs text-gray-400">{c.durationMonths ? `${c.durationMonths} Mos` : 'N/A'}</td>
+                        <td className="p-3 text-xs text-[var(--alo-text-muted)]">{c.durationMonths ? `${c.durationMonths} Mos` : 'N/A'}</td>
                         <td className="p-3 font-mono text-xs text-emerald-400">
                           {c.intakeFees?.[0]?.yearlyTuition ? `${c.intakeFees[0].tuitionCurrency || '£'} ${c.intakeFees[0].yearlyTuition.toLocaleString()}` : 'Contact for fee'}
                         </td>
@@ -239,7 +239,7 @@ export default function UniversityDataCenterPage() {
                           </Badge>
                         </td>
                         <td className="p-3 text-right">
-                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-gray-300 hover:text-white">
+                          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[var(--alo-placeholder)] hover:text-white">
                             <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>

@@ -99,24 +99,24 @@ function PortalCardItem({ portal }: { portal: PortalCard }) {
   };
 
   return (
-    <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-5 transition-shadow duration-200 hover:shadow-lg">
+    <div className="flex flex-col rounded-xl border border-[var(--alo-border)] bg-white p-5 transition-shadow duration-200 hover:shadow-lg">
       {/* Icon */}
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
         <Icon className="h-5 w-5 text-orange-600" />
       </div>
 
       {/* Name */}
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">
+      <h3 className="mt-4 text-lg font-semibold text-[var(--alo-text)]">
         {portal.name}
       </h3>
 
       {/* Description */}
-      <p className="mt-1 text-sm leading-relaxed text-gray-500">
+      <p className="mt-1 text-sm leading-relaxed text-[var(--alo-text-muted)]">
         {portal.description}
       </p>
 
       {/* Audience */}
-      <p className="mt-2 text-xs text-gray-400">{portal.audience}</p>
+      <p className="mt-2 text-xs text-[var(--alo-text-muted)]">{portal.audience}</p>
 
       {/* Actions */}
       <div className="mt-4 flex flex-col gap-2">
@@ -156,7 +156,7 @@ export default function PortalSelector() {
             className="h-10 w-10 rounded-full object-cover"
           />
           <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-gray-900">
+            <span className="text-xl font-bold tracking-tight text-[var(--alo-text)]">
               ALO Education
             </span>
             <span className="text-xs italic text-orange-500" style={{ fontFamily: 'Georgia, serif' }}>
@@ -169,12 +169,12 @@ export default function PortalSelector() {
       {/* ---- Content area ---- */}
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center px-4 pb-12 sm:px-6 lg:px-8">
         {/* Title */}
-        <h1 className="mt-6 text-center text-3xl font-bold text-gray-900 md:mt-10 md:text-4xl">
+        <h1 className="mt-6 text-center text-3xl font-bold text-[var(--alo-text)] md:mt-10 md:text-4xl">
           Welcome to ALO Education
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-2 text-center text-gray-500">
+        <p className="mt-2 text-center text-[var(--alo-text-muted)]">
           Choose your portal to continue
         </p>
 
@@ -192,7 +192,7 @@ export default function PortalSelector() {
             return (
               <div
                 key={item.label}
-                className="flex items-center gap-1.5 text-xs text-gray-400"
+                className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]"
               >
                 <Icon className="h-3.5 w-3.5" />
                 <span>{item.label}</span>

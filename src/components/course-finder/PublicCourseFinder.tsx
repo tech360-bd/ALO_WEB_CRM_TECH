@@ -780,7 +780,7 @@ export default function PublicCourseFinder() {
                           >
                             Apply Now
                           </Link>
-                          <span className="mt-1 block text-[10px] text-alo-text-muted">Login / Register required</span>
+                          <span className="mt-1 block text-[11px] text-alo-text-muted">Login / Register required</span>
                         </td>
                       </tr>
                     );
@@ -852,7 +852,7 @@ export default function PublicCourseFinder() {
                         {university.logo ? (
                           <img src={university.logo} alt="" className="h-8 w-8 shrink-0 rounded-lg border border-alo-border object-contain bg-white" loading="lazy" />
                         ) : (
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-alo-brand font-heading text-[10px] font-extrabold text-white" aria-hidden="true">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-alo-brand font-heading text-[11px] font-extrabold text-white" aria-hidden="true">
                             {university.name.replace(/\b(of|the|and|for|at|in)\b/gi, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
                           </span>
                         )}

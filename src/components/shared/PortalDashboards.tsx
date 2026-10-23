@@ -16,10 +16,10 @@ function RangeFilter({ value, onChange }: { value: string; onChange: (v:string)=
 }
 
 // Skeleton for loading states (required)
-function SkeletonCards() { return <div className="grid grid-cols-2 lg:grid-cols-4 gap-3"><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/></div>; }
+function SkeletonCards() { return <div className="grid grid-cols-2 lg:grid-cols-4 gap-3"><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/></div>; }
 
 // Generic empty
-function EmptyState({ title, desc, actionLabel, onAction }: any) { return <div className="py-12 text-center space-y-3"><p className="text-sm font-bold text-slate-900">{title}</p><p className="text-sm text-slate-500">{desc}</p>{onAction && <Button size="sm" onClick={onAction}>{actionLabel}</Button>}</div>; }
+function EmptyState({ title, desc, actionLabel, onAction }: any) { return <div className="py-12 text-center space-y-3"><p className="text-sm font-bold text-[var(--alo-text)]">{title}</p><p className="text-sm text-[var(--alo-text-muted)]">{desc}</p>{onAction && <Button size="sm" onClick={onAction}>{actionLabel}</Button>}</div>; }
 
 // ===== Student Dashboard (unchanged feature set, format only) =====
 export function StudentDashboard({ stats, onAction }: any) {
@@ -128,7 +128,7 @@ export function VisaDashboard({ stats }: any) {
         <KpiCard title="Ready to Submit" value={stats?.ready ?? 7} icon={FileCheck} />
       </KpiGrid>
       <div className="grid lg:grid-cols-2 gap-4">
-        <SectionCard title="Case Aging"><div className="h-32 flex items-center justify-center text-sm text-slate-500">Chart: days since assigned (recharts)</div></SectionCard>
+        <SectionCard title="Case Aging"><div className="h-32 flex items-center justify-center text-sm text-[var(--alo-text-muted)]">Chart: days since assigned (recharts)</div></SectionCard>
         <SectionCard title="Deadline Alerts"><Table><TableHeader><TableRow><TableHead>Student</TableHead><TableHead>Issue</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>SA-301</TableCell><TableCell>Bank statement expires</TableCell></TableRow></TableBody></Table></SectionCard>
       </div>
     </div>
@@ -246,7 +246,7 @@ export function HRDashboard({ stats }: any) {
         <KpiCard title="Leave Pending" value={stats?.leave ?? 7} icon={Calendar} />
         <KpiCard title="Payroll Pending Approval" value={stats?.payroll ?? 2} icon={DollarSign} />
       </KpiGrid>
-      <SectionCard title="Role Widgets"><div className="text-sm text-slate-500">HrWidgets injected for non-student portals (see EnterpriseHRMS)</div></SectionCard>
+      <SectionCard title="Role Widgets"><div className="text-sm text-[var(--alo-text-muted)]">HrWidgets injected for non-student portals (see EnterpriseHRMS)</div></SectionCard>
     </div>
   );
 }
@@ -277,8 +277,8 @@ export function COODashboard({ stats }: any) {
         <KpiCard title="Integrations Health" value="99.2%" icon={Settings} />
       </KpiGrid>
       <div className="grid lg:grid-cols-2 gap-4">
-        <SectionCard title="Department Comparison"><div className="h-36 flex items-center justify-center text-sm text-slate-500">Bar chart: Counselor / Admissions / Visa throughput</div></SectionCard>
-        <SectionCard title="AI Activity (24h)"><div className="text-sm text-slate-600">AI payroll calc: 64 payslips • AI visa checklist: 18 suggestions • Avg approval time 1.2h</div></SectionCard>
+        <SectionCard title="Department Comparison"><div className="h-36 flex items-center justify-center text-sm text-[var(--alo-text-muted)]">Bar chart: Counselor / Admissions / Visa throughput</div></SectionCard>
+        <SectionCard title="AI Activity (24h)"><div className="text-sm text-[var(--alo-body)]">AI payroll calc: 64 payslips • AI visa checklist: 18 suggestions • Avg approval time 1.2h</div></SectionCard>
       </div>
     </div>
   );

@@ -133,19 +133,19 @@ function HeroSection() {
             </motion.div>
           </AnimatePresence>
 
-          <h1 className="font-heading text-[34px] font-extrabold leading-[1.12] tracking-tight text-[#0F172A] md:text-[52px]" aria-live="polite">
+          <h1 className="font-heading text-[34px] font-extrabold leading-[1.12] tracking-tight text-[var(--alo-text)] md:text-[52px]" aria-live="polite">
             Unlock a world-class education in{' '}
-            <span className="text-[#0057B8]">{countryInPhrase}</span> with expert guidance
+            <span className="text-[var(--alo-brand)]">{countryInPhrase}</span> with expert guidance
           </h1>
 
-          <p className="max-w-xl text-lg leading-relaxed text-[#334155]">
+          <p className="max-w-xl text-lg leading-relaxed text-[var(--alo-body)]">
             {countrySentence} offers globally recognized education, strong career prospects, and a
             welcoming environment for international students. At ALO Education, we guide you every
             step of the way—from choosing the right course to submitting a strong application.
           </p>
 
           <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-            <Button asChild size="lg" className="h-12 bg-[#E8501A] px-6 font-heading text-[15px] font-semibold text-white shadow-card hover:bg-[#C93D13]">
+            <Button asChild size="lg" className="h-12 bg-[var(--alo-cta)] px-6 font-heading text-[15px] font-semibold text-black shadow-card hover:bg-[var(--alo-cta-hover)]">
               <Link href="/book-consultation">
                 Book Free Counselling
                 <ArrowRight aria-hidden="true" />
@@ -168,10 +168,10 @@ function HeroSection() {
                   aria-selected={i === current}
                   aria-label={`Show ${s.name}`}
                   onClick={() => go(i)}
-                  className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8] focus-visible:ring-offset-2 ${
+                  className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
                     i === current
-                      ? 'border-[#0057B8] bg-[#EAF3FF] text-[#0057B8]'
-                      : 'border-[#E2E8F0] bg-white text-[#334155] hover:border-[#BFDBFE] hover:bg-[#F4F8FF] hover:text-[#0057B8]'
+                      ? 'border-[var(--alo-brand)] bg-[var(--alo-brand-light)] text-[var(--alo-brand)]'
+                      : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:border-[var(--alo-brand-border)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)]'
                   }`}
                 >
                   <span aria-hidden="true">{s.flag}</span>
@@ -184,8 +184,8 @@ function HeroSection() {
 
         {/* Right: landmark photograph — rounded frame, pale-blue panel, no overlay */}
         <div className="relative lg:col-span-6">
-          <div className="absolute -inset-3 rounded-[24px] bg-[#F4F8FF]" aria-hidden="true" />
-          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[20px] border border-[#E2E8F0] bg-[#F4F8FF] shadow-card">
+          <div className="absolute -inset-3 rounded-[24px] bg-[var(--alo-brand-pale)]" aria-hidden="true" />
+          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[20px] border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] shadow-card">
             <AnimatePresence mode="wait">
               <motion.div
                 key={slide.name}
@@ -206,9 +206,9 @@ function HeroSection() {
                     onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
                   />
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[#EAF3FF]">
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[var(--alo-brand-light)]">
                     <span className="text-7xl" aria-hidden="true">{slide.flag}</span>
-                    <span className="font-heading text-2xl font-bold text-[#0057B8]">{slide.name}</span>
+                    <span className="font-heading text-2xl font-bold text-[var(--alo-brand)]">{slide.name}</span>
                   </div>
                 )}
               </motion.div>
@@ -217,17 +217,17 @@ function HeroSection() {
 
           {/* Floating information card — real destination info only */}
           {slide.heroCity && (
-            <div className="relative z-10 mx-4 -mt-6 flex items-center gap-3 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-floating sm:mx-6">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EAF3FF]">
-                <MapPin className="h-5 w-5 text-[#0057B8]" aria-hidden="true" />
+            <div className="relative z-10 mx-4 -mt-6 flex items-center gap-3 rounded-2xl border border-[var(--alo-border)] bg-white p-4 shadow-floating sm:mx-6">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)]">
+                <MapPin className="h-5 w-5 text-[var(--alo-brand)]" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="font-heading text-sm font-bold text-[#0F172A]">{slide.heroCity}, {slide.name}</p>
-                <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[#0057B8] hover:underline">
+                <p className="font-heading text-sm font-bold text-[var(--alo-text)]">{slide.heroCity}, {slide.name}</p>
+                <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[var(--alo-brand)] hover:underline">
                   Explore the {slide.name} destination guide
                 </Link>
               </div>
-              <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-[#64748B]" aria-hidden="true" />
+              <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
             </div>
           )}
         </div>
@@ -319,20 +319,20 @@ function CourseFinderSection() {
     URL.revokeObjectURL(url);
   }, [selectedCountry]);
 
-  const inputClass = 'h-12 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 text-sm text-[#0F172A] outline-none placeholder:text-slate-400 focus:border-[#0057B8] focus:ring-2 focus:ring-[#0057B8]/20';
+  const inputClass = 'h-12 w-full rounded-xl border border-[var(--alo-border)] bg-white px-3 text-sm text-[var(--alo-text)] outline-none placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-brand)] focus:ring-2 focus:ring-[var(--alo-brand)]/20';
 
   return (
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white" aria-labelledby="smart-course-finder-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-[#FFF1EA] text-[#E8501A] border border-[#E8501A]/25 mb-4">Smart Course Finder</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/25 mb-4">Smart Course Finder</Badge></motion.div>
           <motion.h2 id="smart-course-finder-heading" variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
-          <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Search verified courses and universities — tuition fees, intakes, interview requirements and world rankings in one place.</motion.p>
+          <motion.p variants={sectionSubtitle} className="text-[var(--alo-text-muted)] text-lg mt-3 max-w-2xl mx-auto">Search verified courses and universities — tuition fees, intakes, interview requirements and world rankings in one place.</motion.p>
         </motion.div>
 
-        <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] overflow-hidden">
+        <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-xl border border-[var(--alo-border)] overflow-hidden">
           {/* Tabs: COURSES | UNIVERSITIES */}
-          <div role="tablist" aria-label="Smart Course Finder mode" className="flex gap-1 border-b border-[#E2E8F0] bg-[#F8FAFC] p-1.5">
+          <div role="tablist" aria-label="Smart Course Finder mode" className="flex gap-1 border-b border-[var(--alo-border)] bg-[var(--alo-page)] p-1.5">
             {([
               { id: 'courses' as const, label: 'COURSES', Icon: BookOpen },
               { id: 'universities' as const, label: 'UNIVERSITIES', Icon: GraduationCap },
@@ -343,7 +343,7 @@ function CourseFinderSection() {
                 aria-selected={tab === id}
                 onClick={() => setTab(id)}
                 className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-3 font-heading text-[13px] font-extrabold tracking-[0.08em] transition-colors sm:flex-none sm:px-8 ${
-                  tab === id ? 'bg-[#E8501A] text-white shadow-sm' : 'bg-white text-[#0F172A] hover:bg-[#FFF1EA] hover:text-[#E8501A]'
+                  tab === id ? 'bg-[var(--alo-cta)] text-white shadow-sm' : 'bg-white text-[var(--alo-text)] hover:bg-[var(--alo-cta-soft)] hover:text-[var(--alo-cta)]'
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
@@ -356,12 +356,12 @@ function CourseFinderSection() {
             {tab === 'courses' ? (
               <div role="tabpanel" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <label htmlFor="home-cf-subject" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I&apos;m looking for</label>
+                  <label htmlFor="home-cf-subject" className="mb-1.5 block text-xs font-bold text-[var(--alo-text)]">I&apos;m looking for</label>
                   <Input id="home-cf-subject" list="home-cf-subjects" placeholder="Select subject or course" value={subject} onChange={e => setSubject(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className="h-12 rounded-xl" />
                   <datalist id="home-cf-subjects">{facets.subjects.map(s => <option key={s} value={s} />)}</datalist>
                 </div>
                 <div>
-                  <label htmlFor="home-cf-type" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I&apos;m planning to study</label>
+                  <label htmlFor="home-cf-type" className="mb-1.5 block text-xs font-bold text-[var(--alo-text)]">I&apos;m planning to study</label>
                   <Select value={courseType} onValueChange={setCourseType}>
                     <SelectTrigger id="home-cf-type" className="h-12 rounded-xl"><SelectValue placeholder="Select course type" /></SelectTrigger>
                     <SelectContent>
@@ -374,46 +374,46 @@ function CourseFinderSection() {
                   </Select>
                 </div>
                 <div>
-                  <label htmlFor="home-cf-country" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I want to study in</label>
+                  <label htmlFor="home-cf-country" className="mb-1.5 block text-xs font-bold text-[var(--alo-text)]">I want to study in</label>
                   <Select value={countryName} onValueChange={setCountryName}>
                     <SelectTrigger id="home-cf-country" className="h-12 rounded-xl"><SelectValue placeholder="Select country" /></SelectTrigger>
                     <SelectContent>{countries.map(c => <SelectItem key={c.id} value={c.name}>{c.flag} {c.name}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#E8501A] hover:bg-[#C93D13]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-black bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             ) : (
               <div role="tabpanel" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <div>
-                  <label htmlFor="home-uf-subject" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I&apos;m looking for</label>
+                  <label htmlFor="home-uf-subject" className="mb-1.5 block text-xs font-bold text-[var(--alo-text)]">I&apos;m looking for</label>
                   <Input id="home-uf-subject" list="home-uf-subjects" placeholder="Select subject or course" value={subject} onChange={e => setSubject(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className="h-12 rounded-xl" />
                   <datalist id="home-uf-subjects">{facets.subjects.map(s => <option key={s} value={s} />)}</datalist>
                 </div>
                 <div>
-                  <label htmlFor="home-uf-university" className="mb-1.5 block text-xs font-bold text-[#0F172A]">I want to study in</label>
+                  <label htmlFor="home-uf-university" className="mb-1.5 block text-xs font-bold text-[var(--alo-text)]">I want to study in</label>
                   <input id="home-uf-university" list="home-uf-universities" placeholder="University name" value={universityName} onChange={e => setUniversityName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} className={inputClass} />
                   <datalist id="home-uf-universities">{facets.universities.map(u => <option key={u.name} value={u.name} />)}</datalist>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[#E8501A] hover:bg-[#C93D13]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-black bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             )}
 
             {/* Selected country's 7-step study guide — downloadable */}
             {selectedCountry && (
-              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[#FFB347]/50 bg-[#FFF1EA] p-4 sm:flex-row sm:items-center">
-                <p className="text-sm text-[#0F172A]">
+              <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[var(--alo-cta-accent)]/50 bg-[var(--alo-cta-soft)] p-4 sm:flex-row sm:items-center">
+                <p className="text-sm text-[var(--alo-text)]">
                   <span className="font-heading font-bold">Planning to study in {selectedCountry.name}?</span>{' '}
-                  <span className="text-[#555555]">Download the {selectedCountry.name} 7-step study guide — from free counseling to pre-departure.</span>
+                  <span className="text-[var(--alo-text-secondary)]">Download the {selectedCountry.name} 7-step study guide — from free counseling to pre-departure.</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[#E8501A] px-5 font-heading text-[13px] font-bold text-white hover:bg-[#C93D13]">
+                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-[13px] font-bold text-black hover:bg-[var(--alo-cta-hover)]">
                     <Download className="mr-2 h-4 w-4" /> Download 7-Step Guide
                   </Button>
-                  <Button asChild variant="outline" className="h-12 rounded-xl border-[#0057B8] px-5 font-heading text-[13px] font-bold text-[#0057B8] hover:bg-[#EAF3FF]">
+                  <Button asChild variant="outline" className="h-12 rounded-xl border-[var(--alo-brand)] px-5 font-heading text-[13px] font-bold text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                     <Link href={destinationGuidePath(selectedCountry.slug)}>View {selectedCountry.name} Guide</Link>
                   </Button>
                 </div>
@@ -448,15 +448,15 @@ function DestinationsSection() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20 mb-4">Explore the World</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-blue-50 text-[var(--alo-brand)] border border-[var(--alo-brand)]/20 mb-4">Explore the World</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Popular Study Destinations</motion.h2>
-          <motion.p variants={sectionSubtitle} className="text-[#64748B] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
+          <motion.p variants={sectionSubtitle} className="text-[var(--alo-text-muted)] text-lg mt-3 max-w-2xl mx-auto">Discover world-class education opportunities across top study destinations</motion.p>
         </motion.div>
         <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {main7.map(d => (
             <motion.div key={d.id} variants={staggerItemScale} whileHover={{ y: -4 }} className="h-full">
-              <Card className="group h-full rounded-2xl border border-[#E2E8F0] shadow-card hover:shadow-hover hover:border-[#BFDBFE] transition-all overflow-hidden">
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F4F8FF]">
+              <Card className="group h-full rounded-2xl border border-[var(--alo-border)] shadow-card hover:shadow-hover hover:border-[var(--alo-brand-border)] transition-all overflow-hidden">
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--alo-brand-pale)]">
                   <Image
                     src={destinationCardImage(d.slug, d.heroImage)}
                     alt={`${d.name} — study destination`}
@@ -468,13 +468,13 @@ function DestinationsSection() {
                 </div>
                 <CardContent className="p-5 space-y-3">
                   <div className="flex items-center gap-3"><span className="text-2xl">{d.flag}</span><h3 className="text-lg font-bold" style={{ color: C.text }}>{d.name}</h3></div>
-                  <div className="space-y-1.5 text-sm text-[#64748B]">
+                  <div className="space-y-1.5 text-sm text-[var(--alo-text-muted)]">
                     <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>{d.popularCities?.slice(0, 3).join(', ') || 'Multiple cities'}</span></div>
                     <div className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>Intakes: {d.popularIntakes?.slice(0, 2).join(', ') || 'Check course catalog for current dates'}</span></div>
                     <div className="flex items-center gap-2"><GraduationCap className="h-3.5 w-3.5 shrink-0" style={{ color: d.accentColor }} /><span>{d.studyLevels?.slice(0, 3).join(', ') || 'Multiple levels'}</span></div>
                   </div>
                   {hasLiveCountryData && (
-                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#E2E8F0]">
+                    <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[var(--alo-border)]">
                       {[
                         { v: d.universityCount, l: 'Universities in catalog' },
                         { v: d.courseCount, l: 'Courses in catalog' },
@@ -482,7 +482,7 @@ function DestinationsSection() {
                       ].filter((item) => typeof item.v === 'number').map((item) => (
                         <div key={item.l} className="text-center">
                           <div className="text-lg font-bold" style={{ color: d.accentColor }}>{item.v}</div>
-                          <div className="text-[10px] text-[#64748B] uppercase tracking-wider">{item.l}</div>
+                          <div className="text-[11px] text-[var(--alo-text-muted)] uppercase tracking-wider">{item.l}</div>
                         </div>
                       ))}
                     </div>
@@ -509,7 +509,7 @@ function DestinationsSection() {
             {showMore && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
                 {extra.map(d => (
-                  <Card key={d.id} className="rounded-2xl border border-[#E2E8F0] p-5">
+                  <Card key={d.id} className="rounded-2xl border border-[var(--alo-border)] p-5">
                     <div className="h-1.5 w-12 rounded mb-3" style={{ backgroundColor: d.accentColor }} />
                     <div className="flex items-center gap-2 mb-2"><span>{d.flag}</span><h3 className="font-bold" style={{ color: C.text }}>{d.name}</h3></div>
                     {hasLiveCountryData && (
@@ -519,7 +519,7 @@ function DestinationsSection() {
                           { value: d.courseCount, label: 'Courses in catalog' },
                           { value: d.scholarshipCount, label: 'Scholarships in catalog' },
                         ].filter((item) => typeof item.value === 'number').map((item) => (
-                          <div key={item.label}><div className="font-bold" style={{ color: d.accentColor }}>{item.value}</div><div className="text-[10px] text-[#64748B]">{item.label}</div></div>
+                          <div key={item.label}><div className="font-bold" style={{ color: d.accentColor }}>{item.value}</div><div className="text-[11px] text-[var(--alo-text-muted)]">{item.label}</div></div>
                         ))}
                       </div>
                     )}
@@ -552,9 +552,9 @@ function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div variants={slideFromLeft} className="space-y-6">
-            <Badge className="bg-blue-50 text-[#0057B8] border border-[#0057B8]/20">About ALO Education</Badge>
+            <Badge className="bg-blue-50 text-[var(--alo-brand)] border border-[var(--alo-brand)]/20">About ALO Education</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Who We Are</h2>
-            <div className="space-y-4 text-[#64748B] leading-relaxed">
+            <div className="space-y-4 text-[var(--alo-text-muted)] leading-relaxed">
               <p>In February 2023, <strong style={{ color: C.text }}>Taslima Akter</strong> founded ALO Education with a vision to connect ambitious Bangladeshi students with world-class education opportunities abroad. Her personal experience navigating the complexities of international admissions inspired her to create a platform built on trust, transparency, and genuine care for every student&apos;s future.</p>
               <p>That same year, our first office opened in <strong style={{ color: C.text }}>Dhaka, Bangladesh</strong>, with a dedicated focus on helping students secure admissions to leading universities and colleges across the United Kingdom, United States, Australia, Canada, New Zealand, Ireland, and Europe. From the very first day, our approach has been centered on providing personalized, honest, and comprehensive guidance.</p>
               <p>Guided by the founder&apos;s vision of <strong style={{ color: C.text }}>trust, transparency, and professionalism</strong>, ALO Education continues to grow with the mission of offering global opportunities and becoming a trusted partner in international education consultancy. We are not just consultants — we are mentors, guides, and partners in your journey toward a brighter future.</p>
@@ -585,10 +585,10 @@ function AboutSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <Image src="/images/landing/Copy of pexels-rdne-7092364.webp" alt="ALO Education team" width={600} height={500} className="w-full h-auto object-cover" />
             </div>
-            <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }} className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-xl p-4 border border-[#E2E8F0]">
+            <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }} className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-xl p-4 border border-[var(--alo-border)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: gradients.orange }}><Heart className="h-5 w-5 text-white" /></div>
-                <div><div className="text-sm font-bold" style={{ color: C.text }}>Student-First</div><div className="text-xs text-[#64748B]">Since 2023</div></div>
+                <div><div className="text-sm font-bold" style={{ color: C.text }}>Student-First</div><div className="text-xs text-[var(--alo-text-muted)]">Since 2023</div></div>
               </div>
             </motion.div>
           </motion.div>
@@ -610,13 +610,13 @@ function MissionVisionValues() {
     <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
-          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[#E8501A] border border-[#E8501A]/20 mb-4">Our Purpose</Badge></motion.div>
+          <motion.div variants={staggerItem}><Badge className="bg-orange-50 text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 mb-4">Our Purpose</Badge></motion.div>
           <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Our Commitment to Your Study-Abroad Dream</motion.h2>
         </motion.div>
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {cards.map(card => (
             <motion.div key={card.title} variants={staggerItemScale} whileHover={{ y: -6 }}>
-              <Card className="h-full rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-lg transition-all overflow-hidden">
+              <Card className="h-full rounded-2xl border border-[var(--alo-border)] shadow-sm hover:shadow-lg transition-all overflow-hidden">
                 <div className="h-2" style={{ background: card.gradient }} />
                 <CardContent className="p-6 space-y-4">
                   <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: card.gradient }}><card.icon className="w-7 h-7 text-white" /></div>
@@ -630,12 +630,12 @@ function MissionVisionValues() {
                       ].map(v => (
                         <div key={v.t} className="flex items-start gap-3">
                           <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-orange-50"><v.icon className="w-4 h-4" style={{ color: C.orange }} /></div>
-                          <div><div className="text-sm font-semibold" style={{ color: C.text }}>{v.t}</div><div className="text-xs text-[#64748B]">{v.d}</div></div>
+                          <div><div className="text-sm font-semibold" style={{ color: C.text }}>{v.t}</div><div className="text-xs text-[var(--alo-text-muted)]">{v.d}</div></div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    card.paras.map((p, i) => <p key={i} className="text-[#64748B] leading-relaxed">{p}</p>)
+                    card.paras.map((p, i) => <p key={i} className="text-[var(--alo-text-muted)] leading-relaxed">{p}</p>)
                   )}
                 </CardContent>
               </Card>

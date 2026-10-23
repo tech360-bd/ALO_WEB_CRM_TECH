@@ -208,8 +208,8 @@ export default function CrmCommunicationsPage() {
             <Megaphone className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Communications</h1>
-            <p className="text-sm text-gray-500">Email, SMS &amp; WhatsApp Management</p>
+            <h1 className="text-xl font-bold text-[var(--alo-text)]">Communications</h1>
+            <p className="text-sm text-[var(--alo-text-muted)]">Email, SMS &amp; WhatsApp Management</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -245,7 +245,7 @@ export default function CrmCommunicationsPage() {
             })}
           </TabsList>
           <div className="relative flex-1 sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--alo-text-muted)]" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -253,12 +253,12 @@ export default function CrmCommunicationsPage() {
               className="pl-9 h-8 text-xs"
             />
           </div>
-          <label className="flex items-center gap-1.5 text-xs text-gray-600">
+          <label className="flex items-center gap-1.5 text-xs text-[var(--alo-body)]">
             <input
               type="checkbox"
               checked={showAllTemplates}
               onChange={(e) => setShowAllTemplates(e.target.checked)}
-              className="rounded border-gray-300"
+              className="rounded border-[var(--alo-border-strong)]"
             />
             Show all channels
           </label>
@@ -272,7 +272,7 @@ export default function CrmCommunicationsPage() {
                 <CardTitle className="text-sm font-semibold flex items-center gap-2">
                   <FileText className="h-4 w-4 text-orange-600" />Message Templates
                 </CardTitle>
-                <Badge variant="muted" className="text-[10px]">{filteredTemplates.length} shown</Badge>
+                <Badge variant="muted" className="text-[11px]">{filteredTemplates.length} shown</Badge>
               </div>
             </CardHeader>
             <CardContent>
@@ -286,10 +286,10 @@ export default function CrmCommunicationsPage() {
                 </div>
               ) : templatesLoading ? (
                 <div className="space-y-2" aria-busy="true" aria-live="polite">
-                  {[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse rounded bg-gray-100" />)}
+                  {[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse rounded bg-[var(--alo-surface-muted)]" />)}
                 </div>
               ) : filteredTemplates.length === 0 ? (
-                <p className="text-sm text-gray-500 py-8 text-center">
+                <p className="text-sm text-[var(--alo-text-muted)] py-8 text-center">
                   {templates.length === 0
                     ? 'No message templates have been created yet.'
                     : 'No templates match this channel or search.'}
@@ -297,28 +297,28 @@ export default function CrmCommunicationsPage() {
               ) : (
                 <div className="space-y-2">
                   {filteredTemplates.map((template) => (
-                    <div key={template.id} className="p-3 rounded-lg border border-gray-100 hover:border-orange-200 transition-colors">
+                    <div key={template.id} className="p-3 rounded-lg border border-[var(--alo-border)] hover:border-orange-200 transition-colors">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="text-sm font-semibold text-gray-900">{template.templateName}</span>
-                            <Badge variant="outline" className="text-[9px] font-normal">{template.channel}</Badge>
-                            {template.category && <Badge variant="muted" className="text-[9px]">{template.category}</Badge>}
+                            <span className="text-sm font-semibold text-[var(--alo-text)]">{template.templateName}</span>
+                            <Badge variant="outline" className="text-[11px] font-normal">{template.channel}</Badge>
+                            {template.category && <Badge variant="muted" className="text-[11px]">{template.category}</Badge>}
                             {template.requiresApproval && (
-                              <Badge className="text-[9px] bg-amber-100 text-amber-700">Needs approval</Badge>
+                              <Badge className="text-[11px] bg-amber-100 text-amber-700">Needs approval</Badge>
                             )}
-                            {template.isLocked && <Badge variant="muted" className="text-[9px]">Locked</Badge>}
+                            {template.isLocked && <Badge variant="muted" className="text-[11px]">Locked</Badge>}
                           </div>
                           {template.templateCode && (
-                            <p className="text-[10px] text-gray-400 font-mono mt-0.5">{template.templateCode}</p>
+                            <p className="text-[11px] text-[var(--alo-text-muted)] font-mono mt-0.5">{template.templateCode}</p>
                           )}
                         </div>
                         <Button size="sm" variant="outline" className="h-7 text-xs shrink-0" onClick={() => handleApplyTemplate(template)}>
                           Use
                         </Button>
                       </div>
-                      <p className="text-xs text-gray-600 mt-1.5 line-clamp-2">{template.body || 'No body stored.'}</p>
-                      <p className="text-[10px] text-gray-400 mt-1.5">Updated {formatDate(template.updatedAt)}</p>
+                      <p className="text-xs text-[var(--alo-body)] mt-1.5 line-clamp-2">{template.body || 'No body stored.'}</p>
+                      <p className="text-[11px] text-[var(--alo-text-muted)] mt-1.5">Updated {formatDate(template.updatedAt)}</p>
                     </div>
                   ))}
                 </div>
@@ -342,44 +342,44 @@ export default function CrmCommunicationsPage() {
           <CardContent className="space-y-4">
             {activeChannel === 'email' && (
               <div className="space-y-1.5">
-                <label htmlFor="blast-subject" className="text-xs font-medium text-gray-700">Subject</label>
+                <label htmlFor="blast-subject" className="text-xs font-medium text-[var(--alo-body)]">Subject</label>
                 <Input id="blast-subject" value={blastSubject} onChange={(e) => setBlastSubject(e.target.value)} className="h-9 text-sm" />
               </div>
             )}
             <div className="space-y-1.5">
-              <label htmlFor="blast-message" className="text-xs font-medium text-gray-700">Message</label>
+              <label htmlFor="blast-message" className="text-xs font-medium text-[var(--alo-body)]">Message</label>
               <Textarea id="blast-message" value={blastMessage} onChange={(e) => setBlastMessage(e.target.value)} rows={5} className="text-sm resize-y" />
             </div>
 
             <div className="space-y-1.5">
-              <p className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+              <p className="text-xs font-medium text-[var(--alo-body)] flex items-center gap-1.5">
                 <Users className="h-3.5 w-3.5" />Recipients
-                <span className="text-gray-400 font-normal">({selectedIds.length} selected)</span>
+                <span className="text-[var(--alo-text-muted)] font-normal">({selectedIds.length} selected)</span>
               </p>
               {recipientsError ? (
                 <p className="text-xs text-destructive" role="alert">{recipientsError}</p>
               ) : recipientsLoading ? (
                 <div className="space-y-1.5" aria-busy="true">
-                  {[0, 1, 2].map((i) => <div key={i} className="h-9 animate-pulse rounded bg-gray-100" />)}
+                  {[0, 1, 2].map((i) => <div key={i} className="h-9 animate-pulse rounded bg-[var(--alo-surface-muted)]" />)}
                 </div>
               ) : filteredRecipients.length === 0 ? (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[var(--alo-text-muted)]">
                   {recipients.length === 0
                     ? 'No student records are available to select as recipients.'
                     : 'No recipients match your search.'}
                 </p>
               ) : (
-                <div className="max-h-48 overflow-y-auto rounded-md border border-gray-100 divide-y divide-gray-50">
+                <div className="max-h-48 overflow-y-auto rounded-md border border-[var(--alo-border)] divide-y divide-gray-50">
                   {filteredRecipients.map((recipient) => (
-                    <label key={recipient.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 cursor-pointer">
+                    <label key={recipient.id} className="flex items-center gap-2 p-2 hover:bg-[var(--alo-page)] cursor-pointer">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(recipient.id)}
                         onChange={() => handleToggleRecipient(recipient.id)}
-                        className="rounded border-gray-300"
+                        className="rounded border-[var(--alo-border-strong)]"
                       />
-                      <span className="text-xs text-gray-800 flex-1 truncate">{recipient.fullName}</span>
-                      <span className="text-[10px] text-gray-400 font-mono">{recipient.studentId}</span>
+                      <span className="text-xs text-[var(--alo-text)] flex-1 truncate">{recipient.fullName}</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)] font-mono">{recipient.studentId}</span>
                     </label>
                   ))}
                 </div>

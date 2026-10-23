@@ -18,10 +18,10 @@ const ICONS = {
 };
 
 const TONES = {
-  blue: 'border-[#0057B8]/30 bg-[#0057B8]/[0.04] text-[#0057B8]',
-  orange: 'border-[#E8501A]/30 bg-[#E8501A]/[0.04] text-[#B63A12]',
+  blue: 'border-[var(--alo-brand)]/30 bg-[var(--alo-brand)]/[0.04] text-[var(--alo-brand)]',
+  orange: 'border-[var(--alo-cta)]/30 bg-[var(--alo-cta)]/[0.04] text-[#B63A12]',
   green: 'border-emerald-300 bg-emerald-50 text-emerald-700',
-  slate: 'border-slate-300 bg-slate-50 text-slate-700',
+  slate: 'border-[var(--alo-border-strong)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };
 
 /**
@@ -45,13 +45,13 @@ export default function EditorialFlowDiagram({
   const titleId = useId();
 
   return (
-    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" aria-labelledby={titleId}>
+    <figure className="rounded-2xl border border-[var(--alo-border)] bg-white p-4 sm:p-6" aria-labelledby={titleId}>
       <figcaption id={titleId} className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">System map</p>
-          <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--alo-brand)]">System map</p>
+          <h2 className="mt-1 text-base font-bold text-[var(--alo-text)]">{title}</h2>
         </div>
-        <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">static · auditable</span>
+        <span className="rounded-full border border-[var(--alo-border)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-text-muted)]">static · auditable</span>
       </figcaption>
       <ol className="grid gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-center">
         {steps.map((step, index) => {
@@ -63,13 +63,13 @@ export default function EditorialFlowDiagram({
                   <Icon className="h-4 w-4" aria-hidden="true" />
                   <span className="text-xs font-bold">{step.label}</span>
                 </div>
-                <p className="mt-3 text-xs leading-5 text-slate-600">{step.detail}</p>
-                <div className="mt-3 flex items-center gap-1 text-[10px] font-semibold opacity-70">
+                <p className="mt-3 text-xs leading-5 text-[var(--alo-body)]">{step.detail}</p>
+                <div className="mt-3 flex items-center gap-1 text-[11px] font-semibold opacity-70">
                   <CircleDot className="h-3 w-3" aria-hidden="true" /> step {index + 1}
                 </div>
               </div>
               {index < steps.length - 1 && (
-                <div className="flex justify-center text-slate-300" aria-hidden="true">
+                <div className="flex justify-center text-[var(--alo-placeholder)]" aria-hidden="true">
                   <ArrowDown className="h-4 w-4 md:hidden" />
                   <svg className="hidden h-4 w-8 md:block" viewBox="0 0 32 16" fill="none">
                     <path d="M1 8h26m0 0-5-5m5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -80,7 +80,7 @@ export default function EditorialFlowDiagram({
           );
         })}
       </ol>
-      <p className="mt-4 flex items-center gap-2 text-[11px] leading-4 text-slate-500">
+      <p className="mt-4 flex items-center gap-2 text-[11px] leading-4 text-[var(--alo-text-muted)]">
         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
         Automation drafts stay reviewable before any external reply or campaign publish.
       </p>

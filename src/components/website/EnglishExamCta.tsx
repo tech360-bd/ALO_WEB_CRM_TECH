@@ -102,31 +102,31 @@ export function PrepVsExamSplit({
 }) {
   return (
     <section aria-label="Preparation and real exam" className="grid gap-4 md:grid-cols-2">
-      <div className="flex flex-col rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
-        <span className="inline-flex w-fit items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#0057B8]">
+      <div className="flex flex-col rounded-3xl border border-[var(--alo-border)] bg-white p-6 shadow-sm">
+        <span className="inline-flex w-fit items-center rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-brand)]">
           {COPY.en.preparationLabel}
         </span>
-        <h3 className="mt-3 text-lg font-bold text-[#0F172A]">{prepTitle}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">{COPY.en.preparationBody}</p>
+        <h3 className="mt-3 text-lg font-bold text-[var(--alo-text)]">{prepTitle}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--alo-body)]">{COPY.en.preparationBody}</p>
         <Link
           href={prepHref}
-          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 pt-4 text-sm font-semibold text-[#0057B8] hover:text-[#003F87]"
+          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 pt-4 text-sm font-semibold text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]"
         >
           {prepCta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
 
       <div className="flex flex-col rounded-3xl border border-orange-200 bg-orange-50 p-6 shadow-sm">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E8501A] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
+        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
           <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
           {COPY.en.realExamLabel}
         </span>
-        <h3 className="mt-3 text-lg font-bold text-[#0F172A]">{COPY.en.question}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-slate-700">{COPY.en.realExamBody}</p>
-        <p className="mt-2 text-xs text-slate-500">{COPY.en.leaving}</p>
+        <h3 className="mt-3 text-lg font-bold text-[var(--alo-text)]">{COPY.en.question}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--alo-body)]">{COPY.en.realExamBody}</p>
+        <p className="mt-2 text-xs text-[var(--alo-text-muted)]">{COPY.en.leaving}</p>
         <EnglishExamButton
           location={location}
-          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[#E8501A] px-5 py-3 text-sm font-bold text-black shadow-sm transition hover:bg-[#C93D13] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[var(--alo-cta)] px-5 py-3 text-sm font-bold text-black shadow-sm transition hover:bg-[var(--alo-cta-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
         >
           {COPY.bn.button} · {COPY.en.button} <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </EnglishExamButton>
@@ -140,21 +140,21 @@ export function PrepVsExamSplit({
 export function EnglishExamCard({ location, testName }: { location: EnglishExamCtaLocation; testName?: string }) {
   return (
     <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8501A] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-black">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
         <GraduationCap className="h-3 w-3" aria-hidden="true" />
         {COPY.en.realExamLabel}
       </span>
-      <p className="mt-3 text-sm font-bold text-[#0F172A]">
+      <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">
         {testName ? `Ready to sit the ${testName}?` : COPY.en.question}
       </p>
-      <p className="mt-1 text-xs text-slate-600">{COPY.en.realExamBody}</p>
+      <p className="mt-1 text-xs text-[var(--alo-body)]">{COPY.en.realExamBody}</p>
       <EnglishExamButton
         location={location}
-        className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] px-4 py-3 text-sm font-bold text-black transition hover:bg-[#C93D13] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+        className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--alo-cta)] px-4 py-3 text-sm font-bold text-black transition hover:bg-[var(--alo-cta-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
       >
         {COPY.en.button} <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </EnglishExamButton>
-      <p className="mt-2 text-[11px] text-slate-500">{ENGLISH_EXAM_PLATFORM_HOST}</p>
+      <p className="mt-2 text-[11px] text-[var(--alo-text-muted)]">{ENGLISH_EXAM_PLATFORM_HOST}</p>
     </div>
   );
 }

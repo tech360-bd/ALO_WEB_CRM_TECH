@@ -55,7 +55,7 @@ export function CrmCalls() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : totalCalls === 0 ? (
         <EmptyState
           icon="PhoneCall"
@@ -81,14 +81,14 @@ export function CrmCalls() {
             />
           </div>
 
-          <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+          <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
             <CardContent className="p-0">
-              <div className="border-b border-[#DCE8F5] px-5 py-4">
-                <h3 className="font-bold text-[#0B2447]">Call History</h3>
+              <div className="border-b border-[var(--alo-brand-border)] px-5 py-4">
+                <h3 className="font-bold text-[var(--alo-text)]">Call History</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-[#F7FAFE] text-left text-[#5A7299]">
+                  <thead className="bg-[var(--alo-page)] text-left text-[var(--alo-text-muted)]">
                     <tr>
                       <th className="px-5 py-3 font-medium">Contact</th>
                       <th className="px-5 py-3 font-medium">Direction</th>
@@ -99,18 +99,18 @@ export function CrmCalls() {
                       <th className="px-5 py-3 font-medium">AI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#DCE8F5]">
+                  <tbody className="divide-y divide-[var(--alo-brand-border)]">
                     {calls.slice(0, 30).map((c, idx) => (
-                      <tr key={c.id || idx} className="hover:bg-[#F7FAFE]">
-                        <td className="px-5 py-3 font-medium text-[#0B2447]">
+                      <tr key={c.id || idx} className="hover:bg-[var(--alo-page)]">
+                        <td className="px-5 py-3 font-medium text-[var(--alo-text)]">
                           {c.conversation?.studentName || c.fromName || "Unknown"}
                         </td>
                         <td className="px-5 py-3">
                           <Badge
                             className={
                               c.direction === "OUTBOUND"
-                                ? "bg-[#FFF3EA] text-[#E8501A]"
-                                : "bg-[#EAF3FF] text-[#0057B8]"
+                                ? "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
+                                : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                             }
                           >
                             <Icon
@@ -122,16 +122,16 @@ export function CrmCalls() {
                             {c.direction || "INBOUND"}
                           </Badge>
                         </td>
-                        <td className="px-5 py-3 text-[#5A7299]">
+                        <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                           {c.fromPhone || c.toPhone || "—"}
                         </td>
-                        <td className="px-5 py-3 text-[#5A7299]">
+                        <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                           {c.duration ? formatDuration(c.duration) : "—"}
                         </td>
-                        <td className="px-5 py-3 text-[#5A7299]">
+                        <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                           {c.body?.slice(0, 60) || "—"}
                         </td>
-                        <td className="px-5 py-3 text-[#5A7299]">
+                        <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                           {c.receivedAt
                             ? new Date(c.receivedAt).toLocaleString("en-GB", {
                                 day: "2-digit",
@@ -147,7 +147,7 @@ export function CrmCalls() {
                               <Icon name="Sparkles" className="mr-1 size-3" /> AI
                             </Badge>
                           ) : (
-                            <span className="text-[#5A7299]">—</span>
+                            <span className="text-[var(--alo-text-muted)]">—</span>
                           )}
                         </td>
                       </tr>

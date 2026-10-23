@@ -48,9 +48,9 @@ const TYPE_CONFIG: Record<string, { color: string; bg: string; border: string; d
 };
 
 const DEFAULT_STYLE = {
-  color: 'text-slate-700',
-  bg: 'bg-slate-50',
-  border: 'border-slate-200',
+  color: 'text-[var(--alo-body)]',
+  bg: 'bg-[var(--alo-page)]',
+  border: 'border-[var(--alo-border)]',
   dot: 'bg-slate-500',
 };
 
@@ -339,7 +339,7 @@ export default function EmployeeCalendarPage() {
                           onClick={() => setSelectedDate(cell.dateStr)}
                           className={cn(
                             'min-h-[76px] rounded-lg border p-1.5 text-left transition-colors',
-                            cell.inMonth ? 'bg-white' : 'bg-slate-50/60',
+                            cell.inMonth ? 'bg-white' : 'bg-[var(--alo-page)]/60',
                             selectedDate === cell.dateStr ? 'border-alo-brand' : 'border-alo-border',
                             isToday && 'ring-1 ring-alo-brand',
                           )}
@@ -354,7 +354,7 @@ export default function EmployeeCalendarPage() {
                               {cell.day}
                             </span>
                             {isToday ? (
-                              <span className="text-[9px] font-medium text-alo-brand">Today</span>
+                              <span className="text-[11px] font-medium text-alo-brand">Today</span>
                             ) : null}
                           </div>
                           <div className="mt-1 space-y-1">
@@ -363,14 +363,14 @@ export default function EmployeeCalendarPage() {
                               return (
                                 <div
                                   key={appointment.id}
-                                  className={cn('truncate rounded px-1 py-0.5 text-[9px]', style.bg, style.color)}
+                                  className={cn('truncate rounded px-1 py-0.5 text-[11px]', style.bg, style.color)}
                                 >
                                   {formatTime(appointment.scheduledAt)} {appointment.title}
                                 </div>
                               );
                             })}
                             {dayAppointments.length > 2 ? (
-                              <div className="text-alo-text-muted text-[9px]">
+                              <div className="text-alo-text-muted text-[11px]">
                                 +{dayAppointments.length - 2} more
                               </div>
                             ) : null}
@@ -398,7 +398,7 @@ export default function EmployeeCalendarPage() {
                             <p className={cn('text-sm font-medium', style.color)}>
                               {appointment.title}
                             </p>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {(appointment.status || 'unknown').toUpperCase()}
                             </Badge>
                           </div>

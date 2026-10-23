@@ -93,8 +93,8 @@ export function PortalPageHeader({
   return (
     <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-[20px] font-bold leading-tight tracking-[-0.01em] text-slate-900">{title}</h1>
-        <p className="mt-1 text-[13px] leading-relaxed text-slate-500">{description}</p>
+        <h1 className="text-[20px] font-bold leading-tight tracking-[-0.01em] text-[var(--alo-text)]">{title}</h1>
+        <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-text-muted)]">{description}</p>
       </div>
       {action && <div className="flex shrink-0 flex-wrap gap-2">{action}</div>}
     </header>
@@ -118,17 +118,17 @@ export function PortalCard({
   className?: string;
 }) {
   return (
-    <section className={cn('rounded-2xl border border-slate-200 bg-white', className)}>
+    <section className={cn('rounded-2xl border border-[var(--alo-border)] bg-white', className)}>
       {(title || action) && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--alo-border)] px-5 py-4">
           <div className="min-w-0">
             {title && (
-              <h2 className="flex items-center text-[14px] font-semibold text-slate-900">
+              <h2 className="flex items-center text-[14px] font-semibold text-[var(--alo-text)]">
                 {icon}
                 {title}
               </h2>
             )}
-            {description && <p className="mt-0.5 text-[12px] text-slate-500">{description}</p>}
+            {description && <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">{description}</p>}
           </div>
           {action}
         </div>
@@ -141,7 +141,7 @@ export function PortalCard({
 /** Heading for a section rendered inside a PortalCard without its own title. */
 export function PortalSectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="flex items-center border-b border-slate-200 px-5 py-4 text-[14px] font-semibold text-slate-900">
+    <h2 className="flex items-center border-b border-[var(--alo-border)] px-5 py-4 text-[14px] font-semibold text-[var(--alo-text)]">
       {children}
     </h2>
   );
@@ -150,7 +150,7 @@ export function PortalSectionTitle({ children }: { children: React.ReactNode }) 
 export function PortalLoading({ rows = 4, label }: { rows?: number; label?: string }) {
   return (
     <div className="space-y-3" aria-busy="true" aria-live="polite">
-      <p className="text-[12px] font-medium text-slate-500">{label ?? 'Loading…'}</p>
+      <p className="text-[12px] font-medium text-[var(--alo-text-muted)]">{label ?? 'Loading…'}</p>
       {Array.from({ length: rows }).map((_, index) => (
         <Skeleton key={index} className="h-14 w-full rounded-xl" />
       ))}
@@ -185,9 +185,9 @@ export function PortalEmpty({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 px-6 py-14 text-center">
-      <Inbox className="h-8 w-8 text-slate-300" aria-hidden="true" />
-      <h3 className="text-[15px] font-semibold text-slate-900">{title}</h3>
-      <p className="max-w-[460px] text-[13px] leading-relaxed text-slate-500">{description}</p>
+      <Inbox className="h-8 w-8 text-[var(--alo-placeholder)]" aria-hidden="true" />
+      <h3 className="text-[15px] font-semibold text-[var(--alo-text)]">{title}</h3>
+      <p className="max-w-[460px] text-[13px] leading-relaxed text-[var(--alo-text-muted)]">{description}</p>
       {action && <div className="mt-1 flex flex-wrap justify-center gap-2">{action}</div>}
     </div>
   );
@@ -203,7 +203,7 @@ const STATUS_TONE: Record<string, string> = {
   COMPLETED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   failed: 'border-red-200 bg-red-50 text-red-800',
   overdue: 'border-red-200 bg-red-50 text-red-800',
-  refunded: 'border-slate-200 bg-slate-50 text-slate-600',
+  refunded: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };
 
 /**
@@ -211,7 +211,7 @@ const STATUS_TONE: Record<string, string> = {
  * next to the tone (spec §84).
  */
 export function StatusBadge({ value }: { value: string }) {
-  const tone = STATUS_TONE[value] ?? 'border-slate-200 bg-slate-50 text-slate-600';
+  const tone = STATUS_TONE[value] ?? 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]';
   const label = value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
   return (
     <span className={cn('inline-flex items-center rounded-button border px-2 py-0.5 text-[11px] font-semibold', tone)}>
@@ -224,11 +224,11 @@ const PRIORITY_TONE: Record<string, string> = {
   URGENT: 'border-red-200 bg-red-50 text-red-800',
   HIGH: 'border-orange-200 bg-orange-50 text-orange-800',
   MEDIUM: 'border-blue-200 bg-blue-50 text-blue-800',
-  LOW: 'border-slate-200 bg-slate-50 text-slate-600',
+  LOW: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };
 
 export function PriorityBadge({ value }: { value: string }) {
-  const tone = PRIORITY_TONE[value?.toUpperCase()] ?? 'border-slate-200 bg-slate-50 text-slate-600';
+  const tone = PRIORITY_TONE[value?.toUpperCase()] ?? 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]';
   const label = (value || 'Medium').replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
   return (
     <span className={cn('inline-flex items-center rounded-button border px-2 py-0.5 text-[11px] font-semibold', tone)}>

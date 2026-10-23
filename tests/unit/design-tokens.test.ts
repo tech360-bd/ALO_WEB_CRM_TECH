@@ -56,7 +56,10 @@ describe('ALO master design tokens', () => {
     expect(heroBlock).not.toContain('from-black');
     expect(heroBlock).not.toContain('/95 via');
     expect(heroBlock).toContain('bg-white');
-    expect(heroBlock).toContain('text-[#0057B8]');
+    // The accent is now expressed through the shared token rather than raw
+    // hex, so the hero follows the theme layer (and any future palette swap).
+    expect(heroBlock).toContain('var(--alo-brand)');
+    expect(heroBlock).not.toMatch(/text-\[#0057B8\]/);
   });
 });
 
@@ -92,6 +95,36 @@ describe('rendered-copy hygiene (feedback round)', () => {
     };
     walk(join(process.cwd(), 'src/app'));
     walk(join(process.cwd(), 'src/components'));
+    expect(offenders).toEqual([]);
+  });
+
+  it('public copy never leaks build instructions or database vocabulary', async () => {
+    // Regression guard for the redesign pass: several public components were
+    // rendering their own implementation notes ("Count from database — not
+    // hardcoded", "Dynamic from DB", "ESTIMATE ONLY — Never present…",
+    // "White card • Blue accent • Route: /language-prep").
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const patterns = [
+      /\bcount from database\b/i,
+      /\bnot hardcoded\b/i,
+      /\bdynamic from db\b/i,
+      /route:\s*\/[a-z-]+/i,
+      /white card •/i,
+    ];
+    const offenders: string[] = [];
+    for (const dir of ['src/app', 'src/components']) {
+      const walk = (root: string) => {
+        for (const name of readdirSync(root)) {
+          const p = join(root, name);
+          if (statSync(p).isDirectory()) { walk(p); continue; }
+          if (!p.endsWith('.tsx')) continue;
+          const text = readFileSync(p, 'utf8');
+          if (patterns.some((re) => re.test(text))) offenders.push(p);
+        }
+      };
+      walk(join(process.cwd(), dir));
+    }
     expect(offenders).toEqual([]);
   });
 

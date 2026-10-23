@@ -262,25 +262,25 @@ export default function AICommandingCenter() {
   };
 
   return (
-    <div className="flex flex-col gap-4 font-sans text-slate-900">
+    <div className="flex flex-col gap-4 font-sans text-[var(--alo-text)]">
       
       {/* HEADER CONTROLS */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 text-white p-5 rounded-2xl shadow-md border border-slate-800">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--alo-blue-soft)] text-[var(--alo-text)] p-5 rounded-[16px] shadow-[var(--alo-shadow-xs)] border border-[var(--alo-brand-border)]">
         <div>
           <div className="flex items-center gap-2">
             <Cpu className="w-5 h-5 text-orange-500 animate-pulse" />
             <h1 className="text-lg font-bold">AI Commanding Center</h1>
-            <Badge className="bg-orange-500 text-white text-[10px] uppercase font-mono">Owner Protection Enabled</Badge>
+            <Badge className="bg-orange-500 text-white text-[11px] uppercase font-mono">Owner Protection Enabled</Badge>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[var(--alo-text-muted)] mt-1">
             Department Co-processor • Local-First Execution • Payment Guard: Active ({healthStats.agents} Agents Online)
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white" onClick={fetchHealth}>
+          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-[var(--alo-placeholder)] border-slate-700 hover:bg-slate-700 hover:text-white" onClick={fetchHealth}>
             <RefreshCw className="w-3.5 h-3.5 mr-1" /> Reload Core
           </Button>
-          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-slate-500 border-slate-700 font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
+          <Button variant="outline" size="sm" className="h-8 text-xs bg-slate-800 text-[var(--alo-text-muted)] border-slate-700 font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
             <Undo className="w-3.5 h-3.5 mr-1" /> Revert Database (disabled)
           </Button>
         </div>
@@ -292,9 +292,9 @@ export default function AICommandingCenter() {
         {/* LEFT COLUMN: Explorer & Agents (Span 3) */}
         <div className="lg:col-span-3 flex flex-col gap-4">
           {/* Agent/Department Selector */}
-          <Card className="bg-white border-slate-200 shadow-2xs">
+          <Card className="bg-white border-[var(--alo-border)] shadow-2xs">
             <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center gap-1.5">
                 <Bot className="w-4 h-4 text-orange-500" /> Target AI Agent
               </CardTitle>
             </CardHeader>
@@ -310,10 +310,10 @@ export default function AICommandingCenter() {
                   <button
                     key={agent.id}
                     onClick={() => setActiveAgent(agent.id)}
-                    className={`w-full text-left p-2 rounded-lg text-xs transition-all ${activeAgent === agent.id ? 'bg-orange-500 text-white font-bold' : 'hover:bg-slate-50 text-slate-700'}`}
+                    className={`w-full text-left p-2 rounded-lg text-xs transition-all ${activeAgent === agent.id ? 'bg-orange-500 text-white font-bold' : 'hover:bg-[var(--alo-page)] text-[var(--alo-body)]'}`}
                   >
                     <div>{agent.name}</div>
-                    <div className={`text-[10px] ${activeAgent === agent.id ? 'text-orange-200' : 'text-slate-400'}`}>{agent.dept}</div>
+                    <div className={`text-[11px] ${activeAgent === agent.id ? 'text-orange-200' : 'text-[var(--alo-text-muted)]'}`}>{agent.dept}</div>
                   </button>
                 ))}
               </div>
@@ -321,15 +321,15 @@ export default function AICommandingCenter() {
           </Card>
 
           {/* Project Explorer */}
-          <Card className="bg-white border-slate-200 shadow-2xs flex-1 flex flex-col">
+          <Card className="bg-white border-[var(--alo-border)] shadow-2xs flex-1 flex flex-col">
             <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project Workspace</CardTitle>
-              <div className="flex gap-1 mt-2 border-b border-slate-100 pb-2">
+              <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider">Project Workspace</CardTitle>
+              <div className="flex gap-1 mt-2 border-b border-[var(--alo-border)] pb-2">
                 {['crm', 'website', 'system'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setExplorerTab(tab as any)}
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${explorerTab === tab ? 'bg-slate-900 text-white' : 'text-slate-400 hover:bg-slate-50'}`}
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full uppercase ${explorerTab === tab ? 'bg-[var(--alo-brand)] text-white' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-brand-pale)]'}`}
                   >
                     {tab}
                   </button>
@@ -338,7 +338,7 @@ export default function AICommandingCenter() {
             </CardHeader>
             <CardContent className="p-3 flex-1 flex flex-col pt-0">
               <ScrollArea className="h-64 lg:h-80">
-                <div className="flex flex-col gap-1 font-mono text-[10px]">
+                <div className="flex flex-col gap-1 font-mono text-[11px]">
                   {explorerTab === 'crm' && (
                     <>
                       <ExplorerItem name="src/app/crm/leads/" isDir active={selectedFile === 'src/app/crm/leads/'} onClick={setSelectedFile} />
@@ -372,13 +372,13 @@ export default function AICommandingCenter() {
 
         {/* CENTER COLUMN: Command console, Chat history & Diffs (Span 6) */}
         <div className="lg:col-span-6 flex flex-col gap-4">
-          <Card className="bg-white border-slate-200 shadow-2xs flex-1 flex flex-col h-[500px]">
-            <CardHeader className="p-4 pb-2 border-b border-slate-100 flex flex-row items-center justify-between">
+          <Card className="bg-white border-[var(--alo-border)] shadow-2xs flex-1 flex flex-col h-[500px]">
+            <CardHeader className="p-4 pb-2 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-bold text-slate-800">Command Chat Console</CardTitle>
-                <CardDescription className="text-xs text-slate-500">Coordinate and review changes to code or database models.</CardDescription>
+                <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Command Chat Console</CardTitle>
+                <CardDescription className="text-xs text-[var(--alo-text-muted)]">Coordinate and review changes to code or database models.</CardDescription>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold bg-slate-50 px-2 py-1 rounded-lg">
+              <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)] font-semibold bg-[var(--alo-page)] px-2 py-1 rounded-lg">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" /> Auth Gate: Active
               </div>
             </CardHeader>
@@ -389,12 +389,12 @@ export default function AICommandingCenter() {
                 <div className="flex flex-col gap-3">
                   {messages.map((msg) => (
                     <div key={msg.id} className={`flex flex-col max-w-[85%] ${msg.sender === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'}`}>
-                      <div className={`p-3 rounded-2xl text-xs ${msg.sender === 'user' ? 'bg-slate-900 text-white rounded-tr-none' : 'bg-slate-100 text-slate-800 rounded-tl-none'}`}>
+                      <div className={`p-3 rounded-2xl text-xs ${msg.sender === 'user' ? 'bg-[var(--alo-brand)] text-white rounded-tr-none' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-none'}`}>
                         {msg.text}
                       </div>
                       
                       {msg.reasoning && msg.reasoning.length > 0 && (
-                        <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-2.5 mt-1.5 w-full text-[10px] text-amber-800">
+                        <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-2.5 mt-1.5 w-full text-[11px] text-amber-800">
                           <div className="font-bold flex items-center gap-1 mb-1">
                             <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Reasoning steps:
                           </div>
@@ -405,13 +405,13 @@ export default function AICommandingCenter() {
                       )}
 
                       {msg.diff && (
-                        <div className="bg-slate-950 text-slate-200 font-mono text-[9px] p-2.5 rounded-xl mt-1.5 w-full border border-slate-800 overflow-x-auto whitespace-pre">
-                          <div className="font-bold text-slate-400 mb-1 border-b border-slate-800 pb-1">GIT DIFF PREVIEW</div>
+                        <div className="bg-[var(--alo-text)] text-[var(--alo-surface-muted)] font-mono text-[11px] p-2.5 rounded-xl mt-1.5 w-full border border-slate-800 overflow-x-auto whitespace-pre">
+                          <div className="font-bold text-[var(--alo-text-muted)] mb-1 border-b border-slate-800 pb-1">GIT DIFF PREVIEW</div>
                           {msg.diff}
                         </div>
                       )}
 
-                      <div className="text-[9px] text-slate-400 mt-0.5">{msg.timestamp}</div>
+                      <div className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">{msg.timestamp}</div>
                     </div>
                   ))}
                   <div ref={chatEndRef} />
@@ -420,7 +420,7 @@ export default function AICommandingCenter() {
             </CardContent>
 
             {/* Chat Input */}
-            <div className="p-3 border-t border-slate-100">
+            <div className="p-3 border-t border-[var(--alo-border)]">
               <form onSubmit={handleSubmitCommand} className="flex gap-2">
                 <Input
                   value={command}
@@ -440,9 +440,9 @@ export default function AICommandingCenter() {
         {/* RIGHT COLUMN: Change plan, controls, and stats (Span 3) */}
         <div className="lg:col-span-3 flex flex-col gap-4">
           {/* Change Plan Panel */}
-          <Card className="bg-white border-slate-200 shadow-2xs flex-1 flex flex-col">
-            <CardHeader className="p-4 pb-2 border-b border-slate-100">
-              <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <Card className="bg-white border-[var(--alo-border)] shadow-2xs flex-1 flex flex-col">
+            <CardHeader className="p-4 pb-2 border-b border-[var(--alo-border)]">
+              <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-indigo-500" /> Proposed Plan
               </CardTitle>
             </CardHeader>
@@ -451,94 +451,94 @@ export default function AICommandingCenter() {
                 <div className="space-y-3.5 flex-1 flex flex-col justify-between">
                   <div className="space-y-3">
                     <div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase">TITLE</div>
-                      <div className="text-xs font-extrabold text-slate-900">{currentPlan.title}</div>
+                      <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">TITLE</div>
+                      <div className="text-xs font-extrabold text-[var(--alo-text)]">{currentPlan.title}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase">AFFECTED FILES</div>
+                      <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">AFFECTED FILES</div>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {currentPlan.affectedFiles.map((f) => (
-                          <Badge key={f} variant="outline" className="text-[9px] font-mono bg-slate-50">{f}</Badge>
+                          <Badge key={f} variant="outline" className="text-[11px] font-mono bg-[var(--alo-page)]">{f}</Badge>
                         ))}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase">DB IMPACT</div>
-                        <div className="text-[10px] font-bold text-slate-800">{currentPlan.databaseImpact}</div>
+                        <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">DB IMPACT</div>
+                        <div className="text-[11px] font-bold text-[var(--alo-text)]">{currentPlan.databaseImpact}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase">API IMPACT</div>
-                        <div className="text-[10px] font-bold text-slate-800">{currentPlan.apiImpact}</div>
+                        <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">API IMPACT</div>
+                        <div className="text-[11px] font-bold text-[var(--alo-text)]">{currentPlan.apiImpact}</div>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase">SECURITY</div>
-                        <Badge className={`text-[9px] uppercase ${currentPlan.securityImpact === 'HIGH' ? 'bg-red-500' : 'bg-slate-500'}`}>{currentPlan.securityImpact}</Badge>
+                        <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">SECURITY</div>
+                        <Badge className={`text-[11px] uppercase ${currentPlan.securityImpact === 'HIGH' ? 'bg-red-500' : 'bg-slate-500'}`}>{currentPlan.securityImpact}</Badge>
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase">TESTS REQUIRED</div>
-                        <div className="text-[10px] font-medium text-slate-600">{currentPlan.testsRequired}</div>
+                        <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">TESTS REQUIRED</div>
+                        <div className="text-[11px] font-medium text-[var(--alo-body)]">{currentPlan.testsRequired}</div>
                       </div>
                     </div>
                     {currentPlan.isDestructive && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-start gap-1.5 text-[10px] text-red-800">
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-start gap-1.5 text-[11px] text-red-800">
                         <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
                         <span><strong>Destructive Operation:</strong> Always verify and backups schema before approving.</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="space-y-2 pt-4 border-t border-slate-100">
-                    <p className="text-[10px] text-slate-500">{SCHEMA_APPLY_DISABLED_MSG}</p>
-                    <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled className="w-full h-8 text-xs bg-slate-300 text-slate-600 font-bold" title={SCHEMA_APPLY_DISABLED_MSG}>
+                  <div className="space-y-2 pt-4 border-t border-[var(--alo-border)]">
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">{SCHEMA_APPLY_DISABLED_MSG}</p>
+                    <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled className="w-full h-8 text-xs bg-slate-300 text-[var(--alo-body)] font-bold" title={SCHEMA_APPLY_DISABLED_MSG}>
                       <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Apply disabled (preview only)
                     </Button>
-                    <Button onClick={handleRejectPlan} disabled={isExecuting} variant="outline" className="w-full h-8 text-xs border-slate-200 text-slate-600">
+                    <Button onClick={handleRejectPlan} disabled={isExecuting} variant="outline" className="w-full h-8 text-xs border-[var(--alo-border)] text-[var(--alo-body)]">
                       <XCircle className="w-3.5 h-3.5 mr-1" /> Discard Plan
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-400 p-4">
-                  <HelpCircle className="w-8 h-8 text-slate-300 mb-2" />
+                <div className="flex-1 flex flex-col items-center justify-center text-center text-[var(--alo-text-muted)] p-4">
+                  <HelpCircle className="w-8 h-8 text-[var(--alo-placeholder)] mb-2" />
                   <div className="text-xs font-bold">No active plan</div>
-                  <div className="text-[10px] mt-1">Submit a change command in chat to draft a code plan.</div>
+                  <div className="text-[11px] mt-1">Submit a change command in chat to draft a code plan.</div>
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Trusted Mode & Quick tools */}
-          <Card className="bg-white border-slate-200 shadow-2xs">
+          <Card className="bg-white border-[var(--alo-border)] shadow-2xs">
             <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+              <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center justify-between">
                 <span>Developer Settings</span>
-                <Badge variant="outline" className="text-[9px] bg-slate-50 text-indigo-600 border-indigo-200">Gates Active</Badge>
+                <Badge variant="outline" className="text-[11px] bg-[var(--alo-page)] text-indigo-600 border-indigo-200">Gates Active</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-1 space-y-3">
-              <div className="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+              <div className="flex items-center justify-between bg-[var(--alo-page)] p-2.5 rounded-xl border border-[var(--alo-border)]">
                 <div>
-                  <div className="text-[11px] font-bold text-slate-700">Trusted Dev Mode</div>
-                  <div className="text-[9px] text-slate-400">Unavailable: plans cannot be applied from here</div>
+                  <div className="text-[11px] font-bold text-[var(--alo-body)]">Trusted Dev Mode</div>
+                  <div className="text-[11px] text-[var(--alo-text-muted)]">Unavailable: plans cannot be applied from here</div>
                 </div>
                 <Switch checked={false} onCheckedChange={setTrustedMode} disabled />
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="h-8 text-[10px] bg-white border-slate-200 hover:bg-slate-50" onClick={() => runTerminalTool('run-lint')}>
+                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-lint')}>
                   Lint Check
                 </Button>
-                <Button variant="outline" size="sm" className="h-8 text-[10px] bg-white border-slate-200 hover:bg-slate-50" onClick={() => runTerminalTool('run-typecheck')}>
+                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-typecheck')}>
                   Typecheck
                 </Button>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="h-8 text-[10px] bg-white border-slate-200 hover:bg-slate-50" onClick={() => runTerminalTool('run-tests')}>
+                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-tests')}>
                   Run Vitest
                 </Button>
-                <Button variant="outline" size="sm" className="h-8 text-[10px] bg-white border-slate-200 hover:bg-slate-50" onClick={() => runTerminalTool('run-build')}>
+                <Button variant="outline" size="sm" className="h-8 text-[11px] bg-white border-[var(--alo-border)] hover:bg-[var(--alo-page)]" onClick={() => runTerminalTool('run-build')}>
                   Prod Build
                 </Button>
               </div>
@@ -549,28 +549,28 @@ export default function AICommandingCenter() {
       </div>
 
       {/* BOTTOM PANEL: Monospace Console & Status (Span 12) */}
-      <Card className="bg-slate-950 border-slate-800 text-slate-300 shadow-2xl overflow-hidden">
-        <CardHeader className="p-3 border-b border-slate-900 bg-slate-900/50 flex flex-row items-center justify-between">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-300">
+      <Card className="bg-[var(--alo-surface-muted)] border-[var(--alo-border)] text-[var(--alo-text-secondary)] shadow-[var(--alo-shadow-xs)] overflow-hidden">
+        <CardHeader className="p-3 border-b border-[var(--alo-border)] bg-[var(--alo-page)] flex flex-row items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--alo-placeholder)]">
             <Terminal className="w-4 h-4 text-orange-500 animate-pulse" /> Terminal Console Log
           </div>
           
           {/* Badge Quality Indicators */}
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-indigo-600 text-white font-mono text-[9px] flex items-center gap-1">
+            <Badge className="bg-indigo-600 text-white font-mono text-[11px] flex items-center gap-1">
               <ShieldCheck className="w-3 h-3" /> tsc: OK
             </Badge>
-            <Badge className="bg-emerald-600 text-white font-mono text-[9px] flex items-center gap-1">
+            <Badge className="bg-emerald-600 text-white font-mono text-[11px] flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> tests: 82/82
             </Badge>
-            <Badge className="bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[9px] flex items-center gap-1">
+            <Badge className="bg-slate-800 text-[var(--alo-placeholder)] border border-slate-700 font-mono text-[11px] flex items-center gap-1">
               <HardDrive className="w-3 h-3" /> SQLite: 47 Tables
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="p-4 font-mono text-xs">
           <ScrollArea className="h-32 bg-black/60 rounded-xl p-3 border border-slate-900">
-            <pre className="whitespace-pre overflow-x-auto text-[10px] text-emerald-400">
+            <pre className="whitespace-pre overflow-x-auto text-[11px] text-emerald-400">
               {terminalLogs}
             </pre>
             <div ref={terminalEndRef} />
@@ -587,12 +587,12 @@ function ExplorerItem({ name, isDir, active, onClick }: { name: string; isDir?: 
   return (
     <button
       onClick={() => onClick(name)}
-      className={`w-full text-left p-1 rounded-sm flex items-center gap-1.5 truncate ${active ? 'bg-slate-200 text-slate-900 font-bold' : 'text-slate-500 hover:bg-slate-100'}`}
+      className={`w-full text-left p-1 rounded-sm flex items-center gap-1.5 truncate ${active ? 'bg-slate-200 text-[var(--alo-text)] font-bold' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-surface-muted)]'}`}
     >
       {isDir ? (
-        <Layers className={`w-3.5 h-3.5 ${active ? 'text-slate-900' : 'text-slate-400'}`} />
+        <Layers className={`w-3.5 h-3.5 ${active ? 'text-[var(--alo-text)]' : 'text-[var(--alo-text-muted)]'}`} />
       ) : (
-        <FileText className={`w-3.5 h-3.5 ${active ? 'text-slate-900' : 'text-slate-400'}`} />
+        <FileText className={`w-3.5 h-3.5 ${active ? 'text-[var(--alo-text)]' : 'text-[var(--alo-text-muted)]'}`} />
       )}
       <span className="truncate">{name}</span>
     </button>

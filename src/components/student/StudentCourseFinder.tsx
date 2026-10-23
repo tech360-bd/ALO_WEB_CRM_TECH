@@ -78,7 +78,7 @@ const LABEL_STYLE: Record<string, string> = {
   'Likely Eligible': 'bg-blue-50 text-blue-700 border-blue-100',
   'Need Review': 'bg-amber-50 text-amber-700 border-amber-200',
   'Not Eligible': 'bg-red-50 text-red-700 border-red-200',
-  'Missing Information': 'bg-slate-50 text-slate-600 border-slate-200',
+  'Missing Information': 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
 function parseNumber(value: string): number | null {
@@ -188,12 +188,12 @@ export default function StudentCourseFinder() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm sm:p-8">
-        <Badge className="mb-3 border-[#0057B8]/20 bg-[#0057B8]/10 text-xs text-[#0057B8]">
+      <div className="rounded-3xl border border-[var(--alo-border)] bg-white p-6 shadow-sm sm:p-8">
+        <Badge className="mb-3 border-[var(--alo-brand)]/20 bg-[var(--alo-brand)]/10 text-xs text-[var(--alo-brand)]">
           Same catalogue as the public finder · scored against your own profile
         </Badge>
-        <h1 className="mb-2 text-2xl font-bold text-[#0F172A] sm:text-3xl">Find courses</h1>
-        <p className="max-w-3xl text-sm text-slate-600">
+        <h1 className="mb-2 text-2xl font-bold text-[var(--alo-text)] sm:text-3xl">Find courses</h1>
+        <p className="max-w-3xl text-sm text-[var(--alo-body)]">
           Results come from the live course database. Eligibility is calculated from the details you
           enter below — nationality, qualification, GPA, English test and score, budget and
           preferences. Labels are Eligible, Likely Eligible, Need Review, Not Eligible and Missing
@@ -218,7 +218,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. Bachelor"
               value={profile.highestQualification}
               onChange={(e) => setProfile({ ...profile, highestQualification: e.target.value })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -228,7 +228,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. 3.2"
               value={profile.gpa ?? ''}
               onChange={(e) => setProfile({ ...profile, gpa: parseNumber(e.target.value) })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -238,7 +238,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. IELTS"
               value={profile.englishTest}
               onChange={(e) => setProfile({ ...profile, englishTest: e.target.value })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -248,7 +248,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. 6.5"
               value={profile.englishScore ?? ''}
               onChange={(e) => setProfile({ ...profile, englishScore: parseNumber(e.target.value) })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. United Kingdom"
               value={profile.preferredCountry}
               onChange={(e) => setProfile({ ...profile, preferredCountry: e.target.value })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -271,7 +271,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. Business"
               value={profile.preferredSubject}
               onChange={(e) => setProfile({ ...profile, preferredSubject: e.target.value })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -281,7 +281,7 @@ export default function StudentCourseFinder() {
               placeholder="e.g. 20000"
               value={profile.budgetMax ?? ''}
               onChange={(e) => setProfile({ ...profile, budgetMax: parseNumber(e.target.value) })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
           <div className="space-y-1.5">
@@ -291,25 +291,25 @@ export default function StudentCourseFinder() {
               placeholder="e.g. Bangladeshi"
               value={profile.nationality}
               onChange={(e) => setProfile({ ...profile, nationality: e.target.value })}
-              className="h-10 border-[#E2E8F0] bg-white text-sm"
+              className="h-10 border-[var(--alo-border)] bg-white text-sm"
             />
           </div>
         </div>
       </div>
 
-      <Card className="rounded-2xl border-[#E2E8F0] bg-white p-4 shadow-sm">
+      <Card className="rounded-2xl border-[var(--alo-border)] bg-white p-4 shadow-sm">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
             <Input
               placeholder="Search the live course catalogue…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-11 border-[#E2E8F0] bg-white pl-9"
+              className="h-11 border-[var(--alo-border)] bg-white pl-9"
               aria-label="Search courses"
             />
           </div>
-          <Button onClick={() => void fetchCourses()} className="h-11 bg-[#0057B8] text-white">
+          <Button onClick={() => void fetchCourses()} className="h-11 bg-[var(--alo-brand)] text-white">
             Search
           </Button>
         </div>
@@ -318,9 +318,9 @@ export default function StudentCourseFinder() {
       {loadError && (
         <Card className="rounded-2xl border-2 border-amber-200 bg-white p-10 text-center">
           <AlertTriangle className="mx-auto mb-3 size-10 text-amber-500" />
-          <p className="text-sm font-semibold text-slate-800">Course search unavailable</p>
-          <p className="mx-auto mt-1 max-w-md text-xs text-slate-500">{loadError}</p>
-          <p className="mx-auto mt-2 max-w-md text-[11px] text-slate-400">
+          <p className="text-sm font-semibold text-[var(--alo-text)]">Course search unavailable</p>
+          <p className="mx-auto mt-1 max-w-md text-xs text-[var(--alo-text-muted)]">{loadError}</p>
+          <p className="mx-auto mt-2 max-w-md text-[11px] text-[var(--alo-text-muted)]">
             No results are being shown because the catalogue could not be reached — this is not an
             empty result set.
           </p>
@@ -334,18 +334,18 @@ export default function StudentCourseFinder() {
       {!loadError && loading && (
         <div className="grid gap-4 sm:grid-cols-2">
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl border border-[#E2E8F0] bg-white" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl border border-[var(--alo-border)] bg-white" />
           ))}
         </div>
       )}
 
       {!loadError && !loading && courses.length === 0 && (
-        <Card className="rounded-2xl border-[#E2E8F0] bg-white p-12 text-center">
-          <Search className="mx-auto mb-3 size-12 text-slate-300" />
-          <p className="text-sm text-slate-600">
+        <Card className="rounded-2xl border-[var(--alo-border)] bg-white p-12 text-center">
+          <Search className="mx-auto mb-3 size-12 text-[var(--alo-placeholder)]" />
+          <p className="text-sm text-[var(--alo-body)]">
             No published courses match your current filters.
           </p>
-          <p className="mx-auto mt-1 max-w-md text-[11px] text-slate-400">
+          <p className="mx-auto mt-1 max-w-md text-[11px] text-[var(--alo-text-muted)]">
             Only published, verified courses with a public university are listed, so a course that is
             still being verified will not appear here.
           </p>
@@ -354,7 +354,7 @@ export default function StudentCourseFinder() {
 
       {!loadError && !loading && courses.length > 0 && (
         <>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[var(--alo-text-muted)]">
             {courses.length} course{courses.length === 1 ? '' : 's'} from the live catalogue
             {hasProfile ? ' · scored against your profile' : ' · enter your profile to see eligibility'}
           </p>
@@ -372,40 +372,40 @@ export default function StudentCourseFinder() {
               return (
                 <Card
                   key={courseId}
-                  className="flex h-full flex-col justify-between rounded-2xl border-[#E2E8F0] bg-white p-5 transition-all hover:border-[#0057B8] hover:shadow-md"
+                  className="flex h-full flex-col justify-between rounded-2xl border-[var(--alo-border)] bg-white p-5 transition-all hover:border-[var(--alo-brand)] hover:shadow-md"
                 >
                   <div>
                     <div className="mb-2 flex flex-wrap items-center justify-between gap-1.5">
                       {eligibility ? (
-                        <Badge className={`text-[10px] ${LABEL_STYLE[eligibility.label] ?? LABEL_STYLE['Missing Information']}`}>
+                        <Badge className={`text-[11px] ${LABEL_STYLE[eligibility.label] ?? LABEL_STYLE['Missing Information']}`}>
                           {eligibility.label} — {eligibility.score}%
                         </Badge>
                       ) : (
-                        <Badge className={`text-[10px] ${LABEL_STYLE['Missing Information']}`}>
+                        <Badge className={`text-[11px] ${LABEL_STYLE['Missing Information']}`}>
                           Missing Information
                         </Badge>
                       )}
                       {matchScore !== null ? (
-                        <Badge className="border-[#E2E8F0] bg-[#F8FAFC] text-[10px]">
+                        <Badge className="border-[var(--alo-border)] bg-[var(--alo-page)] text-[11px]">
                           Match {matchScore}%
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-[10px] text-slate-400">
+                        <Badge variant="outline" className="text-[11px] text-[var(--alo-text-muted)]">
                           match needs profile
                         </Badge>
                       )}
                     </div>
 
-                    <h3 className="mb-1 line-clamp-2 text-sm font-bold text-[#0F172A]">
+                    <h3 className="mb-1 line-clamp-2 text-sm font-bold text-[var(--alo-text)]">
                       {String(c.courseTitle ?? c.name ?? 'Untitled course')}
                     </h3>
-                    <p className="mb-2 flex items-center gap-1 text-xs text-slate-600">
+                    <p className="mb-2 flex items-center gap-1 text-xs text-[var(--alo-body)]">
                       <MapPin className="size-3" />
                       {String(c.university?.name ?? c.universityName ?? 'University not recorded')}
                       {c.country ? ` • ${String(c.country)}` : ''}
                     </p>
 
-                    <div className="space-y-1 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 text-[11px]">
+                    <div className="space-y-1 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-[11px]">
                       {eligibility ? (
                         <>
                           <p>
@@ -420,7 +420,7 @@ export default function StudentCourseFinder() {
                           )}
                         </>
                       ) : (
-                        <p className="text-slate-600">
+                        <p className="text-[var(--alo-body)]">
                           <strong className="font-semibold">Eligibility:</strong> not calculated —
                           enter your qualification, GPA or English score above.
                         </p>
@@ -441,23 +441,23 @@ export default function StudentCourseFinder() {
 
                   <div className="mt-4 space-y-2">
                     <Link href={`/student/course/${courseId}`} className="block">
-                      <Button className="h-11 w-full bg-[#0057B8] text-xs font-bold text-white">
+                      <Button className="h-11 w-full bg-[var(--alo-brand)] text-xs font-bold text-white">
                         View course + eligibility
                       </Button>
                     </Link>
                     <div className="grid grid-cols-3 gap-2">
-                      <Button variant="outline" size="sm" className="h-9 border-[#E2E8F0] text-[11px]">
+                      <Button variant="outline" size="sm" className="h-9 border-[var(--alo-border)] text-[11px]">
                         <BookmarkPlus className="mr-1 size-3" />
                         Save
                       </Button>
                       <Link href="/student/compare">
-                        <Button variant="outline" size="sm" className="h-9 w-full border-[#E2E8F0] text-[11px]">
+                        <Button variant="outline" size="sm" className="h-9 w-full border-[var(--alo-border)] text-[11px]">
                           <GitCompare className="mr-1 size-3" />
                           Compare
                         </Button>
                       </Link>
                       <Link href={`/student/apply/${courseId}`}>
-                        <Button variant="outline" size="sm" className="h-9 w-full border-[#E2E8F0] text-[11px]">
+                        <Button variant="outline" size="sm" className="h-9 w-full border-[var(--alo-border)] text-[11px]">
                           <Send className="mr-1 size-3" />
                           Apply
                         </Button>
@@ -469,7 +469,7 @@ export default function StudentCourseFinder() {
             })}
           </div>
 
-          <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
+          <p className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-[11px] text-[var(--alo-body)]">
             Eligibility and match scores are operational guidance calculated from the requirements
             recorded in ALO&apos;s catalogue and the profile you entered. They are not an admission
             decision, not a visa assessment, and not a guarantee. Final requirements are set by the

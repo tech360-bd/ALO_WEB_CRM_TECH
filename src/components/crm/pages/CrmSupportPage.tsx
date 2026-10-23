@@ -33,7 +33,7 @@ const statusColors: Record<TicketStatus, string> = {
   'Open': 'bg-blue-100 text-blue-700',
   'In Progress': 'bg-amber-100 text-amber-700',
   'Resolved': 'bg-emerald-100 text-emerald-700',
-  'Closed': 'bg-gray-100 text-gray-600',
+  'Closed': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 const priorityColors: Record<TicketPriority, string> = {
@@ -181,7 +181,7 @@ export default function CrmSupportPage() {
                 </thead>
                 <tbody>
                   {filtered.map(ticket => (
-                    <tr key={ticket.id} className="border-b border-alo-border/50 hover:bg-gray-50 transition-colors">
+                    <tr key={ticket.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)] transition-colors">
                       <td className="py-3 font-mono text-xs text-alo-text-muted">{ticket.id}</td>
                       <td className="py-3">
                         <div>

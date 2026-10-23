@@ -13,7 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  SCHEDULED: "bg-[#EAF3FF] text-[#0057B8]",
+  SCHEDULED: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
   CANCELLED: "bg-rose-100 text-rose-700",
   NO_SHOW: "bg-amber-100 text-amber-700",
@@ -61,7 +61,7 @@ export function CrmAppointments() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : appointments.length === 0 ? (
         <EmptyState
           icon="CalendarDays"
@@ -100,7 +100,7 @@ export function CrmAppointments() {
           {/* Upcoming */}
           {upcoming.length > 0 && (
             <div>
-              <h3 className="mb-3 text-lg font-bold text-[#0B2447]">
+              <h3 className="mb-3 text-lg font-bold text-[var(--alo-text)]">
                 Upcoming Appointments
               </h3>
               <div className="space-y-4">
@@ -113,14 +113,14 @@ export function CrmAppointments() {
                         <div
                           className={`flex size-9 items-center justify-center rounded-lg text-sm font-bold ${
                             isToday
-                              ? "bg-[#E8501A] text-white"
-                              : "bg-[#EAF3FF] text-[#0057B8]"
+                              ? "bg-[var(--alo-cta)] text-white"
+                              : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                           }`}
                         >
                           {d.getDate()}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-[#0B2447]">
+                          <p className="text-sm font-semibold text-[var(--alo-text)]">
                             {d.toLocaleDateString("en-GB", {
                               weekday: "long",
                               day: "2-digit",
@@ -129,7 +129,7 @@ export function CrmAppointments() {
                             })}
                           </p>
                           {isToday && (
-                            <p className="text-xs font-medium text-[#E8501A]">Today</p>
+                            <p className="text-xs font-medium text-[var(--alo-cta)]">Today</p>
                           )}
                         </div>
                       </div>
@@ -137,13 +137,13 @@ export function CrmAppointments() {
                         {list.map((a) => (
                           <Card
                             key={a.id}
-                            className="rounded-2xl border border-[#DCE8F5] bg-white"
+                            className="rounded-2xl border border-[var(--alo-brand-border)] bg-white"
                           >
                             <CardContent className="p-4">
                               <div className="flex items-start justify-between">
                                 <div>
-                                  <p className="font-semibold text-[#0B2447]">{a.title}</p>
-                                  <p className="text-xs text-[#5A7299]">
+                                  <p className="font-semibold text-[var(--alo-text)]">{a.title}</p>
+                                  <p className="text-xs text-[var(--alo-text-muted)]">
                                     {new Date(a.scheduledAt).toLocaleTimeString("en-GB", {
                                       hour: "2-digit",
                                       minute: "2-digit",
@@ -156,11 +156,11 @@ export function CrmAppointments() {
                                 </Badge>
                               </div>
                               <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                                <Badge variant="outline" className="text-[#0057B8]">
+                                <Badge variant="outline" className="text-[var(--alo-brand)]">
                                   {TYPE_LABELS[a.type] || a.type}
                                 </Badge>
                                 {a.location && (
-                                  <span className="text-[#5A7299]">
+                                  <span className="text-[var(--alo-text-muted)]">
                                     <Icon
                                       name={a.location === "online" ? "Video" : "MapPin"}
                                       className="mr-1 inline size-3"
@@ -170,7 +170,7 @@ export function CrmAppointments() {
                                 )}
                               </div>
                               {a.notes && (
-                                <p className="mt-2 line-clamp-2 text-xs text-[#5A7299]">
+                                <p className="mt-2 line-clamp-2 text-xs text-[var(--alo-text-muted)]">
                                   {a.notes}
                                 </p>
                               )}
@@ -188,12 +188,12 @@ export function CrmAppointments() {
           {/* Past */}
           {past.length > 0 && (
             <div>
-              <h3 className="mb-3 text-lg font-bold text-[#0B2447]">Past Appointments</h3>
-              <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+              <h3 className="mb-3 text-lg font-bold text-[var(--alo-text)]">Past Appointments</h3>
+              <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="bg-[#F7FAFE] text-left text-[#5A7299]">
+                      <thead className="bg-[var(--alo-page)] text-left text-[var(--alo-text-muted)]">
                         <tr>
                           <th className="px-5 py-3 font-medium">Title</th>
                           <th className="px-5 py-3 font-medium">Type</th>
@@ -202,23 +202,23 @@ export function CrmAppointments() {
                           <th className="px-5 py-3 font-medium">Status</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#DCE8F5]">
+                      <tbody className="divide-y divide-[var(--alo-brand-border)]">
                         {past.slice(0, 15).map((a) => (
-                          <tr key={a.id} className="hover:bg-[#F7FAFE]">
-                            <td className="px-5 py-3 font-medium text-[#0B2447]">{a.title}</td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                          <tr key={a.id} className="hover:bg-[var(--alo-page)]">
+                            <td className="px-5 py-3 font-medium text-[var(--alo-text)]">{a.title}</td>
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {TYPE_LABELS[a.type] || a.type}
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {new Date(a.scheduledAt).toLocaleDateString("en-GB", {
                                 day: "2-digit",
                                 month: "short",
                                 year: "numeric",
                               })}
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">{a.location || "—"}</td>
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">{a.location || "—"}</td>
                             <td className="px-5 py-3">
-                              <Badge className={STATUS_COLORS[a.status] || "bg-slate-100"}>
+                              <Badge className={STATUS_COLORS[a.status] || "bg-[var(--alo-surface-muted)]"}>
                                 {a.status}
                               </Badge>
                             </td>

@@ -388,8 +388,8 @@ function SectionHeader({
 }) {
   return (
     <div className={cn("max-w-3xl", align === "center" ? "mx-auto text-center" : "text-left")}>
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#E8501A]">{label}</p>
-      <h2 className="mt-2 text-3xl font-black text-[#0057B8] sm:text-4xl">{title}</h2>
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--alo-cta)]">{label}</p>
+      <h2 className="mt-2 text-3xl font-black text-[var(--alo-brand)] sm:text-4xl">{title}</h2>
       {subtitle && <p className="mt-3 text-sm text-muted-foreground sm:text-base">{subtitle}</p>}
     </div>
   );
@@ -512,9 +512,9 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
     return (
       <div className="mx-auto max-w-[1280px] px-4 py-16 lg:px-6">
         <div className="space-y-4">
-          <div className="h-64 rounded-2xl bg-[#F8FAFC]" />
+          <div className="h-64 rounded-2xl bg-[var(--alo-page)]" />
           <LoadingGrid count={4} />
-          <div className="h-48 rounded-2xl bg-[#F8FAFC]" />
+          <div className="h-48 rounded-2xl bg-[var(--alo-page)]" />
         </div>
       </div>
     );
@@ -541,8 +541,8 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       >
         {/* Decorative soft background */}
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute -left-32 -top-32 size-96 rounded-full bg-[#e8f0fb]/60 blur-3xl" />
-          <div className="absolute -right-32 top-20 size-96 rounded-full bg-[#fdece4]/50 blur-3xl" />
+          <div className="absolute -left-32 -top-32 size-96 rounded-full bg-[var(--alo-brand-light)]/60 blur-3xl" />
+          <div className="absolute -right-32 top-20 size-96 rounded-full bg-[var(--alo-cta-soft)]/50 blur-3xl" />
         </div>
 
         <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6 lg:py-16">
@@ -550,18 +550,18 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
             {/* ─── LEFT ─── */}
             <div>
               {/* Badge with animated pulse dot */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#E8501A]/30 bg-[#fdece4]/60 px-3.5 py-1.5">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/60 px-3.5 py-1.5">
                 <span className="relative flex size-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E8501A] opacity-75" />
-                  <span className="relative inline-flex size-2.5 rounded-full bg-[#E8501A]" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--alo-cta)] opacity-75" />
+                  <span className="relative inline-flex size-2.5 rounded-full bg-[var(--alo-cta)]" />
                 </span>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Your Future Starts Here</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">Your Future Starts Here</span>
               </div>
 
               {/* H1 — dynamic country */}
-              <h1 className="mt-5 text-4xl font-black leading-[1.05] text-[#0F172A] sm:text-5xl lg:text-6xl">
+              <h1 className="mt-5 text-4xl font-black leading-[1.05] text-[var(--alo-text)] sm:text-5xl lg:text-6xl">
                 Study Abroad in the{" "}
-                <span key={`country-${safeIndex}`} className="inline-block animate-in fade-in slide-in-from-bottom-2 duration-700 text-[#0057B8]">
+                <span key={`country-${safeIndex}`} className="inline-block animate-in fade-in slide-in-from-bottom-2 duration-700 text-[var(--alo-brand)]">
                   {slideCountry?.name || "World"}
                 </span>
               </h1>
@@ -575,7 +575,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button
                   onClick={handleConsult}
-                  className="h-12 bg-[#E8501A] px-5 text-white hover:bg-[#E8501A]/90"
+                  className="h-12 bg-[var(--alo-cta)] px-5 text-black hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="CalendarCheck" className="size-4" />
                   Book Free Consultation
@@ -583,7 +583,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 <Button
                   onClick={handleFindCourses}
                   variant="outline"
-                  className="h-12 border-[#0057B8] px-5 text-[#0057B8] hover:bg-[#e8f0fb]"
+                  className="h-12 border-[var(--alo-brand)] px-5 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 >
                   <Icon name="Search" className="size-4" />
                   Find Courses
@@ -591,7 +591,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 <Button
                   onClick={handleEligibility}
                   variant="ghost"
-                  className="h-12 px-4 text-[#0057B8] hover:bg-[#e8f0fb]"
+                  className="h-12 px-4 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 >
                   <Icon name="ClipboardCheck" className="size-4" />
                   Check Eligibility
@@ -614,11 +614,11 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   { icon: "BookOpen", value: stats.totalCourses, label: "Courses" },
                   { icon: "GraduationCap", value: stats.totalExams, label: "English Tests" },
                 ].map((s) => (
-                  <div key={s.label} className="rounded-2xl border-2 border-[#E2E8F0] bg-white p-3.5">
-                    <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                  <div key={s.label} className="rounded-2xl border-2 border-[var(--alo-border)] bg-white p-3.5">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name={s.icon} className="size-4" />
                     </div>
-                    <p className="mt-2.5 text-2xl font-black tabular-nums text-[#0F172A]">{s.value}</p>
+                    <p className="mt-2.5 text-2xl font-black tabular-nums text-[var(--alo-text)]">{s.value}</p>
                     <p className="text-xs font-medium text-muted-foreground">{s.label}</p>
                   </div>
                 ))}
@@ -636,7 +636,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         aria-label={`Switch to ${s.country?.name || s.countrySlug}`}
                         className={cn(
                           "h-2.5 rounded-full transition-all",
-                          i === safeIndex ? "w-7 bg-[#0057B8]" : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                          i === safeIndex ? "w-7 bg-[var(--alo-brand)]" : "w-2.5 bg-slate-300 hover:bg-slate-400"
                         )}
                       />
                     ))}
@@ -652,7 +652,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   key={`card-${safeIndex}`}
                   className="relative animate-in fade-in slide-in-from-bottom-3 duration-700"
                 >
-                  <Card className="overflow-hidden rounded-3xl border-2 border-[#E2E8F0] bg-white">
+                  <Card className="overflow-hidden rounded-3xl border-2 border-[var(--alo-border)] bg-white">
                     {/* Top color band */}
                     <div
                       className="h-28 w-full"
@@ -664,7 +664,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         <div className="flex size-24 items-center justify-center rounded-2xl border-4 border-white bg-white text-6xl shadow-lg">
                           {slideCountry?.flag || "🌍"}
                         </div>
-                        <Badge variant="outline" className="mb-1 border-[#0057B8]/20 bg-[#e8f0fb]/60 text-[#0057B8]">
+                        <Badge variant="outline" className="mb-1 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/60 text-[var(--alo-brand)]">
                           <Icon name="ShieldCheck" className="mr-1 size-3" />
                           Last verified: {safeSlide.lastVerifiedAt ? fmtDate(safeSlide.lastVerifiedAt) : "Jan 2025"}
                         </Badge>
@@ -672,37 +672,37 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
                       {/* Name + capital */}
                       <div className="mt-4">
-                        <h3 className="text-2xl font-black text-[#0F172A]">{slideCountry?.name || "Your Destination"}</h3>
+                        <h3 className="text-2xl font-black text-[var(--alo-text)]">{slideCountry?.name || "Your Destination"}</h3>
                         <p className="mt-0.5 text-sm text-muted-foreground">
-                          Capital: <span className="font-semibold text-[#0F172A]">{slideCountry?.capital || "—"}</span>
+                          Capital: <span className="font-semibold text-[var(--alo-text)]">{slideCountry?.capital || "—"}</span>
                         </p>
                       </div>
 
                       {/* Stats grid */}
                       <div className="mt-5 grid grid-cols-2 gap-3">
-                        <div className="rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3">
-                          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Popular City</p>
-                          <p className="mt-1 text-sm font-bold text-[#0057B8]">{safeSlide.popularCity || "—"}</p>
+                        <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Popular City</p>
+                          <p className="mt-1 text-sm font-bold text-[var(--alo-brand)]">{safeSlide.popularCity || "—"}</p>
                         </div>
-                        <div className="rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3">
-                          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Popular Intake</p>
-                          <p className="mt-1 text-sm font-bold text-[#0057B8]">{safeSlide.popularIntake || "—"}</p>
+                        <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Popular Intake</p>
+                          <p className="mt-1 text-sm font-bold text-[var(--alo-brand)]">{safeSlide.popularIntake || "—"}</p>
                         </div>
-                        <div className="rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3">
-                          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Universities</p>
-                          <p className="mt-1 text-sm font-bold text-[#0057B8]">{safeSlide.universityCountLabel || "—"}</p>
+                        <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Universities</p>
+                          <p className="mt-1 text-sm font-bold text-[var(--alo-brand)]">{safeSlide.universityCountLabel || "—"}</p>
                         </div>
-                        <div className="rounded-xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3">
-                          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Courses</p>
-                          <p className="mt-1 text-sm font-bold text-[#0057B8]">{safeSlide.courseCountLabel || "—"}</p>
+                        <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Courses</p>
+                          <p className="mt-1 text-sm font-bold text-[var(--alo-brand)]">{safeSlide.courseCountLabel || "—"}</p>
                         </div>
                       </div>
 
                       {/* Scholarship label */}
                       {safeSlide.scholarshipLabel && (
-                        <div className="mt-3 flex items-center gap-2 rounded-xl border-2 border-[#E8501A]/30 bg-[#fdece4]/40 p-3">
-                          <Icon name="Award" className="size-4 text-[#E8501A]" />
-                          <p className="text-xs font-semibold text-[#E8501A]">{safeSlide.scholarshipLabel}</p>
+                        <div className="mt-3 flex items-center gap-2 rounded-xl border-2 border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/40 p-3">
+                          <Icon name="Award" className="size-4 text-[var(--alo-cta)]" />
+                          <p className="text-xs font-semibold text-[var(--alo-cta)]">{safeSlide.scholarshipLabel}</p>
                         </div>
                       )}
                     </CardContent>
@@ -710,10 +710,10 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
                   {/* Floating quick facts card */}
                   {factEntries.length > 0 && (
-                    <div className="absolute -bottom-6 -left-6 hidden w-56 rounded-2xl border-2 border-[#E2E8F0] bg-white p-4 shadow-xl sm:block">
+                    <div className="absolute -bottom-6 -left-6 hidden w-56 rounded-2xl border-2 border-[var(--alo-border)] bg-white p-4 shadow-xl sm:block">
                       <div className="flex items-center gap-2">
-                        <Icon name="Sparkles" className="size-4 text-[#E8501A]" />
-                        <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Quick Facts</p>
+                        <Icon name="Sparkles" className="size-4 text-[var(--alo-cta)]" />
+                        <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">Quick Facts</p>
                       </div>
                       <ul className="mt-2 space-y-1.5">
                         {factEntries.map(([k, v]) => (
@@ -721,7 +721,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                             <span className="font-medium capitalize text-muted-foreground">
                               {k.replace(/([A-Z])/g, " $1").trim()}:
                             </span>
-                            <span className="text-right font-semibold text-[#0F172A]">
+                            <span className="text-right font-semibold text-[var(--alo-text)]">
                               {Array.isArray(v) ? v.slice(0, 2).join(", ") : String(v)}
                             </span>
                           </li>
@@ -731,9 +731,9 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   )}
                 </div>
               ) : (
-                <Card className="rounded-3xl border-2 border-[#E2E8F0]">
+                <Card className="rounded-3xl border-2 border-[var(--alo-border)]">
                   <CardContent className="p-10 text-center">
-                    <Icon name="Globe" className="mx-auto size-12 text-[#0057B8]/40" />
+                    <Icon name="Globe" className="mx-auto size-12 text-[var(--alo-brand)]/40" />
                     <p className="mt-3 font-semibold text-muted-foreground">Hero slides will appear here.</p>
                   </CardContent>
                 </Card>
@@ -746,7 +746,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 3 — SMART COURSE FINDER SEARCH
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Smart Course Finder"
@@ -754,7 +754,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
             subtitle="Tell us your country, level, subject, intake, budget, and English score — we'll match courses from 1000+ published programs."
           />
 
-          <Card className="mt-8 rounded-2xl border-2 border-[#E2E8F0] bg-white">
+          <Card className="mt-8 rounded-2xl border-2 border-[var(--alo-border)] bg-white">
             <CardContent className="p-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div>
@@ -816,11 +816,11 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button onClick={handleSearch} className="h-12 flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+                <Button onClick={handleSearch} className="h-12 flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
                   <Icon name="Search" className="size-4" />
                   Find Courses
                 </Button>
-                <Button onClick={handleAIMatch} variant="outline" className="h-12 flex-1 border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
+                <Button onClick={handleAIMatch} variant="outline" className="h-12 flex-1 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                   <Icon name="Sparkles" className="size-4" />
                   AI Course Match
                 </Button>
@@ -845,14 +845,14 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
             {heroSlides.slice(0, 7).map((slide) => {
               const facts = safeParse<Record<string, any>>(slide.country?.quickFacts, {});
               return (
-                <Card key={slide.countrySlug} className="flex h-full flex-col rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-lg">
+                <Card key={slide.countrySlug} className="flex h-full flex-col rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-lg">
                   <CardContent className="flex h-full flex-col p-5">
                     {/* Header */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-4xl">{slide.country?.flag || "🌍"}</span>
                         <div>
-                          <h3 className="text-lg font-black text-[#0F172A]">{slide.country?.name}</h3>
+                          <h3 className="text-lg font-black text-[var(--alo-text)]">{slide.country?.name}</h3>
                           <p className="text-xs text-muted-foreground">Capital: {slide.country?.capital || "—"}</p>
                         </div>
                       </div>
@@ -860,36 +860,36 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
                     {/* Body */}
                     <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                      <div className="rounded-lg bg-[#F8FAFC] p-2">
+                      <div className="rounded-lg bg-[var(--alo-page)] p-2">
                         <p className="font-semibold text-muted-foreground">Popular city</p>
-                        <p className="font-bold text-[#0057B8]">{slide.popularCity || "—"}</p>
+                        <p className="font-bold text-[var(--alo-brand)]">{slide.popularCity || "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[#F8FAFC] p-2">
+                      <div className="rounded-lg bg-[var(--alo-page)] p-2">
                         <p className="font-semibold text-muted-foreground">Popular intake</p>
-                        <p className="font-bold text-[#0057B8]">{slide.popularIntake || "—"}</p>
+                        <p className="font-bold text-[var(--alo-brand)]">{slide.popularIntake || "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[#F8FAFC] p-2">
+                      <div className="rounded-lg bg-[var(--alo-page)] p-2">
                         <p className="font-semibold text-muted-foreground">Universities</p>
-                        <p className="font-bold text-[#0057B8]">{slide.universityCountLabel || "—"}</p>
+                        <p className="font-bold text-[var(--alo-brand)]">{slide.universityCountLabel || "—"}</p>
                       </div>
-                      <div className="rounded-lg bg-[#F8FAFC] p-2">
+                      <div className="rounded-lg bg-[var(--alo-page)] p-2">
                         <p className="font-semibold text-muted-foreground">Courses</p>
-                        <p className="font-bold text-[#0057B8]">{slide.courseCountLabel || "—"}</p>
+                        <p className="font-bold text-[var(--alo-brand)]">{slide.courseCountLabel || "—"}</p>
                       </div>
                     </div>
 
                     {/* Extra details */}
                     <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
                       {Array.isArray(facts.studyLevels) && facts.studyLevels.length > 0 && (
-                        <p><span className="font-semibold text-[#0F172A]">Levels:</span> {facts.studyLevels.join(", ")}</p>
+                        <p><span className="font-semibold text-[var(--alo-text)]">Levels:</span> {facts.studyLevels.join(", ")}</p>
                       )}
                       {facts.visaType && (
-                        <p><span className="font-semibold text-[#0F172A]">Visa:</span> {facts.visaType}</p>
+                        <p><span className="font-semibold text-[var(--alo-text)]">Visa:</span> {facts.visaType}</p>
                       )}
                       {slide.scholarshipLabel && (
-                        <p className="flex items-center gap-1"><Icon name="Award" className="size-3 text-[#E8501A]" /><span className="font-semibold text-[#E8501A]">{slide.scholarshipLabel}</span></p>
+                        <p className="flex items-center gap-1"><Icon name="Award" className="size-3 text-[var(--alo-cta)]" /><span className="font-semibold text-[var(--alo-cta)]">{slide.scholarshipLabel}</span></p>
                       )}
-                      <p className="text-[10px]">Last verified: {slide.lastVerifiedAt ? fmtDate(slide.lastVerifiedAt) : "—"}</p>
+                      <p className="text-[11px]">Last verified: {slide.lastVerifiedAt ? fmtDate(slide.lastVerifiedAt) : "—"}</p>
                     </div>
 
                     {/* Actions */}
@@ -897,13 +897,13 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                       <Button
                         onClick={() => handleViewCountry(slide.countrySlug)}
                         variant="outline"
-                        className="h-10 w-full border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
+                        className="h-10 w-full border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                       >
                         View Country Guide
                       </Button>
                       <Button
                         onClick={handleFindCourses}
-                        className="h-10 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                        className="h-10 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
                       >
                         Find Courses
                       </Button>
@@ -915,7 +915,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </div>
 
           <div className="mt-8 text-center">
-            <Button onClick={() => onNavigate("public-destinations")} variant="outline" className="h-12 border-[#0057B8] px-6 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("public-destinations")} variant="outline" className="h-12 border-[var(--alo-brand)] px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               View All Destinations
               <Icon name="ArrowRight" className="size-4" />
             </Button>
@@ -926,7 +926,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 5 — ABOUT ALO EDUCATION
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
             <div>
@@ -938,22 +938,22 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               />
               <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
                 <p>
-                  ALO Education was founded in <span className="font-semibold text-[#0F172A]">February 2023</span> by <span className="font-semibold text-[#0F172A]">Taslima Akter</span> with a single mission — to give Bangladeshi students an honest, technology-driven pathway to study abroad. We started in <span className="font-semibold text-[#0F172A]">Dhaka</span> and remain rooted in the realities of Bangladeshi academic, financial, and family contexts.
+                  ALO Education was founded in <span className="font-semibold text-[var(--alo-text)]">February 2023</span> by <span className="font-semibold text-[var(--alo-text)]">Taslima Akter</span> with a single mission — to give Bangladeshi students an honest, technology-driven pathway to study abroad. We started in <span className="font-semibold text-[var(--alo-text)]">Dhaka</span> and remain rooted in the realities of Bangladeshi academic, financial, and family contexts.
                 </p>
                 <p>
-                  Our process is <span className="font-semibold text-[#0F172A]">transparent</span> — clear fees, clear timelines, clear next steps. Every student gets a <span className="font-semibold text-[#0F172A]">student portal</span> to track profile, documents, applications, and visa stages in real time.
+                  Our process is <span className="font-semibold text-[var(--alo-text)]">transparent</span> — clear fees, clear timelines, clear next steps. Every student gets a <span className="font-semibold text-[var(--alo-text)]">student portal</span> to track profile, documents, applications, and visa stages in real time.
                 </p>
                 <p>
-                  Quick questions? Reach us on <span className="font-semibold text-[#0F172A]">WhatsApp at 01805020101</span> during working hours. We answer in Bangla or English — your choice.
+                  Quick questions? Reach us on <span className="font-semibold text-[var(--alo-text)]">WhatsApp at 01805020101</span> during working hours. We answer in Bangla or English — your choice.
                 </p>
               </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-destinations")} variant="outline" className="h-12 border-[#0057B8] px-5 text-[#0057B8] hover:bg-[#e8f0fb]">
+                <Button onClick={() => onNavigate("public-destinations")} variant="outline" className="h-12 border-[var(--alo-brand)] px-5 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                   <Icon name="Info" className="size-4" />
                   Learn More
                 </Button>
-                <Button onClick={handleConsult} className="h-12 bg-[#E8501A] px-5 text-white hover:bg-[#E8501A]/90">
+                <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] px-5 text-black hover:bg-[var(--alo-cta)]/90">
                   <Icon name="CalendarCheck" className="size-4" />
                   Book Free Consultation
                 </Button>
@@ -969,12 +969,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 { icon: "MessageCircle", title: "WhatsApp Support", text: "Quick replies on 01805020101 during working hours." },
                 { icon: "ShieldCheck", title: "Audit-Logged", text: "Every action on your profile is recorded for safety." },
               ].map((c) => (
-                <Card key={c.title} className="rounded-2xl border-2 border-[#E2E8F0] bg-white">
+                <Card key={c.title} className="rounded-2xl border-2 border-[var(--alo-border)] bg-white">
                   <CardContent className="p-4">
-                    <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                    <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name={c.icon} className="size-4" />
                     </div>
-                    <p className="mt-3 text-sm font-bold text-[#0F172A]">{c.title}</p>
+                    <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{c.title}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{c.text}</p>
                   </CardContent>
                 </Card>
@@ -996,12 +996,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           />
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {VALUES.map((v) => (
-              <Card key={v.heading} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+              <Card key={v.heading} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
-                  <div className="flex size-11 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={v.icon} className="size-5" />
                   </div>
-                  <p className="mt-4 text-base font-bold text-[#0F172A]">{v.heading}</p>
+                  <p className="mt-4 text-base font-bold text-[var(--alo-text)]">{v.heading}</p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{v.explanation}</p>
                 </CardContent>
               </Card>
@@ -1013,7 +1013,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 7 — WHY CHOOSE ALO
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Why Choose ALO"
@@ -1022,12 +1022,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           />
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {WHY_CHOOSE.map((w) => (
-              <Card key={w.title} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+              <Card key={w.title} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                     <Icon name={w.icon} className="size-5" />
                   </div>
-                  <p className="mt-3.5 text-sm font-bold text-[#0F172A]">{w.title}</p>
+                  <p className="mt-3.5 text-sm font-bold text-[var(--alo-text)]">{w.title}</p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{w.description}</p>
                 </CardContent>
               </Card>
@@ -1049,19 +1049,19 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           {data?.services && data.services.length > 0 ? (
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {data.services.slice(0, 15).map((s) => (
-                <Card key={s.slug} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+                <Card key={s.slug} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                   <CardContent className="flex h-full flex-col p-5">
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name={s.icon || "Sparkles"} className="size-5" />
                     </div>
-                    <p className="mt-3.5 text-sm font-bold text-[#0F172A]">{s.title}</p>
+                    <p className="mt-3.5 text-sm font-bold text-[var(--alo-text)]">{s.title}</p>
                     <p className="mt-1.5 flex-1 text-xs leading-relaxed text-muted-foreground">{s.description}</p>
                     <Button
                       onClick={() => {
                         toast({ title: s.ctaLabel || "Learn More", description: "A counselor will reach out within 24 hours." });
                       }}
                       variant="ghost"
-                      className="mt-3 h-9 justify-start px-0 text-[#0057B8] hover:bg-transparent hover:underline"
+                      className="mt-3 h-9 justify-start px-0 text-[var(--alo-brand)] hover:bg-transparent hover:underline"
                     >
                       {s.ctaLabel || "Learn More"}
                       <Icon name="ArrowRight" className="size-3.5" />
@@ -1075,7 +1075,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               icon="Sparkles"
               title="Services unavailable right now"
               description="Our service catalog is being finalized. Talk to a counselor to learn more."
-              action={<Button onClick={handleConsult} className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">Book Free Consultation</Button>}
+              action={<Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">Book Free Consultation</Button>}
             />
           )}
         </div>
@@ -1084,7 +1084,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 9 — STUDENT JOURNEY TIMELINE
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Student Journey"
@@ -1104,17 +1104,17 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {JOURNEY_STEPS.map((step, i) => (
-              <Card key={step.title} className="relative h-full rounded-2xl border-2 border-[#E2E8F0] bg-white">
+              <Card key={step.title} className="relative h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white">
                 <CardContent className="flex h-full flex-col p-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
                       <Icon name={step.icon} className="size-5" />
                     </div>
-                    <span className="flex size-7 items-center justify-center rounded-full bg-[#fdece4] text-xs font-black text-[#E8501A]">
+                    <span className="flex size-7 items-center justify-center rounded-full bg-[var(--alo-cta-soft)] text-xs font-black text-[var(--alo-cta)]">
                       {i + 1}
                     </span>
                   </div>
-                  <p className="mt-3.5 text-sm font-bold text-[#0F172A]">{step.title}</p>
+                  <p className="mt-3.5 text-sm font-bold text-[var(--alo-text)]">{step.title}</p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{step.description}</p>
                 </CardContent>
               </Card>
@@ -1147,18 +1147,18 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               const verified = slide.country?.lastVerifiedAt != null;
 
               return (
-                <Card key={slide.countrySlug} className="rounded-2xl border-2 border-[#E2E8F0] bg-white">
+                <Card key={slide.countrySlug} className="rounded-2xl border-2 border-[var(--alo-border)] bg-white">
                   <CardContent className="p-5">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <span className="text-3xl">{slide.country?.flag || "🌍"}</span>
                         <div>
-                          <h3 className="text-lg font-black text-[#0F172A]">{slide.country?.name}</h3>
+                          <h3 className="text-lg font-black text-[var(--alo-text)]">{slide.country?.name}</h3>
                           <p className="text-xs text-muted-foreground">Capital: {slide.country?.capital || "—"}</p>
                         </div>
                       </div>
-                      <Badge variant="outline" className={cn("text-[10px]", verified ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-amber-300 bg-amber-50 text-amber-700")}>
+                      <Badge variant="outline" className={cn("text-[11px]", verified ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-amber-300 bg-amber-50 text-amber-700")}>
                         {verified ? "Verified" : "Needs review"}
                       </Badge>
                     </div>
@@ -1166,35 +1166,35 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                     {/* Grid */}
                     <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
                       <p className="font-semibold text-muted-foreground">Popular cities:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{cities.length > 0 ? cities.slice(0, 3).join(", ") : "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{cities.length > 0 ? cities.slice(0, 3).join(", ") : "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Popular intakes:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{intakes.length > 0 ? intakes.join(", ") : "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{intakes.length > 0 ? intakes.join(", ") : "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Study levels:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{studyLevels.length > 0 ? studyLevels.join(", ") : "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{studyLevels.length > 0 ? studyLevels.join(", ") : "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Tuition range:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{tuitionRange ? (typeof tuitionRange === "string" ? tuitionRange : JSON.stringify(tuitionRange)) : "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{tuitionRange ? (typeof tuitionRange === "string" ? tuitionRange : JSON.stringify(tuitionRange)) : "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Living cost:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{livingCost ? (typeof livingCost === "string" ? livingCost : JSON.stringify(livingCost)) : "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{livingCost ? (typeof livingCost === "string" ? livingCost : JSON.stringify(livingCost)) : "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Visa type:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{visaType || "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{visaType || "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Work / post-study:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{postStudyRoute ? (typeof postStudyRoute === "string" ? postStudyRoute : "Available — verify with counselor") : "Check with counselor"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{postStudyRoute ? (typeof postStudyRoute === "string" ? postStudyRoute : "Available — verify with counselor") : "Check with counselor"}</p>
 
                       <p className="font-semibold text-muted-foreground">Last verified:</p>
-                      <p className="text-right font-semibold text-[#0F172A]">{slide.country?.lastVerifiedAt ? fmtDate(slide.country.lastVerifiedAt) : "—"}</p>
+                      <p className="text-right font-semibold text-[var(--alo-text)]">{slide.country?.lastVerifiedAt ? fmtDate(slide.country.lastVerifiedAt) : "—"}</p>
                     </div>
 
                     <div className="mt-4 flex gap-2">
-                      <Button onClick={() => handleViewCountry(slide.countrySlug)} variant="outline" className="h-10 flex-1 border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
+                      <Button onClick={() => handleViewCountry(slide.countrySlug)} variant="outline" className="h-10 flex-1 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                         View Country Guide
                       </Button>
-                      <Button onClick={handleConsult} className="h-10 flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+                      <Button onClick={handleConsult} className="h-10 flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
                         Talk to Counselor
                       </Button>
                     </div>
@@ -1209,7 +1209,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 11 — POPULAR COURSES (Dynamic + Tabs)
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Popular Courses"
@@ -1222,7 +1222,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               <div className="overflow-x-auto alo-scroll">
                 <TabsList className="flex h-auto w-max gap-1 bg-white p-1">
                   {COURSE_TABS.map((t) => (
-                    <TabsTrigger key={t} value={t} className="h-9 px-3 text-xs data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+                    <TabsTrigger key={t} value={t} className="h-9 px-3 text-xs data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
                       {t}
                     </TabsTrigger>
                   ))}
@@ -1241,37 +1241,37 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                     {list.length > 0 ? (
                       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {list.map((c) => (
-                          <Card key={c.slug} className="flex h-full flex-col rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+                          <Card key={c.slug} className="flex h-full flex-col rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                             <CardContent className="flex h-full flex-col p-5">
                               <div className="flex items-start justify-between gap-2">
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-bold text-[#0F172A]">{c.name}</p>
+                                  <p className="truncate text-sm font-bold text-[var(--alo-text)]">{c.name}</p>
                                   <p className="mt-0.5 text-xs text-muted-foreground">{c.university.name}</p>
                                 </div>
                                 {c.country?.flag && <span className="text-2xl">{c.country.flag}</span>}
                               </div>
 
                               <div className="mt-3 flex flex-wrap gap-1.5">
-                                <Badge variant="outline" className="text-[10px] border-[#0057B8]/20 bg-[#e8f0fb]/60 text-[#0057B8]">{c.level}</Badge>
-                                <Badge variant="outline" className="text-[10px]">{c.subject}</Badge>
+                                <Badge variant="outline" className="text-[11px] border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/60 text-[var(--alo-brand)]">{c.level}</Badge>
+                                <Badge variant="outline" className="text-[11px]">{c.subject}</Badge>
                               </div>
 
                               <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                                <p><span className="font-semibold text-muted-foreground">City:</span> <span className="font-semibold text-[#0F172A]">{c.university.city}</span></p>
-                                <p><span className="font-semibold text-muted-foreground">Duration:</span> <span className="font-semibold text-[#0F172A]">{c.duration}</span></p>
-                                <p><span className="font-semibold text-muted-foreground">Intake:</span> <span className="font-semibold text-[#0F172A]">{c.intake}</span></p>
-                                <p><span className="font-semibold text-muted-foreground">Deadline:</span> <span className="font-semibold text-[#0F172A]">{c.deadline || "—"}</span></p>
+                                <p><span className="font-semibold text-muted-foreground">City:</span> <span className="font-semibold text-[var(--alo-text)]">{c.university.city}</span></p>
+                                <p><span className="font-semibold text-muted-foreground">Duration:</span> <span className="font-semibold text-[var(--alo-text)]">{c.duration}</span></p>
+                                <p><span className="font-semibold text-muted-foreground">Intake:</span> <span className="font-semibold text-[var(--alo-text)]">{c.intake}</span></p>
+                                <p><span className="font-semibold text-muted-foreground">Deadline:</span> <span className="font-semibold text-[var(--alo-text)]">{c.deadline || "—"}</span></p>
                               </div>
 
-                              <div className="mt-3 rounded-lg bg-[#F8FAFC] p-2.5">
+                              <div className="mt-3 rounded-lg bg-[var(--alo-page)] p-2.5">
                                 <p className="text-xs font-semibold text-muted-foreground">Tuition</p>
-                                <p className="text-base font-black text-[#0057B8]">{c.tuition}</p>
+                                <p className="text-base font-black text-[var(--alo-brand)]">{c.tuition}</p>
                               </div>
 
                               {c.scholarship && (
                                 <div className="mt-2 flex items-center gap-1.5 text-xs">
-                                  <Icon name="Award" className="size-3.5 text-[#E8501A]" />
-                                  <span className="font-semibold text-[#E8501A]">{c.scholarship}</span>
+                                  <Icon name="Award" className="size-3.5 text-[var(--alo-cta)]" />
+                                  <span className="font-semibold text-[var(--alo-cta)]">{c.scholarship}</span>
                                 </div>
                               )}
 
@@ -1280,20 +1280,20 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                               </p>
 
                               <div className="mt-auto flex flex-wrap gap-2 pt-4">
-                                <Button onClick={() => onNavigate("public-course", c.slug)} variant="outline" className="h-9 flex-1 border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
+                                <Button onClick={() => onNavigate("public-course", c.slug)} variant="outline" className="h-9 flex-1 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                                   View Details
                                 </Button>
                                 <Button
                                   onClick={() => toast({ title: "Added to compare", description: `${c.name} added to your compare list.` })}
                                   variant="ghost"
-                                  className="h-9 px-2 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                  className="h-9 px-2 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                                   aria-label="Compare"
                                 >
                                   <Icon name="GitCompare" className="size-4" />
                                 </Button>
                                 <Button
                                   onClick={() => toast({ title: "Application started", description: "A counselor will reach out to begin your application." })}
-                                  className="h-9 flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                                  className="h-9 flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                                 >
                                   Apply
                                 </Button>
@@ -1314,7 +1314,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           )}
 
           <div className="mt-8 text-center">
-            <Button onClick={() => onNavigate("public-courses")} variant="outline" className="h-12 border-[#0057B8] px-6 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("public-courses")} variant="outline" className="h-12 border-[var(--alo-brand)] px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               Browse All Courses
               <Icon name="ArrowRight" className="size-4" />
             </Button>
@@ -1343,9 +1343,9 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 const ranking = facts.worldRanking || facts.ranking;
                 const uniImage = destinationCardImage(u.countrySlug || '');
                 return (
-                  <Card key={u.slug} className="alo-card-anim group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-[#E2E8F0] bg-white transition-all hover:shadow-lg">
+                  <Card key={u.slug} className="alo-card-anim group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-all hover:shadow-lg">
                     {/* University image header */}
-                    <div className="relative h-32 overflow-hidden bg-[#F8FAFC]">
+                    <div className="relative h-32 overflow-hidden bg-[var(--alo-page)]">
                                 <img
                         src={uniImage}
                         alt={`${u.name} — study destination`}
@@ -1356,12 +1356,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                       {u.country?.flag && <span className="absolute left-3 top-3 text-2xl drop-shadow-lg">{u.country.flag}</span>}
                       {ranking && (
-                        <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-[#0057B8]">#{ranking}</span>
+                        <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-[var(--alo-brand)]">#{ranking}</span>
                       )}
                     </div>
                     <CardContent className="flex h-full flex-col p-5">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-[#0F172A]">{u.name}</p>
+                        <p className="truncate text-sm font-bold text-[var(--alo-text)]">{u.name}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">{u.city}{u.country?.name ? `, ${u.country.name}` : ""}</p>
                       </div>
 
@@ -1369,27 +1369,27 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
                       <div className="mt-3 space-y-1.5 text-xs">
                         {intakes.length > 0 && (
-                          <p><span className="font-semibold text-muted-foreground">Intakes:</span> <span className="font-semibold text-[#0F172A]">{intakes.join(", ")}</span></p>
+                          <p><span className="font-semibold text-muted-foreground">Intakes:</span> <span className="font-semibold text-[var(--alo-text)]">{intakes.join(", ")}</span></p>
                         )}
                         {englishTests.length > 0 && (
-                          <p><span className="font-semibold text-muted-foreground">English:</span> <span className="font-semibold text-[#0F172A]">{englishTests.join(", ")}</span></p>
+                          <p><span className="font-semibold text-muted-foreground">English:</span> <span className="font-semibold text-[var(--alo-text)]">{englishTests.join(", ")}</span></p>
                         )}
                         {scholarship && (
-                          <Badge variant="outline" className="border-[#E8501A]/30 bg-[#fdece4]/40 text-[#E8501A]">
+                          <Badge variant="outline" className="border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/40 text-[var(--alo-cta)]">
                             <Icon name="Award" className="mr-1 size-3" />
                             {typeof scholarship === "string" ? scholarship : "Scholarship available"}
                           </Badge>
                         )}
-                        <p className="text-[10px] text-muted-foreground">Last verified: {u.lastVerifiedAt ? fmtDate(u.lastVerifiedAt) : "—"}</p>
+                        <p className="text-[11px] text-muted-foreground">Last verified: {u.lastVerifiedAt ? fmtDate(u.lastVerifiedAt) : "—"}</p>
                       </div>
 
                       <div className="mt-auto flex flex-col gap-2 pt-4">
-                        <Button onClick={() => onNavigate("public-university", u.slug)} variant="outline" className="h-10 w-full border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]">
+                        <Button onClick={() => onNavigate("public-university", u.slug)} variant="outline" className="h-10 w-full border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                           View Courses
                         </Button>
                         <Button
                           onClick={() => toast({ title: "Application started", description: `Beginning your application to ${u.name}.` })}
-                          className="h-10 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                          className="h-10 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                         >
                           Apply
                         </Button>
@@ -1404,7 +1404,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           )}
 
           <div className="mt-8 text-center">
-            <Button onClick={() => onNavigate("public-universities")} variant="outline" className="h-12 border-[#0057B8] px-6 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("public-universities")} variant="outline" className="h-12 border-[var(--alo-brand)] px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               View All Universities
               <Icon name="ArrowRight" className="size-4" />
             </Button>
@@ -1415,7 +1415,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 13 — SCHOLARSHIPS (Dynamic)
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Scholarships"
@@ -1426,26 +1426,26 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           {data?.scholarships && data.scholarships.length > 0 ? (
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {data.scholarships.slice(0, 8).map((s, i) => (
-                <Card key={`${s.name}-${i}`} className="flex h-full flex-col rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+                <Card key={`${s.name}-${i}`} className="flex h-full flex-col rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                   <CardContent className="flex h-full flex-col p-5">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex size-10 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]">
+                      <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                         <Icon name="Award" className="size-5" />
                       </div>
                       {s.flag && <span className="text-2xl">{s.flag}</span>}
                     </div>
-                    <p className="mt-3 text-sm font-bold text-[#0F172A]">{s.name || "Scholarship"}</p>
+                    <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{s.name || "Scholarship"}</p>
                     <p className="text-xs text-muted-foreground">{s.country}{s.university ? ` · ${s.university}` : ""}</p>
 
                     <div className="mt-3 space-y-1.5 text-xs">
                       {s.amount && (
-                        <p><span className="font-semibold text-muted-foreground">Amount:</span> <span className="font-bold text-[#0057B8]">{s.amount}</span></p>
+                        <p><span className="font-semibold text-muted-foreground">Amount:</span> <span className="font-bold text-[var(--alo-brand)]">{s.amount}</span></p>
                       )}
                       {s.eligibility && (
                         <p className="line-clamp-2"><span className="font-semibold text-muted-foreground">Eligibility:</span> {s.eligibility}</p>
                       )}
                       {s.deadline && (
-                        <p><span className="font-semibold text-muted-foreground">Deadline:</span> <span className="font-semibold text-[#0F172A]">{s.deadline}</span></p>
+                        <p><span className="font-semibold text-muted-foreground">Deadline:</span> <span className="font-semibold text-[var(--alo-text)]">{s.deadline}</span></p>
                       )}
                     </div>
 
@@ -1455,7 +1455,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                           toast({ title: "Checking eligibility", description: "Our counselor will review your profile against this scholarship." });
                           handleConsult();
                         }}
-                        className="h-10 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                        className="h-10 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                       >
                         Check Eligibility
                       </Button>
@@ -1469,7 +1469,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           )}
 
           <div className="mt-8 text-center">
-            <Button onClick={() => onNavigate("scholarship-finder")} variant="outline" className="h-12 border-[#0057B8] px-6 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("scholarship-finder")} variant="outline" className="h-12 border-[var(--alo-brand)] px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               Open Scholarship Finder
               <Icon name="ArrowRight" className="size-4" />
             </Button>
@@ -1490,25 +1490,25 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {ENGLISH_TESTS.map((t) => (
-              <Card key={t.name} className="flex h-full flex-col rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+              <Card key={t.name} className="flex h-full flex-col rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={t.icon} className="size-5" />
                   </div>
-                  <p className="mt-3 text-sm font-bold text-[#0F172A]">{t.name}</p>
+                  <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{t.name}</p>
                   <p className="text-[11px] leading-snug text-muted-foreground">{t.fullName}</p>
 
                   <div className="mt-3 space-y-1.5 text-xs">
-                    <p><span className="font-semibold text-muted-foreground">Best for:</span> <span className="font-semibold text-[#0F172A]">{t.bestFor}</span></p>
-                    <p><span className="font-semibold text-muted-foreground">Accepted in:</span> <span className="font-semibold text-[#0F172A]">{t.destinations}</span></p>
-                    <p><span className="font-semibold text-muted-foreground">Score range:</span> <span className="font-semibold text-[#0F172A]">{t.scoreRange}</span></p>
+                    <p><span className="font-semibold text-muted-foreground">Best for:</span> <span className="font-semibold text-[var(--alo-text)]">{t.bestFor}</span></p>
+                    <p><span className="font-semibold text-muted-foreground">Accepted in:</span> <span className="font-semibold text-[var(--alo-text)]">{t.destinations}</span></p>
+                    <p><span className="font-semibold text-muted-foreground">Score range:</span> <span className="font-semibold text-[var(--alo-text)]">{t.scoreRange}</span></p>
                   </div>
 
                   <div className="mt-auto flex flex-col gap-2 pt-4">
                     <Button
                       onClick={() => onNavigate("public-exams")}
                       variant="outline"
-                      className="h-10 w-full border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="h-10 w-full border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                     >
                       Learn More
                     </Button>
@@ -1517,7 +1517,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         toast({ title: "Mock test starting", description: `Loading a free ${t.name} mock test for you.` });
                         onNavigate("english-test");
                       }}
-                      className="h-10 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                      className="h-10 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                     >
                       Start Mock Test
                     </Button>
@@ -1528,12 +1528,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </div>
 
           {/* Comparison table */}
-          <Card className="mt-10 rounded-2xl border-2 border-[#E2E8F0] bg-white">
+          <Card className="mt-10 rounded-2xl border-2 border-[var(--alo-border)] bg-white">
             <CardContent className="p-6">
-              <p className="text-sm font-bold text-[#0057B8]">Quick Comparison</p>
+              <p className="text-sm font-bold text-[var(--alo-brand)]">Quick Comparison</p>
               <div className="mt-4 overflow-x-auto alo-scroll">
                 <table className="w-full min-w-[640px] text-left text-xs">
-                  <thead className="border-b-2 border-[#E2E8F0] text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <thead className="border-b-2 border-[var(--alo-border)] text-[11px] uppercase tracking-wider text-muted-foreground">
                     <tr>
                       <th className="py-2 pr-3">Test</th>
                       <th className="py-2 pr-3">Best for</th>
@@ -1544,16 +1544,16 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   </thead>
                   <tbody>
                     {ENGLISH_TESTS.map((t) => (
-                      <tr key={t.name} className="border-b border-[#E2E8F0] last:border-0">
-                        <td className="py-2.5 pr-3 font-bold text-[#0F172A]">{t.name}</td>
+                      <tr key={t.name} className="border-b border-[var(--alo-border)] last:border-0">
+                        <td className="py-2.5 pr-3 font-bold text-[var(--alo-text)]">{t.name}</td>
                         <td className="py-2.5 pr-3 text-muted-foreground">{t.bestFor}</td>
                         <td className="py-2.5 pr-3 text-muted-foreground">{t.destinations}</td>
-                        <td className="py-2.5 pr-3 font-semibold text-[#0057B8]">{t.scoreRange}</td>
+                        <td className="py-2.5 pr-3 font-semibold text-[var(--alo-brand)]">{t.scoreRange}</td>
                         <td className="py-2.5">
                           <Button
                             onClick={() => onNavigate("english-test")}
                             variant="ghost"
-                            className="h-7 px-2 text-[#E8501A] hover:bg-[#fdece4]/40"
+                            className="h-7 px-2 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]/40"
                           >
                             Start
                           </Button>
@@ -1567,11 +1567,11 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </Card>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button onClick={() => onNavigate("public-exams")} variant="outline" className="h-12 border-[#0057B8] px-5 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("public-exams")} variant="outline" className="h-12 border-[var(--alo-brand)] px-5 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               <Icon name="BookOpen" className="size-4" />
               View All English Tests
             </Button>
-            <Button onClick={() => onNavigate("english-test")} className="h-12 bg-[#E8501A] px-5 text-white hover:bg-[#E8501A]/90">
+            <Button onClick={() => onNavigate("english-test")} className="h-12 bg-[var(--alo-cta)] px-5 text-white hover:bg-[var(--alo-cta)]/90">
               <Icon name="Mic" className="size-4" />
               Start Free Mock Test
             </Button>
@@ -1582,7 +1582,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 15 — VISA AND COMPLIANCE SUPPORT
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Visa and Compliance"
@@ -1592,12 +1592,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {VISA_SUPPORT.map((v) => (
-              <Card key={v.title} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+              <Card key={v.title} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
-                  <div className="flex size-11 items-center justify-center rounded-xl bg-[#fdece4] text-[#E8501A]">
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                     <Icon name={v.icon} className="size-5" />
                   </div>
-                  <p className="mt-3.5 text-base font-bold text-[#0F172A]">{v.title}</p>
+                  <p className="mt-3.5 text-base font-bold text-[var(--alo-text)]">{v.title}</p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{v.description}</p>
                 </CardContent>
               </Card>
@@ -1620,12 +1620,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 toast({ title: "Visa Readiness Check", description: "Answer 8 questions to get your readiness score." });
                 onNavigate("ai-interview");
               }}
-              className="h-12 bg-[#E8501A] px-5 text-white hover:bg-[#E8501A]/90"
+              className="h-12 bg-[var(--alo-cta)] px-5 text-white hover:bg-[var(--alo-cta)]/90"
             >
               <Icon name="ClipboardCheck" className="size-4" />
               Start Visa Readiness Check
             </Button>
-            <Button onClick={handleConsult} variant="outline" className="h-12 border-[#0057B8] px-5 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={handleConsult} variant="outline" className="h-12 border-[var(--alo-brand)] px-5 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               <Icon name="CalendarCheck" className="size-4" />
               Book Visa Consultation
             </Button>
@@ -1646,15 +1646,15 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
             {STUDENT_PORTAL_FEATURES.map((f) => (
-              <Card key={f.label} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white">
+              <Card key={f.label} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                    <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name={f.icon} className="size-4" />
                     </div>
-                    <span className="text-xl font-black text-[#0F172A]">{f.value}</span>
+                    <span className="text-xl font-black text-[var(--alo-text)]">{f.value}</span>
                   </div>
-                  <p className="mt-3 text-sm font-bold text-[#0F172A]">{f.label}</p>
+                  <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{f.label}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{f.hint}</p>
                 </CardContent>
               </Card>
@@ -1662,9 +1662,9 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </div>
 
           {/* Mini progress preview */}
-          <Card className="mt-6 rounded-2xl border-2 border-[#E2E8F0] bg-white">
+          <Card className="mt-6 rounded-2xl border-2 border-[var(--alo-border)] bg-white">
             <CardContent className="p-6">
-              <p className="text-sm font-bold text-[#0057B8]">Sample progress for a student</p>
+              <p className="text-sm font-bold text-[var(--alo-brand)]">Sample progress for a student</p>
               <div className="mt-4 space-y-4">
                 {[
                   { label: "Profile completion", val: 84 },
@@ -1674,8 +1674,8 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 ].map((p) => (
                   <div key={p.label}>
                     <div className="mb-1 flex items-center justify-between text-xs">
-                      <span className="font-semibold text-[#0F172A]">{p.label}</span>
-                      <span className="font-bold text-[#0057B8]">{p.val}%</span>
+                      <span className="font-semibold text-[var(--alo-text)]">{p.label}</span>
+                      <span className="font-bold text-[var(--alo-brand)]">{p.val}%</span>
                     </div>
                     <Progress value={p.val} className="h-2" />
                   </div>
@@ -1685,7 +1685,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </Card>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button onClick={() => onNavigate("student-dashboard")} variant="outline" className="h-12 border-[#0057B8] px-5 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("student-dashboard")} variant="outline" className="h-12 border-[var(--alo-brand)] px-5 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               <Icon name="LogIn" className="size-4" />
               Student Login
             </Button>
@@ -1694,7 +1694,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 toast({ title: "Create Student Account", description: "Scroll down to the lead form to get started." });
                 document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="h-12 bg-[#E8501A] px-5 text-white hover:bg-[#E8501A]/90"
+              className="h-12 bg-[var(--alo-cta)] px-5 text-white hover:bg-[var(--alo-cta)]/90"
             >
               <Icon name="UserPlus" className="size-4" />
               Create Student Account
@@ -1706,7 +1706,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 17 — PARTNER PORTAL PREVIEW
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Partner Portal Preview"
@@ -1716,12 +1716,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {PARTNER_PORTAL_FEATURES.map((f) => (
-              <Card key={f.title} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+              <Card key={f.title} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={f.icon} className="size-5" />
                   </div>
-                  <p className="mt-3 text-sm font-bold text-[#0F172A]">{f.title}</p>
+                  <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{f.title}</p>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{f.description}</p>
                 </CardContent>
               </Card>
@@ -1729,13 +1729,13 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </div>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button onClick={() => onNavigate("partner-portal")} variant="outline" className="h-12 border-[#0057B8] px-5 text-[#0057B8] hover:bg-[#e8f0fb]">
+            <Button onClick={() => onNavigate("partner-portal")} variant="outline" className="h-12 border-[var(--alo-brand)] px-5 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               <Icon name="LogIn" className="size-4" />
               Partner Login
             </Button>
             <Button
               onClick={() => toast({ title: "Become a Partner", description: "Fill out the partner interest form — we'll reach out within 48 hours." })}
-              className="h-12 bg-[#E8501A] px-5 text-white hover:bg-[#E8501A]/90"
+              className="h-12 bg-[var(--alo-cta)] px-5 text-white hover:bg-[var(--alo-cta)]/90"
             >
               <Icon name="Handshake" className="size-4" />
               Become A Partner
@@ -1757,12 +1757,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
 
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {AI_TOOLS.map((t) => (
-              <Card key={t.title} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+              <Card key={t.title} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
                   <div className="flex size-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
                     <Icon name={t.icon} className="size-5" />
                   </div>
-                  <p className="mt-3 text-sm font-bold text-[#0F172A]">{t.title}</p>
+                  <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{t.title}</p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{t.description}</p>
                   <Button
                     onClick={() => toast({ title: t.title, description: "AI tool is loading — your counselor will validate the output." })}
@@ -1778,10 +1778,10 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </div>
 
           {/* Safety text */}
-          <Card className="mt-8 rounded-2xl border-2 border-[#E8501A]/30 bg-[#fdece4]/40">
+          <Card className="mt-8 rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/40">
             <CardContent className="flex items-start gap-3 p-5">
-              <Icon name="ShieldAlert" className="mt-0.5 size-5 text-[#E8501A]" />
-              <p className="text-xs leading-relaxed text-[#0F172A]">
+              <Icon name="ShieldAlert" className="mt-0.5 size-5 text-[var(--alo-cta)]" />
+              <p className="text-xs leading-relaxed text-[var(--alo-text)]">
                 <span className="font-bold">AI Safety:</span> AI gives preparation guidance only. ALO counselor final review required. AI cannot guarantee admission or visa. Every AI action is logged in your timeline for transparency.
               </p>
             </CardContent>
@@ -1792,7 +1792,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 19 — RESOURCES HUB
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Resources Hub"
@@ -1804,18 +1804,18 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
             {RESOURCES.map((r, i) => (
               <Card
                 key={`${r.title}-${i}`}
-                className="group h-full cursor-pointer rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md"
+                className="group h-full cursor-pointer rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md"
                 onClick={() => toast({ title: r.title, description: `Opening ${r.category.toLowerCase()} — written by ALO counselors.` })}
               >
                 <CardContent className="flex h-full flex-col p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                    <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       <Icon name={r.icon} className="size-4" />
                     </div>
-                    <Badge variant="outline" className="text-[10px]">{r.category}</Badge>
+                    <Badge variant="outline" className="text-[11px]">{r.category}</Badge>
                   </div>
-                  <p className="mt-3 flex-1 text-xs font-semibold leading-snug text-[#0F172A] group-hover:text-[#0057B8]">{r.title}</p>
-                  <div className="mt-3 flex items-center gap-1 text-[10px] font-semibold text-[#0057B8]">
+                  <p className="mt-3 flex-1 text-xs font-semibold leading-snug text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{r.title}</p>
+                  <div className="mt-3 flex items-center gap-1 text-[11px] font-semibold text-[var(--alo-brand)]">
                     Read article
                     <Icon name="ArrowRight" className="size-3" />
                   </div>
@@ -1827,7 +1827,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           <div className="mt-8 text-center">
             <Button
               onClick={() => toast({ title: "Resources Hub", description: "Opening the full resources library." })}
-              className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#E8501A]/90"
+              className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta)]/90"
             >
               Open Resources Hub
               <Icon name="ArrowRight" className="size-4" />
@@ -1850,27 +1850,27 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           {data?.stories && data.stories.length > 0 ? (
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {data.stories.slice(0, 4).map((s, i) => (
-                <Card key={`${s.studentName}-${i}`} className="flex h-full flex-col rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+                <Card key={`${s.studentName}-${i}`} className="flex h-full flex-col rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                   <CardContent className="flex h-full flex-col p-5">
                     <div className="flex items-center gap-3">
                       <div className="flex size-12 items-center justify-center rounded-full bg-alo-gradient text-white">
                         <span className="text-base font-black">{initials(s.studentName)}</span>
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-[#0F172A]">{s.studentName}</p>
+                        <p className="truncate text-sm font-bold text-[var(--alo-text)]">{s.studentName}</p>
                         {s.homeDistrict && <p className="text-xs text-muted-foreground">From {s.homeDistrict}</p>}
                       </div>
                     </div>
 
                     <div className="mt-3 space-y-1 text-xs">
                       {s.countrySlug && (
-                        <p><span className="font-semibold text-muted-foreground">Destination:</span> <span className="font-semibold text-[#0F172A]">{flagFor(s.countrySlug, heroSlides)} {s.countrySlug.toUpperCase()}</span></p>
+                        <p><span className="font-semibold text-muted-foreground">Destination:</span> <span className="font-semibold text-[var(--alo-text)]">{flagFor(s.countrySlug, heroSlides)} {s.countrySlug.toUpperCase()}</span></p>
                       )}
                       {s.universityName && (
-                        <p><span className="font-semibold text-muted-foreground">University:</span> <span className="font-semibold text-[#0F172A]">{s.universityName}</span></p>
+                        <p><span className="font-semibold text-muted-foreground">University:</span> <span className="font-semibold text-[var(--alo-text)]">{s.universityName}</span></p>
                       )}
                       {s.courseName && (
-                        <p><span className="font-semibold text-muted-foreground">Course:</span> <span className="font-semibold text-[#0F172A]">{s.courseName}</span></p>
+                        <p><span className="font-semibold text-muted-foreground">Course:</span> <span className="font-semibold text-[var(--alo-text)]">{s.courseName}</span></p>
                       )}
                       {s.outcome && (
                         <p><span className="font-semibold text-muted-foreground">Outcome:</span> <span className="font-semibold text-emerald-600">{s.outcome}</span></p>
@@ -1880,7 +1880,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                     <p className="mt-3 flex-1 text-xs italic leading-relaxed text-muted-foreground">"{s.testimonial}"</p>
 
                     {s.consentStatus && (
-                      <p className="mt-3 flex items-center gap-1 text-[10px] text-emerald-600">
+                      <p className="mt-3 flex items-center gap-1 text-[11px] text-emerald-600">
                         <Icon name="ShieldCheck" className="size-3" />
                         Consent: {s.consentStatus}
                       </p>
@@ -1890,7 +1890,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                       <Button
                         onClick={() => toast({ title: "Read full story", description: `${s.studentName}'s full story is loading.` })}
                         variant="outline"
-                        className="h-9 w-full border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
+                        className="h-9 w-full border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                       >
                         Read More
                       </Button>
@@ -1908,7 +1908,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 21 — EXPERT TEAM (Dynamic)
           ════════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
           <SectionHeader
             label="Expert Team"
@@ -1919,20 +1919,20 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           {data?.team && data.team.length > 0 ? (
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {data.team.slice(0, 6).map((m, i) => (
-                <Card key={`${m.name}-${i}`} className="h-full rounded-2xl border-2 border-[#E2E8F0] bg-white transition-shadow hover:shadow-md">
+                <Card key={`${m.name}-${i}`} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                   <CardContent className="flex h-full flex-col p-5">
                     <div className="flex items-center gap-3">
                       <div className="flex size-14 items-center justify-center rounded-2xl bg-alo-gradient text-lg font-black text-white">
                         {initials(m.name)}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate text-base font-bold text-[#0F172A]">{m.name}</p>
-                        <p className="text-xs font-semibold text-[#0057B8]">{m.role}</p>
+                        <p className="truncate text-base font-bold text-[var(--alo-text)]">{m.name}</p>
+                        <p className="text-xs font-semibold text-[var(--alo-brand)]">{m.role}</p>
                       </div>
                     </div>
 
                     {m.specialty && (
-                      <div className="mt-3 inline-flex items-center gap-1.5 self-start rounded-full bg-[#e8f0fb] px-2.5 py-1 text-xs font-semibold text-[#0057B8]">
+                      <div className="mt-3 inline-flex items-center gap-1.5 self-start rounded-full bg-[var(--alo-brand-light)] px-2.5 py-1 text-xs font-semibold text-[var(--alo-brand)]">
                         <Icon name="Star" className="size-3" />
                         {m.specialty}
                       </div>
@@ -1945,7 +1945,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                     <Button
                       onClick={() => toast({ title: "Meet our team", description: "Book a consultation to talk with our counselors." })}
                       variant="ghost"
-                      className="mt-3 h-9 justify-start px-0 text-[#0057B8] hover:bg-transparent hover:underline"
+                      className="mt-3 h-9 justify-start px-0 text-[var(--alo-brand)] hover:bg-transparent hover:underline"
                     >
                       Meet Our Team
                       <Icon name="ArrowRight" className="size-3.5" />
@@ -1972,12 +1972,12 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           />
 
           {data?.faqs && data.faqs.length > 0 ? (
-            <Card className="mt-10 rounded-2xl border-2 border-[#E2E8F0] bg-white">
+            <Card className="mt-10 rounded-2xl border-2 border-[var(--alo-border)] bg-white">
               <CardContent className="p-2">
                 <Accordion type="single" collapsible className="w-full">
                   {data.faqs.slice(0, 20).map((f, i) => (
-                    <AccordionItem key={`faq-${i}`} value={`faq-${i}`} className="border-b border-[#E2E8F0] last:border-0">
-                      <AccordionTrigger className="px-4 py-4 text-left text-sm font-bold text-[#0F172A] hover:no-underline">
+                    <AccordionItem key={`faq-${i}`} value={`faq-${i}`} className="border-b border-[var(--alo-border)] last:border-0">
+                      <AccordionTrigger className="px-4 py-4 text-left text-sm font-bold text-[var(--alo-text)] hover:no-underline">
                         {f.question}
                       </AccordionTrigger>
                       <AccordionContent className="px-4 pb-4 text-xs leading-relaxed text-muted-foreground">
@@ -1996,7 +1996,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
             <Button
               onClick={() => toast({ title: "View All FAQs", description: "Opening the full FAQ library." })}
               variant="outline"
-              className="h-12 border-[#0057B8] px-6 text-[#0057B8] hover:bg-[#e8f0fb]"
+              className="h-12 border-[var(--alo-brand)] px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             >
               View All FAQs
               <Icon name="ArrowRight" className="size-4" />
@@ -2008,13 +2008,13 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
       {/* ════════════════════════════════════════════════════════════════
           SECTION 23 — FINAL CTA AND LEAD FORM
           ════════════════════════════════════════════════════════════════ */}
-      <section id="final-cta" className="bg-[#F8FAFC] py-16 lg:py-20">
+      <section id="final-cta" className="bg-[var(--alo-page)] py-16 lg:py-20">
         <div className="mx-auto max-w-[1100px] px-4 lg:px-6">
-          <Card className="overflow-hidden rounded-3xl border-2 border-[#E2E8F0] bg-white">
+          <Card className="overflow-hidden rounded-3xl border-2 border-[var(--alo-border)] bg-white">
             <div className="grid grid-cols-1 lg:grid-cols-2">
               {/* Left — pitch + buttons */}
               <div className="bg-alo-hero p-8 text-white lg:p-10">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#E8501A]">Final CTA</p>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--alo-cta)]">Final CTA</p>
                 <h2 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
                   Ready to Start Your Study Abroad Journey?
                 </h2>
@@ -2023,7 +2023,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 </p>
 
                 <div className="mt-7 flex flex-wrap gap-3">
-                  <Button onClick={handleConsult} className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+                  <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
                     <Icon name="CalendarCheck" className="size-4" />
                     Book Free Consultation
                   </Button>
@@ -2044,15 +2044,15 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 <div className="mt-8 grid grid-cols-3 gap-3 text-center">
                   <div>
                     <p className="text-2xl font-black">{stats.totalCountries}+</p>
-                    <p className="text-[10px] uppercase tracking-wider text-white/70">Countries</p>
+                    <p className="text-[11px] uppercase tracking-wider text-white/70">Countries</p>
                   </div>
                   <div>
                     <p className="text-2xl font-black">{stats.totalUniversities}+</p>
-                    <p className="text-[10px] uppercase tracking-wider text-white/70">Universities</p>
+                    <p className="text-[11px] uppercase tracking-wider text-white/70">Universities</p>
                   </div>
                   <div>
                     <p className="text-2xl font-black">{stats.totalCourses}+</p>
-                    <p className="text-[10px] uppercase tracking-wider text-white/70">Courses</p>
+                    <p className="text-[11px] uppercase tracking-wider text-white/70">Courses</p>
                   </div>
                 </div>
               </div>

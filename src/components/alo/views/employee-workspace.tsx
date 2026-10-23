@@ -7,8 +7,8 @@ import { Icon, PageHeader, EmptyState, StatCard, SectionCard, MiniBar } from "@/
 import { type ViewKey } from "@/lib/alo-types";
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-slate-100 text-slate-700",
-  NORMAL: "bg-[#EAF3FF] text-[#0057B8]",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  NORMAL: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -52,7 +52,7 @@ export function EmployeeWorkspace({
           subtitle="Your daily briefing, tasks, and AI recommendations"
           icon="LayoutPanelLeft"
         />
-        <div className="text-center text-[#5A7299]">Loading your workspace...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading your workspace...</div>
       </div>
     );
   }
@@ -95,7 +95,7 @@ export function EmployeeWorkspace({
         action={
           <Button
             variant="outline"
-            className="border-[#DCE8F5] text-[#0057B8] hover:bg-[#EAF3FF]"
+            className="border-[var(--alo-brand-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             onClick={() => onNavigate?.("crm-tasks")}
           >
             <Icon name="CheckSquare" className="mr-1.5 size-4" /> View All Tasks
@@ -142,7 +142,7 @@ export function EmployeeWorkspace({
               <div className="flex size-8 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
                 <Icon name="AlertTriangle" className="size-4" />
               </div>
-              <h3 className="font-bold text-[#0B2447]">SLA Alerts</h3>
+              <h3 className="font-bold text-[var(--alo-text)]">SLA Alerts</h3>
               <Badge className="bg-rose-600 text-white">{slaEvents.length}</Badge>
             </div>
             <div className="space-y-2">
@@ -157,7 +157,7 @@ export function EmployeeWorkspace({
                   >
                     <div className="flex items-center gap-2">
                       <Icon name="Clock" className="size-4 text-rose-600" />
-                      <span className="text-[#0B2447]">{e.channel} • {elapsed}m ago</span>
+                      <span className="text-[var(--alo-text)]">{e.channel} • {elapsed}m ago</span>
                     </div>
                     <Badge
                       className={
@@ -187,7 +187,7 @@ export function EmployeeWorkspace({
             <Button
               size="sm"
               variant="outline"
-              className="border-[#DCE8F5] text-[#0057B8] hover:bg-[#EAF3FF]"
+              className="border-[var(--alo-brand-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               onClick={() => onNavigate?.("crm-tasks")}
             >
               View all
@@ -205,7 +205,7 @@ export function EmployeeWorkspace({
               {tasks.slice(0, 6).map((t: any) => (
                 <div
                   key={t.id}
-                  className="flex items-center gap-3 rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] px-3 py-2"
+                  className="flex items-center gap-3 rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] px-3 py-2"
                 >
                   <div
                     className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
@@ -213,15 +213,15 @@ export function EmployeeWorkspace({
                         ? "bg-rose-100 text-rose-700"
                         : t.priority === "HIGH"
                         ? "bg-amber-100 text-amber-700"
-                        : "bg-[#EAF3FF] text-[#0057B8]"
+                        : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                     }`}
                   >
                     <Icon name="CheckSquare" className="size-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-[#0B2447]">{t.title}</p>
+                    <p className="truncate text-sm font-semibold text-[var(--alo-text)]">{t.title}</p>
                     {t.dueDate && (
-                      <p className="text-xs text-[#5A7299]">
+                      <p className="text-xs text-[var(--alo-text-muted)]">
                         Due: {new Date(t.dueDate).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "short",
@@ -229,10 +229,10 @@ export function EmployeeWorkspace({
                       </p>
                     )}
                   </div>
-                  <Badge className={PRIORITY_COLORS[t.priority] || "bg-slate-100"}>
+                  <Badge className={PRIORITY_COLORS[t.priority] || "bg-[var(--alo-surface-muted)]"}>
                     {t.priority}
                   </Badge>
-                  <Badge className={TASK_STATUS_COLORS[t.status] || "bg-slate-100"}>
+                  <Badge className={TASK_STATUS_COLORS[t.status] || "bg-[var(--alo-surface-muted)]"}>
                     {t.status.replace(/_/g, " ")}
                   </Badge>
                 </div>
@@ -249,7 +249,7 @@ export function EmployeeWorkspace({
             <Button
               size="sm"
               variant="outline"
-              className="border-[#DCE8F5] text-[#0057B8] hover:bg-[#EAF3FF]"
+              className="border-[var(--alo-brand-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               onClick={() => onNavigate?.("crm-appointments")}
             >
               Calendar
@@ -267,13 +267,13 @@ export function EmployeeWorkspace({
               {appointments.slice(0, 4).map((a: any) => (
                 <div
                   key={a.id}
-                  className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] px-3 py-2"
+                  className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] px-3 py-2"
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-[#0B2447]">{a.title}</p>
-                    <Badge className="bg-[#EAF3FF] text-[#0057B8]">{a.type}</Badge>
+                    <p className="text-sm font-semibold text-[var(--alo-text)]">{a.title}</p>
+                    <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">{a.type}</Badge>
                   </div>
-                  <p className="mt-1 text-xs text-[#5A7299]">
+                  <p className="mt-1 text-xs text-[var(--alo-text-muted)]">
                     <Icon name="Clock" className="mr-1 inline size-3" />
                     {new Date(a.scheduledAt).toLocaleString("en-GB", {
                       weekday: "short",
@@ -297,7 +297,7 @@ export function EmployeeWorkspace({
             <Button
               size="sm"
               variant="outline"
-              className="border-[#DCE8F5] text-[#0057B8] hover:bg-[#EAF3FF]"
+              className="border-[var(--alo-brand-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               onClick={() => onNavigate?.("unified-inbox")}
             >
               Inbox
@@ -315,15 +315,15 @@ export function EmployeeWorkspace({
               {unread.slice(0, 5).map((m: any) => (
                 <div
                   key={m.id}
-                  className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] px-3 py-2"
+                  className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] px-3 py-2"
                 >
                   <div className="flex items-center justify-between">
-                    <p className="truncate text-sm font-semibold text-[#0B2447]">
+                    <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                       {m.fromName || "Unknown"}
                     </p>
-                    <Badge className="bg-[#EAF3FF] text-[#0057B8]">{m.channel}</Badge>
+                    <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">{m.channel}</Badge>
                   </div>
-                  <p className="mt-1 truncate text-xs text-[#5A7299]">
+                  <p className="mt-1 truncate text-xs text-[var(--alo-text-muted)]">
                     {m.body?.slice(0, 80)}
                   </p>
                 </div>
@@ -352,9 +352,9 @@ export function EmployeeWorkspace({
             ].map((p) => (
               <div
                 key={p.label}
-                className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-3"
+                className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-3"
               >
-                <p className="text-xs text-[#5A7299]">{p.label}</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">{p.label}</p>
                 <p
                   className="mt-1 text-2xl font-bold tabular-nums"
                   style={{ color: p.color }}
@@ -429,7 +429,7 @@ export function EmployeeWorkspace({
             ].map((rec, idx) => (
               <Card
                 key={idx}
-                className="cursor-pointer rounded-2xl border border-[#DCE8F5] bg-white transition-shadow hover:shadow-md"
+                className="cursor-pointer rounded-2xl border border-[var(--alo-brand-border)] bg-white transition-shadow hover:shadow-md"
                 onClick={() => rec.action && onNavigate?.(rec.action as ViewKey)}
               >
                 <CardContent className="p-4">
@@ -438,15 +438,15 @@ export function EmployeeWorkspace({
                       <Icon name={rec.icon} className="size-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#0B2447]">{rec.title}</p>
-                      <p className="mt-0.5 text-xs text-[#5A7299]">{rec.description}</p>
+                      <p className="text-sm font-semibold text-[var(--alo-text)]">{rec.title}</p>
+                      <p className="mt-0.5 text-xs text-[var(--alo-text-muted)]">{rec.description}</p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <Badge className={PRIORITY_COLORS[rec.priority] || "bg-slate-100"}>
+                    <Badge className={PRIORITY_COLORS[rec.priority] || "bg-[var(--alo-surface-muted)]"}>
                       {rec.priority}
                     </Badge>
-                    <span className="text-xs font-medium text-[#0057B8]">
+                    <span className="text-xs font-medium text-[var(--alo-brand)]">
                       Take action →
                     </span>
                   </div>
@@ -465,26 +465,26 @@ export function EmployeeWorkspace({
             className="lg:col-span-3"
           >
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <div className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-4">
-                <p className="text-xs text-[#5A7299]">Pending Commission</p>
-                <p className="mt-1 text-2xl font-bold text-[#E8501A]">
+              <div className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4">
+                <p className="text-xs text-[var(--alo-text-muted)]">Pending Commission</p>
+                <p className="mt-1 text-2xl font-bold text-[var(--alo-cta)]">
                   {(m.pendingCommission || 0).toLocaleString()} BDT
                 </p>
               </div>
-              <div className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-4">
-                <p className="text-xs text-[#5A7299]">Paid Commission</p>
+              <div className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4">
+                <p className="text-xs text-[var(--alo-text-muted)]">Paid Commission</p>
                 <p className="mt-1 text-2xl font-bold text-emerald-600">
                   {(m.paidCommission || 0).toLocaleString()} BDT
                 </p>
               </div>
-              <div className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-4">
-                <p className="text-xs text-[#5A7299]">New Leads Today</p>
-                <p className="mt-1 text-2xl font-bold text-[#0057B8]">
+              <div className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4">
+                <p className="text-xs text-[var(--alo-text-muted)]">New Leads Today</p>
+                <p className="mt-1 text-2xl font-bold text-[var(--alo-brand)]">
                   {m.newLeadsToday || 0}
                 </p>
               </div>
-              <div className="rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-4">
-                <p className="text-xs text-[#5A7299]">Partner Referred</p>
+              <div className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4">
+                <p className="text-xs text-[var(--alo-text-muted)]">Partner Referred</p>
                 <p className="mt-1 text-2xl font-bold text-violet-600">
                   {m.partnerReferredStudents || 0}
                 </p>

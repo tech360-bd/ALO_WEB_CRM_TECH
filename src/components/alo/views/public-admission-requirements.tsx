@@ -154,7 +154,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -163,23 +163,23 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="GraduationCap" className="mr-1 size-3" />
               By Level &amp; Country
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Admission <span className="text-[#0057B8]">Requirements</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Admission <span className="text-[var(--alo-brand)]">Requirements</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Find out exactly what you need to get into your dream university — by study level and by country.
               All requirements verified against official university sources weekly.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#c8451a]">
+              <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
                 <Icon name="UserCheck" className="size-4" />
                 Get Free Profile Assessment
               </Button>
-              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[#0057B8]/30 bg-white px-6 text-[#0057B8] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[var(--alo-brand)]/30 bg-white px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                 <Icon name="Phone" className="size-4" />
                 Talk to a Counselor
               </Button>
@@ -192,38 +192,38 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">By Study Level</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Requirements by study level</h2>
-            <p className="mt-2 text-sm text-[#5A7299]">From Foundation to PhD — what you need at each stage.</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">By Study Level</p>
+            <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">Requirements by study level</h2>
+            <p className="mt-2 text-sm text-[var(--alo-text-muted)]">From Foundation to PhD — what you need at each stage.</p>
           </div>
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {LEVELS.map((l) => (
-              <Card key={l.level} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30">
+              <Card key={l.level} className="alo-card-hover rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30">
                 <CardContent className="p-6">
                   <div className={cn(
                     "flex size-12 items-center justify-center rounded-2xl",
-                    l.accent === "blue" ? "bg-[#EAF3FF] text-[#0057B8]" : "bg-[#FFF3EA] text-[#E8501A]"
+                    l.accent === "blue" ? "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" : "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
                   )}>
                     <Icon name={l.icon} className="size-6" />
                   </div>
-                  <h3 className="mt-4 text-lg font-black text-[#0B2447]">{l.level}</h3>
-                  <p className="mt-1 text-xs text-[#5A7299]">{l.description}</p>
+                  <h3 className="mt-4 text-lg font-black text-[var(--alo-text)]">{l.level}</h3>
+                  <p className="mt-1 text-xs text-[var(--alo-text-muted)]">{l.description}</p>
                   <div className="mt-4">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#0057B8]">Requirements</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-brand)]">Requirements</p>
                     <ul className="mt-2 space-y-1.5">
                       {l.requirements.map((r, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-xs text-[#5A7299]">
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-[var(--alo-text-muted)]">
                           <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />
                           <span>{r}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="mt-4 border-t border-[#E2E8F0] pt-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#E8501A]">Typical courses</p>
+                  <div className="mt-4 border-t border-[var(--alo-border)] pt-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-cta)]">Typical courses</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {l.typicalCourses.map((c) => (
-                        <Badge key={c} variant="outline" className="bg-[#F7FAFE] text-[#5A7299] text-[10px]">{c}</Badge>
+                        <Badge key={c} variant="outline" className="bg-[var(--alo-page)] text-[var(--alo-text-muted)] text-[11px]">{c}</Badge>
                       ))}
                     </div>
                   </div>
@@ -235,36 +235,36 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       </section>
 
       {/* BY COUNTRY */}
-      <section className="bg-[#F7FAFE]">
+      <section className="bg-[var(--alo-page)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0057B8]">By Destination Country</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Country-specific requirements</h2>
-            <p className="mt-2 text-sm text-[#5A7299]">Click any country for full entry requirements, visas, and university list.</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-brand)]">By Destination Country</p>
+            <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">Country-specific requirements</h2>
+            <p className="mt-2 text-sm text-[var(--alo-text-muted)]">Click any country for full entry requirements, visas, and university list.</p>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {COUNTRY_REQUIREMENTS.map((c) => (
               <Card
                 key={c.slug}
-                className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30"
+                className="alo-card-hover group cursor-pointer rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30"
                 onClick={() => onNavigate("public-country", c.slug)}
               >
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{c.flag}</span>
-                    <h3 className="text-base font-bold text-[#0B2447] group-hover:text-[#0057B8]">{c.name}</h3>
+                    <h3 className="text-base font-bold text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{c.name}</h3>
                   </div>
                   <div className="mt-3 space-y-2 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-[#5A7299]">Min IELTS</span>
-                      <span className="font-bold text-[#0B2447]">{c.minIELTS}</span>
+                      <span className="text-[var(--alo-text-muted)]">Min IELTS</span>
+                      <span className="font-bold text-[var(--alo-text)]">{c.minIELTS}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#5A7299]">Min GPA</span>
-                      <span className="font-bold text-[#0B2447]">{c.minGPA}</span>
+                      <span className="text-[var(--alo-text-muted)]">Min GPA</span>
+                      <span className="font-bold text-[var(--alo-text)]">{c.minGPA}</span>
                     </div>
                   </div>
-                  <p className="mt-3 border-t border-[#E2E8F0] pt-3 text-xs leading-relaxed text-[#5A7299]">{c.notes}</p>
+                  <p className="mt-3 border-t border-[var(--alo-border)] pt-3 text-xs leading-relaxed text-[var(--alo-text-muted)]">{c.notes}</p>
                 </CardContent>
               </Card>
             ))}
@@ -276,14 +276,14 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">English Tests</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0B2447]">English test requirements comparison</h2>
-            <p className="mt-2 text-sm text-[#5A7299]">Which test scores are accepted by which country's visa offices.</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">English Tests</p>
+            <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">English test requirements comparison</h2>
+            <p className="mt-2 text-sm text-[var(--alo-text-muted)]">Which test scores are accepted by which country's visa offices.</p>
           </div>
-          <Card className="mt-8 overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white alo-shadow">
+          <Card className="mt-8 overflow-hidden rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#0057B8] text-white">
+                <thead className="bg-[var(--alo-brand)] text-white">
                   <tr>
                     <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">Test</th>
                     <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider">Common Score</th>
@@ -295,13 +295,13 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
                 </thead>
                 <tbody>
                   {ENGLISH_TEST_TABLE.map((row, i) => (
-                    <tr key={row.test} className={i % 2 === 0 ? "bg-white" : "bg-[#F7FAFE]/60"}>
-                      <td className="border-b border-[#E2E8F0] px-4 py-3 font-semibold text-[#0B2447]">{row.test}</td>
-                      <td className="border-b border-[#E2E8F0] px-4 py-3 text-[#5A7299]">{row.commonScore}</td>
-                      <td className="border-b border-[#E2E8F0] px-4 py-3 text-[#5A7299]">{row.ukVisa}</td>
-                      <td className="border-b border-[#E2E8F0] px-4 py-3 text-[#5A7299]">{row.usa}</td>
-                      <td className="border-b border-[#E2E8F0] px-4 py-3 text-[#5A7299]">{row.canada}</td>
-                      <td className="border-b border-[#E2E8F0] px-4 py-3 text-[#5A7299]">{row.australia}</td>
+                    <tr key={row.test} className={i % 2 === 0 ? "bg-white" : "bg-[var(--alo-page)]/60"}>
+                      <td className="border-b border-[var(--alo-border)] px-4 py-3 font-semibold text-[var(--alo-text)]">{row.test}</td>
+                      <td className="border-b border-[var(--alo-border)] px-4 py-3 text-[var(--alo-text-muted)]">{row.commonScore}</td>
+                      <td className="border-b border-[var(--alo-border)] px-4 py-3 text-[var(--alo-text-muted)]">{row.ukVisa}</td>
+                      <td className="border-b border-[var(--alo-border)] px-4 py-3 text-[var(--alo-text-muted)]">{row.usa}</td>
+                      <td className="border-b border-[var(--alo-border)] px-4 py-3 text-[var(--alo-text-muted)]">{row.canada}</td>
+                      <td className="border-b border-[var(--alo-border)] px-4 py-3 text-[var(--alo-text-muted)]">{row.australia}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -315,25 +315,25 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       </section>
 
       {/* DOCUMENT CHECKLIST */}
-      <section className="bg-[#F7FAFE]">
+      <section className="bg-[var(--alo-page)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#0057B8]">Document Checklist</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0B2447]">All documents you'll need</h2>
-            <p className="mt-2 text-sm text-[#5A7299]">Organised by category — tick them off as you prepare.</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-brand)]">Document Checklist</p>
+            <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">All documents you'll need</h2>
+            <p className="mt-2 text-sm text-[var(--alo-text-muted)]">Organised by category — tick them off as you prepare.</p>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {REQUIRED_DOCUMENTS.map((cat) => (
-              <Card key={cat.category} className="rounded-2xl border border-[#E2E8F0] bg-white">
+              <Card key={cat.category} className="rounded-2xl border border-[var(--alo-border)] bg-white">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2">
-                    <Icon name="Folder" className="size-5 text-[#0057B8]" />
-                    <h3 className="text-sm font-bold text-[#0B2447]">{cat.category}</h3>
+                    <Icon name="Folder" className="size-5 text-[var(--alo-brand)]" />
+                    <h3 className="text-sm font-bold text-[var(--alo-text)]">{cat.category}</h3>
                   </div>
                   <ul className="mt-3 space-y-1.5">
                     {cat.items.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-[#5A7299]">
-                        <Icon name="FileText" className="mt-0.5 size-3 shrink-0 text-[#0057B8]" />
+                      <li key={i} className="flex items-start gap-2 text-xs text-[var(--alo-text-muted)]">
+                        <Icon name="FileText" className="mt-0.5 size-3 shrink-0 text-[var(--alo-brand)]" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -346,7 +346,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0B2447]">
+      <section className="bg-[var(--alo-text)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
@@ -356,7 +356,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
                 requirements of your target universities — giving you a clear chance-of-admission estimate.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#c8451a]">
+                <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
                   <Icon name="UserCheck" className="size-4" />
                   Get Profile Assessment
                 </Button>

@@ -85,7 +85,7 @@ export default function EmployeeReportsPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-alo-text">{r.name}</p>
                   <p className="text-[11px] text-alo-text-muted mt-0.5">{r.description}</p>
-                  <p className="text-[10px] text-alo-text-muted mt-0.5">Last: {r.lastGenerated} · {r.format}</p>
+                  <p className="text-[11px] text-alo-text-muted mt-0.5">Last: {r.lastGenerated} · {r.format}</p>
                 </div>
                 <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-8 text-xs text-alo-brand shrink-0">
                   <Download className="w-3 h-3 mr-1" /> {r.format}

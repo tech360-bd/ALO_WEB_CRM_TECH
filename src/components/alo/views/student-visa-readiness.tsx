@@ -30,7 +30,7 @@ const RISK_COLORS: Record<string, string> = {
   NEEDS_DOCUMENT_UPDATE: "bg-amber-100 text-amber-700",
   HIGH_RISK: "bg-rose-100 text-rose-700",
   HUMAN_REVIEW_REQUIRED: "bg-violet-100 text-violet-700",
-  UNKNOWN: "bg-slate-100 text-slate-700",
+  UNKNOWN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 export function StudentVisaReadiness() {
@@ -76,7 +76,7 @@ export function StudentVisaReadiness() {
   }
 
   if (loading) {
-    return <div className="p-6 text-center text-[#5A7299]">Loading...</div>;
+    return <div className="p-6 text-center text-[var(--alo-text-muted)]">Loading...</div>;
   }
 
   const score = data?.overallScore || 0;
@@ -92,25 +92,25 @@ export function StudentVisaReadiness() {
         icon="ShieldCheck"
       />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-4 text-center sm:p-6">
-            <p className="text-sm font-bold uppercase text-[#5A7299]">
+            <p className="text-sm font-bold uppercase text-[var(--alo-text-muted)]">
               Overall Readiness
             </p>
-            <p className="mt-4 text-5xl font-black text-[#0057B8]">{score}%</p>
+            <p className="mt-4 text-5xl font-black text-[var(--alo-brand)]">{score}%</p>
             <Badge className={cn("mt-4 capitalize", riskColor)}>
               {risk.replace(/_/g, " ").toLowerCase()}
             </Badge>
             <Progress value={score} className="mt-4" />
-            <p className="mt-3 text-xs text-[#5A7299]">
+            <p className="mt-3 text-xs text-[var(--alo-text-muted)]">
               AI assessment only — not a visa guarantee.
             </p>
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2 rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="lg:col-span-2 rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-4 sm:p-6">
-            <h3 className="text-lg font-bold text-[#0B2447]">
+            <h3 className="text-lg font-bold text-[var(--alo-text)]">
               Visa Checklist ({data?.totalItems || 0} items, {data?.blockingItems || 0}{" "}
               blocking)
             </h3>
@@ -127,14 +127,14 @@ export function StudentVisaReadiness() {
                 {checklist.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-3"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-3"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-[#0B2447]">
+                      <p className="text-sm font-medium text-[var(--alo-text)]">
                         {item.itemName}
                       </p>
                       {item.category && (
-                        <p className="text-xs text-[#5A7299]">{item.category}</p>
+                        <p className="text-xs text-[var(--alo-text-muted)]">{item.category}</p>
                       )}
                     </div>
                     <Badge

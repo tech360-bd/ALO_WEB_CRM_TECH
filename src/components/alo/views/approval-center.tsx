@@ -257,7 +257,7 @@ export function ApprovalCenter() {
                       {/* Content */}
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant={item.riskLevel === "CRITICAL" ? "danger" : item.riskLevel === "HIGH" ? "warning" : item.riskLevel === "MEDIUM" ? "info" : "neutral"} className="text-[10px]">
+                          <Badge variant={item.riskLevel === "CRITICAL" ? "danger" : item.riskLevel === "HIGH" ? "warning" : item.riskLevel === "MEDIUM" ? "info" : "neutral"} className="text-[11px]">
                             {risk.label}
                           </Badge>
                           <span className={cn("flex items-center gap-1 text-xs font-semibold", src.color)}>
@@ -275,7 +275,7 @@ export function ApprovalCenter() {
                         {item.riskFlags && item.riskFlags !== "[]" && (
                           <div className="mt-2 flex flex-wrap gap-1">
                             {JSON.parse(item.riskFlags || "[]").map((flag: string, i: number) => (
-                              <Badge key={i} variant="warning" className="text-[10px]">{flag.replace(/_/g, " ")}</Badge>
+                              <Badge key={i} variant="warning" className="text-[11px]">{flag.replace(/_/g, " ")}</Badge>
                             ))}
                           </div>
                         )}

@@ -56,7 +56,7 @@ export function CrmFollowups() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -98,8 +98,8 @@ export function CrmFollowups() {
                   filter === f.k
                     ? f.k === "OVERDUE"
                       ? "bg-rose-600 text-white hover:bg-rose-700"
-                      : "bg-[#0057B8] text-white"
-                    : "border-[#DCE8F5] text-[#5A7299]"
+                      : "bg-[var(--alo-brand)] text-white"
+                    : "border-[var(--alo-brand-border)] text-[var(--alo-text-muted)]"
                 }
                 onClick={() => setFilter(f.k)}
               >
@@ -124,20 +124,20 @@ export function CrmFollowups() {
                   <Card
                     key={l.id}
                     className={`rounded-2xl border bg-white ${
-                      isOverdue ? "border-rose-200" : "border-[#DCE8F5]"
+                      isOverdue ? "border-rose-200" : "border-[var(--alo-brand-border)]"
                     }`}
                   >
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <h3 className="truncate font-bold text-[#0B2447]">{l.fullName}</h3>
-                          <p className="text-xs text-[#5A7299]">{l.leadId}</p>
+                          <h3 className="truncate font-bold text-[var(--alo-text)]">{l.fullName}</h3>
+                          <p className="text-xs text-[var(--alo-text-muted)]">{l.leadId}</p>
                         </div>
                         <Badge
                           className={
                             isOverdue
                               ? "bg-rose-100 text-rose-700"
-                              : "bg-[#EAF3FF] text-[#0057B8]"
+                              : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                           }
                         >
                           <Icon name="CalendarClock" className="mr-1 size-3" />
@@ -152,19 +152,19 @@ export function CrmFollowups() {
 
                       <div className="mt-3 space-y-1 text-sm">
                         {l.phone && (
-                          <p className="text-[#5A7299]">
+                          <p className="text-[var(--alo-text-muted)]">
                             <Icon name="Phone" className="mr-1 inline size-3.5" />
                             {l.phone}
                           </p>
                         )}
                         {l.preferredCountry && (
-                          <p className="text-[#5A7299]">
+                          <p className="text-[var(--alo-text-muted)]">
                             <Icon name="Globe" className="mr-1 inline size-3.5" />
                             {l.preferredCountry}
                           </p>
                         )}
                         {l.counselor && (
-                          <p className="text-[#5A7299]">
+                          <p className="text-[var(--alo-text-muted)]">
                             <Icon name="UserCog" className="mr-1 inline size-3.5" />
                             {l.counselor.name || "Counselor"}
                           </p>
@@ -172,7 +172,7 @@ export function CrmFollowups() {
                       </div>
 
                       {l.notes && (
-                        <div className="mt-3 rounded-lg bg-[#F7FAFE] p-2 text-xs text-[#5A7299]">
+                        <div className="mt-3 rounded-lg bg-[var(--alo-page)] p-2 text-xs text-[var(--alo-text-muted)]">
                           {l.notes.slice(0, 120)}
                         </div>
                       )}
@@ -180,14 +180,14 @@ export function CrmFollowups() {
                       <div className="mt-4 flex gap-2">
                         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                           size="sm"
-                          className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+                          className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                         >
                           <Icon name="PhoneCall" className="mr-1 size-3.5" /> Call
                         </Button>
                         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                           size="sm"
                           variant="outline"
-                          className="border-[#E8501A] text-[#E8501A] hover:bg-[#FFF3EA]"
+                          className="border-[var(--alo-cta)] text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
                         >
                           <Icon name="MessageSquare" className="mr-1 size-3.5" /> Message
                         </Button>

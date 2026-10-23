@@ -200,8 +200,8 @@ export default function KeywordTriggersView() {
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Keyword Triggers</h1>
-          <p className="text-sm text-gray-500">Auto-reply to social media comments containing specific keywords</p>
+          <h1 className="text-xl font-bold text-[var(--alo-text)]">Keyword Triggers</h1>
+          <p className="text-sm text-[var(--alo-text-muted)]">Auto-reply to social media comments containing specific keywords</p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={() => void loadTriggers()} disabled={loading}>
@@ -214,32 +214,32 @@ export default function KeywordTriggersView() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Card className="bg-white border border-gray-100">
+        <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
             <div className="p-2 bg-orange-100 rounded-lg w-fit"><Hash className="w-4 h-4 text-orange-600" /></div>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{activeCount}<span className="text-sm text-gray-400 font-normal">/{triggers.length}</span></p>
-            <p className="text-xs text-gray-500">Active keywords</p>
+            <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{activeCount}<span className="text-sm text-[var(--alo-text-muted)] font-normal">/{triggers.length}</span></p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Active keywords</p>
           </CardContent>
         </Card>
-        <Card className="bg-white border border-gray-100">
+        <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
             <div className="p-2 bg-blue-100 rounded-lg w-fit"><Zap className="w-4 h-4 text-blue-600" /></div>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{totalFires.toLocaleString()}</p>
-            <p className="text-xs text-gray-500">Total fires</p>
+            <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{totalFires.toLocaleString()}</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Total fires</p>
           </CardContent>
         </Card>
-        <Card className="bg-white border border-gray-100">
+        <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
             <div className="p-2 bg-green-100 rounded-lg w-fit"><Target className="w-4 h-4 text-green-600" /></div>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{leadCount.toLocaleString()}</p>
-            <p className="text-xs text-gray-500">Rules creating leads</p>
+            <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{leadCount.toLocaleString()}</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Rules creating leads</p>
           </CardContent>
         </Card>
-        <Card className="bg-white border border-gray-100">
+        <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
             <div className="p-2 bg-purple-100 rounded-lg w-fit"><Send className="w-4 h-4 text-purple-600" /></div>
-            <p className="text-2xl font-bold text-gray-900 mt-2">{triggers.filter((t) => t.autoDmText).length}</p>
-            <p className="text-xs text-gray-500">Rules sending a DM</p>
+            <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{triggers.filter((t) => t.autoDmText).length}</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Rules sending a DM</p>
           </CardContent>
         </Card>
       </div>
@@ -247,7 +247,7 @@ export default function KeywordTriggersView() {
       {showAddForm && (
         <Card className="bg-orange-50 border border-orange-200">
           <CardContent className="p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-gray-900">Add New Keyword Trigger</h3>
+            <h3 className="text-sm font-semibold text-[var(--alo-text)]">Add New Keyword Trigger</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <Input value={form.keyword} onChange={(e) => setForm((f) => ({ ...f, keyword: e.target.value }))} placeholder="Keyword (e.g. Study Abroad)" className="h-9 text-sm" />
               <Select value={form.platform} onValueChange={(v) => setForm((f) => ({ ...f, platform: v }))}>
@@ -274,7 +274,7 @@ export default function KeywordTriggersView() {
             </div>
             <Textarea value={form.autoReplyText} onChange={(e) => setForm((f) => ({ ...f, autoReplyText: e.target.value }))} placeholder="Auto reply text (required)" rows={2} className="text-sm" />
             <Textarea value={form.autoDmText} onChange={(e) => setForm((f) => ({ ...f, autoDmText: e.target.value }))} placeholder="Optional auto DM text" rows={2} className="text-sm" />
-            <p className="text-[11px] text-gray-500">
+            <p className="text-[11px] text-[var(--alo-text-muted)]">
               Do not include unverified claims such as success rates or student counts in reply text. Every message is sent to a real prospect.
             </p>
           </CardContent>
@@ -283,7 +283,7 @@ export default function KeywordTriggersView() {
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--alo-text-muted)]" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search keywords..." className="pl-9 h-9 text-sm" />
         </div>
         <Select value={platformFilter} onValueChange={setPlatformFilter}>
@@ -297,7 +297,7 @@ export default function KeywordTriggersView() {
         </Select>
       </div>
 
-      <Card className="bg-white border border-gray-100">
+      <Card className="bg-white border border-[var(--alo-border)]">
         <CardContent className="p-4">
           {loadError && (
             <div role="alert" className="mb-4 flex items-start gap-3 rounded-md border border-destructive/30 bg-destructive/5 p-3">
@@ -313,17 +313,17 @@ export default function KeywordTriggersView() {
           {loading && !loadError && (
             <div className="space-y-2 py-2" aria-busy="true" aria-live="polite">
               {[0, 1, 2].map((row) => (
-                <div key={row} className="h-12 animate-pulse rounded-md bg-gray-100" />
+                <div key={row} className="h-12 animate-pulse rounded-md bg-[var(--alo-surface-muted)]" />
               ))}
-              <p className="text-xs text-gray-500">Loading keyword triggers…</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">Loading keyword triggers…</p>
             </div>
           )}
 
           {!loading && !loadError && triggers.length === 0 && (
             <div className="text-center py-10">
-              <Hash className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-              <p className="text-sm font-semibold text-gray-900">No keyword triggers configured</p>
-              <p className="text-xs text-gray-500 mt-1 max-w-md mx-auto">
+              <Hash className="w-8 h-8 mx-auto mb-2 text-[var(--alo-placeholder)]" />
+              <p className="text-sm font-semibold text-[var(--alo-text)]">No keyword triggers configured</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mt-1 max-w-md mx-auto">
                 Create a rule to auto-reply to comments, or load the default set to start from a working baseline.
               </p>
               <Button size="sm" variant="outline" className="mt-3" onClick={() => void handleSeed()} disabled={seeding}>
@@ -336,15 +336,15 @@ export default function KeywordTriggersView() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 text-left">
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500">Keyword</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500">Platform</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500">Actions</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500">Auto Reply</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500 text-center">Fires</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500 text-center">Updated</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500 text-center">Active</th>
-                    <th className="pb-3 text-[11px] font-semibold text-gray-500 text-right">Remove</th>
+                  <tr className="border-b border-[var(--alo-border)] text-left">
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)]">Keyword</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)]">Platform</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)]">Actions</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)]">Auto Reply</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)] text-center">Fires</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)] text-center">Updated</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)] text-center">Active</th>
+                    <th className="pb-3 text-[11px] font-semibold text-[var(--alo-text-muted)] text-right">Remove</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -353,36 +353,36 @@ export default function KeywordTriggersView() {
                     const PlatformIcon = meta.icon;
                     const isActive = trigger.status === 'ACTIVE';
                     return (
-                      <tr key={trigger.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                      <tr key={trigger.id} className="border-b border-gray-50 hover:bg-[var(--alo-page)]/50 transition-colors">
                         <td className="py-3">
                           <span className="text-sm font-bold text-orange-600">{trigger.keyword}</span>
-                          <Badge variant="outline" className="ml-2 text-[10px] font-normal">{trigger.keywordType}</Badge>
+                          <Badge variant="outline" className="ml-2 text-[11px] font-normal">{trigger.keywordType}</Badge>
                         </td>
                         <td className="py-3">
                           <div className="flex items-center gap-1.5">
                             <span className={`w-5 h-5 rounded ${meta.bg} flex items-center justify-center`}>
                               <PlatformIcon className="w-3 h-3 text-white" />
                             </span>
-                            <span className="text-xs text-gray-600">{meta.label}</span>
+                            <span className="text-xs text-[var(--alo-body)]">{meta.label}</span>
                           </div>
                         </td>
                         <td className="py-3">
                           <div className="flex flex-wrap gap-1 max-w-[190px]">
                             {actionsFor(trigger).length === 0 ? (
-                              <span className="text-xs text-gray-400">No automation enabled</span>
+                              <span className="text-xs text-[var(--alo-text-muted)]">No automation enabled</span>
                             ) : actionsFor(trigger).map((action) => (
-                              <Badge key={action} variant="outline" className="text-[10px] font-normal">{action}</Badge>
+                              <Badge key={action} variant="outline" className="text-[11px] font-normal">{action}</Badge>
                             ))}
                           </div>
                         </td>
                         <td className="py-3">
-                          <p className="text-xs text-gray-600 line-clamp-2 max-w-[260px]">{trigger.autoReplyText || '—'}</p>
+                          <p className="text-xs text-[var(--alo-body)] line-clamp-2 max-w-[260px]">{trigger.autoReplyText || '—'}</p>
                           {trigger.autoDmText && (
-                            <p className="text-[10px] text-gray-400 mt-0.5 line-clamp-1 max-w-[260px]">DM: {trigger.autoDmText}</p>
+                            <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5 line-clamp-1 max-w-[260px]">DM: {trigger.autoDmText}</p>
                           )}
                         </td>
                         <td className="py-3 text-center text-xs font-bold text-green-600">{trigger.triggerCount}</td>
-                        <td className="py-3 text-center text-[10px] text-gray-400">{formatTimestamp(trigger.updatedAt)}</td>
+                        <td className="py-3 text-center text-[11px] text-[var(--alo-text-muted)]">{formatTimestamp(trigger.updatedAt)}</td>
                         <td className="py-3 text-center">
                           <span className="flex items-center justify-center gap-2">
                             <Switch
@@ -391,7 +391,7 @@ export default function KeywordTriggersView() {
                               onCheckedChange={() => void handleToggle(trigger)}
                               aria-label={`${isActive ? 'Pause' : 'Activate'} keyword ${trigger.keyword}`}
                             />
-                            <span className="text-[10px] text-gray-500">{isActive ? 'On' : 'Paused'}</span>
+                            <span className="text-[11px] text-[var(--alo-text-muted)]">{isActive ? 'On' : 'Paused'}</span>
                           </span>
                         </td>
                         <td className="py-3 text-right">
@@ -412,7 +412,7 @@ export default function KeywordTriggersView() {
                 </tbody>
               </table>
               {filtered.length === 0 && (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-[var(--alo-text-muted)]">
                   <Search className="w-6 h-6 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">No keywords match your filters</p>
                   <Button size="sm" variant="ghost" className="mt-2 h-7 text-xs" onClick={() => { setSearch(''); setPlatformFilter('all'); }}>
@@ -425,7 +425,7 @@ export default function KeywordTriggersView() {
         </CardContent>
       </Card>
 
-      <p className="text-[11px] text-gray-400 flex items-center gap-1.5">
+      <p className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1.5">
         <Users className="w-3 h-3" />
         Figures shown are counts stored against each rule. No conversion or success-rate metrics are estimated.
       </p>

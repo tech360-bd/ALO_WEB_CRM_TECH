@@ -140,7 +140,7 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
           <button
             type="button"
             onClick={() => setView('portals')}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors mb-8 group cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-text)] transition-colors mb-8 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
             Back to Portals
@@ -157,8 +157,8 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-slate-900 mb-1">{portalTitle}</h2>
-          <p className="text-sm text-slate-500 mb-8">
+          <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-1">{portalTitle}</h2>
+          <p className="text-sm text-[var(--alo-text-muted)] mb-8">
             Sign in to access your portal
           </p>
 
@@ -181,11 +181,11 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="login-email" className="text-slate-700">
+              <Label htmlFor="login-email" className="text-[var(--alo-body)]">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                 <Input
                   id="login-email"
                   type="email"
@@ -201,11 +201,11 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="login-password" className="text-slate-700">
+              <Label htmlFor="login-password" className="text-[var(--alo-body)]">
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                 <Input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
@@ -219,7 +219,7 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] transition-colors cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
@@ -240,7 +240,7 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
                     setRememberDevice(checked === true)
                   }
                 />
-                <span className="text-sm text-slate-600">Remember device</span>
+                <span className="text-sm text-[var(--alo-body)]">Remember device</span>
               </label>
               <button
                 type="button"
@@ -269,7 +269,7 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
           {/* Register / Info note */}
           <div className="mt-6">
             {canRegister ? (
-              <p className="text-sm text-slate-500 text-center">
+              <p className="text-sm text-[var(--alo-text-muted)] text-center">
                 Don&apos;t have an account?{' '}
                 <button
                   type="button"
@@ -280,14 +280,14 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
                 </button>
               </p>
             ) : (
-              <p className="text-sm text-slate-400 text-center">
+              <p className="text-sm text-[var(--alo-text-muted)] text-center">
                 Employees are created by admin only.
               </p>
             )}
           </div>
 
           {/* Security note */}
-          <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+          <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
             <Lock className="w-3 h-3" />
             <span>
               Protected by 256-bit encryption. All login attempts are monitored.

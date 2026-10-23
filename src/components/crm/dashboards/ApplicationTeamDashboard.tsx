@@ -28,7 +28,7 @@ function StageBadge({ stage }: { stage: string }) {
     'Missing Docs': { variant: 'danger' },
   };
   const v = map[stage] || { variant: 'muted' as const };
-  return <Badge variant={v.variant} className="text-[10px]">{stage}</Badge>;
+  return <Badge variant={v.variant} className="text-[11px]">{stage}</Badge>;
 }
 
 export default function ApplicationTeamDashboard() {
@@ -162,7 +162,7 @@ export default function ApplicationTeamDashboard() {
                   <div key={d.student + d.doc} className={`p-2.5 rounded-lg border ${d.severity === 'high' ? 'border-red-200 bg-red-50' : d.severity === 'medium' ? 'border-amber-200 bg-amber-50' : 'border-alo-border'}`}>
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{d.student}</p>
-                      <Badge variant={d.severity === 'high' ? 'danger' : d.severity === 'medium' ? 'warning' : 'muted'} className="text-[10px] shrink-0 ml-1">By {d.deadline}</Badge>
+                      <Badge variant={d.severity === 'high' ? 'danger' : d.severity === 'medium' ? 'warning' : 'muted'} className="text-[11px] shrink-0 ml-1">By {d.deadline}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{d.doc}</p>
                   </div>
@@ -184,7 +184,7 @@ export default function ApplicationTeamDashboard() {
                   <div key={i} className="p-2.5 rounded-lg border border-alo-border hover:bg-alo-brand-light/20 transition-colors">
                     <p className="text-sm font-medium text-alo-text">{f.university}</p>
                     <p className="text-[11px] text-alo-text-muted mt-0.5">{f.task}</p>
-                    <p className="text-[10px] text-alo-brand mt-1">Due: {f.due}</p>
+                    <p className="text-[11px] text-alo-brand mt-1">Due: {f.due}</p>
                   </div>
                 ))}
               </div>
@@ -204,7 +204,7 @@ export default function ApplicationTeamDashboard() {
                   <div key={i} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-alo-text truncate">{d.university}</p>
-                      <Badge variant="warning" className="text-[10px] shrink-0 ml-1">{d.daysLeft}d left</Badge>
+                      <Badge variant="warning" className="text-[11px] shrink-0 ml-1">{d.daysLeft}d left</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{d.intake} · Deadline: {d.deadline}</p>
                   </div>

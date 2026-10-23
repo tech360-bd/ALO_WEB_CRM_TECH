@@ -34,7 +34,7 @@ interface EligibilityRow {
   alternativeRoutes?: Array<{ courseTitle?: string; title?: string; slug?: string; universityName?: string; categoryLabel?: string }>;
 }
 
-const NR = <span className="text-slate-400">Not recorded</span>;
+const NR = <span className="text-[var(--alo-text-muted)]">Not recorded</span>;
 const money = (amount: number | null, cur: string) => (amount ? `${cur} ${amount.toLocaleString()}` : null);
 const yesNo = (v: boolean | null) => (v === null ? null : v ? 'Yes' : 'No');
 
@@ -150,8 +150,8 @@ export default function CourseComparePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Compare courses</h1>
-        <p className="text-sm text-slate-600 max-w-3xl">Compare up to {COMPARE_MAX} courses side by side. Only courses whose details ALO Education has verified against official sources are shown. Fees, intakes and requirements can change, so check the source links and last-verified dates.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Compare courses</h1>
+        <p className="text-sm text-[var(--alo-body)] max-w-3xl">Compare up to {COMPARE_MAX} courses side by side. Only courses whose details ALO Education has verified against official sources are shown. Fees, intakes and requirements can change, so check the source links and last-verified dates.</p>
       </header>
 
       {error && <div role="alert" className="p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl flex items-center gap-2"><AlertCircle className="w-4 h-4" aria-hidden="true" />{error}</div>}
@@ -162,26 +162,26 @@ export default function CourseComparePage() {
         </div>
       )}
 
-      {courses === null && <p className="text-sm text-slate-500" role="status">Loading comparison…</p>}
+      {courses === null && <p className="text-sm text-[var(--alo-text-muted)]" role="status">Loading comparison…</p>}
       {courses && courses.length === 0 && !error && (
-        <Card className="p-8 text-center space-y-3 bg-white border border-slate-200 rounded-2xl">
-          <p className="text-slate-700 font-medium">No courses selected yet.</p>
-          <p className="text-sm text-slate-500">Use “Add to compare” on Course Finder results.</p>
+        <Card className="p-8 text-center space-y-3 bg-white border border-[var(--alo-border)] rounded-2xl">
+          <p className="text-[var(--alo-body)] font-medium">No courses selected yet.</p>
+          <p className="text-sm text-[var(--alo-text-muted)]">Use “Add to compare” on Course Finder results.</p>
           <Link href="/course-finder"><Button>Open Course Finder</Button></Link>
         </Card>
       )}
 
       {courses && courses.length > 0 && (
         <>
-          <div className="overflow-x-auto bg-white border border-slate-200 rounded-2xl">
+          <div className="overflow-x-auto bg-white border border-[var(--alo-border)] rounded-2xl">
             <table className="w-full text-sm min-w-[640px]">
               <caption className="sr-only">Course comparison</caption>
               <thead>
-                <tr className="bg-slate-50">
-                  <th scope="col" className="p-3 text-left text-xs text-slate-500 w-48">Course</th>
+                <tr className="bg-[var(--alo-page)]">
+                  <th scope="col" className="p-3 text-left text-xs text-[var(--alo-text-muted)] w-48">Course</th>
                   {courses.map((c) => (
                     <th key={c.courseId} scope="col" className="p-3 text-left align-top">
-                      <Link href={`/course/${encodeURIComponent(c.slug)}`} className="font-semibold text-slate-900 hover:underline">{c.courseTitle}</Link>
+                      <Link href={`/course/${encodeURIComponent(c.slug)}`} className="font-semibold text-[var(--alo-text)] hover:underline">{c.courseTitle}</Link>
                       <div><button type="button" className="text-xs text-red-700 underline mt-1" onClick={() => remove(c.identifier)}>Remove</button></div>
                     </th>
                   ))}
@@ -189,28 +189,28 @@ export default function CourseComparePage() {
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.label} className="border-t border-slate-100 align-top">
-                    <th scope="row" className="p-3 text-left text-xs font-medium text-slate-600">{r.label}</th>
-                    {r.cells.map((cell, i) => <td key={courses[i].courseId} className="p-3 text-slate-800">{cell}</td>)}
+                  <tr key={r.label} className="border-t border-[var(--alo-border)] align-top">
+                    <th scope="row" className="p-3 text-left text-xs font-medium text-[var(--alo-body)]">{r.label}</th>
+                    {r.cells.map((cell, i) => <td key={courses[i].courseId} className="p-3 text-[var(--alo-text)]">{cell}</td>)}
                   </tr>
                 ))}
                 {elig && (
-                  <tr className="border-t border-slate-200 align-top bg-blue-50/40">
-                    <th scope="row" className="p-3 text-left text-xs font-medium text-slate-600">Your indicative eligibility</th>
+                  <tr className="border-t border-[var(--alo-border)] align-top bg-blue-50/40">
+                    <th scope="row" className="p-3 text-left text-xs font-medium text-[var(--alo-body)]">Your indicative eligibility</th>
                     {courses.map((c) => {
                       const e = elig[c.courseId];
                       return (
-                        <td key={c.courseId} className="p-3 text-xs text-slate-800 space-y-1">
+                        <td key={c.courseId} className="p-3 text-xs text-[var(--alo-text)] space-y-1">
                           {e ? (
                             <>
                               <div className="font-semibold">{e.categoryLabel ?? e.eligibilityCategory}</div>
                               <div>{e.reason}</div>
-                              {e.nextSteps?.[0] && <div className="text-slate-600">Next step: {e.nextSteps[0]}</div>}
+                              {e.nextSteps?.[0] && <div className="text-[var(--alo-body)]">Next step: {e.nextSteps[0]}</div>}
                               {e.alternativeRoutes && e.alternativeRoutes.length > 0 && (
-                                <div className="text-slate-600">Alternative routes (checked by the same rules): {e.alternativeRoutes.slice(0, 2).map((a) => a.courseTitle ?? a.title).filter(Boolean).join('; ')}</div>
+                                <div className="text-[var(--alo-body)]">Alternative routes (checked by the same rules): {e.alternativeRoutes.slice(0, 2).map((a) => a.courseTitle ?? a.title).filter(Boolean).join('; ')}</div>
                               )}
                             </>
-                          ) : <span className="text-slate-400">No result returned</span>}
+                          ) : <span className="text-[var(--alo-text-muted)]">No result returned</span>}
                         </td>
                       );
                     })}
@@ -220,25 +220,25 @@ export default function CourseComparePage() {
             </table>
           </div>
 
-          <Card className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3">
-            <h2 className="text-base font-semibold text-slate-900">Check your indicative eligibility for these courses</h2>
+          <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-2xl space-y-3">
+            <h2 className="text-base font-semibold text-[var(--alo-text)]">Check your indicative eligibility for these courses</h2>
             <div className="grid sm:grid-cols-4 gap-3 text-sm">
-              <label className="space-y-1"><span className="block text-xs text-slate-600">Highest qualification</span>
-                <select className="w-full border border-slate-300 rounded-lg px-2 py-2" value={qualType} onChange={(e) => setQualType(e.target.value)}>
+              <label className="space-y-1"><span className="block text-xs text-[var(--alo-body)]">Highest qualification</span>
+                <select className="w-full border border-[var(--alo-border-strong)] rounded-lg px-2 py-2" value={qualType} onChange={(e) => setQualType(e.target.value)}>
                   {['HSC', 'A Level', 'Diploma', "Bachelor's", "Master's"].map((q) => <option key={q}>{q}</option>)}
                 </select></label>
-              <label className="space-y-1"><span className="block text-xs text-slate-600">Result (GPA, % or class)</span>
-                <input className="w-full border border-slate-300 rounded-lg px-2 py-2" value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="e.g. 3.4 or 72 or 2:1" /></label>
-              <label className="space-y-1"><span className="block text-xs text-slate-600">English test</span>
-                <select className="w-full border border-slate-300 rounded-lg px-2 py-2" value={testType} onChange={(e) => setTestType(e.target.value)}>
+              <label className="space-y-1"><span className="block text-xs text-[var(--alo-body)]">Result (GPA, % or class)</span>
+                <input className="w-full border border-[var(--alo-border-strong)] rounded-lg px-2 py-2" value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="e.g. 3.4 or 72 or 2:1" /></label>
+              <label className="space-y-1"><span className="block text-xs text-[var(--alo-body)]">English test</span>
+                <select className="w-full border border-[var(--alo-border-strong)] rounded-lg px-2 py-2" value={testType} onChange={(e) => setTestType(e.target.value)}>
                   {['IELTS', 'PTE', 'TOEFL', 'Duolingo'].map((t) => <option key={t}>{t}</option>)}
                 </select></label>
-              <label className="space-y-1"><span className="block text-xs text-slate-600">Overall score (leave blank if none)</span>
-                <input className="w-full border border-slate-300 rounded-lg px-2 py-2" inputMode="decimal" value={testScore} onChange={(e) => setTestScore(e.target.value)} /></label>
+              <label className="space-y-1"><span className="block text-xs text-[var(--alo-body)]">Overall score (leave blank if none)</span>
+                <input className="w-full border border-[var(--alo-border-strong)] rounded-lg px-2 py-2" inputMode="decimal" value={testScore} onChange={(e) => setTestScore(e.target.value)} /></label>
             </div>
             <Button onClick={() => void checkEligibility()} disabled={eligBusy}>{eligBusy ? 'Checking…' : 'Check eligibility'}</Button>
             {eligError && <p role="alert" className="text-sm text-red-700">{eligError}</p>}
-            <ul className="text-xs text-slate-500 list-disc pl-5 space-y-1">
+            <ul className="text-xs text-[var(--alo-text-muted)] list-disc pl-5 space-y-1">
               {ELIGIBILITY_DISCLAIMERS.map((d) => <li key={d}>{d}</li>)}
             </ul>
           </Card>

@@ -94,7 +94,7 @@ export default function SupportDashboard() {
         <CardContent className="pt-4">
           <div className="flex items-center gap-6">
             <div className="flex-1">
-              <div className="relative h-10 rounded-lg overflow-hidden bg-gray-100">
+              <div className="relative h-10 rounded-lg overflow-hidden bg-[var(--alo-surface-muted)]">
                 <div className="h-full bg-purple-500 rounded-l-lg flex items-center pl-4" style={{ width: '62%' }}>
                   <span className="text-xs font-bold text-white">AI: 62%</span>
                 </div>
@@ -133,7 +133,7 @@ export default function SupportDashboard() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="text-sm font-medium text-alo-text truncate">{m.contact}</p>
-                          <Badge variant="muted" className="text-[9px]">{m.channel}</Badge>
+                          <Badge variant="muted" className="text-[11px]">{m.channel}</Badge>
                           {m.matched ? (
                             <UserCheck className="w-3 h-3 text-emerald-500" />
                           ) : (
@@ -143,7 +143,7 @@ export default function SupportDashboard() {
                         <p className="text-[11px] text-alo-text-muted truncate">{m.lastMsg}</p>
                       </div>
                     </div>
-                    <span className="text-[10px] text-alo-text-muted shrink-0 ml-2">{m.time}</span>
+                    <span className="text-[11px] text-alo-text-muted shrink-0 ml-2">{m.time}</span>
                   </div>
                 ))}
               </div>
@@ -166,12 +166,12 @@ export default function SupportDashboard() {
                   <div key={t.student} className="p-2.5 rounded-lg border border-alo-border">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-sm font-medium text-alo-text">{t.student}</p>
-                      <Badge variant={t.agent === 'Bot' ? 'muted' : 'brand'} className="text-[10px]">{t.agent}</Badge>
+                      <Badge variant={t.agent === 'Bot' ? 'muted' : 'brand'} className="text-[11px]">{t.agent}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{t.topic}</p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <Progress value={parseInt(t.remaining)} className="h-1.5 flex-1" />
-                      <span className="text-[10px] text-alo-text-secondary">{t.sla}</span>
+                      <span className="text-[11px] text-alo-text-secondary">{t.sla}</span>
                     </div>
                   </div>
                 ))}
@@ -195,7 +195,7 @@ export default function SupportDashboard() {
                   <div key={e.contact} className={`p-2.5 rounded-lg border ${e.priority === 'high' ? 'border-red-200 bg-red-50' : 'border-amber-200 bg-amber-50'}`}>
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{e.contact}</p>
-                      <Badge variant={e.priority === 'high' ? 'danger' : 'warning'} className="text-[10px] shrink-0 ml-1">{e.priority}</Badge>
+                      <Badge variant={e.priority === 'high' ? 'danger' : 'warning'} className="text-[11px] shrink-0 ml-1">{e.priority}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{e.reason}</p>
                   </div>
@@ -222,7 +222,7 @@ export default function SupportDashboard() {
                       <p className="text-sm font-medium text-alo-text">{c.phone}</p>
                       <p className="text-[11px] text-alo-text-muted truncate">{c.lastMsg} · {c.msgCount} msgs</p>
                     </div>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-[10px] text-alo-brand shrink-0 ml-1">Match</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-[11px] text-alo-brand shrink-0 ml-1">Match</Button>
                   </div>
                 ))}
               </div>

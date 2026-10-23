@@ -155,7 +155,7 @@ interface HrSelfSummary {
 // Color & label maps
 // ============================================================
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-slate-100 text-slate-600",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-sky-100 text-sky-700",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
@@ -185,7 +185,7 @@ const SLA_STATUS_COLORS: Record<string, string> = {
   ESCALATED_50: "bg-rose-100 text-rose-700",
   RESPONDED: "bg-emerald-100 text-emerald-700",
   AI_HANDLED: "bg-violet-100 text-violet-700",
-  MISSED: "bg-slate-100 text-slate-600",
+  MISSED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const SLA_STATUS_LABELS: Record<string, string> = {
@@ -205,7 +205,7 @@ const CHANNEL_COLORS: Record<string, string> = {
   FACEBOOK: "bg-blue-100 text-blue-700",
   INSTAGRAM: "bg-pink-100 text-pink-700",
   MESSENGER: "bg-sky-100 text-sky-700",
-  WEBSITE_CHAT: "bg-slate-100 text-slate-700",
+  WEBSITE_CHAT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PORTAL: "bg-orange-100 text-orange-700",
 };
 
@@ -348,7 +348,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
       {/* ============================================================ */}
       {/* HEADER BAR                                                    */}
       {/* ============================================================ */}
-      <Card className="overflow-hidden rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-[#e8f0fb] to-white">
+      <Card className="overflow-hidden rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-gradient-to-br from-[var(--alo-brand-light)] to-white">
         <CardContent className="pt-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Left: identity */}
@@ -358,11 +358,11 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-xl font-bold text-[#0057B8] sm:text-2xl">{counselor.name}</h1>
-                  <Badge variant="outline" className="border-[#0057B8]/30 bg-white font-mono text-[#0057B8]">
+                  <h1 className="text-xl font-bold text-[var(--alo-brand)] sm:text-2xl">{counselor.name}</h1>
+                  <Badge variant="outline" className="border-[var(--alo-brand)]/30 bg-white font-mono text-[var(--alo-brand)]">
                     {hr?.employeeId ?? "—"}
                   </Badge>
-                  <Badge className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+                  <Badge className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
                     {counselor.role?.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) ?? "Counselor"}
                   </Badge>
                 </div>
@@ -415,12 +415,12 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => onNavigate("unified-inbox")}
-                      className="relative flex size-9 items-center justify-center rounded-lg border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="relative flex size-9 items-center justify-center rounded-lg border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                       aria-label="Notifications"
                     >
                       <Icon name="Bell" className="size-4" />
                       {unreadTotal > 0 && (
-                        <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-[#E8501A] text-[9px] font-bold text-white">
+                        <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-[var(--alo-cta)] text-[11px] font-bold text-white">
                           {unreadTotal > 9 ? "9+" : unreadTotal}
                         </span>
                       )}
@@ -437,7 +437,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                   })
                 }
                 variant="outline"
-                className="h-9 rounded-lg border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-9 rounded-lg border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               >
                 <Icon name="Shield" className="mr-1.5 size-4" />
                 <span className="hidden sm:inline">Screen Safe</span>
@@ -484,7 +484,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 onClick={() => toast({ title: "Full task list", description: "Open the unified inbox to see all assigned tasks." })}
               >
                 View all <Icon name="ArrowRight" className="ml-1 size-3.5" />
@@ -509,7 +509,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                             <StatusBadge status={task.priority} colorMap={PRIORITY_COLORS} />
                           )}
                           {task.type && (
-                            <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                            <Badge variant="outline" className="text-[11px] text-muted-foreground">
                               {TASK_TYPE_LABELS[task.type] ?? task.type}
                             </Badge>
                           )}
@@ -563,14 +563,14 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               <div className="space-y-3">
                 {appointments.map((a) => (
                   <div key={a.id} className="flex items-start gap-3 rounded-xl border border-border/60 p-3">
-                    <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
-                      <span className="text-[10px] font-medium uppercase">{new Date(a.scheduledAt).toLocaleDateString("en-GB", { month: "short" })}</span>
+                    <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
+                      <span className="text-[11px] font-medium uppercase">{new Date(a.scheduledAt).toLocaleDateString("en-GB", { month: "short" })}</span>
                       <span className="text-base font-bold leading-none">{new Date(a.scheduledAt).getDate()}</span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-semibold text-foreground">{a.title}</span>
-                        <Badge variant="outline" className="text-[10px] text-[#0057B8]">
+                        <Badge variant="outline" className="text-[11px] text-[var(--alo-brand)]">
                           {APPT_TYPE_LABELS[a.type] ?? a.type}
                         </Badge>
                       </div>
@@ -630,7 +630,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex flex-wrap items-center gap-2">
                           <StatusBadge status={ev.status} colorMap={SLA_STATUS_COLORS} labels={SLA_STATUS_LABELS} />
-                          <Badge variant="outline" className="text-[10px]">
+                          <Badge variant="outline" className="text-[11px]">
                             {CHANNEL_LABELS[ev.channel] ?? ev.channel}
                           </Badge>
                           <span className={`text-xs font-semibold ${overdue ? "text-rose-600" : "text-muted-foreground"}`}>
@@ -640,7 +640,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                          className="h-7 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                           onClick={() => onNavigate("unified-inbox")}
                         >
                           Respond <Icon name="ArrowRight" className="ml-1 size-3" />
@@ -667,7 +667,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               <Button
                 size="sm"
                 onClick={() => onNavigate("unified-inbox")}
-                className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="h-8 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Inbox" className="mr-1.5 size-3.5" />
                 Open Inbox
@@ -682,9 +682,9 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                   <button
                     key={m.id}
                     onClick={() => onNavigate("unified-inbox")}
-                    className="flex w-full items-start gap-3 rounded-xl border border-border/60 p-3 text-left transition-colors hover:bg-[#e8f0fb]/40"
+                    className="flex w-full items-start gap-3 rounded-xl border border-border/60 p-3 text-left transition-colors hover:bg-[var(--alo-brand-light)]/40"
                   >
-                    <Badge variant="outline" className={`shrink-0 text-[10px] ${CHANNEL_COLORS[m.channel] ?? "bg-slate-100 text-slate-700"}`}>
+                    <Badge variant="outline" className={`shrink-0 text-[11px] ${CHANNEL_COLORS[m.channel] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>
                       {CHANNEL_LABELS[m.channel] ?? m.channel}
                     </Badge>
                     <div className="min-w-0 flex-1">
@@ -692,7 +692,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                         <span className="truncate text-sm font-semibold text-foreground">
                           {m.fromName ?? m.fromPhone ?? "Unknown sender"}
                         </span>
-                        <span className="shrink-0 text-[10px] text-muted-foreground">{timeAgo(m.receivedAt)}</span>
+                        <span className="shrink-0 text-[11px] text-muted-foreground">{timeAgo(m.receivedAt)}</span>
                       </div>
                       <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{m.body}</p>
                     </div>
@@ -714,8 +714,8 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
           >
             <div className="space-y-4">
               {/* Profile summary */}
-              <div className="rounded-xl bg-[#e8f0fb]/60 p-3">
-                <p className="text-sm font-bold text-[#0057B8]">{counselor.name}</p>
+              <div className="rounded-xl bg-[var(--alo-brand-light)]/60 p-3">
+                <p className="text-sm font-bold text-[var(--alo-brand)]">{counselor.name}</p>
                 <p className="text-xs text-muted-foreground">{hr?.designation ?? "Counselor"} · {hr?.department ?? "Student Success"}</p>
                 <div className="mt-2 grid grid-cols-2 gap-1 text-xs">
                   <div>
@@ -756,15 +756,15 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-lg bg-emerald-50 p-2">
                       <p className="text-lg font-bold text-emerald-700">{hrSummary.presentDays}</p>
-                      <p className="text-[10px] font-medium uppercase text-emerald-600">Present</p>
+                      <p className="text-[11px] font-medium uppercase text-emerald-600">Present</p>
                     </div>
                     <div className="rounded-lg bg-amber-50 p-2">
                       <p className="text-lg font-bold text-amber-700">{hrSummary.lateDays}</p>
-                      <p className="text-[10px] font-medium uppercase text-amber-600">Late</p>
+                      <p className="text-[11px] font-medium uppercase text-amber-600">Late</p>
                     </div>
-                    <div className="rounded-lg bg-slate-100 p-2">
-                      <p className="text-lg font-bold text-slate-700">{hrSummary.leaveDays}</p>
-                      <p className="text-[10px] font-medium uppercase text-slate-600">Leave</p>
+                    <div className="rounded-lg bg-[var(--alo-surface-muted)] p-2">
+                      <p className="text-lg font-bold text-[var(--alo-body)]">{hrSummary.leaveDays}</p>
+                      <p className="text-[11px] font-medium uppercase text-[var(--alo-body)]">Leave</p>
                     </div>
                   </div>
                 </div>
@@ -783,7 +783,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
 
               <Button
                 variant="outline"
-                className="h-10 w-full rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-10 w-full rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 onClick={() =>
                   toast({
                     title: "HR profile",
@@ -806,7 +806,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
             <div className="space-y-3">
               <SensitiveField id="est-pending" label="Pending (this cycle)" value={fmtCurrency(metrics.pendingCommission)} type="currency" mono />
               <SensitiveField id="est-paid" label="Paid YTD" value={fmtCurrency(metrics.paidCommission)} type="currency" mono />
-              <div className="rounded-lg bg-[#fdece4]/60 p-3 text-xs text-[#E8501A]">
+              <div className="rounded-lg bg-[var(--alo-cta-soft)]/60 p-3 text-xs text-[var(--alo-cta)]">
                 <Icon name="Info" className="mr-1 inline size-3.5" />
                 Commission is visible only with permission. Each reveal is audit-logged as <code className="font-mono">sensitive_data_revealed</code>.
               </div>
@@ -821,12 +821,12 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
           >
             {performance ? (
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-xl bg-[#e8f0fb]/60 p-3">
+                <div className="flex items-center justify-between rounded-xl bg-[var(--alo-brand-light)]/60 p-3">
                   <div>
                     <p className="text-xs text-muted-foreground">Overall score</p>
-                    <p className="text-2xl font-bold text-[#0057B8]">{(performance.score ?? 0).toFixed(1)}<span className="text-sm text-muted-foreground">/100</span></p>
+                    <p className="text-2xl font-bold text-[var(--alo-brand)]">{(performance.score ?? 0).toFixed(1)}<span className="text-sm text-muted-foreground">/100</span></p>
                   </div>
-                  <div className="flex size-12 items-center justify-center rounded-full bg-[#0057B8] text-white">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-[var(--alo-brand)] text-white">
                     <Icon name="Award" className="size-6" />
                   </div>
                 </div>
@@ -894,9 +894,9 @@ function QuickActionButton({ icon, label, onClick }: { icon: string; label: stri
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-center gap-1.5 rounded-xl border-2 border-[#0057B8]/15 bg-white p-3 text-center transition-all hover:border-[#0057B8]/40 hover:bg-[#e8f0fb]/50"
+      className="flex flex-col items-center gap-1.5 rounded-xl border-2 border-[var(--alo-brand)]/15 bg-white p-3 text-center transition-all hover:border-[var(--alo-brand)]/40 hover:bg-[var(--alo-brand-light)]/50"
     >
-      <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+      <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
         <Icon name={icon} className="size-4" />
       </div>
       <span className="text-xs font-semibold text-foreground">{label}</span>

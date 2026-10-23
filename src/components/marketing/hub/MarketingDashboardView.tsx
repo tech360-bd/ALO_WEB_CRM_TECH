@@ -336,7 +336,7 @@ export default function MarketingDashboardView() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Production dashboard: real DB-backed metrics only — never display fabricated stats
+  // Production dashboard:-backed metrics only — never display fabricated stats
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -352,7 +352,7 @@ export default function MarketingDashboardView() {
         if (json.kpis && json.leadSources) {
           normalized = json as DashboardData;
         } else if (json.kpis) {
-          // Build minimal view from real kpis, filling missing sections with DB-empty states (never fabricate)
+          // Build minimal view from real kpis, filling missing sections with DBs (never fabricate)
           const k = json.kpis;
           normalized = {
             kpis: {
@@ -423,7 +423,7 @@ export default function MarketingDashboardView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#E8501A]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--alo-cta)]" />
       </div>
     );
   }
@@ -431,10 +431,10 @@ export default function MarketingDashboardView() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center space-y-3">
         <AlertTriangle className="h-8 w-8 text-amber-500" />
-        <h3 className="font-semibold text-[#0F172A]">Dashboard data unavailable</h3>
-        <p className="text-sm text-gray-500 max-w-md">{error || 'No marketing data returned from /api/marketing/dashboard. This view only displays database-backed metrics — no fabricated statistics are shown.'}</p>
-        <p className="text-xs text-gray-400">Data source: MarketingLead, MarketingCampaign, MarketingApproval, MarketingCalendar, MarketingAgentJob via Prisma • Period: today • Sync: live</p>
-        <Button onClick={() => location.reload()} className="bg-[#E8501A] hover:bg-[#d85f1b] text-white mt-2">Retry</Button>
+        <h3 className="font-semibold text-[var(--alo-text)]">Dashboard data unavailable</h3>
+        <p className="text-sm text-[var(--alo-text-muted)] max-w-md">{error || 'No marketing data returned from /api/marketing/dashboard. This view only displays database-backed metrics — no fabricated statistics are shown.'}</p>
+        <p className="text-xs text-[var(--alo-text-muted)]">Data source: MarketingLead, MarketingCampaign, MarketingApproval, MarketingCalendar, MarketingAgentJob via Prisma • Period: today • Sync: live</p>
+        <Button onClick={() => location.reload()} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white mt-2">Retry</Button>
       </div>
     );
   }
@@ -562,7 +562,7 @@ export default function MarketingDashboardView() {
                   <span className="text-alo-text-secondary">{item.source}</span>
                   <span className="font-semibold text-alo-text">{item.count}</span>
                 </div>
-                <div className="h-2.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-2.5 w-full rounded-full bg-[var(--alo-surface-muted)] overflow-hidden">
                   <div
                     className={cn('h-full rounded-full transition-all duration-700', item.color)}
                     style={{ width: `${(item.count / maxSourceCount) * 100}%` }}
@@ -631,7 +631,7 @@ export default function MarketingDashboardView() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-alo-text">{conv.leadName}</span>
-                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                      <Badge variant="destructive" className="text-[11px] px-1.5 py-0">
                         {conv.waitMinutes}m late
                       </Badge>
                     </div>
@@ -658,7 +658,7 @@ export default function MarketingDashboardView() {
             {aiAgents.map((agent) => (
               <div
                 key={agent.name}
-                className="flex items-center justify-between rounded-lg border border-alo-border px-3 py-2.5 hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-between rounded-lg border border-alo-border px-3 py-2.5 hover:bg-[var(--alo-page)] transition-colors"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   {agent.status === 'active' ? (
@@ -676,7 +676,7 @@ export default function MarketingDashboardView() {
                   </span>
                   <Badge
                     className={cn(
-                      'text-[10px] px-1.5 py-0 font-medium',
+                      'text-[11px] px-1.5 py-0 font-medium',
                       agent.status === 'active' && 'bg-green-100 text-green-700 hover:bg-green-100',
                       agent.status === 'paused' && 'bg-amber-100 text-amber-700 hover:bg-amber-100',
                       agent.status === 'error' && 'bg-red-100 text-red-700 hover:bg-red-100'
@@ -724,7 +724,7 @@ export default function MarketingDashboardView() {
               </TableHeader>
               <TableBody>
                 {recentLeads.map((lead) => (
-                  <TableRow key={lead.id} className="hover:bg-gray-50/60">
+                  <TableRow key={lead.id} className="hover:bg-[var(--alo-page)]/60">
                     <TableCell>
                       <div>
                         <p className="text-sm font-medium text-alo-text">{lead.name}</p>
@@ -742,7 +742,7 @@ export default function MarketingDashboardView() {
                           'text-xs font-medium',
                           lead.status === 'Hot' && 'bg-orange-50 text-orange-700 hover:bg-orange-50',
                           lead.status === 'New' && 'bg-blue-50 text-blue-700 hover:bg-blue-50',
-                          lead.status === 'Contacted' && 'bg-gray-100 text-gray-700 hover:bg-gray-100',
+                          lead.status === 'Contacted' && 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]',
                           lead.status === 'Follow-up' && 'bg-purple-50 text-purple-700 hover:bg-purple-50'
                         )}
                       >
@@ -779,7 +779,7 @@ export default function MarketingDashboardView() {
               {pendingApprovals.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-lg border border-alo-border p-3 space-y-1.5 hover:bg-gray-50 transition-colors"
+                  className="rounded-lg border border-alo-border p-3 space-y-1.5 hover:bg-[var(--alo-page)] transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">

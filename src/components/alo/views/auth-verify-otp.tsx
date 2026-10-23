@@ -173,22 +173,22 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 <Icon name="GraduationCap" className="size-7" />
               </div>
               <div className="text-left">
-                <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p className="text-lg font-bold leading-tight text-[var(--alo-brand)]">ALO Education</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                   Study Abroad, Done Right
                 </p>
               </div>
             </button>
           </div>
 
-          <Card className="rounded-2xl border-2 border-[#E2E8F0] shadow-sm">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)] shadow-sm">
             <CardContent className="pt-6">
               <div className="space-y-5 text-center">
                 <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-50">
                   <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-[#0057B8]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
+                  <h1 className="text-2xl font-bold text-[var(--alo-brand)]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {approvalRequired
                       ? "Your email address is verified. Partner access remains pending separate staff approval."
@@ -198,7 +198,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 <Button
                   type="button"
                   onClick={() => canonicalStudent ? router.push("/student/login") : onNavigate("auth-login")}
-                  className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90"
+                  className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="LogIn" className="size-4" />
                   Sign In
@@ -234,19 +234,19 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-lg font-bold leading-tight text-[var(--alo-brand)]">ALO Education</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0057B8] sm:text-3xl">Verify Your Email</h1>
+          <h1 className="text-2xl font-bold text-[var(--alo-brand)] sm:text-3xl">Verify Your Email</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Enter the 6-digit code we sent to your email address
           </p>
         </div>
 
-        <Card className="rounded-2xl border-2 border-[#E2E8F0] shadow-sm">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)] shadow-sm">
           <CardContent className="pt-6">
             <form onSubmit={handleVerify} className="space-y-5" noValidate>
               {/* Email */}
@@ -317,7 +317,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               <Button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90 disabled:opacity-60"
+                className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-black hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
               >
                 {loading ? (
                   <>
@@ -340,7 +340,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                     type="button"
                     onClick={handleResend}
                     disabled={resending}
-                    className="font-semibold text-[#0057B8] hover:underline disabled:opacity-60"
+                    className="font-semibold text-[var(--alo-brand)] hover:underline disabled:opacity-60"
                   >
                     {resending ? "Sending..." : "Resend OTP"}
                   </button>
@@ -362,7 +362,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
             </form>
 
             {/* Security note */}
-            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0057B8]">
+            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[var(--alo-brand-light)]/60 px-3 py-2 text-xs text-[var(--alo-brand)]">
               <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 OTPs are single-use, expire after 10 minutes, and are audit-logged. Never share
@@ -373,7 +373,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <Badge variant="outline" className="mr-1.5 border-[#E2E8F0]">
+          <Badge variant="outline" className="mr-1.5 border-[var(--alo-border)]">
             Email Verification
           </Badge>
           Required for all new accounts. Helps protect against spam and fraud.

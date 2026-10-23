@@ -155,7 +155,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           </p>
         )}
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
-          <Button className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => { window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view: "student-dashboard" } })); }}>
+          <Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => { window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view: "student-dashboard" } })); }}>
             Open Student Portal
           </Button>
           <Button variant="outline" className="border-emerald-400 text-emerald-700 hover:bg-emerald-100" onClick={() => setResult(null)}>
@@ -167,9 +167,9 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
   }
 
   return (
-    <div className={cn("rounded-2xl border-2 border-[#0057B8]/20 bg-white p-6 alo-shadow", compact && "p-5")}>
+    <div className={cn("rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-white p-6 alo-shadow", compact && "p-5")}>
       <div className="mb-5">
-        <h3 className="text-lg font-bold text-[#0057B8]">{title}</h3>
+        <h3 className="text-lg font-bold text-[var(--alo-brand)]">{title}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
       </div>
       <form
@@ -181,11 +181,11 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Label className="text-xs font-semibold">Full Name <span className="text-[#E8501A]">*</span></Label>
+            <Label className="text-xs font-semibold">Full Name <span className="text-[var(--alo-cta)]">*</span></Label>
             <Input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className="mt-1 h-10" placeholder="Your full name" />
           </div>
           <div>
-            <Label className="text-xs font-semibold">Mobile <span className="text-[#E8501A]">*</span></Label>
+            <Label className="text-xs font-semibold">Mobile <span className="text-[var(--alo-cta)]">*</span></Label>
             <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="+8801805020100" />
           </div>
         </div>
@@ -237,13 +237,13 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="mt-1 min-h-[70px]" placeholder="Tell us about your goals, questions, or anything we should know." />
         </div>
         <label className="flex cursor-pointer items-start gap-2.5 text-xs text-muted-foreground">
-          <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[#0057B8]/40 data-[state=checked]:bg-[#0057B8]" />
+          <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]" />
           <span>
             I agree to be contacted by ALO Education via phone, WhatsApp, and email. My data is
-            private, RBAC-protected, and audit-logged. <span className="text-[#E8501A]">*</span>
+            private, RBAC-protected, and audit-logged. <span className="text-[var(--alo-cta)]">*</span>
           </span>
         </label>
-        <Button type="submit" disabled={loading || !form.fullName || !form.phone || !form.consent} className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+        <Button type="submit" disabled={loading || !form.fullName || !form.phone || !form.consent} className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
           {loading ? (
             <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting...</>
           ) : (

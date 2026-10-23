@@ -115,7 +115,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="relative overflow-hidden border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-20">
           <Breadcrumb
             items={[
@@ -125,28 +125,28 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
           />
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+              <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
                 <Icon name="Sparkles" className="mr-1 size-3" />
                 Founded February 2023
               </Badge>
-              <h1 className="mt-4 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl lg:text-6xl">
-                About <span className="text-[#0057B8]">ALO Education</span>
+              <h1 className="mt-4 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl lg:text-6xl">
+                About <span className="text-[var(--alo-brand)]">ALO Education</span>
               </h1>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-[#5A7299] sm:text-lg">
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
                 ALO Education was founded in February 2023 by{" "}
-                <span className="font-semibold text-[#0B2447]">Taslima Akter</span> with a simple mission:
+                <span className="font-semibold text-[var(--alo-text)]">Taslima Akter</span> with a simple mission:
                 give Bangladeshi students honest, expert, and end-to-end guidance for studying abroad — without the
                 hidden fees, fake promises, or pressure sales tactics common in the industry.
               </p>
-              <p className="mt-3 max-w-xl text-base leading-relaxed text-[#5A7299]">
-                In our first 18 months, we helped <span className="font-semibold text-[#0B2447]">over 800 students</span>{" "}
+              <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--alo-text-muted)]">
+                In our first 18 months, we helped <span className="font-semibold text-[var(--alo-text)]">over 800 students</span>{" "}
                 apply to universities in 13 countries. Our counselor team includes graduates from UK, US, Australian,
                 and Canadian universities — we've walked this path ourselves.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Button
                   onClick={() => onNavigate("public-contact")}
-                  className="h-12 rounded-xl bg-[#E8501A] px-6 text-white hover:bg-[#c8451a]"
+                  className="h-12 rounded-xl bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]"
                 >
                   <Icon name="Phone" className="size-4" />
                   Talk to a Counselor
@@ -154,7 +154,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
                 <Button
                   onClick={() => onNavigate("public-team")}
                   variant="outline"
-                  className="h-12 rounded-xl border-[#0057B8]/30 bg-white px-6 text-[#0057B8] hover:bg-[#EAF3FF]"
+                  className="h-12 rounded-xl border-[var(--alo-brand)]/30 bg-white px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 >
                   <Icon name="Users" className="size-4" />
                   Meet the Team
@@ -163,26 +163,26 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
             </div>
             {/* Decorative gradient card */}
             <div className="relative">
-              <div className="absolute inset-0 -z-10 rotate-3 rounded-3xl bg-gradient-to-br from-[#0057B8]/10 to-[#E8501A]/10" />
-              <Card className="overflow-hidden rounded-3xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
+              <div className="absolute inset-0 -z-10 rotate-3 rounded-3xl bg-gradient-to-br from-[var(--alo-brand)]/10 to-[var(--alo-cta)]/10" />
+              <Card className="overflow-hidden rounded-3xl border-2 border-[var(--alo-brand)]/15 bg-white alo-shadow">
                 <div className="h-48 bg-alo-gradient" />
                 <CardContent className="p-6">
                   <div className="grid grid-cols-2 gap-4">
                     <Stat>
-                      <span className="text-3xl font-black text-[#0057B8]">800+</span>
-                      <span className="text-xs text-[#5A7299]">Students guided</span>
+                      <span className="text-3xl font-black text-[var(--alo-brand)]">800+</span>
+                      <span className="text-xs text-[var(--alo-text-muted)]">Students guided</span>
                     </Stat>
                     <Stat>
-                      <span className="text-3xl font-black text-[#E8501A]">13</span>
-                      <span className="text-xs text-[#5A7299]">Study destinations</span>
+                      <span className="text-3xl font-black text-[var(--alo-cta)]">13</span>
+                      <span className="text-xs text-[var(--alo-text-muted)]">Study destinations</span>
                     </Stat>
                     <Stat>
-                      <span className="text-3xl font-black text-[#0057B8]">{stats.totalUniversities || "408"}</span>
-                      <span className="text-xs text-[#5A7299]">Verified universities</span>
+                      <span className="text-3xl font-black text-[var(--alo-brand)]">{stats.totalUniversities || "408"}</span>
+                      <span className="text-xs text-[var(--alo-text-muted)]">Verified universities</span>
                     </Stat>
                     <Stat>
-                      <span className="text-3xl font-black text-[#E8501A]">{stats.totalCourses || "794"}</span>
-                      <span className="text-xs text-[#5A7299]">Courses tracked</span>
+                      <span className="text-3xl font-black text-[var(--alo-cta)]">{stats.totalCourses || "794"}</span>
+                      <span className="text-xs text-[var(--alo-text-muted)]">Courses tracked</span>
                     </Stat>
                   </div>
                 </CardContent>
@@ -193,21 +193,21 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       </section>
 
       {/* STORY */}
-      <section className="border-b border-[#0057B8]/10">
+      <section className="border-b border-[var(--alo-brand)]/10">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-start">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Our Story</p>
-              <h2 className="mt-2 text-3xl font-black text-[#0B2447]">From a small Dhaka office to 13 destinations</h2>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">Our Story</p>
+              <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">From a small Dhaka office to 13 destinations</h2>
             </div>
-            <div className="space-y-4 text-[15px] leading-relaxed text-[#5A7299]">
+            <div className="space-y-4 text-[15px] leading-relaxed text-[var(--alo-text-muted)]">
               <p>
                 ALO Education began in February 2023 with one counselor, one laptop, and one belief: Bangladeshi
                 students deserve better than commission-driven sales agents who push them toward whichever
                 university pays the highest bonus.
               </p>
               <p>
-                Our founder, <span className="font-semibold text-[#0B2447]">Taslima Akter</span>, had seen too
+                Our founder, <span className="font-semibold text-[var(--alo-text)]">Taslima Akter</span>, had seen too
                 many friends arrive abroad only to discover their "dream university" was a low-ranked institution
                 with no scholarship, no post-study work rights, and no support network. She set out to build a
                 counseling service that would treat each student like a younger sibling — not a sales target.
@@ -215,7 +215,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
               <p>
                 Two years later, ALO Education has grown into a team of specialist counselors, English trainers,
                 visa officers, and application experts. We've built a custom platform that monitors{" "}
-                <span className="font-semibold text-[#0B2447]">97 official university and government sources</span>{" "}
+                <span className="font-semibold text-[var(--alo-text)]">97 official university and government sources</span>{" "}
                 every week — so the advice we give you is always verified against the official source, never
                 remembered from a brochure.
               </p>
@@ -230,40 +230,40 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       </section>
 
       {/* MISSION / VISION / VALUES */}
-      <section className="bg-[#F7FAFE]">
+      <section className="bg-[var(--alo-page)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white alo-shadow">
               <CardContent className="p-8">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#EAF3FF] text-[#0057B8]">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                   <Icon name="Target" className="size-6" />
                 </div>
-                <h3 className="mt-5 text-2xl font-black text-[#0057B8]">Our Mission</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-[#5A7299]">{MISSION}</p>
+                <h3 className="mt-5 text-2xl font-black text-[var(--alo-brand)]">Our Mission</h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-[var(--alo-text-muted)]">{MISSION}</p>
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#E8501A]/15 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/15 bg-white alo-shadow">
               <CardContent className="p-8">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#FFF3EA] text-[#E8501A]">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                   <Icon name="Eye" className="size-6" />
                 </div>
-                <h3 className="mt-5 text-2xl font-black text-[#E8501A]">Our Vision</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-[#5A7299]">{VISION}</p>
+                <h3 className="mt-5 text-2xl font-black text-[var(--alo-cta)]">Our Vision</h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-[var(--alo-text-muted)]">{VISION}</p>
               </CardContent>
             </Card>
           </div>
 
-          <h3 className="mt-12 text-2xl font-black text-[#0B2447]">Our Values</h3>
-          <p className="mt-1 text-sm text-[#5A7299]">The non-negotiable principles that shape every decision at ALO.</p>
+          <h3 className="mt-12 text-2xl font-black text-[var(--alo-text)]">Our Values</h3>
+          <p className="mt-1 text-sm text-[var(--alo-text-muted)]">The non-negotiable principles that shape every decision at ALO.</p>
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {VALUES.map((v) => (
-              <Card key={v.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30">
+              <Card key={v.title} className="alo-card-hover rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30">
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0057B8]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={v.icon} className="size-5" />
                   </div>
-                  <h4 className="mt-3 text-base font-bold text-[#0B2447]">{v.title}</h4>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[#5A7299]">{v.description}</p>
+                  <h4 className="mt-3 text-base font-bold text-[var(--alo-text)]">{v.title}</h4>
+                  <p className="mt-1.5 text-sm leading-relaxed text-[var(--alo-text-muted)]">{v.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -275,19 +275,19 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       <section>
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Why Choose ALO</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0B2447]">8 reasons students choose us</h2>
-            <p className="mt-2 text-sm text-[#5A7299]">And why they stay with us from first call to graduation.</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">Why Choose ALO</p>
+            <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">8 reasons students choose us</h2>
+            <p className="mt-2 text-sm text-[var(--alo-text-muted)]">And why they stay with us from first call to graduation.</p>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {WHY_CHOOSE.map((w) => (
-              <Card key={w.title} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#E8501A]/30">
+              <Card key={w.title} className="alo-card-hover rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-cta)]/30">
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#FFF3EA] text-[#E8501A]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                     <Icon name={w.icon} className="size-5" />
                   </div>
-                  <h4 className="mt-3 text-sm font-bold text-[#0B2447]">{w.title}</h4>
-                  <p className="mt-1.5 text-xs leading-relaxed text-[#5A7299]">{w.description}</p>
+                  <h4 className="mt-3 text-sm font-bold text-[var(--alo-text)]">{w.title}</h4>
+                  <p className="mt-1.5 text-xs leading-relaxed text-[var(--alo-text-muted)]">{w.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -296,18 +296,18 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       </section>
 
       {/* TEAM PREVIEW */}
-      <section className="bg-[#F7FAFE]">
+      <section className="bg-[var(--alo-page)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0057B8]">Our Team</p>
-              <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Meet the counselors behind your journey</h2>
-              <p className="mt-2 text-sm text-[#5A7299]">Specialist counselors, English trainers, visa officers, and application experts.</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-brand)]">Our Team</p>
+              <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">Meet the counselors behind your journey</h2>
+              <p className="mt-2 text-sm text-[var(--alo-text-muted)]">Specialist counselors, English trainers, visa officers, and application experts.</p>
             </div>
             <Button
               onClick={() => onNavigate("public-team")}
               variant="outline"
-              className="h-11 rounded-xl border-[#0057B8]/30 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+              className="h-11 rounded-xl border-[var(--alo-brand)]/30 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             >
               View Full Team
               <Icon name="ArrowRight" className="size-4" />
@@ -322,7 +322,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
               title="Team profiles will appear here"
               description="Our counselors are updating their bios. In the meantime, contact us directly."
               action={
-                <Button onClick={() => onNavigate("public-contact")} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+                <Button onClick={() => onNavigate("public-contact")} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
                   <Icon name="Phone" className="size-4" /> Contact Us
                 </Button>
               }
@@ -330,18 +330,18 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
           ) : (
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {team.slice(0, 4).map((m) => (
-                <Card key={m.id} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30">
+                <Card key={m.id} className="alo-card-hover rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30">
                   <CardContent className="p-5">
                     <div className="flex size-16 items-center justify-center rounded-2xl bg-alo-gradient text-2xl font-black text-white">
                       {m.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
                     </div>
-                    <h4 className="mt-4 text-base font-bold text-[#0B2447]">{m.name}</h4>
-                    <p className="text-sm font-medium text-[#0057B8]">{m.role}</p>
+                    <h4 className="mt-4 text-base font-bold text-[var(--alo-text)]">{m.name}</h4>
+                    <p className="text-sm font-medium text-[var(--alo-brand)]">{m.role}</p>
                     {m.specialty && (
-                      <p className="mt-1 text-xs text-[#5A7299]">{m.specialty}</p>
+                      <p className="mt-1 text-xs text-[var(--alo-text-muted)]">{m.specialty}</p>
                     )}
                     {m.bio && (
-                      <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-[#5A7299]">{m.bio}</p>
+                      <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-[var(--alo-text-muted)]">{m.bio}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -364,7 +364,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0B2447]">
+      <section className="bg-[var(--alo-text)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
@@ -374,7 +374,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
                 recommend destinations and courses, and outline a clear path to admission — no commitment required.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#c8451a]">
+                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
                   <Icon name="CalendarCheck" className="size-4" />
                   Book Free Consultation
                 </Button>

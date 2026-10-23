@@ -97,13 +97,13 @@ export default function StudentSavedCourses() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-5xl">
         <PortalPageHeader
           title="Saved Courses"
           description="Courses you shortlisted while searching. Only you and your assigned counselor can see this list."
           action={
-            <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+            <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
               <Link href="/course-finder">
                 <Search className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                 Find More Courses
@@ -146,10 +146,10 @@ export default function StudentSavedCourses() {
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search your shortlist"
                   aria-label="Search saved courses"
-                  className="h-9 w-full rounded-input border-slate-200 sm:w-52"
+                  className="h-9 w-full rounded-input border-[var(--alo-border)] sm:w-52"
                 />
                 <Select value={country} onValueChange={setCountry}>
-                  <SelectTrigger className="h-9 w-full rounded-input border-slate-200 sm:w-36" aria-label="Filter by country">
+                  <SelectTrigger className="h-9 w-full rounded-input border-[var(--alo-border)] sm:w-36" aria-label="Filter by country">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -158,7 +158,7 @@ export default function StudentSavedCourses() {
                   </SelectContent>
                 </Select>
                 <Select value={level} onValueChange={setLevel}>
-                  <SelectTrigger className="h-9 w-full rounded-input border-slate-200 sm:w-36" aria-label="Filter by study level">
+                  <SelectTrigger className="h-9 w-full rounded-input border-[var(--alo-border)] sm:w-36" aria-label="Filter by study level">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -175,13 +175,13 @@ export default function StudentSavedCourses() {
                 description="Clear the search or filters to see your full shortlist again."
               />
             ) : (
-              <ul className="divide-y divide-slate-200">
+              <ul className="divide-y divide-[var(--alo-border)]">
                 {filtered.map((course) => (
                   <li key={course.id} className="flex flex-wrap items-start gap-4 px-5 py-4">
                     <Bookmark className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-[14px] font-semibold text-slate-900">{course.courseName}</p>
-                      <p className="mt-0.5 text-[13px] text-slate-600">
+                      <p className="text-[14px] font-semibold text-[var(--alo-text)]">{course.courseName}</p>
+                      <p className="mt-0.5 text-[13px] text-[var(--alo-body)]">
                         {course.universityName || 'University not recorded'}
                         {course.country ? ` — ${course.country}` : ''}
                       </p>
@@ -196,7 +196,7 @@ export default function StudentSavedCourses() {
                     <div className="flex shrink-0 items-center gap-2">
                       <Button
                         variant="outline"
-                        className="h-8 rounded-button border-slate-200 px-3 text-[12px] font-semibold text-red-600"
+                        className="h-8 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold text-red-600"
                         onClick={() => remove(course)}
                         disabled={removing === course.id}
                       >
@@ -218,8 +218,8 @@ export default function StudentSavedCourses() {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-400">{label}</dt>
-      <dd className="text-[13px] text-slate-700">{value || 'Not recorded'}</dd>
+      <dt className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">{label}</dt>
+      <dd className="text-[13px] text-[var(--alo-body)]">{value || 'Not recorded'}</dd>
     </div>
   );
 }

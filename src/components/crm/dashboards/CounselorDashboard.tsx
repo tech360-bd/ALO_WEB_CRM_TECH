@@ -22,8 +22,8 @@ const aiActions = [
 ];
 
 function UrgencyBadge({ urgency }: { urgency: string }) {
-  if (urgency === 'hot') return <Badge variant="danger" className="text-[10px]">🔥 Hot</Badge>;
-  return <Badge variant="warning" className="text-[10px]">Warm</Badge>;
+  if (urgency === 'hot') return <Badge variant="danger" className="text-[11px]">🔥 Hot</Badge>;
+  return <Badge variant="warning" className="text-[11px]">Warm</Badge>;
 }
 
 export default function CounselorDashboard() {
@@ -211,7 +211,7 @@ export default function CounselorDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-alo-brand" /> AI Recommended Actions
                 </CardTitle>
-                <Badge variant="brand" className="text-[10px]">Smart Queue</Badge>
+                <Badge variant="brand" className="text-[11px]">Smart Queue</Badge>
               </div>
             </CardHeader>
             <CardContent>

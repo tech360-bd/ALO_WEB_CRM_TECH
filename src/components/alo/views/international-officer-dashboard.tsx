@@ -288,16 +288,16 @@ export function InternationalOfficerDashboard() {
             <SectionCard title="Rapid Partnership — Best Methods" description="Proven methods to rapidly establish partnerships with universities" icon="Zap">
               <div className="space-y-3">
                 {RAPID_METHODS.map((m, i) => (
-                  <div key={i} className="rounded-xl border border-[#E2E8F0] bg-white p-3">
+                  <div key={i} className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
                     <div className="flex items-start justify-between gap-2">
-                      <div><p className="font-semibold text-sm text-[#0F172A]">{i+1}. {m.title}</p><p className="text-xs text-[#64748B] mt-0.5">{m.desc}</p></div>
+                      <div><p className="font-semibold text-sm text-[var(--alo-text)]">{i+1}. {m.title}</p><p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{m.desc}</p></div>
                       <div className="flex flex-col gap-1 items-end">
-                        <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-700">{m.success}</Badge>
-                        <Badge variant="outline" className="text-[10px]">{m.time}</Badge>
+                        <Badge variant="outline" className="text-[11px] bg-emerald-50 text-emerald-700">{m.success}</Badge>
+                        <Badge variant="outline" className="text-[11px]">{m.time}</Badge>
                       </div>
                     </div>
                     <ul className="mt-2 space-y-1">
-                      {m.steps.map((s, j) => (<li key={j} className="text-xs text-[#475569] flex gap-1.5"><span className="text-[#0057B8]">•</span>{s}</li>))}
+                      {m.steps.map((s, j) => (<li key={j} className="text-xs text-[var(--alo-text-secondary)] flex gap-1.5"><span className="text-[var(--alo-brand)]">•</span>{s}</li>))}
                     </ul>
                   </div>
                 ))}
@@ -307,18 +307,18 @@ export function InternationalOfficerDashboard() {
             <SectionCard title="Best Locations for Rapid Partnerships" description="Priority countries & regions based on student demand, partnership ease, commission" icon="Globe">
               <div className="space-y-2">
                 {COUNTRIES.map((c) => (
-                  <div key={c.slug} className="flex items-center justify-between rounded-xl border border-[#E2E8F0] bg-white p-3">
+                  <div key={c.slug} className="flex items-center justify-between rounded-xl border border-[var(--alo-border)] bg-white p-3">
                     <div className="flex items-center gap-2">
                       <div className="size-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-xs">{c.slug.toUpperCase().slice(0,2)}</div>
-                      <div><p className="font-medium text-sm text-[#0F172A]">{c.label}</p><p className="text-xs text-[#64748B]">{c.region} • {c.universities} universities</p></div>
+                      <div><p className="font-medium text-sm text-[var(--alo-text)]">{c.label}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.region} • {c.universities} universities</p></div>
                     </div>
-                    <Badge variant="outline" className={cn("text-[10px]", c.priority==="High" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200")}>{c.priority}</Badge>
+                    <Badge variant="outline" className={cn("text-[11px]", c.priority==="High" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200")}>{c.priority}</Badge>
                   </div>
                 ))}
               </div>
               <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/60 p-3">
-                <p className="font-semibold text-sm text-[#0F172A] flex items-center gap-1"><Icon name="Lightbulb" className="size-4 text-amber-600" />Business Expansion Tips</p>
-                <ul className="mt-2 space-y-1 text-xs text-[#475569]">
+                <p className="font-semibold text-sm text-[var(--alo-text)] flex items-center gap-1"><Icon name="Lightbulb" className="size-4 text-amber-600" />Business Expansion Tips</p>
+                <ul className="mt-2 space-y-1 text-xs text-[var(--alo-text-secondary)]">
                   <li>• Focus on UK, Canada, Australia first — fastest agreement turnaround (COMMISSION type)</li>
                   <li>• Leverage research data: show university ranking, courses, scholarships from DigitalTwin</li>
                   <li>• Use B2BContact warm intros — 3x faster than cold outreach</li>
@@ -335,8 +335,8 @@ export function InternationalOfficerDashboard() {
                 <div className="space-y-2">
                   {researchActivities.slice(0,5).map((r) => (
                     <div key={r.id} className="rounded-lg border p-2.5 bg-white flex justify-between">
-                      <div><p className="font-medium text-sm">{r.universityName}</p><p className="text-xs text-slate-500">{r.title} • {r.status} • {r.priority}</p></div>
-                      <Badge variant="outline" className="text-[10px] h-fit">{r.activityType}</Badge>
+                      <div><p className="font-medium text-sm">{r.universityName}</p><p className="text-xs text-[var(--alo-text-muted)]">{r.title} • {r.status} • {r.priority}</p></div>
+                      <Badge variant="outline" className="text-[11px] h-fit">{r.activityType}</Badge>
                     </div>
                   ))}
                 </div>
@@ -347,8 +347,8 @@ export function InternationalOfficerDashboard() {
                 <div className="space-y-2">
                   {communications.slice(0,5).map((c) => (
                     <div key={c.id} className="rounded-lg border p-2.5 bg-white flex justify-between">
-                      <div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-slate-500">{c.communicationType} • {c.status} • {c.contactEmail}</p></div>
-                      <Badge variant="outline" className="text-[10px] h-fit">{c.direction}</Badge>
+                      <div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.communicationType} • {c.status} • {c.contactEmail}</p></div>
+                      <Badge variant="outline" className="text-[11px] h-fit">{c.direction}</Badge>
                     </div>
                   ))}
                 </div>
@@ -359,18 +359,18 @@ export function InternationalOfficerDashboard() {
 
         {/* Research */}
         <TabsContent value="research" className="space-y-4">
-          <SectionCard title="University Research Activities" description="Track research, outreach, agreement negotiations, leveraging UniversityResearchEvidence & DigitalTwin" icon="BookMarked" action={<Button onClick={() => setResearchFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#003F87]"><Icon name="Plus" className="size-4" />New Activity</Button>}>
+          <SectionCard title="University Research Activities" description="Track research, outreach, agreement negotiations, leveraging UniversityResearchEvidence & DigitalTwin" icon="BookMarked" action={<Button onClick={() => setResearchFormOpen(true)} className="h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"><Icon name="Plus" className="size-4" />New Activity</Button>}>
             {researchActivities.length===0 ? <EmptyState icon="FileSearch" title="No research activities" description="Create first university research activity" /> : (
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {researchActivities.map((r) => (
                   <Card key={r.id} className="rounded-xl border">
                     <CardContent className="pt-4 space-y-2">
-                      <div className="flex justify-between"><p className="font-semibold text-sm">{r.universityName}</p><Badge variant="outline" className="text-[10px]">{r.status}</Badge></div>
-                      <p className="text-sm text-slate-700">{r.title}</p>
-                      <p className="text-xs text-slate-500 line-clamp-2">{r.description}</p>
-                      <div className="flex gap-1 flex-wrap"><Badge variant="outline" className="text-[10px]">{r.activityType}</Badge><Badge variant="outline" className="text-[10px]">{r.priority}</Badge><Badge variant="outline" className="text-[10px]">{r.countrySlug}</Badge></div>
+                      <div className="flex justify-between"><p className="font-semibold text-sm">{r.universityName}</p><Badge variant="outline" className="text-[11px]">{r.status}</Badge></div>
+                      <p className="text-sm text-[var(--alo-body)]">{r.title}</p>
+                      <p className="text-xs text-[var(--alo-text-muted)] line-clamp-2">{r.description}</p>
+                      <div className="flex gap-1 flex-wrap"><Badge variant="outline" className="text-[11px]">{r.activityType}</Badge><Badge variant="outline" className="text-[11px]">{r.priority}</Badge><Badge variant="outline" className="text-[11px]">{r.countrySlug}</Badge></div>
                       {r.nextAction && <p className="text-xs bg-amber-50 border border-amber-200 rounded-md p-2"><span className="font-semibold">Next:</span> {r.nextAction}</p>}
-                      <div className="flex justify-between text-[11px] text-slate-400"><span>{r.assignedOfficerName || "Unassigned"}</span><span>{new Date(r.createdAt).toLocaleDateString()}</span></div>
+                      <div className="flex justify-between text-[11px] text-[var(--alo-text-muted)]"><span>{r.assignedOfficerName || "Unassigned"}</span><span>{new Date(r.createdAt).toLocaleDateString()}</span></div>
                     </CardContent>
                   </Card>
                 ))}
@@ -381,12 +381,12 @@ export function InternationalOfficerDashboard() {
 
         {/* Communications */}
         <TabsContent value="communications" className="space-y-4">
-          <SectionCard title="Partnership Communications" description="Emails, agreements, calls, meetings timeline — integrated with OfficialEmail & UniversityAgreement" icon="Mail" action={<Button onClick={() => setCommFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#003F87]"><Icon name="Plus" className="size-4" />Log Communication</Button>}>
+          <SectionCard title="Partnership Communications" description="Emails, agreements, calls, meetings timeline — integrated with OfficialEmail & UniversityAgreement" icon="Mail" action={<Button onClick={() => setCommFormOpen(true)} className="h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"><Icon name="Plus" className="size-4" />Log Communication</Button>}>
             {communications.length===0 ? <EmptyState icon="Mail" title="No communications logged" description="Start logging partnership emails and meetings" /> : (
               <div className="space-y-2">
                 {communications.map((c) => (
                   <div key={c.id} className="rounded-xl border p-3 bg-white">
-                    <div className="flex justify-between gap-2"><div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-slate-500">{c.contactName} • {c.contactEmail} • {c.communicationType} • {c.direction}</p><p className="text-xs text-slate-600 mt-1 line-clamp-2">{c.body.slice(0,200)}</p></div><Badge variant="outline" className={cn("h-fit text-[10px]", c.status==="SENT" ? "bg-emerald-50 text-emerald-700" : c.status==="REPLIED" ? "bg-blue-50 text-blue-700" : "bg-slate-50")}>{c.status}</Badge></div>
+                    <div className="flex justify-between gap-2"><div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.contactName} • {c.contactEmail} • {c.communicationType} • {c.direction}</p><p className="text-xs text-[var(--alo-body)] mt-1 line-clamp-2">{c.body.slice(0,200)}</p></div><Badge variant="outline" className={cn("h-fit text-[11px]", c.status==="SENT" ? "bg-emerald-50 text-emerald-700" : c.status==="REPLIED" ? "bg-blue-50 text-blue-700" : "bg-[var(--alo-page)]")}>{c.status}</Badge></div>
                   </div>
                 ))}
               </div>
@@ -396,11 +396,11 @@ export function InternationalOfficerDashboard() {
 
         {/* Contacts */}
         <TabsContent value="contacts" className="space-y-4">
-          <SectionCard title="Contact Details" description="B2B contacts for universities, agents, partners — name, organization, email, phone, position, notes, last contacted" icon="Contact" action={<Button onClick={() => setContactFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#003F87]"><Icon name="Plus" className="size-4" />Add Contact</Button>}>
+          <SectionCard title="Contact Details" description="B2B contacts for universities, agents, partners — name, organization, email, phone, position, notes, last contacted" icon="Contact" action={<Button onClick={() => setContactFormOpen(true)} className="h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"><Icon name="Plus" className="size-4" />Add Contact</Button>}>
             {contacts.length===0 ? <EmptyState icon="Contact" title="No contacts" description="Add university contacts to start outreach" /> : (
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {contacts.map((ct) => (
-                  <Card key={ct.id} className="rounded-xl border"><CardContent className="pt-4 space-y-2"><div className="flex justify-between"><p className="font-semibold text-sm">{ct.name}</p><Badge variant="outline" className="text-[10px]">{ct.type}</Badge></div><p className="text-xs text-slate-600">{ct.organization} • {ct.position}</p><p className="text-xs text-slate-500">{ct.email}</p><p className="text-xs text-slate-500">{ct.phone}</p><p className="text-xs bg-slate-50 rounded p-2">{ct.notes || "No notes"}</p><div className="flex justify-between text-[11px] text-slate-400"><span>{ct.countrySlug}</span><span>{ct.lastContactedAt ? new Date(ct.lastContactedAt).toLocaleDateString() : ""}</span></div></CardContent></Card>
+                  <Card key={ct.id} className="rounded-xl border"><CardContent className="pt-4 space-y-2"><div className="flex justify-between"><p className="font-semibold text-sm">{ct.name}</p><Badge variant="outline" className="text-[11px]">{ct.type}</Badge></div><p className="text-xs text-[var(--alo-body)]">{ct.organization} • {ct.position}</p><p className="text-xs text-[var(--alo-text-muted)]">{ct.email}</p><p className="text-xs text-[var(--alo-text-muted)]">{ct.phone}</p><p className="text-xs bg-[var(--alo-page)] rounded p-2">{ct.notes || "No notes"}</p><div className="flex justify-between text-[11px] text-[var(--alo-text-muted)]"><span>{ct.countrySlug}</span><span>{ct.lastContactedAt ? new Date(ct.lastContactedAt).toLocaleDateString() : ""}</span></div></CardContent></Card>
                 ))}
               </div>
             )}
@@ -409,13 +409,13 @@ export function InternationalOfficerDashboard() {
 
         {/* Agreements */}
         <TabsContent value="agreements" className="space-y-4">
-          <SectionCard title="University Agreements" description="Manage partnership agreements — ALO-AGR-XXXXX, status PENDING/ACTIVE, type AGENT/COMMISSION, researchData JSON" icon="FileSignature" action={<Button onClick={() => setAgreementFormOpen(true)} className="h-9 bg-[#0057B8] text-white hover:bg-[#003F87]"><Icon name="Plus" className="size-4" />New Agreement</Button>}>
+          <SectionCard title="University Agreements" description="Manage partnership agreements — ALO-AGR-XXXXX, status PENDING/ACTIVE, type AGENT/COMMISSION, researchData JSON" icon="FileSignature" action={<Button onClick={() => setAgreementFormOpen(true)} className="h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"><Icon name="Plus" className="size-4" />New Agreement</Button>}>
             {agreements.length===0 ? <EmptyState icon="FileSignature" title="No agreements" description="Create agreement request to start partnership" /> : (
               <div className="space-y-2">
                 {agreements.map((a) => (
                   <div key={a.id} className="rounded-xl border p-3 bg-white flex justify-between">
-                    <div><p className="font-medium text-sm">{a.agreementCode} — {a.universityName}</p><p className="text-xs text-slate-500">{a.partnershipType} • {a.countrySlug} • {a.contactName} • {a.contactEmail}</p></div>
-                    <Badge variant="outline" className={cn("h-fit text-[10px]", a.status==="ACTIVE" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : a.status==="PENDING" ? "bg-amber-50 text-amber-700" : "bg-slate-50")}>{a.status}</Badge>
+                    <div><p className="font-medium text-sm">{a.agreementCode} — {a.universityName}</p><p className="text-xs text-[var(--alo-text-muted)]">{a.partnershipType} • {a.countrySlug} • {a.contactName} • {a.contactEmail}</p></div>
+                    <Badge variant="outline" className={cn("h-fit text-[11px]", a.status==="ACTIVE" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : a.status==="PENDING" ? "bg-amber-50 text-amber-700" : "bg-[var(--alo-page)]")}>{a.status}</Badge>
                   </div>
                 ))}
               </div>
@@ -430,14 +430,14 @@ export function InternationalOfficerDashboard() {
               <div className="space-y-4">
                 <div className="rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/30 p-6 text-center">
                   <Icon name="MapPinned" className="size-10 mx-auto text-amber-600 mb-2" />
-                  <p className="font-semibold text-[#0F172A]">No business strategy documented yet</p>
-                  <p className="text-sm text-[#64748B] mt-1">Create your first strategy outlining best methods and locations for rapid partnerships</p>
+                  <p className="font-semibold text-[var(--alo-text)]">No business strategy documented yet</p>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">Create your first strategy outlining best methods and locations for rapid partnerships</p>
                   <Button onClick={() => setStrategyFormOpen(true)} className="mt-3 h-9 bg-amber-600 text-white">Create Strategy</Button>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   <div className="rounded-xl border bg-white p-4">
                     <h4 className="font-bold text-sm flex items-center gap-2"><Icon name="Zap" className="size-4 text-amber-600" />Default Rapid Partnership Playbook (Template)</h4>
-                    <div className="mt-3 space-y-3 text-xs text-slate-700">
+                    <div className="mt-3 space-y-3 text-xs text-[var(--alo-body)]">
                       <div><p className="font-semibold">Best Methods:</p><ul className="list-disc pl-4 space-y-1 mt-1"><li>Direct outreach to International Office via OfficialEmail + B2BContact (2-5 days)</li><li>Agent warm intro via existing B2BContact type=AGENT (1-3 days, highest success)</li><li>Commission-only fast track: UniversityAgreement type=COMMISSION, 10-15% commission, zero upfront (2-7 days)</li><li>Education fairs ICEF/NAFSA/EAIE — pre-book meetings (1-4 weeks)</li><li>Digital research leverage: show UniversityDigitalTwin + ResearchEvidence to prove value</li></ul></div>
                       <div><p className="font-semibold">Best Locations:</p><ul className="list-disc pl-4 space-y-1 mt-1"><li>UK (130 unis, high demand, easy COMMISSION agreements, Tier 4 visa)</li><li>Canada (200 unis, SDS, high commission, fast approval)</li><li>Australia (100 unis, GTE, high value)</li><li>USA (4000 unis, but complex — start with community colleges & state unis)</li><li>Ireland, Germany, Netherlands (medium, growing demand, EU post-study work)</li></ul></div>
                       <div><p className="font-semibold">How to Communicate:</p><p>Personalize using research data (courses, intakes, scholarships from DigitalTwin), send via OfficialEmail type UNIVERSITY_COMMUNICATION, follow up call 48h, log in PartnershipCommunication, track reply status.</p></div>
@@ -450,7 +450,7 @@ export function InternationalOfficerDashboard() {
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {strategies.map((s) => (
-                  <Card key={s.id} className="rounded-xl border"><CardContent className="pt-4 space-y-3"><div className="flex justify-between"><p className="font-bold text-sm">{s.title}</p><Badge variant="outline" className="text-[10px]">{s.status}</Badge></div><p className="text-xs text-slate-500">{s.countrySlug} • {s.region} • {s.strategyType}</p><p className="text-sm text-slate-700">{s.description}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"><div className="rounded-lg border p-2 bg-amber-50/50"><p className="font-semibold">Best Methods</p><p className="mt-1 whitespace-pre-wrap">{s.bestMethods.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-blue-50/50"><p className="font-semibold">Best Locations</p><p className="mt-1 whitespace-pre-wrap">{s.bestLocations.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-emerald-50/50"><p className="font-semibold">Contact Strategy</p><p className="mt-1 whitespace-pre-wrap">{s.contactStrategy.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-violet-50/50"><p className="font-semibold">Research Leverage & Expansion</p><p className="mt-1 whitespace-pre-wrap">{(s.researchLeverage + "\n" + s.businessExpansion).slice(0,500)}</p></div></div></CardContent></Card>
+                  <Card key={s.id} className="rounded-xl border"><CardContent className="pt-4 space-y-3"><div className="flex justify-between"><p className="font-bold text-sm">{s.title}</p><Badge variant="outline" className="text-[11px]">{s.status}</Badge></div><p className="text-xs text-[var(--alo-text-muted)]">{s.countrySlug} • {s.region} • {s.strategyType}</p><p className="text-sm text-[var(--alo-body)]">{s.description}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"><div className="rounded-lg border p-2 bg-amber-50/50"><p className="font-semibold">Best Methods</p><p className="mt-1 whitespace-pre-wrap">{s.bestMethods.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-blue-50/50"><p className="font-semibold">Best Locations</p><p className="mt-1 whitespace-pre-wrap">{s.bestLocations.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-emerald-50/50"><p className="font-semibold">Contact Strategy</p><p className="mt-1 whitespace-pre-wrap">{s.contactStrategy.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-violet-50/50"><p className="font-semibold">Research Leverage & Expansion</p><p className="mt-1 whitespace-pre-wrap">{(s.researchLeverage + "\n" + s.businessExpansion).slice(0,500)}</p></div></div></CardContent></Card>
                 ))}
               </div>
             )}
@@ -468,7 +468,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Description</Label><Textarea value={researchForm.description} onChange={(e) => setResearchForm({ ...researchForm, description: e.target.value })} rows={3} /></div>
             <div className="grid gap-1"><Label>Next Action</Label><Input value={researchForm.nextAction} onChange={(e) => setResearchForm({ ...researchForm, nextAction: e.target.value })} placeholder="Send email to international office" /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setResearchFormOpen(false)}>Cancel</Button><Button onClick={handleCreateResearch} className="bg-[#0057B8] text-white">Create</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setResearchFormOpen(false)}>Cancel</Button><Button onClick={handleCreateResearch} className="bg-[var(--alo-brand)] text-white">Create</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -481,7 +481,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Body</Label><Textarea value={commForm.body} onChange={(e) => setCommForm({ ...commForm, body: e.target.value })} rows={4} /></div>
             <div className="grid grid-cols-2 gap-2"><div className="grid gap-1"><Label>Contact Name</Label><Input value={commForm.contactName} onChange={(e) => setCommForm({ ...commForm, contactName: e.target.value })} /></div><div className="grid gap-1"><Label>Contact Email</Label><Input value={commForm.contactEmail} onChange={(e) => setCommForm({ ...commForm, contactEmail: e.target.value })} /></div></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setCommFormOpen(false)}>Cancel</Button><Button onClick={handleCreateComm} className="bg-[#0057B8] text-white">Log</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setCommFormOpen(false)}>Cancel</Button><Button onClick={handleCreateComm} className="bg-[var(--alo-brand)] text-white">Log</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -494,7 +494,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Position</Label><Input value={contactForm.position} onChange={(e) => setContactForm({ ...contactForm, position: e.target.value })} placeholder="International Officer, Partnership Manager" /></div>
             <div className="grid gap-1"><Label>Notes</Label><Textarea value={contactForm.notes} onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })} rows={2} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setContactFormOpen(false)}>Cancel</Button><Button onClick={handleCreateContact} className="bg-[#0057B8] text-white">Add Contact</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setContactFormOpen(false)}>Cancel</Button><Button onClick={handleCreateContact} className="bg-[var(--alo-brand)] text-white">Add Contact</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -506,7 +506,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid grid-cols-2 gap-2"><div className="grid gap-1"><Label>Contact Name</Label><Input value={agreementForm.contactName} onChange={(e) => setAgreementForm({ ...agreementForm, contactName: e.target.value })} /></div><div className="grid gap-1"><Label>Contact Email</Label><Input value={agreementForm.contactEmail} onChange={(e) => setAgreementForm({ ...agreementForm, contactEmail: e.target.value })} /></div></div>
             <div className="grid gap-1"><Label>Notes</Label><Textarea value={agreementForm.notes} onChange={(e) => setAgreementForm({ ...agreementForm, notes: e.target.value })} rows={2} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setAgreementFormOpen(false)}>Cancel</Button><Button onClick={handleCreateAgreement} className="bg-[#0057B8] text-white">Request Agreement</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setAgreementFormOpen(false)}>Cancel</Button><Button onClick={handleCreateAgreement} className="bg-[var(--alo-brand)] text-white">Request Agreement</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 

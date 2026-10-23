@@ -140,17 +140,17 @@ function formatDate(iso: string | null | undefined): string {
 function getLevelBadgeClasses(level: string): string {
   switch (level?.toLowerCase()) {
     case 'undergraduate': case 'bachelor':
-      return 'bg-[#0057B8]/10 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]';
     case 'postgraduate': case 'master':
-      return 'bg-[#0057B8]/20 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/20 text-[var(--alo-brand)]';
     case 'phd': case 'doctorate':
-      return 'bg-[#0057B8]/30 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/30 text-[var(--alo-brand)]';
     case 'foundation':
       return 'bg-sky-100 text-sky-800';
     case 'diploma': case 'certificate':
-      return 'bg-[#0057B8]/15 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]';
     default:
-      return 'bg-slate-100 text-slate-700';
+      return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
 
@@ -174,7 +174,7 @@ function getMatchColor(level: string) {
     case 'likely': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
     case 'possible': return 'text-amber-600 bg-amber-50 border-amber-200';
     case 'review': return 'text-red-600 bg-red-50 border-red-200';
-    default: return 'text-slate-600 bg-slate-50 border-slate-200';
+    default: return 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]';
   }
 }
 
@@ -186,7 +186,7 @@ function getMatchBadge(level: string, score: number) {
       <div className={`text-lg font-bold`}>{score}%</div>
       <div>
         <p className={`text-xs font-semibold capitalize`}>{label}</p>
-        <p className="text-[10px] opacity-70">Preliminary</p>
+        <p className="text-[11px] opacity-70">Preliminary</p>
       </div>
     </div>
   );
@@ -232,27 +232,27 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
       <div className="space-y-6 pb-6">
         {/* Academic Requirements */}
         <section>
-          <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <GraduationCap className="size-4 text-[#0057B8]" />
+          <h3 className="text-sm font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <GraduationCap className="size-4 text-[var(--alo-brand)]" />
             Academic Requirements
           </h3>
-          <div className="space-y-2 bg-slate-50 rounded-lg p-4">
+          <div className="space-y-2 bg-[var(--alo-page)] rounded-lg p-4">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Qualification</span>
-              <span className="font-medium text-slate-800">{course.qualification || 'Not specified'}</span>
+              <span className="text-[var(--alo-text-muted)]">Qualification</span>
+              <span className="font-medium text-[var(--alo-text)]">{course.qualification || 'Not specified'}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Minimum GPA</span>
-              <span className="font-medium text-slate-800">{course.gpaMin ?? 'Not specified'}</span>
+              <span className="text-[var(--alo-text-muted)]">Minimum GPA</span>
+              <span className="font-medium text-[var(--alo-text)]">{course.gpaMin ?? 'Not specified'}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Study Level</span>
-              <span className="font-medium text-slate-800">{course.studyLevel || 'Not specified'}</span>
+              <span className="text-[var(--alo-text-muted)]">Study Level</span>
+              <span className="font-medium text-[var(--alo-text)]">{course.studyLevel || 'Not specified'}</span>
             </div>
             {course.academicRequirement && (
-              <div className="mt-2 pt-2 border-t border-slate-200">
-                <p className="text-xs text-slate-500 mb-1">Detailed Requirements</p>
-                <p className="text-sm text-slate-700 whitespace-pre-line">{course.academicRequirement}</p>
+              <div className="mt-2 pt-2 border-t border-[var(--alo-border)]">
+                <p className="text-xs text-[var(--alo-text-muted)] mb-1">Detailed Requirements</p>
+                <p className="text-sm text-[var(--alo-body)] whitespace-pre-line">{course.academicRequirement}</p>
               </div>
             )}
           </div>
@@ -260,8 +260,8 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
 
         {/* English Requirements */}
         <section>
-          <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <BookOpen className="size-4 text-[#0057B8]" />
+          <h3 className="text-sm font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <BookOpen className="size-4 text-[var(--alo-brand)]" />
             English Language Requirements
           </h3>
           <div className="grid grid-cols-2 gap-3">
@@ -271,16 +271,16 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
               { name: 'TOEFL', score: course.toeflMin, icon: '托福' },
               { name: 'Duolingo', score: course.duolingoMin, icon: '🎯' },
             ].map(t => (
-              <div key={t.name} className="bg-slate-50 rounded-lg p-3 text-center">
-                <p className="text-xs text-slate-500">{t.icon} {t.name}</p>
-                <p className="text-xl font-bold text-slate-900 mt-1">
-                  {t.score ?? <span className="text-sm text-slate-400 font-normal">N/A</span>}
+              <div key={t.name} className="bg-[var(--alo-page)] rounded-lg p-3 text-center">
+                <p className="text-xs text-[var(--alo-text-muted)]">{t.icon} {t.name}</p>
+                <p className="text-xl font-bold text-[var(--alo-text)] mt-1">
+                  {t.score ?? <span className="text-sm text-[var(--alo-text-muted)] font-normal">N/A</span>}
                 </p>
-                <p className="text-[10px] text-slate-400 mt-0.5">Overall minimum</p>
+                <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">Overall minimum</p>
               </div>
             ))}
           </div>
-          <div className="mt-3 space-y-1.5 text-xs text-slate-500">
+          <div className="mt-3 space-y-1.5 text-xs text-[var(--alo-text-muted)]">
             <p>• Test validity: Typically 2 years from test date</p>
             <p>• Pre-sessional English courses may be available if scores are slightly below requirements</p>
             <p>• UKVI IELTS may be required for visa purposes (UK only)</p>
@@ -290,8 +290,8 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
 
         {/* Professional Requirements */}
         <section>
-          <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <Briefcase className="size-4 text-[#0057B8]" />
+          <h3 className="text-sm font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <Briefcase className="size-4 text-[var(--alo-brand)]" />
             Professional Requirements
           </h3>
           <div className="space-y-2">
@@ -300,22 +300,22 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
               { label: 'Portfolio', required: course.portfolioRequired },
               { label: 'Interview', required: course.interviewRequired },
             ].map(r => (
-              <div key={r.label} className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
-                <span className="text-sm text-slate-600">{r.label}</span>
+              <div key={r.label} className="flex items-center justify-between bg-[var(--alo-page)] rounded-lg p-3">
+                <span className="text-sm text-[var(--alo-body)]">{r.label}</span>
                 {r.required ? (
                   <Badge className="bg-amber-100 text-amber-700 text-xs">Required</Badge>
                 ) : (
-                  <span className="text-xs text-slate-400">Not required</span>
+                  <span className="text-xs text-[var(--alo-text-muted)]">Not required</span>
                 )}
               </div>
             ))}
-            <div className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
-              <span className="text-sm text-slate-600">CV / Resume</span>
-              <Badge className="bg-[#0057B8]/10 text-[#0057B8] text-xs">Recommended</Badge>
+            <div className="flex items-center justify-between bg-[var(--alo-page)] rounded-lg p-3">
+              <span className="text-sm text-[var(--alo-body)]">CV / Resume</span>
+              <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] text-xs">Recommended</Badge>
             </div>
-            <div className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
-              <span className="text-sm text-slate-600">References</span>
-              <Badge className="bg-[#0057B8]/10 text-[#0057B8] text-xs">Usually 1-2</Badge>
+            <div className="flex items-center justify-between bg-[var(--alo-page)] rounded-lg p-3">
+              <span className="text-sm text-[var(--alo-body)]">References</span>
+              <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] text-xs">Usually 1-2</Badge>
             </div>
           </div>
         </section>
@@ -323,22 +323,22 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         {/* Research Requirements */}
         {isResearch && (
           <section>
-            <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-              <FlaskConical className="size-4 text-[#0057B8]" />
+            <h3 className="text-sm font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+              <FlaskConical className="size-4 text-[var(--alo-brand)]" />
               Research Requirements
             </h3>
-            <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm text-slate-600">
-              <p>• <span className="font-medium text-slate-700">Research Proposal:</span> A detailed research proposal aligned with departmental expertise</p>
-              <p>• <span className="font-medium text-slate-700">Supervisor Contact:</span> It is recommended to contact potential supervisors before applying</p>
-              <p>• <span className="font-medium text-slate-700">Publications:</span> Previous publications may strengthen your application</p>
+            <div className="bg-[var(--alo-page)] rounded-lg p-4 space-y-2 text-sm text-[var(--alo-body)]">
+              <p>• <span className="font-medium text-[var(--alo-body)]">Research Proposal:</span> A detailed research proposal aligned with departmental expertise</p>
+              <p>• <span className="font-medium text-[var(--alo-body)]">Supervisor Contact:</span> It is recommended to contact potential supervisors before applying</p>
+              <p>• <span className="font-medium text-[var(--alo-body)]">Publications:</span> Previous publications may strengthen your application</p>
             </div>
           </section>
         )}
 
         {/* Documents Checklist */}
         <section>
-          <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <ListChecks className="size-4 text-[#0057B8]" />
+          <h3 className="text-sm font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <ListChecks className="size-4 text-[var(--alo-brand)]" />
             Documents Checklist
           </h3>
           <div className="space-y-1.5">
@@ -348,8 +348,8 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
               'Reference Letters (1-2)', 'Work Experience Letter (if applicable)',
               'Portfolio (if required)', 'Financial Evidence / Bank Statements',
             ].map(doc => (
-              <div key={doc} className="flex items-center gap-2 text-sm text-slate-600 py-1">
-                <CircleDot className="size-3.5 text-[#0057B8] flex-shrink-0" />
+              <div key={doc} className="flex items-center gap-2 text-sm text-[var(--alo-body)] py-1">
+                <CircleDot className="size-3.5 text-[var(--alo-brand)] flex-shrink-0" />
                 <span>{doc}</span>
               </div>
             ))}
@@ -358,38 +358,38 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
 
         {/* Financial Info */}
         <section>
-          <h3 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-            <Banknote className="size-4 text-[#0057B8]" />
+          <h3 className="text-sm font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
+            <Banknote className="size-4 text-[var(--alo-brand)]" />
             Financial Information
           </h3>
-          <div className="space-y-2 bg-slate-50 rounded-lg p-4">
+          <div className="space-y-2 bg-[var(--alo-page)] rounded-lg p-4">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Tuition Fee</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-[var(--alo-text-muted)]">Tuition Fee</span>
+              <span className="font-medium text-[var(--alo-text)]">
                 {course.tuitionFee ? `${course.tuitionCurrency || 'GBP'} ${course.tuitionFee.toLocaleString()}${course.tuitionPeriod ? ` / ${course.tuitionPeriod}` : ''}` : 'Not specified'}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Deposit</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-[var(--alo-text-muted)]">Deposit</span>
+              <span className="font-medium text-[var(--alo-text)]">
                 {course.depositRequired
                   ? `${course.depositAmount ? `${course.tuitionCurrency || 'GBP'} ${course.depositAmount.toLocaleString()}` : 'Required'}`
                   : 'Not required'}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Application Fee</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-[var(--alo-text-muted)]">Application Fee</span>
+              <span className="font-medium text-[var(--alo-text)]">
                 {course.applicationFee ? `${course.applicationFeeCurrency || course.tuitionCurrency || 'GBP'} ${course.applicationFee.toLocaleString()}` : 'No fee'}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Estimated Living Costs</span>
-              <span className="text-xs text-slate-400">Contact counsellor</span>
+              <span className="text-[var(--alo-text-muted)]">Estimated Living Costs</span>
+              <span className="text-xs text-[var(--alo-text-muted)]">Contact counsellor</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Scholarships</span>
-              <span className="font-medium text-slate-800">
+              <span className="text-[var(--alo-text-muted)]">Scholarships</span>
+              <span className="font-medium text-[var(--alo-text)]">
                 {course.scholarshipAvailable ? 'Available' : 'Not listed'}
               </span>
             </div>
@@ -397,12 +397,12 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
         </section>
 
         {/* Source Provenance */}
-        <section className="border-t border-slate-200 pt-4">
-          <div className="space-y-1 text-xs text-slate-400">
+        <section className="border-t border-[var(--alo-border)] pt-4">
+          <div className="space-y-1 text-xs text-[var(--alo-text-muted)]">
             {course.sourceUrl && (
               <p className="flex items-center gap-1">
                 <ExternalLink className="size-3" />
-                Source: <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:underline truncate max-w-[200px] inline-block">{course.sourceUrl}</a>
+                Source: <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--alo-brand)] hover:underline truncate max-w-[200px] inline-block">{course.sourceUrl}</a>
               </p>
             )}
             <p>Collected: {formatDate(course.collectedAt)}</p>
@@ -428,7 +428,7 @@ function CourseDetailSkeleton() {
         </div>
       </div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
-        <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-4">
+        <div className="flex items-center gap-3 bg-[var(--alo-page)] rounded-xl p-4">
           <Skeleton className="size-12 rounded-lg" />
           <div className="space-y-1.5">
             <Skeleton className="h-5 w-48" />
@@ -460,11 +460,11 @@ function NotFoundState() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-8">
       <div className="text-center max-w-md">
-        <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-6">
-          <SearchX className="size-10 text-slate-300" />
+        <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mx-auto mb-6">
+          <SearchX className="size-10 text-[var(--alo-placeholder)]" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Course Not Found</h2>
-        <p className="text-slate-500 mb-6">
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Course Not Found</h2>
+        <p className="text-[var(--alo-text-muted)] mb-6">
           The course you&apos;re looking for doesn&apos;t exist, has been removed, or is not yet published.
         </p>
         <div className="flex gap-3 justify-center">
@@ -492,13 +492,13 @@ function InfoItem({ icon: Icon, label, value, subLabel }: {
 }) {
   return (
     <div className="flex items-start gap-3 p-3">
-      <div className="w-9 h-9 rounded-lg bg-[#0057B8]/10 flex items-center justify-center flex-shrink-0">
-        <Icon className="size-4 text-[#0057B8]" />
+      <div className="w-9 h-9 rounded-lg bg-[var(--alo-brand)]/10 flex items-center justify-center flex-shrink-0">
+        <Icon className="size-4 text-[var(--alo-brand)]" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs text-slate-500 mb-0.5">{label}</p>
-        <p className="text-sm font-semibold text-slate-900 truncate">{value}</p>
-        {subLabel && <p className="text-xs text-slate-400 mt-0.5">{subLabel}</p>}
+        <p className="text-xs text-[var(--alo-text-muted)] mb-0.5">{label}</p>
+        <p className="text-sm font-semibold text-[var(--alo-text)] truncate">{value}</p>
+        {subLabel && <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{subLabel}</p>}
       </div>
     </div>
   );
@@ -508,23 +508,23 @@ function InfoItem({ icon: Icon, label, value, subLabel }: {
 function RelatedCourseCard({ course }: { course: RelatedCourse }) {
   return (
     <Link href={`/course-finder?slug=${course.slug}`}>
-      <Card className="hover:shadow-md transition-shadow border-slate-200 cursor-pointer h-full">
+      <Card className="hover:shadow-md transition-shadow border-[var(--alo-border)] cursor-pointer h-full">
         <CardContent className="p-4 space-y-2">
           {course.studyLevel && (
-            <Badge variant="secondary" className={`text-[10px] font-medium ${getLevelBadgeClasses(course.studyLevel)}`}>
+            <Badge variant="secondary" className={`text-[11px] font-medium ${getLevelBadgeClasses(course.studyLevel)}`}>
               {course.studyLevel}
             </Badge>
           )}
-          <h4 className="font-semibold text-sm text-slate-900 leading-snug line-clamp-2">
+          <h4 className="font-semibold text-sm text-[var(--alo-text)] leading-snug line-clamp-2">
             {course.title}
           </h4>
           {course.university && (
-            <p className="text-xs text-slate-500 flex items-center gap-1">
+            <p className="text-xs text-[var(--alo-text-muted)] flex items-center gap-1">
               <Building2 className="size-3" />
               {course.university.name}
             </p>
           )}
-          <div className="flex flex-wrap gap-3 text-xs text-slate-500 pt-1">
+          <div className="flex flex-wrap gap-3 text-xs text-[var(--alo-text-muted)] pt-1">
             {course.duration && (
               <span className="flex items-center gap-1"><Clock className="size-3" />{course.duration}</span>
             )}
@@ -533,7 +533,7 @@ function RelatedCourseCard({ course }: { course: RelatedCourse }) {
             )}
           </div>
           {course.scholarshipAvailable && (
-            <Badge className="bg-amber-100 text-amber-700 text-[10px] font-medium">
+            <Badge className="bg-amber-100 text-amber-700 text-[11px] font-medium">
               <Award className="size-2.5 mr-0.5" /> Scholarship
             </Badge>
           )}
@@ -549,17 +549,17 @@ function ApplicationStepItem({ step, index }: { step: ReturnType<typeof getAppli
   return (
     <div className="flex gap-3 group">
       <div className="flex flex-col items-center">
-        <div className="w-8 h-8 rounded-full bg-[#0057B8] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
           {step.step}
         </div>
         {index < 19 && <div className="w-px flex-1 bg-slate-200 mt-1" />}
       </div>
       <div className="pb-6">
         <div className="flex items-center gap-2">
-          <StepIcon className="size-4 text-[#0057B8]" />
-          <h4 className="text-sm font-semibold text-slate-900">{step.title}</h4>
+          <StepIcon className="size-4 text-[var(--alo-brand)]" />
+          <h4 className="text-sm font-semibold text-[var(--alo-text)]">{step.title}</h4>
         </div>
-        <p className="text-xs text-slate-500 mt-1 leading-relaxed">{step.desc}</p>
+        <p className="text-xs text-[var(--alo-text-muted)] mt-1 leading-relaxed">{step.desc}</p>
       </div>
     </div>
   );
@@ -776,8 +776,8 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
             <SearchX className="size-10 text-red-300" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Error Loading Course</h2>
-          <p className="text-slate-500 mb-6">{error || 'Unable to load course data.'}</p>
+          <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Error Loading Course</h2>
+          <p className="text-[var(--alo-text-muted)] mb-6">{error || 'Unable to load course data.'}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
@@ -801,21 +801,21 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
       <nav className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
         <button
           onClick={() => window.history.back()}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] transition-colors mb-3"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] transition-colors mb-3"
         >
           <ArrowLeft className="size-4" />
           Back
         </button>
-        <ol className="flex items-center gap-1.5 text-sm text-slate-500 flex-wrap">
+        <ol className="flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] flex-wrap">
           <li>
-            <Link href="/" className="hover:text-[#0057B8] transition-colors">Home</Link>
+            <Link href="/" className="hover:text-[var(--alo-brand)] transition-colors">Home</Link>
           </li>
           <li><ChevronRight className="size-3.5" /></li>
           <li>
-            <Link href="/course-finder" className="hover:text-[#0057B8] transition-colors">Course Finder</Link>
+            <Link href="/course-finder" className="hover:text-[var(--alo-brand)] transition-colors">Course Finder</Link>
           </li>
           <li><ChevronRight className="size-3.5" /></li>
-          <li className="text-slate-900 font-medium truncate max-w-[250px]" title={course.title}>
+          <li className="text-[var(--alo-text)] font-medium truncate max-w-[250px]" title={course.title}>
             {course.title}
           </li>
         </ol>
@@ -824,22 +824,22 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
       {/* ═══ Hero: University Info Bar ═══ */}
       {uni && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
-          <div className="flex items-center gap-4 bg-slate-50 rounded-xl p-4 border border-slate-100">
-            <div className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
+          <div className="flex items-center gap-4 bg-[var(--alo-page)] rounded-xl p-4 border border-[var(--alo-border)]">
+            <div className="w-12 h-12 rounded-lg bg-white border border-[var(--alo-border)] flex items-center justify-center flex-shrink-0">
               {uni.logoUrl ? (
                 <img src={uni.logoUrl} alt={uni.name} className="w-10 h-10 object-contain" />
               ) : (
-                <Building2 className="size-6 text-slate-300" />
+                <Building2 className="size-6 text-[var(--alo-placeholder)]" />
               )}
             </div>
             <div className="min-w-0 flex-1">
               <Link
                 href={`/course-finder?slug=${uni.slug}`}
-                className="font-semibold text-slate-900 hover:text-[#0057B8] transition-colors truncate block"
+                className="font-semibold text-[var(--alo-text)] hover:text-[var(--alo-brand)] transition-colors truncate block"
               >
                 {uni.name}
               </Link>
-              <div className="flex items-center gap-3 text-sm text-slate-500 flex-wrap">
+              <div className="flex items-center gap-3 text-sm text-[var(--alo-text-muted)] flex-wrap">
                 {uni.city && uni.country && (
                   <span className="flex items-center gap-1">
                     <MapPin className="size-3.5" />
@@ -866,12 +866,12 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
       {/* ═══ Title + Badges ═══ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
-        <h1 className="text-xl sm:text-3xl font-bold text-slate-900 leading-snug">
+        <h1 className="text-xl sm:text-3xl font-bold text-[var(--alo-text)] leading-snug">
           {course.title}
         </h1>
         <div className="flex flex-wrap items-center gap-2 mt-3">
           {course.qualification && (
-            <Badge variant="secondary" className="bg-slate-100 text-slate-700">
+            <Badge variant="secondary" className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">
               {course.qualification}
             </Badge>
           )}
@@ -881,7 +881,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             </Badge>
           )}
           {course.subjectArea && (
-            <Badge variant="secondary" className="bg-slate-50 text-slate-600">
+            <Badge variant="secondary" className="bg-[var(--alo-page)] text-[var(--alo-body)]">
               <BookOpen className="size-3 mr-1" />
               {course.subjectArea}
             </Badge>
@@ -901,15 +901,15 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
       {/* ═══ Eligibility Section ═══ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
-        <Card className="overflow-hidden border-slate-200">
+        <Card className="overflow-hidden border-[var(--alo-border)]">
           <CardContent className="p-4 sm:p-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <ClipboardCheck className="size-5 text-[#0057B8]" />
+                <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
+                  <ClipboardCheck className="size-5 text-[var(--alo-brand)]" />
                   Your Eligibility
                 </h2>
-                <p className="text-xs text-slate-500 mt-1">Check if this course is right for you</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">Check if this course is right for you</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 {eligibilityResult ? (
@@ -920,7 +920,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5"
+                  className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/5"
                   onClick={() => toast.info('Navigating to eligibility checker with this course pre-selected...')}
                 >
                   <ClipboardCheck className="size-4 mr-1.5" />
@@ -928,7 +928,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                 </Button>
                 <Sheet open={requirementsOpen} onOpenChange={setRequirementsOpen}>
                   <SheetTrigger asChild>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]">
                       <FileText className="size-4 mr-1.5" />
                       Check Full Requirements
                     </Button>
@@ -936,7 +936,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   <SheetContent side="right" className="sm:max-w-lg w-full">
                     <SheetHeader>
                       <SheetTitle className="flex items-center gap-2">
-                        <ScrollText className="size-5 text-[#0057B8]" />
+                        <ScrollText className="size-5 text-[var(--alo-brand)]" />
                         Full Requirements
                       </SheetTitle>
                       <SheetDescription>
@@ -952,7 +952,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             {eligibilityResult && eligibilityResult.reasons.length > 0 && (
               <div className="mt-4 space-y-1.5">
                 {eligibilityResult.reasons.map((r, i) => (
-                  <p key={i} className="text-xs text-slate-500 flex items-start gap-1.5">
+                  <p key={i} className="text-xs text-[var(--alo-text-muted)] flex items-start gap-1.5">
                     <ChevronRight className="size-3 mt-0.5 flex-shrink-0" />
                     <span>{r}</span>
                   </p>
@@ -965,7 +965,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
       {/* ═══ Key Info Grid ═══ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
-        <Card className="overflow-hidden border-slate-200">
+        <Card className="overflow-hidden border-[var(--alo-border)]">
           <CardContent className="p-2 sm:p-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
               <InfoItem icon={Clock} label="Duration" value={pOrV(course.duration)} subLabel={course.durationMonths ? `${course.durationMonths} months` : undefined} />
@@ -1013,13 +1013,13 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           {/* ── Overview Tab ── */}
           <TabsContent value="overview" className="mt-6 space-y-6">
             {course.overview && (
-              <Card className="overflow-hidden border-slate-200">
+              <Card className="overflow-hidden border-[var(--alo-border)]">
                 <CardContent className="p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Sparkles className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2">
+                    <Sparkles className="size-5 text-[var(--alo-brand)]" />
                     Overview
                   </h2>
-                  <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 whitespace-pre-line">
+                  <div className="prose prose-slate max-w-none text-sm leading-relaxed text-[var(--alo-body)] whitespace-pre-line">
                     {course.overview}
                   </div>
                 </CardContent>
@@ -1027,16 +1027,16 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             )}
 
             {modulesItems.length > 0 && (
-              <Card className="overflow-hidden border-slate-200">
+              <Card className="overflow-hidden border-[var(--alo-border)]">
                 <CardContent className="p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <BookOpen className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2">
+                    <BookOpen className="size-5 text-[var(--alo-brand)]" />
                     Key Modules
                   </h2>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {modulesItems.map((mod, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                        <CheckCircle className="size-4 text-[#0057B8] mt-0.5 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--alo-body)]">
+                        <CheckCircle className="size-4 text-[var(--alo-brand)] mt-0.5 flex-shrink-0" />
                         <span>{mod}</span>
                       </li>
                     ))}
@@ -1046,16 +1046,16 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             )}
 
             {learningItems.length > 0 && (
-              <Card className="overflow-hidden border-slate-200">
+              <Card className="overflow-hidden border-[var(--alo-border)]">
                 <CardContent className="p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <Target className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2">
+                    <Target className="size-5 text-[var(--alo-brand)]" />
                     Learning Outcomes
                   </h2>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {learningItems.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                        <ChevronRight className="size-4 text-[#0057B8] mt-0.5 flex-shrink-0" />
+                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--alo-body)]">
+                        <ChevronRight className="size-4 text-[var(--alo-brand)] mt-0.5 flex-shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -1065,10 +1065,10 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             )}
 
             {(careerItems.length > 0 || course.placementAvailable) && (
-              <Card className="overflow-hidden border-slate-200">
+              <Card className="overflow-hidden border-[var(--alo-border)]">
                 <CardContent className="p-5 sm:p-6 space-y-4">
-                  <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Briefcase className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
+                    <Briefcase className="size-5 text-[var(--alo-brand)]" />
                     Career Outcomes
                   </h2>
                   {course.placementAvailable && (
@@ -1080,8 +1080,8 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   {careerItems.length > 0 && (
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {careerItems.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                          <ChevronRight className="size-4 text-[#0057B8] mt-0.5 flex-shrink-0" />
+                        <li key={i} className="flex items-start gap-2 text-sm text-[var(--alo-body)]">
+                          <ChevronRight className="size-4 text-[var(--alo-brand)] mt-0.5 flex-shrink-0" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -1092,13 +1092,13 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             )}
 
             {course.professionalAccreditation && (
-              <Card className="overflow-hidden border-slate-200">
+              <Card className="overflow-hidden border-[var(--alo-border)]">
                 <CardContent className="p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Award className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
+                    <Award className="size-5 text-[var(--alo-brand)]" />
                     Professional Accreditation
                   </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed">{course.professionalAccreditation}</p>
+                  <p className="text-sm text-[var(--alo-body)] leading-relaxed">{course.professionalAccreditation}</p>
                 </CardContent>
               </Card>
             )}
@@ -1106,7 +1106,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
           {/* ── Requirements Tab ── */}
           <TabsContent value="requirements" className="mt-6">
-            <Card className="overflow-hidden border-slate-200">
+            <Card className="overflow-hidden border-[var(--alo-border)]">
               <CardContent className="p-5 sm:p-6">
                 <RequirementsDrawer course={course} />
               </CardContent>
@@ -1117,18 +1117,18 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <TabsContent value="scholarships" className="mt-6">
             <Card className="overflow-hidden border-amber-200 bg-amber-50/50">
               <CardContent className="p-5 sm:p-6">
-                <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
                   <Award className="size-5 text-amber-600" />
                   Scholarship Information
                 </h2>
                 {course.scholarshipAvailable ? (
                   <div className="mt-4 space-y-3">
                     {course.scholarshipNotes ? (
-                      <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                      <p className="text-sm text-[var(--alo-body)] leading-relaxed whitespace-pre-line">
                         {course.scholarshipNotes}
                       </p>
                     ) : (
-                      <p className="text-sm text-slate-600 leading-relaxed">
+                      <p className="text-sm text-[var(--alo-body)] leading-relaxed">
                         Scholarships are available for this course. Many universities offer merit-based and need-based
                         scholarships for international students. The amount and eligibility criteria vary.
                       </p>
@@ -1156,11 +1156,11 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   </div>
                 ) : (
                   <div className="mt-4 text-center py-8">
-                    <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                      <Award className="size-8 text-slate-300" />
+                    <div className="w-16 h-16 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mx-auto mb-4">
+                      <Award className="size-8 text-[var(--alo-placeholder)]" />
                     </div>
-                    <p className="text-sm text-slate-500 mb-1">No scholarship information listed for this course.</p>
-                    <p className="text-xs text-slate-400 mb-4">Scholarships may still be available — contact a counsellor to find out.</p>
+                    <p className="text-sm text-[var(--alo-text-muted)] mb-1">No scholarship information listed for this course.</p>
+                    <p className="text-xs text-[var(--alo-text-muted)] mb-4">Scholarships may still be available — contact a counsellor to find out.</p>
                     <Button
                       size="sm"
                       style={{ backgroundColor: ALO_ORANGE }}
@@ -1178,17 +1178,17 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
           {/* ── How to Apply Tab ── */}
           <TabsContent value="how-to-apply" className="mt-6">
-            <Card className="overflow-hidden border-slate-200">
+            <Card className="overflow-hidden border-[var(--alo-border)]">
               <CardContent className="p-5 sm:p-6">
-                <h2 className="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-                  <ListChecks className="size-5 text-[#0057B8]" />
+                <h2 className="text-lg font-bold text-[var(--alo-text)] mb-2 flex items-center gap-2">
+                  <ListChecks className="size-5 text-[var(--alo-brand)]" />
                   How to Apply
                 </h2>
-                <p className="text-sm text-slate-500 mb-6">
+                <p className="text-sm text-[var(--alo-text-muted)] mb-6">
                   Follow these {appSteps.length} steps to apply for this course with ALO Education support.
                   {course.country && (
                     <span className="ml-1">
-                      Steps are tailored for <span className="font-medium text-slate-700">{COUNTRY_FLAGS[course.country] || ''} {course.country}</span>.
+                      Steps are tailored for <span className="font-medium text-[var(--alo-body)]">{COUNTRY_FLAGS[course.country] || ''} {course.country}</span>.
                     </span>
                   )}
                 </p>
@@ -1210,7 +1210,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5"
+                    className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/5"
                     onClick={() => toast.info('Connecting you with a counsellor...')}
                   >
                     <MessageCircle className="size-5 mr-2" />
@@ -1239,12 +1239,12 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             ) : similarCourses.length > 0 ? (
               <>
                 <div className="flex items-center gap-2 mb-4">
-                  <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <BookOpen className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
+                    <BookOpen className="size-5 text-[var(--alo-brand)]" />
                     Similar Courses
                   </h2>
                   {course.subjectArea && (
-                    <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-xs">
+                    <Badge variant="secondary" className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)] text-xs">
                       {course.subjectArea}
                     </Badge>
                   )}
@@ -1258,8 +1258,8 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             ) : relatedCourses.length > 0 ? (
               <>
                 <div className="flex items-center gap-2 mb-4">
-                  <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <BookOpen className="size-5 text-[#0057B8]" />
+                  <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
+                    <BookOpen className="size-5 text-[var(--alo-brand)]" />
                     Related Courses
                   </h2>
                 </div>
@@ -1271,8 +1271,8 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               </>
             ) : (
               <div className="text-center py-12">
-                <SearchX className="size-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-sm text-slate-500">No similar courses found at this time.</p>
+                <SearchX className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                <p className="text-sm text-[var(--alo-text-muted)]">No similar courses found at this time.</p>
               </div>
             )}
           </TabsContent>
@@ -1286,7 +1286,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             href={course.officialCourseUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-[#0057B8] hover:underline font-medium"
+            className="inline-flex items-center gap-2 text-sm text-[var(--alo-brand)] hover:underline font-medium"
           >
             <ExternalLink className="size-4" />
             View on {uni?.name || 'University'} website
@@ -1296,7 +1296,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
       {/* ═══ CTA Buttons (Sticky) ═══ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 mb-4">
-        <div className="sticky bottom-0 bg-white/90 backdrop-blur-sm border-t border-slate-200 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 flex flex-wrap gap-2 justify-center">
+        <div className="sticky bottom-0 bg-white/90 backdrop-blur-sm border-t border-[var(--alo-border)] -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 flex flex-wrap gap-2 justify-center">
           <Button
             size="lg"
             className="text-white px-6"
@@ -1309,7 +1309,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <Button
             variant="outline"
             size="lg"
-            className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5 px-4"
+            className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/5 px-4"
             onClick={handleSaveCourse}
             disabled={saving}
           >
@@ -1319,7 +1319,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <Button
             variant="outline"
             size="lg"
-            className="border-[#0057B8] text-[#0057B8] hover:bg-[#0057B8]/5 px-4"
+            className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/5 px-4"
             onClick={handleCompare}
           >
             <GitCompare className="size-5" />
@@ -1337,7 +1337,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <Button
             variant="outline"
             size="lg"
-            className="border-slate-300 text-slate-700 hover:bg-slate-50 px-4"
+            className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-4"
             onClick={handleDownloadSummary}
           >
             <Download className="size-5" />
@@ -1346,7 +1346,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <Button
             variant="outline"
             size="lg"
-            className="border-slate-300 text-slate-700 hover:bg-slate-50 px-4"
+            className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-4"
             onClick={handleShare}
           >
             <Share2 className="size-5" />
@@ -1374,11 +1374,11 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
       {/* ═══ Source Provenance Footer ═══ */}
       <footer className="max-w-5xl mx-auto px-4 sm:px-6 pb-10 pt-2">
         <Separator className="mb-4" />
-        <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+        <div className="flex flex-wrap gap-4 text-xs text-[var(--alo-text-muted)]">
           <span className="flex items-center gap-1">
             <ShieldCheck className="size-3.5" />
             Source: {course.sourceUrl ? (
-              <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[#0057B8] hover:underline truncate max-w-[300px] inline-block">
+              <a href={course.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--alo-brand)] hover:underline truncate max-w-[300px] inline-block">
                 {course.sourceUrl}
               </a>
             ) : (

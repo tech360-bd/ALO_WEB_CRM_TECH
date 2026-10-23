@@ -145,7 +145,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -154,14 +154,14 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="Phone" className="mr-1 size-3" />
               24-Hour Response Promise
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Contact <span className="text-[#0057B8]">ALO Education</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Contact <span className="text-[var(--alo-brand)]">ALO Education</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Have a question, want to book a consultation, or just need someone to talk to about studying abroad?
               We respond to every inquiry within 24 hours — guaranteed in writing.
             </p>
@@ -177,31 +177,31 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
               <div className="space-y-3">
                 {CONTACT_INFO.map((info) => {
                   const accentColors = {
-                    blue: "bg-[#EAF3FF] text-[#0057B8]",
-                    orange: "bg-[#FFF3EA] text-[#E8501A]",
+                    blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
+                    orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
                     emerald: "bg-emerald-50 text-emerald-600",
                   };
                   return (
                     <div
                       key={info.label}
-                      className="flex items-start gap-3 rounded-xl border border-[#E2E8F0] bg-white p-4 transition-colors hover:border-[#0057B8]/30"
+                      className="flex items-start gap-3 rounded-xl border border-[var(--alo-border)] bg-white p-4 transition-colors hover:border-[var(--alo-brand)]/30"
                     >
                       <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", accentColors[info.accent])}>
                         <Icon name={info.icon} className="size-5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold uppercase tracking-wide text-[#5A7299]">{info.label}</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{info.label}</p>
                         {info.href ? (
                           <a
                             href={info.href}
                             target={info.href.startsWith("http") ? "_blank" : undefined}
                             rel={info.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="mt-0.5 block whitespace-pre-line text-sm font-semibold text-[#0B2447] transition-colors hover:text-[#0057B8]"
+                            className="mt-0.5 block whitespace-pre-line text-sm font-semibold text-[var(--alo-text)] transition-colors hover:text-[var(--alo-brand)]"
                           >
                             {info.value}
                           </a>
                         ) : (
-                          <p className="mt-0.5 whitespace-pre-line text-sm font-semibold text-[#0B2447]">{info.value}</p>
+                          <p className="mt-0.5 whitespace-pre-line text-sm font-semibold text-[var(--alo-text)]">{info.value}</p>
                         )}
                       </div>
                     </div>
@@ -214,9 +214,9 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
             <SectionCard title="Office hours" icon="Clock">
               <div className="space-y-2">
                 {HOURS.map((h) => (
-                  <div key={h.day} className="flex items-center justify-between border-b border-[#E2E8F0] py-2 last:border-0">
-                    <span className="text-sm font-medium text-[#0B2447]">{h.day}</span>
-                    <span className="text-sm text-[#5A7299]">{h.time}</span>
+                  <div key={h.day} className="flex items-center justify-between border-b border-[var(--alo-border)] py-2 last:border-0">
+                    <span className="text-sm font-medium text-[var(--alo-text)]">{h.day}</span>
+                    <span className="text-sm text-[var(--alo-text-muted)]">{h.time}</span>
                   </div>
                 ))}
               </div>
@@ -231,10 +231,10 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl border border-[#0057B8]/15 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30 hover:bg-[#EAF3FF]/30"
+                    className="flex items-center gap-2 rounded-xl border border-[var(--alo-brand)]/15 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30 hover:bg-[var(--alo-brand-light)]/30"
                   >
-                    <Icon name={s.icon} className="size-5 text-[#0057B8]" />
-                    <span className="text-sm font-semibold text-[#0B2447]">{s.label}</span>
+                    <Icon name={s.icon} className="size-5 text-[var(--alo-brand)]" />
+                    <span className="text-sm font-semibold text-[var(--alo-text)]">{s.label}</span>
                   </a>
                 ))}
               </div>
@@ -242,19 +242,19 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
 
             {/* Map placeholder */}
             <SectionCard title="Visit our office" description="Banani, Dhaka" icon="MapPin">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-[#0057B8]/15 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-[var(--alo-brand)]/15 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <div className="flex size-14 items-center justify-center rounded-2xl bg-alo-gradient text-white alo-shadow">
                       <Icon name="MapPin" className="size-7" />
                     </div>
-                    <p className="mt-3 text-sm font-bold text-[#0B2447]">House 25, Road 11, Banani</p>
-                    <p className="text-xs text-[#5A7299]">Dhaka 1213, Bangladesh</p>
+                    <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">House 25, Road 11, Banani</p>
+                    <p className="text-xs text-[var(--alo-text-muted)]">Dhaka 1213, Bangladesh</p>
                     <a
                       href="https://www.google.com/maps/search/?api=1&query=Banani+Dhaka+Bangladesh"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0057B8] hover:underline"
+                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--alo-brand)] hover:underline"
                     >
                       Open in Google Maps
                       <Icon name="ExternalLink" className="size-3" />
@@ -281,7 +281,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                   <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
                     <Button
                       onClick={() => onNavigate("public-home")}
-                      className="h-11 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                      className="h-11 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                     >
                       <Icon name="Home" className="size-4" />
                       Back to Home
@@ -300,16 +300,16 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
+              <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white alo-shadow">
                 <CardContent className="p-6">
                   <div className="mb-5">
-                    <h3 className="text-lg font-bold text-[#0057B8]">Send us a message</h3>
-                    <p className="mt-1 text-sm text-[#5A7299]">We respond within 24 hours.</p>
+                    <h3 className="text-lg font-bold text-[var(--alo-brand)]">Send us a message</h3>
+                    <p className="mt-1 text-sm text-[var(--alo-text-muted)]">We respond within 24 hours.</p>
                   </div>
                   <form onSubmit={submit} className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div>
-                        <Label className="text-xs font-semibold">Full Name <span className="text-[#E8501A]">*</span></Label>
+                        <Label className="text-xs font-semibold">Full Name <span className="text-[var(--alo-cta)]">*</span></Label>
                         <Input
                           required
                           value={form.fullName}
@@ -319,7 +319,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-semibold">Phone <span className="text-[#E8501A]">*</span></Label>
+                        <Label className="text-xs font-semibold">Phone <span className="text-[var(--alo-cta)]">*</span></Label>
                         <Input
                           required
                           value={form.phone}
@@ -359,21 +359,21 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         placeholder="Tell us about your goals, questions, or anything we should know."
                       />
                     </div>
-                    <label className="flex cursor-pointer items-start gap-2.5 text-xs text-[#5A7299]">
+                    <label className="flex cursor-pointer items-start gap-2.5 text-xs text-[var(--alo-text-muted)]">
                       <Checkbox
                         checked={form.consent}
                         onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })}
-                        className="mt-0.5 border-[#0057B8]/40 data-[state=checked]:bg-[#0057B8]"
+                        className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]"
                       />
                       <span>
                         I agree to be contacted by ALO Education via phone, WhatsApp, and email about my inquiry.
-                        My data is private, RBAC-protected, and audit-logged. <span className="text-[#E8501A]">*</span>
+                        My data is private, RBAC-protected, and audit-logged. <span className="text-[var(--alo-cta)]">*</span>
                       </span>
                     </label>
                     <Button
                       type="submit"
                       disabled={loading || !form.fullName || !form.phone || !form.consent}
-                      className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#c8451a]"
+                      className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]"
                     >
                       {loading ? (
                         <><Icon name="Loader2" className="size-4 animate-spin" /> Sending...</>
@@ -381,7 +381,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         <><Icon name="Send" className="size-4" /> Send Message</>
                       )}
                     </Button>
-                    <p className="text-center text-xs text-[#5A7299]">
+                    <p className="text-center text-xs text-[var(--alo-text-muted)]">
                       <Icon name="ShieldCheck" className="mr-1 inline size-3" />
                       Your data is encrypted and never shared without consent.
                     </p>

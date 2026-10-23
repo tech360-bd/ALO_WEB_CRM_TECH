@@ -70,7 +70,7 @@ export default function CrmVisaPage() {
               </thead>
               <tbody>
                 {filtered.map((vc) => (
-                  <tr key={vc.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                  <tr key={vc.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                     <td className="py-3 font-medium text-alo-text">{vc.caseCode || 'N/A'}</td>
                     <td className="py-3 text-alo-text-secondary">{vc.studentName || 'N/A'}</td>
                     <td className="py-3 text-alo-text-secondary">{vc.university}</td>

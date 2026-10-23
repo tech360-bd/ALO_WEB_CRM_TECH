@@ -214,7 +214,7 @@ export default function EmployeeDashboard() {
             <CardContent className="pt-4">
               <div className="space-y-1 max-h-96 overflow-y-auto">
                 {taskData.length===0 ? (
-                  <div className="text-center py-8 text-sm text-slate-400">No tasks assigned yet.</div>
+                  <div className="text-center py-8 text-sm text-[var(--alo-text-muted)]">No tasks assigned yet.</div>
                 ) : taskData.map((task, i) => (
                   <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors">
                     <div className="flex items-center gap-3 min-w-0 flex-1">

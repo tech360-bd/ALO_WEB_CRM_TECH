@@ -18,7 +18,7 @@ const statusColors: Record<string, string> = {
   accepted: 'bg-emerald-100 text-emerald-700',
   rejected: 'bg-red-100 text-red-700',
   uploaded: 'bg-blue-100 text-blue-700',
-  not_uploaded: 'bg-gray-100 text-gray-600',
+  not_uploaded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 export default function CrmDocumentsPage() {
@@ -116,11 +116,11 @@ export default function CrmDocumentsPage() {
                   </thead>
                   <tbody>
                     {filtered.map((doc) => (
-                      <tr key={doc.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                      <tr key={doc.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                         <td className="py-3 font-medium text-alo-text">{doc.studentProfile?.fullName || doc.studentName || 'N/A'}</td>
                         <td className="py-3 text-alo-text-secondary">{doc.category}</td>
                         <td className="py-3 text-alo-text-secondary">{doc.documentType}</td>
-                        <td className="py-3"><Badge className={statusColors[doc.status] || 'bg-gray-100 text-gray-700'}>{doc.status?.replace(/_/g, ' ')}</Badge></td>
+                        <td className="py-3"><Badge className={statusColors[doc.status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{doc.status?.replace(/_/g, ' ')}</Badge></td>
                         <td className="py-3 text-alo-text-muted">{doc.createdAt?.substring(0, 10)}</td>
                         <td className="py-3 text-right">
                           <div className="flex justify-end gap-1">

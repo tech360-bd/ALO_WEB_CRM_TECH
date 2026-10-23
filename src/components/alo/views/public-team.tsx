@@ -83,7 +83,7 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-b from-[#EAF3FF]/60 to-white">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-b from-[var(--alo-brand-light)]/60 to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6 lg:py-14">
           <Breadcrumb
             items={[
@@ -93,14 +93,14 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
             ]}
           />
           <div className="mt-5">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="Users" className="mr-1 size-3" />
               Meet the ALO Team
             </Badge>
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-[#0057B8] sm:text-4xl lg:text-5xl">
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--alo-brand)] sm:text-4xl lg:text-5xl">
               Counselors who walked this path themselves
             </h1>
-            <p className="mt-3 max-w-2xl text-base text-[#5A7299]">
+            <p className="mt-3 max-w-2xl text-base text-[var(--alo-text-muted)]">
               Our team includes graduates from UK, US, Australian, and Canadian universities. We've sat the same
               exams, applied to the same universities, and navigated the same visa process you're about to start.
             </p>
@@ -114,7 +114,7 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
           <button
             onClick={() => setFilter(null)}
             className={`rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
-              !filter ? "bg-[#0057B8] text-white" : "border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+              !filter ? "bg-[var(--alo-brand)] text-white" : "border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             }`}
           >
             All ({team.length})
@@ -137,7 +137,7 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
                 key={d.key}
                 onClick={() => setFilter(d.key)}
                 className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
-                  filter === d.key ? "bg-[#0057B8] text-white" : "border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+                  filter === d.key ? "bg-[var(--alo-brand)] text-white" : "border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 }`}
               >
                 <Icon name={d.icon} className="size-3.5" />
@@ -156,7 +156,7 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
             title="Team profiles coming shortly"
             description="Our counselors are updating their bios. In the meantime, reach out and we'll connect you with the right person."
             action={
-              <Button onClick={() => onNavigate("public-contact")} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+              <Button onClick={() => onNavigate("public-contact")} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
                 <Icon name="Phone" className="size-4" /> Contact Us
               </Button>
             }
@@ -164,22 +164,22 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((m) => (
-              <Card key={m.id} className="alo-card-hover rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30">
+              <Card key={m.id} className="alo-card-hover rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-alo-gradient text-xl font-black text-white">
                       {m.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="truncate text-base font-bold text-[#0B2447]">{m.name}</h3>
-                      <p className="text-sm font-semibold text-[#0057B8]">{m.role}</p>
+                      <h3 className="truncate text-base font-bold text-[var(--alo-text)]">{m.name}</h3>
+                      <p className="text-sm font-semibold text-[var(--alo-brand)]">{m.role}</p>
                       {m.specialty && (
-                        <p className="text-xs text-[#5A7299]">{m.specialty}</p>
+                        <p className="text-xs text-[var(--alo-text-muted)]">{m.specialty}</p>
                       )}
                     </div>
                   </div>
                   {m.bio && (
-                    <p className="mt-4 line-clamp-4 text-xs leading-relaxed text-[#5A7299]">{m.bio}</p>
+                    <p className="mt-4 line-clamp-4 text-xs leading-relaxed text-[var(--alo-text-muted)]">{m.bio}</p>
                   )}
                 </CardContent>
               </Card>
@@ -193,13 +193,13 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
             title="Want to speak with a specific counselor?"
             description="Tell us what you're studying, where you want to go, and we'll match you with the best-fit counselor for your profile."
             icon="UserSearch"
-            className="rounded-2xl border-2 border-[#E8501A]/15 bg-gradient-to-br from-[#FFF3EA]/60 to-white"
+            className="rounded-2xl border-2 border-[var(--alo-cta)]/15 bg-gradient-to-br from-[var(--alo-cta-soft)]/60 to-white"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-[#5A7299]">
+              <p className="text-sm text-[var(--alo-text-muted)]">
                 Free 30-minute consultation, no commitment required.
               </p>
-              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#E8501A] text-white hover:bg-[#c8451a]">
+              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
                 <Icon name="CalendarCheck" className="size-4" />
                 Book Free Consultation
               </Button>

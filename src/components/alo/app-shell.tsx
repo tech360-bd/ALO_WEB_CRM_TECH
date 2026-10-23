@@ -25,8 +25,8 @@ function Logo() {
         <span className="text-lg font-black tracking-tight">A</span>
       </div>
       <div className="leading-tight">
-        <p className="text-base font-black text-[#0057B8]">ALO Education</p>
-        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Study Abroad OS</p>
+        <p className="text-base font-black text-[var(--alo-brand)]">ALO Education</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--alo-text-muted)]">Study Abroad OS</p>
       </div>
     </div>
   );
@@ -41,23 +41,36 @@ function NavList({ view, onViewChange, role, onNavigate }: { view: ViewKey; onVi
         if (items.length === 0) return null;
         return (
           <div key={group}>
-            <p className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{group}</p>
+            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--alo-text-muted)]">{group}</p>
             <div className="flex flex-col gap-0.5">
               {items.map((item) => {
                 const active = view === item.key;
                 return (
                   <button
                     key={item.key}
+                    aria-current={active ? 'page' : undefined}
                     onClick={() => {
                       onViewChange(item.key);
                       onNavigate?.();
                     }}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all",
-                      active ? "bg-alo-gradient text-white shadow-md" : "text-foreground hover:bg-[#EAF3FF] hover:text-[#0057B8]"
+                      // Master §12: white sidebar, active item = pale-blue surface +
+                      // brand-blue label with a slim blue indicator bar. The previous
+                      // `bg-alo-gradient text-white` was a no-op class, which rendered
+                      // the ACTIVE label white-on-white and made it invisible.
+                      'group relative flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium transition-colors duration-150',
+                      active
+                        ? 'bg-[var(--alo-blue-soft)] font-semibold text-[var(--alo-blue)]'
+                        : 'text-[var(--alo-text-secondary)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-blue)]'
                     )}
                   >
-                    <Icon name={item.icon} className="size-4 shrink-0" />
+                    {active && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-[var(--alo-blue)]"
+                      />
+                    )}
+                    <Icon name={item.icon} className="size-[18px] shrink-0" />
                     <span className="truncate">{item.label}</span>
                   </button>
                 );
@@ -76,16 +89,22 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
   const currentRole = ROLES.find((r) => r.value === role);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f7f9fc]">
+    <div className="flex min-h-screen flex-col bg-[var(--alo-page)]">
       {/* Top header */}
-      <header className="sticky top-0 z-40 border-b border-[#0057B8]/10 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+      <header className="sticky top-0 z-40 border-b border-[var(--alo-border)] bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
         <div className="flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
           <div className="flex items-center gap-2">
             {/* Mobile menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
-                  <Icon name="Menu" className="size-5" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden"
+                  aria-label="Open navigation menu"
+                  aria-expanded={mobileOpen}
+                >
+                  <Icon name="Menu" className="size-5 text-[var(--alo-text-secondary)]" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-72 p-0">
@@ -119,10 +138,10 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
               <Icon name="Search" className="size-5" />
             </Button>
             {/* Role switcher */}
-            <div className="hidden items-center gap-2 rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/60 px-3 py-1.5 sm:flex">
-              <Icon name="ShieldCheck" className="size-4 text-[#0057B8]" />
+            <div className="hidden items-center gap-2 rounded-input border border-[var(--alo-brand-border)] bg-[var(--alo-blue-soft)] px-3 py-1.5 sm:flex">
+              <Icon name="ShieldCheck" className="size-4 text-[var(--alo-brand)]" />
               <Select value={role} onValueChange={onRoleChange}>
-                <SelectTrigger className="h-7 w-[170px] border-0 bg-transparent p-0 text-xs font-semibold text-[#0057B8] focus:ring-0">
+                <SelectTrigger className="h-7 w-[170px] border-0 bg-transparent p-0 text-[13px] font-semibold text-[var(--alo-blue)] focus:ring-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -136,7 +155,7 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
             </div>
             {/* Mobile role switcher */}
             <Select value={role} onValueChange={onRoleChange}>
-              <SelectTrigger className="h-9 w-[130px] border-[#0057B8]/15 text-xs font-semibold text-[#0057B8] sm:hidden">
+              <SelectTrigger className="h-11 w-[136px] border-[var(--alo-border)] text-[13px] font-semibold text-[var(--alo-blue)] sm:hidden">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -147,9 +166,14 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
                 ))}
               </SelectContent>
             </Select>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative">
-              <Icon name="Bell" className="size-5 text-muted-foreground" />
-              <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#E8501A]" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
+              aria-label="Notifications"
+              title="Notifications"
+            >
+              <Icon name="Bell" className="size-5 text-[var(--alo-text-secondary)]" />
             </Button>
             <div className="flex size-9 items-center justify-center rounded-full bg-alo-gradient text-sm font-bold text-white">
               {currentRole?.label?.[0] ?? "U"}
@@ -160,7 +184,7 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
 
       <div className="flex flex-1">
         {/* Desktop sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r border-[#0057B8]/10 bg-white lg:block">
+        <aside className="hidden w-[264px] shrink-0 border-r border-[var(--alo-border)] bg-white lg:block">
           <div className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-y-auto alo-scroll">
             <NavList view={view} onViewChange={onViewChange} role={role} />
           </div>
@@ -173,10 +197,10 @@ export function AppShell({ view, onViewChange, role, onRoleChange, children }: A
       </div>
 
       {/* Sticky footer */}
-      <footer className="mt-auto border-t border-[#0057B8]/10 bg-white">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row lg:px-8">
+      <footer className="mt-auto border-t border-[var(--alo-border)] bg-white">
+        <div className="mx-auto flex w-full max-w-[1400px] flex-col items-center justify-between gap-2 px-4 py-4 text-[13px] text-[var(--alo-text-muted)] sm:flex-row lg:px-8">
           <p>
-            <span className="font-semibold text-[#0057B8]">ALO Education</span> — Complete Student Management, CRM, Admission & Visa Workflow System
+            <span className="font-semibold text-[var(--alo-blue)]">ALO Education</span> — Complete Student Management, CRM, Admission & Visa Workflow System
           </p>
           <p className="flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-emerald-500" />

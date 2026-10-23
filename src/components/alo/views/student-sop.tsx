@@ -152,9 +152,9 @@ export function StudentSop() {
         icon="PenLine"
       />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="space-y-4 p-4 sm:p-6">
-            <h3 className="text-lg font-bold text-[#0B2447]">Create New SOP</h3>
+            <h3 className="text-lg font-bold text-[var(--alo-text)]">Create New SOP</h3>
             <div>
               <Label htmlFor="title">SOP Title</Label>
               <Input
@@ -180,7 +180,7 @@ export function StudentSop() {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+                className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               >
                 Save Draft
               </Button>
@@ -188,7 +188,7 @@ export function StudentSop() {
                 onClick={handleAiGenerate}
                 disabled={generating}
                 variant="outline"
-                className="border-[#E8501A] text-[#E8501A] hover:bg-[#FFF3EA]"
+                className="border-[var(--alo-cta)] text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
               >
                 <Icon name="Sparkles" className="mr-1.5 size-4" />
                 AI Generate
@@ -197,11 +197,11 @@ export function StudentSop() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-4 sm:p-6">
-            <h3 className="text-lg font-bold text-[#0B2447]">My SOP Drafts</h3>
+            <h3 className="text-lg font-bold text-[var(--alo-text)]">My SOP Drafts</h3>
             {loading ? (
-              <p className="mt-4 text-[#5A7299]">Loading...</p>
+              <p className="mt-4 text-[var(--alo-text-muted)]">Loading...</p>
             ) : drafts.length === 0 ? (
               <div className="mt-4">
                 <EmptyState icon="FileText" title="No SOPs yet" description="Create your first SOP." />
@@ -211,17 +211,17 @@ export function StudentSop() {
                 {drafts.map((d) => (
                   <div
                     key={d.id}
-                    className="rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4"
+                    className="rounded-xl border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-semibold text-[#0B2447]">
+                      <h4 className="font-semibold text-[var(--alo-text)]">
                         {d.title || d.university || "Untitled SOP"}
                       </h4>
                       <Badge variant="secondary" className={cn("capitalize")}>
                         {(d.status || "draft").toLowerCase()}
                       </Badge>
                     </div>
-                    <p className="mt-2 line-clamp-2 text-sm text-[#5A7299]">
+                    <p className="mt-2 line-clamp-2 text-sm text-[var(--alo-text-muted)]">
                       {d.content?.slice(0, 120) || "Empty draft"}
                     </p>
                   </div>

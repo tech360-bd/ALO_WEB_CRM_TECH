@@ -508,7 +508,7 @@ function SLAComplianceChart({ data }: { data: SLAData[] }) {
               className="absolute top-0 bottom-0 w-0.5 bg-red-400/70"
               style={{ left: '95%' }}
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] text-red-500 font-medium">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[11px] text-red-500 font-medium">
                 95%
               </div>
             </div>

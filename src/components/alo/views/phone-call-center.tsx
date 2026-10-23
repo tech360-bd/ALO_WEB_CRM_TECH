@@ -429,7 +429,7 @@ export function PhoneCallCenter() {
                 <TabsTrigger value="unknown-callers" className="data-[state=active]:bg-[var(--alo-blue-soft)] data-[state=active]:text-[var(--alo-blue-strong)]">
                   <Icon name="UserX" className="mr-1.5 size-3.5" /> Unknown Callers
                   {unknownPending > 0 && (
-                    <Badge variant="warning" className="ml-1.5 px-1.5 py-0 text-[10px]">
+                    <Badge variant="warning" className="ml-1.5 px-1.5 py-0 text-[11px]">
                       {unknownPending}
                     </Badge>
                   )}
@@ -608,7 +608,7 @@ function CallHistoryTable({
       header: "Student",
       cell: (r) =>
         r.studentId ? (
-          <Badge variant="blue" className="font-mono text-[10px]">
+          <Badge variant="blue" className="font-mono text-[11px]">
             {r.studentId.slice(-6)}
           </Badge>
         ) : (
@@ -620,7 +620,7 @@ function CallHistoryTable({
       header: "Outcome",
       cell: (r) =>
         r.disposition ? (
-          <Badge variant="neutral" className="text-[10px]">
+          <Badge variant="neutral" className="text-[11px]">
             {r.disposition}
           </Badge>
         ) : (
@@ -825,7 +825,7 @@ function CallOutcomesTable({
       header: "Counselor",
       cell: (r) =>
         r.counselorId ? (
-          <Badge variant="neutral" className="font-mono text-[10px]">
+          <Badge variant="neutral" className="font-mono text-[11px]">
             {r.counselorId.slice(-6)}
           </Badge>
         ) : (
@@ -837,7 +837,7 @@ function CallOutcomesTable({
       header: "Student",
       cell: (r) =>
         r.studentId ? (
-          <Badge variant="blue" className="font-mono text-[10px]">
+          <Badge variant="blue" className="font-mono text-[11px]">
             {r.studentId.slice(-6)}
           </Badge>
         ) : (

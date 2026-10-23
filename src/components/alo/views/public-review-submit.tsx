@@ -95,12 +95,12 @@ export function PublicReviewSubmit({ token }: { token: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e8f0fb] to-white p-4">
-        <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-[#E2E8F0] text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--alo-brand-light)] to-white p-4">
+        <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-[var(--alo-border)] text-center">
           <div className="animate-pulse">
-            <div className="h-12 w-12 bg-[#0057B8]/20 rounded-full mx-auto mb-4" />
+            <div className="h-12 w-12 bg-[var(--alo-brand)]/20 rounded-full mx-auto mb-4" />
             <div className="h-4 bg-slate-200 rounded w-3/4 mx-auto mb-2" />
-            <div className="h-3 bg-slate-100 rounded w-1/2 mx-auto" />
+            <div className="h-3 bg-[var(--alo-surface-muted)] rounded w-1/2 mx-auto" />
           </div>
         </Card>
       </div>
@@ -112,13 +112,13 @@ export function PublicReviewSubmit({ token }: { token: string }) {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-white p-4">
         <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-amber-200 text-center">
           <Icon name="Clock" className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-slate-900 mb-2">
+          <h1 className="text-xl font-bold text-[var(--alo-text)] mb-2">
             {alreadySubmitted ? "Review Already Submitted" : "Link Unavailable"}
           </h1>
-          <p className="text-slate-600 text-sm">
+          <p className="text-[var(--alo-body)] text-sm">
             {error || "This review link has already been used or has expired."}
           </p>
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-[var(--alo-text-muted)] mt-4">
             If you believe this is an error, please contact your ALO Education counselor.
           </p>
         </Card>
@@ -133,8 +133,8 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           <div className="h-16 w-16 bg-emerald-100 rounded-full mx-auto mb-4 flex items-center justify-center">
             <Icon name="Check" className="h-8 w-8 text-emerald-600" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Thank You!</h1>
-          <p className="text-slate-600 text-sm mb-6">
+          <h1 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Thank You!</h1>
+          <p className="text-[var(--alo-body)] text-sm mb-6">
             Your review has been submitted successfully. {consentPublish
               ? "It will be published on the ALO Education website after moderation."
               : "Your feedback has been recorded internally."}
@@ -154,18 +154,18 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           {/* Multi-channel: show Google/Facebook links if available */}
           {(invitation.googleReviewUrl || invitation.facebookRecommendUrl) && (
             <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 mb-4 text-left">
-              <div className="text-sm font-semibold text-[#0057B8] mb-2">Optional: Also share on these platforms</div>
-              <p className="text-xs text-slate-600 mb-3">
+              <div className="text-sm font-semibold text-[var(--alo-brand)] mb-2">Optional: Also share on these platforms</div>
+              <p className="text-xs text-[var(--alo-body)] mb-3">
                 You can optionally share your experience on Google and Facebook. Clicking a link opens the official platform — you submit the review yourself. We never post on your behalf.
               </p>
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
-                  <Button asChild variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]"><a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
+                  <Button asChild variant="outline" size="sm" className="border-[var(--alo-brand)] text-[var(--alo-brand)]"><a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
                     </a></Button>
                 )}
                 {invitation.facebookRecommendUrl && (
-                  <Button asChild variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]"><a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
+                  <Button asChild variant="outline" size="sm" className="border-[var(--alo-brand)] text-[var(--alo-brand)]"><a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
                     </a></Button>
                 )}
@@ -173,7 +173,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
             </div>
           )}
 
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[var(--alo-text-muted)]">
             Need help? Contact your counselor or email info@aloeducation.com
           </p>
         </Card>
@@ -182,24 +182,24 @@ export function PublicReviewSubmit({ token }: { token: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e8f0fb] via-white to-orange-50/30 p-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-orange-50/30 p-4 py-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 mb-3">
-            <div className="h-10 w-10 rounded-xl bg-[#E8501A] flex items-center justify-center text-white font-bold text-lg">A</div>
+            <div className="h-10 w-10 rounded-xl bg-[var(--alo-cta)] flex items-center justify-center text-white font-bold text-lg">A</div>
             <div className="text-left">
-              <div className="font-bold text-slate-900">ALO Education</div>
-              <div className="text-xs text-slate-500">Study Abroad Consultants</div>
+              <div className="font-bold text-[var(--alo-text)]">ALO Education</div>
+              <div className="text-xs text-[var(--alo-text-muted)]">Study Abroad Consultants</div>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Share Your Experience</h1>
-          <p className="text-sm text-slate-600">
+          <h1 className="text-2xl font-bold text-[var(--alo-text)] mb-1">Share Your Experience</h1>
+          <p className="text-sm text-[var(--alo-body)]">
             Hi {invitation.studentName}! We'd love to hear about your journey with ALO Education.
           </p>
         </div>
 
-        <Card className="rounded-2xl border-2 border-[#E2E8F0] p-6 space-y-5">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)] p-6 space-y-5">
           {/* Context */}
           {(invitation.country || invitation.serviceType) && (
             <div className="flex flex-wrap gap-2">
@@ -210,7 +210,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
 
           {/* Rating */}
           <div>
-            <Label className="text-sm font-semibold text-slate-700">Your Rating *</Label>
+            <Label className="text-sm font-semibold text-[var(--alo-body)]">Your Rating *</Label>
             <div className="mt-2 flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -224,7 +224,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
                 >
                   <Icon
                     name="Star"
-                    className={`h-8 w-8 ${(hoverRating || rating) >= star ? "fill-[#E8501A] text-[#E8501A]" : "text-slate-300"}`}
+                    className={`h-8 w-8 ${(hoverRating || rating) >= star ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-[var(--alo-placeholder)]"}`}
                   />
                 </button>
               ))}
@@ -233,7 +233,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
 
           {/* Review text */}
           <div>
-            <Label className="text-sm font-semibold text-slate-700">Your Review *</Label>
+            <Label className="text-sm font-semibold text-[var(--alo-body)]">Your Review *</Label>
             <Textarea
               className="mt-2 min-h-[120px]"
               placeholder="Tell us about your experience with ALO Education. How did we help you? What did you appreciate most?"
@@ -241,38 +241,38 @@ export function PublicReviewSubmit({ token }: { token: string }) {
               onChange={(e) => setReviewText(e.target.value)}
               maxLength={2000}
             />
-            <div className="text-xs text-slate-400 mt-1 text-right">{reviewText.length}/2000</div>
+            <div className="text-xs text-[var(--alo-text-muted)] mt-1 text-right">{reviewText.length}/2000</div>
           </div>
 
           {/* Consent */}
-          <div className="rounded-lg bg-slate-50 border border-slate-200 p-4 space-y-3">
-            <div className="text-sm font-semibold text-slate-700">Consent — please select what you're comfortable with</div>
+          <div className="rounded-lg bg-[var(--alo-page)] border border-[var(--alo-border)] p-4 space-y-3">
+            <div className="text-sm font-semibold text-[var(--alo-body)]">Consent — please select what you're comfortable with</div>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={consentPublish} onCheckedChange={(v) => setConsentPublish(!!v)} className="mt-0.5" />
               <div>
-                <div className="text-sm font-medium text-slate-700">Publish on ALO Education website</div>
-                <div className="text-xs text-slate-500">Your review may appear on our website's reviews page.</div>
+                <div className="text-sm font-medium text-[var(--alo-body)]">Publish on ALO Education website</div>
+                <div className="text-xs text-[var(--alo-text-muted)]">Your review may appear on our website's reviews page.</div>
               </div>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={consentMarketing} onCheckedChange={(v) => setConsentMarketing(!!v)} className="mt-0.5" />
               <div>
-                <div className="text-sm font-medium text-slate-700">Allow use in marketing materials</div>
-                <div className="text-xs text-slate-500">We may use your review (with or without your name) in social media, brochures, and ads.</div>
+                <div className="text-sm font-medium text-[var(--alo-body)]">Allow use in marketing materials</div>
+                <div className="text-xs text-[var(--alo-text-muted)]">We may use your review (with or without your name) in social media, brochures, and ads.</div>
               </div>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={consentShowName} onCheckedChange={(v) => setConsentShowName(!!v)} className="mt-0.5" />
               <div>
-                <div className="text-sm font-medium text-slate-700">Allow my name to appear with the review</div>
-                <div className="text-xs text-slate-500">If unchecked, your review will be shown as "Anonymous ALO Student".</div>
+                <div className="text-sm font-medium text-[var(--alo-body)]">Allow my name to appear with the review</div>
+                <div className="text-xs text-[var(--alo-text-muted)]">If unchecked, your review will be shown as "Anonymous ALO Student".</div>
               </div>
             </label>
           </div>
 
           {/* AI notice */}
-          <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 text-xs text-slate-600">
-            <Icon name="Info" className="h-4 w-4 inline mr-1 text-[#0057B8]" />
+          <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 text-xs text-[var(--alo-body)]">
+            <Icon name="Info" className="h-4 w-4 inline mr-1 text-[var(--alo-brand)]" />
             Your review will be checked by our AI system for spam and inappropriate content. We never modify your words — the review is published as you wrote it (after moderation).
           </div>
 
@@ -280,7 +280,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           <Button
             onClick={submit}
             disabled={submitting || rating === 0 || reviewText.trim().length < 10}
-            className="w-full h-12 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
+            className="w-full h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
           >
             {submitting ? (
               <><Icon name="Loader2" className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
@@ -291,19 +291,19 @@ export function PublicReviewSubmit({ token }: { token: string }) {
 
           {/* Optional multi-channel links (shown before submission too) */}
           {(invitation.googleReviewUrl || invitation.facebookRecommendUrl) && (
-            <div className="border-t border-slate-200 pt-4">
-              <div className="text-xs font-semibold text-slate-600 mb-2">Optional: Also share on these platforms</div>
-              <p className="text-xs text-slate-500 mb-3">
+            <div className="border-t border-[var(--alo-border)] pt-4">
+              <div className="text-xs font-semibold text-[var(--alo-body)] mb-2">Optional: Also share on these platforms</div>
+              <p className="text-xs text-[var(--alo-text-muted)] mb-3">
                 After submitting here, you can optionally share your experience on Google and/or Facebook. You'll submit the review yourself on each platform — we never post on your behalf.
               </p>
               <div className="flex flex-wrap gap-2">
                 {invitation.googleReviewUrl && (
-                  <Button asChild variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]"><a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
+                  <Button asChild variant="outline" size="sm" className="border-[var(--alo-brand)] text-[var(--alo-brand)]"><a href={invitation.googleReviewUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="Star" className="h-4 w-4 mr-1" /> Google Reviews
                     </a></Button>
                 )}
                 {invitation.facebookRecommendUrl && (
-                  <Button asChild variant="outline" size="sm" className="border-[#0057B8] text-[#0057B8]"><a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
+                  <Button asChild variant="outline" size="sm" className="border-[var(--alo-brand)] text-[var(--alo-brand)]"><a href={invitation.facebookRecommendUrl} target="_blank" rel="noopener noreferrer">
                       <Icon name="ThumbsUp" className="h-4 w-4 mr-1" /> Facebook
                     </a></Button>
                 )}
@@ -312,7 +312,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           )}
         </Card>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
+        <p className="text-center text-xs text-[var(--alo-text-muted)] mt-6">
           © {new Date().getFullYear()} ALO Education. Your privacy is protected.
         </p>
       </div>

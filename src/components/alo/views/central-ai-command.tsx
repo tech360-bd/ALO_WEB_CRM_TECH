@@ -98,7 +98,7 @@ interface AiAgentPatchResponse {
 const STATUS_META: Record<string, { label: string; color: string; dot: string }> = {
   ACTIVE: { label: "Active", color: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
   IDLE: { label: "Idle", color: "bg-amber-100 text-amber-700 border-amber-200", dot: "bg-amber-500" },
-  PAUSED: { label: "Paused", color: "bg-slate-100 text-slate-700 border-slate-200", dot: "bg-slate-400" },
+  PAUSED: { label: "Paused", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]", dot: "bg-slate-400" },
   ERROR: { label: "Error", color: "bg-rose-100 text-rose-700 border-rose-200", dot: "bg-rose-500" },
 };
 
@@ -114,7 +114,7 @@ const AGENT_TYPE_META: Record<string, { label: string; icon: string; color: stri
   CONTENT: { label: "Content", icon: "PenLine", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
   SEO: { label: "SEO", icon: "Search", color: "bg-amber-100 text-amber-700 border-amber-200" },
   TRANSLATION: { label: "Translation", icon: "Languages", color: "bg-rose-100 text-rose-700 border-rose-200" },
-  DOCUMENT_OCR: { label: "Document OCR", icon: "ScanText", color: "bg-slate-100 text-slate-700 border-slate-200" },
+  DOCUMENT_OCR: { label: "Document OCR", icon: "ScanText", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]" },
   EMAIL: { label: "Email", icon: "Mail", color: "bg-blue-100 text-blue-700 border-blue-200" },
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
   ANALYTICS: { label: "Analytics", icon: "BarChart3", color: "bg-violet-100 text-violet-700 border-violet-200" },
@@ -152,11 +152,11 @@ function fmtNum(n: number): string {
 }
 
 function statusMeta(s: string) {
-  return STATUS_META[s] || { label: s, color: "bg-slate-100 text-slate-700 border-slate-200", dot: "bg-slate-400" };
+  return STATUS_META[s] || { label: s, color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]", dot: "bg-slate-400" };
 }
 
 function agentTypeMeta(t: string) {
-  return AGENT_TYPE_META[t] || { label: t.replace(/_/g, " "), icon: "Bot", color: "bg-slate-100 text-slate-700 border-slate-200" };
+  return AGENT_TYPE_META[t] || { label: t.replace(/_/g, " "), icon: "Bot", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]" };
 }
 
 function successRateColor(rate: number): string {
@@ -182,7 +182,7 @@ function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
 function StatusPill({ status }: { status: string }) {
   const m = statusMeta(status);
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold", m.color)}>
+    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold", m.color)}>
       <span className={cn("size-1.5 rounded-full", m.dot)} />
       {m.label}
     </span>
@@ -192,7 +192,7 @@ function StatusPill({ status }: { status: string }) {
 function TypePill({ type }: { type: string }) {
   const m = agentTypeMeta(type);
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-bold", m.color)}>
+    <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-bold", m.color)}>
       <Icon name={m.icon} className="size-3" />
       {m.label}
     </span>
@@ -223,9 +223,9 @@ function ArchitectureBox({
   accent: "blue" | "violet" | "orange";
 }) {
   const accentMap: Record<string, string> = {
-    blue: "border-[#0057B8] bg-[#EFF6FF] text-[#0057B8]",
+    blue: "border-[var(--alo-brand)] bg-[var(--alo-info-bg)] text-[var(--alo-brand)]",
     violet: "border-violet-300 bg-violet-50 text-violet-700",
-    orange: "border-[#C93D13] bg-[#FFF7ED] text-[#C93D13]",
+    orange: "border-[var(--alo-cta-hover)] bg-[var(--alo-cta-soft)] text-[var(--alo-cta-hover)]",
   };
   return (
     <div className={cn("flex flex-1 flex-col items-center gap-2 rounded-2xl border-2 p-4 text-center alo-shadow", accentMap[accent])}>
@@ -233,8 +233,8 @@ function ArchitectureBox({
         <Icon name={icon} className="size-6" />
       </div>
       <div>
-        <p className="card-title text-[#0F172A]">{title}</p>
-        <p className="body-text text-[#64748B]">{subtitle}</p>
+        <p className="card-title text-[var(--alo-text)]">{title}</p>
+        <p className="body-text text-[var(--alo-text-muted)]">{subtitle}</p>
       </div>
     </div>
   );
@@ -386,7 +386,7 @@ export function CentralAiCommand() {
           icon="BrainCircuit"
         />
         <LoadingGrid count={6} />
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-border)] bg-white">
           <CardContent className="space-y-3 pt-5">
             <Skeleton className="h-5 w-1/3" />
             <Skeleton className="h-8 w-full" />
@@ -443,7 +443,7 @@ export function CentralAiCommand() {
             subtitle="Unified, rate-limited, authenticated entry point"
             accent="blue"
           />
-          <div className="flex items-center justify-center text-[#64748B]">
+          <div className="flex items-center justify-center text-[var(--alo-text-muted)]">
             <Icon name="ArrowRight" className="hidden size-6 lg:block" />
             <Icon name="ArrowDown" className="size-6 lg:hidden" />
           </div>
@@ -453,7 +453,7 @@ export function CentralAiCommand() {
             subtitle="Routes requests to the correct specialist agent"
             accent="violet"
           />
-          <div className="flex items-center justify-center text-[#64748B]">
+          <div className="flex items-center justify-center text-[var(--alo-text-muted)]">
             <Icon name="ArrowRight" className="hidden size-6 lg:block" />
             <Icon name="ArrowDown" className="size-6 lg:hidden" />
           </div>
@@ -466,26 +466,26 @@ export function CentralAiCommand() {
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-[#E2E8F0] bg-slate-50/60 p-3">
-            <p className="badge-text flex items-center gap-1 text-[#64748B]">
+          <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)]/60 p-3">
+            <p className="badge-text flex items-center gap-1 text-[var(--alo-text-muted)]">
               <Icon name="Shield" className="size-3.5" />
               Single choke point
             </p>
-            <p className="mt-1 body-text text-[#475569]">All AI calls go through one gateway — no scattered logic across modules.</p>
+            <p className="mt-1 body-text text-[var(--alo-text-secondary)]">All AI calls go through one gateway — no scattered logic across modules.</p>
           </div>
-          <div className="rounded-xl border border-[#E2E8F0] bg-slate-50/60 p-3">
-            <p className="badge-text flex items-center gap-1 text-[#64748B]">
+          <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)]/60 p-3">
+            <p className="badge-text flex items-center gap-1 text-[var(--alo-text-muted)]">
               <Icon name="Repeat" className="size-3.5" />
               Shared services
             </p>
-            <p className="mt-1 body-text text-[#475569]">Caching, retry, fallback, and observability are reused by every agent.</p>
+            <p className="mt-1 body-text text-[var(--alo-text-secondary)]">Caching, retry, fallback, and observability are reused by every agent.</p>
           </div>
-          <div className="rounded-xl border border-[#E2E8F0] bg-slate-50/60 p-3">
-            <p className="badge-text flex items-center gap-1 text-[#64748B]">
+          <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)]/60 p-3">
+            <p className="badge-text flex items-center gap-1 text-[var(--alo-text-muted)]">
               <Icon name="Eye" className="size-3.5" />
               Invisible to users
             </p>
-            <p className="mt-1 body-text text-[#475569]">Users just use the feature — they never know which agent is working.</p>
+            <p className="mt-1 body-text text-[var(--alo-text-secondary)]">Users just use the feature — they never know which agent is working.</p>
           </div>
         </div>
       </SectionCard>
@@ -499,12 +499,12 @@ export function CentralAiCommand() {
         {/* Filter row */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+            <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
             <Input
               placeholder="Search agent code, name, or type…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-10 rounded-xl border-[#E2E8F0] pl-9"
+              className="h-10 rounded-xl border-[var(--alo-border)] pl-9"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -534,28 +534,28 @@ export function CentralAiCommand() {
           </Select>
         </div>
 
-        <div className="mt-2 body-text text-[#64748B]">
-          Showing <span className="font-semibold text-[#0F172A]">{filteredAgents.length}</span> of {agents.length} agents
+        <div className="mt-2 body-text text-[var(--alo-text-muted)]">
+          Showing <span className="font-semibold text-[var(--alo-text)]">{filteredAgents.length}</span> of {agents.length} agents
           <span className="mx-1.5">·</span>
-          Sort: <span className="font-semibold text-[#0F172A]">{sortBy.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase())}</span> ({sortDir})
+          Sort: <span className="font-semibold text-[var(--alo-text)]">{sortBy.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase())}</span> ({sortDir})
         </div>
 
         {filteredAgents.length === 0 ? (
           <EmptyState icon="Bot" title="No agents match your filters" description="Adjust your search or filter criteria." />
         ) : (
-          <div className="mt-4 max-h-[640px] overflow-auto alo-scroll rounded-2xl border border-[#E2E8F0]">
+          <div className="mt-4 max-h-[640px] overflow-auto alo-scroll rounded-2xl border border-[var(--alo-border)]">
             <Table>
-              <TableHeader className="sticky top-0 z-10 bg-[#F8FAFC]">
-                <TableRow className="border-[#E2E8F0] hover:bg-transparent">
+              <TableHeader className="sticky top-0 z-10 bg-[var(--alo-page)]">
+                <TableRow className="border-[var(--alo-border)] hover:bg-transparent">
                   <TableHead className="min-w-[120px]">
-                    <button onClick={() => toggleSort("name")} className="inline-flex items-center gap-1 font-semibold text-[#0F172A]">
+                    <button onClick={() => toggleSort("name")} className="inline-flex items-center gap-1 font-semibold text-[var(--alo-text)]">
                       Agent Code
                       {sortBy === "name" && <Icon name={sortDir === "asc" ? "ArrowUp" : "ArrowDown"} className="size-3" />}
                     </button>
                   </TableHead>
                   <TableHead className="min-w-[180px]">Agent Name</TableHead>
                   <TableHead className="min-w-[140px]">
-                    <button onClick={() => toggleSort("type")} className="inline-flex items-center gap-1 font-semibold text-[#0F172A]">
+                    <button onClick={() => toggleSort("type")} className="inline-flex items-center gap-1 font-semibold text-[var(--alo-text)]">
                       Type
                       {sortBy === "type" && <Icon name={sortDir === "asc" ? "ArrowUp" : "ArrowDown"} className="size-3" />}
                     </button>
@@ -563,20 +563,20 @@ export function CentralAiCommand() {
                   <TableHead className="min-w-[100px]">Status</TableHead>
                   <TableHead className="min-w-[70px]">Ver.</TableHead>
                   <TableHead className="text-right min-w-[90px]">
-                    <button onClick={() => toggleSort("dailyRequests")} className="inline-flex items-center gap-1 font-semibold text-[#0F172A]">
+                    <button onClick={() => toggleSort("dailyRequests")} className="inline-flex items-center gap-1 font-semibold text-[var(--alo-text)]">
                       Daily
                       {sortBy === "dailyRequests" && <Icon name={sortDir === "asc" ? "ArrowUp" : "ArrowDown"} className="size-3" />}
                     </button>
                   </TableHead>
                   <TableHead className="text-right min-w-[90px]">Monthly</TableHead>
                   <TableHead className="text-right min-w-[90px]">
-                    <button onClick={() => toggleSort("totalRequests")} className="inline-flex items-center gap-1 font-semibold text-[#0F172A]">
+                    <button onClick={() => toggleSort("totalRequests")} className="inline-flex items-center gap-1 font-semibold text-[var(--alo-text)]">
                       Total
                       {sortBy === "totalRequests" && <Icon name={sortDir === "asc" ? "ArrowUp" : "ArrowDown"} className="size-3" />}
                     </button>
                   </TableHead>
                   <TableHead className="min-w-[120px]">
-                    <button onClick={() => toggleSort("successRate")} className="inline-flex items-center gap-1 font-semibold text-[#0F172A]">
+                    <button onClick={() => toggleSort("successRate")} className="inline-flex items-center gap-1 font-semibold text-[var(--alo-text)]">
                       Success
                       {sortBy === "successRate" && <Icon name={sortDir === "asc" ? "ArrowUp" : "ArrowDown"} className="size-3" />}
                     </button>
@@ -594,29 +594,29 @@ export function CentralAiCommand() {
                     <TableRow
                       key={a.id}
                       onClick={() => setSelected(a)}
-                      className="cursor-pointer border-[#E2E8F0] transition-colors hover:bg-[#EFF6FF]/50"
+                      className="cursor-pointer border-[var(--alo-border)] transition-colors hover:bg-[var(--alo-info-bg)]/50"
                     >
-                      <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{a.agentCode}</TableCell>
-                      <TableCell className="font-medium text-[#0F172A]">{a.agentName}</TableCell>
+                      <TableCell className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{a.agentCode}</TableCell>
+                      <TableCell className="font-medium text-[var(--alo-text)]">{a.agentName}</TableCell>
                       <TableCell><TypePill type={a.agentType} /></TableCell>
                       <TableCell>
-                        <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold", m.color)}>
+                        <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold", m.color)}>
                           <span className={cn("size-1.5 rounded-full", m.dot)} />
                           {m.label}
                         </span>
                       </TableCell>
-                      <TableCell className="font-mono text-xs text-[#64748B]">{a.version}</TableCell>
-                      <TableCell className="text-right tabular-nums text-[#0F172A]">{fmtNum(a.dailyRequests)}</TableCell>
-                      <TableCell className="text-right tabular-nums text-[#0F172A]">{fmtNum(a.monthlyRequests)}</TableCell>
-                      <TableCell className="text-right tabular-nums text-[#0F172A]">{fmtNum(a.totalRequests)}</TableCell>
+                      <TableCell className="font-mono text-xs text-[var(--alo-text-muted)]">{a.version}</TableCell>
+                      <TableCell className="text-right tabular-nums text-[var(--alo-text)]">{fmtNum(a.dailyRequests)}</TableCell>
+                      <TableCell className="text-right tabular-nums text-[var(--alo-text)]">{fmtNum(a.monthlyRequests)}</TableCell>
+                      <TableCell className="text-right tabular-nums text-[var(--alo-text)]">{fmtNum(a.totalRequests)}</TableCell>
                       <TableCell><SuccessRateCell rate={a.successRate} /></TableCell>
-                      <TableCell className="text-right tabular-nums text-[#64748B]">{a.avgResponseTime > 0 ? `${Math.round(a.avgResponseTime)}ms` : "—"}</TableCell>
+                      <TableCell className="text-right tabular-nums text-[var(--alo-text-muted)]">{a.avgResponseTime > 0 ? `${Math.round(a.avgResponseTime)}ms` : "—"}</TableCell>
                       <TableCell>
-                        <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-600">
+                        <span className="rounded-md bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--alo-body)]">
                           {a.apiUsed.length > 16 ? `${a.apiUsed.slice(0, 14)}…` : a.apiUsed}
                         </span>
                       </TableCell>
-                      <TableCell className="body-text text-[#64748B]">{a.lastExecutedAt ? timeAgo(a.lastExecutedAt) : "—"}</TableCell>
+                      <TableCell className="body-text text-[var(--alo-text-muted)]">{a.lastExecutedAt ? timeAgo(a.lastExecutedAt) : "—"}</TableCell>
                       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <Button
                           size="sm"
@@ -652,14 +652,14 @@ export function CentralAiCommand() {
       {/* AI integration + Safety */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SectionCard title="Centralized Integration" icon="Workflow">
-          <div className="rounded-2xl border border-[#0057B8]/20 bg-gradient-to-br from-[#EFF6FF] to-white p-4">
+          <div className="rounded-2xl border border-[var(--alo-brand)]/20 bg-gradient-to-br from-[var(--alo-info-bg)] to-white p-4">
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
                 <Icon name="Network" className="size-5" />
               </div>
               <div>
-                <p className="card-title text-[#0F172A]">One AI brain. Every feature.</p>
-                <p className="mt-1 body-text leading-relaxed text-[#475569]">
+                <p className="card-title text-[var(--alo-text)]">One AI brain. Every feature.</p>
+                <p className="mt-1 body-text leading-relaxed text-[var(--alo-text-secondary)]">
                   Every AI feature throughout the Website and CRM uses this centralized command center. No duplicated AI logic.
                   Single architecture. Shared services. Users simply use the feature — they never know which AI Agent is working
                   behind the scenes.
@@ -673,9 +673,9 @@ export function CentralAiCommand() {
                 { icon: "Share2", label: "Shared services" },
                 { icon: "Users", label: "Invisible to users" },
               ].map((s) => (
-                <div key={s.label} className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-2 py-1.5">
-                  <Icon name={s.icon} className="size-3.5 text-[#0057B8]" />
-                  <span className="badge-text text-[#475569]">{s.label}</span>
+                <div key={s.label} className="flex items-center gap-1.5 rounded-lg border border-[var(--alo-border)] bg-white px-2 py-1.5">
+                  <Icon name={s.icon} className="size-3.5 text-[var(--alo-brand)]" />
+                  <span className="badge-text text-[var(--alo-text-secondary)]">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -693,7 +693,7 @@ export function CentralAiCommand() {
                 {AI_SAFETY_MUST_NOT.map((r) => (
                   <div key={r.text} className="flex items-center gap-1.5 rounded-md bg-white px-2 py-1">
                     <Icon name={r.icon} className="size-3.5 shrink-0 text-rose-600" />
-                    <span className="body-text text-[#475569]">{r.text}</span>
+                    <span className="body-text text-[var(--alo-text-secondary)]">{r.text}</span>
                   </div>
                 ))}
               </div>
@@ -708,7 +708,7 @@ export function CentralAiCommand() {
                 {AI_SAFETY_MUST.map((r) => (
                   <div key={r.text} className="flex items-center gap-1.5 rounded-md bg-white px-2 py-1">
                     <Icon name={r.icon} className="size-3.5 shrink-0 text-emerald-600" />
-                    <span className="body-text text-[#475569]">{r.text}</span>
+                    <span className="body-text text-[var(--alo-text-secondary)]">{r.text}</span>
                   </div>
                 ))}
               </div>
@@ -724,12 +724,12 @@ export function CentralAiCommand() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#0057B8]">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-info-bg)] text-[var(--alo-brand)]">
                     <Icon name={agentTypeMeta(selected.agentType).icon} className="size-5" />
                   </div>
                   <div>
                     <span className="block">{selected.agentName}</span>
-                    <span className="font-mono text-xs font-normal text-[#64748B]">{selected.agentCode}</span>
+                    <span className="font-mono text-xs font-normal text-[var(--alo-text-muted)]">{selected.agentCode}</span>
                   </div>
                 </DialogTitle>
                 <DialogDescription>
@@ -742,10 +742,10 @@ export function CentralAiCommand() {
                 <div className="flex flex-wrap items-center gap-2">
                   <TypePill type={selected.agentType} />
                   <StatusPill status={selected.status} />
-                  <Badge variant="outline" className="font-mono text-[10px]">v{selected.version}</Badge>
-                  <Badge variant="outline" className="font-mono text-[10px]">{selected.apiUsed}</Badge>
+                  <Badge variant="outline" className="font-mono text-[11px]">v{selected.version}</Badge>
+                  <Badge variant="outline" className="font-mono text-[11px]">{selected.apiUsed}</Badge>
                   {selected.fallbackApi && (
-                    <Badge variant="outline" className="font-mono text-[10px] text-amber-700">
+                    <Badge variant="outline" className="font-mono text-[11px] text-amber-700">
                       <Icon name="Shield" className="size-3" />
                       Fallback: {selected.fallbackApi}
                     </Badge>
@@ -754,32 +754,32 @@ export function CentralAiCommand() {
 
                 {/* Description */}
                 {selected.description && (
-                  <div className="rounded-xl border border-[#E2E8F0] bg-slate-50/60 p-3">
-                    <p className="badge-text text-[#64748B]">Description</p>
-                    <p className="mt-1 body-text text-[#1E293B]">{selected.description}</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)]/60 p-3">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Description</p>
+                    <p className="mt-1 body-text text-[var(--alo-surface-muted)]">{selected.description}</p>
                   </div>
                 )}
 
                 {/* Metrics grid */}
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5">
-                    <p className="badge-text text-[#64748B]">Daily Requests</p>
-                    <p className="text-lg font-bold text-[#0F172A]">{fmtNum(selected.dailyRequests)}</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Daily Requests</p>
+                    <p className="text-lg font-bold text-[var(--alo-text)]">{fmtNum(selected.dailyRequests)}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5">
-                    <p className="badge-text text-[#64748B]">Monthly Requests</p>
-                    <p className="text-lg font-bold text-[#0F172A]">{fmtNum(selected.monthlyRequests)}</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Monthly Requests</p>
+                    <p className="text-lg font-bold text-[var(--alo-text)]">{fmtNum(selected.monthlyRequests)}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5">
-                    <p className="badge-text text-[#64748B]">Total Requests</p>
-                    <p className="text-lg font-bold text-[#0F172A]">{fmtNum(selected.totalRequests)}</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Total Requests</p>
+                    <p className="text-lg font-bold text-[var(--alo-text)]">{fmtNum(selected.totalRequests)}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5">
-                    <p className="badge-text text-[#64748B]">Error Count</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Error Count</p>
                     <p className="text-lg font-bold text-rose-600">{fmtNum(selected.errorCount)}</p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5 sm:col-span-2">
-                    <p className="badge-text text-[#64748B]">Success Rate</p>
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5 sm:col-span-2">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Success Rate</p>
                     <div className="mt-1.5 flex items-center gap-2">
                       <span className="text-lg font-bold" style={{ color: successRateColor(selected.successRate) }}>
                         {selected.successRate.toFixed(1)}%
@@ -787,18 +787,18 @@ export function CentralAiCommand() {
                       <Progress value={selected.successRate} className="h-2 flex-1" indicatorColor={successRateColor(selected.successRate)} />
                     </div>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5">
-                    <p className="badge-text text-[#64748B]">Avg Response</p>
-                    <p className="text-lg font-bold text-[#0F172A]">
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Avg Response</p>
+                    <p className="text-lg font-bold text-[var(--alo-text)]">
                       {selected.avgResponseTime > 0 ? `${Math.round(selected.avgResponseTime)}ms` : "—"}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-2.5">
-                    <p className="badge-text text-[#64748B]">Last Executed</p>
-                    <p className="text-sm font-bold text-[#0F172A]">
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
+                    <p className="badge-text text-[var(--alo-text-muted)]">Last Executed</p>
+                    <p className="text-sm font-bold text-[var(--alo-text)]">
                       {selected.lastExecutedAt ? timeAgo(selected.lastExecutedAt) : "—"}
                     </p>
-                    <p className="badge-text text-[#64748B]">
+                    <p className="badge-text text-[var(--alo-text-muted)]">
                       {selected.lastExecutedAt ? fmtDate(selected.lastExecutedAt) : ""}
                     </p>
                   </div>
@@ -806,9 +806,9 @@ export function CentralAiCommand() {
 
                 {/* Config */}
                 {selected.config && (
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                    <p className="card-title flex items-center gap-1.5 text-[#0F172A]">
-                      <Icon name="Settings2" className="size-4 text-[#0057B8]" />
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                    <p className="card-title flex items-center gap-1.5 text-[var(--alo-text)]">
+                      <Icon name="Settings2" className="size-4 text-[var(--alo-brand)]" />
                       Configuration
                     </p>
                     <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -816,12 +816,12 @@ export function CentralAiCommand() {
                         const cfg = safeParseJson<Record<string, number | string | boolean>>(selected.config, {});
                         const entries = Object.entries(cfg);
                         if (entries.length === 0) {
-                          return <p className="body-text text-[#64748B]">No structured config.</p>;
+                          return <p className="body-text text-[var(--alo-text-muted)]">No structured config.</p>;
                         }
                         return entries.map(([k, v]) => (
-                          <div key={k} className="rounded-md bg-slate-50 px-2 py-1">
-                            <p className="badge-text text-[#64748B]">{k}</p>
-                            <p className="font-mono text-xs font-semibold text-[#0F172A]">{String(v)}</p>
+                          <div key={k} className="rounded-md bg-[var(--alo-page)] px-2 py-1">
+                            <p className="badge-text text-[var(--alo-text-muted)]">{k}</p>
+                            <p className="font-mono text-xs font-semibold text-[var(--alo-text)]">{String(v)}</p>
                           </div>
                         ));
                       })()}
@@ -836,7 +836,7 @@ export function CentralAiCommand() {
                       <Icon name="Terminal" className="size-4" />
                       Prompt Template (System)
                     </p>
-                    <pre className="mt-2 max-h-48 overflow-auto alo-scroll whitespace-pre-wrap rounded-lg bg-white p-2.5 font-mono text-xs text-[#1E293B]">
+                    <pre className="mt-2 max-h-48 overflow-auto alo-scroll whitespace-pre-wrap rounded-lg bg-white p-2.5 font-mono text-xs text-[var(--alo-surface-muted)]">
                       {selected.promptTemplate}
                     </pre>
                   </div>
@@ -844,26 +844,26 @@ export function CentralAiCommand() {
 
                 {/* Execution log */}
                 {selected.executionLog && (
-                  <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-                    <p className="card-title flex items-center gap-1.5 text-[#0F172A]">
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                    <p className="card-title flex items-center gap-1.5 text-[var(--alo-text)]">
                       <Icon name="Activity" className="size-4 text-emerald-600" />
                       Execution Log
                     </p>
                     {(() => {
                       const log = safeParseJson<any[]>(selected.executionLog, []);
                       if (!Array.isArray(log) || log.length === 0) {
-                        return <p className="mt-1 body-text text-[#64748B]">No execution history recorded.</p>;
+                        return <p className="mt-1 body-text text-[var(--alo-text-muted)]">No execution history recorded.</p>;
                       }
                       return (
                         <div className="mt-2 max-h-48 space-y-1.5 overflow-auto alo-scroll">
                           {log.slice(-10).reverse().map((entry, i) => (
-                            <div key={i} className="flex items-start gap-2 rounded-md border border-[#E2E8F0] bg-slate-50/60 px-2 py-1.5">
-                              <Icon name="CircleDot" className="mt-0.5 size-3 shrink-0 text-[#0057B8]" />
+                            <div key={i} className="flex items-start gap-2 rounded-md border border-[var(--alo-border)] bg-[var(--alo-page)]/60 px-2 py-1.5">
+                              <Icon name="CircleDot" className="mt-0.5 size-3 shrink-0 text-[var(--alo-brand)]" />
                               <div className="min-w-0">
-                                <p className="body-text font-medium text-[#0F172A]">
+                                <p className="body-text font-medium text-[var(--alo-text)]">
                                   {entry?.action || entry?.event || "Invocation"}
                                 </p>
-                                <p className="badge-text text-[#64748B]">
+                                <p className="badge-text text-[var(--alo-text-muted)]">
                                   {entry?.timestamp ? timeAgo(entry.timestamp) : ""} · {entry?.status || entry?.result || "OK"}
                                 </p>
                               </div>

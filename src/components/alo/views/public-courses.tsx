@@ -193,7 +193,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
       </div>
 
       {/* Filters bar */}
-      <Card className="mt-6 rounded-2xl border-2 border-[#0057B8]/15">
+      <Card className="mt-6 rounded-2xl border-2 border-[var(--alo-brand)]/15">
         <CardContent className="pt-5">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div>
@@ -277,7 +277,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 onClick={resetFilters}
               >
                 <Icon name="RotateCcw" className="size-3.5" /> Reset all
@@ -298,12 +298,12 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
             description="Try removing one or more filters — or use the AI Course Finder to get personalised recommendations."
             action={
               <div className="flex flex-wrap justify-center gap-2">
-                <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-10" onClick={resetFilters}>
+                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-10" onClick={resetFilters}>
                   <Icon name="RotateCcw" className="size-4" /> Reset filters
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
+                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
                   onClick={() => onNavigate("public-course-finder")}
                 >
                   <Icon name="Sparkles" className="size-4" /> Try AI Course Finder
@@ -323,25 +323,25 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
             {filtered.map((c) => {
               const tone = deadlineTone(c.deadline);
               return (
-                <Card key={c.slug} className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 transition-all hover:border-[#0057B8]/40 hover:shadow-md">
+                <Card key={c.slug} className="flex flex-col rounded-2xl border-2 border-[var(--alo-brand)]/15 transition-all hover:border-[var(--alo-brand)]/40 hover:shadow-md">
                   <CardContent className="flex flex-1 flex-col pt-5">
                     {/* Top badges */}
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <Badge className="bg-[#e8f0fb] text-[#0057B8] hover:bg-[#e8f0fb]">{c.level}</Badge>
-                      <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">{c.subject}</Badge>
+                      <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">{c.level}</Badge>
+                      <Badge variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)]">{c.subject}</Badge>
                       {c.scholarship && (
-                        <Badge className="bg-[#fdece4] text-[#E8501A] hover:bg-[#fdece4]">
+                        <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]">
                           <Icon name="Award" className="mr-1 size-3" /> Scholarship
                         </Badge>
                       )}
                     </div>
 
                     {/* Name */}
-                    <h3 className="mt-3 line-clamp-2 text-base font-bold text-[#0057B8]">{c.name}</h3>
+                    <h3 className="mt-3 line-clamp-2 text-base font-bold text-[var(--alo-brand)]">{c.name}</h3>
 
                     {/* University + location */}
                     <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Icon name="Building2" className="size-3.5 text-[#0057B8]" />
+                      <Icon name="Building2" className="size-3.5 text-[var(--alo-brand)]" />
                       <span className="font-medium text-foreground">{c.university.name}</span>
                       <span aria-hidden>·</span>
                       <span>{c.city}</span>
@@ -351,28 +351,28 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
 
                     {/* Quick facts grid */}
                     <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                      <div className="rounded-lg bg-[#f7f9fc] p-2">
+                      <div className="rounded-lg bg-[var(--alo-page)] p-2">
                         <p className="font-semibold text-muted-foreground">Duration</p>
                         <p className="font-medium text-foreground">{c.duration}</p>
                       </div>
-                      <div className="rounded-lg bg-[#f7f9fc] p-2">
+                      <div className="rounded-lg bg-[var(--alo-page)] p-2">
                         <p className="font-semibold text-muted-foreground">Intake</p>
                         <p className="font-medium text-foreground">{c.intake}</p>
                       </div>
-                      <div className="col-span-2 rounded-lg bg-[#e8f0fb]/60 p-2">
-                        <p className="font-semibold text-[#0057B8]">Tuition</p>
-                        <p className="text-sm font-bold text-[#0057B8]">{c.tuition}</p>
+                      <div className="col-span-2 rounded-lg bg-[var(--alo-brand-light)]/60 p-2">
+                        <p className="font-semibold text-[var(--alo-brand)]">Tuition</p>
+                        <p className="text-sm font-bold text-[var(--alo-brand)]">{c.tuition}</p>
                       </div>
                     </div>
 
                     {/* Requirements */}
                     <div className="mt-3 space-y-1.5 text-xs">
                       <p className="flex items-start gap-1.5">
-                        <Icon name="GraduationCap" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                        <Icon name="GraduationCap" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                         <span className="text-muted-foreground">Academic: <span className="font-medium text-foreground line-clamp-1">{c.academicRequirement}</span></span>
                       </p>
                       <p className="flex items-start gap-1.5">
-                        <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                        <Icon name="Languages" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                         <span className="text-muted-foreground">English: <span className="font-medium text-foreground line-clamp-1">{c.englishRequirement}</span></span>
                       </p>
                     </div>
@@ -385,7 +385,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                             "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
                             tone === "near" && "bg-amber-50 text-amber-700",
                             tone === "open" && "bg-emerald-50 text-emerald-700",
-                            tone === "neutral" && "bg-slate-50 text-slate-600"
+                            tone === "neutral" && "bg-[var(--alo-page)] text-[var(--alo-body)]"
                           )}
                         >
                           <Icon
@@ -406,13 +406,13 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
-                          className="flex-1 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
+                          className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-10"
                           onClick={() => onNavigate("public-course", c.slug)}
                         >
                           <Icon name="FileText" className="size-4" /> View Details
                         </Button>
                         <Button
-                          className="flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-10"
+                          className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-10"
                           onClick={() => {
                             toast({
                               title: "Application started",
@@ -440,7 +440,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
           icon="Sparkles"
           title="Found a course you like? Apply in 60 seconds."
           description="Submit your details once — your ALO counselor will handle university selection, documents, application, and visa."
-          className="border-2 border-[#0057B8]/15 bg-gradient-to-br from-[#e8f0fb]/60 to-white"
+          className="border-2 border-[var(--alo-brand)]/15 bg-gradient-to-br from-[var(--alo-brand-light)]/60 to-white"
         >
           <div className="space-y-4">
             <Disclaimer text="Tuition, scholarships, deadlines, and entry requirements shown on this page are indicative. Always confirm with your ALO counselor before applying." />

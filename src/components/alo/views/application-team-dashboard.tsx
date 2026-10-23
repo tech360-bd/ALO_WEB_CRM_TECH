@@ -105,7 +105,7 @@ const PRIORITY_META: Record<string, { label: string; cls: string }> = {
   URGENT: { label: "Urgent", cls: "bg-red-100 text-red-700" },
   HIGH: { label: "High", cls: "bg-orange-100 text-orange-700" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
-  LOW: { label: "Low", cls: "bg-slate-100 text-slate-600" },
+  LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
 
 const COUNTRY_FLAG: Record<string, string> = {
@@ -315,7 +315,7 @@ export function ApplicationTeamDashboard() {
             {APP_STAGES.map((stage, idx) => {
               const count = stageCounts[stage] || 0;
               const active = count > 0;
-              const colorCls = STAGE_COLORS[stage] || "bg-slate-100 text-slate-700";
+              const colorCls = STAGE_COLORS[stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
               const pct = totalStageCount > 0 ? Math.round((count / totalStageCount) * 100) : 0;
               return (
                 <button
@@ -323,16 +323,16 @@ export function ApplicationTeamDashboard() {
                   onClick={() => setTab("applications")}
                   title={`${STAGE_LABELS[stage]} — ${count} (${pct}%)`}
                   className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
-                    active ? colorCls + " border-transparent hover:scale-[1.02]" : "bg-slate-50 text-slate-400 border-transparent"
+                    active ? colorCls + " border-transparent hover:scale-[1.02]" : "bg-[var(--alo-page)] text-[var(--alo-text-muted)] border-transparent"
                   }`}
                 >
-                  <span className="font-mono text-[10px] opacity-70">
+                  <span className="font-mono text-[11px] opacity-70">
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   <span className="truncate max-w-[140px]">{STAGE_LABELS[stage]}</span>
                   <span
-                    className={`ml-1 inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${
-                      active ? "bg-white/70 text-current" : "bg-slate-200 text-slate-500"
+                    className={`ml-1 inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold ${
+                      active ? "bg-white/70 text-current" : "bg-slate-200 text-[var(--alo-text-muted)]"
                     }`}
                   >
                     {count}
@@ -352,21 +352,21 @@ export function ApplicationTeamDashboard() {
               <TabsTrigger value="applications" className="gap-1.5">
                 <Icon name="ClipboardList" className="size-3.5" />
                 Applications
-                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">
                   {applications.length}
                 </Badge>
               </TabsTrigger>
               <TabsTrigger value="documents" className="gap-1.5">
                 <Icon name="FileSearch" className="size-3.5" />
                 Documents to Review
-                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">
                   {documents.length}
                 </Badge>
               </TabsTrigger>
               <TabsTrigger value="partner-emails" className="gap-1.5">
                 <Icon name="Mail" className="size-3.5" />
                 Partner Email Updates
-                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">
                   {partnerEmails.length}
                 </Badge>
               </TabsTrigger>
@@ -408,9 +408,9 @@ export function ApplicationTeamDashboard() {
                         ? Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
                         : null;
                       return (
-                        <TableRow key={app.id} className="hover:bg-[#e8f0fb]/40">
+                        <TableRow key={app.id} className="hover:bg-[var(--alo-brand-light)]/40">
                           <TableCell>
-                            <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                            <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                               {app.applicationId}
                             </span>
                           </TableCell>
@@ -419,7 +419,7 @@ export function ApplicationTeamDashboard() {
                               <span className="text-sm font-semibold text-foreground">
                                 {app.student?.fullName || "—"}
                               </span>
-                              <span className="font-mono text-[10px] text-muted-foreground">
+                              <span className="font-mono text-[11px] text-muted-foreground">
                                 {app.student?.studentId || ""}
                               </span>
                             </div>
@@ -437,7 +437,7 @@ export function ApplicationTeamDashboard() {
                           <TableCell>
                             <span className="inline-flex items-center gap-1 text-xs font-medium">
                               {flag && (
-                                <span className="rounded border border-[#0057B8]/15 bg-white px-1 py-0.5 text-[10px] font-bold text-[#0057B8]">
+                                <span className="rounded border border-[var(--alo-brand)]/15 bg-white px-1 py-0.5 text-[11px] font-bold text-[var(--alo-brand)]">
                                   {flag}
                                 </span>
                               )}
@@ -449,7 +449,7 @@ export function ApplicationTeamDashboard() {
                           </TableCell>
                           <TableCell>
                             <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${priority.cls}`}
+                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${priority.cls}`}
                             >
                               {priority.label}
                             </span>
@@ -461,7 +461,7 @@ export function ApplicationTeamDashboard() {
                               </span>
                               {daysLeft !== null && daysLeft >= 0 && (
                                 <span
-                                  className={`text-[10px] font-semibold ${
+                                  className={`text-[11px] font-semibold ${
                                     daysLeft <= 7 ? "text-red-600" : daysLeft <= 14 ? "text-amber-600" : "text-muted-foreground"
                                   }`}
                                 >
@@ -469,7 +469,7 @@ export function ApplicationTeamDashboard() {
                                 </span>
                               )}
                               {daysLeft !== null && daysLeft < 0 && (
-                                <span className="text-[10px] font-semibold text-red-600">Overdue</span>
+                                <span className="text-[11px] font-semibold text-red-600">Overdue</span>
                               )}
                             </div>
                           </TableCell>
@@ -479,7 +479,7 @@ export function ApplicationTeamDashboard() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleViewStudent(app)}
-                                className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                                className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                               >
                                 <Icon name="User" className="size-3.5" />
                                 <span className="hidden sm:inline">View Student</span>
@@ -487,7 +487,7 @@ export function ApplicationTeamDashboard() {
                               <Button
                                 size="sm"
                                 onClick={() => handleUpdateStage(app)}
-                                className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                                className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                               >
                                 <Icon name="GitCommitHorizontal" className="size-3.5" />
                                 <span className="hidden sm:inline">Update Stage</span>
@@ -506,7 +506,7 @@ export function ApplicationTeamDashboard() {
           {/* Documents tab */}
           <TabsContent value="documents" className="p-4 pt-4 sm:px-6">
             {!loading && (
-              <div className="mb-3 flex items-start gap-2 rounded-xl border border-[#0057B8]/20 bg-[#e8f0fb]/50 px-3 py-2.5 text-xs text-[#0057B8]">
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/50 px-3 py-2.5 text-xs text-[var(--alo-brand)]">
                 <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Application team can <strong>review</strong>, <strong>approve</strong>, and <strong>reject</strong> documents.{" "}
@@ -537,20 +537,20 @@ export function ApplicationTeamDashboard() {
                   </TableHeader>
                   <TableBody>
                     {documents.map((doc) => (
-                      <TableRow key={doc.id} className="hover:bg-[#e8f0fb]/40">
+                      <TableRow key={doc.id} className="hover:bg-[var(--alo-brand-light)]/40">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="text-sm font-semibold text-foreground">
                               {doc.student?.fullName || "—"}
                             </span>
-                            <span className="font-mono text-[10px] text-muted-foreground">
+                            <span className="font-mono text-[11px] text-muted-foreground">
                               {doc.student?.studentId || ""}
                             </span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Icon name="FileText" className="size-4 text-[#0057B8]" />
+                            <Icon name="FileText" className="size-4 text-[var(--alo-brand)]" />
                             <span className="text-sm font-medium text-foreground">{doc.name}</span>
                           </div>
                         </TableCell>
@@ -565,7 +565,7 @@ export function ApplicationTeamDashboard() {
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="text-xs text-foreground">{fmtDate(doc.uploadedAt)}</span>
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className="text-[11px] text-muted-foreground">
                               {doc.uploadedAt ? timeAgo(doc.uploadedAt) : ""}
                             </span>
                           </div>
@@ -576,7 +576,7 @@ export function ApplicationTeamDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleReviewDoc(doc)}
-                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                             >
                               <Icon name="Eye" className="size-3.5" />
                               <span className="hidden md:inline">Review</span>
@@ -632,17 +632,17 @@ export function ApplicationTeamDashboard() {
                 {partnerEmails.map((email) => (
                   <Card
                     key={email.id}
-                    className="rounded-2xl border-2 border-[#0057B8]/15 transition-colors hover:border-[#0057B8]/40"
+                    className="rounded-2xl border-2 border-[var(--alo-brand)]/15 transition-colors hover:border-[var(--alo-brand)]/40"
                   >
                     <CardContent className="space-y-3 pt-4">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                          <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                             <Icon name="Handshake" className="size-4" />
                           </div>
                           <div>
                             <p className="text-sm font-bold text-foreground">{email.partnerName}</p>
-                            <p className="font-mono text-[10px] text-muted-foreground">
+                            <p className="font-mono text-[11px] text-muted-foreground">
                               {email.partnerEmail || "no-reply@partner.com"}
                             </p>
                           </div>
@@ -653,7 +653,7 @@ export function ApplicationTeamDashboard() {
                             PENDING: "bg-amber-100 text-amber-700",
                             REVIEWED: "bg-sky-100 text-sky-700",
                             SENT_TO_STUDENT: "bg-emerald-100 text-emerald-700",
-                            ARCHIVED: "bg-slate-100 text-slate-600",
+                            ARCHIVED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                           }}
                         />
                       </div>
@@ -669,7 +669,7 @@ export function ApplicationTeamDashboard() {
                         <span className="inline-flex items-center gap-1">
                           <Icon name="User" className="size-3 text-muted-foreground" />
                           <span className="text-muted-foreground">Student match:</span>
-                          <span className="font-mono font-semibold text-[#0057B8]">
+                          <span className="font-mono font-semibold text-[var(--alo-brand)]">
                             {email.studentId || "Unmatched"}
                           </span>
                         </span>
@@ -684,7 +684,7 @@ export function ApplicationTeamDashboard() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleReviewPartnerEmail(email)}
-                          className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                          className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                         >
                           <Icon name="Eye" className="size-3.5" />
                           Review
@@ -692,7 +692,7 @@ export function ApplicationTeamDashboard() {
                         <Button
                           size="sm"
                           onClick={() => handleGenerateStudentMessage(email)}
-                          className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                          className="h-8 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                         >
                           <Icon name="Sparkles" className="size-3.5" />
                           Generate Student-Facing Message
@@ -721,9 +721,9 @@ export function ApplicationTeamDashboard() {
           {SUBMISSION_CHANNELS.map((ch) => (
             <div
               key={ch.key}
-              className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-3"
+              className="flex items-start gap-2.5 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-3"
             >
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name={ch.icon} className="size-4" />
               </div>
               <div className="min-w-0">
@@ -746,7 +746,7 @@ export function ApplicationTeamDashboard() {
       <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0057B8]">Reject document</DialogTitle>
+            <DialogTitle className="text-[var(--alo-brand)]">Reject document</DialogTitle>
             <DialogDescription>
               {rejectTarget?.name} — {rejectTarget?.student?.fullName || "student"}
             </DialogDescription>
@@ -761,7 +761,7 @@ export function ApplicationTeamDashboard() {
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="e.g. Document is blurry, please re-upload a clear scan."
                 rows={4}
-                className="resize-none border-[#0057B8]/20"
+                className="resize-none border-[var(--alo-brand)]/20"
               />
             </div>
             <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">

@@ -77,14 +77,14 @@ const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
   high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
   medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
   low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
-  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+  normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
 const ESCALATION_STATUS: Record<string, { label: string; cls: string }> = {
   OPEN: { label: 'Open', cls: 'bg-red-100 text-red-700 border-red-200' },
   ACKNOWLEDGED: { label: 'Acknowledged', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
   RESOLVED: { label: 'Resolved', cls: 'bg-green-100 text-green-700 border-green-200' },
-  CLOSED: { label: 'Closed', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+  CLOSED: { label: 'Closed', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
 const LEVEL_LABELS: Record<number, string> = {
@@ -97,16 +97,16 @@ function priorityBadge(priority?: string) {
   const key = (priority || 'normal').toLowerCase();
   const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
   return (
-    <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>
+    <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>
       {meta.label}
     </Badge>
   );
 }
 
 function escalationStatusBadge(status: string) {
-  const meta = ESCALATION_STATUS[status] || { label: status, cls: 'bg-gray-100 text-gray-600' };
+  const meta = ESCALATION_STATUS[status] || { label: status, cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
   return (
-    <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>
+    <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>
       {meta.label}
     </Badge>
   );
@@ -448,7 +448,7 @@ export default function HumanHandoffView() {
                           </p>
                           {priorityBadge(thread.priority)}
                           {thread.unreadCount && thread.unreadCount > 0 ? (
-                            <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[10px]">
+                            <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[11px]">
                               {thread.unreadCount} unread
                             </Badge>
                           ) : null}
@@ -477,17 +477,17 @@ export default function HumanHandoffView() {
                     )}
 
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[11px]">
                         Intent: {thread.intent || 'general'}
                       </Badge>
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[11px]">
                         SLA: {thread.slaStatus || 'none'}
                       </Badge>
                       {thread.isAiHandled ? (
-                        <Badge variant="outline" className="text-[10px]">AI was handling</Badge>
+                        <Badge variant="outline" className="text-[11px]">AI was handling</Badge>
                       ) : null}
                       {thread.escalatedToName ? (
-                        <Badge variant="outline" className="bg-red-100 text-red-700 text-[10px]">
+                        <Badge variant="outline" className="bg-red-100 text-red-700 text-[11px]">
                           Escalated to {thread.escalatedToName}
                         </Badge>
                       ) : null}
@@ -629,7 +629,7 @@ export default function HumanHandoffView() {
                             {escalation.type.replace(/_/g, ' ')}
                           </p>
                           {escalationStatusBadge(escalation.status)}
-                          <Badge variant="outline" className="text-[10px]">
+                          <Badge variant="outline" className="text-[11px]">
                             {LEVEL_LABELS[escalation.level] || `Level ${escalation.level}`}
                           </Badge>
                         </div>
@@ -650,17 +650,17 @@ export default function HumanHandoffView() {
 
                     <div className="flex flex-wrap gap-2 text-xs">
                       {escalation.communicationId ? (
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-[11px]">
                           Conversation {escalation.communicationId}
                         </Badge>
                       ) : null}
                       {escalation.studentId ? (
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-[11px]">
                           Student {escalation.studentId}
                         </Badge>
                       ) : null}
                       {escalation.counselorId ? (
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-[11px]">
                           Counselor {escalation.counselorId}
                         </Badge>
                       ) : null}

@@ -431,7 +431,7 @@ function SuccessStoriesSection() {
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star
                         key={si}
-                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
+                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-amber-400' : 'text-[var(--alo-placeholder)]'}`}
                       />
                     ))}
                   </div>
@@ -721,13 +721,13 @@ function FinalCtaSection() {
   }, [formData]);
 
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden bg-[#FFF1EA]">
+    <section className="py-16 md:py-20 relative overflow-hidden bg-[var(--alo-cta-soft)]">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Column — Content */}
           <motion.div
-            className="text-[#0F172A]"
+            className="text-[var(--alo-text)]"
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
@@ -736,7 +736,7 @@ function FinalCtaSection() {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
               Ready to Start Your Study Abroad Journey?
             </h2>
-            <p className="text-base md:text-lg mb-8 text-[#334155] leading-relaxed">
+            <p className="text-base md:text-lg mb-8 text-[var(--alo-body)] leading-relaxed">
               Take the first step today. Fill out the form and one of our expert counselors will get back to you within 24 hours with a personalized plan.
             </p>
 
@@ -753,7 +753,7 @@ function FinalCtaSection() {
                 </Link>
               </Button>
               <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[#BFDBFE]"
+                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[var(--alo-brand-border)]"
                 style={{ color: "#0057B8" }}
                 asChild
               >
@@ -768,33 +768,33 @@ function FinalCtaSection() {
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
-                  <Phone className="h-4.5 w-4.5 text-[#0057B8]" />
+                <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                  <Phone className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#64748B]">Call / WhatsApp</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Call / WhatsApp</p>
                   <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">
                     {ALO_CONTACT.mobileDisplay}
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
-                  <Mail className="h-4.5 w-4.5 text-[#0057B8]" />
+                <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                  <Mail className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#64748B]">Email Us</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Email Us</p>
                   <a href={ALO_CONTACT.emailHref} className="text-sm font-semibold hover:underline">
                     {ALO_CONTACT.email}
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
-                  <MapPin className="h-4.5 w-4.5 text-[#0057B8]" />
+                <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                  <MapPin className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#64748B]">Visit Us</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Visit Us</p>
                   <a
                     href={ALO_CONTACT.mapsUrl}
                     target="_blank"

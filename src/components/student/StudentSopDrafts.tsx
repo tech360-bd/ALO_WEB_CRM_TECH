@@ -46,7 +46,7 @@ const SEVERITY_ICON = {
 const SEVERITY_STYLE = {
   error: 'text-red-600',
   warning: 'text-amber-600',
-  info: 'text-slate-400',
+  info: 'text-[var(--alo-text-muted)]',
 } as const;
 
 export default function StudentSop() {
@@ -94,14 +94,14 @@ export default function StudentSop() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-5xl">
         <PortalPageHeader
           title="Statement of Purpose"
           description="Draft your SOPs here and get structure feedback before your counselor reviews them."
           action={
             <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/ai/sop-helper">
                   <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />
                   Open SOP Helper
@@ -109,7 +109,7 @@ export default function StudentSop() {
               </Button>
               <Button
                 type="button"
-                className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
+                className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
                 onClick={() => setCreating((value) => !value)}
               >
                 {creating ? 'Cancel' : 'New Draft'}
@@ -127,7 +127,7 @@ export default function StudentSop() {
             <form className="space-y-3 px-5 py-4" onSubmit={createDraft}>
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="sop-title" className="text-[12px] font-semibold text-slate-700">Title</Label>
+                  <Label htmlFor="sop-title" className="text-[12px] font-semibold text-[var(--alo-body)]">Title</Label>
                   <Input
                     id="sop-title"
                     value={form.title}
@@ -138,7 +138,7 @@ export default function StudentSop() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="sop-uni" className="text-[12px] font-semibold text-slate-700">University</Label>
+                  <Label htmlFor="sop-uni" className="text-[12px] font-semibold text-[var(--alo-body)]">University</Label>
                   <Input
                     id="sop-uni"
                     value={form.universityName}
@@ -149,7 +149,7 @@ export default function StudentSop() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="sop-course" className="text-[12px] font-semibold text-slate-700">Course</Label>
+                  <Label htmlFor="sop-course" className="text-[12px] font-semibold text-[var(--alo-body)]">Course</Label>
                   <Input
                     id="sop-course"
                     value={form.courseName}
@@ -161,7 +161,7 @@ export default function StudentSop() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="sop-content" className="text-[12px] font-semibold text-slate-700">Draft</Label>
+                <Label htmlFor="sop-content" className="text-[12px] font-semibold text-[var(--alo-body)]">Draft</Label>
                 <Textarea
                   id="sop-content"
                   value={form.content}
@@ -179,14 +179,14 @@ export default function StudentSop() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
+                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
                 >
                   {submitting ? 'Saving…' : 'Save Draft'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold"
+                  className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
                   onClick={() => setCreating(false)}
                 >
                   Cancel
@@ -205,12 +205,12 @@ export default function StudentSop() {
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
                     type="button"
-                    className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
+                    className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-orange-500"
                     onClick={() => setCreating(true)}
                   >
                     Create Blank Draft
                   </Button>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className="h-9 rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/ai/sop-helper">Use SOP Helper</Link>
                   </Button>
                 </div>
@@ -222,30 +222,30 @@ export default function StudentSop() {
         {state === 'ready' && drafts.length > 0 && (
           <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
             <PortalCard>
-              <div className="border-b border-slate-200 px-5 py-3">
-                <h2 className="text-[13px] font-bold uppercase tracking-[0.06em] text-slate-500">
+              <div className="border-b border-[var(--alo-border)] px-5 py-3">
+                <h2 className="text-[13px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">
                   Drafts ({drafts.length})
                 </h2>
               </div>
-              <ul className="divide-y divide-slate-200">
+              <ul className="divide-y divide-[var(--alo-border)]">
                 {drafts.map((draft) => (
                   <li key={draft.id}>
                     <button
                       type="button"
-                      className={`w-full px-5 py-3 text-left transition-colors hover:bg-slate-50 ${
+                      className={`w-full px-5 py-3 text-left transition-colors hover:bg-[var(--alo-page)] ${
                         selected?.id === draft.id ? 'bg-blue-50' : ''
                       }`}
                       onClick={() => setSelectedId(draft.id)}
                     >
-                      <p className="text-[13px] font-semibold text-slate-900">
+                      <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                         {draft.universityName || 'Untitled draft'}
                       </p>
                       {draft.courseName && (
-                        <p className="mt-0.5 truncate text-[12px] text-slate-500">{draft.courseName}</p>
+                        <p className="mt-0.5 truncate text-[12px] text-[var(--alo-text-muted)]">{draft.courseName}</p>
                       )}
                       <div className="mt-1.5 flex items-center gap-1.5">
                         <StatusBadge value={draft.status} />
-                        <span className="text-[11px] text-slate-400">v{draft.version}</span>
+                        <span className="text-[11px] text-[var(--alo-text-muted)]">v{draft.version}</span>
                       </div>
                     </button>
                   </li>
@@ -264,13 +264,13 @@ export default function StudentSop() {
                     }
                   >
                     {selected.reviewerNote && (
-                      <div className="border-b border-slate-200 bg-amber-50 px-5 py-3">
+                      <div className="border-b border-[var(--alo-border)] bg-amber-50 px-5 py-3">
                         <p className="text-[12px] font-semibold text-amber-800">Counselor note</p>
                         <p className="mt-0.5 text-[13px] leading-relaxed text-amber-900">{selected.reviewerNote}</p>
                       </div>
                     )}
                     {selected.content?.trim() ? (
-                      <pre className="whitespace-pre-wrap px-5 py-4 font-sans text-[13px] leading-relaxed text-slate-700">
+                      <pre className="whitespace-pre-wrap px-5 py-4 font-sans text-[13px] leading-relaxed text-[var(--alo-body)]">
                         {selected.content}
                       </pre>
                     ) : (
@@ -288,31 +288,31 @@ export default function StudentSop() {
                       title="Structure review"
                       description={`Automatic checks · completeness ${review.completenessScore}/100`}
                     >
-                      <div className="border-b border-slate-200 px-5 py-3">
+                      <div className="border-b border-[var(--alo-border)] px-5 py-3">
                         <div className="flex flex-wrap items-center gap-3">
-                          <span className="text-[13px] font-semibold text-slate-700">
+                          <span className="text-[13px] font-semibold text-[var(--alo-body)]">
                             {review.wordCount} words
                           </span>
-                          <span className="text-[12px] text-slate-500">
+                          <span className="text-[12px] text-[var(--alo-text-muted)]">
                             {review.findings.length} point{review.findings.length === 1 ? '' : 's'} raised
                           </span>
                         </div>
                       </div>
-                      <ul className="divide-y divide-slate-200">
+                      <ul className="divide-y divide-[var(--alo-border)]">
                         {review.findings.map((finding: Finding, index: number) => {
                           const Icon = SEVERITY_ICON[finding.severity];
                           return (
                             <li key={finding.id || index} className="flex gap-3 px-5 py-3">
                               <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${SEVERITY_STYLE[finding.severity]}`} aria-hidden="true" />
                               <div className="min-w-0">
-                                <p className="text-[13px] font-semibold text-slate-900">{finding.label}</p>
-                                <p className="mt-0.5 text-[13px] leading-relaxed text-slate-600">{finding.detail}</p>
+                                <p className="text-[13px] font-semibold text-[var(--alo-text)]">{finding.label}</p>
+                                <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{finding.detail}</p>
                               </div>
                             </li>
                           );
                         })}
                       </ul>
-                      <p className="px-5 py-3 text-[12px] leading-relaxed text-slate-500">
+                      <p className="px-5 py-3 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                         These are automatic structure checks, not a judgment on whether your statement will be
                         accepted. Your counselor reviews the final version.
                       </p>
@@ -324,7 +324,7 @@ export default function StudentSop() {
           </div>
         )}
 
-        <p className="mt-4 flex items-start gap-2 text-[12px] leading-relaxed text-slate-500">
+        <p className="mt-4 flex items-start gap-2 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
           <FileText className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           A well-structured statement helps, but admission decisions rest with the university. Nothing here is a
           guarantee of acceptance.

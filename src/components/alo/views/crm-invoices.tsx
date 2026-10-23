@@ -60,7 +60,7 @@ export function CrmInvoices() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : (
         <>
           {metrics && (
@@ -100,8 +100,8 @@ export function CrmInvoices() {
                 variant={filter === f ? "default" : "outline"}
                 className={
                   filter === f
-                    ? "bg-[#0057B8] text-white"
-                    : "border-[#DCE8F5] text-[#5A7299]"
+                    ? "bg-[var(--alo-brand)] text-white"
+                    : "border-[var(--alo-brand-border)] text-[var(--alo-text-muted)]"
                 }
                 onClick={() => setFilter(f)}
               >
@@ -117,11 +117,11 @@ export function CrmInvoices() {
               description="Invoices will appear here once payments are added."
             />
           ) : (
-            <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+            <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-[#F7FAFE] text-left text-[#5A7299]">
+                    <thead className="bg-[var(--alo-page)] text-left text-[var(--alo-text-muted)]">
                       <tr>
                         <th className="px-5 py-3 font-medium">Invoice #</th>
                         <th className="px-5 py-3 font-medium">Student</th>
@@ -133,23 +133,23 @@ export function CrmInvoices() {
                         <th className="px-5 py-3 font-medium">Action</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DCE8F5]">
+                    <tbody className="divide-y divide-[var(--alo-brand-border)]">
                       {filtered.map((p) => (
-                        <tr key={p.id} className="hover:bg-[#F7FAFE]">
-                          <td className="px-5 py-3 font-mono text-[#0B2447]">
+                        <tr key={p.id} className="hover:bg-[var(--alo-page)]">
+                          <td className="px-5 py-3 font-mono text-[var(--alo-text)]">
                             {p.paymentId}
                           </td>
-                          <td className="px-5 py-3 text-[#0B2447]">
+                          <td className="px-5 py-3 text-[var(--alo-text)]">
                             {p.studentId?.slice(-6) || "—"}
                           </td>
-                          <td className="px-5 py-3 text-[#0B2447]">
+                          <td className="px-5 py-3 text-[var(--alo-text)]">
                             {TYPE_LABELS[p.type] || p.type}
                           </td>
-                          <td className="px-5 py-3 font-semibold text-[#0B2447]">
+                          <td className="px-5 py-3 font-semibold text-[var(--alo-text)]">
                             {(p.amount || 0).toLocaleString()} {p.currency || "BDT"}
                           </td>
-                          <td className="px-5 py-3 text-[#5A7299]">{p.method || "—"}</td>
-                          <td className="px-5 py-3 text-[#5A7299]">
+                          <td className="px-5 py-3 text-[var(--alo-text-muted)]">{p.method || "—"}</td>
+                          <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                             {new Date(p.createdAt).toLocaleDateString("en-GB", {
                               day: "2-digit",
                               month: "short",
@@ -157,7 +157,7 @@ export function CrmInvoices() {
                             })}
                           </td>
                           <td className="px-5 py-3">
-                            <Badge className={STATUS_COLORS[p.status] || "bg-slate-100"}>
+                            <Badge className={STATUS_COLORS[p.status] || "bg-[var(--alo-surface-muted)]"}>
                               {p.status}
                             </Badge>
                           </td>
@@ -165,7 +165,7 @@ export function CrmInvoices() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="h-7 border-[#DCE8F5] text-xs text-[#0057B8] hover:bg-[#EAF3FF]"
+                              className="h-7 border-[var(--alo-brand-border)] text-xs text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                               onClick={() => handleDownload(p.id, p.paymentId)}
                             >
                               <Icon name="Download" className="mr-1 size-3" /> Invoice
@@ -182,14 +182,14 @@ export function CrmInvoices() {
 
           {commissions.length > 0 && (
             <div>
-              <h3 className="mb-3 text-lg font-bold text-[#0B2447]">
+              <h3 className="mb-3 text-lg font-bold text-[var(--alo-text)]">
                 Partner Commission Payouts
               </h3>
-              <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+              <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="bg-[#F7FAFE] text-left text-[#5A7299]">
+                      <thead className="bg-[var(--alo-page)] text-left text-[var(--alo-text-muted)]">
                         <tr>
                           <th className="px-5 py-3 font-medium">Invoice #</th>
                           <th className="px-5 py-3 font-medium">Commission Amount</th>
@@ -197,13 +197,13 @@ export function CrmInvoices() {
                           <th className="px-5 py-3 font-medium">Date</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#DCE8F5]">
+                      <tbody className="divide-y divide-[var(--alo-brand-border)]">
                         {commissions.map((c) => (
-                          <tr key={c.id} className="hover:bg-[#F7FAFE]">
-                            <td className="px-5 py-3 font-mono text-[#0B2447]">
+                          <tr key={c.id} className="hover:bg-[var(--alo-page)]">
+                            <td className="px-5 py-3 font-mono text-[var(--alo-text)]">
                               {c.paymentId}
                             </td>
-                            <td className="px-5 py-3 font-semibold text-[#E8501A]">
+                            <td className="px-5 py-3 font-semibold text-[var(--alo-cta)]">
                               {(c.commissionAmount || 0).toLocaleString()} {c.currency || "BDT"}
                             </td>
                             <td className="px-5 py-3">
@@ -212,14 +212,14 @@ export function CrmInvoices() {
                                   c.commissionStatus === "PAID"
                                     ? "bg-emerald-100 text-emerald-700"
                                     : c.commissionStatus === "APPROVED"
-                                    ? "bg-[#EAF3FF] text-[#0057B8]"
+                                    ? "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                                     : "bg-amber-100 text-amber-700"
                                 }
                               >
                                 {c.commissionStatus || "PENDING"}
                               </Badge>
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {new Date(c.createdAt).toLocaleDateString("en-GB")}
                             </td>
                           </tr>

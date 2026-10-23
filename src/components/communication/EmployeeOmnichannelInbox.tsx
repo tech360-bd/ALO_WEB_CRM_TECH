@@ -26,7 +26,7 @@ const CHANNEL_ICONS: Record<string, React.ReactNode> = {
   instagram: <Instagram className="w-3.5 h-3.5 text-pink-500" />,
   email: <Mail className="w-3.5 h-3.5 text-amber-500" />,
   live_chat: <Globe className="w-3.5 h-3.5 text-blue-400" />,
-  sms: <Phone className="w-3.5 h-3.5 text-slate-500" />,
+  sms: <Phone className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />,
   internal: <Users className="w-3.5 h-3.5 text-purple-500" />,
   portal: <BookOpen className="w-3.5 h-3.5 text-indigo-500" />,
   telegram: <Bot className="w-3.5 h-3.5 text-sky-500" />,
@@ -227,7 +227,7 @@ export default function EmployeeOmnichannelInbox() {
     const map: Record<string, string> = {
       urgent: 'bg-red-100 text-red-600',
       high: 'bg-amber-100 text-amber-700',
-      normal: 'bg-slate-100 text-slate-500',
+      normal: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
       low: 'bg-green-50 text-green-600',
     };
     return map[priority] || map.normal;
@@ -238,29 +238,29 @@ export default function EmployeeOmnichannelInbox() {
       open: 'bg-emerald-100 text-emerald-700',
       pending: 'bg-amber-100 text-amber-700',
       snoozed: 'bg-purple-100 text-purple-600',
-      closed: 'bg-slate-100 text-slate-500',
+      closed: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
     };
     return map[status] || map.open;
   };
 
   // ── Layout ─────────────────────────────────────────────────
   return (
-    <div className="flex h-screen bg-[#F8FAFC] text-slate-900 overflow-hidden" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div className="flex h-screen bg-[var(--alo-page)] text-[var(--alo-text)] overflow-hidden" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
 
       {/* ── LEFT: Conversation List ─────────────────────── */}
-      <div className="w-80 flex-shrink-0 bg-white border-r border-[#E2E8F0] flex flex-col">
+      <div className="w-80 flex-shrink-0 bg-white border-r border-[var(--alo-border)] flex flex-col">
         {/* Header */}
-        <div className="px-4 pt-4 pb-3 border-b border-[#E2E8F0] space-y-3">
+        <div className="px-4 pt-4 pb-3 border-b border-[var(--alo-border)] space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[#0057B8] rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-[var(--alo-brand)] rounded-lg flex items-center justify-center">
                 <MessageSquare className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-sm text-[#0F172A]">Unified Inbox</span>
+              <span className="font-bold text-sm text-[var(--alo-text)]">Unified Inbox</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                officeOpen === null ? 'bg-slate-100 text-slate-500' :
+              <div className={`flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                officeOpen === null ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]' :
                 officeOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
               }`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -268,7 +268,7 @@ export default function EmployeeOmnichannelInbox() {
               </div>
               <button
                 onClick={fetchConversations}
-                className="p-1.5 rounded-lg hover:bg-[#F8FAFC] transition text-slate-400 hover:text-slate-700"
+                className="p-1.5 rounded-lg hover:bg-[var(--alo-page)] transition text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                 title="Refresh"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -278,13 +278,13 @@ export default function EmployeeOmnichannelInbox() {
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--alo-text-muted)]" />
             <input
               type="text"
               placeholder="Search by name, phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0057B8]/20 focus:border-[#0057B8]"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--alo-brand)]/20 focus:border-[var(--alo-brand)]"
             />
           </div>
 
@@ -294,10 +294,10 @@ export default function EmployeeOmnichannelInbox() {
               <button
                 key={ch}
                 onClick={() => setActiveChannel(ch)}
-                className={`text-[10px] font-semibold px-2.5 py-1 rounded-full transition ${
+                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full transition ${
                   activeChannel === ch
-                    ? 'bg-[#0057B8] text-white shadow-sm'
-                    : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500 hover:border-[#0057B8] hover:text-[#0057B8]'
+                    ? 'bg-[var(--alo-brand)] text-white shadow-sm'
+                    : 'bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)] hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)]'
                 }`}
               >
                 {ch === 'all' ? 'All Channels' : CHANNEL_LABELS[ch] || ch}
@@ -307,15 +307,15 @@ export default function EmployeeOmnichannelInbox() {
         </div>
 
         {/* Status tabs */}
-        <div className="flex border-b border-[#E2E8F0] bg-white overflow-x-auto">
+        <div className="flex border-b border-[var(--alo-border)] bg-white overflow-x-auto">
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
-              className={`text-[10px] font-semibold px-3 py-2.5 whitespace-nowrap border-b-2 transition ${
+              className={`text-[11px] font-semibold px-3 py-2.5 whitespace-nowrap border-b-2 transition ${
                 activeFilter === f.key
-                  ? 'border-[#0057B8] text-[#0057B8]'
-                  : 'border-transparent text-slate-400 hover:text-slate-600'
+                  ? 'border-[var(--alo-brand)] text-[var(--alo-brand)]'
+                  : 'border-transparent text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]'
               }`}
             >
               {f.label}
@@ -327,11 +327,11 @@ export default function EmployeeOmnichannelInbox() {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-8 text-center">
-              <div className="w-6 h-6 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-xs text-slate-400">Loading conversations...</p>
+              <div className="w-6 h-6 border-2 border-[var(--alo-brand)] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <p className="text-xs text-[var(--alo-text-muted)]">Loading conversations...</p>
             </div>
           ) : conversations.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-8 text-center text-[var(--alo-text-muted)]">
               <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-20" />
               <p className="text-xs font-medium">No conversations found</p>
             </div>
@@ -340,7 +340,7 @@ export default function EmployeeOmnichannelInbox() {
               <button
                 key={conv.id}
                 onClick={() => selectConversation(conv)}
-                className={`w-full text-left px-4 py-3 border-b border-[#E2E8F0] hover:bg-[#F8FAFC] transition-all ${
+                className={`w-full text-left px-4 py-3 border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-all ${
                   selectedConv?.id === conv.id
                     ? 'bg-blue-50 border-l-2 border-l-[#0057B8]'
                     : 'border-l-2 border-l-transparent'
@@ -349,29 +349,29 @@ export default function EmployeeOmnichannelInbox() {
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5 min-w-0">
                     {CHANNEL_ICONS[conv.channel]}
-                    <span className="text-xs font-semibold text-[#0F172A] truncate">
+                    <span className="text-xs font-semibold text-[var(--alo-text)] truncate">
                       {conv.participantName || 'Unknown'}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {conv.unreadCount > 0 && (
-                      <span className="min-w-[16px] h-4 bg-[#0057B8] text-white text-[9px] font-bold rounded-full px-1 flex items-center justify-center">
+                      <span className="min-w-[16px] h-4 bg-[var(--alo-brand)] text-white text-[11px] font-bold rounded-full px-1 flex items-center justify-center">
                         {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
                       </span>
                     )}
                     {(conv.priority === 'urgent' || conv.priority === 'high') && (
-                      <AlertTriangle className="w-3 h-3 text-[#E8501A]" />
+                      <AlertTriangle className="w-3 h-3 text-[var(--alo-cta)]" />
                     )}
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-400 truncate mb-1.5">
+                <p className="text-[11px] text-[var(--alo-text-muted)] truncate mb-1.5">
                   {conv.lastMessageText || 'No messages yet'}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${statusBadge(conv.status)}`}>
+                  <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-semibold ${statusBadge(conv.status)}`}>
                     {conv.status}
                   </span>
-                  <span className="text-[9px] text-slate-400">
+                  <span className="text-[11px] text-[var(--alo-text-muted)]">
                     {new Date(conv.lastMessageAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
@@ -382,18 +382,18 @@ export default function EmployeeOmnichannelInbox() {
       </div>
 
       {/* ── CENTER: Message Thread ───────────────────────── */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
+      <div className="flex-1 flex flex-col min-w-0 bg-[var(--alo-page)]">
         {selectedConv ? (
           <>
             {/* Conversation header */}
-            <div className="px-5 py-3.5 bg-white border-b border-[#E2E8F0] flex items-center justify-between shadow-sm">
+            <div className="px-5 py-3.5 bg-white border-b border-[var(--alo-border)] flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057B8] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {(selectedConv.participantName || 'U')[0].toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-bold text-sm text-[#0F172A] truncate">{selectedConv.participantName}</h3>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                  <h3 className="font-bold text-sm text-[var(--alo-text)] truncate">{selectedConv.participantName}</h3>
+                  <div className="flex items-center gap-2 text-[11px] text-[var(--alo-text-muted)]">
                     {CHANNEL_ICONS[selectedConv.channel]}
                     <span>{CHANNEL_LABELS[selectedConv.channel] || selectedConv.channel}</span>
                     {selectedConv.participantPhone && <><span>•</span><span>{selectedConv.participantPhone}</span></>}
@@ -406,18 +406,18 @@ export default function EmployeeOmnichannelInbox() {
                   <button
                     onClick={createLead}
                     disabled={creatingLead}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold bg-[#10B981] hover:bg-green-600 text-white rounded-xl transition disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-[var(--alo-success)] hover:bg-green-600 text-white rounded-xl transition disabled:opacity-50"
                   >
                     <Link2 className="w-3 h-3" />
                     {creatingLead ? 'Creating...' : 'Create Lead'}
                   </button>
                 )}
                 {selectedConv.leadId && (
-                  <span className="text-[10px] font-semibold px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full flex items-center gap-1">
+                  <span className="text-[11px] font-semibold px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" /> Lead Linked
                   </span>
                 )}
-                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${priorityBadge(selectedConv.priority)}`}>
+                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${priorityBadge(selectedConv.priority)}`}>
                   {selectedConv.priority}
                 </span>
               </div>
@@ -426,7 +426,7 @@ export default function EmployeeOmnichannelInbox() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
               {messages.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center py-16 text-center text-slate-400">
+                <div className="flex-1 flex items-center justify-center py-16 text-center text-[var(--alo-text-muted)]">
                   <div>
                     <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-20" />
                     <p className="text-xs">No messages yet in this conversation</p>
@@ -444,7 +444,7 @@ export default function EmployeeOmnichannelInbox() {
                   >
                     {msg.direction === 'internal_note' && (
                       <div className="max-w-lg w-full text-center">
-                        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-xl text-[10px]">
+                        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-xl text-[11px]">
                           <Lock className="w-3 h-3" />
                           <span className="font-bold">INTERNAL NOTE</span>
                           <span>—</span>
@@ -453,22 +453,22 @@ export default function EmployeeOmnichannelInbox() {
                       </div>
                     )}
                     {msg.direction === 'system' && (
-                      <div className="text-[10px] text-slate-400 bg-slate-100 px-3 py-1.5 rounded-full">
+                      <div className="text-[11px] text-[var(--alo-text-muted)] bg-[var(--alo-surface-muted)] px-3 py-1.5 rounded-full">
                         {msg.content}
                       </div>
                     )}
                     {(msg.direction === 'outbound' || msg.direction === 'inbound') && (
                       <div className={`max-w-[72%] space-y-1 ${msg.direction === 'outbound' ? 'items-end' : 'items-start'} flex flex-col`}>
                         {msg.aiGenerated && (
-                          <div className="text-[9px] font-bold text-purple-500 flex items-center gap-1">
+                          <div className="text-[11px] font-bold text-purple-500 flex items-center gap-1">
                             <Bot className="w-3 h-3" /> AI Generated
                             {!msg.aiApproved && <span className="text-amber-500">— Pending Approval</span>}
                           </div>
                         )}
                         <div className={`px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
                           msg.direction === 'outbound'
-                            ? 'bg-[#0057B8] text-white rounded-br-none'
-                            : 'bg-white border border-[#E2E8F0] text-[#0F172A] rounded-bl-none shadow-sm'
+                            ? 'bg-[var(--alo-brand)] text-white rounded-br-none'
+                            : 'bg-white border border-[var(--alo-border)] text-[var(--alo-text)] rounded-bl-none shadow-sm'
                         }`}>
                           {msg.content}
                           {msg.attachments?.map((attachment: any) => (
@@ -482,7 +482,7 @@ export default function EmployeeOmnichannelInbox() {
                             </a>
                           ))}
                         </div>
-                        <div className={`text-[9px] text-slate-400 ${msg.direction === 'outbound' ? 'text-right' : 'text-left'}`}>
+                        <div className={`text-[11px] text-[var(--alo-text-muted)] ${msg.direction === 'outbound' ? 'text-right' : 'text-left'}`}>
                           {msg.senderName} • {new Date(msg.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
@@ -497,10 +497,10 @@ export default function EmployeeOmnichannelInbox() {
             {showAi && aiSuggestions.length > 0 && (
               <div className="px-5 py-2 bg-purple-50 border-t border-purple-100">
                 <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-purple-700">
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-purple-700">
                     <Sparkles className="w-3 h-3" /> AI Suggested Replies
                   </div>
-                  <button onClick={() => setShowAi(false)} className="text-slate-400 hover:text-slate-600">
+                  <button onClick={() => setShowAi(false)} className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">
                     <XCircle className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -509,7 +509,7 @@ export default function EmployeeOmnichannelInbox() {
                     <button
                       key={i}
                       onClick={() => setMessageInput(s)}
-                      className="text-[10px] px-3 py-1.5 bg-white border border-purple-200 text-purple-700 rounded-full hover:bg-purple-50 transition max-w-xs truncate"
+                      className="text-[11px] px-3 py-1.5 bg-white border border-purple-200 text-purple-700 rounded-full hover:bg-purple-50 transition max-w-xs truncate"
                     >
                       {s.substring(0, 70)}{s.length > 70 ? '...' : ''}
                     </button>
@@ -519,7 +519,7 @@ export default function EmployeeOmnichannelInbox() {
             )}
 
             {/* Reply Box */}
-            <div className="p-4 bg-white border-t border-[#E2E8F0]">
+            <div className="p-4 bg-white border-t border-[var(--alo-border)]">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -535,7 +535,7 @@ export default function EmployeeOmnichannelInbox() {
                   aria-label="Link the document to an application"
                   value={selectedApplicationId}
                   onChange={(event) => setSelectedApplicationId(event.target.value)}
-                  className="mb-2 max-w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[10px] text-slate-700"
+                  className="mb-2 max-w-full rounded-lg border border-[var(--alo-border)] bg-white px-2 py-1.5 text-[11px] text-[var(--alo-body)]"
                 >
                   <option value="">Choose related application</option>
                   {selectedConv.applications.map((application: any) => (
@@ -546,31 +546,31 @@ export default function EmployeeOmnichannelInbox() {
                 </select>
               )}
               {selectedFile && (
-                <div className="mb-2 flex items-center justify-between gap-2 text-[10px] text-slate-600">
+                <div className="mb-2 flex items-center justify-between gap-2 text-[11px] text-[var(--alo-body)]">
                   <span className="truncate">Private attachment: {selectedFile.name}</span>
                   <button type="button" onClick={() => setSelectedFile(null)} className="text-rose-600 hover:underline">Remove</button>
                 </div>
               )}
-              {sendError && <p role="alert" className="mb-2 text-[10px] text-rose-600">{sendError}</p>}
+              {sendError && <p role="alert" className="mb-2 text-[11px] text-rose-600">{sendError}</p>}
               <div className="flex items-center gap-2 mb-2">
                 <button
                   onClick={() => setIsInternalNote(false)}
-                  className={`text-[10px] font-semibold px-3 py-1 rounded-full transition ${
-                    !isInternalNote ? 'bg-[#0057B8] text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
+                  className={`text-[11px] font-semibold px-3 py-1 rounded-full transition ${
+                    !isInternalNote ? 'bg-[var(--alo-brand)] text-white' : 'bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)]'
                   }`}
                 >
                   Reply to Customer
                 </button>
                 <button
                   onClick={() => { setIsInternalNote(true); setSelectedFile(null); }}
-                  className={`text-[10px] font-semibold px-3 py-1 rounded-full transition flex items-center gap-1 ${
-                    isInternalNote ? 'bg-amber-500 text-white' : 'bg-[#F8FAFC] border border-[#E2E8F0] text-slate-500'
+                  className={`text-[11px] font-semibold px-3 py-1 rounded-full transition flex items-center gap-1 ${
+                    isInternalNote ? 'bg-amber-500 text-white' : 'bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)]'
                   }`}
                 >
                   <Lock className="w-2.5 h-2.5" /> Internal Note
                 </button>
                 {aiLoading && (
-                  <span className="text-[9px] text-purple-500 flex items-center gap-1 ml-auto">
+                  <span className="text-[11px] text-purple-500 flex items-center gap-1 ml-auto">
                     <Sparkles className="w-3 h-3 animate-pulse" /> Getting AI suggestions...
                   </span>
                 )}
@@ -582,7 +582,7 @@ export default function EmployeeOmnichannelInbox() {
                   disabled={isInternalNote || selectedConv.channel !== 'whatsapp' || sending}
                   title="Upload a private PDF/JPEG/PNG and send it via WhatsApp"
                   onClick={() => fileInputRef.current?.click()}
-                  className="h-10 w-10 self-end flex items-center justify-center rounded-xl border border-[#E2E8F0] text-slate-500 hover:bg-slate-50 disabled:opacity-40"
+                  className="h-10 w-10 self-end flex items-center justify-center rounded-xl border border-[var(--alo-border)] text-[var(--alo-text-muted)] hover:bg-[var(--alo-page)] disabled:opacity-40"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
@@ -595,13 +595,13 @@ export default function EmployeeOmnichannelInbox() {
                   className={`flex-1 text-xs resize-none p-3 rounded-xl border focus:outline-none focus:ring-2 transition ${
                     isInternalNote
                       ? 'bg-amber-50 border-amber-200 focus:ring-amber-300 focus:border-amber-400'
-                      : 'bg-[#F8FAFC] border-[#E2E8F0] focus:ring-[#0057B8]/20 focus:border-[#0057B8]'
+                      : 'bg-[var(--alo-page)] border-[var(--alo-border)] focus:ring-[var(--alo-brand)]/20 focus:border-[var(--alo-brand)]'
                   }`}
                 />
                 <button
                   onClick={sendMessage}
                   disabled={(!messageInput.trim() && !selectedFile) || sending}
-                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[#0057B8] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
+                  className="w-10 h-10 self-end flex items-center justify-center rounded-xl bg-[var(--alo-brand)] hover:bg-blue-700 disabled:opacity-40 text-white transition shadow-sm"
                 >
                   {sending ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -610,16 +610,16 @@ export default function EmployeeOmnichannelInbox() {
                   )}
                 </button>
               </div>
-              <p className="text-[9px] text-slate-400 mt-1">Ctrl+Enter to send</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Ctrl+Enter to send</p>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-400 space-y-4">
-            <div className="w-20 h-20 bg-white border border-[#E2E8F0] rounded-2xl flex items-center justify-center shadow-sm">
+          <div className="flex-1 flex flex-col items-center justify-center text-[var(--alo-text-muted)] space-y-4">
+            <div className="w-20 h-20 bg-white border border-[var(--alo-border)] rounded-2xl flex items-center justify-center shadow-sm">
               <MessageSquare className="w-10 h-10 opacity-20" />
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold text-slate-600">Select a conversation</p>
+              <p className="text-sm font-semibold text-[var(--alo-body)]">Select a conversation</p>
               <p className="text-xs mt-1">{conversations.length} conversation{conversations.length !== 1 ? 's' : ''} in your inbox</p>
             </div>
           </div>
@@ -628,65 +628,65 @@ export default function EmployeeOmnichannelInbox() {
 
       {/* ── RIGHT: Profile + Actions ─────────────────────── */}
       {selectedConv && (
-        <div className="w-64 flex-shrink-0 bg-white border-l border-[#E2E8F0] flex flex-col overflow-y-auto">
+        <div className="w-64 flex-shrink-0 bg-white border-l border-[var(--alo-border)] flex flex-col overflow-y-auto">
           {/* Contact card */}
-          <div className="p-4 border-b border-[#E2E8F0] text-center">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0057B8] to-blue-400 mx-auto flex items-center justify-center text-white font-bold text-xl mb-2">
+          <div className="p-4 border-b border-[var(--alo-border)] text-center">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-blue-400 mx-auto flex items-center justify-center text-white font-bold text-xl mb-2">
               {(selectedConv.participantName || 'U')[0].toUpperCase()}
             </div>
-            <p className="font-bold text-sm text-[#0F172A]">{selectedConv.participantName}</p>
+            <p className="font-bold text-sm text-[var(--alo-text)]">{selectedConv.participantName}</p>
             {selectedConv.participantPhone && (
-              <p className="text-[10px] text-slate-400 mt-0.5">{selectedConv.participantPhone}</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">{selectedConv.participantPhone}</p>
             )}
             {selectedConv.participantEmail && (
-              <p className="text-[10px] text-slate-400 truncate">{selectedConv.participantEmail}</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] truncate">{selectedConv.participantEmail}</p>
             )}
           </div>
 
           {/* Conversation details */}
           <div className="p-4 space-y-3 text-xs">
             <div>
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Channel</label>
+              <label className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Channel</label>
               <div className="flex items-center gap-1.5 mt-1">
                 {CHANNEL_ICONS[selectedConv.channel]}
-                <span className="font-medium text-[#0F172A]">{CHANNEL_LABELS[selectedConv.channel] || selectedConv.channel}</span>
+                <span className="font-medium text-[var(--alo-text)]">{CHANNEL_LABELS[selectedConv.channel] || selectedConv.channel}</span>
               </div>
             </div>
 
             {selectedConv.destinationCountry && (
               <div>
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Destination</label>
-                <p className="mt-1 font-medium text-[#0F172A]">{selectedConv.destinationCountry}</p>
+                <label className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Destination</label>
+                <p className="mt-1 font-medium text-[var(--alo-text)]">{selectedConv.destinationCountry}</p>
               </div>
             )}
 
             <div>
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status</label>
-              <div className={`mt-1 inline-flex px-2 py-0.5 rounded-full font-semibold text-[10px] ${statusBadge(selectedConv.status)}`}>
+              <label className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Status</label>
+              <div className={`mt-1 inline-flex px-2 py-0.5 rounded-full font-semibold text-[11px] ${statusBadge(selectedConv.status)}`}>
                 {selectedConv.status}
               </div>
             </div>
 
             <div>
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Priority</label>
-              <div className={`mt-1 inline-flex px-2 py-0.5 rounded-full font-semibold text-[10px] ${priorityBadge(selectedConv.priority)}`}>
+              <label className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Priority</label>
+              <div className={`mt-1 inline-flex px-2 py-0.5 rounded-full font-semibold text-[11px] ${priorityBadge(selectedConv.priority)}`}>
                 {selectedConv.priority}
               </div>
             </div>
 
             {selectedConv.leadId && (
               <div>
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Lead ID</label>
-                <p className="mt-1 text-[#0057B8] font-mono text-[10px]">{selectedConv.leadId.substring(0, 16)}...</p>
+                <label className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Lead ID</label>
+                <p className="mt-1 text-[var(--alo-brand)] font-mono text-[11px]">{selectedConv.leadId.substring(0, 16)}...</p>
               </div>
             )}
 
             {selectedConv.tags && JSON.parse(selectedConv.tags || '[]').length > 0 && (
               <div>
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Tags</label>
+                <label className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Tags</label>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {JSON.parse(selectedConv.tags).map((tag: string) => (
-                    <span key={tag} className="text-[9px] px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-full">{tag}</span>
+                    <span key={tag} className="text-[11px] px-1.5 py-0.5 bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-full">{tag}</span>
                   ))}
                 </div>
               </div>
@@ -694,22 +694,22 @@ export default function EmployeeOmnichannelInbox() {
           </div>
 
           {/* Actions */}
-          <div className="p-4 space-y-2 border-t border-[#E2E8F0]">
+          <div className="p-4 space-y-2 border-t border-[var(--alo-border)]">
             <button
               disabled={selectedConv.channel !== 'whatsapp' || isInternalNote || sending}
               title={selectedConv.channel === 'whatsapp' ? 'Choose a private PDF/JPEG/PNG to send with your reply' : 'Document sending is currently available only on WhatsApp'}
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition disabled:opacity-40"
+              className="w-full py-2 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition disabled:opacity-40"
             >
               <Paperclip className="w-3 h-3" /> Upload Document
             </button>
-            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[#F8FAFC] hover:bg-slate-100 border border-[#E2E8F0] rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Tag className="w-3 h-3" /> Add Tag
             </button>
-            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
               <AlertTriangle className="w-3 h-3" /> Escalate
             </button>
-            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-[#E2E8F0] text-slate-500 rounded-xl text-[10px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[var(--alo-surface-muted)] hover:bg-slate-200 border border-[var(--alo-border)] text-[var(--alo-text-muted)] rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Clock className="w-3 h-3" /> Snooze
             </button>
           </div>

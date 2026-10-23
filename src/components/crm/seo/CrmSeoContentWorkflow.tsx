@@ -138,13 +138,13 @@ function ContentKanbanCard({ item }: { item: ContentCard }) {
         <span className="truncate">{item.url}</span>
       </div>
       <div className="flex flex-wrap gap-1">
-        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${destinationColor(item.destination)}`}>{item.destination}</Badge>
-        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${priorityColor[item.priority]}`}>{item.priority}</Badge>
-        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${contentTypeColor[item.contentType]}`}>{item.contentType}</Badge>
+        <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${destinationColor(item.destination)}`}>{item.destination}</Badge>
+        <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${priorityColor[item.priority]}`}>{item.priority}</Badge>
+        <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${contentTypeColor[item.contentType]}`}>{item.contentType}</Badge>
       </div>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{item.wordCount > 0 ? `${item.wordCount.toLocaleString()} words` : 'Not started'}</span>
-        <span className={`text-[10px] px-1.5 py-0 rounded ${approvalColor[item.approvalStatus]}`}>{item.approvalStatus}</span>
+        <span className={`text-[11px] px-1.5 py-0 rounded ${approvalColor[item.approvalStatus]}`}>{item.approvalStatus}</span>
       </div>
       <Separator className="my-1" />
       <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -214,10 +214,10 @@ function ContentBacklog() {
                   <td className="px-3 py-2.5 max-w-[200px]"><span className="font-medium line-clamp-1 block">{c.title}</span></td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono whitespace-nowrap">{c.url}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate">{c.targetKeyword}</td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className="text-[10px] px-1.5 py-0">{c.intent}</Badge></td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${priorityColor[c.priority]}`}>{c.priority}</Badge></td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${approvalColor[c.approvalStatus]}`}>{c.approvalStatus}</Badge></td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${contentTypeColor[c.contentType]}`}>{c.contentType}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className="text-[11px] px-1.5 py-0">{c.intent}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${priorityColor[c.priority]}`}>{c.priority}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${approvalColor[c.approvalStatus]}`}>{c.approvalStatus}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${contentTypeColor[c.contentType]}`}>{c.contentType}</Badge></td>
                   <td className="px-3 py-2.5 text-xs tabular-nums">{c.wordCount > 0 ? c.wordCount.toLocaleString() : '—'}</td>
                   <td className="px-3 py-2.5 text-xs whitespace-nowrap">{c.writer.split(' ')[0]}</td>
                   <td className="px-3 py-2.5 text-xs whitespace-nowrap">{c.reviewer.split(' ')[0]}</td>
@@ -246,8 +246,8 @@ function ReviewQueuePanel() {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-sm font-semibold">{r.title}</p>
-                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${riskColor[r.riskLevel]}`}>{r.riskLevel} Risk</Badge>
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-muted"><Icon className="h-3 w-3 mr-1 inline" />{r.reviewType}</Badge>
+                  <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${riskColor[r.riskLevel]}`}>{r.riskLevel} Risk</Badge>
+                  <Badge variant="outline" className="text-[11px] px-1.5 py-0 bg-muted"><Icon className="h-3 w-3 mr-1 inline" />{r.reviewType}</Badge>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1"><User className="h-3 w-3" />{r.reviewer}</span>
@@ -312,7 +312,7 @@ function SourceVerificationPanel() {
               <div className="flex items-center gap-2 mb-1">
                 <r.icon className={`h-4 w-4 ${r.needed ? 'text-amber-600' : 'text-muted-foreground'}`} />
                 <p className="text-xs font-semibold">{r.role}</p>
-                {r.needed && <Badge variant="outline" className="text-[10px] px-1.5 py-0 ml-auto text-amber-600 border-amber-500/30">Required</Badge>}
+                {r.needed && <Badge variant="outline" className="text-[11px] px-1.5 py-0 ml-auto text-amber-600 border-amber-500/30">Required</Badge>}
               </div>
               <p className="text-[11px] text-muted-foreground">{r.desc}</p>
             </div>

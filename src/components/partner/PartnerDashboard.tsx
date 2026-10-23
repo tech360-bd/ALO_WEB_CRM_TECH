@@ -304,7 +304,7 @@ export default function PartnerDashboard() {
             <CardHeader className="pb-2"><CardTitle className="text-base font-semibold text-alo-text">Commission Summary</CardTitle></CardHeader>
             <CardContent>
               <div className="flex items-center justify-between text-sm"><span className="text-alo-text-secondary">Paid</span><span className="font-semibold text-alo-text">{formatCurrency(commissionPaid)}</span></div>
-              <div className="mt-3 h-3 rounded-full bg-slate-100 overflow-hidden" role="progressbar" aria-valuenow={Math.round(paidPercent)} aria-valuemin={0} aria-valuemax={100} aria-label="Paid commission percentage"><div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${paidPercent}%` }} /></div>
+              <div className="mt-3 h-3 rounded-full bg-[var(--alo-surface-muted)] overflow-hidden" role="progressbar" aria-valuenow={Math.round(paidPercent)} aria-valuemin={0} aria-valuemax={100} aria-label="Paid commission percentage"><div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${paidPercent}%` }} /></div>
               <div className="mt-3 flex items-center justify-between text-xs text-alo-text-muted"><span>Pending {formatCurrency(commissionPending)}</span><span>Expected {formatCurrency(commissionExpected)}</span></div>
               <Button variant="link" className="mt-2 h-auto px-0 text-xs" onClick={() => router.push('/partner/commission')}>Open commission statement <ChevronRight className="ml-1 h-3.5 w-3.5" /></Button>
             </CardContent>

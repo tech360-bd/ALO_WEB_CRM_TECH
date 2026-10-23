@@ -106,7 +106,7 @@ export function StudentShortlist() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : courses.length === 0 ? (
         <EmptyState
           icon="Bookmark"
@@ -118,37 +118,37 @@ export function StudentShortlist() {
           {courses.map((c) => (
             <Card
               key={c.slug}
-              className="rounded-2xl border border-[#DCE8F5] bg-white transition-shadow hover:shadow-md"
+              className="rounded-2xl border border-[var(--alo-brand-border)] bg-white transition-shadow hover:shadow-md"
             >
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h3 className="font-bold text-[#0B2447]">{c.name || c.title || "Course"}</h3>
-                    <p className="text-sm text-[#5A7299]">{c.university || "—"}</p>
+                    <h3 className="font-bold text-[var(--alo-text)]">{c.name || c.title || "Course"}</h3>
+                    <p className="text-sm text-[var(--alo-text-muted)]">{c.university || "—"}</p>
                   </div>
-                  <Badge className={cn("bg-[#EAF3FF] text-[#0057B8]")}>{c.country || "—"}</Badge>
+                  <Badge className={cn("bg-[var(--alo-brand-light)] text-[var(--alo-brand)]")}>{c.country || "—"}</Badge>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <p className="text-[#5A7299]">Level</p>
-                    <p className="font-semibold text-[#0B2447]">
+                    <p className="text-[var(--alo-text-muted)]">Level</p>
+                    <p className="font-semibold text-[var(--alo-text)]">
                       {c.studyLevel || c.level || "—"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[#5A7299]">Duration</p>
-                    <p className="font-semibold text-[#0B2447]">{c.duration || "—"}</p>
+                    <p className="text-[var(--alo-text-muted)]">Duration</p>
+                    <p className="font-semibold text-[var(--alo-text)]">{c.duration || "—"}</p>
                   </div>
                   <div>
-                    <p className="text-[#5A7299]">Tuition</p>
-                    <p className="font-semibold text-[#0B2447]">
+                    <p className="text-[var(--alo-text-muted)]">Tuition</p>
+                    <p className="font-semibold text-[var(--alo-text)]">
                       {c.tuitionFee ? `${c.tuitionFee.toLocaleString()} ${c.currency || ""}` : "—"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[#5A7299]">Intake</p>
-                    <p className="font-semibold text-[#0B2447]">{c.intake || "Sep 2026"}</p>
+                    <p className="text-[var(--alo-text-muted)]">Intake</p>
+                    <p className="font-semibold text-[var(--alo-text)]">{c.intake || "Sep 2026"}</p>
                   </div>
                 </div>
 
@@ -156,7 +156,7 @@ export function StudentShortlist() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-[#E8501A] text-[#E8501A] hover:bg-[#FFF3EA]"
+                    className="border-[var(--alo-cta)] text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
                     onClick={() => handleRemove(c.slug)}
                   >
                     <Icon name="Trash2" className="mr-1 size-3.5" /> Remove

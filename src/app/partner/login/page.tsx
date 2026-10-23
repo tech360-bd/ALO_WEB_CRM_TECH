@@ -53,14 +53,14 @@ export default function PartnerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-xl border-slate-200 bg-white">
+    <div className="min-h-screen bg-[var(--alo-page)] flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-xl border-[var(--alo-border)] bg-white">
         <CardHeader className="text-center pb-2">
-          <div className="mx-auto w-12 h-12 rounded-xl bg-[#0057B8]/10 text-[#0057B8] flex items-center justify-center mb-3">
+          <div className="mx-auto w-12 h-12 rounded-xl bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] flex items-center justify-center mb-3">
             <Building2 className="h-6 w-6" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900">Partner & Agent Portal</CardTitle>
-          <CardDescription className="text-xs text-slate-600">
+          <CardTitle className="text-2xl font-bold text-[var(--alo-text)]">Partner & Agent Portal</CardTitle>
+          <CardDescription className="text-xs text-[var(--alo-body)]">
             Sign in to manage student referrals, view commissions, and submit university applications.
           </CardDescription>
         </CardHeader>
@@ -74,9 +74,9 @@ export default function PartnerLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="partner-email" className="text-xs font-medium text-slate-700">Partner Email</Label>
+              <Label htmlFor="partner-email" className="text-xs font-medium text-[var(--alo-body)]">Partner Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-[var(--alo-text-muted)]" />
                 <Input
                   id="partner-email"
                   type="email"
@@ -84,18 +84,18 @@ export default function PartnerLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-9 h-11 text-sm border-slate-200"
+                  className="pl-9 h-11 text-sm border-[var(--alo-border)]"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="partner-pass" className="text-xs font-medium text-slate-700">Password</Label>
-                <Link href="/forgot-password" className="text-xs text-[#0057B8] hover:underline">Forgot password?</Link>
+                <Label htmlFor="partner-pass" className="text-xs font-medium text-[var(--alo-body)]">Password</Label>
+                <Link href="/forgot-password" className="text-xs text-[var(--alo-brand)] hover:underline">Forgot password?</Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-[var(--alo-text-muted)]" />
                 <Input
                   id="partner-pass"
                   type={showPassword ? 'text' : 'password'}
@@ -103,12 +103,12 @@ export default function PartnerLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-9 pr-9 h-11 text-sm border-slate-200"
+                  className="pl-9 pr-9 h-11 text-sm border-[var(--alo-border)]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-3 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -118,7 +118,7 @@ export default function PartnerLoginPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-[#0057B8] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
+              className="w-full h-11 bg-[var(--alo-brand)] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -132,10 +132,10 @@ export default function PartnerLoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 text-center">
-            <p className="text-xs text-slate-500">
+          <div className="mt-6 pt-4 border-t border-[var(--alo-border)] text-center">
+            <p className="text-xs text-[var(--alo-text-muted)]">
               Not a registered partner yet?{' '}
-              <Link href="/contact" className="text-[#E8501A] font-semibold hover:underline">
+              <Link href="/contact" className="text-[var(--alo-cta)] font-semibold hover:underline">
                 Apply for B2B Partnership
               </Link>
             </p>

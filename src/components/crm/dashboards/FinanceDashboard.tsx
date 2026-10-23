@@ -147,7 +147,7 @@ export default function FinanceDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-alo-text">{p.amount}</span>
-                      <Badge variant={p.status === 'verified' ? 'success' : 'warning'} className="text-[10px]">{p.status}</Badge>
+                      <Badge variant={p.status === 'verified' ? 'success' : 'warning'} className="text-[11px]">{p.status}</Badge>
                     </div>
                   </div>
                 ))}
@@ -201,8 +201,8 @@ export default function FinanceDashboard() {
                   <div key={i} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
                     <p className="text-sm text-alo-text">{inv}</p>
                     <div className="flex items-center justify-between mt-1">
-                      <Badge variant="warning" className="text-[10px]">Overdue</Badge>
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-[10px] text-alo-brand">Send Reminder</Button>
+                      <Badge variant="warning" className="text-[11px]">Overdue</Badge>
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-[11px] text-alo-brand">Send Reminder</Button>
                     </div>
                   </div>
                 ))}

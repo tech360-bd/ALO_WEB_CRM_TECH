@@ -340,7 +340,7 @@ export function SuperAdminWebsiteCmsHub() {
       default:
         return (
           <div className="space-y-3">
-            <p className="text-xs text-slate-500">Editing {activeType} — generic JSON editor for advanced fields</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Editing {activeType} — generic JSON editor for advanced fields</p>
             <textarea className="w-full border rounded-lg px-3 py-2 text-xs font-mono" rows={12} value={JSON.stringify(formData, null, 2)} onChange={e=>{ try{ setFormData(JSON.parse(e.target.value)); }catch{}}} />
           </div>
         );
@@ -350,9 +350,9 @@ export function SuperAdminWebsiteCmsHub() {
   return (
     <div className="space-y-6">
       {/* Virtual Editor view switch (§15: website content vs site-wide & CRM content) */}
-      <div className="flex gap-2 border-b border-slate-200 pb-3">
-        <button onClick={() => setView("website")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "website" ? "bg-[#0057B8] text-white" : "bg-white border border-slate-200 hover:bg-slate-50"}`}>Website Content</button>
-        <button onClick={() => setView("managed")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "managed" ? "bg-[#0057B8] text-white" : "bg-white border border-slate-200 hover:bg-slate-50"}`}>Site-Wide &amp; CRM (Nav / Footer / SEO / CRM)</button>
+      <div className="flex gap-2 border-b border-[var(--alo-border)] pb-3">
+        <button onClick={() => setView("website")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "website" ? "bg-[var(--alo-brand)] text-white" : "bg-white border border-[var(--alo-border)] hover:bg-[var(--alo-page)]"}`}>Website Content</button>
+        <button onClick={() => setView("managed")} className={`px-3 py-2 rounded-xl text-sm font-medium transition ${view === "managed" ? "bg-[var(--alo-brand)] text-white" : "bg-white border border-[var(--alo-border)] hover:bg-[var(--alo-page)]"}`}>Site-Wide &amp; CRM (Nav / Footer / SEO / CRM)</button>
       </div>
       {view === "managed" && <ManagedContentManager />}
       {view === "website" && (
@@ -360,20 +360,20 @@ export function SuperAdminWebsiteCmsHub() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Super Admin — Website CMS Hub</h2>
-          <p className="text-sm text-slate-600 mt-1">Edit any part of website directly — real DB operations, audit logged, RBAC protected. Mobile PWA ready.</p>
+          <h2 className="text-2xl font-bold text-[var(--alo-text)]">Super Admin — Website CMS Hub</h2>
+          <p className="text-sm text-[var(--alo-body)] mt-1">Edit any part of website directly — operations, audit logged, RBAC protected. Mobile PWA ready.</p>
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchItems()} className="border rounded-lg px-3 py-2 text-sm w-48" />
-          <button onClick={fetchItems} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium">🔍 Search</button>
-          <button onClick={handleCreate} className="px-4 py-2 bg-[#0057B8] hover:bg-[#003F87] text-white rounded-lg text-sm font-semibold">+ New</button>
+          <button onClick={fetchItems} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-slate-200 rounded-lg text-sm font-medium">🔍 Search</button>
+          <button onClick={handleCreate} className="px-4 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-lg text-sm font-semibold">+ New</button>
         </div>
       </div>
 
       {/* Type tabs */}
       <div className="flex flex-wrap gap-2">
         {WEBSITE_TYPES.map(t => (
-          <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${activeType===t.key ? "bg-[#0057B8] text-white border-[#0057B8] shadow" : "bg-white hover:bg-slate-50 border-slate-200 text-slate-700"}`}>
+          <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${activeType===t.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]"}`}>
             <span className="mr-1">{t.icon}</span> {t.label}
           </button>
         ))}
@@ -394,14 +394,14 @@ export function SuperAdminWebsiteCmsHub() {
       </div>
 
       {/* Items table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-[var(--alo-border)] shadow-sm overflow-hidden">
         <div className="p-4 border-b flex items-center justify-between">
           <h3 className="font-semibold text-sm">{activeType} — {items.length} items {loading && "(loading...)"}</h3>
-          <span className="text-xs text-slate-500">Live data • Audit logged</span>
+          <span className="text-xs text-[var(--alo-text-muted)]">Live data • Audit logged</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-xs text-slate-500">
+            <thead className="bg-[var(--alo-page)] text-xs text-[var(--alo-text-muted)]">
               <tr>
                 <th className="text-left px-4 py-2">ID / Title</th>
                 <th className="text-left px-4 py-2">Key Info</th>
@@ -411,23 +411,23 @@ export function SuperAdminWebsiteCmsHub() {
             </thead>
             <tbody>
               {items.map(item=>(
-                <tr key={item.id} className="border-t hover:bg-slate-50">
+                <tr key={item.id} className="border-t hover:bg-[var(--alo-page)]">
                   <td className="px-4 py-2.5">
-                    <div className="font-medium text-slate-900 truncate max-w-[220px]">{item.title || item.name || item.headline || item.question || item.studentName || item.sectionKey || item.slug || item.id.slice(0,8)}</div>
-                    <div className="text-xs text-slate-400 font-mono">{item.id.slice(0,12)}...</div>
+                    <div className="font-medium text-[var(--alo-text)] truncate max-w-[220px]">{item.title || item.name || item.headline || item.question || item.studentName || item.sectionKey || item.slug || item.id.slice(0,8)}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] font-mono">{item.id.slice(0,12)}...</div>
                   </td>
                   <td className="px-4 py-2.5">
-                    <div className="text-xs text-slate-600 truncate max-w-[320px]">{item.subtitle || item.description || item.testimonial || item.answer || item.overview || item.heroTitle || item.countryId || item.factValue || item.cityName || item.heading || ""}</div>
+                    <div className="text-xs text-[var(--alo-body)] truncate max-w-[320px]">{item.subtitle || item.description || item.testimonial || item.answer || item.overview || item.heroTitle || item.countryId || item.factValue || item.cityName || item.heading || ""}</div>
                   </td>
-                  <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>{item.status||"—"}</span></td>
+                  <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-green-100 text-green-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{item.status||"—"}</span></td>
                   <td className="px-4 py-2.5 text-right space-x-1">
                     <button onClick={()=>handleEdit(item)} className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">Edit</button>
-                    <button onClick={()=>handleHistory(item)} className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">🕘 History</button>
+                    <button onClick={()=>handleHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
                     <button onClick={()=>handleDelete(item.id)} className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium">Delete</button>
                   </td>
                 </tr>
               ))}
-              {items.length===0 && !loading && <tr><td colSpan={4} className="px-4 py-12 text-center text-slate-400 text-sm">No items found. Create first {activeType}.</td></tr>}
+              {items.length===0 && !loading && <tr><td colSpan={4} className="px-4 py-12 text-center text-[var(--alo-text-muted)] text-sm">No items found. Create first {activeType}.</td></tr>}
             </tbody>
           </table>
         </div>
@@ -438,16 +438,16 @@ export function SuperAdminWebsiteCmsHub() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
-              <h3 className="font-bold text-slate-900">{editing ? "Edit" : "Create"} {activeType}</h3>
-              <button onClick={()=>setShowForm(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <h3 className="font-bold text-[var(--alo-text)]">{editing ? "Edit" : "Create"} {activeType}</h3>
+              <button onClick={()=>setShowForm(false)} className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">✕</button>
             </div>
             <div className="p-5 overflow-y-auto flex-1">
               {renderFormFields()}
             </div>
-            <div className="p-4 border-t bg-slate-50 flex justify-end gap-2">
+            <div className="p-4 border-t bg-[var(--alo-page)] flex justify-end gap-2">
               <button onClick={()=>setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
               <button onClick={handleSaveDraft} disabled={revisionBusy} className="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save as Draft</button>
-              <button onClick={handleSave} className="px-5 py-2 bg-[#0057B8] hover:bg-[#003F87] text-white rounded-xl text-sm font-semibold">Save</button>
+              <button onClick={handleSave} className="px-5 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-xl text-sm font-semibold">Save</button>
             </div>
           </div>
         </div>
@@ -459,29 +459,29 @@ export function SuperAdminWebsiteCmsHub() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-900">Revision History — {activeType}</h3>
-                <p className="text-xs text-slate-500 mt-0.5 font-mono">{historyFor.id.slice(0, 14)}… · every edit keeps a before-image snapshot; rollbacks are reversible</p>
+                <h3 className="font-bold text-[var(--alo-text)]">Revision History — {activeType}</h3>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-0.5 font-mono">{historyFor.id.slice(0, 14)}… · every edit keeps a before-image snapshot; rollbacks are reversible</p>
               </div>
-              <button onClick={()=>setHistoryFor(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+              <button onClick={()=>setHistoryFor(null)} className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">✕</button>
             </div>
             <div className="p-5 overflow-y-auto flex-1 space-y-2">
               {revisions.length === 0 && (
-                <p className="text-sm text-slate-400 text-center py-8">No revisions yet — edit this item to create version history.</p>
+                <p className="text-sm text-[var(--alo-text-muted)] text-center py-8">No revisions yet — edit this item to create version history.</p>
               )}
               {revisions.map((rev: any) => (
                 <div key={rev.id} className="border rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "DRAFT" ? "bg-amber-100 text-amber-700" : rev.kind === "PUBLISHED" ? "bg-green-100 text-green-700" : rev.kind === "ROLLBACK" ? "bg-purple-100 text-purple-700" : "bg-slate-100 text-slate-600"}`}>{rev.kind}</span>
-                      <span className="text-sm font-medium text-slate-800 truncate">{rev.label || "—"}</span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "DRAFT" ? "bg-amber-100 text-amber-700" : rev.kind === "PUBLISHED" ? "bg-green-100 text-green-700" : rev.kind === "ROLLBACK" ? "bg-purple-100 text-purple-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{rev.kind}</span>
+                      <span className="text-sm font-medium text-[var(--alo-text)] truncate">{rev.label || "—"}</span>
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">
                       {new Date(rev.createdAt).toLocaleString()} · by {rev.createdBy?.slice(0, 18)}
                       {rev.publishedAt ? ` · published ${new Date(rev.publishedAt).toLocaleString()}` : ""}
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={()=>handlePreviewRevision(rev.id)} className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border rounded-lg text-xs font-medium">Preview</button>
+                    <button onClick={()=>handlePreviewRevision(rev.id)} className="px-3 py-1.5 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] border rounded-lg text-xs font-medium">Preview</button>
                     {rev.kind === "DRAFT" && (
                       <button onClick={()=>handlePublishDraft(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold">Publish</button>
                     )}
@@ -491,8 +491,8 @@ export function SuperAdminWebsiteCmsHub() {
               ))}
             </div>
             {preview && (
-              <div className="border-t bg-slate-50 p-4">
-                <div className="text-xs font-semibold text-slate-600 mb-2">Preview — {preview.kind} revision (nothing is changed until you publish/rollback)</div>
+              <div className="border-t bg-[var(--alo-page)] p-4">
+                <div className="text-xs font-semibold text-[var(--alo-body)] mb-2">Preview — {preview.kind} revision (nothing is changed until you publish/rollback)</div>
                 <pre className="text-[11px] bg-white border rounded-lg p-3 max-h-56 overflow-auto whitespace-pre-wrap break-words">{JSON.stringify(preview.snapshot, null, 2)}</pre>
               </div>
             )}

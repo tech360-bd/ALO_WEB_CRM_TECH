@@ -44,7 +44,7 @@ const ELIGIBILITY_CONFIG: Record<string, { label: string; color: string; bg: str
   CONDITIONALLY_ELIGIBLE: { label: 'Conditional', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', icon: AlertCircle },
   PARTIALLY_MATCHED: { label: 'Partial Match', color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200', icon: HelpCircle },
   NOT_CURRENTLY_ELIGIBLE: { label: 'Not Eligible', color: 'text-red-700', bg: 'bg-red-50 border-red-200', icon: CircleAlert },
-  INSUFFICIENT_INFO: { label: 'Info Needed', color: 'text-slate-600', bg: 'bg-slate-50 border-slate-200', icon: HelpCircle },
+  INSUFFICIENT_INFO: { label: 'Info Needed', color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)] border-[var(--alo-border)]', icon: HelpCircle },
   COUNSELLOR_REVIEW_REQUIRED: { label: 'Counsellor Review', color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200', icon: Users },
 };
 
@@ -183,11 +183,11 @@ const DEFAULT_FILTERS: Filters = {
 // ============================================================
 function getLevelBadgeClasses(level: string): string {
   const l = level?.toLowerCase();
-  if (l?.includes('bachelor') || l?.includes('undergraduate')) return 'bg-[#0057B8]/10 text-[#0057B8]';
-  if (l?.includes('master') || l?.includes('postgraduate') || l?.includes('mres') || l?.includes('mphil')) return 'bg-[#0057B8]/20 text-[#0057B8]';
-  if (l?.includes('phd') || l?.includes('doctorate')) return 'bg-[#0057B8]/30 text-[#0057B8]';
+  if (l?.includes('bachelor') || l?.includes('undergraduate')) return 'bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]';
+  if (l?.includes('master') || l?.includes('postgraduate') || l?.includes('mres') || l?.includes('mphil')) return 'bg-[var(--alo-brand)]/20 text-[var(--alo-brand)]';
+  if (l?.includes('phd') || l?.includes('doctorate')) return 'bg-[var(--alo-brand)]/30 text-[var(--alo-brand)]';
   if (l?.includes('foundation') || l?.includes('international year')) return 'bg-sky-100 text-sky-800';
-  return 'bg-[#0057B8]/10 text-[#0057B8]';
+  return 'bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]';
 }
 
 function formatDate(iso: string): string {
@@ -247,7 +247,7 @@ function EligibilityBadge({ category }: { category: string }) {
 // ============================================================
 function CourseCardSkeleton() {
   return (
-    <Card className="overflow-hidden border-slate-200">
+    <Card className="overflow-hidden border-[var(--alo-border)]">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-2">
           <Skeleton className="h-4 w-28" /><Skeleton className="h-5 w-20 rounded-full" />
@@ -267,7 +267,7 @@ function CourseCardSkeleton() {
 
 function UniversityCardSkeleton() {
   return (
-    <Card className="overflow-hidden border-slate-200">
+    <Card className="overflow-hidden border-[var(--alo-border)]">
       <CardContent className="p-5 space-y-4">
         <Skeleton className="h-5 w-2/3" /><Skeleton className="h-4 w-40" />
         <div className="flex gap-2"><Skeleton className="h-6 w-20 rounded-full" /><Skeleton className="h-6 w-24 rounded-full" /></div>
@@ -314,7 +314,7 @@ function HeroSection({
         <div className="mt-8 max-w-5xl">
           <div className="bg-white rounded-xl shadow-xl p-2 flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
               <Input placeholder="Search courses, subjects, universities..." value={keyword}
                 onChange={(e) => onKeywordChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && onSearch()}
@@ -322,7 +322,7 @@ function HeroSection({
             </div>
             <Select value={country} onValueChange={(v) => onCountryChange(v === '__all__' ? '' : v)}>
               <SelectTrigger className="sm:w-40 h-11 text-sm border-0 shadow-none focus:ring-0">
-                <Globe className="size-4 text-slate-400 mr-1" /><SelectValue placeholder="Country" />
+                <Globe className="size-4 text-[var(--alo-text-muted)] mr-1" /><SelectValue placeholder="Country" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">All Countries</SelectItem>
@@ -331,7 +331,7 @@ function HeroSection({
             </Select>
             <Select value={studyLevel} onValueChange={(v) => onStudyLevelChange(v === '__all__' ? '' : v)}>
               <SelectTrigger className="sm:w-40 h-11 text-sm border-0 shadow-none focus:ring-0">
-                <GraduationCap className="size-4 text-slate-400 mr-1" /><SelectValue placeholder="Study Level" />
+                <GraduationCap className="size-4 text-[var(--alo-text-muted)] mr-1" /><SelectValue placeholder="Study Level" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">All Levels</SelectItem>
@@ -343,7 +343,7 @@ function HeroSection({
             </Select>
             <Select value={intake} onValueChange={(v) => onIntakeChange(v === '__all__' ? '' : v)}>
               <SelectTrigger className="sm:w-36 h-11 text-sm border-0 shadow-none focus:ring-0">
-                <CalendarDays className="size-4 text-slate-400 mr-1" /><SelectValue placeholder="Intake" />
+                <CalendarDays className="size-4 text-[var(--alo-text-muted)] mr-1" /><SelectValue placeholder="Intake" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="__all__">Any Intake</SelectItem>
@@ -397,8 +397,8 @@ function EntryOptions({ onSelect }: { onSelect: (option: 'profile' | 'manual' | 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
       <div className="text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">How would you like to find courses?</h2>
-        <p className="text-slate-500 mt-2 text-sm sm:text-base max-w-2xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[var(--alo-text)]">How would you like to find courses?</h2>
+        <p className="text-[var(--alo-text-muted)] mt-2 text-sm sm:text-base max-w-2xl mx-auto">
           Choose the approach that works best for you. All paths lead to the same verified course database.
         </p>
       </div>
@@ -416,8 +416,8 @@ function EntryOptions({ onSelect }: { onSelect: (option: 'profile' | 'manual' | 
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: opt.tagBg, color: opt.tagColor }}>{opt.tag}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 text-base group-hover:text-slate-800 transition-colors">{opt.title}</h3>
-                  <p className="text-sm text-slate-500 mt-2 leading-relaxed">{opt.description}</p>
+                  <h3 className="font-semibold text-[var(--alo-text)] text-base group-hover:text-[var(--alo-text)] transition-colors">{opt.title}</h3>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-2 leading-relaxed">{opt.description}</p>
                 </div>
                 <div className="flex items-center gap-1 text-sm font-semibold mt-auto pt-2" style={{ color: opt.iconColor }}>
                   {opt.id === 'profile' && 'Start Profile Check'}
@@ -509,14 +509,14 @@ function ProfileStep2({ tests, onChange, onAdd, onRemove }: {
   return (
     <div className="space-y-5">
       {tests.length === 0 && (
-        <div className="text-center py-8 bg-slate-50 rounded-lg">
-          <Languages className="size-8 text-slate-300 mx-auto mb-2" />
-          <p className="text-sm text-slate-500">No English test added yet.</p>
-          <p className="text-xs text-slate-400 mt-1">Click below if you have taken an English proficiency test.</p>
+        <div className="text-center py-8 bg-[var(--alo-page)] rounded-lg">
+          <Languages className="size-8 text-[var(--alo-placeholder)] mx-auto mb-2" />
+          <p className="text-sm text-[var(--alo-text-muted)]">No English test added yet.</p>
+          <p className="text-xs text-[var(--alo-text-muted)] mt-1">Click below if you have taken an English proficiency test.</p>
         </div>
       )}
       {tests.map((test, i) => (
-        <Card key={i} className="p-4 border-slate-200">
+        <Card key={i} className="p-4 border-[var(--alo-border)]">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2"><Languages className="size-4" style={{ color: ALO_BLUE }} /><span className="font-medium text-sm">Test #{i + 1}</span></div>
             <Button variant="ghost" size="sm" className="h-7 text-xs text-red-500 hover:text-red-700" onClick={() => onRemove(i)}><X className="size-3 mr-1" />Remove</Button>
@@ -538,7 +538,7 @@ function ProfileStep2({ tests, onChange, onAdd, onRemove }: {
         </Card>
       ))}
       <Button variant="outline" size="sm" className="text-xs" onClick={onAdd}><Plus className="size-3.5 mr-1" />Add English Test</Button>
-      <p className="text-xs text-slate-400">If you haven't taken any English test yet, you can leave this section empty.</p>
+      <p className="text-xs text-[var(--alo-text-muted)]">If you haven't taken any English test yet, you can leave this section empty.</p>
     </div>
   );
 }
@@ -552,7 +552,7 @@ function ProfileStep3({ work, gap, onWorkChange, onGapChange }: {
         <div className="space-y-1.5">
           <Label className="text-sm font-medium">Total Work Experience (months)</Label>
           <Input type="number" min="0" max="600" placeholder="e.g. 24" value={work.totalMonths} onChange={(e) => onWorkChange({ ...work, totalMonths: e.target.value })} />
-          <p className="text-xs text-slate-400">0 if no work experience</p>
+          <p className="text-xs text-[var(--alo-text-muted)]">0 if no work experience</p>
         </div>
         <div className="space-y-1.5">
           <Label className="text-sm font-medium">Work Field</Label>
@@ -564,7 +564,7 @@ function ProfileStep3({ work, gap, onWorkChange, onGapChange }: {
         <div className="space-y-1.5">
           <Label className="text-sm font-medium">Study Gap (months)</Label>
           <Input type="number" min="0" max="300" placeholder="e.g. 12" value={gap.months} onChange={(e) => onGapChange({ ...gap, months: e.target.value })} />
-          <p className="text-xs text-slate-400">0 if no gap</p>
+          <p className="text-xs text-[var(--alo-text-muted)]">0 if no gap</p>
         </div>
         <div className="space-y-1.5">
           <Label className="text-sm font-medium">Gap Reason</Label>
@@ -617,7 +617,7 @@ function ProfileStep4({ prefs, onChange }: { prefs: StudyPreferences; onChange: 
       <div className="space-y-1.5">
         <Label className="text-sm font-medium">Maximum Budget (BDT/year)</Label>
         <Input type="number" min="0" placeholder="e.g. 2000000" value={prefs.maxBudget} onChange={(e) => u('maxBudget', e.target.value)} />
-        <p className="text-xs text-slate-400">Leave empty if no budget constraint</p>
+        <p className="text-xs text-[var(--alo-text-muted)]">Leave empty if no budget constraint</p>
       </div>
     </div>
   );
@@ -650,20 +650,20 @@ function FilterSidebar({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2"><Filter className="size-4" />Filters</h3>
+        <h3 className="font-semibold text-sm text-[var(--alo-text)] flex items-center gap-2"><Filter className="size-4" />Filters</h3>
         {activeCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={onReset} className="text-xs text-slate-500 h-7">Clear all ({activeCount})</Button>
+          <Button variant="ghost" size="sm" onClick={onReset} className="text-xs text-[var(--alo-text-muted)] h-7">Clear all ({activeCount})</Button>
         )}
       </div>
       <Separator />
 
       {/* Keyword */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Keyword</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Keyword</h4>
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-slate-400" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-[var(--alo-text-muted)]" />
           <Input placeholder="Search..." value={filters.keyword} onChange={(e) => onFiltersChange({ ...filters, keyword: e.target.value })} className="pl-8 h-9 text-sm" />
-          {filters.keyword && <button onClick={() => onFiltersChange({ ...filters, keyword: '' })} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><X className="size-3" /></button>}
+          {filters.keyword && <button onClick={() => onFiltersChange({ ...filters, keyword: '' })} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"><X className="size-3" /></button>}
         </div>
       </div>
       <Separator />
@@ -672,7 +672,7 @@ function FilterSidebar({
       {showEligibilityFilter && (
         <>
           <div className="space-y-2">
-            <h4 className="text-sm font-medium text-slate-700">Eligibility</h4>
+            <h4 className="text-sm font-medium text-[var(--alo-body)]">Eligibility</h4>
             <Select value={filters.eligibilityFilter} onValueChange={(v) => onFiltersChange({ ...filters, eligibilityFilter: v })}>
               <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
               <SelectContent>
@@ -690,15 +690,15 @@ function FilterSidebar({
 
       {/* Country */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Country</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Country</h4>
         <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
           {countries.length > 0 ? countries.map((c) => (
             <label key={c.name} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox checked={filters.countries.includes(c.name)} onCheckedChange={() => toggleArrayFilter('countries', c.name)} className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]" />
-              <span className="text-sm text-slate-600 group-hover:text-slate-900 flex-1">{c.name}</span>
-              <span className="text-xs text-slate-400">{c.count}</span>
+              <Checkbox checked={filters.countries.includes(c.name)} onCheckedChange={() => toggleArrayFilter('countries', c.name)} className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]" />
+              <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)] flex-1">{c.name}</span>
+              <span className="text-xs text-[var(--alo-text-muted)]">{c.count}</span>
             </label>
-          )) : <p className="text-xs text-slate-400">Loading countries...</p>}
+          )) : <p className="text-xs text-[var(--alo-text-muted)]">Loading countries...</p>}
         </div>
       </div>
       <Separator />
@@ -706,12 +706,12 @@ function FilterSidebar({
       {/* City */}
       {cities.length > 0 && (<>
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-slate-700">City</h4>
+          <h4 className="text-sm font-medium text-[var(--alo-body)]">City</h4>
           <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
             {cities.map((city) => (
               <label key={city} className="flex items-center gap-2 cursor-pointer group">
-                <Checkbox checked={filters.cities.includes(city)} onCheckedChange={() => toggleArrayFilter('cities', city)} className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]" />
-                <span className="text-sm text-slate-600 group-hover:text-slate-900">{city}</span>
+                <Checkbox checked={filters.cities.includes(city)} onCheckedChange={() => toggleArrayFilter('cities', city)} className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]" />
+                <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">{city}</span>
               </label>
             ))}
           </div>
@@ -721,22 +721,22 @@ function FilterSidebar({
 
       {/* Study Level (checkboxes) */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Study Level</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Study Level</h4>
         <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
           {studyLevels.length > 0 ? studyLevels.map((l) => (
             <label key={l.name} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox checked={filters.studyLevels.includes(l.name)} onCheckedChange={() => toggleArrayFilter('studyLevels', l.name)} className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]" />
-              <span className="text-sm text-slate-600 group-hover:text-slate-900 flex-1">{l.name}</span>
-              <span className="text-xs text-slate-400">{l.count}</span>
+              <Checkbox checked={filters.studyLevels.includes(l.name)} onCheckedChange={() => toggleArrayFilter('studyLevels', l.name)} className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]" />
+              <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)] flex-1">{l.name}</span>
+              <span className="text-xs text-[var(--alo-text-muted)]">{l.count}</span>
             </label>
-          )) : <p className="text-xs text-slate-400">Loading levels...</p>}
+          )) : <p className="text-xs text-[var(--alo-text-muted)]">Loading levels...</p>}
         </div>
       </div>
       <Separator />
 
       {/* Qualification */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Qualification</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Qualification</h4>
         <Select value={filters.qualification} onValueChange={(v) => onFiltersChange({ ...filters, qualification: v === '__all__' ? '' : v })}>
           <SelectTrigger className="w-full"><SelectValue placeholder="Any qualification" /></SelectTrigger>
           <SelectContent>
@@ -749,7 +749,7 @@ function FilterSidebar({
 
       {/* Subject Area */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Subject Area</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Subject Area</h4>
         <Select value={filters.subjectArea} onValueChange={(v) => onFiltersChange({ ...filters, subjectArea: v === '__all__' ? '' : v })}>
           <SelectTrigger className="w-full"><SelectValue placeholder="All subjects" /></SelectTrigger>
           <SelectContent>
@@ -762,12 +762,12 @@ function FilterSidebar({
 
       {/* Intake Month (checkboxes) */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Intake Month</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Intake Month</h4>
         <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
           {ALL_MONTHS.map((m) => (
             <label key={m} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox checked={filters.intakeMonths.includes(m)} onCheckedChange={() => toggleArrayFilter('intakeMonths', m)} className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]" />
-              <span className="text-sm text-slate-600 group-hover:text-slate-900">{m}</span>
+              <Checkbox checked={filters.intakeMonths.includes(m)} onCheckedChange={() => toggleArrayFilter('intakeMonths', m)} className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]" />
+              <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">{m}</span>
             </label>
           ))}
         </div>
@@ -775,7 +775,7 @@ function FilterSidebar({
 
       {/* Intake Year */}
       <div className="space-y-2 mt-3">
-        <h4 className="text-sm font-medium text-slate-700">Intake Year</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Intake Year</h4>
         <Select value={filters.intakeYear} onValueChange={(v) => onFiltersChange({ ...filters, intakeYear: v === '__all__' ? '' : v })}>
           <SelectTrigger><SelectValue placeholder="Any year" /></SelectTrigger>
           <SelectContent>
@@ -788,10 +788,10 @@ function FilterSidebar({
 
       {/* Tuition Fee Range */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Tuition Fee (GBP/yr)</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Tuition Fee (GBP/yr)</h4>
         <div className="px-1">
-          <Slider min={0} max={100000} step={1000} value={filters.tuitionRange} onValueChange={(v) => onFiltersChange({ ...filters, tuitionRange: v as [number, number] })} className="[&_[data-slot=slider-range]]:bg-[#0057B8] [&_[data-slot=slider-thumb]]:border-[#0057B8]" />
-          <div className="flex justify-between mt-1.5 text-xs text-slate-500">
+          <Slider min={0} max={100000} step={1000} value={filters.tuitionRange} onValueChange={(v) => onFiltersChange({ ...filters, tuitionRange: v as [number, number] })} className="[&_[data-slot=slider-range]]:bg-[var(--alo-brand)] [&_[data-slot=slider-thumb]]:border-[var(--alo-brand)]" />
+          <div className="flex justify-between mt-1.5 text-xs text-[var(--alo-text-muted)]">
             <span>£{filters.tuitionRange[0].toLocaleString()}</span>
             <span>£{filters.tuitionRange[1].toLocaleString()}</span>
           </div>
@@ -801,7 +801,7 @@ function FilterSidebar({
 
       {/* English Test */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">English Test</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">English Test</h4>
         <Select value={filters.englishTestType} onValueChange={(v) => onFiltersChange({ ...filters, englishTestType: v === '__all__' ? '' : v })}>
           <SelectTrigger><SelectValue placeholder="Any test" /></SelectTrigger>
           <SelectContent>
@@ -810,26 +810,26 @@ function FilterSidebar({
           </SelectContent>
         </Select>
         <div className="px-1 mt-2">
-          <Label className="text-xs text-slate-500">Min Score: {filters.englishMinScore > 0 ? filters.englishMinScore : 'Any'}</Label>
-          <Slider min={0} max={9} step={0.5} value={[filters.englishMinScore]} onValueChange={(v) => onFiltersChange({ ...filters, englishMinScore: v[0] })} className="[&_[data-slot=slider-range]]:bg-[#0057B8] [&_[data-slot=slider-thumb]]:border-[#0057B8]" />
+          <Label className="text-xs text-[var(--alo-text-muted)]">Min Score: {filters.englishMinScore > 0 ? filters.englishMinScore : 'Any'}</Label>
+          <Slider min={0} max={9} step={0.5} value={[filters.englishMinScore]} onValueChange={(v) => onFiltersChange({ ...filters, englishMinScore: v[0] })} className="[&_[data-slot=slider-range]]:bg-[var(--alo-brand)] [&_[data-slot=slider-thumb]]:border-[var(--alo-brand)]" />
         </div>
       </div>
       <Separator />
 
       {/* Scholarship */}
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-slate-700">Scholarship Only</h4>
-        <Switch checked={filters.scholarshipOnly} onCheckedChange={(v) => onFiltersChange({ ...filters, scholarshipOnly: v })} className="data-[state=checked]:bg-[#0057B8]" />
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Scholarship Only</h4>
+        <Switch checked={filters.scholarshipOnly} onCheckedChange={(v) => onFiltersChange({ ...filters, scholarshipOnly: v })} className="data-[state=checked]:bg-[var(--alo-brand)]" />
       </div>
       <Separator />
 
       {/* Delivery Mode */}
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Delivery Mode</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Delivery Mode</h4>
         {DELIVERY_MODES.map((mode) => (
           <label key={mode} className="flex items-center gap-2 cursor-pointer group">
-            <Checkbox checked={filters.deliveryMode === mode} onCheckedChange={(checked) => onFiltersChange({ ...filters, deliveryMode: checked ? mode : '' })} className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]" />
-            <span className="text-sm text-slate-600 group-hover:text-slate-900">{mode}</span>
+            <Checkbox checked={filters.deliveryMode === mode} onCheckedChange={(checked) => onFiltersChange({ ...filters, deliveryMode: checked ? mode : '' })} className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]" />
+            <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">{mode}</span>
           </label>
         ))}
       </div>
@@ -852,13 +852,13 @@ function EnhancedCourseCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow border-slate-200 group">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow border-[var(--alo-border)] group">
       <CardContent className="p-4 flex flex-col gap-3">
         {/* Top: University + Eligibility Badge + Match Score */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate" style={{ color: ALO_BLUE }}>{course.universityName}</p>
-            <h3 className="font-semibold text-slate-900 leading-snug line-clamp-2 text-sm mt-0.5 min-h-[2.5rem]">{course.title}</h3>
+            <h3 className="font-semibold text-[var(--alo-text)] leading-snug line-clamp-2 text-sm mt-0.5 min-h-[2.5rem]">{course.title}</h3>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
             {matchScore !== undefined && <MatchScoreCircle score={matchScore} />}
@@ -867,19 +867,19 @@ function EnhancedCourseCard({
         </div>
 
         {/* Country + City */}
-        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+        <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
           <MapPin className="size-3" /><span>{course.city}{course.city && course.country ? ', ' : ''}{course.country}</span>
         </div>
 
         {/* Detail Grid */}
-        <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-600">
-          <div className="flex items-center gap-1.5"><Clock className="size-3.5 text-slate-400" /><span>{course.duration}</span></div>
-          <div className="flex items-center gap-1.5"><DollarSign className="size-3.5 text-slate-400" /><span>£{course.tuitionFee?.toLocaleString()}/yr</span></div>
-          {course.qualification && <div className="flex items-center gap-1.5"><FileText className="size-3.5 text-slate-400" /><span className="truncate">{course.qualification}</span></div>}
-          {course.studyLevel && <Badge variant="secondary" className={`text-[10px] ${getLevelBadgeClasses(course.studyLevel)}`}>{course.studyLevel}</Badge>}
-          {course.ieltsMin > 0 && <div className="flex items-center gap-1.5"><GraduationCap className="size-3.5 text-slate-400" /><span>IELTS {course.ieltsMin}</span></div>}
-          {course.pteMin > 0 && <div className="flex items-center gap-1.5"><GraduationCap className="size-3.5 text-slate-400" /><span>PTE {course.pteMin}</span></div>}
-          {course.nextIntake && <div className="flex items-center gap-1.5"><CalendarDays className="size-3.5 text-slate-400" /><span>Intake: {course.nextIntake}</span></div>}
+        <div className="grid grid-cols-2 gap-1.5 text-xs text-[var(--alo-body)]">
+          <div className="flex items-center gap-1.5"><Clock className="size-3.5 text-[var(--alo-text-muted)]" /><span>{course.duration}</span></div>
+          <div className="flex items-center gap-1.5"><DollarSign className="size-3.5 text-[var(--alo-text-muted)]" /><span>£{course.tuitionFee?.toLocaleString()}/yr</span></div>
+          {course.qualification && <div className="flex items-center gap-1.5"><FileText className="size-3.5 text-[var(--alo-text-muted)]" /><span className="truncate">{course.qualification}</span></div>}
+          {course.studyLevel && <Badge variant="secondary" className={`text-[11px] ${getLevelBadgeClasses(course.studyLevel)}`}>{course.studyLevel}</Badge>}
+          {course.ieltsMin > 0 && <div className="flex items-center gap-1.5"><GraduationCap className="size-3.5 text-[var(--alo-text-muted)]" /><span>IELTS {course.ieltsMin}</span></div>}
+          {course.pteMin > 0 && <div className="flex items-center gap-1.5"><GraduationCap className="size-3.5 text-[var(--alo-text-muted)]" /><span>PTE {course.pteMin}</span></div>}
+          {course.nextIntake && <div className="flex items-center gap-1.5"><CalendarDays className="size-3.5 text-[var(--alo-text-muted)]" /><span>Intake: {course.nextIntake}</span></div>}
         </div>
 
         {/* Badges */}
@@ -888,13 +888,13 @@ function EnhancedCourseCard({
             <Badge className="text-xs font-medium" style={{ backgroundColor: ALO_ORANGE, color: '#fff' }}><Award className="size-3 mr-1" />Scholarship</Badge>
           )}
           {course.lastVerifiedAt && (
-            <Badge variant="outline" className="text-[10px] text-slate-500 gap-1"><ShieldCheck className="size-3" />Verified {formatDate(course.lastVerifiedAt)}</Badge>
+            <Badge variant="outline" className="text-[11px] text-[var(--alo-text-muted)] gap-1"><ShieldCheck className="size-3" />Verified {formatDate(course.lastVerifiedAt)}</Badge>
           )}
         </div>
 
         {/* Why Matched / How to Qualify (expandable for eligibility results) */}
         {requirements && requirements.length > 0 && (
-          <div className="border-t border-slate-100 pt-2">
+          <div className="border-t border-[var(--alo-border)] pt-2">
             <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 text-xs font-medium" style={{ color: ALO_BLUE }}>
               {expanded ? <ChevronDown className="size-3" /> : <ChevronRight className="size-3" />}
               {improvements && improvements.length > 0 ? 'How to Qualify' : 'Why Matched'}
@@ -902,14 +902,14 @@ function EnhancedCourseCard({
             {expanded && (
               <div className="mt-2 space-y-2">
                 {requirements.map((req, i) => (
-                  <div key={i} className={`flex items-start gap-2 text-xs p-2 rounded ${req.status === 'MET' ? 'bg-emerald-50' : req.status === 'CONDITION' ? 'bg-amber-50' : req.status === 'NOT_MET' ? 'bg-red-50' : 'bg-slate-50'}`}>
+                  <div key={i} className={`flex items-start gap-2 text-xs p-2 rounded ${req.status === 'MET' ? 'bg-emerald-50' : req.status === 'CONDITION' ? 'bg-amber-50' : req.status === 'NOT_MET' ? 'bg-red-50' : 'bg-[var(--alo-page)]'}`}>
                     {req.status === 'MET' ? <CheckCircle2 className="size-3.5 text-emerald-600 mt-0.5 shrink-0" />
                       : req.status === 'NOT_MET' ? <CircleAlert className="size-3.5 text-red-500 mt-0.5 shrink-0" />
                       : <HelpCircle className="size-3.5 text-amber-500 mt-0.5 shrink-0" />}
                     <div className="min-w-0">
-                      <p className="font-medium text-slate-700">{req.name}</p>
-                      <p className="text-slate-500">Required: {req.required} | Your: {req.actual || 'Not provided'}</p>
-                      {req.improvementTip && <p className="text-slate-400 mt-0.5">Tip: {req.improvementTip}</p>}
+                      <p className="font-medium text-[var(--alo-body)]">{req.name}</p>
+                      <p className="text-[var(--alo-text-muted)]">Required: {req.required} | Your: {req.actual || 'Not provided'}</p>
+                      {req.improvementTip && <p className="text-[var(--alo-text-muted)] mt-0.5">Tip: {req.improvementTip}</p>}
                     </div>
                   </div>
                 ))}
@@ -917,7 +917,7 @@ function EnhancedCourseCard({
                   <div className="mt-2 p-2 bg-amber-50 rounded">
                     <p className="text-xs font-semibold text-amber-700 mb-1">Improvement Plan</p>
                     {improvements.map((imp, i) => (
-                      <div key={i} className="text-xs text-slate-600 mb-1">
+                      <div key={i} className="text-xs text-[var(--alo-body)] mb-1">
                         <span className="font-medium">{imp.gap}</span> — {imp.action} ({imp.timeframe})
                       </div>
                     ))}
@@ -960,36 +960,36 @@ function UniversityCard({ university, onViewCourses, onCompare }: {
   university: UniversityResult; onViewCourses: (u: UniversityResult) => void; onCompare: (u: UniversityResult) => void;
 }) {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow border-slate-200">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-5 flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-slate-900 text-base leading-snug truncate">{university.name}</h3>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1"><MapPin className="size-3" /><span>{university.city}{university.city && university.country ? ', ' : ''}{university.country}</span></div>
+            <h3 className="font-semibold text-[var(--alo-text)] text-base leading-snug truncate">{university.name}</h3>
+            <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)] mt-1"><MapPin className="size-3" /><span>{university.city}{university.city && university.country ? ', ' : ''}{university.country}</span></div>
           </div>
           {university.featured && <Badge className="shrink-0 text-xs font-medium" style={{ backgroundColor: ALO_ORANGE, color: '#fff' }}><Star className="size-3 mr-0.5" />Featured</Badge>}
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {university.institutionType && <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700"><Building2 className="size-3 mr-1" />{university.institutionType}</Badge>}
+          {university.institutionType && <Badge variant="secondary" className="text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"><Building2 className="size-3 mr-1" />{university.institutionType}</Badge>}
           {university.scholarshipAvailable && <Badge className="text-xs" style={{ backgroundColor: ALO_ORANGE, color: '#fff' }}><Award className="size-3 mr-1" />Scholarship</Badge>}
         </div>
         <div className="grid grid-cols-3 gap-3">
           {university.rankingValue > 0 && (
-            <div className="bg-slate-50 rounded-lg p-2 text-center">
+            <div className="bg-[var(--alo-page)] rounded-lg p-2 text-center">
               <p className="text-lg font-bold" style={{ color: ALO_BLUE }}>#{university.rankingValue}</p>
-              <p className="text-[10px] text-slate-500 leading-tight">{university.rankingProvider}{university.rankingYear ? ` ${university.rankingYear}` : ''}</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] leading-tight">{university.rankingProvider}{university.rankingYear ? ` ${university.rankingYear}` : ''}</p>
             </div>
           )}
-          <div className="bg-slate-50 rounded-lg p-2 text-center">
+          <div className="bg-[var(--alo-page)] rounded-lg p-2 text-center">
             <p className="text-lg font-bold" style={{ color: ALO_BLUE }}>{university._count?.courses ?? '—'}</p>
-            <p className="text-[10px] text-slate-500 leading-tight">Courses</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)] leading-tight">Courses</p>
           </div>
-          <div className="bg-slate-50 rounded-lg p-2 text-center">
+          <div className="bg-[var(--alo-page)] rounded-lg p-2 text-center">
             <p className="text-lg font-bold" style={{ color: ALO_BLUE }}>{university.keyIntakes ? university.keyIntakes.split(',').length : '—'}</p>
-            <p className="text-[10px] text-slate-500 leading-tight">Intakes</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)] leading-tight">Intakes</p>
           </div>
         </div>
-        {university.lastVerifiedAt && <div className="flex items-center gap-1 text-xs text-slate-400"><ShieldCheck className="size-3" /><span>Verified {formatDate(university.lastVerifiedAt)}</span></div>}
+        {university.lastVerifiedAt && <div className="flex items-center gap-1 text-xs text-[var(--alo-text-muted)]"><ShieldCheck className="size-3" /><span>Verified {formatDate(university.lastVerifiedAt)}</span></div>}
         <div className="flex gap-2 pt-1">
           <Button size="sm" className="flex-1 h-12 text-xs font-semibold text-white" style={{ backgroundColor: ALO_BLUE }} onClick={() => onViewCourses(university)}><BookOpen className="size-3 mr-1" />View Courses</Button>
           <Button variant="outline" size="sm" className="h-12 text-xs" onClick={() => onCompare(university)}><GitCompare className="size-3 mr-1" />Compare</Button>
@@ -1028,8 +1028,8 @@ function CounsellorForm({ onBack }: { onBack: () => void }) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
         <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6"><CheckCircle2 className="size-10 text-emerald-600" /></div>
-        <h2 className="text-2xl font-bold text-slate-900">Request Submitted!</h2>
-        <p className="mt-3 text-slate-500 max-w-md mx-auto">Our counsellor will contact you within 24 hours. Thank you for choosing ALO Education.</p>
+        <h2 className="text-2xl font-bold text-[var(--alo-text)]">Request Submitted!</h2>
+        <p className="mt-3 text-[var(--alo-text-muted)] max-w-md mx-auto">Our counsellor will contact you within 24 hours. Thank you for choosing ALO Education.</p>
         <Button className="mt-6 text-white" style={{ backgroundColor: ALO_BLUE }} onClick={onBack}>Back to Course Finder</Button>
       </div>
     );
@@ -1037,13 +1037,13 @@ function CounsellorForm({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
-      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] mb-6 transition-colors">
+      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />Back to Course Finder
       </button>
       <Card>
         <CardHeader>
           <CardTitle className="text-xl" style={{ color: ALO_BLUE }}>Request a Counsellor Consultation</CardTitle>
-          <p className="text-sm text-slate-500">Fill in your details and an ALO Education counsellor will build a personalised shortlist for you.</p>
+          <p className="text-sm text-[var(--alo-text-muted)]">Fill in your details and an ALO Education counsellor will build a personalised shortlist for you.</p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1091,10 +1091,10 @@ function EligibilitySummaryBar({ summary }: { summary: Record<string, number> })
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
         {items.filter((i) => i.count > 0).map((item) => (
-          <div key={item.key} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200">
+          <div key={item.key} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)]">
             <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-            <span className="text-xs font-medium text-slate-700">{item.label}</span>
-            <span className="text-xs font-bold text-slate-900">{item.count}</span>
+            <span className="text-xs font-medium text-[var(--alo-body)]">{item.label}</span>
+            <span className="text-xs font-bold text-[var(--alo-text)]">{item.count}</span>
           </div>
         ))}
       </div>
@@ -1300,11 +1300,11 @@ export function CourseFinderEnhanced() {
     }
     return (
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-8">
-        <p className="text-xs text-slate-500">Showing page {currentPage} of {totalPages} ({totalResults} results)</p>
+        <p className="text-xs text-[var(--alo-text-muted)]">Showing page {currentPage} of {totalPages} ({totalResults} results)</p>
         <div className="flex items-center gap-1">
           <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)} className="h-8 w-8 p-0"><ChevronLeft className="size-4" /></Button>
           {pages.map((page, idx) => typeof page === 'string'
-            ? <span key={`ellipsis-${idx}`} className="px-2 text-sm text-slate-400">...</span>
+            ? <span key={`ellipsis-${idx}`} className="px-2 text-sm text-[var(--alo-text-muted)]">...</span>
             : <Button key={page} variant={currentPage === page ? 'default' : 'outline'} size="sm" onClick={() => setCurrentPage(page)} className={currentPage === page ? 'h-8 w-8 p-0 text-white' : 'h-8 w-8 p-0'} style={currentPage === page ? { backgroundColor: ALO_BLUE } : undefined}>{page}</Button>
           )}
           <Button variant="outline" size="sm" disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)} className="h-8 w-8 p-0"><ChevronRight className="size-4" /></Button>
@@ -1324,14 +1324,14 @@ export function CourseFinderEnhanced() {
   ];
 
   const renderTabs = () => (
-    <div className="border-b border-slate-200 bg-white sticky top-0 z-30">
+    <div className="border-b border-[var(--alo-border)] bg-white sticky top-0 z-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex gap-0">
           {TAB_CONFIG.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.value;
             return (
-              <button key={tab.value} onClick={() => setActiveTab(tab.value)} className={`relative inline-flex items-center gap-2 px-4 sm:px-6 py-3.5 text-sm font-medium transition-colors whitespace-nowrap ${isActive ? 'text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+              <button key={tab.value} onClick={() => setActiveTab(tab.value)} className={`relative inline-flex items-center gap-2 px-4 sm:px-6 py-3.5 text-sm font-medium transition-colors whitespace-nowrap ${isActive ? 'text-white' : 'text-[var(--alo-body)] hover:text-[var(--alo-text)]'}`}>
                 <Icon className="size-4" />{tab.label}
                 {isActive && <span className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: ALO_BLUE }} />}
                 {isActive && <span className="absolute inset-0 -z-10" style={{ backgroundColor: ALO_BLUE }} />}
@@ -1353,8 +1353,8 @@ export function CourseFinderEnhanced() {
         <EntryOptions onSelect={handleEntrySelect} />
         <section style={{ backgroundColor: '#F0F6FF' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Ready to Study Abroad?</h2>
-            <p className="mt-3 text-slate-600 text-sm sm:text-base max-w-xl mx-auto">Book a Free Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--alo-text)]">Ready to Study Abroad?</h2>
+            <p className="mt-3 text-[var(--alo-body)] text-sm sm:text-base max-w-xl mx-auto">Book a Free Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Book a Free Consultation<ArrowRight className="size-4 ml-2" /></Button>
               <Button variant="outline" size="lg" className="px-8 text-sm font-medium" style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} asChild>
@@ -1363,7 +1363,7 @@ export function CourseFinderEnhanced() {
             </div>
           </div>
         </section>
-        <footer className="bg-slate-900 text-slate-400 py-6">
+        <footer className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] py-6 text-[var(--alo-text-muted)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs">
             © {new Date().getFullYear()} ALO Education. All rights reserved.
           </div>
@@ -1398,11 +1398,11 @@ export function CourseFinderEnhanced() {
       <div className="min-h-screen bg-white">
         <HeroSection keyword={heroKeyword} onKeywordChange={setHeroKeyword} country={heroCountry} onCountryChange={setHeroCountry} studyLevel={heroStudyLevel} onStudyLevelChange={setHeroStudyLevel} intake={heroIntake} onIntakeChange={setHeroIntake} onSearch={handleHeroSearch} onCounsellor={() => setView('counsellor')} studyLevels={filterOptions.studyLevels} />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <button onClick={() => setView('landing')} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] mb-6 transition-colors">
+          <button onClick={() => setView('landing')} className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] mb-6 transition-colors">
             <ArrowLeft className="h-4 w-4" />Back to options
           </button>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Profile-Based Eligibility Check</h2>
-          <p className="text-sm text-slate-500 mb-8">Tell us about your academic background and we will match you with courses you are eligible for.</p>
+          <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Profile-Based Eligibility Check</h2>
+          <p className="text-sm text-[var(--alo-text-muted)] mb-8">Tell us about your academic background and we will match you with courses you are eligible for.</p>
 
           {/* Step Indicator */}
           <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
@@ -1411,8 +1411,8 @@ export function CourseFinderEnhanced() {
               const isActive = profileStep === i + 1;
               const isDone = profileStep > i + 1;
               return (
-                <button key={i} onClick={() => setProfileStep(i + 1)} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${isActive ? 'text-white' : isDone ? 'text-slate-700 bg-slate-100' : 'text-slate-400 bg-slate-50'}`} style={isActive ? { backgroundColor: ALO_BLUE } : undefined}>
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isActive ? 'bg-white/20' : isDone ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                <button key={i} onClick={() => setProfileStep(i + 1)} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${isActive ? 'text-white' : isDone ? 'text-[var(--alo-body)] bg-[var(--alo-surface-muted)]' : 'text-[var(--alo-text-muted)] bg-[var(--alo-page)]'}`} style={isActive ? { backgroundColor: ALO_BLUE } : undefined}>
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold ${isActive ? 'bg-white/20' : isDone ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-[var(--alo-text-muted)]'}`}>
                     {isDone ? <CheckCircle2 className="size-3.5" /> : i + 1}
                   </span>
                   <Icon className="size-3.5" />{step.title}
@@ -1458,9 +1458,9 @@ export function CourseFinderEnhanced() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <button onClick={() => setView('profile')} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] mb-2 transition-colors"><ArrowLeft className="h-4 w-4" />Back to profile</button>
-              <h2 className="text-xl font-bold text-slate-900">Eligibility Results</h2>
-              <p className="text-sm text-slate-500">Courses matched to your profile, sorted by match score.</p>
+              <button onClick={() => setView('profile')} className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] mb-2 transition-colors"><ArrowLeft className="h-4 w-4" />Back to profile</button>
+              <h2 className="text-xl font-bold text-[var(--alo-text)]">Eligibility Results</h2>
+              <p className="text-sm text-[var(--alo-text-muted)]">Courses matched to your profile, sorted by match score.</p>
             </div>
           </div>
 
@@ -1469,7 +1469,7 @@ export function CourseFinderEnhanced() {
 
           {/* Eligibility Category Filter */}
           <div className="flex items-center gap-2 mt-4 overflow-x-auto pb-2">
-            <span className="text-xs text-slate-500 shrink-0">Filter:</span>
+            <span className="text-xs text-[var(--alo-text-muted)] shrink-0">Filter:</span>
             <Button size="sm" variant={eligibilityFilter === 'all' ? 'default' : 'outline'} className={`h-7 text-xs ${eligibilityFilter === 'all' ? 'text-white' : ''}`} style={eligibilityFilter === 'all' ? { backgroundColor: ALO_BLUE } : undefined} onClick={() => setEligibilityFilter('all')}>All ({eligibilityResults.length})</Button>
             {Object.entries(ELIGIBILITY_CONFIG).map(([key, config]) => {
               const count = eligibilityResults.filter((r) => r.eligibilityCategory === key).length;
@@ -1488,8 +1488,8 @@ export function CourseFinderEnhanced() {
           ) : filteredEligibilityResults.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0057B810' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
-              <h3 className="text-lg font-semibold text-slate-700">No results in this category</h3>
-              <p className="text-sm text-slate-500 mt-1">Try a different eligibility filter or adjust your profile.</p>
+              <h3 className="text-lg font-semibold text-[var(--alo-body)]">No results in this category</h3>
+              <p className="text-sm text-[var(--alo-text-muted)] mt-1">Try a different eligibility filter or adjust your profile.</p>
               <div className="flex gap-2 mt-4">
                 <Button variant="outline" onClick={() => setEligibilityFilter('all')} className="text-xs">Show All</Button>
                 <Button className="text-xs text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
@@ -1518,12 +1518,12 @@ export function CourseFinderEnhanced() {
 
         {/* Disclaimer */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-8">
-          <p className="text-xs text-slate-400 text-center leading-relaxed">
+          <p className="text-xs text-[var(--alo-text-muted)] text-center leading-relaxed">
             Eligibility results are preliminary guidance based on the information provided and the latest verified course data available to ALO Education. Final admission decisions are made by the university.
           </p>
         </div>
 
-        <footer className="bg-slate-900 text-slate-400 py-6">
+        <footer className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] py-6 text-[var(--alo-text-muted)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs">© {new Date().getFullYear()} ALO Education. All rights reserved.</div>
         </footer>
       </div>
@@ -1545,7 +1545,7 @@ export function CourseFinderEnhanced() {
         <div className="flex gap-6">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-72 shrink-0">
-            <div className="sticky top-24 bg-white border border-slate-200 rounded-xl p-5 shadow-sm max-h-[calc(100vh-8rem)] overflow-y-auto">{filterContent}</div>
+            <div className="sticky top-24 bg-white border border-[var(--alo-border)] rounded-xl p-5 shadow-sm max-h-[calc(100vh-8rem)] overflow-y-auto">{filterContent}</div>
           </aside>
 
           {/* Mobile Filter Sheet */}
@@ -1562,8 +1562,8 @@ export function CourseFinderEnhanced() {
           {/* Results Area */}
           <main className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-5 gap-4">
-              <p className="text-sm text-slate-600">
-                {loading ? <Skeleton className="h-4 w-36" /> : <><span className="font-semibold text-slate-900">{totalResults}</span> {resultLabel} found</>}
+              <p className="text-sm text-[var(--alo-body)]">
+                {loading ? <Skeleton className="h-4 w-36" /> : <><span className="font-semibold text-[var(--alo-text)]">{totalResults}</span> {resultLabel} found</>}
               </p>
               <Select value={filters.sortBy} onValueChange={(v) => setFilters((p) => ({ ...p, sortBy: v }))}>
                 <SelectTrigger className="w-[180px] h-9 text-xs"><SelectValue placeholder="Sort by" /></SelectTrigger>
@@ -1578,8 +1578,8 @@ export function CourseFinderEnhanced() {
                 {!loading && courses.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0057B810' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
-                    <h3 className="text-lg font-semibold text-slate-700">No courses match your criteria</h3>
-                    <p className="text-sm text-slate-500 mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
+                    <h3 className="text-lg font-semibold text-[var(--alo-body)]">No courses match your criteria</h3>
+                    <p className="text-sm text-[var(--alo-text-muted)] mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
                     <div className="flex gap-2 mt-4">
                       <Button variant="outline" onClick={handleResetFilters} className="text-xs">Clear all filters</Button>
                       <Button className="text-xs text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
@@ -1603,8 +1603,8 @@ export function CourseFinderEnhanced() {
                 {!loading && universities.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0057B810' }}><SearchX className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
-                    <h3 className="text-lg font-semibold text-slate-700">No universities match your criteria</h3>
-                    <p className="text-sm text-slate-500 mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
+                    <h3 className="text-lg font-semibold text-[var(--alo-body)]">No universities match your criteria</h3>
+                    <p className="text-sm text-[var(--alo-text-muted)] mt-1 max-w-md">Try adjusting filters or speak with an ALO Education counsellor.</p>
                   </div>
                 )}
                 {!loading && universities.length > 0 && (
@@ -1619,8 +1619,8 @@ export function CourseFinderEnhanced() {
             {activeTab === 'scholarships' && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: `${ALO_ORANGE}15` }}><Trophy className="size-10" style={{ color: ALO_ORANGE, opacity: 0.6 }} /></div>
-                <h3 className="text-lg font-semibold text-slate-700">Scholarships Coming Soon</h3>
-                <p className="text-sm text-slate-500 mt-2 max-w-md">ALO Education is building a comprehensive scholarship database. In the meantime, filter courses with the &quot;Scholarship Available&quot; toggle, or speak with a counsellor.</p>
+                <h3 className="text-lg font-semibold text-[var(--alo-body)]">Scholarships Coming Soon</h3>
+                <p className="text-sm text-[var(--alo-text-muted)] mt-2 max-w-md">ALO Education is building a comprehensive scholarship database. In the meantime, filter courses with the &quot;Scholarship Available&quot; toggle, or speak with a counsellor.</p>
                 <Button className="mt-4 text-xs text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}><Phone className="size-3.5 mr-1.5" />Talk to a Counsellor</Button>
               </div>
             )}
@@ -1629,8 +1629,8 @@ export function CourseFinderEnhanced() {
             {activeTab === 'compare' && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: '#0057B810' }}><GitCompare className="size-10" style={{ color: ALO_BLUE, opacity: 0.5 }} /></div>
-                <h3 className="text-lg font-semibold text-slate-700">Compare Courses Side by Side</h3>
-                <p className="text-sm text-slate-500 mt-2 max-w-md">Add courses or universities to compare using the &quot;Compare&quot; buttons on course or university cards. You can compare up to 3 items at once.</p>
+                <h3 className="text-lg font-semibold text-[var(--alo-body)]">Compare Courses Side by Side</h3>
+                <p className="text-sm text-[var(--alo-text-muted)] mt-2 max-w-md">Add courses or universities to compare using the &quot;Compare&quot; buttons on course or university cards. You can compare up to 3 items at once.</p>
               </div>
             )}
 
@@ -1642,8 +1642,8 @@ export function CourseFinderEnhanced() {
       {/* Bottom CTA */}
       <section className="mt-12" style={{ backgroundColor: '#F0F6FF' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Ready to Study Abroad?</h2>
-          <p className="mt-3 text-slate-600 text-sm sm:text-base max-w-xl mx-auto">Book a Free Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[var(--alo-text)]">Ready to Study Abroad?</h2>
+          <p className="mt-3 text-[var(--alo-body)] text-sm sm:text-base max-w-xl mx-auto">Book a Free Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Book a Free Consultation<ArrowRight className="size-4 ml-2" /></Button>
             <Button variant="outline" size="lg" className="px-8 text-sm font-medium" style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} onClick={() => setView('profile')}><GraduationCap className="size-4 mr-2" />Check Eligibility</Button>
@@ -1653,12 +1653,12 @@ export function CourseFinderEnhanced() {
 
       {/* Disclaimer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        <p className="text-xs text-slate-400 text-center leading-relaxed">
+        <p className="text-xs text-[var(--alo-text-muted)] text-center leading-relaxed">
           Eligibility results are preliminary guidance based on the information provided and the latest verified course data available to ALO Education. Final admission decisions are made by the university.
         </p>
       </div>
 
-      <footer className="bg-slate-900 text-slate-400 py-6">
+      <footer className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] py-6 text-[var(--alo-text-muted)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs">© {new Date().getFullYear()} ALO Education. All rights reserved.</div>
       </footer>
     </div>

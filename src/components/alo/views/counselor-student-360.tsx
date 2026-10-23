@@ -288,12 +288,12 @@ interface StudentDetailResponse {
 // ============================================================
 const STUDENT_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
-  INACTIVE: "bg-slate-100 text-slate-700",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   GRADUATED: "bg-blue-100 text-blue-700",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-slate-100 text-slate-600",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-sky-100 text-sky-700",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
@@ -387,7 +387,7 @@ const CHANNEL_COLORS: Record<string, string> = {
   FACEBOOK: "bg-blue-100 text-blue-700",
   INSTAGRAM: "bg-pink-100 text-pink-700",
   MESSENGER: "bg-sky-100 text-sky-700",
-  WEBSITE_CHAT: "bg-slate-100 text-slate-700",
+  WEBSITE_CHAT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PORTAL: "bg-orange-100 text-orange-700",
 };
 
@@ -416,7 +416,7 @@ const VISIBILITY_COLORS: Record<string, string> = {
   APPLICATION_TEAM_ONLY: "bg-orange-100 text-orange-700",
   VISA_TEAM_ONLY: "bg-rose-100 text-rose-700",
   FINANCE_ONLY: "bg-emerald-100 text-emerald-700",
-  SUPER_ADMIN_ONLY: "bg-slate-100 text-slate-700",
+  SUPER_ADMIN_ONLY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   COUNSELOR_VISIBLE: "bg-blue-100 text-blue-700",
 };
 
@@ -433,7 +433,7 @@ const COMMENT_TYPE_LABELS: Record<string, string> = {
 };
 
 const COMMENT_TYPE_COLORS: Record<string, string> = {
-  COUNSELOR_NOTE: "bg-slate-100 text-slate-700",
+  COUNSELOR_NOTE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   APPLICATION_TEAM_NOTE: "bg-orange-100 text-orange-700",
   VISA_OFFICER_NOTE: "bg-rose-100 text-rose-700",
   PARTNER_SUBMISSION_NOTE: "bg-blue-100 text-blue-700",
@@ -457,7 +457,7 @@ const SOP_TYPE_LABELS: Record<string, string> = {
 };
 
 const SOP_STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-slate-100 text-slate-700",
+  DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   STUDENT_REVIEW: "bg-amber-100 text-amber-700",
   COUNSELOR_REVIEW: "bg-orange-100 text-orange-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
@@ -580,7 +580,7 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
           title="No students assigned"
           description="You don't have any students assigned yet. Add a lead in CRM to get started."
           action={
-            <Button onClick={() => onNavigate("crm")} className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+            <Button onClick={() => onNavigate("crm")} className="h-11 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
               <Icon name="UserPlus" className="mr-2 size-4" /> Go to CRM
             </Button>
           }
@@ -592,14 +592,14 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
   return (
     <div className="space-y-6">
       {/* STUDENT SELECTOR */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
         <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Icon name="Search" className="size-4" />
             Select student:
           </div>
           <Select value={selectedId} onValueChange={setSelectedId}>
-            <SelectTrigger className="h-10 flex-1 rounded-xl border-[#0057B8]/15">
+            <SelectTrigger className="h-10 flex-1 rounded-xl border-[var(--alo-brand)]/15">
               <SelectValue placeholder="Pick a student" />
             </SelectTrigger>
             <SelectContent>
@@ -612,7 +612,7 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
               ))}
             </SelectContent>
           </Select>
-          <Badge variant="outline" className="h-10 border-[#0057B8]/20 px-3 text-xs">
+          <Badge variant="outline" className="h-10 border-[var(--alo-brand)]/20 px-3 text-xs">
             {students.findIndex((s) => s.id === selectedId) + 1} of {students.length}
           </Badge>
         </CardContent>
@@ -647,7 +647,7 @@ function StudentDetailBody({
   const currentApp = student.applications?.[0];
   const currentStage = currentApp?.stage ?? "COUNSELING";
   const stageLabel = STAGE_LABELS[currentStage] ?? currentStage.replace(/_/g, " ");
-  const stageColor = STAGE_COLORS[currentStage] ?? "bg-slate-100 text-slate-700";
+  const stageColor = STAGE_COLORS[currentStage] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
 
   // Risk level from latest interview or student's risk note
   const latestInterview = student.interviews?.[0];
@@ -671,13 +671,13 @@ function StudentDetailBody({
   return (
     <>
       {/* STUDENT HEADER CARD */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20">
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-bold text-[#0057B8]">{student.fullName}</h2>
-                <Badge variant="outline" className="border-[#0057B8]/20 bg-[#e8f0fb]/60 font-mono text-[#0057B8]">
+                <h2 className="text-2xl font-bold text-[var(--alo-brand)]">{student.fullName}</h2>
+                <Badge variant="outline" className="border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/60 font-mono text-[var(--alo-brand)]">
                   {student.studentId}
                 </Badge>
                 <StatusBadge status={student.status} colorMap={STUDENT_STATUS_COLORS} />
@@ -691,7 +691,7 @@ function StudentDetailBody({
                 </span>
                 {student.partnerId && (
                   <span className="flex items-center gap-1.5">
-                    <Icon name="Handshake" className="size-3.5 text-[#E8501A]" />
+                    <Icon name="Handshake" className="size-3.5 text-[var(--alo-cta)]" />
                     Partner: <span className="font-mono font-medium text-foreground">{student.partnerId.slice(-8)}</span>
                   </span>
                 )}
@@ -704,9 +704,9 @@ function StudentDetailBody({
                   <span className="font-mono">{student.mobile}</span>
                 </span>
               </div>
-              <div className="flex flex-wrap items-center gap-2 rounded-xl bg-[#e8f0fb]/50 p-2.5 text-sm">
-                <Icon name="Flag" className="size-4 text-[#0057B8]" />
-                <span className="font-medium text-[#0057B8]">Next action:</span>
+              <div className="flex flex-wrap items-center gap-2 rounded-xl bg-[var(--alo-brand-light)]/50 p-2.5 text-sm">
+                <Icon name="Flag" className="size-4 text-[var(--alo-brand)]" />
+                <span className="font-medium text-[var(--alo-brand)]">Next action:</span>
                 <span className="text-foreground">{nextAction}</span>
               </div>
             </div>
@@ -722,7 +722,7 @@ function StudentDetailBody({
               <Button
                 onClick={() => onNavigate("sop-studio", student.studentId)}
                 variant="outline"
-                className="h-10 rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-10 rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               >
                 <Icon name="FileText" className="mr-1.5 size-4" />
                 Generate SOP
@@ -734,7 +734,7 @@ function StudentDetailBody({
                     description: `A document request template was prepared for ${student.fullName}.`,
                   })
                 }
-                className="h-10 rounded-xl bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="h-10 rounded-xl bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="FileUp" className="mr-1.5 size-4" />
                 Request Documents
@@ -748,7 +748,7 @@ function StudentDetailBody({
               <span className="flex items-center gap-1.5 font-medium text-muted-foreground">
                 <Icon name="UserCheck" className="size-3.5" /> Profile completion
               </span>
-              <span className="font-semibold text-[#0057B8]">{student.profileCompletion}%</span>
+              <span className="font-semibold text-[var(--alo-brand)]">{student.profileCompletion}%</span>
             </div>
             <Progress value={student.profileCompletion} className="h-2" />
           </div>
@@ -758,32 +758,32 @@ function StudentDetailBody({
       {/* TABS */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <ScrollArea className="w-full whitespace-nowrap rounded-xl">
-          <TabsList className="flex w-max gap-1 bg-[#e8f0fb]/60 p-1">
-            <TabsTrigger value="profile" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+          <TabsList className="flex w-max gap-1 bg-[var(--alo-brand-light)]/60 p-1">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="User" className="mr-1.5 size-3.5" /> Profile
             </TabsTrigger>
-            <TabsTrigger value="applications" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="applications" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="ClipboardList" className="mr-1.5 size-3.5" /> Applications
             </TabsTrigger>
-            <TabsTrigger value="documents" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="documents" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="FolderLock" className="mr-1.5 size-3.5" /> Documents
             </TabsTrigger>
-            <TabsTrigger value="comments" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="comments" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="MessageSquare" className="mr-1.5 size-3.5" /> Comments
-              <Badge className="ml-1.5 bg-[#E8501A] text-white" variant="secondary">
+              <Badge className="ml-1.5 bg-[var(--alo-cta)] text-white" variant="secondary">
                 {internalComments.length + studentComments.length}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="communication" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="communication" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Inbox" className="mr-1.5 size-3.5" /> Communication
             </TabsTrigger>
-            <TabsTrigger value="sopcv" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="sopcv" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="FileText" className="mr-1.5 size-3.5" /> SOP / CV
             </TabsTrigger>
-            <TabsTrigger value="interview" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="interview" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Mic" className="mr-1.5 size-3.5" /> Interview
             </TabsTrigger>
-            <TabsTrigger value="timeline" className="data-[state=active]:bg-white data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="timeline" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="History" className="mr-1.5 size-3.5" /> Timeline
             </TabsTrigger>
           </TabsList>
@@ -968,7 +968,7 @@ function StudentDetailBody({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                  className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   onClick={() => toast({ title: "Request document", description: "Document request template opened." })}
                 >
                   <Icon name="FileUp" className="mr-1.5 size-3.5" /> Request Document
@@ -976,7 +976,7 @@ function StudentDetailBody({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 border-[#E8501A]/30 text-[#E8501A] hover:bg-[#fdece4]"
+                  className="h-8 border-[var(--alo-cta)]/30 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
                   onClick={() => toast({ title: "Upload on behalf", description: "Counselor upload form opened — student will be notified." })}
                 >
                   <Icon name="Upload" className="mr-1.5 size-3.5" /> Upload on Behalf
@@ -1009,7 +1009,7 @@ function StudentDetailBody({
                       <TableRow key={d.id}>
                         <TableCell className="font-medium">{d.name}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-[10px]">
+                          <Badge variant="outline" className="text-[11px]">
                             {DOC_CATEGORY_LABELS[d.category] ?? d.category}
                           </Badge>
                         </TableCell>
@@ -1050,24 +1050,24 @@ function StudentDetailBody({
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-foreground">{authorDisplay(c.authorId, c.authorRole)}</p>
-                          <p className="text-[10px] text-muted-foreground">{fmtDate(c.createdAt)} · {fmtTime(c.createdAt)}</p>
+                          <p className="text-[11px] text-muted-foreground">{fmtDate(c.createdAt)} · {fmtTime(c.createdAt)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         {c.isAutoGenerated && (
-                          <Badge variant="outline" className="text-[10px] text-violet-600">
+                          <Badge variant="outline" className="text-[11px] text-violet-600">
                             <Icon name="Bot" className="mr-1 size-3" /> AI
                           </Badge>
                         )}
-                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-[10px]">
+                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-[11px]">
                           <Icon name="Eye" className="mr-1 size-3" /> Student can see
                         </Badge>
                         {c.readByStudent ? (
-                          <Badge variant="outline" className="text-[10px] text-emerald-600">
+                          <Badge variant="outline" className="text-[11px] text-emerald-600">
                             <Icon name="CheckCheck" className="mr-1 size-3" /> Read
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] text-amber-600">
+                          <Badge variant="outline" className="text-[11px] text-amber-600">
                             <Icon name="Clock" className="mr-1 size-3" /> Unread
                           </Badge>
                         )}
@@ -1112,7 +1112,7 @@ function StudentDetailBody({
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-foreground">{authorDisplay(c.authorId, c.authorRole)}</p>
-                          <p className="text-[10px] text-muted-foreground">{timeAgo(c.createdAt)}</p>
+                          <p className="text-[11px] text-muted-foreground">{timeAgo(c.createdAt)}</p>
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5">
@@ -1144,7 +1144,7 @@ function StudentDetailBody({
               <Button
                 size="sm"
                 onClick={() => onNavigate("unified-inbox")}
-                className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="h-8 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Send" className="mr-1.5 size-3.5" /> Open Inbox
               </Button>
@@ -1160,31 +1160,31 @@ function StudentDetailBody({
                     <div
                       key={m.id}
                       className={`flex items-start gap-3 rounded-xl border p-3 ${
-                        inbound ? "border-[#0057B8]/15 bg-[#e8f0fb]/30" : "border-emerald-200 bg-emerald-50/30"
+                        inbound ? "border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/30" : "border-emerald-200 bg-emerald-50/30"
                       }`}
                     >
-                      <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${CHANNEL_COLORS[m.channel] ?? "bg-slate-100 text-slate-700"}`}>
+                      <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${CHANNEL_COLORS[m.channel] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>
                         <Icon name={inbound ? "ArrowDownLeft" : "ArrowUpRight"} className="size-4" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="outline" className={`text-[10px] ${CHANNEL_COLORS[m.channel] ?? "bg-slate-100 text-slate-700"}`}>
+                          <Badge variant="outline" className={`text-[11px] ${CHANNEL_COLORS[m.channel] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>
                             {CHANNEL_LABELS[m.channel] ?? m.channel}
                           </Badge>
                           <span className="text-xs font-semibold text-foreground">
                             {inbound ? (m.fromName ?? m.fromPhone ?? m.fromEmail ?? "Inbound") : "Outbound"}
                           </span>
                           {m.aiAssisted && (
-                            <Badge variant="outline" className="text-[10px] text-violet-600">
+                            <Badge variant="outline" className="text-[11px] text-violet-600">
                               <Icon name="Bot" className="mr-1 size-3" /> AI-assisted
                             </Badge>
                           )}
                           {m.humanApproved && (
-                            <Badge variant="outline" className="text-[10px] text-emerald-600">
+                            <Badge variant="outline" className="text-[11px] text-emerald-600">
                               <Icon name="ShieldCheck" className="mr-1 size-3" /> Approved
                             </Badge>
                           )}
-                          <span className="ml-auto text-[10px] text-muted-foreground">{timeAgo(m.receivedAt ?? m.createdAt)}</span>
+                          <span className="ml-auto text-[11px] text-muted-foreground">{timeAgo(m.receivedAt ?? m.createdAt)}</span>
                         </div>
                         <p className="mt-1 text-sm text-foreground">{m.body}</p>
                       </div>
@@ -1206,7 +1206,7 @@ function StudentDetailBody({
                 <Button
                   size="sm"
                   onClick={() => onNavigate("sop-studio", student.studentId)}
-                  className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                  className="h-8 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="Sparkles" className="mr-1.5 size-3.5" /> Generate New SOP
                 </Button>
@@ -1222,14 +1222,14 @@ function StudentDetailBody({
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-semibold text-foreground">{SOP_TYPE_LABELS[d.type] ?? d.type}</span>
                           <StatusBadge status={d.status} colorMap={SOP_STATUS_COLORS} />
-                          <Badge variant="outline" className="text-[10px]">v{d.version}</Badge>
+                          <Badge variant="outline" className="text-[11px]">v{d.version}</Badge>
                           {d.aiGenerated && (
-                            <Badge variant="outline" className="text-[10px] text-violet-600">
+                            <Badge variant="outline" className="text-[11px] text-violet-600">
                               <Icon name="Bot" className="mr-1 size-3" /> AI
                             </Badge>
                           )}
                         </div>
-                        <span className="text-[10px] text-muted-foreground">{timeAgo(d.updatedAt)}</span>
+                        <span className="text-[11px] text-muted-foreground">{timeAgo(d.updatedAt)}</span>
                       </div>
                       {(d.university || d.course) && (
                         <p className="mt-1 text-xs text-muted-foreground">
@@ -1239,15 +1239,15 @@ function StudentDetailBody({
                       <div className="mt-2 grid grid-cols-3 gap-2 text-center text-xs">
                         <div className="rounded-lg bg-muted/50 p-2">
                           <p className="font-bold text-foreground">{d.wordCount}</p>
-                          <p className="text-[10px] text-muted-foreground">words</p>
+                          <p className="text-[11px] text-muted-foreground">words</p>
                         </div>
                         <div className="rounded-lg bg-muted/50 p-2">
                           <p className="font-bold text-foreground">{d.originalityScore ? `${d.originalityScore.toFixed(0)}%` : "—"}</p>
-                          <p className="text-[10px] text-muted-foreground">originality</p>
+                          <p className="text-[11px] text-muted-foreground">originality</p>
                         </div>
                         <div className="rounded-lg bg-muted/50 p-2">
                           <p className="font-bold text-foreground">v{d.version}</p>
-                          <p className="text-[10px] text-muted-foreground">version</p>
+                          <p className="text-[11px] text-muted-foreground">version</p>
                         </div>
                       </div>
                       <div className="mt-2 max-h-32 overflow-y-auto rounded-lg bg-muted/30 p-2 text-xs text-muted-foreground alo-scroll">
@@ -1257,7 +1257,7 @@ function StudentDetailBody({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                          className="h-7 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                           onClick={() => toast({ title: "Sent to student portal", description: "SOP draft is now visible to the student for review." })}
                         >
                           <Icon name="Send" className="mr-1 size-3" /> Send to Student Portal
@@ -1265,7 +1265,7 @@ function StudentDetailBody({
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-7 text-[#0057B8] hover:bg-[#e8f0fb]"
+                          className="h-7 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                           onClick={() => onNavigate("sop-studio", student.studentId)}
                         >
                           <Icon name="Pencil" className="mr-1 size-3" /> Edit
@@ -1288,9 +1288,9 @@ function StudentDetailBody({
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-foreground">{d.template}</span>
                           <StatusBadge status={d.status} colorMap={SOP_STATUS_COLORS} />
-                          <Badge variant="outline" className="text-[10px]">v{d.version}</Badge>
+                          <Badge variant="outline" className="text-[11px]">v{d.version}</Badge>
                         </div>
-                        <span className="text-[10px] text-muted-foreground">{timeAgo(d.updatedAt)}</span>
+                        <span className="text-[11px] text-muted-foreground">{timeAgo(d.updatedAt)}</span>
                       </div>
                       <div className="mt-2 max-h-32 overflow-y-auto rounded-lg bg-muted/30 p-2 text-xs text-muted-foreground alo-scroll">
                         {d.content.slice(0, 400)}{d.content.length > 400 ? "…" : ""}
@@ -1298,7 +1298,7 @@ function StudentDetailBody({
                       <Button
                         size="sm"
                         variant="outline"
-                        className="mt-2 h-7 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                        className="mt-2 h-7 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                         onClick={() => toast({ title: "Sent to student portal", description: "CV draft shared with the student." })}
                       >
                         <Icon name="Send" className="mr-1 size-3" /> Send to Student Portal
@@ -1321,7 +1321,7 @@ function StudentDetailBody({
               <Button
                 size="sm"
                 onClick={() => onNavigate("ai-interview")}
-                className="h-8 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="h-8 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Mic" className="mr-1.5 size-3.5" /> Start New Interview
               </Button>
@@ -1344,7 +1344,7 @@ function StudentDetailBody({
                           {iv.readiness && <StatusBadge status={iv.readiness} colorMap={READINESS_COLORS} labels={READINESS_LABELS} />}
                           {iv.riskLevel && <StatusBadge status={iv.riskLevel} colorMap={RISK_COLORS} />}
                         </div>
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[11px] text-muted-foreground">
                           {fmtDate(iv.startedAt)} · {fmtTime(iv.startedAt)}
                         </span>
                       </div>
@@ -1362,8 +1362,8 @@ function StudentDetailBody({
                         </div>
                       )}
                       {iv.feedback && (
-                        <div className="mt-3 rounded-lg bg-[#e8f0fb]/40 p-2.5 text-xs text-foreground">
-                          <p className="mb-1 flex items-center gap-1 font-semibold text-[#0057B8]">
+                        <div className="mt-3 rounded-lg bg-[var(--alo-brand-light)]/40 p-2.5 text-xs text-foreground">
+                          <p className="mb-1 flex items-center gap-1 font-semibold text-[var(--alo-brand)]">
                             <Icon name="Lightbulb" className="size-3.5" /> AI feedback
                           </p>
                           {iv.feedback}
@@ -1391,7 +1391,7 @@ function StudentDetailBody({
                 <div className="absolute bottom-2 left-[19px] top-2 w-px bg-border" aria-hidden />
                 <div className="space-y-4">
                   {student.timelineEvents.map((ev) => {
-                    const meta = TIMELINE_META[ev.type] ?? { icon: "Circle", color: "bg-slate-100 text-slate-700" };
+                    const meta = TIMELINE_META[ev.type] ?? { icon: "Circle", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" };
                     return (
                       <div key={ev.id} className="relative flex gap-3">
                         <div className={`z-10 flex size-8 shrink-0 items-center justify-center rounded-full ${meta.color} ring-4 ring-background`}>
@@ -1400,11 +1400,11 @@ function StudentDetailBody({
                         <div className="flex-1 pb-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <p className="text-sm font-semibold text-foreground">{ev.title}</p>
-                            <span className="text-[10px] text-muted-foreground">{timeAgo(ev.createdAt)}</span>
+                            <span className="text-[11px] text-muted-foreground">{timeAgo(ev.createdAt)}</span>
                           </div>
                           {ev.description && <p className="mt-0.5 text-xs text-muted-foreground">{ev.description}</p>}
                           {ev.user?.name && (
-                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                            <p className="mt-0.5 text-[11px] text-muted-foreground">
                               <Icon name="User" className="mr-1 inline size-3" /> by {ev.user.name}
                             </p>
                           )}
@@ -1495,7 +1495,7 @@ function CommentComposer({
       {isInternal && (
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
           <div>
-            <Label className="mb-1 block text-[10px] font-medium uppercase text-muted-foreground">Visibility</Label>
+            <Label className="mb-1 block text-[11px] font-medium uppercase text-muted-foreground">Visibility</Label>
             <Select value={visibility} onValueChange={setVisibility}>
               <SelectTrigger className="h-9 text-xs">
                 <SelectValue />
@@ -1508,7 +1508,7 @@ function CommentComposer({
             </Select>
           </div>
           <div>
-            <Label className="mb-1 block text-[10px] font-medium uppercase text-muted-foreground">Comment type</Label>
+            <Label className="mb-1 block text-[11px] font-medium uppercase text-muted-foreground">Comment type</Label>
             <Select value={commentType} onValueChange={setCommentType}>
               <SelectTrigger className="h-9 text-xs">
                 <SelectValue />
@@ -1523,7 +1523,7 @@ function CommentComposer({
         </div>
       )}
       <div className="mt-2 flex items-center justify-between gap-2">
-        <p className={`text-[10px] ${isInternal ? "text-amber-700" : "text-blue-700"}`}>
+        <p className={`text-[11px] ${isInternal ? "text-amber-700" : "text-blue-700"}`}>
           {isInternal ? (
             <span className="flex items-center gap-1"><Icon name="ShieldAlert" className="size-3" /> Audit-logged. Student will NOT see this.</span>
           ) : (
@@ -1537,7 +1537,7 @@ function CommentComposer({
           className={
             isInternal
               ? "h-9 bg-amber-600 text-white hover:bg-amber-700"
-              : "h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+              : "h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
           }
         >
           {posting ? <Icon name="Loader2" className="mr-1.5 size-3.5 animate-spin" /> : <Icon name="Send" className="mr-1.5 size-3.5" />}
@@ -1554,7 +1554,7 @@ function CommentComposer({
 function ScoreCell({ label, value }: { label: string; value?: number | string }) {
   return (
     <div className="rounded-lg bg-muted/50 p-1.5">
-      <p className="text-[9px] font-medium uppercase text-muted-foreground">{label}</p>
+      <p className="text-[11px] font-medium uppercase text-muted-foreground">{label}</p>
       <p className="text-sm font-bold text-foreground">{value ?? "—"}</p>
     </div>
   );

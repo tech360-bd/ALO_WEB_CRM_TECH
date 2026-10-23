@@ -22,7 +22,7 @@ const MODERATION_COLORS: Record<string, string> = {
 };
 
 const PUBLICATION_COLORS: Record<string, string> = {
-  INTERNAL: "bg-slate-100 text-slate-600",
+  INTERNAL: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PUBLISHED: "bg-emerald-100 text-emerald-700",
   UNPUBLISHED: "bg-rose-100 text-rose-700",
 };
@@ -104,7 +104,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
         subtitle="Collect, moderate, and publish student reviews. Multi-channel invitations (Website + Google + Facebook). Never fabricated — students submit their own reviews."
         icon="Star"
         action={
-          <Button onClick={() => setInviteOpen(true)} className="h-10 bg-[#E8501A] hover:bg-[#E8501A]/90">
+          <Button onClick={() => setInviteOpen(true)} className="h-10 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90">
             <Icon name="Plus" className="mr-2 h-4 w-4" /> Send Review Invitation
           </Button>
         }
@@ -128,11 +128,11 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               data.ratingDistribution.map((r: any) => (
                 <div key={r.rating} className="flex items-center gap-3 text-sm">
                   <div className="flex items-center gap-1 w-16">
-                    <span className="font-semibold text-slate-700">{r.rating}</span>
-                    <Icon name="Star" className="h-3 w-3 fill-[#E8501A] text-[#E8501A]" />
+                    <span className="font-semibold text-[var(--alo-body)]">{r.rating}</span>
+                    <Icon name="Star" className="h-3 w-3 fill-[var(--alo-cta)] text-[var(--alo-cta)]" />
                   </div>
                   <div className="flex-1"><MiniBar value={r.count} max={Math.max(...data.ratingDistribution.map((x: any) => x.count), 1)} color="#E8501A" /></div>
-                  <div className="w-8 text-right text-xs text-slate-600">{r.count}</div>
+                  <div className="w-8 text-right text-xs text-[var(--alo-body)]">{r.count}</div>
                 </div>
               ))
             ) : (
@@ -145,15 +145,15 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
         <SectionCard title="Multi-Channel Tracking" icon="Share2">
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">Website Reviews</span>
+              <span className="text-[var(--alo-body)]">Website Reviews</span>
               <Badge className="bg-blue-50 text-blue-700">{s.published}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">Google Clicks</span>
+              <span className="text-[var(--alo-body)]">Google Clicks</span>
               <Badge className="bg-emerald-50 text-emerald-700">{s.googleClicks}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">Facebook Clicks</span>
+              <span className="text-[var(--alo-body)]">Facebook Clicks</span>
               <Badge className="bg-blue-50 text-blue-700">{s.facebookClicks}</Badge>
             </div>
             <div className="rounded-lg bg-amber-50 border border-amber-200 p-2 text-xs text-amber-700 mt-2">
@@ -169,8 +169,8 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
             {data.bySentiment.length > 0 ? (
               data.bySentiment.map((snt: any) => (
                 <div key={snt.sentiment} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 capitalize">{snt.sentiment.toLowerCase()}</span>
-                  <Badge className={snt.sentiment === "POSITIVE" ? "bg-emerald-100 text-emerald-700" : snt.sentiment === "NEGATIVE" ? "bg-rose-100 text-rose-700" : "bg-slate-100 text-slate-700"}>{snt.count}</Badge>
+                  <span className="text-[var(--alo-body)] capitalize">{snt.sentiment.toLowerCase()}</span>
+                  <Badge className={snt.sentiment === "POSITIVE" ? "bg-emerald-100 text-emerald-700" : snt.sentiment === "NEGATIVE" ? "bg-rose-100 text-rose-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>{snt.count}</Badge>
                 </div>
               ))
             ) : (
@@ -185,7 +185,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
         {data.recentReviews.length === 0 ? (
           <EmptyState icon="MessageSquare" title="No reviews yet" description="Send review invitations to your students to start collecting feedback." />
         ) : (
-          <Card className="rounded-2xl border-2 border-[#E2E8F0] overflow-hidden">
+          <Card className="rounded-2xl border-2 border-[var(--alo-border)] overflow-hidden">
             <div className="max-h-[600px] overflow-auto alo-scroll">
               <Table>
                 <TableHeader className="sticky top-0 bg-white z-10">
@@ -203,36 +203,36 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                 </TableHeader>
                 <TableBody>
                   {data.recentReviews.map((r: any) => (
-                    <TableRow key={r.id} className="cursor-pointer hover:bg-slate-50" onClick={() => { setSelectedReview(r); setActionNotes(""); }}>
+                    <TableRow key={r.id} className="cursor-pointer hover:bg-[var(--alo-page)]" onClick={() => { setSelectedReview(r); setActionNotes(""); }}>
                       <TableCell className="align-top">
-                        <div className="text-sm font-medium text-slate-900">{r.studentName}</div>
-                        <div className="text-xs text-slate-500">{r.country || "—"} · {r.serviceType || "—"}</div>
+                        <div className="text-sm font-medium text-[var(--alo-text)]">{r.studentName}</div>
+                        <div className="text-xs text-[var(--alo-text-muted)]">{r.country || "—"} · {r.serviceType || "—"}</div>
                         {r.isVerifiedStudent && <Badge className="mt-1 bg-emerald-50 text-emerald-700 text-xs">Verified</Badge>}
                       </TableCell>
                       <TableCell className="align-top">
                         <div className="flex items-center gap-0.5">
                           {[1,2,3,4,5].map((s) => (
-                            <Icon key={s} name="Star" className={`h-3 w-3 ${r.rating >= s ? "fill-[#E8501A] text-[#E8501A]" : "text-slate-200"}`} />
+                            <Icon key={s} name="Star" className={`h-3 w-3 ${r.rating >= s ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-slate-200"}`} />
                           ))}
                         </div>
                       </TableCell>
                       <TableCell className="align-top max-w-xs">
-                        <div className="text-xs text-slate-700 line-clamp-3">{r.reviewText}</div>
+                        <div className="text-xs text-[var(--alo-body)] line-clamp-3">{r.reviewText}</div>
                       </TableCell>
                       <TableCell className="align-top">
                         <div className="flex flex-col gap-0.5">
                           {r.consentPublish && <Badge className="bg-emerald-50 text-emerald-700 text-xs">Website</Badge>}
                           {r.consentMarketing && <Badge className="bg-blue-50 text-blue-700 text-xs">Marketing</Badge>}
                           {r.consentShowName && <Badge className="bg-violet-50 text-violet-700 text-xs">Name</Badge>}
-                          {!r.consentPublish && !r.consentMarketing && <Badge className="bg-slate-100 text-slate-500 text-xs">Internal only</Badge>}
+                          {!r.consentPublish && !r.consentMarketing && <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] text-xs">Internal only</Badge>}
                         </div>
                       </TableCell>
                       <TableCell className="align-top">
-                        {r.aiSpamScore > 0.5 ? <Badge className="bg-rose-100 text-rose-700 text-xs">{(r.aiSpamScore * 100).toFixed(0)}%</Badge> : <span className="text-xs text-slate-400">clean</span>}
+                        {r.aiSpamScore > 0.5 ? <Badge className="bg-rose-100 text-rose-700 text-xs">{(r.aiSpamScore * 100).toFixed(0)}%</Badge> : <span className="text-xs text-[var(--alo-text-muted)]">clean</span>}
                       </TableCell>
                       <TableCell className="align-top"><Badge className={MODERATION_COLORS[r.moderationStatus]}>{r.moderationStatus}</Badge></TableCell>
                       <TableCell className="align-top"><Badge className={PUBLICATION_COLORS[r.publicationStatus]}>{r.publicationStatus}</Badge></TableCell>
-                      <TableCell className="align-top text-xs text-slate-500">{timeAgo(r.createdAt)}</TableCell>
+                      <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{timeAgo(r.createdAt)}</TableCell>
                       <TableCell className="align-top text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
                           <Button size="sm" variant="outline" className="h-7 px-2 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(r.id, "PUBLISH")} disabled={acting || !r.consentPublish}>Publish</Button>
@@ -255,37 +255,37 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Icon name="MessageSquare" className="h-5 w-5 text-[#0057B8]" />
+                  <Icon name="MessageSquare" className="h-5 w-5 text-[var(--alo-brand)]" />
                   Review by {selectedReview.studentName}
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   {[1,2,3,4,5].map((s) => (
-                    <Icon key={s} name="Star" className={`h-5 w-5 ${selectedReview.rating >= s ? "fill-[#E8501A] text-[#E8501A]" : "text-slate-200"}`} />
+                    <Icon key={s} name="Star" className={`h-5 w-5 ${selectedReview.rating >= s ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-slate-200"}`} />
                   ))}
-                  <span className="text-sm text-slate-600 ml-2">{selectedReview.rating}/5</span>
+                  <span className="text-sm text-[var(--alo-body)] ml-2">{selectedReview.rating}/5</span>
                 </div>
-                <div className="rounded-lg bg-slate-50 p-4">
-                  <div className="text-xs font-semibold text-slate-500 mb-1">Review Text</div>
-                  <p className="text-sm text-slate-800 whitespace-pre-wrap">{selectedReview.reviewText}</p>
+                <div className="rounded-lg bg-[var(--alo-page)] p-4">
+                  <div className="text-xs font-semibold text-[var(--alo-text-muted)] mb-1">Review Text</div>
+                  <p className="text-sm text-[var(--alo-text)] whitespace-pre-wrap">{selectedReview.reviewText}</p>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentPublish ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentPublish ? "bg-emerald-50 text-emerald-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
                     <Icon name={selectedReview.consentPublish ? "Check" : "X"} className="h-4 w-4 mx-auto mb-1" />
                     Website
                   </div>
-                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentMarketing ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentMarketing ? "bg-emerald-50 text-emerald-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
                     <Icon name={selectedReview.consentMarketing ? "Check" : "X"} className="h-4 w-4 mx-auto mb-1" />
                     Marketing
                   </div>
-                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentShowName ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentShowName ? "bg-emerald-50 text-emerald-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
                     <Icon name={selectedReview.consentShowName ? "Check" : "X"} className="h-4 w-4 mx-auto mb-1" />
                     Show Name
                   </div>
                 </div>
                 <div>
-                  <Label className="text-xs text-slate-500">Moderation Notes</Label>
+                  <Label className="text-xs text-[var(--alo-text-muted)]">Moderation Notes</Label>
                   <Textarea className="mt-1" rows={2} placeholder="Optional notes..." value={actionNotes} onChange={(e) => setActionNotes(e.target.value)} />
                 </div>
               </div>
@@ -306,7 +306,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Icon name="Send" className="h-5 w-5 text-[#E8501A]" /> Send Review Invitation
+              <Icon name="Send" className="h-5 w-5 text-[var(--alo-cta)]" /> Send Review Invitation
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
@@ -341,14 +341,14 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               <Label className="text-xs">Facebook Recommendation URL (optional)</Label>
               <Input className="h-10" value={inviteForm.facebookRecommendUrl} onChange={(e) => setInviteForm({ ...inviteForm, facebookRecommendUrl: e.target.value })} placeholder="https://facebook.com/aloeducation/reviews" />
             </div>
-            <div className="rounded-lg bg-blue-50 p-2 text-xs text-slate-600">
-              <Icon name="Info" className="h-3 w-3 inline mr-1 text-[#0057B8]" />
+            <div className="rounded-lg bg-blue-50 p-2 text-xs text-[var(--alo-body)]">
+              <Icon name="Info" className="h-3 w-3 inline mr-1 text-[var(--alo-brand)]" />
               The student will receive a unique link. They submit the review themselves — we never post on their behalf.
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setInviteOpen(false)}>Cancel</Button>
-            <Button onClick={createInvitation} className="bg-[#E8501A] hover:bg-[#E8501A]/90">Create Invitation</Button>
+            <Button onClick={createInvitation} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90">Create Invitation</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

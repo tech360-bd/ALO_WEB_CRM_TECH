@@ -81,7 +81,7 @@ export default function EmployeeSalaryPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Wallet className="w-5 h-5 text-emerald-600" />
-              <Badge variant="success" className="text-[10px]">Net Pay</Badge>
+              <Badge variant="success" className="text-[11px]">Net Pay</Badge>
             </div>
             <p className="text-2xl font-bold text-alo-text">{formatTaka(net)}</p>
             <p className="text-xs text-alo-text-muted mt-0.5">{payslipHistory[0]?.month || 'Current Month'}</p>

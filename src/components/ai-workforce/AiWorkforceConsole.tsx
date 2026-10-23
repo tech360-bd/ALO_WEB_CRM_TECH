@@ -48,7 +48,7 @@ const statusTone: Record<string, string> = {
   COMPLETED: 'bg-emerald-100 text-emerald-800',
   HEALTHY: 'bg-emerald-100 text-emerald-800',
   DEPLOYED: 'bg-emerald-100 text-emerald-800',
-  DRAFT: 'bg-slate-100 text-slate-700',
+  DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   VALIDATED: 'bg-sky-100 text-sky-800',
   TESTED: 'bg-indigo-100 text-indigo-800',
   APPROVED: 'bg-violet-100 text-violet-800',
@@ -62,7 +62,7 @@ const statusTone: Record<string, string> = {
 };
 
 function StatusBadge({ value }: { value: string }) {
-  return <Badge className={statusTone[value] || 'bg-slate-100 text-slate-700'}>{value}</Badge>;
+  return <Badge className={statusTone[value] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{value}</Badge>;
 }
 
 function Stat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {

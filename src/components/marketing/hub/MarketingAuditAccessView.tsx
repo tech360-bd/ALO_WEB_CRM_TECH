@@ -367,10 +367,10 @@ export default function MarketingAuditAccessView() {
   const statusBadge = (status: string) => {
     const map: Record<string, { cls: string; label: string }> = {
       ACTIVE: { cls: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100', label: 'Active' },
-      REVOKED: { cls: 'bg-gray-100 text-gray-600 hover:bg-gray-100', label: 'Revoked' },
+      REVOKED: { cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]', label: 'Revoked' },
       SUSPENDED: { cls: 'bg-red-100 text-red-700 hover:bg-red-100', label: 'Suspended' },
     };
-    const match = map[status] || { cls: 'bg-gray-100 text-gray-600', label: status || 'Unknown' };
+    const match = map[status] || { cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', label: status || 'Unknown' };
     return <Badge variant="secondary" className={cn('text-xs', match.cls)}>{match.label}</Badge>;
   };
 
@@ -514,7 +514,7 @@ export default function MarketingAuditAccessView() {
                               <>
                                 <span>{log.userName || 'User'}</span>
                                 {log.role ? (
-                                  <Badge variant="outline" className="ml-1 text-[10px]">{log.role}</Badge>
+                                  <Badge variant="outline" className="ml-1 text-[11px]">{log.role}</Badge>
                                 ) : null}
                               </>
                             ) : (
@@ -522,7 +522,7 @@ export default function MarketingAuditAccessView() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {log.source === 'marketingAuditLog' ? 'Marketing audit' : 'System audit'}
                             </Badge>
                           </TableCell>
@@ -752,7 +752,7 @@ export default function MarketingAuditAccessView() {
                               {permissions.length > 0 ? (
                                 <div className="flex flex-wrap gap-1">
                                   {permissions.map((permission) => (
-                                    <Badge key={permission} variant="outline" className="text-[10px]">
+                                    <Badge key={permission} variant="outline" className="text-[11px]">
                                       {permission}
                                     </Badge>
                                   ))}

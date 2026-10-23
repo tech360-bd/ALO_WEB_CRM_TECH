@@ -95,15 +95,15 @@ export default function OldCrmImportCenterPage() {
   };
 
   return (
-    <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6">
+    <div className="space-y-6 bg-[var(--alo-page)]/50 min-h-screen p-4 lg:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-[var(--alo-border)] shadow-xs">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
             <Database className="w-5 h-5 text-indigo-600" />
             Old CRM Student Migration Import Center
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
             Import old CRM records into staging, deduplicate, preview risks, and generate AE-YYYY000001 IDs only after Super Admin approval.
           </p>
         </div>
@@ -119,10 +119,10 @@ export default function OldCrmImportCenterPage() {
         </Button>
       </div>
 
-      <Card className="bg-white border-slate-200 shadow-xs">
-        <CardHeader className="pb-3 border-b border-slate-100">
-          <CardTitle className="text-sm font-bold text-slate-900">Paste Normalized Old-CRM Rows</CardTitle>
-          <CardDescription className="text-xs text-slate-500">
+      <Card className="bg-white border-[var(--alo-border)] shadow-xs">
+        <CardHeader className="pb-3 border-b border-[var(--alo-border)]">
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Paste Normalized Old-CRM Rows</CardTitle>
+          <CardDescription className="text-xs text-[var(--alo-text-muted)]">
             This panel no longer ships demo students. Paste validated CSV/Excel output as a JSON array, then create a staging-only preview.
           </CardDescription>
         </CardHeader>
@@ -130,24 +130,24 @@ export default function OldCrmImportCenterPage() {
           <textarea
             value={rawRows}
             onChange={(event) => setRawRows(event.target.value)}
-            className="min-h-32 w-full rounded-xl border border-slate-300 p-3 font-mono text-xs"
+            className="min-h-32 w-full rounded-xl border border-[var(--alo-border-strong)] p-3 font-mono text-xs"
             placeholder='[{"oldCrmId":"OLD-001","name":"Student Name","phone":"+880...","email":"student@example.com","passportNumber":"...","countryInterest":"United Kingdom","courseInterest":"MSc ..."}]'
           />
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-[var(--alo-text-muted)]">
             Required for new portal activation: student name and email. Rows without email remain in review and will not create synthetic portal-user emails.
           </p>
         </CardContent>
       </Card>
 
       {/* Batches Table */}
-      <Card className="bg-white border-slate-200 shadow-xs">
-        <CardHeader className="pb-3 border-b border-slate-100">
-          <CardTitle className="text-sm font-bold text-slate-900">Import Batches Preview &amp; Staging Queue</CardTitle>
-          <CardDescription className="text-xs text-slate-500">Super Admin must review and approve final import/merge before inserting into live DB.</CardDescription>
+      <Card className="bg-white border-[var(--alo-border)] shadow-xs">
+        <CardHeader className="pb-3 border-b border-[var(--alo-border)]">
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Import Batches Preview &amp; Staging Queue</CardTitle>
+          <CardDescription className="text-xs text-[var(--alo-text-muted)]">Super Admin must review and approve final import/merge before inserting into live DB.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="bg-slate-50">
+            <TableHeader className="bg-[var(--alo-page)]">
               <TableRow>
                 <TableHead className="text-xs font-semibold">Source / File</TableHead>
                 <TableHead className="text-xs font-semibold">Total Rows</TableHead>
@@ -161,7 +161,7 @@ export default function OldCrmImportCenterPage() {
             <TableBody>
               {batches.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-xs text-slate-500">
+                  <TableCell colSpan={7} className="text-center py-8 text-xs text-[var(--alo-text-muted)]">
                     No import batches found. Paste validated rows above and create a staging preview.
                   </TableCell>
                 </TableRow>
@@ -170,16 +170,16 @@ export default function OldCrmImportCenterPage() {
                   <TableRow key={b.id}>
                     <TableCell>
                       <div>
-                        <span className="text-xs font-bold text-slate-900 block">{b.sourceCrmName}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">{b.fileName}</span>
+                        <span className="text-xs font-bold text-[var(--alo-text)] block">{b.sourceCrmName}</span>
+                        <span className="text-[11px] text-[var(--alo-text-muted)] font-mono">{b.fileName}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-xs font-bold text-slate-800">{b.totalRows}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-700">{b.newCount} New</Badge></TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700">{b.matchedCount} Matched</Badge></TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px] bg-amber-50 text-amber-700">{b.duplicateCount} Risk</Badge></TableCell>
+                    <TableCell className="text-xs font-bold text-[var(--alo-text)]">{b.totalRows}</TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] bg-emerald-50 text-emerald-700">{b.newCount} New</Badge></TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] bg-blue-50 text-blue-700">{b.matchedCount} Matched</Badge></TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] bg-amber-50 text-amber-700">{b.duplicateCount} Risk</Badge></TableCell>
                     <TableCell>
-                      <Badge className={`text-[10px] ${b.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                      <Badge className={`text-[11px] ${b.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                         {b.status.toUpperCase()}
                       </Badge>
                     </TableCell>

@@ -181,13 +181,13 @@ const CV_SECTION_CONFIG: { key: CvSection; label: string; icon: React.ElementTyp
 
 function StatusBadge({ status }: { status: SopStatus }) {
   const config: Record<SopStatus, { className: string }> = {
-    Draft: { className: 'bg-slate-100 text-slate-700' },
+    Draft: { className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
     'Needs Review': { className: 'bg-amber-100 text-amber-700' },
     Approved: { className: 'bg-emerald-100 text-emerald-700' },
     Submitted: { className: 'bg-blue-100 text-blue-700' },
   };
   return (
-    <Badge variant="secondary" className={cn('text-[10px] px-2 py-0.5', config[status].className)}>
+    <Badge variant="secondary" className={cn('text-[11px] px-2 py-0.5', config[status].className)}>
       {status}
     </Badge>
   );
@@ -252,15 +252,15 @@ export default function StudentSopCvStudio() {
     <div className="h-[calc(100vh-8rem)] flex flex-col">
       {/* Page header */}
       <div className="shrink-0 mb-4">
-        <h1 className="text-2xl font-bold text-slate-900">SOP & CV Studio</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-[var(--alo-text)]">SOP & CV Studio</h1>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1">
           Write, refine, and manage your Statements of Purpose and CVs
         </p>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'sop' | 'cv')} className="flex-1 flex flex-col min-h-0">
-        <TabsList className="shrink-0 bg-slate-100 h-10 p-0.5">
+        <TabsList className="shrink-0 bg-[var(--alo-surface-muted)] h-10 p-0.5">
           <TabsTrigger
             value="sop"
             className="h-9 rounded-md data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm text-sm font-medium gap-2"
@@ -301,7 +301,7 @@ export default function StudentSopCvStudio() {
                         'w-full text-left p-3 rounded-lg border transition-all',
                         activeSopId === sop.id
                           ? 'border-blue-200 bg-blue-50 shadow-sm'
-                          : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                          : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)] hover:shadow-sm'
                       )}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -309,19 +309,19 @@ export default function StudentSopCvStudio() {
                           <p
                             className={cn(
                               'text-sm font-medium truncate',
-                              activeSopId === sop.id ? 'text-blue-900' : 'text-slate-900'
+                              activeSopId === sop.id ? 'text-blue-900' : 'text-[var(--alo-text)]'
                             )}
                           >
                             {sop.title}
                           </p>
-                          <p className="text-xs text-slate-500 mt-0.5">{sop.university}</p>
+                          <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{sop.university}</p>
                           <div className="flex items-center gap-2 mt-1.5">
                             <StatusBadge status={sop.status} />
-                            <span className="text-[10px] text-slate-400">v{sop.version}</span>
+                            <span className="text-[11px] text-[var(--alo-text-muted)]">v{sop.version}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 mt-2 text-[10px] text-slate-400">
+                      <div className="flex items-center gap-1.5 mt-2 text-[11px] text-[var(--alo-text-muted)]">
                         <Clock className="w-3 h-3" />
                         {sop.lastModified}
                       </div>
@@ -340,15 +340,15 @@ export default function StudentSopCvStudio() {
                     <Input
                       value={sopTitle}
                       onChange={(e) => setSopTitle(e.target.value)}
-                      className="text-lg font-semibold text-slate-900 border-0 border-b border-slate-200 rounded-none px-0 focus-visible:ring-0 h-auto pb-2"
+                      className="text-lg font-semibold text-[var(--alo-text)] border-0 border-b border-[var(--alo-border)] rounded-none px-0 focus-visible:ring-0 h-auto pb-2"
                       placeholder="Document title"
                     />
                     <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1.5 text-slate-500">
+                      <div className="flex items-center gap-1.5 text-[var(--alo-text-muted)]">
                         <GraduationCap className="w-4 h-4" />
-                        <span className="font-medium text-slate-700">{activeSop.university}</span>
+                        <span className="font-medium text-[var(--alo-body)]">{activeSop.university}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-slate-500">
+                      <div className="flex items-center gap-1.5 text-[var(--alo-text-muted)]">
                         <FileText className="w-3.5 h-3.5" />
                         <span>{activeSop.course}</span>
                       </div>
@@ -361,26 +361,26 @@ export default function StudentSopCvStudio() {
                     <Textarea
                       value={sopEditorContent}
                       onChange={(e) => setSopEditorContent(e.target.value)}
-                      className="w-full h-full text-sm leading-relaxed resize-none border-slate-200 rounded-lg bg-white p-4 custom-scrollbar"
+                      className="w-full h-full text-sm leading-relaxed resize-none border-[var(--alo-border)] rounded-lg bg-white p-4 custom-scrollbar"
                       placeholder="Start writing your Statement of Purpose..."
                     />
 
                     {/* Word count bar */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-slate-100 px-4 py-2 flex items-center justify-between rounded-b-lg">
-                      <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-[var(--alo-border)] px-4 py-2 flex items-center justify-between rounded-b-lg">
+                      <div className="flex items-center gap-4 text-xs text-[var(--alo-text-muted)]">
                         <span>
                           {wordCount} word{wordCount !== 1 ? 's' : ''}
                         </span>
-                        <span className="text-slate-300">|</span>
+                        <span className="text-[var(--alo-placeholder)]">|</span>
                         <span>
                           {sopEditorContent.length} character{sopEditorContent.length !== 1 ? 's' : ''}
                         </span>
-                        <span className="text-slate-300">|</span>
-                        <span className={cn(wordCount < 200 ? 'text-amber-600' : 'text-slate-500')}>
+                        <span className="text-[var(--alo-placeholder)]">|</span>
+                        <span className={cn(wordCount < 200 ? 'text-amber-600' : 'text-[var(--alo-text-muted)]')}>
                           Target: 500–1000 words
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-400">Auto-saved</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)]">Auto-saved</span>
                     </div>
                   </div>
 
@@ -406,7 +406,7 @@ export default function StudentSopCvStudio() {
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="outline"
                       size="sm"
-                      className="border-slate-200 text-slate-700 hover:bg-slate-50"
+                      className="border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                     >
                       <Download className="w-3.5 h-3.5 mr-1.5" />
                       Download
@@ -414,7 +414,7 @@ export default function StudentSopCvStudio() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-slate-500"
+                      className="text-[var(--alo-text-muted)]"
                       onClick={() => setShowVersionHistory(!showVersionHistory)}
                     >
                       <History className="w-3.5 h-3.5 mr-1.5" />
@@ -429,19 +429,19 @@ export default function StudentSopCvStudio() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-purple-600" />
-                            <span className="text-sm font-semibold text-slate-900">AI SOP Assistant</span>
+                            <span className="text-sm font-semibold text-[var(--alo-text)]">AI SOP Assistant</span>
                           </div>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 text-slate-400"
+                            className="h-6 w-6 text-[var(--alo-text-muted)]"
                             onClick={() => setShowAiPanel(false)}
                           >
                             <X className="w-3.5 h-3.5" />
                           </Button>
                         </div>
 
-                        <p className="text-xs text-slate-600 leading-relaxed">
+                        <p className="text-xs text-[var(--alo-body)] leading-relaxed">
                           AI will use your verified profile data, education history, and course requirements to create a personalized draft.
                         </p>
 
@@ -470,7 +470,7 @@ export default function StudentSopCvStudio() {
                           )}
                         </Button>
 
-                        <p className="text-[10px] text-slate-400 text-center">
+                        <p className="text-[11px] text-[var(--alo-text-muted)] text-center">
                           ✨ This draft is based on your authentic profile data.
                         </p>
                       </CardContent>
@@ -479,9 +479,9 @@ export default function StudentSopCvStudio() {
 
                   {/* Version History */}
                   {showVersionHistory && (
-                    <Card className="mt-3 border-slate-200">
+                    <Card className="mt-3 border-[var(--alo-border)]">
                       <CardHeader className="py-3 px-4">
-                        <CardTitle className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                        <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
                           <History className="w-4 h-4 text-blue-600" />
                           Version History
                         </CardTitle>
@@ -491,22 +491,22 @@ export default function StudentSopCvStudio() {
                           <div className="flex items-center gap-3 p-2 rounded-lg bg-blue-50 border border-blue-100">
                             <span className="text-xs font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">v3</span>
                             <div className="flex-1">
-                              <p className="text-xs text-slate-700">Current version</p>
-                              <p className="text-[10px] text-slate-400">Jul 12, 2025 at 3:45 PM — by Ahmed Hassan</p>
+                              <p className="text-xs text-[var(--alo-body)]">Current version</p>
+                              <p className="text-[11px] text-[var(--alo-text-muted)]">Jul 12, 2025 at 3:45 PM — by Ahmed Hassan</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
-                            <span className="text-xs font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">v2</span>
+                          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--alo-page)]">
+                            <span className="text-xs font-medium text-[var(--alo-text-muted)] bg-[var(--alo-surface-muted)] px-1.5 py-0.5 rounded">v2</span>
                             <div className="flex-1">
-                              <p className="text-xs text-slate-700">Added internship experience section</p>
-                              <p className="text-[10px] text-slate-400">Jul 10, 2025 at 2:30 PM — by Ahmed Hassan</p>
+                              <p className="text-xs text-[var(--alo-body)]">Added internship experience section</p>
+                              <p className="text-[11px] text-[var(--alo-text-muted)]">Jul 10, 2025 at 2:30 PM — by Ahmed Hassan</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
-                            <span className="text-xs font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">v1</span>
+                          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--alo-page)]">
+                            <span className="text-xs font-medium text-[var(--alo-text-muted)] bg-[var(--alo-surface-muted)] px-1.5 py-0.5 rounded">v1</span>
                             <div className="flex-1">
-                              <p className="text-xs text-slate-700">Initial draft created</p>
-                              <p className="text-[10px] text-slate-400">Jul 8, 2025 at 11:00 AM — AI Generated</p>
+                              <p className="text-xs text-[var(--alo-body)]">Initial draft created</p>
+                              <p className="text-[11px] text-[var(--alo-text-muted)]">Jul 8, 2025 at 11:00 AM — AI Generated</p>
                             </div>
                           </div>
                         </div>
@@ -517,8 +517,8 @@ export default function StudentSopCvStudio() {
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
-                    <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p className="text-sm text-slate-500">Select or create an SOP to start writing</p>
+                    <FileText className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                    <p className="text-sm text-[var(--alo-text-muted)]">Select or create an SOP to start writing</p>
                   </div>
                 </div>
               )}
@@ -547,18 +547,18 @@ export default function StudentSopCvStudio() {
                         'w-full text-left p-3 rounded-lg border transition-all',
                         activeCvId === cv.id
                           ? 'border-blue-200 bg-blue-50 shadow-sm'
-                          : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                          : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)] hover:shadow-sm'
                       )}
                     >
                       <p
                         className={cn(
                           'text-sm font-medium',
-                          activeCvId === cv.id ? 'text-blue-900' : 'text-slate-900'
+                          activeCvId === cv.id ? 'text-blue-900' : 'text-[var(--alo-text)]'
                         )}
                       >
                         {cv.title}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-2 text-[10px] text-slate-400">
+                      <div className="flex items-center gap-1.5 mt-2 text-[11px] text-[var(--alo-text-muted)]">
                         <Clock className="w-3 h-3" />
                         {cv.lastModified}
                       </div>
@@ -570,7 +570,7 @@ export default function StudentSopCvStudio() {
               {/* Template selection */}
               <Separator className="my-3" />
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-1">
+                <p className="text-xs font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider mb-2 px-1">
                   Templates
                 </p>
                 <div className="flex gap-2 px-1">
@@ -582,7 +582,7 @@ export default function StudentSopCvStudio() {
                         'flex-1 p-2 rounded-lg border text-center transition-all',
                         selectedTemplate === t.id
                           ? 'border-blue-300 bg-blue-50 shadow-sm'
-                          : 'border-slate-200 bg-white hover:border-slate-300'
+                          : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)]'
                       )}
                     >
                       <div
@@ -593,7 +593,7 @@ export default function StudentSopCvStudio() {
                       >
                         <FileText className="w-4 h-4 text-white/80" />
                       </div>
-                      <p className="text-[10px] font-medium text-slate-700">{t.name}</p>
+                      <p className="text-[11px] font-medium text-[var(--alo-body)]">{t.name}</p>
                     </button>
                   ))}
                 </div>
@@ -605,8 +605,8 @@ export default function StudentSopCvStudio() {
               {/* CV Title + Actions */}
               <div className="shrink-0 mb-3 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">{cvDrafts[0].title}</h2>
-                  <p className="text-xs text-slate-400">Last modified: {cvDrafts[0].lastModified}</p>
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">{cvDrafts[0].title}</h2>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Last modified: {cvDrafts[0].lastModified}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
@@ -646,29 +646,29 @@ export default function StudentSopCvStudio() {
                         open={section.expanded}
                         onOpenChange={() => toggleCvSection(key)}
                       >
-                        <Card className={cn('border-slate-200', section.expanded && 'shadow-sm')}>
+                        <Card className={cn('border-[var(--alo-border)]', section.expanded && 'shadow-sm')}>
                           <CollapsibleTrigger className="w-full">
-                            <CardHeader className="py-3 px-4 cursor-pointer hover:bg-slate-50 transition-colors rounded-t-lg">
+                            <CardHeader className="py-3 px-4 cursor-pointer hover:bg-[var(--alo-page)] transition-colors rounded-t-lg">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <Icon className="w-4 h-4 text-blue-600" />
-                                  <CardTitle className="text-sm font-semibold text-slate-900">
+                                  <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
                                     {label}
                                   </CardTitle>
                                   {key === 'personal' && (
-                                    <Badge variant="secondary" className="text-[9px] bg-blue-50 text-blue-600 px-1.5">
+                                    <Badge variant="secondary" className="text-[11px] bg-blue-50 text-blue-600 px-1.5">
                                       Pre-filled
                                     </Badge>
                                   )}
                                   {(key === 'education' || key === 'experience') && (
-                                    <Badge variant="secondary" className="text-[9px] bg-emerald-50 text-emerald-600 px-1.5">
+                                    <Badge variant="secondary" className="text-[11px] bg-emerald-50 text-emerald-600 px-1.5">
                                       From profile
                                     </Badge>
                                   )}
                                 </div>
                                 <ChevronDown
                                   className={cn(
-                                    'w-4 h-4 text-slate-400 transition-transform',
+                                    'w-4 h-4 text-[var(--alo-text-muted)] transition-transform',
                                     !section.expanded && '-rotate-90'
                                   )}
                                 />
@@ -682,7 +682,7 @@ export default function StudentSopCvStudio() {
                                   <Textarea
                                     value={section.content}
                                     onChange={(e) => updateCvSection(key, e.target.value)}
-                                    className="min-h-[80px] text-sm resize-none border-slate-200"
+                                    className="min-h-[80px] text-sm resize-none border-[var(--alo-border)]"
                                     rows={3}
                                   />
                                   <div className="flex flex-wrap gap-1.5">
@@ -707,7 +707,7 @@ export default function StudentSopCvStudio() {
                                 <Textarea
                                   value={section.content}
                                   onChange={(e) => updateCvSection(key, e.target.value)}
-                                  className="min-h-[100px] text-sm resize-none border-slate-200"
+                                  className="min-h-[100px] text-sm resize-none border-[var(--alo-border)]"
                                   rows={
                                     key === 'personal' ? 3
                                       : key === 'education' ? 3

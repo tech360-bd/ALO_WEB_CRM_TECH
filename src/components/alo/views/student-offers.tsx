@@ -115,7 +115,7 @@ export function StudentOffers() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : offers.length === 0 ? (
         <EmptyState
           icon="Award"
@@ -131,7 +131,7 @@ export function StudentOffers() {
               ? Math.ceil((deadline.getTime() - Date.now()) / 86400000)
               : null;
             return (
-              <Card key={o.id} className="rounded-2xl border border-[#DCE8F5] bg-white">
+              <Card key={o.id} className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
@@ -139,16 +139,16 @@ export function StudentOffers() {
                         className={cn(
                           "flex size-12 items-center justify-center rounded-xl",
                           isConditional
-                            ? "bg-[#FFF3EA] text-[#E8501A]"
+                            ? "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
                             : "bg-emerald-100 text-emerald-700"
                         )}
                       >
                         <Icon name="Award" className="size-6" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-[#0B2447]">{o.university}</h3>
-                        <p className="text-sm text-[#5A7299]">{o.course}</p>
-                        <p className="mt-0.5 text-xs text-[#5A7299]">
+                        <h3 className="font-bold text-[var(--alo-text)]">{o.university}</h3>
+                        <p className="text-sm text-[var(--alo-text-muted)]">{o.course}</p>
+                        <p className="mt-0.5 text-xs text-[var(--alo-text-muted)]">
                           {o.country} • {o.studyLevel} • Intake: {o.intake}
                         </p>
                       </div>
@@ -156,7 +156,7 @@ export function StudentOffers() {
                     <Badge
                       className={cn(
                         isConditional
-                          ? "bg-[#FFF3EA] text-[#E8501A]"
+                          ? "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
                           : "bg-emerald-100 text-emerald-700"
                       )}
                     >
@@ -170,7 +170,7 @@ export function StudentOffers() {
                         "mt-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
                         daysLeft !== null && daysLeft < 7
                           ? "bg-rose-50 text-rose-700"
-                          : "bg-[#EAF3FF] text-[#0057B8]"
+                          : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                       )}
                     >
                       <Icon name="CalendarClock" className="size-4" />
@@ -190,11 +190,11 @@ export function StudentOffers() {
                   )}
 
                   {isConditional && (
-                    <div className="mt-4 rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] p-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-[#5A7299]">
+                    <div className="mt-4 rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">
                         Conditions
                       </p>
-                      <p className="mt-1 text-sm text-[#0B2447]">
+                      <p className="mt-1 text-sm text-[var(--alo-text)]">
                         {o.notes || "Submit final transcripts and meet IELTS requirement."}
                       </p>
                     </div>
@@ -203,7 +203,7 @@ export function StudentOffers() {
                   <div className="mt-4 flex gap-2">
                     <Button
                       onClick={() => respondToOffer(o.id, "ACCEPTED")}
-                      className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+                      className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                       size="sm"
                     >
                       <Icon name="Check" className="mr-1 size-4" /> Accept
@@ -211,7 +211,7 @@ export function StudentOffers() {
                     <Button
                       onClick={() => respondToOffer(o.id, "DECLINED")}
                       variant="outline"
-                      className="border-[#E8501A] text-[#E8501A] hover:bg-[#FFF3EA]"
+                      className="border-[var(--alo-cta)] text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]"
                       size="sm"
                     >
                       <Icon name="X" className="mr-1 size-4" /> Decline

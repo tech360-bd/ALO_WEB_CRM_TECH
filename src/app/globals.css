@@ -722,3 +722,275 @@ html[lang="bn"] h4, html[lang="bn"] h5, html[lang="bn"] h6 {
   font-family: "Montserrat", "Poppins", "Noto Sans Bengali", "Hind Siliguri",
     "SolaimanLipi", "Kalpurush", "Vrinda", "Bangla", ui-sans-serif, system-ui, sans-serif;
 }
+
+/* ============================================================
+   ALO SEMANTIC UTILITY LAYER (Master §17)
+   ------------------------------------------------------------
+   The CRM component kit (src/components/alo/*) and several portal
+   shells were written against a semantic utility layer — `body-text`,
+   `caption-text`, `card-title`, `crm-page-title`, `alo-shadow*`,
+   `alo-card-*`, `alo-scroll*`, `bg-alo-gradient`, `nx-*` — plus a
+   compatibility alias set of brand CSS variables. Neither the classes
+   nor those aliases were ever shipped, so every one of those names was
+   a no-op in the browser:
+
+     • `bg-[var(--alo-surface)]` / `bg-[var(--alo-blue-soft)]` resolved to
+       an invalid value → transparent cards and unreadable labels.
+     • `bg-alo-gradient text-white` on the active CRM nav item produced
+       WHITE TEXT ON THE WHITE SIDEBAR (active item effectively invisible).
+     • `alo-shadow*` produced no elevation at all, so panels read as flat
+       text blocks rather than cards.
+     • `caption-text` / `body-text` / `card-title` produced inherited type
+       sizes, breaking the CRM type scale.
+
+   This block defines the missing layer exactly once, against the master
+   palette in §03, so a single correction re-skins every consumer. It adds
+   no new design language: every value below maps to an approved token.
+   ============================================================ */
+
+/* ── 1. Compatibility variable aliases ───────────────────────────
+   Older CRM components reference short semantic aliases. Each one is
+   bound to the master token it was always meant to represent. */
+:root {
+  --alo-blue: var(--alo-brand);              /* #0057B8 */
+  --alo-blue-soft: var(--alo-brand-light);   /* #EAF3FF */
+  --alo-blue-strong: var(--alo-brand-deep);  /* #003F87 */
+  --alo-orange: var(--alo-cta);              /* #E8501A */
+  --alo-orange-soft: var(--alo-cta-soft);    /* #FFF1EA */
+  --alo-orange-strong: var(--alo-cta-hover); /* #C93D13 */
+  --alo-success-strong: var(--alo-success-dark);
+  --alo-warning-strong: #92400E;
+  --alo-danger: var(--alo-error);
+  --alo-danger-soft: var(--alo-error-soft);
+  --alo-danger-strong: #B91C1C;
+  --alo-info-soft: var(--alo-info-bg);
+  --alo-info-strong: var(--alo-info-text);
+  --alo-sunshine: var(--alo-warning);
+  --alo-sunshine-soft: var(--alo-warning-soft);
+  --alo-emerald: var(--alo-success);
+  --alo-violet: var(--alo-info);
+  --alo-surface: var(--card);
+  --alo-muted: var(--alo-text-muted);
+  --alo-gray-light: #F1F5F9;
+
+  /* Elevation aliases (Master §06). */
+  --alo-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --alo-shadow-sm: var(--shadow-card);
+  --alo-shadow-md: var(--shadow-md);
+  --alo-shadow-lg: var(--shadow-hover);
+  --alo-shadow-blue: 0 8px 24px rgba(0, 87, 184, 0.14);
+}
+
+.dark {
+  --alo-surface: var(--card);
+  --alo-muted: #94A3B8;
+  --alo-gray-light: #1E293B;
+  --alo-warning-strong: #FCD34D;
+  --alo-danger-strong: #FCA5A5;
+  --alo-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --alo-shadow-blue: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ── 2. Typography utilities (Master §04) ────────────────────────
+   Used by CRM cards, tables, metric tiles and page headers. */
+.body-text {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--alo-body);
+}
+
+.caption-text {
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--alo-text-muted);
+}
+
+/* Bengali labels must not be forced into uppercase tracking. */
+:lang(bn) .caption-text { text-transform: none; letter-spacing: 0; }
+
+.card-title {
+  font-family: var(--alo-font-heading);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--alo-text);
+}
+
+.badge-text {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.crm-page-title {
+  font-family: var(--alo-font-heading);
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--alo-text);
+}
+@media (min-width: 1024px) {
+  .crm-page-title { font-size: 30px; line-height: 38px; }
+}
+
+.crm-section-title {
+  font-family: var(--alo-font-heading);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--alo-text);
+}
+
+.page-title {
+  font-family: var(--alo-font-heading);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--alo-text);
+}
+
+/* ── 3. Surface / elevation utilities ────────────────────────── */
+
+/* Brand mark only — logo tile and avatar. Never a full-width section
+   background (Master §02: no dark or gradient page blocks). */
+.bg-alo-gradient,
+.alo-gradient {
+  background-image: linear-gradient(135deg, var(--alo-brand) 0%, var(--alo-brand-deep) 100%);
+}
+
+.alo-shadow { box-shadow: var(--alo-shadow-sm); }
+.alo-shadow-xs { box-shadow: var(--alo-shadow-xs); }
+.alo-shadow-sm { box-shadow: var(--alo-shadow-sm); }
+.alo-shadow-md { box-shadow: var(--alo-shadow-md); }
+.alo-shadow-lg { box-shadow: var(--alo-shadow-lg); }
+.alo-shadow-blue { box-shadow: var(--alo-shadow-blue); }
+
+/* Interactive card: border tint + elevation on hover, no layout shift. */
+.alo-card-hover {
+  transition: box-shadow 200ms ease-out, border-color 200ms ease-out,
+    transform 200ms ease-out;
+}
+.alo-card-hover:hover {
+  box-shadow: var(--alo-shadow-lg);
+  border-color: var(--alo-brand-border);
+}
+
+/* Card action row: keeps actions aligned across a grid of cards. */
+.alo-card-cta { margin-top: auto; }
+
+/* Card image: consistent crop + restrained zoom on hover of the card. */
+.alo-card-img {
+  transition: transform 320ms ease-out;
+}
+.alo-card-hover:hover .alo-card-img,
+.group:hover .alo-card-img {
+  transform: scale(1.03);
+}
+
+/* Entrance reveal for card grids (Master §15). */
+@keyframes alo-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.alo-card-anim { animation: alo-card-in 320ms ease-out both; }
+
+@keyframes alo-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in { animation: alo-fade-in 240ms ease-out both; }
+
+/* ── 4. Scroll containers ────────────────────────────────────── */
+.alo-scroll,
+.alo-scrollbar,
+.alo-scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+  overscroll-behavior: contain;
+}
+.alo-scroll::-webkit-scrollbar,
+.alo-scrollbar::-webkit-scrollbar,
+.alo-scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.alo-scroll::-webkit-scrollbar-track,
+.alo-scrollbar::-webkit-scrollbar-track,
+.alo-scroll-thin::-webkit-scrollbar-track { background: transparent; }
+.alo-scroll::-webkit-scrollbar-thumb,
+.alo-scrollbar::-webkit-scrollbar-thumb,
+.alo-scroll-thin::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+.alo-scroll::-webkit-scrollbar-thumb:hover,
+.alo-scrollbar::-webkit-scrollbar-thumb:hover,
+.alo-scroll-thin::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ── 5. Dashboard bento surfaces (nexabroad dashboard) ─────────
+   "Glass" is rendered as a plain white card with a hairline border:
+   no dark glassmorphism, no neon glow — Master §02. */
+.nx-glass {
+  background-color: var(--card);
+  border: 1px solid var(--alo-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--alo-shadow-sm);
+}
+.nx-glass-glow-blue { box-shadow: 0 0 0 1px var(--alo-brand-border), var(--alo-shadow-md); }
+.nx-glass-glow-orange { box-shadow: 0 0 0 1px #FFD5C4, var(--alo-shadow-md); }
+
+.nx-bento { display: grid; gap: 16px; grid-template-columns: repeat(1, minmax(0, 1fr)); }
+@media (min-width: 768px) {
+  .nx-bento { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .nx-bento-sm { grid-column: span 1; }
+  .nx-bento-md { grid-column: span 2; }
+  .nx-bento-lg { grid-column: span 4; }
+}
+
+.nx-progress-track {
+  height: 8px;
+  width: 100%;
+  border-radius: 999px;
+  background-color: #F1F5F9;
+  overflow: hidden;
+}
+.nx-progress-fill,
+.nx-progress-gradient {
+  height: 100%;
+  border-radius: 999px;
+  background-color: var(--alo-brand);
+  transition: width 400ms ease-out;
+}
+
+.nx-ai-active { border-color: var(--alo-brand-border); }
+.nx-btn-glow { box-shadow: var(--alo-shadow-blue); }
+
+@keyframes nx-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.nx-pulse { animation: nx-pulse 2.4s ease-in-out infinite; }
+
+/* ── 6. Hero letter-decoration layers (public shell) ─────────── */
+.cap-layer-1, .cap-layer-2, .cap-layer-3 { pointer-events: none; }
+.cap-delay-1 { animation-delay: 0ms; }
+.cap-delay-2 { animation-delay: 400ms; }
+.cap-delay-3 { animation-delay: 800ms; }
+.cap-delay-4 { animation-delay: 1200ms; }
+.cap-delay-5 { animation-delay: 1600ms; }
+.cap-delay-6 { animation-delay: 2000ms; }
+.cap-delay-7 { animation-delay: 2400ms; }
+.cap-delay-8 { animation-delay: 2800ms; }
+
+/* ── 7. Accessible focus ring for non-shadcn controls ────────── */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--alo-brand);
+  outline-offset: 2px;
+}

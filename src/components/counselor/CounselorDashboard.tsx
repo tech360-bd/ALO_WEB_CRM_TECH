@@ -105,10 +105,10 @@ export default function CounselorDashboard() {
                 <Badge
                   variant="secondary"
                   className={cn(
-                    'text-[10px] shrink-0',
+                    'text-[11px] shrink-0',
                     item.priority === 'high' && 'bg-red-50 text-red-600 border-red-200',
                     item.priority === 'medium' && 'bg-amber-50 text-amber-600 border-amber-200',
-                    item.priority === 'low' && 'bg-slate-50 text-slate-600 border-slate-200'
+                    item.priority === 'low' && 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'
                   )}
                 >
                   {item.priority}
