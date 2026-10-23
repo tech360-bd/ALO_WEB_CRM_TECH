@@ -35,18 +35,18 @@ export default function SubmissionQueuePage() {
 
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
-      <div><h1 className="text-xl font-bold text-[#0F172A]">Submission Queue Status</h1><p className="text-sm text-gray-500">Ready/Missing Doc/Fee Pending/Waiting Counselor/Partner/B2B follow-up/University follow-up/Deadline urgent</p></div>
-      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /></div> : (
+      <div><h1 className="text-xl font-bold text-[var(--alo-text)]">Submission Queue Status</h1><p className="text-sm text-[var(--alo-text-muted)]">Ready/Missing Doc/Fee Pending/Waiting Counselor/Partner/B2B follow-up/University follow-up/Deadline urgent</p></div>
+      {loading ? <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--alo-brand)]" /></div> : (
         <div className="grid grid-cols-12 gap-4">
           {queues.map((q, idx)=>(
             <div key={idx} className="col-span-12 md:col-span-6 lg:col-span-4">
-              <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl h-full">
-                <CardHeader className="p-4 border-b border-[#E2E8F0]"><CardTitle className="text-sm flex items-center justify-between">{q.label}<Badge className="bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] text-[10px]">{apps.filter(q.filter).length}</Badge></CardTitle></CardHeader>
+              <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl h-full">
+                <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm flex items-center justify-between">{q.label}<Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)] text-[11px]">{apps.filter(q.filter).length}</Badge></CardTitle></CardHeader>
                 <CardContent className="p-3 space-y-2 max-h-[300px] overflow-y-auto">
                   {apps.filter(q.filter).slice(0,5).map((app:any)=>(
-                    <div key={app.id} className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-2.5 flex items-center justify-between"><div><p className="text-xs font-medium truncate">{app.applicationCode} — {app.universityName}</p><p className="text-[11px] text-gray-500">{app.stage}</p></div><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button></Link></div>
+                    <div key={app.id} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-2.5 flex items-center justify-between"><div><p className="text-xs font-medium truncate">{app.applicationCode} — {app.universityName}</p><p className="text-[11px] text-[var(--alo-text-muted)]">{app.stage}</p></div><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button></Link></div>
                   ))}
-                  {apps.filter(q.filter).length===0 && <p className="text-xs text-gray-500 py-4 text-center">No applications in this queue.</p>}
+                  {apps.filter(q.filter).length===0 && <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No applications in this queue.</p>}
                 </CardContent>
               </Card>
             </div>

@@ -35,7 +35,7 @@ interface DocumentVersionTimelineProps {
 const versionStatusConfig: Record<string, { label: string; classes: string; icon: React.ReactNode }> = {
   uploaded: {
     label: 'Uploaded',
-    classes: 'bg-blue-50 text-blue-700 border-blue-200',
+    classes: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
     icon: <Clock className="w-3 h-3" />,
   },
   under_review: {
@@ -55,7 +55,7 @@ const versionStatusConfig: Record<string, { label: string; classes: string; icon
   },
   superseded: {
     label: 'Superseded',
-    classes: 'bg-slate-50 text-slate-500 border-slate-200',
+    classes: 'bg-[var(--alo-page)] text-[var(--alo-text-muted)] border-[var(--alo-border)]',
     icon: <ChevronRight className="w-3 h-3" />,
   },
 };
@@ -102,24 +102,24 @@ export default function DocumentVersionTimeline({
   return (
     <div className="space-y-3">
       {/* Document Slot Header */}
-      <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl">
+      <div className="flex items-center justify-between p-3 bg-white border border-[var(--alo-border)] rounded-xl">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-[#0057B8]" />
+          <FileText className="w-4 h-4 text-[var(--alo-brand)]" />
           <div>
-            <p className="font-bold text-sm text-slate-900">{slot.slotName}</p>
-            <p className="text-[11px] text-slate-500">{slot.requirement}</p>
+            <p className="font-bold text-sm text-[var(--alo-text)]">{slot.slotName}</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)]">{slot.requirement}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge
-            className={`text-[10px] font-bold border ${
+            className={`text-[11px] font-bold border ${
               slot.status === 'verified'
                 ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
                 : slot.status === 'rejected'
                 ? 'bg-red-50 text-red-700 border-red-300'
                 : slot.status === 'partial'
                 ? 'bg-amber-50 text-amber-700 border-amber-300'
-                : 'bg-slate-50 text-slate-600 border-slate-300'
+                : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border-strong)]'
             }`}
           >
             {slot.status.toUpperCase()}
@@ -144,12 +144,12 @@ export default function DocumentVersionTimeline({
               )}
 
               {/* Version dot */}
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 border-2 ${
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 border-2 ${
                 ver.status === 'verified'
                   ? 'bg-emerald-100 border-emerald-400 text-emerald-800'
                   : ver.status === 'rejected'
                   ? 'bg-red-100 border-red-400 text-red-800'
-                  : 'bg-slate-100 border-slate-300 text-slate-700'
+                  : 'bg-[var(--alo-surface-muted)] border-[var(--alo-border-strong)] text-[var(--alo-body)]'
               }`}>
                 V{ver.version}
               </div>
@@ -160,24 +160,24 @@ export default function DocumentVersionTimeline({
                   <div className="flex items-center gap-1.5">
                     {cfg.icon}
                     <span className="font-bold">{cfg.label}</span>
-                    {isLatest && <Badge className="bg-white text-slate-600 text-[9px] border border-slate-300 px-1.5">LATEST</Badge>}
+                    {isLatest && <Badge className="bg-white text-[var(--alo-body)] text-[11px] border border-[var(--alo-border-strong)] px-1.5">LATEST</Badge>}
                   </div>
-                  <span className="text-[10px] opacity-70">{new Date(ver.uploadedAt).toLocaleDateString()}</span>
+                  <span className="text-[11px] opacity-70">{new Date(ver.uploadedAt).toLocaleDateString()}</span>
                 </div>
 
                 {ver.fileName && (
-                  <p className="font-mono text-[10px] opacity-80 mt-0.5">📎 {ver.fileName}</p>
+                  <p className="font-mono text-[11px] opacity-80 mt-0.5">📎 {ver.fileName}</p>
                 )}
 
                 {ver.status === 'rejected' && ver.rejectionReason && (
                   <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="font-bold text-red-800 text-[10px] uppercase tracking-wide mb-0.5">Rejection Reason:</p>
+                    <p className="font-bold text-red-800 text-[11px] uppercase tracking-wide mb-0.5">Rejection Reason:</p>
                     <p className="text-red-700 text-[11px]">{ver.rejectionReason}</p>
                   </div>
                 )}
 
                 {ver.status === 'verified' && (
-                  <div className="mt-1.5 flex items-center gap-1 text-emerald-700 text-[10px]">
+                  <div className="mt-1.5 flex items-center gap-1 text-emerald-700 text-[11px]">
                     <Lock className="w-3 h-3" />
                     <span>Document locked — immutable after verification</span>
                   </div>
@@ -200,11 +200,11 @@ export default function DocumentVersionTimeline({
           <Button
             onClick={() => onUploadReplacement?.(slot.id)}
             size="sm"
-            className="bg-[#E8501A] hover:bg-[#C93D13] text-white text-xs font-bold gap-2"
+            className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white text-xs font-bold gap-2"
           >
             <Upload className="w-3.5 h-3.5" /> UPLOAD REPLACEMENT (will create V{(latestVersion?.version || 0) + 1})
           </Button>
-          <p className="text-[10px] text-amber-600">Version {latestVersion?.version} will remain in history</p>
+          <p className="text-[11px] text-amber-600">Version {latestVersion?.version} will remain in history</p>
         </div>
       )}
 
@@ -219,7 +219,7 @@ export default function DocumentVersionTimeline({
           >
             <XCircle className="w-3.5 h-3.5" /> Reject (with Reason)
           </Button>
-          <p className="text-[10px] text-slate-500 self-center">
+          <p className="text-[11px] text-[var(--alo-text-muted)] self-center">
             Reject ≠ Delete — rejected documents remain in history
           </p>
         </div>
@@ -229,16 +229,16 @@ export default function DocumentVersionTimeline({
       {showRejectModal && (
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
-            <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+            <h3 className="font-bold text-sm text-[var(--alo-text)] flex items-center gap-2">
               <XCircle className="w-5 h-5 text-red-500" /> Reject Document — Reason Required
             </h3>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700">Select reason *</label>
+              <label className="text-xs font-bold text-[var(--alo-body)]">Select reason *</label>
               <select
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                className="w-full p-2.5 border border-slate-200 rounded-lg text-xs"
+                className="w-full p-2.5 border border-[var(--alo-border)] rounded-lg text-xs"
               >
                 <option value="">Select a reason...</option>
                 {REJECTION_REASONS.map((r) => (
@@ -248,12 +248,12 @@ export default function DocumentVersionTimeline({
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700">Additional notes (optional)</label>
+              <label className="text-xs font-bold text-[var(--alo-body)]">Additional notes (optional)</label>
               <textarea
                 value={customNote}
                 onChange={(e) => setCustomNote(e.target.value)}
                 placeholder="e.g. Page 2 is missing from the scan..."
-                className="w-full p-2.5 border border-slate-200 rounded-lg text-xs resize-none h-20"
+                className="w-full p-2.5 border border-[var(--alo-border)] rounded-lg text-xs resize-none h-20"
               />
             </div>
 
@@ -263,17 +263,17 @@ export default function DocumentVersionTimeline({
 
             <div className="flex gap-3 pt-1">
               <Button
-                variant="outline"
-                className="flex-1 text-xs font-bold"
-                onClick={() => setShowRejectModal(null)}
+ variant="outline"
+ className="flex-1 font-bold"
+ onClick={() => setShowRejectModal(null)}
               >
                 Cancel
               </Button>
               <Button
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
-                onClick={handleConfirmReject}
-                disabled={!rejectReason}
-              >
+ className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold"
+ onClick={handleConfirmReject}
+ disabled={!rejectReason}
+ >
                 Confirm Rejection
               </Button>
             </div>

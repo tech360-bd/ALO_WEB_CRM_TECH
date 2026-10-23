@@ -115,9 +115,9 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1e] flex">
+    <div className="min-h-screen bg-[var(--alo-text)] flex">
       {/* Left Panel — Brand */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#0057B8] via-[#0046a0] to-[#002d6b] flex-col justify-between p-12">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--alo-brand)] via-[var(--alo-brand-hover)] to-[#002d6b] flex-col justify-between p-12">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
@@ -125,7 +125,7 @@ export default function StudentLoginPage() {
             </div>
             <div>
               <p className="text-white font-bold text-xl">ALO Education</p>
-              <p className="text-blue-200 text-sm">Student Portal</p>
+              <p className="text-[var(--alo-brand-pale)] text-sm">Student Portal</p>
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function StudentLoginPage() {
             <h1 className="text-4xl font-bold text-white leading-tight">
               Your Study Abroad<br />Journey, All in One Place
             </h1>
-            <p className="mt-4 text-blue-200 text-lg leading-relaxed">
+            <p className="mt-4 text-[var(--alo-brand-pale)] text-lg leading-relaxed">
               Track applications, manage documents, prepare for interviews, and stay updated on your visa — from anywhere.
             </p>
           </div>
@@ -150,13 +150,13 @@ export default function StudentLoginPage() {
             ].map((stat) => (
               <div key={stat.label} className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-blue-200 text-sm mt-1">{stat.label}</p>
+                <p className="text-[var(--alo-brand-pale)] text-sm mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-blue-200 text-sm">
+        <div className="flex items-center gap-2 text-[var(--alo-brand-pale)] text-sm">
           <Shield className="w-4 h-4" />
           <span>Your data is protected with enterprise-grade security</span>
         </div>
@@ -166,25 +166,25 @@ export default function StudentLoginPage() {
       <div className="flex-1 lg:max-w-md flex flex-col items-center justify-center p-8">
         {/* Mobile Logo */}
         <div className="lg:hidden flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
           <div>
             <p className="text-white font-bold">ALO Education</p>
-            <p className="text-gray-400 text-xs">Student Portal</p>
+            <p className="text-[var(--alo-text-muted)] text-xs">Student Portal</p>
           </div>
         </div>
 
         <div className="w-full max-w-sm">
           <h2 className="text-2xl font-bold text-white mb-1">Welcome back</h2>
-          <p className="text-gray-400 text-sm mb-8">Sign in to access your student portal</p>
+          <p className="text-[var(--alo-text-muted)] text-sm mb-8">Sign in to access your student portal</p>
 
           {/* Method Tabs */}
           <div className="flex bg-white/5 rounded-xl p-1 mb-6">
             <button
               onClick={() => { setMethod('password'); setError(''); }}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                method === 'password' ? 'bg-[#0057B8] text-white' : 'text-gray-400 hover:text-white'
+                method === 'password' ? 'bg-[var(--alo-brand)] text-white' : 'text-[var(--alo-text-muted)] hover:text-white'
               }`}
             >
               Password
@@ -192,7 +192,7 @@ export default function StudentLoginPage() {
             <button
               onClick={() => { setMethod('otp'); setError(''); }}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                method === 'otp' ? 'bg-[#0057B8] text-white' : 'text-gray-400 hover:text-white'
+                method === 'otp' ? 'bg-[var(--alo-brand)] text-white' : 'text-[var(--alo-text-muted)] hover:text-white'
               }`}
             >
               OTP / SMS
@@ -202,11 +202,11 @@ export default function StudentLoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Email or Phone */}
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-1.5">
+              <label className="block text-[var(--alo-placeholder)] text-sm font-medium mb-1.5">
                 Email or Phone Number
               </label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)]">
                   {email.includes('@') ? <Mail className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
                 </div>
                 <input
@@ -223,7 +223,7 @@ export default function StudentLoginPage() {
                     }
                   }}
                   placeholder="email@example.com or +8801805020100"
-                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] focus:ring-1 focus:ring-[#0057B8] text-sm transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[var(--alo-brand)] focus:ring-1 focus:ring-[var(--alo-brand)] text-sm transition-all"
                   required
                 />
               </div>
@@ -231,23 +231,23 @@ export default function StudentLoginPage() {
 
             {method === 'password' ? (
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-1.5">
+                <label className="block text-[var(--alo-placeholder)] text-sm font-medium mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] w-4 h-4" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Your password"
-                    className="w-full pl-10 pr-10 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] focus:ring-1 focus:ring-[#0057B8] text-sm transition-all"
+                    className="w-full pl-10 pr-10 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[var(--alo-brand)] focus:ring-1 focus:ring-[var(--alo-brand)] text-sm transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-placeholder)]"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -260,7 +260,7 @@ export default function StudentLoginPage() {
               </div>
             ) : (
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-1.5">
+                <label className="block text-[var(--alo-placeholder)] text-sm font-medium mb-1.5">
                   OTP Code
                 </label>
                 <div className="flex gap-2">
@@ -270,7 +270,7 @@ export default function StudentLoginPage() {
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="6-digit code"
                     maxLength={6}
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0057B8] focus:ring-1 focus:ring-[#0057B8] text-sm font-mono tracking-widest transition-all"
+                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[var(--alo-brand)] focus:ring-1 focus:ring-[var(--alo-brand)] text-sm font-mono tracking-widest transition-all"
                   />
                   <button
                     type="button"
@@ -301,7 +301,7 @@ export default function StudentLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-[#0057B8] to-[#0046a0] hover:from-[#0046a0] hover:to-[#003d82] text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-[#0057B8]/20"
+              className="w-full py-3 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] hover:from-[var(--alo-brand-hover)] hover:to-[var(--alo-brand-hover)] text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-[#0057B8]/20"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -315,7 +315,7 @@ export default function StudentLoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-500 text-sm">
+            <p className="text-[var(--alo-text-muted)] text-sm">
               Not registered yet?{' '}
               <Link href="/register" className="text-[#60a5fa] hover:text-blue-300 font-medium">
                 Create an account
@@ -324,11 +324,11 @@ export default function StudentLoginPage() {
           </div>
 
           <div className="mt-6 pt-6 border-t border-white/5 text-center">
-            <p className="text-gray-600 text-xs">
+            <p className="text-[var(--alo-body)] text-xs">
               By signing in, you agree to ALO Education&apos;s{' '}
-              <Link href="/terms" className="text-gray-400 hover:text-white">Terms of Service</Link>
+              <Link href="/terms" className="text-[var(--alo-text-muted)] hover:text-white">Terms of Service</Link>
               {' '}and{' '}
-              <Link href="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link>
+              <Link href="/privacy-policy" className="text-[var(--alo-text-muted)] hover:text-white">Privacy Policy</Link>
             </p>
           </div>
         </div>

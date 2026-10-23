@@ -123,11 +123,11 @@ export default function ConsentBanner({
       role="region"
       aria-label="Analytics consent"
       className="fixed inset-x-0 bottom-0 z-[9998] border-t bg-white px-4 py-4 shadow-[0_-4px_24px_rgba(15,23,42,0.12)] sm:px-6"
-      style={{ borderColor: '#E2E8F0' }}
+      style={{ borderColor: 'var(--alo-border)' }}
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-3xl space-y-2 text-sm text-slate-700">
-          <p className="font-semibold text-slate-900">We would like to measure how this site is used</p>
+        <div className="max-w-3xl space-y-2 text-sm text-[var(--alo-body)]">
+          <p className="font-semibold text-[var(--alo-text)]">We would like to measure how this site is used</p>
           <p className="leading-relaxed">
             With your permission we use Google Analytics to understand which pages, courses and
             universities visitors find useful. This uses cookies and does <strong>not</strong> include
@@ -140,12 +140,12 @@ export default function ConsentBanner({
             .
           </p>
           {showAdvertisingChoice ? (
-            <label className="flex items-center gap-2 pt-1 text-slate-700">
+            <label className="flex items-center gap-2 pt-1 text-[var(--alo-body)]">
               <input
                 type="checkbox"
                 checked={advertising}
                 onChange={(event) => setAdvertising(event.target.checked)}
-                className="size-4 rounded border-slate-300"
+                className="size-4 rounded border-[var(--alo-border-strong)]"
               />
               <span>Also allow advertising measurement (off by default)</span>
             </label>
@@ -156,7 +156,7 @@ export default function ConsentBanner({
           <button
             type="button"
             onClick={() => decide(false, false)}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            className="rounded-lg border border-[var(--alo-border-strong)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--alo-body)] transition-colors hover:bg-[var(--alo-page)]"
           >
             Reject
           </button>

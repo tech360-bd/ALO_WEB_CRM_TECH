@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Download, FileBarChart, Users, FileText, DollarSign, TrendingUp, Activity, CalendarDays } from 'lucide-react';
 
 const quickStats = [
-  { label: 'Activities This Week', value: '47', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { label: 'Activities This Week', value: '47', icon: Activity, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   { label: 'Students Managed', value: '24', icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   { label: 'Applications Processed', value: '8', icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50' },
   { label: 'Revenue Generated', value: '৳2.4L', icon: DollarSign, color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -85,9 +85,9 @@ export default function EmployeeReportsPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-alo-text">{r.name}</p>
                   <p className="text-[11px] text-alo-text-muted mt-0.5">{r.description}</p>
-                  <p className="text-[10px] text-alo-text-muted mt-0.5">Last: {r.lastGenerated} · {r.format}</p>
+                  <p className="text-[11px] text-alo-text-muted mt-0.5">Last: {r.lastGenerated} · {r.format}</p>
                 </div>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-8 text-xs text-alo-brand shrink-0">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className=" text-alo-brand shrink-0">
                   <Download className="w-3 h-3 mr-1" /> {r.format}
                 </Button>
               </div>

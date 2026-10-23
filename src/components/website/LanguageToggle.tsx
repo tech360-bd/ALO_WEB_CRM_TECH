@@ -31,7 +31,7 @@ export default function LanguageToggle({
     >
       {!compact && (
         <Languages
-          className={`ml-1.5 h-3.5 w-3.5 ${onDark ? 'text-white/70' : 'text-slate-400'}`}
+          className={`ml-1.5 h-3.5 w-3.5 ${onDark ? 'text-white/70' : 'text-[var(--alo-text-muted)]'}`}
           aria-hidden
         />
       )}
@@ -48,7 +48,7 @@ export default function LanguageToggle({
                 : 'rounded-full bg-alo-brand px-3 py-1 text-[11px] font-bold text-white'
               : onDark
                 ? 'rounded-full px-3 py-1 text-[11px] font-semibold text-white/80 transition-colors hover:text-white'
-                : 'rounded-full px-3 py-1 text-[11px] font-semibold text-slate-600 transition-colors hover:text-alo-brand'
+                : 'rounded-full px-3 py-1 text-[11px] font-semibold text-[var(--alo-body)] transition-colors hover:text-alo-brand'
           }
         >
           {LOCALE_LABELS[l]}

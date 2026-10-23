@@ -40,26 +40,26 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
   )));
 
   return (
-    <div className="bg-slate-50 min-h-screen py-12 text-slate-900">
+    <div className="bg-[var(--alo-page)] min-h-screen py-12 text-[var(--alo-text)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Link href="/destinations" className="hover:text-blue-600">Destinations</Link>
+        <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
+          <Link href="/destinations" className="hover:text-[var(--alo-brand)]">Destinations</Link>
           <span>/</span>
-          <Link href={`/destinations/${countryData.slug}`} className="hover:text-blue-600">{countryData.name}</Link>
+          <Link href={`/destinations/${countryData.slug}`} className="hover:text-[var(--alo-brand)]">{countryData.name}</Link>
           <span>/</span>
-          <span className="text-slate-800 font-semibold">Scholarships</span>
+          <span className="text-[var(--alo-text)] font-semibold">Scholarships</span>
         </div>
 
         {/* Header Hero */}
-        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white rounded-3xl p-8 border border-[var(--alo-border)] shadow-sm space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
             <Award className="w-4 h-4" /> <span>{countryData.flag}</span> Verified Financial Aid Grants
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900">
+          <h1 className="text-3xl font-extrabold text-[var(--alo-text)]">
             Scholarships in {countryData.name} for Bangladeshi Students
           </h1>
-          <p className="text-xs text-slate-600 max-w-3xl leading-relaxed">
+          <p className="text-xs text-[var(--alo-body)] max-w-3xl leading-relaxed">
             Discover partial tuition fee waivers, merit-based grants, and automatic awards available for Bangladeshi applicants studying in {countryData.name}.
           </p>
         </div>
@@ -69,30 +69,30 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
           {scholarships.map((sch) => (
             <div
               key={sch.id}
-              className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition space-y-4"
+              className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
                     {sch.coverageType || 'Tuition Reduction'}
                   </span>
-                  <span className="text-xs text-slate-500 font-semibold">
+                  <span className="text-xs text-[var(--alo-text-muted)] font-semibold">
                     {sch.scholarshipCurrency} {sch.scholarshipAmount?.toLocaleString()}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">{sch.scholarshipName}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{sch.university?.name || sch.provider || countryData.name}</p>
+                  <h3 className="font-bold text-[var(--alo-text)] text-base">{sch.scholarshipName}</h3>
+                  <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{sch.university?.name || sch.provider || countryData.name}</p>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+                <div className="space-y-1.5 text-xs text-[var(--alo-body)] border-t border-[var(--alo-border)] pt-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Eligible Levels:</span>
-                    <span className="font-semibold text-slate-800">{sch.eligibleLevels || 'UG / PG'}</span>
+                    <span className="text-[var(--alo-text-muted)]">Eligible Levels:</span>
+                    <span className="font-semibold text-[var(--alo-text)]">{sch.eligibleLevels || 'UG / PG'}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400 flex items-center gap-1">
+                    <span className="text-[var(--alo-text-muted)] flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" /> Deadline:
                     </span>
                     <span className="font-bold text-amber-700">{sch.deadline ? String(sch.deadline).substring(0, 10) : 'Rolling Admission'}</span>
@@ -100,7 +100,7 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div className="pt-3 border-t border-[var(--alo-border)] flex items-center justify-between">
                 <a
                   href={sch.officialScholarshipUrl || countryData.canonicalUrl}
                   target="_blank"

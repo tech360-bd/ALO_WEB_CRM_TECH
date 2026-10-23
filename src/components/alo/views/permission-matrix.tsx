@@ -53,8 +53,8 @@ interface PermissionsResponse {
 
 const MODULE_COLORS: Record<string, { badge: string; chip: string; dot: string }> = {
   Student: {
-    badge: "bg-blue-100 text-blue-700 border-blue-200",
-    chip: "bg-blue-50 text-blue-700",
+    badge: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
+    chip: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
     dot: "bg-blue-500",
   },
   Documents: {
@@ -68,9 +68,9 @@ const MODULE_COLORS: Record<string, { badge: string; chip: string; dot: string }
     dot: "bg-emerald-500",
   },
   Application: {
-    badge: "bg-orange-100 text-orange-700 border-orange-200",
-    chip: "bg-orange-50 text-orange-700",
-    dot: "bg-orange-500",
+    badge: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
+    chip: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+    dot: "bg-[var(--alo-cta)]",
   },
   Visa: {
     badge: "bg-rose-100 text-rose-700 border-rose-200",
@@ -99,8 +99,8 @@ const ACTION_STYLES: Record<string, string> = {
   create: "bg-emerald-100 text-emerald-700",
   update: "bg-amber-100 text-amber-700",
   approve: "bg-violet-100 text-violet-700",
-  export: "bg-slate-200 text-slate-700",
-  download: "bg-slate-200 text-slate-700",
+  export: "bg-slate-200 text-[var(--alo-body)]",
+  download: "bg-slate-200 text-[var(--alo-body)]",
 };
 
 const SCOPE_LABELS: Record<string, string> = {
@@ -313,7 +313,7 @@ export function PermissionMatrix() {
           icon="Lock"
           subtitle="Granular role-based access control. Super Admin can grant or revoke any permission per role."
           action={
-            <Button variant="outline" className="h-12 border-[#0057B8]/30 text-[#0057B8]" disabled>
+            <Button variant="outline" className="h-12 border-[var(--alo-brand)]/30 text-[var(--alo-brand)]" disabled>
               <Icon name="RefreshCw" className="size-4" /> Refresh
             </Button>
           }
@@ -338,7 +338,7 @@ export function PermissionMatrix() {
           action={
             <Button
               onClick={fetchPermissions}
-              className="h-12 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
+              className="h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
             >
               <Icon name="RefreshCw" className="size-4" /> Reload
             </Button>
@@ -370,7 +370,7 @@ export function PermissionMatrix() {
           <Button
             variant="outline"
             onClick={fetchPermissions}
-            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-12 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
           >
             <Icon name="RefreshCw" className="size-4" /> Refresh
           </Button>
@@ -378,14 +378,14 @@ export function PermissionMatrix() {
       />
 
       {/* ------------------------------------------------- security notice */}
-      <Card className="rounded-2xl border-2 border-[#E8501A]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-[var(--alo-cta-soft)]/40">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white">
               <Icon name="ShieldAlert" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#E8501A]">
+              <CardTitle className="text-base text-[var(--alo-cta)]">
                 Security Notice — Frontend vs Backend Authority
               </CardTitle>
               <CardDescription className="text-xs">
@@ -397,9 +397,9 @@ export function PermissionMatrix() {
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="flex items-start gap-2.5 rounded-xl bg-white/70 p-3">
-              <Icon name="Eye" className="mt-0.5 size-4 shrink-0 text-[#0057B8]" />
+              <Icon name="Eye" className="mt-0.5 size-4 shrink-0 text-[var(--alo-brand)]" />
               <p className="text-xs text-foreground">
-                <span className="font-semibold text-[#0057B8]">Frontend PermissionGate</span>{" "}
+                <span className="font-semibold text-[var(--alo-brand)]">Frontend PermissionGate</span>{" "}
                 only hides buttons & routes — it&apos;s never the source of truth.
               </p>
             </div>
@@ -411,9 +411,9 @@ export function PermissionMatrix() {
               </p>
             </div>
             <div className="flex items-start gap-2.5 rounded-xl bg-white/70 p-3">
-              <Icon name="ScrollText" className="mt-0.5 size-4 shrink-0 text-[#E8501A]" />
+              <Icon name="ScrollText" className="mt-0.5 size-4 shrink-0 text-[var(--alo-cta)]" />
               <p className="text-xs text-foreground">
-                <span className="font-semibold text-[#E8501A]">All permission changes</span>{" "}
+                <span className="font-semibold text-[var(--alo-cta)]">All permission changes</span>{" "}
                 are written to the audit log with actor, role, scope, and action.
               </p>
             </div>
@@ -431,13 +431,13 @@ export function PermissionMatrix() {
           {SCOPE_INFO.map((s) => (
             <div
               key={s.value}
-              className="flex items-start gap-3 rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3"
+              className="flex items-start gap-3 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3"
             >
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#0057B8] text-white">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-brand)] text-white">
                 <Icon name={s.icon} className="size-4" />
               </div>
               <div className="min-w-0">
-                <p className="font-mono text-xs font-bold text-[#0057B8]">{s.label}</p>
+                <p className="font-mono text-xs font-bold text-[var(--alo-brand)]">{s.label}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{s.description}</p>
               </div>
             </div>
@@ -446,15 +446,15 @@ export function PermissionMatrix() {
       </SectionCard>
 
       {/* --------------------------------------------- role selector chips */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
         <CardContent className="pt-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Icon name="Users" className="size-4 text-[#0057B8]" />
-              <span className="text-sm font-semibold text-[#0057B8]">Select role to configure</span>
+              <Icon name="Users" className="size-4 text-[var(--alo-brand)]" />
+              <span className="text-sm font-semibold text-[var(--alo-brand)]">Select role to configure</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
+              <Badge variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)]">
                 {selectedRole === "__ALL__"
                   ? "Viewing all roles"
                   : `${stats.granted} of ${stats.total} granted`}
@@ -469,8 +469,8 @@ export function PermissionMatrix() {
               className={cn(
                 "rounded-full border-2 px-3.5 py-1.5 text-xs font-semibold transition-colors",
                 selectedRole === "__ALL__"
-                  ? "border-[#0057B8] bg-[#0057B8] text-white"
-                  : "border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#e8f0fb]"
+                  ? "border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white"
+                  : "border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               )}
             >
               All roles
@@ -485,8 +485,8 @@ export function PermissionMatrix() {
                   className={cn(
                     "rounded-full border-2 px-3.5 py-1.5 text-xs font-semibold transition-colors",
                     active
-                      ? "border-[#0057B8] bg-[#0057B8] text-white"
-                      : "border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#e8f0fb]"
+                      ? "border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white"
+                      : "border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   )}
                 >
                   {ROLE_LABELS[role] || role}
@@ -537,10 +537,10 @@ export function PermissionMatrix() {
                         const isToggling = !!toggling[toggleKey];
                         const isDefault = p.defaultRoles.includes(selectedRole);
                         const actionColor =
-                          ACTION_STYLES[p.action] || "bg-slate-100 text-slate-700";
+                          ACTION_STYLES[p.action] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
 
                         return (
-                          <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
+                          <TableRow key={p.id} className="hover:bg-[var(--alo-brand-light)]/40">
                             <TableCell>
                               <span
                                 className={cn(
@@ -561,7 +561,7 @@ export function PermissionMatrix() {
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <span className="inline-flex items-center gap-1 rounded-full bg-[#e8f0fb] px-1.5 py-0.5 text-[10px] font-semibold text-[#0057B8]">
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--alo-brand-light)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-brand)]">
                                           <Icon name="Star" className="size-2.5" /> default
                                         </span>
                                       </TooltipTrigger>
@@ -590,7 +590,7 @@ export function PermissionMatrix() {
                             </TableCell>
                             <TableCell>
                               {granted ? (
-                                <code className="font-mono text-[11px] text-[#0057B8]">
+                                <code className="font-mono text-[11px] text-[var(--alo-brand)]">
                                   {SCOPE_LABELS[granted.scope] || granted.scope}
                                 </code>
                               ) : (
@@ -609,7 +609,7 @@ export function PermissionMatrix() {
                                     "size-5 rounded-md border-2 transition-colors",
                                     granted
                                       ? "border-emerald-600 bg-emerald-600 text-white"
-                                      : "border-slate-300"
+                                      : "border-[var(--alo-border-strong)]"
                                   )}
                                 />
                               </div>
@@ -640,7 +640,7 @@ export function PermissionMatrix() {
                   {visibleRoles.map((r) => (
                     <TableHead key={r} className="w-[60px] text-center">
                       <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[10px] font-semibold leading-tight">
+                        <span className="text-[11px] font-semibold leading-tight">
                           {ROLE_LABELS[r] || r}
                         </span>
                       </div>
@@ -653,7 +653,7 @@ export function PermissionMatrix() {
                   const perms = data.permissions[mod] || [];
                   const color = MODULE_COLORS[mod] || MODULE_COLORS.Student;
                   return perms.map((p) => (
-                    <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
+                    <TableRow key={p.id} className="hover:bg-[var(--alo-brand-light)]/40">
                       <TableCell>
                         <div className="flex flex-col gap-0.5">
                           <code className="font-mono text-xs font-semibold text-foreground">
@@ -690,7 +690,7 @@ export function PermissionMatrix() {
                                   "size-5 rounded-md border-2 transition-colors",
                                   granted
                                     ? "border-emerald-600 bg-emerald-600 text-white"
-                                    : "border-slate-300"
+                                    : "border-[var(--alo-border-strong)]"
                                 )}
                               />
                             </div>

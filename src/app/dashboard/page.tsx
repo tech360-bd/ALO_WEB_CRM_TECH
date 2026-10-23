@@ -36,7 +36,7 @@ export default function DashboardPage() {
   if (!isAuthenticated || !userType) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-pulse text-slate-400">Loading...</div>
+        <div className="animate-pulse text-[var(--alo-text-muted)]">Loading...</div>
       </div>
     );
   }

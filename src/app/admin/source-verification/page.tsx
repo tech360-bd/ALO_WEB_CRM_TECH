@@ -14,20 +14,20 @@ const reviewPanels = [
 
 export default function AdminSourceVerificationPage() {
   return (
-    <main className="min-h-screen bg-slate-950 px-6 py-8 text-white">
+    <main className="min-h-screen bg-[var(--alo-page)] px-6 py-8 text-[var(--alo-text)]">
       <section className="mx-auto max-w-7xl">
-        <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">ALO Education Data Governance</p>
+        <p className="caption-text text-[var(--alo-success-dark)]">ALO Education Data Governance</p>
         <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-3xl font-bold">Official Source Verification</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--alo-placeholder)]">
               University and course data remains unpublished until official-source evidence is reviewed.
               Aggregators are discovery-only. This screen is backed by protected CRM verification APIs.
             </p>
           </div>
           <a
             href="/api/crm/source-verification"
-            className="inline-flex w-fit rounded-md border border-emerald-400 px-4 py-2 text-sm font-semibold text-emerald-200 hover:bg-emerald-400 hover:text-slate-950"
+            className="inline-flex w-fit items-center rounded-[10px] border border-[var(--alo-success)] bg-[var(--alo-success-soft)] px-4 py-2.5 text-[13px] font-semibold text-[var(--alo-success-dark)] transition-colors hover:bg-[var(--alo-success)] hover:text-white"
           >
             Open Protected Evidence API
           </a>
@@ -35,14 +35,14 @@ export default function AdminSourceVerificationPage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {reviewPanels.map(([title, body]) => (
-            <article key={title} className="rounded-lg border border-slate-800 bg-slate-900 p-5">
-              <h2 className="text-base font-semibold text-white">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
+            <article key={title} className="rounded-[14px] border border-[var(--alo-border)] bg-card p-5 shadow-[var(--alo-shadow-xs)]">
+              <h2 className="card-title">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--alo-body)]">{body}</p>
             </article>
           ))}
         </div>
 
-        <section className="mt-8 rounded-lg border border-amber-400 bg-amber-950/40 p-5 text-sm leading-6 text-amber-100">
+        <section className="mt-8 rounded-[14px] border border-[var(--alo-warning)] bg-[var(--alo-warning-soft)] p-5 text-sm leading-6 text-[var(--alo-warning-strong)]">
           <h2 className="font-semibold">Publication Rule</h2>
           <p className="mt-2">
             A course may be published only after official course URL ownership, study level, delivery mode,

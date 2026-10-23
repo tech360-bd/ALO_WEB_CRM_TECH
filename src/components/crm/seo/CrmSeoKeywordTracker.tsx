@@ -234,14 +234,14 @@ const CANNIBALIZATION_ALERTS: CannibalizationAlert[] = [
 function getPositionColor(position: number): string {
   if (position <= 3) return 'text-emerald-600 font-bold';
   if (position <= 10) return 'text-amber-600 font-semibold';
-  if (position <= 20) return 'text-orange-500 font-medium';
+  if (position <= 20) return 'text-[var(--alo-cta)] font-medium';
   return 'text-red-500 font-medium';
 }
 
 function getPositionBg(position: number): string {
   if (position <= 3) return 'bg-emerald-100 dark:bg-emerald-900/30';
   if (position <= 10) return 'bg-amber-100 dark:bg-amber-900/30';
-  if (position <= 20) return 'bg-orange-100 dark:bg-orange-900/30';
+  if (position <= 20) return 'bg-[var(--alo-cta-soft)] dark:bg-orange-900/30';
   return 'bg-red-100 dark:bg-red-900/30';
 }
 

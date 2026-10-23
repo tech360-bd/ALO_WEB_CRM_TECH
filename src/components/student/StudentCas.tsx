@@ -59,7 +59,7 @@ export default function StudentCas() {
   const records = data?.records ?? [];
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Confirmation Documents"
@@ -76,7 +76,7 @@ export default function StudentCas() {
               title="No confirmation document has been issued yet"
               description="This is issued by the university after you accept your offer and, where required, pay a deposit. It appears here as soon as we receive it."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/applications">View My Applications</Link>
                 </Button>
               }
@@ -92,19 +92,19 @@ export default function StudentCas() {
                 title={DOC_LABELS[entry.record.documentType] ?? entry.record.documentType}
                 description={`${entry.universityName}${entry.courseName ? ` · ${entry.courseName}` : ''}${entry.applicationCode ? ` · ${entry.applicationCode}` : ''}`}
               >
-                <div className="divide-y divide-slate-200">
+                <div className="divide-y divide-[var(--alo-border)]">
                   <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                     <div className="flex items-center gap-2.5">
-                      <FileCheck2 className="h-4 w-4 text-alo-blue" aria-hidden="true" />
-                      <span className="text-[13px] font-semibold text-slate-900">Document status</span>
+                      <FileCheck2 className="h-4 w-4 text-alo-brand" aria-hidden="true" />
+                      <span className="text-[13px] font-semibold text-[var(--alo-text)]">Document status</span>
                     </div>
                     <StatusBadge value={entry.record.status} />
                   </div>
 
                   {entry.record.referenceNumber && (
                     <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
-                      <span className="text-[13px] text-slate-600">Reference number</span>
-                      <code className="rounded-button border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-[13px] font-semibold text-slate-900">
+                      <span className="text-[13px] text-[var(--alo-body)]">Reference number</span>
+                      <code className="rounded-button border border-[var(--alo-border)] bg-[var(--alo-page)] px-3 py-1 font-mono text-[13px] font-semibold text-[var(--alo-text)]">
                         {entry.record.referenceNumber}
                       </code>
                     </div>
@@ -114,16 +114,16 @@ export default function StudentCas() {
                     <div className="grid gap-3 px-5 py-3 sm:grid-cols-2">
                       {entry.record.requestedDate && (
                         <div>
-                          <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Requested</p>
-                          <p className="mt-0.5 text-[13px] text-slate-900">
+                          <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Requested</p>
+                          <p className="mt-0.5 text-[13px] text-[var(--alo-text)]">
                             {new Date(entry.record.requestedDate).toLocaleDateString('en-GB')}
                           </p>
                         </div>
                       )}
                       {entry.record.receivedDate && (
                         <div>
-                          <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Received</p>
-                          <p className="mt-0.5 text-[13px] text-slate-900">
+                          <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Received</p>
+                          <p className="mt-0.5 text-[13px] text-[var(--alo-text)]">
                             {new Date(entry.record.receivedDate).toLocaleDateString('en-GB')}
                           </p>
                         </div>
@@ -140,20 +140,20 @@ export default function StudentCas() {
 
                   {entry.record.nextStep && (
                     <div className="px-5 py-3">
-                      <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Next step</p>
-                      <p className="mt-0.5 text-[13px] leading-relaxed text-slate-700">{entry.record.nextStep}</p>
+                      <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Next step</p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{entry.record.nextStep}</p>
                     </div>
                   )}
 
                   <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
-                    <span className="text-[13px] text-slate-600">Visa handover</span>
+                    <span className="text-[13px] text-[var(--alo-body)]">Visa handover</span>
                     <StatusBadge value={entry.record.visaHandoverStatus} />
                   </div>
                 </div>
 
                 {entry.record.fileUrl && (
-                  <div className="border-t border-slate-200 px-5 py-3">
-                    <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                  <div className="border-t border-[var(--alo-border)] px-5 py-3">
+                    <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                       <a href={entry.record.fileUrl}>
                         <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                         Download Document
@@ -164,7 +164,7 @@ export default function StudentCas() {
               </PortalCard>
             ))}
 
-            <p className="text-[12px] leading-relaxed text-slate-500">
+            <p className="text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
               Reference numbers and conditions are exactly as issued by your university. Check them against the
               original document before you use them in a visa application.
             </p>

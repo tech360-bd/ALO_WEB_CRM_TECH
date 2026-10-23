@@ -124,11 +124,11 @@ interface Stats {
 // ---------- Color maps ----------
 const LEAD_STATUS_COLORS: Record<string, string> = {
   NEW: "bg-amber-100 text-amber-700",
-  CONTACTED: "bg-blue-100 text-blue-700",
+  CONTACTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   QUALIFIED: "bg-violet-100 text-violet-700",
   CONVERTED: "bg-emerald-100 text-emerald-700",
   LOST: "bg-rose-100 text-rose-700",
-  DUPLICATE: "bg-slate-100 text-slate-700",
+  DUPLICATE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const LEAD_STATUS_LABELS: Record<string, string> = {
@@ -144,13 +144,13 @@ const LEAD_STATUSES = ["NEW", "CONTACTED", "QUALIFIED", "CONVERTED", "LOST", "DU
 
 const STUDENT_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
-  INACTIVE: "bg-slate-100 text-slate-700",
-  GRADUATED: "bg-blue-100 text-blue-700",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-slate-100 text-slate-600",
-  NORMAL: "bg-blue-100 text-blue-700",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -278,7 +278,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
           action={
             <Button
               onClick={() => onNavigate("landing")}
-              className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+              className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
             >
               <Icon name="Plus" className="mr-2 size-4" />
               New Lead
@@ -299,7 +299,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
         action={
           <Button
             onClick={() => onNavigate("landing")}
-            className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+            className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
           >
             <Icon name="Plus" className="mr-2 size-4" />
             New Lead
@@ -341,24 +341,24 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border-2 border-[#0057B8]/15 bg-white p-1.5 sm:w-auto">
+        <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white p-1.5 sm:w-auto">
           <TabsTrigger
             value="leads"
-            className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white"
+            className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white"
           >
             <Icon name="UserPlus" className="mr-1.5 size-4" />
             Leads
           </TabsTrigger>
           <TabsTrigger
             value="students"
-            className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white"
+            className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white"
           >
             <Icon name="Users" className="mr-1.5 size-4" />
             Students
           </TabsTrigger>
           <TabsTrigger
             value="pipeline"
-            className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white"
+            className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white"
           >
             <Icon name="GitBranch" className="mr-1.5 size-4" />
             Pipeline Overview
@@ -384,15 +384,15 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                     className={
                       "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all " +
                       (isActive
-                        ? "border-[#0057B8] bg-[#0057B8] text-white"
-                        : "border-[#0057B8]/15 bg-[#e8f0fb]/50 text-[#0057B8] hover:border-[#0057B8]/40")
+                        ? "border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white"
+                        : "border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/50 text-[var(--alo-brand)] hover:border-[var(--alo-brand)]/40")
                     }
                   >
                     {src.label}
                     <span
                       className={
-                        "rounded-full px-1.5 py-0.5 text-[10px] " +
-                        (isActive ? "bg-white/20 text-white" : "bg-white text-[#0057B8]")
+                        "rounded-full px-1.5 py-0.5 text-[11px] " +
+                        (isActive ? "bg-white/20 text-white" : "bg-white text-[var(--alo-brand)]")
                       }
                     >
                       {count}
@@ -404,7 +404,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
           </SectionCard>
 
           {/* Filters */}
-          <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+          <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
             <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Icon name="SlidersHorizontal" className="size-4" />
@@ -412,7 +412,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
               </div>
               <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-1">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-10 rounded-xl border-[#0057B8]/15">
+                  <SelectTrigger className="h-10 rounded-xl border-[var(--alo-brand)]/15">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -425,7 +425,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                   </SelectContent>
                 </Select>
                 <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                  <SelectTrigger className="h-10 rounded-xl border-[#0057B8]/15">
+                  <SelectTrigger className="h-10 rounded-xl border-[var(--alo-brand)]/15">
                     <SelectValue placeholder="Source" />
                   </SelectTrigger>
                   <SelectContent>
@@ -463,7 +463,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
               description="Try adjusting the status or source filter to see more leads."
             />
           ) : (
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
               <CardContent className="p-0">
                 <div className="max-h-[34rem] overflow-y-auto alo-scroll">
                   <Table>
@@ -482,7 +482,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                     </TableHeader>
                     <TableBody>
                       {leads.map((lead) => (
-                        <TableRow key={lead.id} className="hover:bg-[#e8f0fb]/30">
+                        <TableRow key={lead.id} className="hover:bg-[var(--alo-brand-light)]/30">
                           <TableCell className="pl-4 font-mono text-xs text-muted-foreground">
                             {lead.leadId}
                           </TableCell>
@@ -498,7 +498,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className="border-[#0057B8]/20 bg-[#e8f0fb]/60 font-normal text-[#0057B8]"
+                              className="border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/60 font-normal text-[var(--alo-brand)]"
                             >
                               {SOURCE_LABELS[lead.source] ?? lead.source}
                             </Badge>
@@ -522,10 +522,10 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                           <TableCell className="pr-4 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 px-2 text-xs text-[#0057B8]"
-                                onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" px-2 text-[var(--alo-brand)]"
+ onClick={() =>
                                   toast({
                                     title: "Lead detail",
                                     description: `Opening detail for ${lead.fullName} (${lead.leadId}).`,
@@ -536,11 +536,11 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                                 View
                               </Button>
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 px-2 text-xs text-[#E8501A]"
-                                disabled={lead.status === "CONVERTED" || lead.status === "DUPLICATE"}
-                                onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" px-2 text-[var(--alo-cta)]"
+ disabled={lead.status === "CONVERTED" || lead.status === "DUPLICATE"}
+ onClick={() =>
                                   toast({
                                     title: "Convert lead",
                                     description: `Starting conversion flow for ${lead.fullName}. A new student record will be created.`,
@@ -564,7 +564,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
 
         {/* ============ STUDENTS TAB ============ */}
         <TabsContent value="students" className="mt-4 space-y-4">
-          <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+          <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
             <CardContent className="pt-5">
               <div className="flex items-center gap-3">
                 <div className="relative flex-1">
@@ -576,10 +576,10 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                     placeholder="Search by name, student ID, or email..."
                     value={studentSearch}
                     onChange={(e) => setStudentSearch(e.target.value)}
-                    className="h-10 rounded-xl border-[#0057B8]/15 pl-9"
+                    className="h-10 rounded-xl border-[var(--alo-brand)]/15 pl-9"
                   />
                 </div>
-                <Badge variant="outline" className="h-10 border-[#0057B8]/20 px-3 text-sm">
+                <Badge variant="outline" className="h-10 border-[var(--alo-brand)]/20 px-3 text-sm">
                   {filteredStudents.length} / {students.length}
                 </Badge>
               </div>
@@ -593,7 +593,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
               description="Try a different search term, or add a new student."
             />
           ) : (
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
               <CardContent className="p-0">
                 <div className="max-h-[34rem] overflow-y-auto alo-scroll">
                   <Table>
@@ -611,7 +611,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                     </TableHeader>
                     <TableBody>
                       {filteredStudents.map((s) => (
-                        <TableRow key={s.id} className="hover:bg-[#e8f0fb]/30">
+                        <TableRow key={s.id} className="hover:bg-[var(--alo-brand-light)]/30">
                           <TableCell className="pl-4 font-mono text-xs text-muted-foreground">
                             {s.studentId}
                           </TableCell>
@@ -641,9 +641,9 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                           </TableCell>
                           <TableCell className="pr-4 text-right">
                             <Button
-                              size="sm"
-                              className="h-8 bg-[#0057B8] px-3 text-xs hover:bg-[#0057B8]/90"
-                              onClick={() => {
+ size="sm"
+ className=" bg-[var(--alo-brand)] px-3 hover:bg-[var(--alo-brand)]/90"
+ onClick={() => {
                                 setSheetStudentId(s.id);
                                 setSheetOpen(true);
                               }}
@@ -678,7 +678,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                     <div key={src.value} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-medium text-foreground">{src.label}</span>
-                        <span className="font-semibold tabular-nums text-[#0057B8]">{count}</span>
+                        <span className="font-semibold tabular-nums text-[var(--alo-brand)]">{count}</span>
                       </div>
                       <MiniBar value={count} max={maxSourceCount} color="#0057B8" />
                     </div>
@@ -723,7 +723,7 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                   <div key={step.label} className="space-y-1.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2 font-medium text-foreground">
-                        <span className="flex size-5 items-center justify-center rounded-full bg-[#e8f0fb] text-[10px] font-bold text-[#0057B8]">
+                        <span className="flex size-5 items-center justify-center rounded-full bg-[var(--alo-brand-light)] text-[11px] font-bold text-[var(--alo-brand)]">
                           {idx + 1}
                         </span>
                         {step.label}
@@ -766,11 +766,11 @@ export function CrmDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => void 
                       key={stage}
                       className={
                         "inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold " +
-                        (STAGE_COLORS[stage] ?? "bg-slate-100 text-slate-700")
+                        (STAGE_COLORS[stage] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")
                       }
                     >
                       <span>{STAGE_LABELS[stage] ?? stage}</span>
-                      <span className="rounded-full bg-white/60 px-1.5 py-0.5 text-[10px]">
+                      <span className="rounded-full bg-white/60 px-1.5 py-0.5 text-[11px]">
                         {count}
                       </span>
                     </div>
@@ -907,7 +907,7 @@ function Student360Sheet({
         className="w-full overflow-y-auto alo-scroll sm:max-w-2xl"
       >
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2 text-[#0057B8]">
+          <SheetTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="Orbit" className="size-5" />
             Student 360
           </SheetTitle>
@@ -922,10 +922,10 @@ function Student360Sheet({
         ) : (
           <div className="space-y-4 px-4 pb-8">
             {/* Header */}
-            <div className="rounded-2xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-4">
+            <div className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-4">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-lg font-bold text-[#0057B8]">{student.fullName}</p>
+                  <p className="text-lg font-bold text-[var(--alo-brand)]">{student.fullName}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <span className="rounded-md bg-white px-2 py-0.5 font-mono">
                       {student.studentId}
@@ -934,8 +934,8 @@ function Student360Sheet({
                       status={student.status}
                       colorMap={{
                         ACTIVE: "bg-emerald-100 text-emerald-700",
-                        INACTIVE: "bg-slate-100 text-slate-700",
-                        GRADUATED: "bg-blue-100 text-blue-700",
+                        INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+                        GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
                       }}
                     />
                   </div>
@@ -950,7 +950,7 @@ function Student360Sheet({
               <div className="mt-3 space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-muted-foreground">Profile Completion</span>
-                  <span className="font-bold text-[#0057B8]">{student.profileCompletion}%</span>
+                  <span className="font-bold text-[var(--alo-brand)]">{student.profileCompletion}%</span>
                 </div>
                 <Progress value={student.profileCompletion} className="h-2" />
               </div>
@@ -966,13 +966,13 @@ function Student360Sheet({
               ].map((q) => (
                 <div
                   key={q.label}
-                  className="rounded-xl border-2 border-[#0057B8]/10 bg-white p-3 text-center"
+                  className="rounded-xl border-2 border-[var(--alo-brand)]/10 bg-white p-3 text-center"
                 >
-                  <div className="mx-auto flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="mx-auto flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={q.icon} className="size-4" />
                   </div>
                   <p className="mt-1.5 text-lg font-bold tabular-nums text-foreground">{q.value}</p>
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                     {q.label}
                   </p>
                 </div>
@@ -981,7 +981,7 @@ function Student360Sheet({
 
             {/* Latest timeline */}
             <div>
-              <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#0057B8]">
+              <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--alo-brand)]">
                 <Icon name="Activity" className="size-4" />
                 Recent Timeline
               </p>
@@ -990,9 +990,9 @@ function Student360Sheet({
                   {student.timelineEvents.slice(0, 5).map((ev: any) => (
                     <div
                       key={ev.id}
-                      className="flex items-start gap-3 rounded-xl border border-[#0057B8]/10 bg-white p-3"
+                      className="flex items-start gap-3 rounded-xl border border-[var(--alo-brand)]/10 bg-white p-3"
                     >
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                         <Icon name="Clock" className="size-3.5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -1000,7 +1000,7 @@ function Student360Sheet({
                         {ev.description && (
                           <p className="truncate text-xs text-muted-foreground">{ev.description}</p>
                         )}
-                        <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        <p className="mt-0.5 text-[11px] text-muted-foreground">
                           {ev.user?.name ? `${ev.user.name} · ` : ""}
                           {timeAgo(ev.createdAt)}
                         </p>
@@ -1009,15 +1009,15 @@ function Student360Sheet({
                   ))}
                 </div>
               ) : (
-                <p className="rounded-xl border-2 border-dashed border-[#0057B8]/20 px-4 py-6 text-center text-xs text-muted-foreground">
+                <p className="rounded-xl border-2 border-dashed border-[var(--alo-brand)]/20 px-4 py-6 text-center text-xs text-muted-foreground">
                   No timeline events yet.
                 </p>
               )}
             </div>
 
             {/* Contact summary */}
-            <div className="rounded-xl border-2 border-[#0057B8]/10 bg-white p-4">
-              <p className="mb-1 text-sm font-semibold text-[#0057B8]">Contact</p>
+            <div className="rounded-xl border-2 border-[var(--alo-brand)]/10 bg-white p-4">
+              <p className="mb-1 text-sm font-semibold text-[var(--alo-brand)]">Contact</p>
               <InfoRow label="Email" value={student.email} mono />
               <InfoRow label="Mobile" value={student.mobile} mono />
               <InfoRow label="Destination" value={student.studyDestination} />
@@ -1026,7 +1026,7 @@ function Student360Sheet({
             </div>
 
             <Button
-              className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+              className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
               onClick={() =>
                 toast({
                   title: "Open full Student 360",

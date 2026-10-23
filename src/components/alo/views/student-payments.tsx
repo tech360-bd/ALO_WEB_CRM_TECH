@@ -99,7 +99,7 @@ export function StudentPayments() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : payments.length === 0 ? (
         <EmptyState
           icon="CreditCard"
@@ -136,14 +136,14 @@ export function StudentPayments() {
             />
           </div>
 
-          <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+          <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
             <CardContent className="p-0">
-              <div className="border-b border-[#DCE8F5] px-5 py-4">
-                <h3 className="font-bold text-[#0B2447]">Payment History</h3>
+              <div className="border-b border-[var(--alo-brand-border)] px-5 py-4">
+                <h3 className="font-bold text-[var(--alo-text)]">Payment History</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-[#F7FAFE] text-left text-[#5A7299]">
+                  <thead className="bg-[var(--alo-page)] text-left text-[var(--alo-text-muted)]">
                     <tr>
                       <th className="px-5 py-3 font-medium">Invoice ID</th>
                       <th className="px-5 py-3 font-medium">Type</th>
@@ -153,18 +153,18 @@ export function StudentPayments() {
                       <th className="px-5 py-3 font-medium">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#DCE8F5]">
+                  <tbody className="divide-y divide-[var(--alo-brand-border)]">
                     {payments.map((p) => (
-                      <tr key={p.id} className="hover:bg-[#F7FAFE]">
-                        <td className="px-5 py-3 font-mono text-[#0B2447]">{p.paymentId}</td>
-                        <td className="px-5 py-3 text-[#0B2447]">
+                      <tr key={p.id} className="hover:bg-[var(--alo-page)]">
+                        <td className="px-5 py-3 font-mono text-[var(--alo-text)]">{p.paymentId}</td>
+                        <td className="px-5 py-3 text-[var(--alo-text)]">
                           {p.type ? TYPE_LABELS[p.type] || p.type : "—"}
                         </td>
-                        <td className="px-5 py-3 font-semibold text-[#0B2447]">
+                        <td className="px-5 py-3 font-semibold text-[var(--alo-text)]">
                           {(p.amount || 0).toLocaleString()} {p.currency || "BDT"}
                         </td>
-                        <td className="px-5 py-3 text-[#5A7299]">{p.method || "—"}</td>
-                        <td className="px-5 py-3 text-[#5A7299]">
+                        <td className="px-5 py-3 text-[var(--alo-text-muted)]">{p.method || "—"}</td>
+                        <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                           {p.createdAt
                             ? new Date(p.createdAt).toLocaleDateString("en-GB", {
                                 day: "2-digit",
@@ -174,7 +174,7 @@ export function StudentPayments() {
                             : "—"}
                         </td>
                         <td className="px-5 py-3">
-                          <Badge className={cn(STATUS_COLORS[p.status || ""] || "bg-slate-100")}>
+                          <Badge className={cn(STATUS_COLORS[p.status || ""] || "bg-[var(--alo-surface-muted)]")}>
                             {p.status}
                           </Badge>
                         </td>

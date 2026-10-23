@@ -33,7 +33,7 @@ const TEST_TYPES = [
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  IN_PROGRESS: "bg-blue-100 text-blue-700",
+  IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COMPLETED: "bg-emerald-100 text-emerald-700",
 };
 
@@ -98,7 +98,7 @@ export function StudentMockTests() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -121,25 +121,25 @@ export function StudentMockTests() {
 
           {/* Available tests */}
           <div>
-            <h3 className="mb-3 text-lg font-bold text-[#0B2447]">Available Mock Tests</h3>
+            <h3 className="mb-3 text-lg font-bold text-[var(--alo-text)]">Available Mock Tests</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {TEST_TYPES.map((t) => (
                 <Card
                   key={t.type}
-                  className="rounded-2xl border border-[#DCE8F5] bg-white transition-shadow hover:shadow-md"
+                  className="rounded-2xl border border-[var(--alo-brand-border)] bg-white transition-shadow hover:shadow-md"
                 >
                   <CardContent className="p-5">
                     <div className="flex items-center gap-3">
-                      <div className="flex size-11 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0057B8]">
+                      <div className="flex size-11 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                         <Icon name={t.icon} className="size-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-[#0B2447]">{t.label}</p>
-                        <p className="text-xs text-[#5A7299]">Full-length practice test</p>
+                        <p className="font-bold text-[var(--alo-text)]">{t.label}</p>
+                        <p className="text-xs text-[var(--alo-text-muted)]">Full-length practice test</p>
                       </div>
                     </div>
                     <Button
-                      className="mt-4 w-full bg-[#0057B8] text-white hover:bg-[#003F87]"
+                      className="mt-4 w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                       disabled={creditsRemaining === 0}
                     >
                       <Icon name="Play" className="mr-1.5 size-4" />
@@ -153,7 +153,7 @@ export function StudentMockTests() {
 
           {/* Test history */}
           <div>
-            <h3 className="mb-3 text-lg font-bold text-[#0B2447]">Test History</h3>
+            <h3 className="mb-3 text-lg font-bold text-[var(--alo-text)]">Test History</h3>
             {tests.length === 0 ? (
               <EmptyState
                 icon="History"
@@ -161,11 +161,11 @@ export function StudentMockTests() {
                 description="Take your first mock test to see your results here."
               />
             ) : (
-              <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+              <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="bg-[#F7FAFE] text-left text-[#5A7299]">
+                      <thead className="bg-[var(--alo-page)] text-left text-[var(--alo-text-muted)]">
                         <tr>
                           <th className="px-5 py-3 font-medium">Test ID</th>
                           <th className="px-5 py-3 font-medium">Type</th>
@@ -178,34 +178,34 @@ export function StudentMockTests() {
                           <th className="px-5 py-3 font-medium">Date</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#DCE8F5]">
+                      <tbody className="divide-y divide-[var(--alo-brand-border)]">
                         {tests.map((t) => (
-                          <tr key={t.id} className="hover:bg-[#F7FAFE]">
-                            <td className="px-5 py-3 font-mono text-[#0B2447]">{t.testId}</td>
-                            <td className="px-5 py-3 text-[#0B2447]">{t.testType}</td>
-                            <td className="px-5 py-3 font-bold text-[#0057B8]">
+                          <tr key={t.id} className="hover:bg-[var(--alo-page)]">
+                            <td className="px-5 py-3 font-mono text-[var(--alo-text)]">{t.testId}</td>
+                            <td className="px-5 py-3 text-[var(--alo-text)]">{t.testType}</td>
+                            <td className="px-5 py-3 font-bold text-[var(--alo-brand)]">
                               {t.overallScore?.toFixed(1) || "—"}
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {t.listeningScore?.toFixed(1) || "—"}
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {t.readingScore?.toFixed(1) || "—"}
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {t.writingScore?.toFixed(1) || "—"}
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {t.speakingScore?.toFixed(1) || "—"}
                             </td>
                             <td className="px-5 py-3">
                               <Badge
-                                className={cn(STATUS_COLORS[t.status || ""] || "bg-slate-100")}
+                                className={cn(STATUS_COLORS[t.status || ""] || "bg-[var(--alo-surface-muted)]")}
                               >
                                 {t.status}
                               </Badge>
                             </td>
-                            <td className="px-5 py-3 text-[#5A7299]">
+                            <td className="px-5 py-3 text-[var(--alo-text-muted)]">
                               {t.createdAt
                                 ? new Date(t.createdAt).toLocaleDateString("en-GB", {
                                     day: "2-digit",

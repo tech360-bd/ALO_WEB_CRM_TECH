@@ -162,11 +162,11 @@ export default function StudentApplicationDetail() {
   const outstanding = required.filter((doc) => !completed.includes(doc));
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <Link
           href="/student/applications"
-          className="mb-4 inline-block text-[13px] font-semibold text-slate-500 hover:text-alo-blue hover:underline"
+          className="mb-4 inline-block text-[13px] font-semibold text-[var(--alo-text-muted)] hover:text-alo-brand hover:underline"
         >
           ← All applications
         </Link>
@@ -183,7 +183,7 @@ export default function StudentApplicationDetail() {
               title="Application not found"
               description="This application may have been removed, or it belongs to another account."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/applications">Back to Applications</Link>
                 </Button>
               }
@@ -202,15 +202,15 @@ export default function StudentApplicationDetail() {
               }
               action={
                 application.counselorName ? (
-                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[12px] font-semibold text-slate-600">
+                  <span className="rounded-full border border-[var(--alo-border)] bg-white px-3 py-1 text-[12px] font-semibold text-[var(--alo-body)]">
                     Counselor: {application.counselorName}
                   </span>
                 ) : undefined
               }
             />
 
-            <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-4">
-              <code className="rounded-button border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-[13px] font-semibold text-slate-900">
+            <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[var(--alo-border)] bg-white px-5 py-4">
+              <code className="rounded-button border border-[var(--alo-border)] bg-[var(--alo-page)] px-3 py-1 font-mono text-[13px] font-semibold text-[var(--alo-text)]">
                 {application.applicationCode}
               </code>
               <StatusBadge value={application.safeStatus} />
@@ -234,8 +234,8 @@ export default function StudentApplicationDetail() {
                 { label: 'CAS / I-20 / CoE', value: application.casI20CoeStatus },
                 { label: 'Visa handover', value: application.visaHandoverStatus },
               ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500">{item.label}</p>
+                <div key={item.label} className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">{item.label}</p>
                   <div className="mt-1.5"><StatusBadge value={item.value} /></div>
                 </div>
               ))}
@@ -246,29 +246,29 @@ export default function StudentApplicationDetail() {
                 className="mt-5"
                 title="Offer"
                 description={application.offer.offerStatus.replace(/_/g, ' ').toLowerCase()}
-                icon={<GraduationCap className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+                icon={<GraduationCap className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
               >
                 <div className="grid gap-4 px-5 py-4 sm:grid-cols-2">
                   {application.offer.decisionDate && (
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500">Decision date</p>
-                      <p className="mt-0.5 text-[13px] font-semibold text-slate-900">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Decision date</p>
+                      <p className="mt-0.5 text-[13px] font-semibold text-[var(--alo-text)]">
                         {new Date(application.offer.decisionDate).toLocaleDateString('en-GB')}
                       </p>
                     </div>
                   )}
                   {application.offer.conditionDeadline && (
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500">Conditions by</p>
-                      <p className="mt-0.5 text-[13px] font-semibold text-slate-900">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Conditions by</p>
+                      <p className="mt-0.5 text-[13px] font-semibold text-[var(--alo-text)]">
                         {new Date(application.offer.conditionDeadline).toLocaleDateString('en-GB')}
                       </p>
                     </div>
                   )}
                   {application.offer.depositAmount > 0 && (
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500">Deposit</p>
-                      <p className="mt-0.5 text-[13px] font-semibold text-slate-900">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Deposit</p>
+                      <p className="mt-0.5 text-[13px] font-semibold text-[var(--alo-text)]">
                         {formatAmount(application.offer.depositAmount, 'GBP')}
                         {application.offer.depositDeadline
                           ? ` by ${new Date(application.offer.depositDeadline).toLocaleDateString('en-GB')}`
@@ -278,7 +278,7 @@ export default function StudentApplicationDetail() {
                   )}
                   {application.offer.scholarship && (
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500">Scholarship</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Scholarship</p>
                       <p className="mt-0.5 text-[13px] font-semibold text-emerald-700">
                         {application.offer.scholarship}
                         {application.offer.scholarshipAmount > 0
@@ -299,17 +299,17 @@ export default function StudentApplicationDetail() {
                 )}
 
                 {application.offer.decisionNote && (
-                  <div className="border-t border-slate-200 px-5 py-3">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Decision note</p>
-                    <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-slate-700">
+                  <div className="border-t border-[var(--alo-border)] px-5 py-3">
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Decision note</p>
+                    <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-[var(--alo-body)]">
                       {application.offer.decisionNote}
                     </p>
                   </div>
                 )}
 
                 {application.offer.offerLetterUrl && (
-                  <div className="border-t border-slate-200 px-5 py-3">
-                    <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                  <div className="border-t border-[var(--alo-border)] px-5 py-3">
+                    <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                       <a href={application.offer.offerLetterUrl}>
                         <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                         Download Offer Letter
@@ -327,16 +327,16 @@ export default function StudentApplicationDetail() {
                 description={`${outstanding.length} of ${required.length} outstanding`}
                 icon={<FileText className="mr-2 h-4 w-4 text-amber-600" aria-hidden="true" />}
                 action={
-                  <Button asChild variant="outline" className="h-8 rounded-button border-slate-200 px-3 text-[12px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold">
                     <Link href="/student/documents">Upload</Link>
                   </Button>
                 }
               >
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {outstanding.map((doc) => (
                     <li key={doc} className="flex items-center gap-2.5 px-5 py-2.5">
                       <CircleDashed className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
-                      <span className="text-[13px] text-slate-700">{doc}</span>
+                      <span className="text-[13px] text-[var(--alo-body)]">{doc}</span>
                     </li>
                   ))}
                 </ul>
@@ -348,41 +348,41 @@ export default function StudentApplicationDetail() {
                 className="mt-5"
                 title="Payment instructions"
                 description="Details recorded by your counselor — confirm before paying"
-                icon={<Landmark className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+                icon={<Landmark className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
               >
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {application.paymentInstructions.map((instruction) => (
                     <li key={instruction.id} className="px-5 py-4">
                       <div className="flex flex-wrap items-start justify-between gap-2">
-                        <p className="text-[13px] font-semibold text-slate-900">
+                        <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                           {instruction.paymentType.replace(/_/g, ' ').toUpperCase()}
                         </p>
-                        <span className="text-[13px] font-bold text-slate-900">
+                        <span className="text-[13px] font-bold text-[var(--alo-text)]">
                           {formatAmount(instruction.amount, instruction.currency)}
                         </span>
                       </div>
                       {instruction.instruction && (
-                        <p className="mt-1 text-[13px] leading-relaxed text-slate-600">{instruction.instruction}</p>
+                        <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-body)]">{instruction.instruction}</p>
                       )}
                       <dl className="mt-2 grid gap-x-6 gap-y-1 text-[12px] sm:grid-cols-2">
                         {instruction.bankName && (
-                          <div className="flex gap-2"><dt className="text-slate-500">Bank:</dt><dd className="text-slate-800">{instruction.bankName}</dd></div>
+                          <div className="flex gap-2"><dt className="text-[var(--alo-text-muted)]">Bank:</dt><dd className="text-[var(--alo-text)]">{instruction.bankName}</dd></div>
                         )}
                         {instruction.accountName && (
-                          <div className="flex gap-2"><dt className="text-slate-500">Account name:</dt><dd className="text-slate-800">{instruction.accountName}</dd></div>
+                          <div className="flex gap-2"><dt className="text-[var(--alo-text-muted)]">Account name:</dt><dd className="text-[var(--alo-text)]">{instruction.accountName}</dd></div>
                         )}
                         {instruction.accountNumberMasked && (
-                          <div className="flex gap-2"><dt className="text-slate-500">Account:</dt><dd className="font-mono text-slate-800">{instruction.accountNumberMasked}</dd></div>
+                          <div className="flex gap-2"><dt className="text-[var(--alo-text-muted)]">Account:</dt><dd className="font-mono text-[var(--alo-text)]">{instruction.accountNumberMasked}</dd></div>
                         )}
                         {instruction.swiftCode && (
-                          <div className="flex gap-2"><dt className="text-slate-500">SWIFT:</dt><dd className="font-mono text-slate-800">{instruction.swiftCode}</dd></div>
+                          <div className="flex gap-2"><dt className="text-[var(--alo-text-muted)]">SWIFT:</dt><dd className="font-mono text-[var(--alo-text)]">{instruction.swiftCode}</dd></div>
                         )}
                         {instruction.iban && (
-                          <div className="flex gap-2"><dt className="text-slate-500">IBAN:</dt><dd className="font-mono text-slate-800">{instruction.iban}</dd></div>
+                          <div className="flex gap-2"><dt className="text-[var(--alo-text-muted)]">IBAN:</dt><dd className="font-mono text-[var(--alo-text)]">{instruction.iban}</dd></div>
                         )}
                         {(instruction.deadline || instruction.dueDate) && (
                           <div className="flex gap-2">
-                            <dt className="text-slate-500">Due:</dt>
+                            <dt className="text-[var(--alo-text-muted)]">Due:</dt>
                             <dd className="font-semibold text-amber-700">{instruction.deadline || instruction.dueDate}</dd>
                           </div>
                         )}
@@ -397,20 +397,20 @@ export default function StudentApplicationDetail() {
               <PortalCard
                 className="mt-5"
                 title="Messages from your team"
-                icon={<MessageSquare className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+                icon={<MessageSquare className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
               >
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-[var(--alo-border)]">
                   {application.comments.map((comment) => (
                     <li key={comment.id} className="px-5 py-3.5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-[13px] font-semibold text-slate-900">{commentAuthor(comment)}</span>
-                        <span className="text-[12px] text-slate-400">
+                        <span className="text-[13px] font-semibold text-[var(--alo-text)]">{commentAuthor(comment)}</span>
+                        <span className="text-[12px] text-[var(--alo-text-muted)]">
                           {new Date(comment.createdAt).toLocaleString('en-GB', {
                             day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                           })}
                         </span>
                       </div>
-                      <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-slate-700">
+                      <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-[var(--alo-body)]">
                         {commentBody(comment)}
                       </p>
                     </li>
@@ -423,7 +423,7 @@ export default function StudentApplicationDetail() {
               className="mt-5"
               title="Stage history"
               description="Every stage change recorded on this application"
-              icon={<History className="mr-2 h-4 w-4 text-slate-400" aria-hidden="true" />}
+              icon={<History className="mr-2 h-4 w-4 text-[var(--alo-text-muted)]" aria-hidden="true" />}
             >
               {stageHistory.length === 0 ? (
                 <PortalEmpty
@@ -431,16 +431,16 @@ export default function StudentApplicationDetail() {
                   description="This list fills in as your application moves between stages."
                 />
               ) : (
-                <ol className="divide-y divide-slate-200">
+                <ol className="divide-y divide-[var(--alo-border)]">
                   {stageHistory.map((entry) => (
                     <li key={entry.id} className="flex items-start gap-3 px-5 py-3.5">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] font-semibold text-slate-900">{stageLabel(entry.stage)}</p>
+                        <p className="text-[13px] font-semibold text-[var(--alo-text)]">{stageLabel(entry.stage)}</p>
                         {entry.note && (
-                          <p className="mt-0.5 text-[13px] leading-relaxed text-slate-600">{entry.note}</p>
+                          <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{entry.note}</p>
                         )}
-                        <p className="mt-1 text-[12px] text-slate-400">
+                        <p className="mt-1 text-[12px] text-[var(--alo-text-muted)]">
                           {new Date(entry.createdAt).toLocaleDateString('en-GB')}
                           {entry.actor ? ` · ${entry.actor}` : ''}
                         </p>
@@ -453,13 +453,13 @@ export default function StudentApplicationDetail() {
             </PortalCard>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button asChild variant="outline" className={cn('h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold')}>
+              <Button asChild variant="outline" className={cn(' rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold')}>
                 <Link href="/student/documents">Manage Documents</Link>
               </Button>
-              <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/student/visa/checklist">Visa Checklist</Link>
               </Button>
-              <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/student/messages">Message Your Counselor</Link>
               </Button>
             </div>

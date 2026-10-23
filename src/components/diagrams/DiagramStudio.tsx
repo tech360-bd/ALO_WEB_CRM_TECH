@@ -65,7 +65,7 @@ export default function DiagramStudio() {
   }
   return <section className="space-y-4 p-4" aria-label="Diagram Studio">
     <h1 className="text-2xl font-bold">Diagram Studio</h1>
-    <p className="text-sm text-slate-600">Five existing ALO diagram types. Process and timeline content is illustrative guidance, not a live application status or guaranteed deadline. Funnel figures are supplied by you, not fetched business metrics.</p>
+    <p className="text-sm text-[var(--alo-body)]">Five existing ALO diagram types. Process and timeline content is illustrative guidance, not a live application status or guaranteed deadline. Funnel figures are supplied by you, not fetched business metrics.</p>
     <label className="block font-medium">Diagram type <select aria-label="Diagram type" value={type} onChange={e => { setType(e.target.value as DiagramType); setFeedback(''); }} className="ml-3 rounded border p-2">{TYPES.map(t => <option key={t}>{t}</option>)}</select></label>
     {type === 'funnel' && <label className="block text-sm">Your funnel data — one label,count per line (2–12 rows)
       <textarea aria-label="Funnel data" className="mt-2 block w-full rounded border p-2" value={counts} onChange={e => setCounts(e.target.value)} rows={4} maxLength={1500} />

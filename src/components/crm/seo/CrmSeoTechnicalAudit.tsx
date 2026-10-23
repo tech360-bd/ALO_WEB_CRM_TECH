@@ -43,7 +43,7 @@ const healthBreakdown = [
 const severitySummary = [
   { level: 'Critical (P0)', count: 4, icon: AlertCircle, color: 'bg-red-100 text-red-800 border-red-200', accent: 'bg-red-500' },
   { level: 'Warning (P1)', count: 12, icon: AlertTriangle, color: 'bg-amber-100 text-amber-800 border-amber-200', accent: 'bg-amber-500' },
-  { level: 'Info (P2)', count: 8, icon: Info, color: 'bg-blue-100 text-blue-800 border-blue-200', accent: 'bg-blue-500' },
+  { level: 'Info (P2)', count: 8, icon: Info, color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]', accent: 'bg-blue-500' },
 ];
 
 const issues = [
@@ -101,14 +101,14 @@ const robotsData = {
 const sevBadge = (s: string) => {
   if (s === 'P0') return 'bg-red-100 text-red-800 border-red-200';
   if (s === 'P1') return 'bg-amber-100 text-amber-800 border-amber-200';
-  return 'bg-blue-100 text-blue-800 border-blue-200';
+  return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]';
 };
 
 const statusBadge = (s: string) => {
   if (s === 'Open') return 'bg-red-100 text-red-800';
   if (s === 'Fixed') return 'bg-emerald-100 text-emerald-800';
   if (s === 'In Progress') return 'bg-amber-100 text-amber-800';
-  return 'bg-slate-100 text-slate-600';
+  return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 };
 
 const vitalColor = (s: string) => {

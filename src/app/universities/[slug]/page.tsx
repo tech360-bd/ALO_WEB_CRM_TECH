@@ -62,7 +62,7 @@ export default async function UniversityDetailPageRoute({
     select: { id: true },
   });
   if (crmUniversity) {
-    return <div className="min-h-screen bg-white"><main className="pb-16 pt-20"><Suspense fallback={<div className="p-12 text-center text-gray-500 font-medium">Loading source-linked university records…</div>}><UniversityHub slug={slug} /></Suspense></main></div>;
+    return <div className="min-h-screen bg-white"><main className="pb-16 pt-20"><Suspense fallback={<div className="p-12 text-center text-[var(--alo-text-muted)] font-medium">Loading source-linked university records…</div>}><UniversityHub slug={slug} /></Suspense></main></div>;
   }
 
   // Legacy page-model route: show the complete paginated set of verified course

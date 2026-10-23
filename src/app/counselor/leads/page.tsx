@@ -67,12 +67,12 @@ const STATUS_OPTIONS = [
 ];
 
 const STATUS_TONE: Record<string, string> = {
-  new: 'border-blue-200 bg-blue-50 text-blue-800',
+  new: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   contacted: 'border-indigo-200 bg-indigo-50 text-indigo-800',
   qualified: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   applied: 'border-teal-200 bg-teal-50 text-teal-800',
   converted: 'border-emerald-300 bg-emerald-100 text-emerald-900',
-  lost: 'border-slate-200 bg-slate-100 text-slate-600',
+  lost: 'border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 function statusLabel(value: string): string {
@@ -170,17 +170,17 @@ export default function CounselorLeadsPage() {
   const awaitingFollowUp = leads.filter((lead) => !lead.followUpDone && lead.followUpDueAt).length;
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-7xl">
         <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-[20px] font-bold leading-tight tracking-[-0.01em] text-slate-900">My Leads</h1>
-            <p className="mt-1 text-[13px] text-slate-500">
+            <h1 className="text-[20px] font-bold leading-tight tracking-[-0.01em] text-[var(--alo-text)]">My Leads</h1>
+            <p className="mt-1 text-[13px] text-[var(--alo-text-muted)]">
               Leads you created. Assignment and team views remain unavailable until identity mapping is verified.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <Button variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold" onClick={load}>
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={load}>
               <RefreshCw className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               Refresh
             </Button>
@@ -196,19 +196,19 @@ export default function CounselorLeadsPage() {
         </div>
 
         {/* Filters + add */}
-        <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 lg:flex-row lg:items-center">
+        <div className="mb-4 flex flex-col gap-3 rounded-xl border border-[var(--alo-border)] bg-white p-4 lg:flex-row lg:items-center">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--alo-text-muted)]" aria-hidden="true" />
             <Input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
               placeholder="Search by name, phone or email"
               aria-label="Search leads"
-              className="h-9 rounded-input border-slate-200 pl-9 text-sm"
+              className="h-9 rounded-input border-[var(--alo-border)] pl-9 text-sm"
             />
           </div>
           <Select value={status || 'all'} onValueChange={(value) => setStatus(value === 'all' ? '' : value)}>
-            <SelectTrigger className="h-9 w-full rounded-input border-slate-200 lg:w-44" aria-label="Filter by status">
+            <SelectTrigger className="h-9 w-full rounded-input border-[var(--alo-border)] lg:w-44" aria-label="Filter by status">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -218,7 +218,7 @@ export default function CounselorLeadsPage() {
             </SelectContent>
           </Select>
           <Link href="/counselor/students">
-            <Button variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
               <Users className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               My Students
             </Button>
@@ -246,12 +246,12 @@ export default function CounselorLeadsPage() {
         )}
 
         {state === 'ready' && leads.length === 0 && (
-          <div className="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center">
-            <Users className="mx-auto mb-3 h-10 w-10 text-slate-300" aria-hidden="true" />
-            <h2 className="text-[15px] font-semibold text-slate-900">
+          <div className="rounded-xl border border-[var(--alo-border)] bg-white px-6 py-16 text-center">
+            <Users className="mx-auto mb-3 h-10 w-10 text-[var(--alo-placeholder)]" aria-hidden="true" />
+            <h2 className="text-[15px] font-semibold text-[var(--alo-text)]">
               {status || search ? 'No leads match those filters' : 'No leads created by you yet'}
             </h2>
-            <p className="mx-auto mt-1 max-w-[460px] text-[13px] leading-relaxed text-slate-500">
+            <p className="mx-auto mt-1 max-w-[460px] text-[13px] leading-relaxed text-[var(--alo-text-muted)]">
               {status || search
                 ? 'Clear the search or status filter to see your full queue.'
                 : 'When a branch manager assigns you a lead it will appear here. You can also add a lead you have spoken to directly.'}
@@ -260,16 +260,16 @@ export default function CounselorLeadsPage() {
         )}
 
         {state === 'ready' && leads.length > 0 && (
-          <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+          <div className="overflow-x-auto rounded-xl border border-[var(--alo-border)] bg-white">
             <Table>
               <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Lead</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Destination</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Contact</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Source</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Status</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Follow-up</TableHead>
+                <TableRow className="bg-[var(--alo-page)]">
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Lead</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Destination</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Contact</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Source</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Status</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Follow-up</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -281,38 +281,38 @@ export default function CounselorLeadsPage() {
                       <TableCell>
                         <div className="flex items-start gap-2">
                           <div className="min-w-0">
-                            <p className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-900">
+                            <p className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--alo-text)]">
                               {name}
                               {lead.hotLead && (
-                                <span className="inline-flex items-center gap-1 rounded border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[10px] font-bold uppercase text-orange-800">
+                                <span className="inline-flex items-center gap-1 rounded border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] px-1.5 py-0.5 text-[11px] font-bold uppercase text-[var(--alo-cta-active)]">
                                   <Flame className="h-3 w-3" aria-hidden="true" />
                                   Hot
                                 </span>
                               )}
                             </p>
-                            <p className="mt-0.5 text-[12px] text-slate-500">
+                            <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
                               {[lead.level, lead.intake].filter(Boolean).join(' · ') || 'Level and intake not recorded'}
                             </p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-[13px] text-slate-700">
+                      <TableCell className="text-[13px] text-[var(--alo-body)]">
                         {lead.destination || '—'}
-                        {lead.ieltsScore > 0 && <p className="mt-0.5 text-[11px] text-slate-400">IELTS {lead.ieltsScore}</p>}
-                        {lead.pteScore > 0 && <p className="mt-0.5 text-[11px] text-slate-400">PTE {lead.pteScore}</p>}
+                        {lead.ieltsScore > 0 && <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">IELTS {lead.ieltsScore}</p>}
+                        {lead.pteScore > 0 && <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">PTE {lead.pteScore}</p>}
                       </TableCell>
                       <TableCell>
-                        <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-[13px] text-slate-700 hover:text-blue-600 hover:underline">
-                          <Phone className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
+                        <a href={`tel:${lead.phone}`} className="inline-flex items-center gap-1.5 text-[13px] text-[var(--alo-body)] hover:text-[var(--alo-brand)] hover:underline">
+                          <Phone className="h-3.5 w-3.5 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
                           {lead.phone || '—'}
                         </a>
-                        {lead.email && <p className="mt-0.5 text-[12px] text-slate-500">{lead.email}</p>}
+                        {lead.email && <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">{lead.email}</p>}
                       </TableCell>
-                      <TableCell className="text-[13px] text-slate-600">{lead.source || '—'}</TableCell>
+                      <TableCell className="text-[13px] text-[var(--alo-body)]">{lead.source || '—'}</TableCell>
                       <TableCell>
                         <span className={cn(
                           'inline-flex rounded border px-2 py-0.5 text-[11px] font-semibold',
-                          STATUS_TONE[lead.status?.toLowerCase()] ?? 'border-slate-200 bg-slate-100 text-slate-600',
+                          STATUS_TONE[lead.status?.toLowerCase()] ?? 'border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
                         )}>
                           {statusLabel(lead.status)}
                         </span>
@@ -321,11 +321,11 @@ export default function CounselorLeadsPage() {
                         {lead.followUpDone ? (
                           <span className="text-[12px] text-emerald-700">Completed</span>
                         ) : due ? (
-                          <span className={cn('text-[12px] font-medium', due.overdue ? 'text-red-600' : 'text-slate-600')}>
+                          <span className={cn('text-[12px] font-medium', due.overdue ? 'text-red-600' : 'text-[var(--alo-body)]')}>
                             {due.label}
                           </span>
                         ) : (
-                          <span className="text-[12px] text-slate-400">Not scheduled</span>
+                          <span className="text-[12px] text-[var(--alo-text-muted)]">Not scheduled</span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -337,20 +337,20 @@ export default function CounselorLeadsPage() {
         )}
 
         {/* Add lead */}
-        <div className="mt-6 rounded-xl border border-slate-200 bg-white">
-          <div className="border-b border-slate-200 px-5 py-4">
-            <h2 className="text-[14px] font-semibold text-slate-900">Add a lead</h2>
-            <p className="mt-0.5 text-[12px] text-slate-500">
+        <div className="mt-6 rounded-xl border border-[var(--alo-border)] bg-white">
+          <div className="border-b border-[var(--alo-border)] px-5 py-4">
+            <h2 className="text-[14px] font-semibold text-[var(--alo-text)]">Add a lead</h2>
+            <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
               Record a prospect you have already spoken to. Only enter details the person gave you.
             </p>
           </div>
           <form onSubmit={submitLead} className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
-            <Input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} placeholder="Full name" aria-label="Full name" className="h-9 rounded-input border-slate-200 text-sm" />
-            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone (+880…)" aria-label="Phone" className="h-9 rounded-input border-slate-200 text-sm" />
-            <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email (optional)" aria-label="Email" className="h-9 rounded-input border-slate-200 text-sm" />
-            <Input value={form.destination} onChange={(e) => setForm({ ...form, destination: e.target.value })} placeholder="Destination country" aria-label="Destination" className="h-9 rounded-input border-slate-200 text-sm" />
-            <Input value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} placeholder="Study level" aria-label="Study level" className="h-9 rounded-input border-slate-200 text-sm" />
-            <Input value={form.intake} onChange={(e) => setForm({ ...form, intake: e.target.value })} placeholder="Target intake" aria-label="Target intake" className="h-9 rounded-input border-slate-200 text-sm" />
+            <Input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} placeholder="Full name" aria-label="Full name" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
+            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone (+880…)" aria-label="Phone" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
+            <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email (optional)" aria-label="Email" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
+            <Input value={form.destination} onChange={(e) => setForm({ ...form, destination: e.target.value })} placeholder="Destination country" aria-label="Destination" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
+            <Input value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} placeholder="Study level" aria-label="Study level" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
+            <Input value={form.intake} onChange={(e) => setForm({ ...form, intake: e.target.value })} placeholder="Target intake" aria-label="Target intake" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
 
             {formError && (
               <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 sm:col-span-2 lg:col-span-3" role="alert">
@@ -360,7 +360,7 @@ export default function CounselorLeadsPage() {
             )}
 
             <div className="sm:col-span-2 lg:col-span-3">
-              <Button type="submit" disabled={adding} className="h-9 rounded-button bg-blue-600 px-4 text-[13px] font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+              <Button type="submit" disabled={adding} className=" rounded-button bg-[var(--alo-brand)] px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-brand-hover)] disabled:opacity-60">
                 {adding ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <UserPlus className="mr-2 h-3.5 w-3.5" aria-hidden="true" />}
                 {adding ? 'Saving Lead…' : 'Add Lead'}
               </Button>
@@ -368,7 +368,7 @@ export default function CounselorLeadsPage() {
           </form>
         </div>
 
-        <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
+        <p className="mt-4 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
           Lead records contain personal data. Only contact a lead who has consented to being contacted, and never
           export this list outside the ALO CRM.
         </p>
@@ -378,11 +378,11 @@ export default function CounselorLeadsPage() {
 }
 
 function Metric({ label, value, tone = 'neutral' }: { label: string; value: number; tone?: 'neutral' | 'info' | 'warning' }) {
-  const toneClass = tone === 'warning' ? 'text-orange-600' : tone === 'info' ? 'text-blue-600' : 'text-slate-900';
+  const toneClass = tone === 'warning' ? 'text-[var(--alo-cta-active)]' : tone === 'info' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]';
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+    <div className="rounded-xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>
-      <p className="mt-1.5 text-[12px] font-medium text-slate-500">{label}</p>
+      <p className="mt-1.5 text-[12px] font-medium text-[var(--alo-text-muted)]">{label}</p>
     </div>
   );
 }

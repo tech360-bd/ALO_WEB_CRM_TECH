@@ -28,7 +28,7 @@ const statusColor: Record<DayStatus, string> = {
   P: 'bg-emerald-100 text-emerald-700',
   A: 'bg-red-100 text-red-700',
   L: 'bg-amber-100 text-amber-700',
-  H: 'bg-slate-100 text-slate-500',
+  H: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
 };
 const statusIcon: Record<DayStatus, React.ElementType> = { P: CheckCircle2, A: XCircle, L: AlertTriangle, H: Calendar };
 
@@ -178,7 +178,7 @@ export default function EmployeeAttendancePage() {
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center"><Calendar className="w-5 h-5 text-slate-500" /></div>
+            <div className="w-10 h-10 rounded-lg bg-[var(--alo-surface-muted)] flex items-center justify-center"><Calendar className="w-5 h-5 text-[var(--alo-text-muted)]" /></div>
             <div><p className="text-xl font-bold text-alo-text">{summary.leave}</p><p className="text-xs text-alo-text-muted">Leave / Holiday</p></div>
           </CardContent>
         </Card>
@@ -245,10 +245,10 @@ export default function EmployeeAttendancePage() {
                       day.date > todayDate && 'opacity-50')}>
                     <span className={cn(isToday ? 'font-bold text-alo-brand' : 'text-alo-text')}>{day.date}</span>
                     {!isFuture && day.status !== 'H' && (
-                      <span className={cn('text-[9px] font-bold mt-0.5', statusColor[day.status])}>{day.status}</span>
+                      <span className={cn('text-[11px] font-bold mt-0.5', statusColor[day.status])}>{day.status}</span>
                     )}
-                    {isFuture && <span className="text-[9px] text-alo-text-muted/30 mt-0.5">--</span>}
-                    {!isFuture && day.status === 'H' && <span className="text-[9px] text-slate-400 mt-0.5">H</span>}
+                    {isFuture && <span className="text-[11px] text-alo-text-muted/30 mt-0.5">--</span>}
+                    {!isFuture && day.status === 'H' && <span className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">H</span>}
                   </div>
                 );
               })}
@@ -270,7 +270,7 @@ export default function EmployeeAttendancePage() {
                 <div key={w.week} className="p-4 rounded-lg border border-alo-border bg-alo-page/50">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-alo-text">{w.week}</span>
-                    {isCurrentWeek && <Badge variant="brand" className="text-[10px]">Current</Badge>}
+                    {isCurrentWeek && <Badge variant="brand" className="text-[11px]">Current</Badge>}
                   </div>
                   <p className="text-2xl font-bold text-alo-text">{w.hours.toFixed(1)}<span className="text-sm font-normal text-alo-text-muted ml-1">hrs</span></p>
                   <div className="w-full h-2 bg-alo-border rounded-full mt-2 overflow-hidden">

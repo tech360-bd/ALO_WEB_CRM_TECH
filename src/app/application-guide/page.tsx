@@ -18,27 +18,27 @@ export default function ApplicationGuidePageRoute() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[var(--alo-page)]">
       <main className="flex-1 pt-20 pb-16 max-w-4xl mx-auto px-4 w-full">
         <div className="text-center space-y-3 mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 text-orange-700 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] text-xs font-semibold">
             <GraduationCap className="w-4 h-4" /> Official ALO Education Admission Roadmap
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Step-by-Step International Application Guide</h1>
-          <p className="text-slate-600 max-w-xl mx-auto text-sm">
+          <h1 className="text-3xl font-bold text-[var(--alo-text)]">Step-by-Step International Application Guide</h1>
+          <p className="text-[var(--alo-body)] max-w-xl mx-auto text-sm">
             Follow our 8-stage step-by-step roadmap from initial course shortlisting to visa issuance and campus enrolment.
           </p>
         </div>
 
         <div className="space-y-4">
           {steps.map((s) => (
-            <Card key={s.num} className="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white font-bold text-base flex items-center justify-center shrink-0">
+            <Card key={s.num} className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl shadow-sm flex items-start gap-4">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-[var(--alo-brand)] text-base font-bold text-white">
                 {s.num}
               </div>
               <div className="space-y-1 text-xs">
-                <h3 className="font-bold text-slate-900 text-sm">{s.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{s.desc}</p>
+                <h3 className="font-bold text-[var(--alo-text)] text-sm">{s.title}</h3>
+                <p className="text-[var(--alo-body)] leading-relaxed">{s.desc}</p>
               </div>
             </Card>
           ))}

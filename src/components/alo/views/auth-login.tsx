@@ -116,20 +116,20 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-lg font-bold leading-tight text-[var(--alo-brand)]">ALO Education</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0057B8] sm:text-3xl">Welcome Back</h1>
+          <h1 className="text-2xl font-bold text-[var(--alo-brand)] sm:text-3xl">Welcome Back</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Sign in to continue your study abroad journey
           </p>
         </div>
 
         {/* Login Card */}
-        <Card className="rounded-2xl border-2 border-[#E2E8F0] shadow-sm">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)] shadow-sm">
           <CardContent className="pt-6">
             <form onSubmit={handleLogin} className="space-y-4" noValidate>
               {/* Email */}
@@ -164,7 +164,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
                   <button
                     type="button"
                     onClick={() => onNavigate("auth-reset-password")}
-                    className="text-xs font-medium text-[#0057B8] hover:underline"
+                    className="text-xs font-medium text-[var(--alo-brand)] hover:underline"
                   >
                     Forgot password?
                   </button>
@@ -222,7 +222,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90 disabled:opacity-60"
+                className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-black hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
               >
                 {loading ? (
                   <>
@@ -243,7 +243,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
                 <button
                   type="button"
                   onClick={() => onNavigate("auth-register")}
-                  className="font-semibold text-[#0057B8] hover:underline"
+                  className="font-semibold text-[var(--alo-brand)] hover:underline"
                 >
                   Register
                 </button>
@@ -252,7 +252,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
 
 
             {/* Security note */}
-            <div className="mt-4 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0057B8]">
+            <div className="mt-4 flex items-start gap-2 rounded-lg bg-[var(--alo-brand-light)]/60 px-3 py-2 text-xs text-[var(--alo-brand)]">
               <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 Your password is encrypted with bcrypt. All logins are audit-logged for security.
@@ -268,9 +268,9 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
               key={p.label}
               type="button"
               onClick={() => onNavigate(p.view)}
-              className="group rounded-2xl border-2 border-[#E2E8F0] bg-white p-4 text-left transition-all hover:border-[#0057B8]/40 hover:shadow-sm"
+              className="group rounded-2xl border-2 border-[var(--alo-border)] bg-white p-4 text-left transition-all hover:border-[var(--alo-brand)]/40 hover:shadow-sm"
             >
-              <div className="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+              <div className="mb-2.5 flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name={p.icon} className="size-5" />
               </div>
               <p className="text-sm font-semibold text-foreground">{p.label}</p>
@@ -285,7 +285,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
           <button
             type="button"
             onClick={() => onNavigate("public-home")}
-            className="text-[#0057B8] hover:underline"
+            className="text-[var(--alo-brand)] hover:underline"
           >
             Terms of Service
           </button>{" "}
@@ -293,7 +293,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
           <button
             type="button"
             onClick={() => onNavigate("public-home")}
-            className="text-[#0057B8] hover:underline"
+            className="text-[var(--alo-brand)] hover:underline"
           >
             Privacy Policy
           </button>

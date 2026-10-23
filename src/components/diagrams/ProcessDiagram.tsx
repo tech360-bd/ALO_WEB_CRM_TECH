@@ -162,15 +162,15 @@ export default function ProcessDiagram({
   });
 
   return (
-    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+    <figure className="rounded-2xl border border-[var(--alo-border)] bg-white p-4 sm:p-6">
       <figcaption className="mb-4 flex items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">{eyebrow}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--alo-brand)]">{eyebrow}</p>
           ) : null}
-          <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
+          <h2 className="mt-1 text-base font-bold text-[var(--alo-text)]">{title}</h2>
         </div>
-        <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">
+        <span className="rounded-full border border-[var(--alo-border)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-text-muted)]">
           who does what
         </span>
       </figcaption>
@@ -208,7 +208,7 @@ export default function ProcessDiagram({
                     key={line + i}
                     x={12}
                     y={y - (lane.name.length > 1 ? 6 : 0) + i * 11}
-                    className="font-mono text-[8px] font-medium uppercase tracking-[0.14em]"
+                    className="font-mono text-[11px] font-medium uppercase tracking-[0.14em]"
                     fill={T.ink}
                   >
                     {line}
@@ -235,7 +235,7 @@ export default function ProcessDiagram({
                   x={cx - 34}
                   y={25.5}
                   textAnchor="middle"
-                  className="font-mono text-[9px] font-semibold"
+                  className="font-mono text-[11px] font-semibold"
                   fill={step.focal ? '#FFFFFF' : T.muted}
                 >
                   {step.number}
@@ -284,7 +284,7 @@ export default function ProcessDiagram({
             strokeWidth={1.25}
             markerEnd={`url(#${idPrefix}-arrow)`}
           />
-          <text x={104} y={height - 15} className="font-mono text-[8px]" fill={T.muted}>
+          <text x={104} y={height - 15} className="font-mono text-[11px]" fill={T.muted}>
             handoff
           </text>
           <rect
@@ -297,7 +297,7 @@ export default function ProcessDiagram({
             stroke={T.accent}
             strokeWidth={1.25}
           />
-          <text x={180} y={height - 15} className="font-mono text-[8px]" fill={T.muted}>
+          <text x={180} y={height - 15} className="font-mono text-[11px]" fill={T.muted}>
             focal step
           </text>
         </DiagramRoot>

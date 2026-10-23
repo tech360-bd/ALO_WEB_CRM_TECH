@@ -80,25 +80,25 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
     <div className="p-4 md:p-6 bg-[#FFFFFF] min-h-screen space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-[#0F172A]">{title}</h1>
-          <p className="text-sm text-gray-500">{description} — {pagination.total} total records from real DB</p>
+          <h1 className="text-xl font-bold text-[var(--alo-text)]">{title}</h1>
+          <p className="text-sm text-[var(--alo-text-muted)]">{description} — {pagination.total} total records from</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="border-[#E2E8F0]" onClick={() => fetchApps()}><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></Button>
-          <Link href="/application-manager/create"><Button className="bg-[#0057B8] text-white">Create Application</Button></Link>
+          <Button variant="outline" className="border-[var(--alo-border)]" onClick={() => fetchApps()}><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></Button>
+          <Link href="/application-manager/create"><Button className="bg-[var(--alo-brand)] text-white">Create Application</Button></Link>
         </div>
       </div>
 
       {/* Filters — source/country/university/course/intake/counselor/officer/document/offer/CAS/deadline/urgent/confidential/SLA/status */}
-      <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
+      <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl">
         <CardContent className="p-4 space-y-3">
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-12 md:col-span-4 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input placeholder="Search App ID, Student, University, Course..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchApps()} className="pl-9 bg-white border-[#E2E8F0]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" />
+              <Input placeholder="Search App ID, Student, University, Course..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchApps()} className="pl-9 bg-white border-[var(--alo-border)]" />
             </div>
             <div className="col-span-6 md:col-span-2">
-              <select value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm">
+              <select value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} className="w-full bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-sm">
                 <option value="all">All Sources</option>
                 <option value="DIRECT_ALO_APPLICATION">Direct ALO</option>
                 <option value="STUDENT_SELF_APPLICATION">Student Self</option>
@@ -113,7 +113,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
               </select>
             </div>
             <div className="col-span-6 md:col-span-2">
-              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm">
+              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-sm">
                 <option value="all">All Safe Status</option>
                 <option value="DRAFT">Draft</option>
                 <option value="UNDER_REVIEW">Under Review</option>
@@ -127,7 +127,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
               </select>
             </div>
             <div className="col-span-6 md:col-span-2">
-              <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm">
+              <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="w-full bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-sm">
                 <option value="all">All Countries</option>
                 <option value="UK">UK</option>
                 <option value="USA">USA</option>
@@ -140,14 +140,14 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
               </select>
             </div>
             <div className="col-span-6 md:col-span-2">
-              <Button className="w-full bg-[#0057B8] text-white" onClick={() => fetchApps(1)}>Apply Filters</Button>
+              <Button className="w-full bg-[var(--alo-brand)] text-white" onClick={() => fetchApps(1)}>Apply Filters</Button>
             </div>
           </div>
 
           {/* Bulk actions */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#E2E8F0]">
-            <span className="text-xs text-gray-600">{selected.length} selected</span>
-            <select value={bulkAction} onChange={e => setBulkAction(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs">
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--alo-border)]">
+            <span className="text-xs text-[var(--alo-body)]">{selected.length} selected</span>
+            <select value={bulkAction} onChange={e => setBulkAction(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-1.5 text-xs">
               <option value="none">Bulk Actions</option>
               <option value="assign">Assign Officer</option>
               <option value="status">Update Status</option>
@@ -160,24 +160,24 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
               <option value="move_to_visa">Move to Visa</option>
               <option value="create_task">Create Task</option>
             </select>
-            <Button size="sm" variant="outline" className="border-[#E2E8F0] text-xs" onClick={handleBulk} disabled={selected.length === 0 || bulkAction === 'none'}><CheckSquare className="w-3 h-3 mr-1" />Apply</Button>
-            <Button size="sm" variant="outline" className="border-[#E2E8F0] text-xs" onClick={() => setSelected([])}>Clear</Button>
+            <Button size="sm" variant="outline" className="border-[var(--alo-border)] " onClick={handleBulk} disabled={selected.length === 0 || bulkAction === 'none'}><CheckSquare className="w-3 h-3 mr-1" />Apply</Button>
+            <Button size="sm" variant="outline" className="border-[var(--alo-border)] " onClick={() => setSelected([])}>Clear</Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Table with horizontal scroll */}
-      <Card className="bg-white border-[#E2E8F0] shadow-sm rounded-xl">
+      <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0057B8]" /><p className="text-sm text-gray-500 mt-2">Loading real database records...</p></div>
+            <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--alo-brand)]" /><p className="text-sm text-[var(--alo-text-muted)] mt-2">Loading real database records...</p></div>
           ) : error ? (
-            <div className="p-8 text-center space-y-3"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" /><p className="text-sm text-gray-600">{error}</p><Button size="sm" onClick={() => fetchApps()} className="bg-[#0057B8] text-white">Retry</Button></div>
+            <div className="p-8 text-center space-y-3"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" /><p className="text-sm text-[var(--alo-body)]">{error}</p><Button size="sm" onClick={() => fetchApps()} className="bg-[var(--alo-brand)] text-white">Retry</Button></div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[1400px]">
                 <thead>
-                  <tr className="border-b border-[#E2E8F0] text-left text-gray-500 bg-[#F8FAFC] text-xs">
+                  <tr className="border-b border-[var(--alo-border)] text-left text-[var(--alo-text-muted)] bg-[var(--alo-page)] text-xs">
                     <th className="p-3"><input type="checkbox" checked={selected.length === apps.length && apps.length > 0} onChange={e => setSelected(e.target.checked ? apps.map(a => a.id) : [])} /></th>
                     <th className="p-3 font-medium">App ID</th>
                     <th className="p-3 font-medium">Student ID</th>
@@ -201,29 +201,29 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
                 </thead>
                 <tbody>
                   {apps.length === 0 ? (
-                    <tr><td colSpan={19} className="p-8 text-center text-gray-500">No applications found. Nothing here yet — create the first application to get started.</td></tr>
+                    <tr><td colSpan={19} className="p-8 text-center text-[var(--alo-text-muted)]">No applications found. Nothing here yet — create the first application to get started.</td></tr>
                   ) : (
                     apps.map(app => (
-                      <tr key={app.id} className="border-b border-[#E2E8F0]/60 hover:bg-[#F8FAFC]">
+                      <tr key={app.id} className="border-b border-[var(--alo-border)]/60 hover:bg-[var(--alo-page)]">
                         <td className="p-3"><input type="checkbox" checked={selected.includes(app.id)} onChange={e => setSelected(e.target.checked ? [...selected, app.id] : selected.filter(id => id !== app.id))} /></td>
-                        <td className="p-3 font-mono text-xs text-[#0057B8]">{app.applicationCode || app.id.substring(0, 8)}</td>
+                        <td className="p-3 font-mono text-xs text-[var(--alo-brand)]">{app.applicationCode || app.id.substring(0, 8)}</td>
                         <td className="p-3 font-mono text-xs">{app.studentId?.substring(0, 8) || '-'}</td>
-                        <td className="p-3 font-medium text-[#0F172A]">{app.studentId?.substring(0, 12) || 'Student'}</td>
+                        <td className="p-3 font-medium text-[var(--alo-text)]">{app.studentId?.substring(0, 12) || 'Student'}</td>
                         <td className="p-3">{app.country || '-'}</td>
                         <td className="p-3 truncate max-w-[150px]">{app.universityName || '-'}</td>
                         <td className="p-3 truncate max-w-[150px] text-xs">{app.courseName || '-'}</td>
                         <td className="p-3 text-xs">{app.intake || '-'}</td>
-                        <td className="p-3"><Badge variant="outline" className="text-[10px] border-[#E2E8F0]">{(app.applicationSource || 'DIRECT').replace(/_/g, ' ')}</Badge></td>
-                        {showB2B && <td className="p-3">{app.isB2b || app.b2bType ? <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[10px]"><Lock className="w-2.5 h-2.5 mr-1" />{app.b2bType || 'B2B'}</Badge> : <span className="text-gray-400 text-xs">-</span>}</td>}
+                        <td className="p-3"><Badge variant="outline" className="text-[11px] border-[var(--alo-border)]">{(app.applicationSource || 'DIRECT').replace(/_/g, ' ')}</Badge></td>
+                        {showB2B && <td className="p-3">{app.isB2b || app.b2bType ? <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[11px]"><Lock className="w-2.5 h-2.5 mr-1" />{app.b2bType || 'B2B'}</Badge> : <span className="text-[var(--alo-text-muted)] text-xs">-</span>}</td>}
                         <td className="p-3 text-xs">{app.partnerId?.substring(0, 6) || '-'}</td>
                         <td className="p-3 text-xs">{app.counselorName || app.counselorId?.substring(0, 6) || '-'}</td>
                         <td className="p-3 text-xs">{app.appTeamOfficerId?.substring(0, 6) || app.applicationOfficer?.substring(0, 6) || '-'}</td>
-                        <td className="p-3"><Badge className={`${app.documentStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[10px]`}>{app.documentStatus || 'PENDING'}</Badge></td>
-                        <td className="p-3"><Badge className="bg-purple-50 text-purple-700 border-purple-200 text-[10px]">{app.offerStatus || 'PENDING'}</Badge></td>
-                        <td className="p-3"><Badge className="bg-cyan-50 text-cyan-700 border-cyan-200 text-[10px]">{app.casI20CoeStatus || 'NOT_STARTED'}</Badge></td>
+                        <td className="p-3"><Badge className={`${app.documentStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{app.documentStatus || 'PENDING'}</Badge></td>
+                        <td className="p-3"><Badge className="bg-purple-50 text-purple-700 border-purple-200 text-[11px]">{app.offerStatus || 'PENDING'}</Badge></td>
+                        <td className="p-3"><Badge className="bg-cyan-50 text-cyan-700 border-cyan-200 text-[11px]">{app.casI20CoeStatus || 'NOT_STARTED'}</Badge></td>
                         <td className="p-3 text-xs">{app.deadlineDate ? new Date(app.deadlineDate).toLocaleDateString() : app.deadline || '-'}</td>
                         <td className="p-3 text-xs">{new Date(app.updatedAt).toLocaleDateString()}</td>
-                        <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[#0057B8]"><Eye className="w-4 h-4" /></Button></Link></td>
+                        <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[var(--alo-brand)]"><Eye className="w-4 h-4" /></Button></Link></td>
                       </tr>
                     ))
                   )}
@@ -232,11 +232,11 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
             </div>
           )}
           {/* Pagination */}
-          <div className="p-4 border-t border-[#E2E8F0] flex items-center justify-between text-xs text-gray-600">
+          <div className="p-4 border-t border-[var(--alo-border)] flex items-center justify-between text-xs text-[var(--alo-body)]">
             <span>Page {pagination.page} of {pagination.totalPages} — {pagination.total} total</span>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="border-[#E2E8F0]" disabled={pagination.page <= 1} onClick={() => fetchApps(pagination.page - 1)}>Prev</Button>
-              <Button size="sm" variant="outline" className="border-[#E2E8F0]" disabled={pagination.page >= pagination.totalPages} onClick={() => fetchApps(pagination.page + 1)}>Next</Button>
+              <Button size="sm" variant="outline" className="border-[var(--alo-border)]" disabled={pagination.page <= 1} onClick={() => fetchApps(pagination.page - 1)}>Prev</Button>
+              <Button size="sm" variant="outline" className="border-[var(--alo-border)]" disabled={pagination.page >= pagination.totalPages} onClick={() => fetchApps(pagination.page + 1)}>Next</Button>
             </div>
           </div>
         </CardContent>

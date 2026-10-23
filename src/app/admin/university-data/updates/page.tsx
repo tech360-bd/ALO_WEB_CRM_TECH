@@ -135,17 +135,17 @@ export default function UniversityUpdatesCenter() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-[#0a0f1e] min-h-screen text-white">
+    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Weekly AI University Update Center</h1>
-              <p className="text-gray-400 text-sm">Human proposal review — official verification and publication remain required</p>
+              <p className="text-[var(--alo-text-muted)] text-sm">Human proposal review — official verification and publication remain required</p>
             </div>
           </div>
         </div>
@@ -154,12 +154,12 @@ export default function UniversityUpdatesCenter() {
           <Button
             onClick={handleRunScan}
             disabled={scanning}
-            className="bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center gap-2"
+            className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white flex items-center gap-2"
           >
             {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             <span>Run On-Demand Scan</span>
           </Button>
-          <Button onClick={fetchUpdates} variant="outline" className="border-white/10 text-gray-300 hover:text-white">
+          <Button onClick={fetchUpdates} variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
@@ -176,18 +176,18 @@ export default function UniversityUpdatesCenter() {
       )}
 
       {/* AI Safeguards Banner */}
-      <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/20 border border-blue-500/20 rounded-2xl p-4 flex items-center gap-4">
+      <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/20 border border-[var(--alo-brand)]/20 rounded-2xl p-4 flex items-center gap-4">
         <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
           <ShieldCheck className="w-5 h-5 text-blue-400" />
         </div>
-        <div className="text-xs text-blue-200">
+        <div className="text-xs text-[var(--alo-brand-pale)]">
           <p className="font-semibold text-white text-sm">Human-in-the-Loop AI Architecture Active</p>
           <p className="mt-0.5">This queue contains unverified proposals. Legacy scan and publication actions are unavailable until official field-level evidence and versioned publication are implemented.</p>
         </div>
       </div>
 
       {/* Table */}
-      <Card className="bg-[#0d1526] border-white/10 text-white">
+      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
         <CardHeader className="p-4 border-b border-white/10">
           <CardTitle className="text-base font-semibold">Review Queue ({updates.length})</CardTitle>
         </CardHeader>
@@ -195,7 +195,7 @@ export default function UniversityUpdatesCenter() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
+                <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
                   <th className="p-3 font-medium">Entity & Country</th>
                   <th className="p-3 font-medium">Field</th>
                   <th className="p-3 font-medium">Current Database</th>
@@ -209,7 +209,7 @@ export default function UniversityUpdatesCenter() {
               <tbody>
                 {updates.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-gray-500">
+                    <td colSpan={8} className="p-8 text-center text-[var(--alo-text-muted)]">
                       No pending update requests. The weekly scanner runs every Sunday at 02:00 BST.
                     </td>
                   </tr>
@@ -218,7 +218,7 @@ export default function UniversityUpdatesCenter() {
                     <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                       <td className="p-3">
                         <p className="font-semibold text-white">{u.entityName}</p>
-                        <p className="text-xs text-gray-400">{u.country} - {u.entityType}</p>
+                        <p className="text-xs text-[var(--alo-text-muted)]">{u.country} - {u.entityType}</p>
                       </td>
                       <td className="p-3 font-mono text-xs text-blue-400">{u.fieldName}</td>
                       <td className="p-3 text-red-400 text-xs line-through">{u.oldValue || 'None'}</td>
@@ -238,11 +238,11 @@ export default function UniversityUpdatesCenter() {
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         ) : (
-                          <span className="text-gray-500">Official Check</span>
+                          <span className="text-[var(--alo-text-muted)]">Official Check</span>
                         )}
                       </td>
                       <td className="p-3">
-                        <Badge variant="outline" className="border-white/10 text-gray-300">
+                        <Badge variant="outline" className="border-white/10 text-[var(--alo-placeholder)]">
                           {u.status.toUpperCase()}
                         </Badge>
                       </td>
@@ -253,7 +253,7 @@ export default function UniversityUpdatesCenter() {
                               <Button
                                 size="sm"
                                 onClick={() => handleApprove(u.id)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                               >
                                 <Check className="w-3.5 h-3.5 mr-1" />
                                 Review Only

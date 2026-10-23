@@ -46,7 +46,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -55,23 +55,23 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="Route" className="mr-1 size-3" />
               12-Step Journey
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Your Study Abroad <span className="text-[#0057B8]">Journey</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Your Study Abroad <span className="text-[var(--alo-brand)]">Journey</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               From your first counseling session to your first day at university — here's the complete 12-step
               journey, with average timelines, what to expect at each step, and which ALO service supports you.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#c8451a]">
+              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
                 <Icon name="CalendarCheck" className="size-4" />
                 Start Your Journey
               </Button>
-              <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[#0057B8]/30 bg-white px-6 text-[#0057B8] hover:bg-[#EAF3FF]">
+              <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[var(--alo-brand)]/30 bg-white px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                 <Icon name="Briefcase" className="size-4" />
                 View All Services
               </Button>
@@ -83,14 +83,14 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
       {/* TIMELINE */}
       <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
         <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">12 Steps to Enrollment</p>
-          <h2 className="mt-2 text-3xl font-black text-[#0B2447]">Your journey, mapped out</h2>
-          <p className="mt-2 text-sm text-[#5A7299]">Total typical duration: 6-12 months from first call to landing abroad.</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">12 Steps to Enrollment</p>
+          <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">Your journey, mapped out</h2>
+          <p className="mt-2 text-sm text-[var(--alo-text-muted)]">Total typical duration: 6-12 months from first call to landing abroad.</p>
         </div>
 
         <div className="relative mt-12">
           {/* Vertical line for desktop */}
-          <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0057B8] via-[#E8501A] to-[#0057B8] hidden lg:block" />
+          <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[var(--alo-brand)] via-[var(--alo-cta)] to-[var(--alo-brand)] hidden lg:block" />
 
           <div className="space-y-6 lg:space-y-0">
             {STEPS.map((step, idx) => (
@@ -100,7 +100,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                   <div className="flex justify-center lg:justify-end">
                     <div className={cn(
                       "relative z-10 flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-black text-white",
-                      step.num <= 4 ? "bg-[#0057B8]" : step.num <= 8 ? "bg-alo-gradient" : "bg-[#E8501A]"
+                      step.num <= 4 ? "bg-[var(--alo-brand)]" : step.num <= 8 ? "bg-alo-gradient" : "bg-[var(--alo-cta)]"
                     )}>
                       {step.num}
                     </div>
@@ -109,7 +109,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                   {/* Card */}
                   <Card className={cn(
                     "alo-card-hover rounded-2xl border bg-white transition-all hover:shadow-lg",
-                    step.num <= 4 ? "border-[#0057B8]/20" : step.num <= 8 ? "border-[#0057B8]/15" : "border-[#E8501A]/20"
+                    step.num <= 4 ? "border-[var(--alo-brand)]/20" : step.num <= 8 ? "border-[var(--alo-brand)]/15" : "border-[var(--alo-cta)]/20"
                   )}>
                     <CardContent className="p-5">
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -117,24 +117,24 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
                           <div className="flex items-center gap-2.5">
                             <div className={cn(
                               "flex size-9 items-center justify-center rounded-xl",
-                              step.num <= 4 ? "bg-[#EAF3FF] text-[#0057B8]" : step.num <= 8 ? "bg-[#EAF3FF] text-[#0057B8]" : "bg-[#FFF3EA] text-[#E8501A]"
+                              step.num <= 4 ? "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" : step.num <= 8 ? "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" : "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
                             )}>
                               <Icon name={step.icon} className="size-5" />
                             </div>
-                            <h3 className="text-base font-bold text-[#0B2447]">
-                              <span className="text-[#5A7299]">Step {step.num}:</span> {step.title}
+                            <h3 className="text-base font-bold text-[var(--alo-text)]">
+                              <span className="text-[var(--alo-text-muted)]">Step {step.num}:</span> {step.title}
                             </h3>
                           </div>
-                          <p className="mt-3 text-sm leading-relaxed text-[#5A7299]">{step.description}</p>
+                          <p className="mt-3 text-sm leading-relaxed text-[var(--alo-text-muted)]">{step.description}</p>
                           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                            <Badge variant="outline" className="bg-[#F7FAFE] text-[#5A7299]">
+                            <Badge variant="outline" className="bg-[var(--alo-page)] text-[var(--alo-text-muted)]">
                               <Icon name="Clock" className="mr-1 size-3" />
                               {step.duration}
                             </Badge>
                             {step.serviceSlug && (
                               <button
                                 onClick={() => onNavigate("public-services", step.serviceSlug!)}
-                                className="inline-flex items-center gap-1 text-xs font-semibold text-[#0057B8] hover:underline"
+                                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--alo-brand)] hover:underline"
                               >
                                 {step.serviceLabel}
                                 <Icon name="ArrowRight" className="size-3" />
@@ -159,20 +159,20 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
             icon="Lightbulb"
           >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40 p-4">
-                <Icon name="Calendar" className="size-5 text-[#0057B8]" />
-                <h4 className="mt-2 text-sm font-bold text-[#0B2447]">Plan 12 months ahead</h4>
-                <p className="mt-1 text-xs leading-relaxed text-[#5A7299]">Top universities have deadlines 8-10 months before intake. Don't start late.</p>
+              <div className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-4">
+                <Icon name="Calendar" className="size-5 text-[var(--alo-brand)]" />
+                <h4 className="mt-2 text-sm font-bold text-[var(--alo-text)]">Plan 12 months ahead</h4>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--alo-text-muted)]">Top universities have deadlines 8-10 months before intake. Don't start late.</p>
               </div>
-              <div className="rounded-xl border border-[#E8501A]/15 bg-[#FFF3EA]/40 p-4">
-                <Icon name="ShieldCheck" className="size-5 text-[#E8501A]" />
-                <h4 className="mt-2 text-sm font-bold text-[#0B2447]">Avoid visa refusals</h4>
-                <p className="mt-1 text-xs leading-relaxed text-[#5A7299]">Most refusals happen when students rush visa applications. Give yourself 8+ weeks.</p>
+              <div className="rounded-xl border border-[var(--alo-cta)]/15 bg-[var(--alo-cta-soft)]/40 p-4">
+                <Icon name="ShieldCheck" className="size-5 text-[var(--alo-cta)]" />
+                <h4 className="mt-2 text-sm font-bold text-[var(--alo-text)]">Avoid visa refusals</h4>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--alo-text-muted)]">Most refusals happen when students rush visa applications. Give yourself 8+ weeks.</p>
               </div>
-              <div className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40 p-4">
-                <Icon name="DollarSign" className="size-5 text-[#0057B8]" />
-                <h4 className="mt-2 text-sm font-bold text-[#0B2447]">Stagger your expenses</h4>
-                <p className="mt-1 text-xs leading-relaxed text-[#5A7299]">Application fees, deposits, visa fees, flights — spread across 6-12 months helps cash flow.</p>
+              <div className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-4">
+                <Icon name="DollarSign" className="size-5 text-[var(--alo-brand)]" />
+                <h4 className="mt-2 text-sm font-bold text-[var(--alo-text)]">Stagger your expenses</h4>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--alo-text-muted)]">Application fees, deposits, visa fees, flights — spread across 6-12 months helps cash flow.</p>
               </div>
             </div>
           </SectionCard>

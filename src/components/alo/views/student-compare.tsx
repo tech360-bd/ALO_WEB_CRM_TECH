@@ -110,7 +110,7 @@ export function StudentCompare() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : courses.length === 0 ? (
         <EmptyState
           icon="Columns3"
@@ -118,20 +118,20 @@ export function StudentCompare() {
           description="Add courses to the comparison list from the course finder."
         />
       ) : (
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#DCE8F5] bg-[#F7FAFE]">
-                    <th className="w-48 px-5 py-4 text-left text-sm font-semibold text-[#5A7299]">
+                  <tr className="border-b border-[var(--alo-brand-border)] bg-[var(--alo-page)]">
+                    <th className="w-48 px-5 py-4 text-left text-sm font-semibold text-[var(--alo-text-muted)]">
                       Attribute
                     </th>
                     {courses.map((c) => (
                       <th key={c.slug} className="min-w-[200px] px-5 py-4 text-left">
                         <div>
-                          <p className="font-bold text-[#0B2447]">{c.name || c.title}</p>
-                          <Badge className={cn("mt-1 bg-[#EAF3FF] text-[#0057B8]")}>
+                          <p className="font-bold text-[var(--alo-text)]">{c.name || c.title}</p>
+                          <Badge className={cn("mt-1 bg-[var(--alo-brand-light)] text-[var(--alo-brand)]")}>
                             {c.country || "—"}
                           </Badge>
                         </div>
@@ -143,16 +143,16 @@ export function StudentCompare() {
                   {rows.map((row, idx) => (
                     <tr
                       key={row.label}
-                      className={idx % 2 === 0 ? "bg-white" : "bg-[#F7FAFE]"}
+                      className={idx % 2 === 0 ? "bg-white" : "bg-[var(--alo-page)]"}
                     >
                       <td className="px-5 py-3 text-sm">
                         <div className="flex items-center gap-2">
-                          <Icon name={row.icon} className="size-4 text-[#5A7299]" />
-                          <span className="font-medium text-[#5A7299]">{row.label}</span>
+                          <Icon name={row.icon} className="size-4 text-[var(--alo-text-muted)]" />
+                          <span className="font-medium text-[var(--alo-text-muted)]">{row.label}</span>
                         </div>
                       </td>
                       {courses.map((c) => (
-                        <td key={c.slug} className="px-5 py-3 text-sm text-[#0B2447]">
+                        <td key={c.slug} className="px-5 py-3 text-sm text-[var(--alo-text)]">
                           {row.get(c)}
                         </td>
                       ))}

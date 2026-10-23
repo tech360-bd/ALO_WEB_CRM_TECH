@@ -55,9 +55,9 @@ export default function CampaignCreativeComposer({ kit }: { kit: MarketingKit })
     } catch (error) { setFeedback(error instanceof Error ? error.message : 'Download failed.'); }
     finally { setExporting(false); }
   };
-  return <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`}>
-    <h4 id={`${id}-title`} className="text-sm font-bold text-slate-900">Visual campaign composer</h4>
-    <p className="mt-1 text-xs text-slate-500">Original ALO layouts. Edit a draft, preview a format, then download SVG, PNG or the copy brief. Changes stay on this page and reset when you switch kits. Exports retain the draft label.</p>
+  return <section className="mt-5 rounded-2xl border border-[var(--alo-border)] bg-white p-4" aria-labelledby={`${id}-title`}>
+    <h4 id={`${id}-title`} className="text-sm font-bold text-[var(--alo-text)]">Visual campaign composer</h4>
+    <p className="mt-1 text-xs text-[var(--alo-text-muted)]">Original ALO layouts. Edit a draft, preview a format, then download SVG, PNG or the copy brief. Changes stay on this page and reset when you switch kits. Exports retain the draft label.</p>
     <div className="mt-4 grid gap-5 md:grid-cols-2">
       <div className="space-y-3">
         <label className="block text-xs font-semibold" htmlFor={`${id}-format`}>Format
@@ -68,7 +68,7 @@ export default function CampaignCreativeComposer({ kit }: { kit: MarketingKit })
         {([['headline', 'Headline', 110], ['body', 'Body copy', 320], ['cta', 'CTA text', 42], ['destination', 'Verified destination URL (optional for draft)', 80]] as const).map(([field, label, max]) => <label key={field} htmlFor={`${id}-${field}`} className="block text-xs font-semibold">
           {label}
           <textarea id={`${id}-${field}`} value={content[field]} maxLength={max} rows={field === 'body' ? 4 : 2} onChange={(e) => setContent({ ...content, [field]: e.target.value })} className="mt-1 w-full rounded-lg border p-2 font-normal focus-visible:outline-2 focus-visible:outline-blue-600" />
-          <span aria-hidden="true" className="font-normal text-slate-500">{content[field].length}/{max}</span>
+          <span aria-hidden="true" className="font-normal text-[var(--alo-text-muted)]">{content[field].length}/{max}</span>
         </label>)}
         {errors.length > 0 && <ul role="alert" className="text-xs text-red-700">{errors.map((error) => <li key={error}>{error}</li>)}</ul>}
         <div className="flex flex-wrap gap-2" aria-busy={exporting}>
@@ -76,11 +76,11 @@ export default function CampaignCreativeComposer({ kit }: { kit: MarketingKit })
           <Button type="button" size="sm" variant="ghost" disabled={exporting} onClick={() => { setContent(creativeFromKit(kit)); setFeedback('Draft reset to the selected kit.'); }}>Reset draft</Button>
         </div>
       </div>
-      <figure className="flex flex-col items-center rounded-xl bg-slate-100 p-3">
-        {previewUrl ? <img src={previewUrl} alt={`Draft ${kit.name} creative: ${content.headline}`} className="max-h-[580px] w-full object-contain" /> : <p className="p-6 text-sm text-slate-500">Complete the fields to preview your draft.</p>}
-        <figcaption className="mt-2 text-xs text-slate-500">{CREATIVE_FORMATS[format].label} · Not approved</figcaption>
+      <figure className="flex flex-col items-center rounded-xl bg-[var(--alo-surface-muted)] p-3">
+        {previewUrl ? <img src={previewUrl} alt={`Draft ${kit.name} creative: ${content.headline}`} className="max-h-[580px] w-full object-contain" /> : <p className="p-6 text-sm text-[var(--alo-text-muted)]">Complete the fields to preview your draft.</p>}
+        <figcaption className="mt-2 text-xs text-[var(--alo-text-muted)]">{CREATIVE_FORMATS[format].label} · Not approved</figcaption>
       </figure>
     </div>
-    <p role="status" aria-live="polite" className="mt-3 text-xs text-slate-600">{feedback}</p>
+    <p role="status" aria-live="polite" className="mt-3 text-xs text-[var(--alo-body)]">{feedback}</p>
   </section>;
 }

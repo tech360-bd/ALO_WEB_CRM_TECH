@@ -367,7 +367,7 @@ export function FeatureFlagsPanel() {
             <select
               value={moduleFilter}
               onChange={(event) => setModuleFilter(event.target.value)}
-              className="h-8 rounded-lg border border-[#E2E8F0] bg-white px-2 text-xs text-[#0F172A]"
+              className="h-8 rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs text-[var(--alo-text)]"
               aria-label="Filter flags by module"
             >
               <option value="ALL">All modules</option>
@@ -392,7 +392,7 @@ export function FeatureFlagsPanel() {
                 key={flag.key}
                 className={cn(
                   "flex flex-col gap-2 rounded-xl border-2 p-3 transition-colors",
-                  flag.enabled ? "border-emerald-200 bg-emerald-50/50" : "border-slate-200 bg-slate-50",
+                  flag.enabled ? "border-emerald-200 bg-emerald-50/50" : "border-[var(--alo-border)] bg-[var(--alo-page)]",
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -400,13 +400,13 @@ export function FeatureFlagsPanel() {
                     <div
                       className={cn(
                         "flex size-8 shrink-0 items-center justify-center rounded-lg",
-                        flag.enabled ? "bg-emerald-100 text-emerald-600" : "bg-slate-200 text-slate-500",
+                        flag.enabled ? "bg-emerald-100 text-emerald-600" : "bg-slate-200 text-[var(--alo-text-muted)]",
                       )}
                     >
                       <Icon name={iconForModule(flag.module)} className="size-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate font-mono text-xs font-semibold text-[#0F172A]" title={flag.key}>
+                      <p className="truncate font-mono text-xs font-semibold text-[var(--alo-text)]" title={flag.key}>
                         {flag.key}
                       </p>
                       <p className="text-[11px] text-muted-foreground">{flag.module}</p>
@@ -425,21 +425,21 @@ export function FeatureFlagsPanel() {
                 </p>
 
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <Badge variant={flag.enabled ? "default" : "secondary"} className="text-[10px]">
+                  <Badge variant={flag.enabled ? "default" : "secondary"} className="text-[11px]">
                     {flag.rolloutPercent}% rollout
                   </Badge>
                   {flag.environment && flag.environment !== "all" && (
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-[11px]">
                       {flag.environment}
                     </Badge>
                   )}
                   {roles.length > 0 && (
-                    <Badge variant="outline" className="text-[10px]" title={roles.join(", ")}>
+                    <Badge variant="outline" className="text-[11px]" title={roles.join(", ")}>
                       {roles.length} role{roles.length === 1 ? "" : "s"}
                     </Badge>
                   )}
                   {flag.status && flag.status !== "ACTIVE" && (
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-[11px]">
                       {flag.status}
                     </Badge>
                   )}
@@ -448,7 +448,7 @@ export function FeatureFlagsPanel() {
                 <button
                   type="button"
                   onClick={() => void openAudit(flag.key)}
-                  className="mt-auto self-start text-[11px] font-medium text-[#0057B8] underline-offset-2 hover:underline"
+                  className="mt-auto self-start text-[11px] font-medium text-[var(--alo-brand)] underline-offset-2 hover:underline"
                 >
                   View audit trail
                 </button>
@@ -547,7 +547,7 @@ export function FeatureFlagsPanel() {
                         {new Date(entry.createdAt).toLocaleString()}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="font-mono text-[10px]">
+                        <Badge variant="outline" className="font-mono text-[11px]">
                           {entry.action}
                         </Badge>
                       </TableCell>

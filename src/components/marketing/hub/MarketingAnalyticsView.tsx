@@ -133,8 +133,8 @@ const kpis: KPIData[] = [
     value: '384',
     change: 8.7,
     icon: <Flame className="h-4 w-4" />,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-50',
+    color: 'text-[var(--alo-cta-active)]',
+    bgColor: 'bg-[var(--alo-cta-soft)]',
   },
   {
     label: 'Lead Conversion',
@@ -245,8 +245,8 @@ const kpis: KPIData[] = [
     value: '1m 42s',
     change: -14.2,
     icon: <Timer className="h-4 w-4" />,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-[var(--alo-brand)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
   },
 ];
 
@@ -508,7 +508,7 @@ function SLAComplianceChart({ data }: { data: SLAData[] }) {
               className="absolute top-0 bottom-0 w-0.5 bg-red-400/70"
               style={{ left: '95%' }}
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] text-red-500 font-medium">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[11px] text-red-500 font-medium">
                 95%
               </div>
             </div>
@@ -716,7 +716,7 @@ export default function MarketingAnalyticsView() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Flame className="h-4 w-4 text-orange-500" />
+              <Flame className="h-4 w-4 text-[var(--alo-cta)]" />
               Lead Sources
             </CardTitle>
             <CardDescription>Breakdown of 1,247 total leads by source channel</CardDescription>
@@ -852,7 +852,7 @@ export default function MarketingAnalyticsView() {
                         className={cn(
                           'text-xs',
                           camp.status === 'running' && 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100',
-                          camp.status === 'completed' && 'bg-blue-100 text-blue-700 hover:bg-blue-100',
+                          camp.status === 'completed' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]',
                           camp.status === 'paused' && 'bg-amber-100 text-amber-700 hover:bg-amber-100'
                         )}
                       >

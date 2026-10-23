@@ -281,7 +281,7 @@ export default function CrmAdminDashboard() {
                         className={`flex items-center justify-between rounded-lg border p-3 ${style.border}`}
                       >
                         <p className="text-alo-text truncate text-xs">{alert.message}</p>
-                        <Badge variant="outline" className="ml-2 shrink-0 text-[10px]">
+                        <Badge variant="outline" className="ml-2 shrink-0 text-[11px]">
                           {style.label}
                         </Badge>
                       </div>
@@ -359,7 +359,7 @@ export default function CrmAdminDashboard() {
                       className="border-alo-border flex flex-wrap items-center justify-between gap-2 border-b pb-2 last:border-0"
                     >
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-[11px]">
                           {entry.action.replace(/_/g, ' ')}
                         </Badge>
                         <span className="text-alo-text-muted text-xs">

@@ -30,7 +30,7 @@ export default function SeoEvidencePanel({mode}:{mode:'keywords'|'technical'}) {
  }
  return <section aria-label={mode==='keywords'?'SEO stored keywords':'SEO configuration and supplied metrics'} className="space-y-4 rounded-xl border bg-white p-6">
   <h1 className="text-2xl font-bold">{mode==='keywords'?'SEO Keyword Research & Tracking':'SEO Technical Evidence'}</h1>
-  <p className="text-sm text-slate-600">{mode==='keywords'?'Stored records only. Volume and difficulty may be manually supplied or legacy defaults. Live rankings, competitor analysis and provider authentication are not verified.':'Configuration checks only—not a site crawl, health score, indexation report or measured Core Web Vitals. No fabricated score is displayed.'}</p>
+  <p className="text-sm text-[var(--alo-body)]">{mode==='keywords'?'Stored records only. Volume and difficulty may be manually supplied or legacy defaults. Live rankings, competitor analysis and provider authentication are not verified.':'Configuration checks only—not a site crawl, health score, indexation report or measured Core Web Vitals. No fabricated score is displayed.'}</p>
   <Button variant="outline" disabled={busy} onClick={()=>setRevision(v=>v+1)}>Refresh SEO evidence</Button>
   {mode==='keywords'&&<label className="block">Search stored keywords<Input aria-label="Search stored keywords" maxLength={191} value={query} onChange={e=>setQuery(e.target.value)}/></label>}
   {error&&<p role="alert" className="text-red-700">{error}</p>}{busy&&<p role="status">Loading SEO evidence…</p>}{notice&&<p role="status">{notice}</p>}

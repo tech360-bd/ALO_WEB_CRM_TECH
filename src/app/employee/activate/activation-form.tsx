@@ -49,8 +49,8 @@ function ActivationForm() {
     return (
       <section className="rounded-xl border border-emerald-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-emerald-800">Account activated</h2>
-        <p className="mt-2 text-slate-600">Your password is set. You can now sign in to the employee portal.</p>
-        <a className="mt-5 inline-flex rounded-md bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800" href="/employee/login">Go to employee login</a>
+        <p className="mt-2 text-[var(--alo-body)]">Your password is set. You can now sign in to the employee portal.</p>
+        <a className="mt-5 inline-flex rounded-md bg-[var(--alo-brand-hover)] px-4 py-2 font-medium text-white hover:bg-[var(--alo-brand-deep)]" href="/employee/login">Go to employee login</a>
       </section>
     );
   }
@@ -59,16 +59,16 @@ function ActivationForm() {
     <form onSubmit={submit} className="space-y-5 rounded-xl border bg-white p-6 shadow-sm">
       {!token && <p role="alert" className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">No activation token was found in this link. Ask HR to send a new one.</p>}
       <div>
-        <label htmlFor="new-password" className="mb-1 block text-sm font-medium text-slate-800">Create password</label>
-        <input id="new-password" autoComplete="new-password" type="password" minLength={8} maxLength={200} required value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-md border px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
-        <p className="mt-1 text-xs text-slate-500">At least 8 characters, including one uppercase letter and one number.</p>
+        <label htmlFor="new-password" className="mb-1 block text-sm font-medium text-[var(--alo-text)]">Create password</label>
+        <input id="new-password" autoComplete="new-password" type="password" minLength={8} maxLength={200} required value={password} onChange={(event) => setPassword(event.target.value)} className="w-full rounded-md border px-3 py-2 outline-none focus:border-[var(--alo-brand)] focus:ring-2 focus:ring-blue-100" />
+        <p className="mt-1 text-xs text-[var(--alo-text-muted)]">At least 8 characters, including one uppercase letter and one number.</p>
       </div>
       <div>
-        <label htmlFor="confirm-password" className="mb-1 block text-sm font-medium text-slate-800">Confirm password</label>
-        <input id="confirm-password" autoComplete="new-password" type="password" minLength={8} maxLength={200} required value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className="w-full rounded-md border px-3 py-2 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100" />
+        <label htmlFor="confirm-password" className="mb-1 block text-sm font-medium text-[var(--alo-text)]">Confirm password</label>
+        <input id="confirm-password" autoComplete="new-password" type="password" minLength={8} maxLength={200} required value={confirmation} onChange={(event) => setConfirmation(event.target.value)} className="w-full rounded-md border px-3 py-2 outline-none focus:border-[var(--alo-brand)] focus:ring-2 focus:ring-blue-100" />
       </div>
       {error && <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-800">{error}</p>}
-      <button disabled={busy || !token} type="submit" className="w-full rounded-md bg-blue-700 px-4 py-2.5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
+      <button disabled={busy || !token} type="submit" className="w-full rounded-md bg-[var(--alo-brand-hover)] px-4 py-2.5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
         {busy ? 'Activating…' : 'Activate account'}
       </button>
     </form>
@@ -76,5 +76,5 @@ function ActivationForm() {
 }
 
 export default function EmployeeActivationForm() {
-  return <Suspense fallback={<div className="rounded-xl border bg-white p-6 text-sm text-slate-600">Loading activation form…</div>}><ActivationForm /></Suspense>;
+  return <Suspense fallback={<div className="rounded-xl border bg-white p-6 text-sm text-[var(--alo-body)]">Loading activation form…</div>}><ActivationForm /></Suspense>;
 }

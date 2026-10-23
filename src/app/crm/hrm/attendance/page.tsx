@@ -26,46 +26,46 @@ export default function HrmAttendancePage() {
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Attendance System</h1>
-          <p className="text-xs text-slate-500">Automatic Attendance • Clock In/Out • Late/Present/Absent/Half-Day/Holiday/Leave • Working Hours • Idle Time</p>
+          <h1 className="text-xl font-bold text-[var(--alo-text)]">Attendance System</h1>
+          <p className="text-xs text-[var(--alo-text-muted)]">Automatic Attendance • Clock In/Out • Late/Present/Absent/Half-Day/Holiday/Leave • Working Hours • Idle Time</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={()=> clock('clock_in')} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-xs">Clock In</Button>
-          <Button onClick={()=> clock('clock_out')} variant="outline" className="h-9 text-xs border-slate-200">Clock Out</Button>
+          <Button onClick={()=> clock('clock_in')} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white h-9 text-xs">Clock In</Button>
+          <Button onClick={()=> clock('clock_out')} variant="outline" className="h-9 text-xs border-[var(--alo-border)]">Clock Out</Button>
         </div>
       </div>
 
-      <Card className="bg-white border-slate-200">
+      <Card className="bg-white border-[var(--alo-border)]">
         <CardHeader className="p-4 border-b flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-bold">Monthly Attendance — {month}</CardTitle>
-          <input type="month" value={month} onChange={e=> setMonth(e.target.value)} className="h-8 text-xs border border-slate-200 rounded px-2 bg-white" />
+          <input type="month" value={month} onChange={e=> setMonth(e.target.value)} className="h-8 text-xs border border-[var(--alo-border)] rounded px-2 bg-white" />
         </CardHeader>
         <CardContent className="p-4 space-y-4">
-          {loading ? <p className="text-xs text-slate-400">Loading...</p> : (
+          {loading ? <p className="text-xs text-[var(--alo-text-muted)]">Loading...</p> : (
             <>
               <div className="grid grid-cols-2 lg:grid-cols-7 gap-2">
                 {[
                   ['Present', data?.summary?.present ?? 0, 'bg-emerald-50 text-emerald-700'],
                   ['Late', data?.summary?.late ?? 0, 'bg-amber-50 text-amber-700'],
                   ['Absent', data?.summary?.absent ?? 0, 'bg-red-50 text-red-700'],
-                  ['Half Day', data?.summary?.halfDay ?? 0, 'bg-orange-50 text-orange-700'],
-                  ['Holiday', data?.summary?.holiday ?? 0, 'bg-blue-50 text-blue-700'],
+                  ['Half Day', data?.summary?.halfDay ?? 0, 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'],
+                  ['Holiday', data?.summary?.holiday ?? 0, 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'],
                   ['Leave', data?.summary?.leave ?? 0, 'bg-purple-50 text-purple-700'],
-                  ['Hours', data?.summary?.totalHours ?? 0, 'bg-slate-50 text-slate-700'],
+                  ['Hours', data?.summary?.totalHours ?? 0, 'bg-[var(--alo-page)] text-[var(--alo-body)]'],
                 ].map(([label,val,cls])=> (
-                  <div key={String(label)} className={`p-3 rounded-xl border text-center ${cls as string} border-slate-200`}>
+                  <div key={String(label)} className={`p-3 rounded-xl border text-center ${cls as string} border-[var(--alo-border)]`}>
                     <p className="text-xs">{label as string}</p>
                     <p className="text-lg font-bold">{String(val)}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="overflow-auto border border-slate-200 rounded-xl">
+              <div className="overflow-auto border border-[var(--alo-border)] rounded-xl">
                 <table className="w-full text-xs">
-                  <thead className="bg-slate-50"><tr className="text-slate-500"><th className="p-2 text-left">Date</th><th className="p-2">Clock In</th><th className="p-2">Clock Out</th><th className="p-2">Status</th><th className="p-2">Hours</th><th className="p-2">Late</th><th className="p-2">Idle</th></tr></thead>
+                  <thead className="bg-[var(--alo-page)]"><tr className="text-[var(--alo-text-muted)]"><th className="p-2 text-left">Date</th><th className="p-2">Clock In</th><th className="p-2">Clock Out</th><th className="p-2">Status</th><th className="p-2">Hours</th><th className="p-2">Late</th><th className="p-2">Idle</th></tr></thead>
                   <tbody>
                     {(data?.records||[]).length ? data.records.map((r:any)=> (
-                      <tr key={r.id||r.date} className="border-t border-slate-100">
+                      <tr key={r.id||r.date} className="border-t border-[var(--alo-border)]">
                         <td className="p-2 font-mono">{r.date}</td>
                         <td className="p-2 text-center">{r.clockIn||r.checkIn||'-'}</td>
                         <td className="p-2 text-center">{r.clockOut||r.checkOut||'-'}</td>
@@ -74,14 +74,14 @@ export default function HrmAttendancePage() {
                         <td className="p-2 text-center">{r.lateMinutes||0}m</td>
                         <td className="p-2 text-center">{r.idleTime||0}</td>
                       </tr>
-                    )) : <tr><td colSpan={7} className="p-6 text-center text-slate-400">No attendance records for {month} — clock in to generate</td></tr>}
+                    )) : <tr><td colSpan={7} className="p-6 text-center text-[var(--alo-text-muted)]">No attendance records for {month} — clock in to generate</td></tr>}
                   </tbody>
                 </table>
               </div>
 
-              <Card className="bg-orange-50 border-orange-100">
-                <CardContent className="p-3 text-xs text-slate-700">
-                  <p className="font-bold text-[#E8501A]">Attendance Calendar</p>
+              <Card className="bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25">
+                <CardContent className="p-3 text-xs text-[var(--alo-body)]">
+                  <p className="font-bold text-[var(--alo-cta)]">Attendance Calendar</p>
                   <p className="mt-1">Calendar view via <code className="bg-white px-1 rounded">?view=calendar&month=YYYY-MM</code> — includes holidays & weekends (Friday). Working hours: 9:00–18:00 Asia/Dhaka, late threshold 15 min, half-day &lt;4h.</p>
                 </CardContent>
               </Card>

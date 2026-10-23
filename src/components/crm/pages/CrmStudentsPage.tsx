@@ -130,7 +130,7 @@ export default function CrmStudentsPage() {
                   </thead>
                   <tbody>
                     {filtered.map((s) => (
-                      <tr key={s.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                      <tr key={s.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                         <td className="py-3 font-mono text-xs text-alo-brand font-medium">{s.studentId || s.id.substring(0, 8)}</td>
                         <td className="py-3 font-medium text-alo-text">{s.fullName}</td>
                         <td className="py-3 text-alo-text-secondary">{s.phone}</td>

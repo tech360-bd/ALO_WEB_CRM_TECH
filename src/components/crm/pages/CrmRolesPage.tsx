@@ -22,14 +22,14 @@ const roleIcons: Record<string, React.ReactNode> = {
   super_admin: <Shield className="w-4 h-4 text-red-500" />,
   ceo: <Shield className="w-4 h-4 text-red-400" />,
   branch_manager: <Users className="w-4 h-4 text-amber-500" />,
-  counselor: <Users className="w-4 h-4 text-blue-500" />,
+  counselor: <Users className="w-4 h-4 text-[var(--alo-brand)]" />,
   application_team: <Lock className="w-4 h-4 text-green-500" />,
   visa_officer: <Shield className="w-4 h-4 text-purple-500" />,
   finance: <Lock className="w-4 h-4 text-teal-500" />,
   marketing_manager: <Shield className="w-4 h-4 text-pink-500" />,
-  front_desk: <Users className="w-4 h-4 text-gray-400" />,
+  front_desk: <Users className="w-4 h-4 text-[var(--alo-text-muted)]" />,
   hr: <Shield className="w-4 h-4 text-indigo-500" />,
-  partner_manager: <Users className="w-4 h-4 text-orange-500" />,
+  partner_manager: <Users className="w-4 h-4 text-[var(--alo-cta)]" />,
   document_officer: <Lock className="w-4 h-4 text-cyan-500" />,
   data_manager: <Lock className="w-4 h-4 text-lime-600" />,
   support_agent: <Users className="w-4 h-4 text-sky-500" />,
@@ -38,9 +38,9 @@ const roleIcons: Record<string, React.ReactNode> = {
 
 const roleBorders: Record<string, string> = {
   super_admin: 'border-red-500', ceo: 'border-red-400', branch_manager: 'border-amber-500',
-  counselor: 'border-blue-500', application_team: 'border-green-500', visa_officer: 'border-purple-500',
+  counselor: 'border-[var(--alo-brand)]', application_team: 'border-green-500', visa_officer: 'border-purple-500',
   finance: 'border-teal-500', marketing_manager: 'border-pink-500', front_desk: 'border-gray-400',
-  hr: 'border-indigo-500', partner_manager: 'border-orange-500', document_officer: 'border-cyan-500',
+  hr: 'border-indigo-500', partner_manager: 'border-[var(--alo-cta)]', document_officer: 'border-cyan-500',
   data_manager: 'border-lime-600', support_agent: 'border-sky-500', ai_manager: 'border-violet-500',
 };
 
@@ -94,34 +94,34 @@ export default function CrmRolesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Role Management</h1>
-          <p className="text-gray-500">Define roles and configure access permissions for {totalUsers} users</p>
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">Role Management</h1>
+          <p className="text-[var(--alo-text-muted)]">Define roles and configure access permissions for {totalUsers} users</p>
         </div>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600"><Plus className="w-4 h-4 mr-2" />Create Role</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Plus className="w-4 h-4 mr-2" />Create Role</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-blue-50 text-blue-600"><Shield className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length}</p><p className="text-xs text-gray-500">Total Roles</p></div></CardContent></Card>
-        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-green-50 text-green-600"><Users className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{totalUsers}</p><p className="text-xs text-gray-500">Users Assigned</p></div></CardContent></Card>
-        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-purple-50 text-purple-600"><Lock className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length > 0 ? Math.round(totalPerms / roles.length) : 0}</p><p className="text-xs text-gray-500">Avg Permissions</p></div></CardContent></Card>
-        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-orange-50 text-orange-600"><Edit className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{customCount}</p><p className="text-xs text-gray-500">Custom Roles</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"><Shield className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length}</p><p className="text-xs text-[var(--alo-text-muted)]">Total Roles</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-green-50 text-green-600"><Users className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{totalUsers}</p><p className="text-xs text-[var(--alo-text-muted)]">Users Assigned</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-purple-50 text-purple-600"><Lock className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length > 0 ? Math.round(totalPerms / roles.length) : 0}</p><p className="text-xs text-[var(--alo-text-muted)]">Avg Permissions</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]"><Edit className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{customCount}</p><p className="text-xs text-[var(--alo-text-muted)]">Custom Roles</p></div></CardContent></Card>
       </div>
 
-      <div className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search roles..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+      <div className="relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" /><Input placeholder="Search roles..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {filtered.length === 0 ? (
-          <Card className="p-8 text-center text-gray-400 col-span-full">No roles found</Card>
+          <Card className="p-8 text-center text-[var(--alo-text-muted)] col-span-full">No roles found</Card>
         ) : filtered.map(role => (
-          <Card key={role.id} className={`border-l-4 ${roleBorders[role.name] || 'border-gray-300'} hover:shadow-md transition-shadow`}>
+          <Card key={role.id} className={`border-l-4 ${roleBorders[role.name] || 'border-[var(--alo-border-strong)]'} hover:shadow-md transition-shadow`}>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                {roleIcons[role.name] || <Shield className="w-4 h-4 text-gray-400" />}
-                <h3 className="font-semibold text-gray-900">{role.label || role.name}</h3>
+                {roleIcons[role.name] || <Shield className="w-4 h-4 text-[var(--alo-text-muted)]" />}
+                <h3 className="font-semibold text-[var(--alo-text)]">{role.label || role.name}</h3>
                 {role.isSystem && <Badge variant="secondary" className="ml-auto">System</Badge>}
               </div>
-              <p className="text-sm text-gray-600 mb-3">{role.description || 'No description'}</p>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <p className="text-sm text-[var(--alo-body)] mb-3">{role.description || 'No description'}</p>
+              <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
                 <Users className="w-3.5 h-3.5" />
                 <span>{role.userCount || 0} users</span>
                 <Lock className="w-3.5 h-3.5 ml-2" />

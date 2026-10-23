@@ -81,14 +81,14 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                       ? 'bg-emerald-600 text-white'
                       : isCurrent
                         ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600'
-                        : 'bg-slate-100 text-slate-400'
+                        : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
                   }`}
                 >
                   {isComplete ? <Check className="size-4" /> : <Icon className="size-4" />}
                 </div>
                 <span
-                  className={`text-[10px] whitespace-nowrap ${
-                    isCurrent ? 'font-semibold text-emerald-700' : 'text-slate-400'
+                  className={`text-[11px] whitespace-nowrap ${
+                    isCurrent ? 'font-semibold text-emerald-700' : 'text-[var(--alo-text-muted)]'
                   }`}
                 >
                   {step.label}
@@ -108,7 +108,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
       {/* Mobile */}
       <div className="md:hidden">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-slate-700">
+          <span className="text-sm font-medium text-[var(--alo-body)]">
             Step {currentStep} of 12
           </span>
           <Badge
@@ -132,7 +132,7 @@ function severityColor(severity: string) {
     case 'error': return 'bg-red-100 text-red-700';
     case 'warning': return 'bg-amber-100 text-amber-700';
     case 'blocked': return 'bg-red-200 text-red-800';
-    default: return 'bg-slate-100 text-slate-700';
+    default: return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
 
@@ -332,10 +332,10 @@ export function ImportWorkflow() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-slate-900 text-white">
+      <div className="border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)] text-[var(--alo-text)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <h1 className="text-2xl sm:text-3xl font-bold">CSV Import Workflow</h1>
-          <p className="text-slate-400 mt-1 text-sm">
+          <p className="text-[var(--alo-text-muted)] mt-1 text-sm">
             Import course, university, and scholarship data from CSV files
           </p>
         </div>
@@ -344,26 +344,26 @@ export function ImportWorkflow() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         <StepIndicator currentStep={step} />
 
-        <Card className="border-slate-200">
+        <Card className="border-[var(--alo-border)]">
           <CardContent className="p-6">
             {/* Step 1: Upload */}
             {step === 1 && (
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-slate-900">Upload CSV File</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="text-lg font-semibold text-[var(--alo-text)]">Upload CSV File</h2>
+                <p className="text-sm text-[var(--alo-text-muted)]">
                   Drag and drop your CSV file or click to browse. Supported format: .csv
                 </p>
                 <div
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-slate-300 rounded-xl p-12 text-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-colors"
+                  className="border-2 border-dashed border-[var(--alo-border-strong)] rounded-xl p-12 text-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-colors"
                 >
-                  <Upload className="size-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-sm font-medium text-slate-600">
+                  <Upload className="size-12 text-[var(--alo-placeholder)] mx-auto mb-4" />
+                  <p className="text-sm font-medium text-[var(--alo-body)]">
                     Drop your CSV file here, or <span className="text-emerald-600">browse</span>
                   </p>
-                  <p className="text-xs text-slate-400 mt-1">CSV files up to 50MB</p>
+                  <p className="text-xs text-[var(--alo-text-muted)] mt-1">CSV files up to 50MB</p>
                 </div>
                 <input
                   ref={fileInputRef}
@@ -379,15 +379,15 @@ export function ImportWorkflow() {
             {step === 2 && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Select Import Type</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Select Import Type</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Choose the type of data you are importing
                   </p>
                 </div>
                 {file && (
-                  <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 bg-[var(--alo-page)] p-3 rounded-lg">
                     <FileSpreadsheet className="size-5 text-emerald-600" />
-                    <span className="text-sm font-medium text-slate-700">{file.name}</span>
+                    <span className="text-sm font-medium text-[var(--alo-body)]">{file.name}</span>
                     <Badge variant="secondary" className="text-xs bg-emerald-50 text-emerald-700">
                       {(file.size / 1024).toFixed(1)} KB
                     </Badge>
@@ -404,11 +404,11 @@ export function ImportWorkflow() {
                       className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
                         importType === value
                           ? 'border-emerald-600 bg-emerald-50'
-                          : 'border-slate-200 hover:border-slate-300'
+                          : 'border-[var(--alo-border)] hover:border-[var(--alo-border-strong)]'
                       }`}
                     >
                       <RadioGroupItem value={value} className="border-emerald-600 text-emerald-600" />
-                      <span className="text-sm font-medium text-slate-800">{label}</span>
+                      <span className="text-sm font-medium text-[var(--alo-text)]">{label}</span>
                     </label>
                   ))}
                 </RadioGroup>
@@ -419,35 +419,35 @@ export function ImportWorkflow() {
             {step === 3 && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Column Mapping</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Column Mapping</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Map your CSV columns to the system fields. Auto-mapped columns are pre-filled.
                   </p>
                 </div>
-                <div className="border border-slate-200 rounded-lg overflow-hidden">
+                <div className="border border-[var(--alo-border)] rounded-lg overflow-hidden">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200">
-                        <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-3">
+                      <tr className="bg-[var(--alo-page)] border-b border-[var(--alo-border)]">
+                        <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-3">
                           CSV Column
                         </th>
-                        <th className="text-center text-xs font-medium text-slate-500 uppercase tracking-wider p-3 w-12">
+                        <th className="text-center text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-3 w-12">
                           →
                         </th>
-                        <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-3">
+                        <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-3">
                           System Field
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {csvHeaders.map((header) => (
-                        <tr key={header} className="border-b border-slate-100 last:border-0">
+                        <tr key={header} className="border-b border-[var(--alo-border)] last:border-0">
                           <td className="p-3">
-                            <span className="text-sm font-medium text-slate-700 bg-slate-100 px-2 py-1 rounded">
+                            <span className="text-sm font-medium text-[var(--alo-body)] bg-[var(--alo-surface-muted)] px-2 py-1 rounded">
                               {header}
                             </span>
                           </td>
-                          <td className="p-3 text-center text-slate-300">
+                          <td className="p-3 text-center text-[var(--alo-placeholder)]">
                             <ArrowRight className="size-4 mx-auto" />
                           </td>
                           <td className="p-3">
@@ -482,21 +482,21 @@ export function ImportWorkflow() {
             {step === 4 && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Data Preview</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Data Preview</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Showing first {previewRows.length} rows of your file
                   </p>
                 </div>
-                <div className="border border-slate-200 rounded-lg overflow-hidden">
+                <div className="border border-[var(--alo-border)] rounded-lg overflow-hidden">
                   <ScrollArea className="max-h-96">
                     <table className="w-full text-xs">
-                      <thead className="sticky top-0 bg-slate-50">
-                        <tr className="border-b border-slate-200">
-                          <th className="p-2 text-left font-medium text-slate-500 w-10">#</th>
+                      <thead className="sticky top-0 bg-[var(--alo-page)]">
+                        <tr className="border-b border-[var(--alo-border)]">
+                          <th className="p-2 text-left font-medium text-[var(--alo-text-muted)] w-10">#</th>
                           {csvHeaders.map((h) => (
                             <th
                               key={h}
-                              className="p-2 text-left font-medium text-slate-500 whitespace-nowrap"
+                              className="p-2 text-left font-medium text-[var(--alo-text-muted)] whitespace-nowrap"
                             >
                               {h}
                             </th>
@@ -507,11 +507,11 @@ export function ImportWorkflow() {
                         {previewRows.map((row, idx) => (
                           <tr
                             key={idx}
-                            className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
+                            className="border-b border-[var(--alo-border)] last:border-0 hover:bg-[var(--alo-page)]"
                           >
-                            <td className="p-2 text-slate-400">{idx + 1}</td>
+                            <td className="p-2 text-[var(--alo-text-muted)]">{idx + 1}</td>
                             {row.map((cell, cellIdx) => (
-                              <td key={cellIdx} className="p-2 text-slate-700 whitespace-nowrap max-w-[200px] truncate">
+                              <td key={cellIdx} className="p-2 text-[var(--alo-body)] whitespace-nowrap max-w-[200px] truncate">
                                 {cell}
                               </td>
                             ))}
@@ -527,8 +527,8 @@ export function ImportWorkflow() {
             {/* Step 5: Validation */}
             {step === 5 && (
               <div className="space-y-6 text-center py-8">
-                <h2 className="text-lg font-semibold text-slate-900">Run Validation</h2>
-                <p className="text-sm text-slate-500 max-w-md mx-auto">
+                <h2 className="text-lg font-semibold text-[var(--alo-text)]">Run Validation</h2>
+                <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto">
                   Run validation to check your data for errors, warnings, and duplicates before importing.
                 </p>
                 <Button
@@ -549,7 +549,7 @@ export function ImportWorkflow() {
                   )}
                 </Button>
                 {validating && (
-                  <p className="text-sm text-slate-400 animate-pulse">
+                  <p className="text-sm text-[var(--alo-text-muted)] animate-pulse">
                     Checking {validationResult?.total || '...'} rows...
                   </p>
                 )}
@@ -560,15 +560,15 @@ export function ImportWorkflow() {
             {step === 6 && validationResult && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Validation Summary</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Validation Summary</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Review the validation results before proceeding
                   </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  <Card className="p-4 border-slate-200">
-                    <div className="text-2xl font-bold text-slate-900">{validationResult.total}</div>
-                    <div className="text-xs text-slate-500 mt-1">Total Rows</div>
+                  <Card className="p-4 border-[var(--alo-border)]">
+                    <div className="text-2xl font-bold text-[var(--alo-text)]">{validationResult.total}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">Total Rows</div>
                   </Card>
                   <Card className="p-4 border-emerald-200 bg-emerald-50">
                     <div className="text-2xl font-bold text-emerald-700">{validationResult.valid}</div>
@@ -588,17 +588,17 @@ export function ImportWorkflow() {
                       <XCircle className="size-3" /> Blocked
                     </div>
                   </Card>
-                  <Card className="p-4 border-orange-200 bg-orange-50">
-                    <div className="text-2xl font-bold text-orange-700">{validationResult.duplicates}</div>
-                    <div className="text-xs text-orange-600 mt-1">Duplicates</div>
+                  <Card className="p-4 border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]">
+                    <div className="text-2xl font-bold text-[var(--alo-cta-active)]">{validationResult.duplicates}</div>
+                    <div className="text-xs text-[var(--alo-cta-active)] mt-1">Duplicates</div>
                   </Card>
-                  <Card className="p-4 border-slate-200">
-                    <div className="text-2xl font-bold text-slate-700">{validationResult.unknownUniversity}</div>
-                    <div className="text-xs text-slate-500 mt-1">Unknown University</div>
+                  <Card className="p-4 border-[var(--alo-border)]">
+                    <div className="text-2xl font-bold text-[var(--alo-body)]">{validationResult.unknownUniversity}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">Unknown University</div>
                   </Card>
-                  <Card className="p-4 border-slate-200">
-                    <div className="text-2xl font-bold text-slate-700">{validationResult.missingSource}</div>
-                    <div className="text-xs text-slate-500 mt-1">Missing Source</div>
+                  <Card className="p-4 border-[var(--alo-border)]">
+                    <div className="text-2xl font-bold text-[var(--alo-body)]">{validationResult.missingSource}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">Missing Source</div>
                   </Card>
                 </div>
               </div>
@@ -608,8 +608,8 @@ export function ImportWorkflow() {
             {step === 7 && validationResult && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Row-Level Issues</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Row-Level Issues</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     {validationResult.errors.length} issues found across your data
                   </p>
                 </div>
@@ -618,21 +618,21 @@ export function ImportWorkflow() {
                     {validationResult.errors.map((err, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50"
+                        className="flex items-start gap-3 p-3 rounded-lg border border-[var(--alo-border)] hover:bg-[var(--alo-page)]"
                       >
-                        <div className="shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-medium text-slate-500">
+                        <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center text-xs font-medium text-[var(--alo-text-muted)]">
                           {err.row}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-medium text-slate-700">
+                            <span className="text-sm font-medium text-[var(--alo-body)]">
                               {err.field}
                             </span>
-                            <Badge className={`text-[10px] ${severityColor(err.severity)}`}>
+                            <Badge className={`text-[11px] ${severityColor(err.severity)}`}>
                               {err.severity}
                             </Badge>
                           </div>
-                          <p className="text-sm text-slate-500 mt-0.5">{err.message}</p>
+                          <p className="text-sm text-[var(--alo-text-muted)] mt-0.5">{err.message}</p>
                         </div>
                       </div>
                     ))}
@@ -645,8 +645,8 @@ export function ImportWorkflow() {
             {step === 8 && validationResult && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Confirm Import</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Confirm Import</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Review the details before starting the import
                   </p>
                 </div>
@@ -664,27 +664,27 @@ export function ImportWorkflow() {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 p-4 bg-[var(--alo-page)] rounded-lg">
                   <div>
-                    <p className="text-xs text-slate-500">Import Type</p>
-                    <p className="text-sm font-medium text-slate-700 mt-0.5">
+                    <p className="text-xs text-[var(--alo-text-muted)]">Import Type</p>
+                    <p className="text-sm font-medium text-[var(--alo-body)] mt-0.5">
                       {IMPORT_TYPE_LABELS[importType]}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">File</p>
-                    <p className="text-sm font-medium text-slate-700 mt-0.5 truncate">
+                    <p className="text-xs text-[var(--alo-text-muted)]">File</p>
+                    <p className="text-sm font-medium text-[var(--alo-body)] mt-0.5 truncate">
                       {file?.name || '—'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Rows to Import</p>
+                    <p className="text-xs text-[var(--alo-text-muted)]">Rows to Import</p>
                     <p className="text-sm font-bold text-emerald-600 text-lg mt-0.5">
                       {validationResult.valid}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Rows to Skip</p>
+                    <p className="text-xs text-[var(--alo-text-muted)]">Rows to Skip</p>
                     <p className="text-sm font-bold text-red-600 text-lg mt-0.5">
                       {validationResult.blocked + validationResult.duplicates}
                     </p>
@@ -698,21 +698,21 @@ export function ImportWorkflow() {
               <div className="space-y-6 py-4">
                 <div className="text-center">
                   <Loader2 className="size-10 text-emerald-600 animate-spin mx-auto mb-4" />
-                  <h2 className="text-lg font-semibold text-slate-900">Importing Data...</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--alo-text)]">Importing Data...</h2>
+                  <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Please do not close this page while the import is in progress
                   </p>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Progress</span>
+                    <span className="text-[var(--alo-body)]">Progress</span>
                     <span className="font-medium text-emerald-600">{importProgress}%</span>
                   </div>
                   <Progress
                     value={importProgress}
                     className="h-3 [&_[data-slot=progress-indicator]]:bg-emerald-600"
                   />
-                  <p className="text-xs text-slate-400 text-center">
+                  <p className="text-xs text-[var(--alo-text-muted)] text-center">
                     Processing rows...
                   </p>
                 </div>
@@ -728,37 +728,37 @@ export function ImportWorkflow() {
                       <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
                         <CheckCircle2 className="size-8 text-emerald-600" />
                       </div>
-                      <h2 className="text-lg font-semibold text-slate-900">Import Successful</h2>
+                      <h2 className="text-lg font-semibold text-[var(--alo-text)]">Import Successful</h2>
                     </>
                   ) : (
                     <>
                       <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
                         <XCircle className="size-8 text-red-600" />
                       </div>
-                      <h2 className="text-lg font-semibold text-slate-900">Import Completed with Errors</h2>
+                      <h2 className="text-lg font-semibold text-[var(--alo-text)]">Import Completed with Errors</h2>
                     </>
                   )}
                 </div>
 
-                <div className="bg-slate-50 rounded-lg p-4 space-y-3">
+                <div className="bg-[var(--alo-page)] rounded-lg p-4 space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-500">Batch ID:</span>
-                    <code className="text-sm font-mono font-medium text-slate-800 bg-white px-2 py-0.5 rounded border">
+                    <span className="text-xs text-[var(--alo-text-muted)]">Batch ID:</span>
+                    <code className="text-sm font-mono font-medium text-[var(--alo-text)] bg-white px-2 py-0.5 rounded border">
                       {batchId}
                     </code>
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center p-3 bg-white rounded-lg border">
                       <div className="text-xl font-bold text-emerald-600">{importResult.imported}</div>
-                      <div className="text-xs text-slate-500">Imported</div>
+                      <div className="text-xs text-[var(--alo-text-muted)]">Imported</div>
                     </div>
                     <div className="text-center p-3 bg-white rounded-lg border">
                       <div className="text-xl font-bold text-red-600">{importResult.failed}</div>
-                      <div className="text-xs text-slate-500">Failed</div>
+                      <div className="text-xs text-[var(--alo-text-muted)]">Failed</div>
                     </div>
                     <div className="text-center p-3 bg-white rounded-lg border">
-                      <div className="text-xl font-bold text-slate-600">{importResult.skipped}</div>
-                      <div className="text-xs text-slate-500">Skipped</div>
+                      <div className="text-xl font-bold text-[var(--alo-body)]">{importResult.skipped}</div>
+                      <div className="text-xs text-[var(--alo-text-muted)]">Skipped</div>
                     </div>
                   </div>
                 </div>
@@ -788,10 +788,10 @@ export function ImportWorkflow() {
             {/* Step 11: Audit */}
             {step === 11 && (
               <div className="space-y-4 text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                  <FileText className="size-8 text-slate-500" />
+                <div className="w-16 h-16 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mx-auto mb-4">
+                  <FileText className="size-8 text-[var(--alo-text-muted)]" />
                 </div>
-                <h2 className="text-lg font-semibold text-slate-900">Audit Log</h2>
+                <h2 className="text-lg font-semibold text-[var(--alo-text)]">Audit Log</h2>
                 <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 max-w-md mx-auto">
                   <div className="flex items-center gap-2 justify-center">
                     <CheckCircle2 className="size-5 text-emerald-600" />
@@ -812,8 +812,8 @@ export function ImportWorkflow() {
                 <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
                   <PartyPopper className="size-10 text-emerald-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900">Import Complete!</h2>
-                <p className="text-sm text-slate-500 max-w-md mx-auto">
+                <h2 className="text-2xl font-bold text-[var(--alo-text)]">Import Complete!</h2>
+                <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto">
                   Your data has been successfully imported. You can start a new import or view the imported data.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
@@ -838,7 +838,7 @@ export function ImportWorkflow() {
 
             {/* Navigation Buttons */}
             {step < 12 && step !== 9 && (
-              <div className="flex items-center justify-between mt-8 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between mt-8 pt-4 border-t border-[var(--alo-border)]">
                 <Button
                   variant="outline"
                   onClick={goBack}
@@ -870,7 +870,7 @@ export function ImportWorkflow() {
               </div>
             )}
             {step === 11 && (
-              <div className="flex items-center justify-between mt-8 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between mt-8 pt-4 border-t border-[var(--alo-border)]">
                 <Button variant="outline" onClick={goBack}>
                   <ChevronLeft className="size-4 mr-1" />
                   Back

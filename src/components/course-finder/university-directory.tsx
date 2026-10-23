@@ -92,28 +92,28 @@ const typeColors: Record<string, string> = {
 
 function UniversityCard({ uni }: { uni: University }) {
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow border-slate-200">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-slate-900 text-sm leading-snug truncate">
+            <h3 className="font-semibold text-[var(--alo-text)] text-sm leading-snug truncate">
               {COUNTRY_FLAGS[uni.country]} {uni.name}
             </h3>
           </div>
-          <Badge variant="secondary" className={typeColors[uni.type] || 'bg-slate-100 text-slate-600'}>
+          <Badge variant="secondary" className={typeColors[uni.type] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>
             {uni.type}
           </Badge>
         </div>
 
         {/* Location */}
-        <div className="flex items-center gap-1.5 text-xs text-slate-500">
-          <MapPin className="size-3.5 text-slate-400" />
+        <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
+          <MapPin className="size-3.5 text-[var(--alo-text-muted)]" />
           <span>{uni.city}, {uni.country}</span>
         </div>
 
         {/* Details Grid */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+        <div className="grid grid-cols-2 gap-2 text-xs text-[var(--alo-body)]">
           {uni.ranking > 0 && (
             <div className="flex items-center gap-1.5">
               <Trophy className="size-3.5 text-amber-500" />
@@ -121,14 +121,14 @@ function UniversityCard({ uni }: { uni: University }) {
             </div>
           )}
           <div className="flex items-center gap-1.5">
-            <BookOpen className="size-3.5 text-slate-400" />
+            <BookOpen className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{uni.courseCount} courses</span>
           </div>
         </div>
 
         {/* Tuition Range */}
-        <div className="text-xs text-slate-500">
-          <span className="font-medium text-slate-700">Tuition:</span>{' '}
+        <div className="text-xs text-[var(--alo-text-muted)]">
+          <span className="font-medium text-[var(--alo-body)]">Tuition:</span>{' '}
           {uni.tuitionMin === 0 ? (
             <span className="text-emerald-600 font-medium">Free / Tuition-free</span>
           ) : (
@@ -141,19 +141,19 @@ function UniversityCard({ uni }: { uni: University }) {
         {/* Actions */}
         <div className="flex gap-2 pt-1">
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => toast.info('Browsing courses at ' + uni.name)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => toast.info('Browsing courses at ' + uni.name)}
           >
             <BookOpen className="size-3 mr-1" />
             View Courses
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={() => window.open(uni.website, '_blank')}
+ variant="outline"
+ size="sm"
+ className=" "
+ onClick={() => window.open(uni.website, '_blank')}
           >
             <Globe className="size-3 mr-1" />
             Website
@@ -241,12 +241,12 @@ export function UniversityDirectory() {
 
           {/* Search */}
           <div className="mt-6 relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[var(--alo-text-muted)]" />
             <Input
               placeholder="Search universities, cities, or countries..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-12 h-12 text-base bg-white text-slate-900 border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-300"
+              className="pl-12 h-12 text-base bg-white text-[var(--alo-text)] border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-300"
             />
           </div>
         </div>
@@ -255,7 +255,7 @@ export function UniversityDirectory() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Country Filter */}
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-slate-700">Country:</span>
+          <span className="text-sm font-medium text-[var(--alo-body)]">Country:</span>
           <div className="flex items-center gap-2 flex-wrap">
             <Button
               variant={countryFilter === 'all' ? 'default' : 'outline'}
@@ -296,16 +296,16 @@ export function UniversityDirectory() {
           </div>
         ) : filteredUnis.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-              <SearchX className="size-10 text-slate-300" />
+            <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-4">
+              <SearchX className="size-10 text-[var(--alo-placeholder)]" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700">No universities found</h3>
-            <p className="text-sm text-slate-500 mt-1">Try adjusting your search or filters.</p>
+            <h3 className="text-lg font-semibold text-[var(--alo-body)]">No universities found</h3>
+            <p className="text-sm text-[var(--alo-text-muted)] mt-1">Try adjusting your search or filters.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-slate-500">
-              <span className="font-medium text-slate-700">{filteredUnis.length}</span>{' '}
+            <p className="text-sm text-[var(--alo-text-muted)]">
+              <span className="font-medium text-[var(--alo-body)]">{filteredUnis.length}</span>{' '}
               {filteredUnis.length === 1 ? 'university' : 'universities'} found
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

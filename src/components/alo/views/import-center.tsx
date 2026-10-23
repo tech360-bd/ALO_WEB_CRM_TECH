@@ -130,7 +130,7 @@ interface PublishedExam {
 // -----------------------------------------------------------------------------
 
 const APPROVAL_COLORS: Record<string, string> = {
-  DRAFT: "bg-slate-100 text-slate-700",
+  DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PENDING_REVIEW: "bg-amber-100 text-amber-700",
   PUBLISHED: "bg-emerald-100 text-emerald-700",
 };
@@ -154,8 +154,8 @@ const VERIFICATION_LABELS: Record<string, string> = {
 };
 
 const TYPE_BADGE: Record<string, string> = {
-  country: "bg-[#e8f0fb] text-[#0057B8]",
-  university: "bg-[#fdece4] text-[#E8501A]",
+  country: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
+  university: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
   course: "bg-violet-100 text-violet-700",
   exam: "bg-emerald-100 text-emerald-700",
   scholarship: "bg-rose-100 text-rose-700",
@@ -208,7 +208,7 @@ function PendingItemCard({
   acting: boolean;
 }) {
   return (
-    <div className="rounded-2xl border-2 border-[#0057B8]/15 bg-white p-4 transition-colors hover:border-[#0057B8]/40">
+    <div className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white p-4 transition-colors hover:border-[var(--alo-brand)]/40">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -247,11 +247,11 @@ function PendingItemCard({
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <Button
-          size="sm"
-          variant="outline"
-          className="h-9 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
-          disabled={acting}
-          onClick={() =>
+ size="sm"
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ disabled={acting}
+ onClick={() =>
             // informational only — surfaces a toast via parent's onAction with a custom action handled below.
             onAction(type, item.slug, "review" as ApprovalAction)
           }
@@ -260,20 +260,20 @@ function PendingItemCard({
           Review
         </Button>
         <Button
-          size="sm"
-          className="h-9 bg-emerald-600 text-white hover:bg-emerald-700"
-          disabled={acting}
-          onClick={() => onAction(type, item.slug, "publish")}
+ size="sm"
+ className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ disabled={acting}
+ onClick={() => onAction(type, item.slug, "publish")}
         >
           <Icon name="CheckCircle2" className="size-4" />
           Approve &amp; Publish
         </Button>
         <Button
-          size="sm"
-          variant="outline"
-          className="h-9 border-rose-300 text-rose-600 hover:bg-rose-50"
-          disabled={acting}
-          onClick={() => onAction(type, item.slug, "reject")}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={acting}
+ onClick={() => onAction(type, item.slug, "reject")}
         >
           <Icon name="XCircle" className="size-4" />
           Reject
@@ -301,8 +301,8 @@ function PublishedSection({
   children: React.ReactNode;
 }) {
   const accentBg: Record<string, string> = {
-    blue: "bg-[#e8f0fb] text-[#0057B8]",
-    orange: "bg-[#fdece4] text-[#E8501A]",
+    blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
+    orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
     violet: "bg-violet-100 text-violet-700",
     emerald: "bg-emerald-100 text-emerald-700",
   };
@@ -340,7 +340,7 @@ function WorkflowStage({
   accent: "slate" | "amber" | "emerald";
 }) {
   const accentMap: Record<string, { ring: string; chip: string; num: string }> = {
-    slate: { ring: "border-slate-300", chip: "bg-slate-100 text-slate-700", num: "bg-slate-200 text-slate-700" },
+    slate: { ring: "border-[var(--alo-border-strong)]", chip: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", num: "bg-slate-200 text-[var(--alo-body)]" },
     amber: { ring: "border-amber-300", chip: "bg-amber-100 text-amber-700", num: "bg-amber-500 text-white" },
     emerald: { ring: "border-emerald-300", chip: "bg-emerald-100 text-emerald-700", num: "bg-emerald-600 text-white" },
   };
@@ -609,10 +609,10 @@ export function ImportCenter() {
         icon="Download"
         action={
           <Button
-            variant="outline"
-            className="h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
-            onClick={fetchMain}
-          >
+ variant="outline"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={fetchMain}
+ >
             <Icon name="RefreshCw" className="size-4" />
             Refresh
           </Button>
@@ -771,10 +771,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /destinations/${c.slug} in the public site…`,
@@ -785,11 +785,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `country:${c.slug}`}
-                                  onClick={() => handleUnpublish("country", c.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `country:${c.slug}`}
+ onClick={() => handleUnpublish("country", c.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -848,10 +848,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /universities/${u.slug} in the public site…`,
@@ -862,11 +862,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `university:${u.slug}`}
-                                  onClick={() => handleUnpublish("university", u.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `university:${u.slug}`}
+ onClick={() => handleUnpublish("university", u.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -926,10 +926,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /courses/${c.slug} in the public site…`,
@@ -940,11 +940,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `course:${c.slug}`}
-                                  onClick={() => handleUnpublish("course", c.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `course:${c.slug}`}
+ onClick={() => handleUnpublish("course", c.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -1001,10 +1001,10 @@ export function ImportCenter() {
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-1.5">
                                 <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 text-[#0057B8] hover:bg-[#e8f0fb]"
-                                  onClick={() =>
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() =>
                                     toast({
                                       title: "View public page",
                                       description: `Opening /exams/${e.slug} in the public site…`,
@@ -1015,11 +1015,11 @@ export function ImportCenter() {
                                   View Page
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8 border-rose-300 text-rose-600 hover:bg-rose-50"
-                                  disabled={actingSlug === `exam:${e.slug}`}
-                                  onClick={() => handleUnpublish("exam", e.slug)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ disabled={actingSlug === `exam:${e.slug}`}
+ onClick={() => handleUnpublish("exam", e.slug)}
                                 >
                                   <Icon name="EyeOff" className="size-3.5" />
                                   Unpublish
@@ -1113,14 +1113,14 @@ export function ImportCenter() {
                   <div className="flex flex-wrap gap-3">
                     <Button
                       variant="outline"
-                      className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                      className="h-12 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                       onClick={handleParsePreview}
                     >
                       <Icon name="FileSearch" className="size-4" />
                       Parse &amp; Preview
                     </Button>
                     <Button
-                      className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                      className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
                       disabled={importing}
                       onClick={handleImportDraft}
                     >
@@ -1144,7 +1144,7 @@ export function ImportCenter() {
                   </p>
                   <ol className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-700">1</span>
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-[var(--alo-body)]">1</span>
                       <span><span className="font-semibold text-foreground">Draft</span> — newly imported or edited data, not visible publicly.</span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -1209,7 +1209,7 @@ export function ImportCenter() {
                 description="Newly imported or edited data. Not visible publicly. Counselors and editors create drafts from external sources."
               />
               <div className="flex items-center justify-center lg:px-1">
-                <Icon name="ArrowRight" className="size-6 text-[#0057B8]/40 lg:rotate-0 rotate-90" />
+                <Icon name="ArrowRight" className="size-6 text-[var(--alo-brand)]/40 lg:rotate-0 rotate-90" />
               </div>
               <WorkflowStage
                 index={2}
@@ -1219,7 +1219,7 @@ export function ImportCenter() {
                 description="Submitted for review by an admin or super admin. Source URL and verification status are checked before approval."
               />
               <div className="flex items-center justify-center lg:px-1">
-                <Icon name="ArrowRight" className="size-6 text-[#0057B8]/40 lg:rotate-0 rotate-90" />
+                <Icon name="ArrowRight" className="size-6 text-[var(--alo-brand)]/40 lg:rotate-0 rotate-90" />
               </div>
               <WorkflowStage
                 index={3}
@@ -1292,12 +1292,12 @@ export function ImportCenter() {
             description="Every approval, rejection, and publish action is audit-logged with user, timestamp, and change details."
             action={
               <Button
-                variant="outline"
-                size="sm"
-                className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
-                onClick={fetchAudit}
-                disabled={auditLoading}
-              >
+ variant="outline"
+ size="sm"
+ className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={fetchAudit}
+ disabled={auditLoading}
+ >
                 <Icon name="RefreshCw" className={cn("size-3.5", auditLoading && "animate-spin")} />
                 Refresh
               </Button>
@@ -1353,7 +1353,7 @@ export function ImportCenter() {
                             <span className="text-muted-foreground">{details.action || log.action.toLowerCase()}</span>{" "}
                             <Badge
                               variant="secondary"
-                              className="ml-1 rounded-full bg-[#e8f0fb] text-[11px] text-[#0057B8]"
+                              className="ml-1 rounded-full bg-[var(--alo-brand-light)] text-[11px] text-[var(--alo-brand)]"
                             >
                               {log.resource || "—"}
                             </Badge>
@@ -1389,27 +1389,27 @@ export function ImportCenter() {
         description="All public-facing data must meet these requirements before publishing."
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-4">
+          <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-4">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#0057B8] text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand)] text-white">
                 <Icon name="ListChecks" className="size-4" />
               </div>
-              <h4 className="text-sm font-semibold text-[#0057B8]">Required fields</h4>
+              <h4 className="text-sm font-semibold text-[var(--alo-brand)]">Required fields</h4>
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              All public data must include <code className="rounded bg-white px-1 font-mono text-[10px]">sourceUrl</code>,{" "}
-              <code className="rounded bg-white px-1 font-mono text-[10px]">lastVerifiedAt</code>,{" "}
-              <code className="rounded bg-white px-1 font-mono text-[10px]">verificationStatus</code>, and{" "}
-              <code className="rounded bg-white px-1 font-mono text-[10px]">approvalStatus</code>.
+              All public data must include <code className="rounded bg-white px-1 font-mono text-[11px]">sourceUrl</code>,{" "}
+              <code className="rounded bg-white px-1 font-mono text-[11px]">lastVerifiedAt</code>,{" "}
+              <code className="rounded bg-white px-1 font-mono text-[11px]">verificationStatus</code>, and{" "}
+              <code className="rounded bg-white px-1 font-mono text-[11px]">approvalStatus</code>.
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-[#E8501A]/15 bg-[#fdece4]/40 p-4">
+          <div className="rounded-xl border-2 border-[var(--alo-cta)]/15 bg-[var(--alo-cta-soft)]/40 p-4">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#E8501A] text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-cta)] text-white">
                 <Icon name="CalendarClock" className="size-4" />
               </div>
-              <h4 className="text-sm font-semibold text-[#E8501A]">Time-sensitive data</h4>
+              <h4 className="text-sm font-semibold text-[var(--alo-cta)]">Time-sensitive data</h4>
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Fees, visa rules, work rights, scholarships, and deadlines can change — always show{" "}
@@ -1426,7 +1426,7 @@ export function ImportCenter() {
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Never publish unverified data. Mark uncertain data as{" "}
-              <Badge variant="secondary" className="mx-0.5 rounded-full bg-amber-100 px-1.5 py-0 text-[10px] text-amber-700">
+              <Badge variant="secondary" className="mx-0.5 rounded-full bg-amber-100 px-1.5 py-0 text-[11px] text-amber-700">
                 Needs verification
               </Badge>{" "}
               and route it back to the editor.

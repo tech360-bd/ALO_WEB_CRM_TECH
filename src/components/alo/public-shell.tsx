@@ -149,7 +149,7 @@ function Logo({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
       </div>
       <div className="leading-tight text-left">
         <p className="text-base font-black" style={{ color: BLUE }}>ALO Education</p>
-        <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Study Abroad OS</p>
+        <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--alo-text-muted)]">Study Abroad OS</p>
       </div>
     </button>
   );
@@ -157,16 +157,16 @@ function Logo({ onNavigate }: { onNavigate: (v: ViewKey) => void }) {
 
 /* ─── Dropdown helpers ─── */
 function DropdownHeader({ children }: { children: React.ReactNode }) {
-  return <p className="px-3 pb-1.5 pt-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">{children}</p>;
+  return <p className="px-3 pb-1.5 pt-2 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">{children}</p>;
 }
 function DropdownLink({ label, icon, flag, onClick }: { label: string; icon?: string; flag?: string; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50"
+      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--alo-page)]"
       style={{ color: TEXT }}
     >
-      {flag ? <span className="text-base">{flag}</span> : icon ? <Icon name={icon} className="size-4 text-[#0057B8]" /> : null}
+      {flag ? <span className="text-base">{flag}</span> : icon ? <Icon name={icon} className="size-4 text-[var(--alo-brand)]" /> : null}
       <span>{label}</span>
     </button>
   );
@@ -227,7 +227,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             <div className="relative" onMouseEnter={() => openMenu("destinations")} onMouseLeave={closeMenu}>
               <button
                 onClick={() => setOpenDropdown((p) => (p === "destinations" ? null : "destinations"))}
-                className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", isDestinationsActive ? "bg-blue-50" : "hover:bg-slate-50")}
+                className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", isDestinationsActive ? "bg-[var(--alo-brand-pale)]" : "hover:bg-[var(--alo-page)]")}
                 style={{ color: isDestinationsActive ? BLUE : TEXT }}
               >
                 <Icon name="Globe" className="size-4" />
@@ -245,18 +245,18 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             </div>
 
             {/* 2. Course Finder */}
-            <button onClick={goCourseFinder} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-course-finder" ? "bg-blue-50" : "hover:bg-slate-50")} style={{ color: view === "public-course-finder" ? BLUE : TEXT }}>
+            <button onClick={goCourseFinder} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-course-finder" ? "bg-[var(--alo-brand-pale)]" : "hover:bg-[var(--alo-page)]")} style={{ color: view === "public-course-finder" ? BLUE : TEXT }}>
               <Icon name="Search" className="size-4" /> Course Finder
             </button>
 
             {/* 3. Services */}
-            <button onClick={goServices} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-services" ? "bg-blue-50" : "hover:bg-slate-50")} style={{ color: view === "public-services" ? BLUE : TEXT }}>
+            <button onClick={goServices} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors", view === "public-services" ? "bg-[var(--alo-brand-pale)]" : "hover:bg-[var(--alo-page)]")} style={{ color: view === "public-services" ? BLUE : TEXT }}>
               <Icon name="Briefcase" className="size-4" /> Services
             </button>
 
             {/* 4. Language Prep */}
             <div className="relative" onMouseEnter={() => openMenu("lang")} onMouseLeave={closeMenu}>
-              <button onClick={() => setOpenDropdown((p) => (p === "lang" ? null : "lang"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50", view === "public-exams" || view === "public-exam" ? "bg-blue-50" : "")} style={{ color: view === "public-exams" || view === "public-exam" ? BLUE : TEXT }}>
+              <button onClick={() => setOpenDropdown((p) => (p === "lang" ? null : "lang"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--alo-page)]", view === "public-exams" || view === "public-exam" ? "bg-[var(--alo-brand-pale)]" : "")} style={{ color: view === "public-exams" || view === "public-exam" ? BLUE : TEXT }}>
                 <Icon name="Languages" className="size-4" /> Language Prep
                 <Icon name="ChevronDown" className={cn("size-3.5 transition-transform", openDropdown === "lang" && "rotate-180")} />
               </button>
@@ -270,7 +270,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
 
             {/* 5. Resources */}
             <div className="relative" onMouseEnter={() => openMenu("resources")} onMouseLeave={closeMenu}>
-              <button onClick={() => setOpenDropdown((p) => (p === "resources" ? null : "resources"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50")} style={{ color: TEXT }}>
+              <button onClick={() => setOpenDropdown((p) => (p === "resources" ? null : "resources"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--alo-page)]")} style={{ color: TEXT }}>
                 <Icon name="BookOpen" className="size-4" /> Resources
                 <Icon name="ChevronDown" className={cn("size-3.5 transition-transform", openDropdown === "resources" && "rotate-180")} />
               </button>
@@ -283,7 +283,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
 
             {/* 6. Portals */}
             <div className="relative" onMouseEnter={() => openMenu("portals")} onMouseLeave={closeMenu}>
-              <button onClick={() => setOpenDropdown((p) => (p === "portals" ? null : "portals"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-50")} style={{ color: TEXT }}>
+              <button onClick={() => setOpenDropdown((p) => (p === "portals" ? null : "portals"))} className={cn("flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--alo-page)]")} style={{ color: TEXT }}>
                 <Icon name="Users" className="size-4" /> Portals
                 <Icon name="ChevronDown" className={cn("size-3.5 transition-transform", openDropdown === "portals" && "rotate-180")} />
               </button>
@@ -321,12 +321,12 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                   <Accordion type="multiple" className="w-full">
                     {/* Destinations */}
                     <AccordionItem value="destinations" className="border-b" style={{ borderColor: BORDER }}>
-                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Globe" className="size-4 text-[#0057B8]" /> Destinations</span>
+                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-[var(--alo-page)] hover:no-underline" style={{ color: TEXT }}>
+                        <span className="flex items-center gap-2"><Icon name="Globe" className="size-4 text-[var(--alo-brand)]" /> Destinations</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {[...mainCountries, ...moreCountries].map((c) => (
-                          <button key={c.slug} onClick={() => { goCountry(c.slug); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
+                          <button key={c.slug} onClick={() => { goCountry(c.slug); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-[var(--alo-page)]" style={{ color: TEXT }}>
                             <span className="text-base">{c.flag}</span> {c.name}
                           </button>
                         ))}
@@ -334,34 +334,34 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     </AccordionItem>
                     {/* Course Finder */}
                     <AccordionItem value="cf" className="border-b" style={{ borderColor: BORDER }}>
-                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Search" className="size-4 text-[#0057B8]" /> Course Finder</span>
+                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-[var(--alo-page)] hover:no-underline" style={{ color: TEXT }}>
+                        <span className="flex items-center gap-2"><Icon name="Search" className="size-4 text-[var(--alo-brand)]" /> Course Finder</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
-                        <button onClick={() => { goCourseFinder(); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
+                        <button onClick={() => { goCourseFinder(); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-[var(--alo-page)]" style={{ color: TEXT }}>
                           <Icon name="ArrowRight" className="size-4" /> Open Course Finder
                         </button>
                       </AccordionContent>
                     </AccordionItem>
                     {/* Services */}
                     <AccordionItem value="svc" className="border-b" style={{ borderColor: BORDER }}>
-                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Briefcase" className="size-4 text-[#0057B8]" /> Services</span>
+                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-[var(--alo-page)] hover:no-underline" style={{ color: TEXT }}>
+                        <span className="flex items-center gap-2"><Icon name="Briefcase" className="size-4 text-[var(--alo-brand)]" /> Services</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
-                        <button onClick={() => { goServices(); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
+                        <button onClick={() => { goServices(); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-[var(--alo-page)]" style={{ color: TEXT }}>
                           <Icon name="ArrowRight" className="size-4" /> All Services
                         </button>
                       </AccordionContent>
                     </AccordionItem>
                     {/* Language Prep */}
                     <AccordionItem value="lang" className="border-b" style={{ borderColor: BORDER }}>
-                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Languages" className="size-4 text-[#0057B8]" /> Language Prep</span>
+                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-[var(--alo-page)] hover:no-underline" style={{ color: TEXT }}>
+                        <span className="flex items-center gap-2"><Icon name="Languages" className="size-4 text-[var(--alo-brand)]" /> Language Prep</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {LANGUAGE_PREP.map((t) => (
-                          <button key={t.slug} onClick={() => { goExam(t.slug!); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
+                          <button key={t.slug} onClick={() => { goExam(t.slug!); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-[var(--alo-page)]" style={{ color: TEXT }}>
                             <Icon name="BookOpen" className="size-4" /> {t.label}
                           </button>
                         ))}
@@ -369,12 +369,12 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     </AccordionItem>
                     {/* Resources */}
                     <AccordionItem value="res" className="border-b" style={{ borderColor: BORDER }}>
-                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="BookOpen" className="size-4 text-[#0057B8]" /> Resources</span>
+                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-[var(--alo-page)] hover:no-underline" style={{ color: TEXT }}>
+                        <span className="flex items-center gap-2"><Icon name="BookOpen" className="size-4 text-[var(--alo-brand)]" /> Resources</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {RESOURCES.map((r) => (
-                          <button key={r.label} onClick={() => { goResource(r); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
+                          <button key={r.label} onClick={() => { goResource(r); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-[var(--alo-page)]" style={{ color: TEXT }}>
                             <Icon name={r.icon} className="size-4" /> {r.label}
                           </button>
                         ))}
@@ -382,12 +382,12 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                     </AccordionItem>
                     {/* Portals */}
                     <AccordionItem value="portals" className="border-b" style={{ borderColor: BORDER }}>
-                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-slate-50 hover:no-underline" style={{ color: TEXT }}>
-                        <span className="flex items-center gap-2"><Icon name="Users" className="size-4 text-[#0057B8]" /> Portals</span>
+                      <AccordionTrigger className="px-3 py-3 text-sm font-semibold hover:bg-[var(--alo-page)] hover:no-underline" style={{ color: TEXT }}>
+                        <span className="flex items-center gap-2"><Icon name="Users" className="size-4 text-[var(--alo-brand)]" /> Portals</span>
                       </AccordionTrigger>
                       <AccordionContent className="pb-2">
                         {PORTALS.map((p) => (
-                          <button key={p.label} onClick={() => { goPortal(p.action); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-50" style={{ color: TEXT }}>
+                          <button key={p.label} onClick={() => { goPortal(p.action); setMobileOpen(false); }} className="flex min-h-[44px] w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-[var(--alo-page)]" style={{ color: TEXT }}>
                             <Icon name={p.icon} className="size-4" /> {p.label}
                           </button>
                         ))}
@@ -428,19 +428,19 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
                 </div>
                 <p className="font-black" style={{ color: BLUE }}>ALO Education</p>
               </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">From your ambition to admission, we're with you all the way.</p>
+              <p className="mt-3 text-xs leading-relaxed text-[var(--alo-text-muted)]">From your ambition to admission, we're with you all the way.</p>
               {/* Social icons */}
               <div className="mt-4 flex gap-2">
-                <a href="https://www.facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Facebook" className="size-4" />
                 </a>
-                <a href="https://www.instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Instagram" className="size-4" />
                 </a>
-                <a href="https://www.linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Linkedin" className="size-4" />
                 </a>
-                <a href="https://www.youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-blue-50" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href="https://www.youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Youtube" className="size-4" />
                 </a>
               </div>
@@ -449,9 +449,9 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             {/* Col 2: Destinations */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Destinations</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-500">
+              <ul className="mt-3 space-y-2 text-sm text-[var(--alo-text-muted)]">
                 {FOOTER_DESTINATIONS.map((d) => (
-                  <li key={d.slug}><button onClick={() => onNavigate("public-country", d.slug)} className="hover:text-[#0057B8]">{d.label}</button></li>
+                  <li key={d.slug}><button onClick={() => onNavigate("public-country", d.slug)} className="hover:text-[var(--alo-brand)]">{d.label}</button></li>
                 ))}
               </ul>
             </div>
@@ -459,9 +459,9 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             {/* Col 3: Quick Links */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Quick Links</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-500">
+              <ul className="mt-3 space-y-2 text-sm text-[var(--alo-text-muted)]">
                 {FOOTER_QUICK_LINKS.map((q) => (
-                  <li key={q.label}><button onClick={() => onNavigate(q.view)} className="hover:text-[#0057B8]">{q.label}</button></li>
+                  <li key={q.label}><button onClick={() => onNavigate(q.view)} className="hover:text-[var(--alo-brand)]">{q.label}</button></li>
                 ))}
               </ul>
             </div>
@@ -469,9 +469,9 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             {/* Col 4: Company */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Company</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-500">
+              <ul className="mt-3 space-y-2 text-sm text-[var(--alo-text-muted)]">
                 {FOOTER_COMPANY.map((c) => (
-                  <li key={c.label}><button onClick={() => onNavigate(c.view)} className="hover:text-[#0057B8]">{c.label}</button></li>
+                  <li key={c.label}><button onClick={() => onNavigate(c.view)} className="hover:text-[var(--alo-brand)]">{c.label}</button></li>
                 ))}
               </ul>
             </div>
@@ -479,17 +479,17 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
             {/* Col 5: Legal + Contact */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Legal</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-500">
+              <ul className="mt-3 space-y-2 text-sm text-[var(--alo-text-muted)]">
                 {FOOTER_LEGAL.map((l) => (
-                  <li key={l.label}><button onClick={() => onNavigate(l.view)} className="hover:text-[#0057B8]">{l.label}</button></li>
+                  <li key={l.label}><button onClick={() => onNavigate(l.view)} className="hover:text-[var(--alo-brand)]">{l.label}</button></li>
                 ))}
               </ul>
               <p className="mt-5 text-xs font-bold uppercase tracking-wider" style={{ color: BLUE }}>Contact</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-500">
-                <li><a href="tel:01805020101" className="hover:text-[#0057B8]">📞 01805020101</a></li>
-                <li><a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer" className="hover:text-[#0057B8]">💬 WhatsApp</a></li>
-                <li><a href="mailto:info@aloeducation.com" className="hover:text-[#0057B8]">✉️ Email</a></li>
-                <li><button onClick={() => onNavigate("public-contact")} className="hover:text-[#0057B8]">📍 Office</button></li>
+              <ul className="mt-3 space-y-2 text-sm text-[var(--alo-text-muted)]">
+                <li><a href="tel:01805020101" className="hover:text-[var(--alo-brand)]">📞 01805020101</a></li>
+                <li><a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--alo-brand)]">💬 WhatsApp</a></li>
+                <li><a href="mailto:info@aloeducation.com" className="hover:text-[var(--alo-brand)]">✉️ Email</a></li>
+                <li><button onClick={() => onNavigate("public-contact")} className="hover:text-[var(--alo-brand)]">📍 Office</button></li>
               </ul>
             </div>
           </div>
@@ -516,7 +516,7 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
           {/* Layer 3 — Gray, faster, opacity 100% */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             {[50, 280, 500, 720, 900, 1100, 1300].map((left, i) => (
-              <span key={`l3-${i}`} className={`cap-layer-3 cap-delay-${(i % 8) + 1} absolute text-slate-400`} style={{ left: `${left}px`, fontSize: "14px", opacity: 1 }}>
+              <span key={`l3-${i}`} className={`cap-layer-3 cap-delay-${(i % 8) + 1} absolute text-[var(--alo-text-muted)]`} style={{ left: `${left}px`, fontSize: "14px", opacity: 1 }}>
                 <Icon name="GraduationCap" className="size-3.5" />
               </span>
             ))}
@@ -525,9 +525,9 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
 
         {/* Bottom bar */}
         <div className="bg-[#f5f5f5]">
-          <div className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-3 text-xs text-slate-500 sm:flex-row lg:px-6">
+          <div className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-between gap-2 px-4 py-3 text-xs text-[var(--alo-text-muted)] sm:flex-row lg:px-6">
             <p>© Copyright 2025 ALO Education. All Rights Reserved.</p>
-            <button onClick={() => onNavigate("public-cookie")} className="hover:text-[#0057B8]">Cookie Policy</button>
+            <button onClick={() => onNavigate("public-cookie")} className="hover:text-[var(--alo-brand)]">Cookie Policy</button>
           </div>
         </div>
       </footer>

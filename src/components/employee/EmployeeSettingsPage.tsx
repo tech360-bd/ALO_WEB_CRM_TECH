@@ -112,9 +112,9 @@ export default function EmployeeSettingsPage() {
       </Card>
 
       <Card className="bg-white rounded-xl border border-alo-border"><CardHeader className="pb-0"><div className="flex items-center gap-2"><Bell className="w-5 h-5 text-alo-brand" /><CardTitle className="text-base font-semibold text-alo-text">Notifications & Privacy</CardTitle></div></CardHeader>
-        <CardContent className="pt-4 space-y-4"><p className="text-sm text-slate-600">Employee notifications are delivered and stored in your account. Per-event email/SMS preference controls are not configured.</p>
-          <div className="flex items-center justify-between gap-4 rounded-lg border border-alo-border p-3"><div><p className="text-sm font-medium">Privacy mode</p><p className="text-xs text-slate-500">Controls your employee presence visibility where supported.</p></div><Switch checked={privacyModeOn ?? false} disabled={privacyModeOn === null || saving} onCheckedChange={(value) => void handlePrivacyChange(value)} /></div>
-          {privacyModeOn === null && <p className="text-xs text-slate-500">Privacy status is unavailable until the employee account is provisioned.</p>}
+        <CardContent className="pt-4 space-y-4"><p className="text-sm text-[var(--alo-body)]">Employee notifications are delivered and stored in your account. Per-event email/SMS preference controls are not configured.</p>
+          <div className="flex items-center justify-between gap-4 rounded-lg border border-alo-border p-3"><div><p className="text-sm font-medium">Privacy mode</p><p className="text-xs text-[var(--alo-text-muted)]">Controls your employee presence visibility where supported.</p></div><Switch checked={privacyModeOn ?? false} disabled={privacyModeOn === null || saving} onCheckedChange={(value) => void handlePrivacyChange(value)} /></div>
+          {privacyModeOn === null && <p className="text-xs text-[var(--alo-text-muted)]">Privacy status is unavailable until the employee account is provisioned.</p>}
         </CardContent>
       </Card>
 

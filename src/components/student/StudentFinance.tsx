@@ -103,13 +103,13 @@ export default function StudentFinance() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-5xl">
         <PortalPageHeader
           title="Finance"
           description="Service fees, deposits and payments recorded against your file."
           action={
-            <Button variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold" onClick={exportCsv} disabled={payments.length === 0}>
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={exportCsv} disabled={payments.length === 0}>
               <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               Export CSV
             </Button>
@@ -125,10 +125,10 @@ export default function StudentFinance() {
             <div className="mb-6 grid gap-3 sm:grid-cols-3">
               <BalanceTile label="Outstanding" amounts={totals.outstanding} tone={totals.outstandingCount > 0 ? 'warning' : 'neutral'} note={`${totals.outstandingCount} payment${totals.outstandingCount === 1 ? '' : 's'} outstanding`} />
               <BalanceTile label="Paid to date" amounts={totals.paid} tone="success" note="Recorded as settled" />
-              <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                <p className="text-[24px] font-bold leading-none tracking-[-0.02em] text-slate-900">{payments.length}</p>
-                <p className="mt-1.5 text-[12px] font-medium text-slate-500">Payments on record</p>
-                <p className="mt-2 text-[12px] leading-relaxed text-slate-400">
+              <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
+                <p className="text-[24px] font-bold leading-none tracking-[-0.02em] text-[var(--alo-text)]">{payments.length}</p>
+                <p className="mt-1.5 text-[12px] font-medium text-[var(--alo-text-muted)]">Payments on record</p>
+                <p className="mt-2 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                   Tuition is paid to your university, not through ALO.
                 </p>
               </div>
@@ -148,8 +148,8 @@ export default function StudentFinance() {
                       className={cn(
                         'rounded-button border px-3 py-1.5 text-[12px] font-semibold transition-colors',
                         status === option.id
-                          ? 'border-slate-900 bg-slate-900 text-white'
-                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50',
+                          ? 'border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white'
+                          : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)]',
                       )}
                     >
                       {option.label}
@@ -167,7 +167,7 @@ export default function StudentFinance() {
                       : 'When a service fee or deposit is added to your file it will appear here with its due date and status.'
                   }
                   action={
-                    <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                    <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                       <Link href="/student/messages">Ask About Fees</Link>
                     </Button>
                   }
@@ -175,30 +175,30 @@ export default function StudentFinance() {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead className="border-b border-slate-200 bg-slate-50">
+                    <thead className="border-b border-[var(--alo-border)] bg-[var(--alo-page)]">
                       <tr>
-                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Description</th>
-                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Amount</th>
-                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Status</th>
-                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Due</th>
-                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">Paid</th>
+                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Description</th>
+                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Amount</th>
+                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Status</th>
+                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Due</th>
+                        <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Paid</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-[var(--alo-border)]">
                       {payments.map((payment) => (
                         <tr key={payment.id}>
                           <td className="px-5 py-3.5">
-                            <span className="flex items-start gap-2 text-[13px] font-medium text-slate-900">
-                              <Receipt className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
+                            <span className="flex items-start gap-2 text-[13px] font-medium text-[var(--alo-text)]">
+                              <Receipt className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
                               {payment.description || 'Payment'}
                             </span>
                           </td>
-                          <td className="whitespace-nowrap px-5 py-3.5 text-[13px] font-semibold text-slate-900">
+                          <td className="whitespace-nowrap px-5 py-3.5 text-[13px] font-semibold text-[var(--alo-text)]">
                             {formatMoney(payment.amount, payment.currency)}
                           </td>
                           <td className="px-5 py-3.5"><StatusBadge value={payment.status} /></td>
-                          <td className="whitespace-nowrap px-5 py-3.5 text-[13px] text-slate-600">{payment.dueDate || '—'}</td>
-                          <td className="whitespace-nowrap px-5 py-3.5 text-[13px] text-slate-600">
+                          <td className="whitespace-nowrap px-5 py-3.5 text-[13px] text-[var(--alo-body)]">{payment.dueDate || '—'}</td>
+                          <td className="whitespace-nowrap px-5 py-3.5 text-[13px] text-[var(--alo-body)]">
                             {payment.paidAt ? new Date(payment.paidAt).toLocaleDateString('en-GB') : '—'}
                           </td>
                         </tr>
@@ -209,7 +209,7 @@ export default function StudentFinance() {
               )}
             </PortalCard>
 
-            <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
+            <p className="mt-4 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
               These are ALO service payments only. University tuition, visa fees, health surcharges and test fees are
               paid directly to the receiving institution or government and are not recorded here. If a payment looks
               wrong, contact your counselor before paying anything further.
@@ -233,11 +233,11 @@ function BalanceTile({
   note: string;
 }) {
   const entries = Object.entries(amounts);
-  const toneClass = tone === 'warning' ? 'text-amber-600' : tone === 'success' ? 'text-emerald-600' : 'text-slate-900';
+  const toneClass = tone === 'warning' ? 'text-amber-600' : tone === 'success' ? 'text-emerald-600' : 'text-[var(--alo-text)]';
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+    <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
       {entries.length === 0 ? (
-        <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', 'text-slate-400')}>—</p>
+        <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', 'text-[var(--alo-text-muted)]')}>—</p>
       ) : (
         <div className="space-y-0.5">
           {entries.map(([currency, amount]) => (
@@ -247,8 +247,8 @@ function BalanceTile({
           ))}
         </div>
       )}
-      <p className="mt-1.5 text-[12px] font-medium text-slate-500">{label}</p>
-      <p className="mt-0.5 text-[11px] text-slate-400">{note}</p>
+      <p className="mt-1.5 text-[12px] font-medium text-[var(--alo-text-muted)]">{label}</p>
+      <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">{note}</p>
     </div>
   );
 }

@@ -51,8 +51,8 @@ const TYPE_LABELS: Record<string, string> = {
 const PRIORITY_STYLES: Record<string, string> = {
   URGENT: 'border-red-200 bg-red-50 text-red-700',
   HIGH: 'border-amber-200 bg-amber-50 text-amber-700',
-  NORMAL: 'border-slate-200 bg-slate-50 text-slate-600',
-  LOW: 'border-slate-200 bg-slate-50 text-slate-500',
+  NORMAL: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',
+  LOW: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]',
 };
 
 export default function StudentNotifications() {
@@ -77,14 +77,14 @@ export default function StudentNotifications() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Notifications"
           description="Updates on your applications, documents, visa and payments."
           action={
             data && data.unread > 0 ? (
-              <span className="rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-[12px] font-semibold text-orange-700">
+              <span className="rounded-full border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] px-3 py-1 text-[12px] font-semibold text-[var(--alo-cta-active)]">
                 {data.unread} unread
               </span>
             ) : undefined
@@ -106,16 +106,16 @@ export default function StudentNotifications() {
 
         {state === 'ready' && notifications.length > 0 && (
           <PortalCard>
-            <ul className="divide-y divide-slate-200">
+            <ul className="divide-y divide-[var(--alo-border)]">
               {notifications.map((notification) => (
                 <li
                   key={notification.id}
-                  className={cn('flex flex-wrap items-start gap-3 px-5 py-4', !notification.isRead && 'bg-blue-50/40')}
+                  className={cn('flex flex-wrap items-start gap-3 px-5 py-4', !notification.isRead && 'bg-[var(--alo-brand-pale)]/40')}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      {!notification.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-alo-blue" aria-label="Unread" />}
-                      <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400">
+                      {!notification.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-alo-brand" aria-label="Unread" />}
+                      <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--alo-text-muted)]">
                         {TYPE_LABELS[notification.type] ?? notification.type}
                       </span>
                       {notification.priority && notification.priority !== 'NORMAL' && (
@@ -127,11 +127,11 @@ export default function StudentNotifications() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-1.5 text-[13px] font-semibold text-slate-900">{notification.title}</p>
+                    <p className="mt-1.5 text-[13px] font-semibold text-[var(--alo-text)]">{notification.title}</p>
                     {notification.message && (
-                      <p className="mt-1 text-[13px] leading-relaxed text-slate-600">{notification.message}</p>
+                      <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-body)]">{notification.message}</p>
                     )}
-                    <p className="mt-1.5 text-[12px] text-slate-400">
+                    <p className="mt-1.5 text-[12px] text-[var(--alo-text-muted)]">
                       {new Date(notification.createdAt).toLocaleString('en-GB', {
                         day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
@@ -139,7 +139,7 @@ export default function StudentNotifications() {
                     {notification.actionUrl && (
                       <Link
                         href={notification.actionUrl}
-                        className="mt-2 inline-block text-[13px] font-semibold text-alo-blue hover:underline"
+                        className="mt-2 inline-block text-[13px] font-semibold text-alo-brand hover:underline"
                       >
                         Open related item
                       </Link>
@@ -148,10 +148,10 @@ export default function StudentNotifications() {
 
                   {!notification.isRead && (
                     <Button
-                      type="button"
-                      variant="outline"
-                      className="h-8 shrink-0 rounded-button border-slate-200 px-3 text-[12px] font-semibold"
-                      onClick={() => markRead(notification.id)}
+ type="button"
+ variant="outline"
+ className=" shrink-0 rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold"
+ onClick={() => markRead(notification.id)}
                       disabled={marking === notification.id}
                     >
                       {marking === notification.id

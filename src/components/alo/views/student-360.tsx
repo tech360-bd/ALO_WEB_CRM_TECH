@@ -201,13 +201,13 @@ interface StudentDetail {
 // ---------- Color maps ----------
 const STUDENT_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
-  INACTIVE: "bg-slate-100 text-slate-700",
-  GRADUATED: "bg-blue-100 text-blue-700",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: "bg-slate-100 text-slate-600",
-  NORMAL: "bg-blue-100 text-blue-700",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   HIGH: "bg-amber-100 text-amber-700",
   URGENT: "bg-rose-100 text-rose-700",
 };
@@ -226,7 +226,7 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 
 const COMMISSION_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-blue-100 text-blue-700",
+  APPROVED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   PAID: "bg-emerald-100 text-emerald-700",
 };
 
@@ -264,17 +264,17 @@ const INTERVIEW_TYPE_LABELS: Record<string, string> = {
 };
 
 const TIMELINE_META: Record<string, { icon: string; color: string }> = {
-  LEAD_CREATED: { icon: "UserPlus", color: "bg-blue-100 text-blue-700" },
-  PROFILE_UPDATED: { icon: "UserCog", color: "bg-blue-100 text-blue-700" },
+  LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   DOC_UPLOADED: { icon: "FileUp", color: "bg-amber-100 text-amber-700" },
   DOC_APPROVED: { icon: "FileCheck2", color: "bg-emerald-100 text-emerald-700" },
   DOC_REJECTED: { icon: "FileX2", color: "bg-rose-100 text-rose-700" },
-  APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-orange-100 text-orange-700" },
-  VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-orange-100 text-orange-700" },
+  APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
+  VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-violet-100 text-violet-700" },
   MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
   AI_ACTION: { icon: "Bot", color: "bg-violet-100 text-violet-700" },
-  MESSAGE_SENT: { icon: "MessageSquare", color: "bg-blue-100 text-blue-700" },
+  MESSAGE_SENT: { icon: "MessageSquare", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   PAYMENT: { icon: "CreditCard", color: "bg-emerald-100 text-emerald-700" },
   NOTE: { icon: "StickyNote", color: "bg-amber-100 text-amber-700" },
 };
@@ -415,7 +415,7 @@ export function Student360() {
       />
 
       {/* Student selector */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
         <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Icon name="Search" className="size-4" />
@@ -427,7 +427,7 @@ export function Student360() {
             <p className="text-sm text-muted-foreground">No students available.</p>
           ) : (
             <Select value={selectedId} onValueChange={setSelectedId}>
-              <SelectTrigger className="h-10 flex-1 rounded-xl border-[#0057B8]/15">
+              <SelectTrigger className="h-10 flex-1 rounded-xl border-[var(--alo-brand)]/15">
                 <SelectValue placeholder="Pick a student" />
               </SelectTrigger>
               <SelectContent>
@@ -442,7 +442,7 @@ export function Student360() {
             </Select>
           )}
           {student && (
-            <Badge variant="outline" className="h-10 border-[#0057B8]/20 px-3 text-xs">
+            <Badge variant="outline" className="h-10 border-[var(--alo-brand)]/20 px-3 text-xs">
               {students.findIndex((s) => s.id === selectedId) + 1} of {students.length}
             </Badge>
           )}
@@ -454,15 +454,15 @@ export function Student360() {
       ) : (
         <>
           {/* Header card */}
-          <Card className="rounded-2xl border-2 border-[#0057B8]/20">
+          <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20">
             <CardContent className="pt-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl font-bold text-[#0057B8]">{student.fullName}</h2>
+                    <h2 className="text-2xl font-bold text-[var(--alo-brand)]">{student.fullName}</h2>
                     <Badge
                       variant="outline"
-                      className="border-[#0057B8]/20 bg-[#e8f0fb]/60 font-mono text-[#0057B8]"
+                      className="border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/60 font-mono text-[var(--alo-brand)]"
                     >
                       {student.studentId}
                     </Badge>
@@ -494,9 +494,9 @@ export function Student360() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button
-                    variant="outline"
-                    className="h-10 rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]/60"
-                    onClick={() =>
+ variant="outline"
+ className=" rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]/60"
+ onClick={() =>
                       toast({
                         title: "Edit profile",
                         description: `Opening edit form for ${student.fullName}.`,
@@ -507,9 +507,9 @@ export function Student360() {
                     Edit Profile
                   </Button>
                   <Button
-                    variant="outline"
-                    className="h-10 rounded-xl border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]/60"
-                    onClick={() =>
+ variant="outline"
+ className=" rounded-xl border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]/60"
+ onClick={() =>
                       toast({
                         title: "Message sent",
                         description: `A WhatsApp/SMS template was prepared for ${student.fullName}.`,
@@ -528,7 +528,7 @@ export function Student360() {
                   <span className="font-medium uppercase tracking-wide text-muted-foreground">
                     Profile Completion
                   </span>
-                  <span className="font-bold text-[#0057B8]">{student.profileCompletion}%</span>
+                  <span className="font-bold text-[var(--alo-brand)]">{student.profileCompletion}%</span>
                 </div>
                 <Progress value={student.profileCompletion} className="h-2.5" />
               </div>
@@ -537,7 +537,7 @@ export function Student360() {
 
           {/* Tabs */}
           <Tabs defaultValue="overview">
-            <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border-2 border-[#0057B8]/15 bg-white p-1.5">
+            <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white p-1.5">
               {[
                 { v: "overview", l: "Overview", i: "LayoutDashboard" },
                 { v: "timeline", l: "Timeline", i: "Activity" },
@@ -549,7 +549,7 @@ export function Student360() {
                 <TabsTrigger
                   key={t.v}
                   value={t.v}
-                  className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white"
+                  className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white"
                 >
                   <Icon name={t.i} className="mr-1.5 size-4" />
                   {t.l}
@@ -728,13 +728,13 @@ function TimelineTab({ events }: { events: TimelineEvent[] }) {
       <div className="max-h-[32rem] overflow-y-auto alo-scroll pr-2">
         <div className="relative space-y-4 pt-2">
           {events.map((ev, idx) => {
-            const meta = TIMELINE_META[ev.type] ?? { icon: "Circle", color: "bg-slate-100 text-slate-700" };
+            const meta = TIMELINE_META[ev.type] ?? { icon: "Circle", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" };
             const isLast = idx === events.length - 1;
             return (
               <div key={ev.id} className="relative flex gap-3">
                 {/* Vertical line */}
                 {!isLast && (
-                  <div className="absolute left-[15px] top-8 h-full w-px bg-[#0057B8]/15" />
+                  <div className="absolute left-[15px] top-8 h-full w-px bg-[var(--alo-brand)]/15" />
                 )}
                 {/* Icon */}
                 <div
@@ -747,20 +747,20 @@ function TimelineTab({ events }: { events: TimelineEvent[] }) {
                 </div>
                 {/* Body */}
                 <div className="flex-1 pb-2">
-                  <div className="rounded-xl border border-[#0057B8]/10 bg-white p-3">
+                  <div className="rounded-xl border border-[var(--alo-brand)]/10 bg-white p-3">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-semibold text-foreground">{ev.title}</p>
-                      <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                      <span className="shrink-0 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                         {timeAgo(ev.createdAt)}
                       </span>
                     </div>
                     {ev.description && (
                       <p className="mt-1 text-xs text-muted-foreground">{ev.description}</p>
                     )}
-                    <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <div className="mt-2 flex items-center gap-2 text-[11px] text-muted-foreground">
                       <Badge
                         variant="outline"
-                        className="border-[#0057B8]/15 bg-[#e8f0fb]/40 font-normal text-[#0057B8]"
+                        className="border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 font-normal text-[var(--alo-brand)]"
                       >
                         {ev.type.replace(/_/g, " ")}
                       </Badge>
@@ -816,7 +816,7 @@ function ApplicationsTab({ applications }: { applications: Application[] }) {
           </TableHeader>
           <TableBody>
             {applications.map((app) => (
-              <TableRow key={app.id} className="hover:bg-[#e8f0fb]/30">
+              <TableRow key={app.id} className="hover:bg-[var(--alo-brand-light)]/30">
                 <TableCell className="font-mono text-xs text-muted-foreground">
                   {app.applicationId}
                 </TableCell>
@@ -879,7 +879,7 @@ function DocumentsTab({ documents }: { documents: Document[] }) {
           </TableHeader>
           <TableBody>
             {documents.map((doc) => (
-              <TableRow key={doc.id} className="hover:bg-[#e8f0fb]/30">
+              <TableRow key={doc.id} className="hover:bg-[var(--alo-brand-light)]/30">
                 <TableCell className="font-medium text-foreground">{doc.name}</TableCell>
                 <TableCell>
                   <Badge variant="outline" className="font-normal text-muted-foreground">
@@ -888,7 +888,7 @@ function DocumentsTab({ documents }: { documents: Document[] }) {
                 </TableCell>
                 <TableCell>
                   {doc.required ? (
-                    <span className="text-xs font-semibold text-[#E8501A]">Required</span>
+                    <span className="text-xs font-semibold text-[var(--alo-cta)]">Required</span>
                   ) : (
                     <span className="text-xs text-muted-foreground">Optional</span>
                   )}
@@ -941,7 +941,7 @@ function InterviewsTab({ interviews }: { interviews: InterviewSession[] }) {
           return (
             <div
               key={iv.id}
-              className="rounded-2xl border-2 border-[#0057B8]/10 bg-white p-4"
+              className="rounded-2xl border-2 border-[var(--alo-brand)]/10 bg-white p-4"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-1">
@@ -980,11 +980,11 @@ function InterviewsTab({ interviews }: { interviews: InterviewSession[] }) {
               {iv.feedback && (
                 <Accordion type="single" collapsible className="mt-3">
                   <AccordionItem value="feedback" className="border-0">
-                    <AccordionTrigger className="rounded-lg bg-[#e8f0fb]/40 px-3 py-2 text-xs font-semibold text-[#0057B8] hover:no-underline">
+                    <AccordionTrigger className="rounded-lg bg-[var(--alo-brand-light)]/40 px-3 py-2 text-xs font-semibold text-[var(--alo-brand)] hover:no-underline">
                       View feedback & scores
                     </AccordionTrigger>
                     <AccordionContent className="px-1 pt-3">
-                      <p className="rounded-lg border border-[#0057B8]/10 bg-muted/30 p-3 text-xs text-foreground">
+                      <p className="rounded-lg border border-[var(--alo-brand)]/10 bg-muted/30 p-3 text-xs text-foreground">
                         {iv.feedback}
                       </p>
                       {scoreEntries.length > 0 && (
@@ -995,9 +995,9 @@ function InterviewsTab({ interviews }: { interviews: InterviewSession[] }) {
                                 <span className="font-medium capitalize text-muted-foreground">
                                   {k.replace(/_/g, " ")}
                                 </span>
-                                <span className="font-bold tabular-nums text-[#0057B8]">
+                                <span className="font-bold tabular-nums text-[var(--alo-brand)]">
                                   {v}
-                                  <span className="text-[10px] text-muted-foreground">/10</span>
+                                  <span className="text-[11px] text-muted-foreground">/10</span>
                                 </span>
                               </div>
                               <MiniBar value={v} max={maxScore} color="#0057B8" />
@@ -1053,11 +1053,11 @@ function PaymentsTab({ payments }: { payments: Payment[] }) {
             ৳{totalPending.toLocaleString()}
           </p>
         </div>
-        <div className="col-span-2 rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3 sm:col-span-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-[#0057B8]">
+        <div className="col-span-2 rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3 sm:col-span-1">
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--alo-brand)]">
             Total Transactions
           </p>
-          <p className="mt-1 text-lg font-bold tabular-nums text-[#0057B8]">{payments.length}</p>
+          <p className="mt-1 text-lg font-bold tabular-nums text-[var(--alo-brand)]">{payments.length}</p>
         </div>
       </div>
 
@@ -1076,7 +1076,7 @@ function PaymentsTab({ payments }: { payments: Payment[] }) {
           </TableHeader>
           <TableBody>
             {payments.map((p) => (
-              <TableRow key={p.id} className="hover:bg-[#e8f0fb]/30">
+              <TableRow key={p.id} className="hover:bg-[var(--alo-brand-light)]/30">
                 <TableCell className="font-mono text-xs text-muted-foreground">
                   {p.paymentId}
                 </TableCell>

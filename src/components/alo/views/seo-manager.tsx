@@ -59,7 +59,7 @@ const TOPIC_TYPES = [
 ];
 
 const STATUS_TONE: Record<string, string> = {
-  draft: 'border-slate-200 bg-slate-100 text-slate-700',
+  draft: 'border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   pending: 'border-amber-200 bg-amber-50 text-amber-800',
   approved: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   rejected: 'border-red-200 bg-red-50 text-red-800',
@@ -178,20 +178,20 @@ export default function SeoManager() {
   }), [items]);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-6xl">
         <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-[20px] font-bold leading-tight tracking-[-0.01em] text-slate-900">
-              <FileSearch className="h-5 w-5 text-blue-600" aria-hidden="true" />
+            <h1 className="flex items-center gap-2 text-[20px] font-bold leading-tight tracking-[-0.01em] text-[var(--alo-text)]">
+              <FileSearch className="h-5 w-5 text-[var(--alo-brand)]" aria-hidden="true" />
               SEO Manager
             </h1>
-            <p className="mt-1 text-[13px] leading-relaxed text-slate-500">
+            <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-text-muted)]">
               Generate SEO page drafts and approve them before anything goes live. Generated content is always a
               draft first — approval is required and every action is audited.
             </p>
           </div>
-          <Button variant="outline" className="h-9 shrink-0 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold" onClick={load}>
+          <Button variant="outline" className=" shrink-0 rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={load}>
             <RefreshCw className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
             Refresh
           </Button>
@@ -212,17 +212,17 @@ export default function SeoManager() {
         )}
 
         {/* Generator */}
-        <form onSubmit={generate} className="mb-6 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="text-[14px] font-semibold text-slate-900">Generate a draft</h2>
-          <p className="mt-0.5 text-[12px] text-slate-500">
+        <form onSubmit={generate} className="mb-6 rounded-xl border border-[var(--alo-border)] bg-white p-5">
+          <h2 className="text-[14px] font-semibold text-[var(--alo-text)]">Generate a draft</h2>
+          <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
             Drafts are written from the topic you supply. Verify every factual claim against an official source
             before approving — the model can be wrong about fees, deadlines and requirements.
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div>
-              <Label htmlFor="seo-type" className="mb-1.5 block text-[13px] font-semibold text-slate-700">Page type</Label>
+              <Label htmlFor="seo-type" className="mb-1.5 block text-[13px] font-semibold text-[var(--alo-body)]">Page type</Label>
               <Select value={topicType} onValueChange={setTopicType}>
-                <SelectTrigger id="seo-type" className="h-10 w-full rounded-input border-slate-200">
+                <SelectTrigger id="seo-type" className="h-10 w-full rounded-input border-[var(--alo-border)]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -233,33 +233,33 @@ export default function SeoManager() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="seo-topic" className="mb-1.5 block text-[13px] font-semibold text-slate-700">Topic</Label>
-              <Input id="seo-topic" required value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Study Data Science in the UK" className="h-10 rounded-input border-slate-200 text-sm" />
+              <Label htmlFor="seo-topic" className="mb-1.5 block text-[13px] font-semibold text-[var(--alo-body)]">Topic</Label>
+              <Input id="seo-topic" required value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Study Data Science in the UK" className="h-10 rounded-input border-[var(--alo-border)] text-sm" />
             </div>
             <div>
-              <Label htmlFor="seo-country" className="mb-1.5 block text-[13px] font-semibold text-slate-700">Country</Label>
-              <Input id="seo-country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="United Kingdom" className="h-10 rounded-input border-slate-200 text-sm" />
+              <Label htmlFor="seo-country" className="mb-1.5 block text-[13px] font-semibold text-[var(--alo-body)]">Country</Label>
+              <Input id="seo-country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="United Kingdom" className="h-10 rounded-input border-[var(--alo-border)] text-sm" />
             </div>
             <div>
-              <Label htmlFor="seo-course" className="mb-1.5 block text-[13px] font-semibold text-slate-700">Course</Label>
-              <Input id="seo-course" value={course} onChange={(e) => setCourse(e.target.value)} placeholder="MSc Data Science" className="h-10 rounded-input border-slate-200 text-sm" />
+              <Label htmlFor="seo-course" className="mb-1.5 block text-[13px] font-semibold text-[var(--alo-body)]">Course</Label>
+              <Input id="seo-course" value={course} onChange={(e) => setCourse(e.target.value)} placeholder="MSc Data Science" className="h-10 rounded-input border-[var(--alo-border)] text-sm" />
             </div>
           </div>
-          <Button type="submit" disabled={generating} className="mt-4 h-10 rounded-button bg-orange-600 px-5 text-[13px] font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
+          <Button type="submit" disabled={generating} className="mt-4 rounded-button bg-[var(--alo-cta-hover)] px-5 text-[13px] font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
             {generating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> : <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />}
             {generating ? 'Generating Draft…' : 'Generate Draft'}
           </Button>
         </form>
 
         {/* Queue */}
-        <div className="rounded-xl border border-slate-200 bg-white">
-          <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center">
+        <div className="rounded-xl border border-[var(--alo-border)] bg-white">
+          <div className="flex flex-col gap-3 border-b border-[var(--alo-border)] p-4 sm:flex-row sm:items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
-              <Input value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder="Search by title or topic" aria-label="Search SEO content" className="h-9 rounded-input border-slate-200 pl-9 text-sm" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--alo-text-muted)]" aria-hidden="true" />
+              <Input value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder="Search by title or topic" aria-label="Search SEO content" className="h-9 rounded-input border-[var(--alo-border)] pl-9 text-sm" />
             </div>
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="h-9 w-full rounded-input border-slate-200 sm:w-40" aria-label="Filter by status">
+              <SelectTrigger className="h-9 w-full rounded-input border-[var(--alo-border)] sm:w-40" aria-label="Filter by status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -294,11 +294,11 @@ export default function SeoManager() {
 
           {state === 'ready' && items.length === 0 && (
             <div className="px-6 py-14 text-center">
-              <FileSearch className="mx-auto mb-3 h-10 w-10 text-slate-300" aria-hidden="true" />
-              <h3 className="text-[15px] font-semibold text-slate-900">
+              <FileSearch className="mx-auto mb-3 h-10 w-10 text-[var(--alo-placeholder)]" aria-hidden="true" />
+              <h3 className="text-[15px] font-semibold text-[var(--alo-text)]">
                 {status !== 'all' || search ? 'No drafts match those filters' : 'No SEO drafts yet'}
               </h3>
-              <p className="mx-auto mt-1 max-w-[440px] text-[13px] leading-relaxed text-slate-500">
+              <p className="mx-auto mt-1 max-w-[440px] text-[13px] leading-relaxed text-[var(--alo-text-muted)]">
                 {status !== 'all' || search
                   ? 'Clear the search or status filter to see the full queue.'
                   : 'Generate a draft above to start building the SEO queue.'}
@@ -307,12 +307,12 @@ export default function SeoManager() {
           )}
 
           {state === 'ready' && items.length > 0 && (
-            <ul className="divide-y divide-slate-200">
+            <ul className="divide-y divide-[var(--alo-border)]">
               {items.map((item) => (
                 <li key={item.id} className="flex flex-wrap items-start gap-4 px-5 py-4">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[14px] font-semibold text-slate-900">{item.title || item.topic || 'Untitled draft'}</p>
-                    <p className="mt-0.5 text-[12px] text-slate-500">
+                    <p className="text-[14px] font-semibold text-[var(--alo-text)]">{item.title || item.topic || 'Untitled draft'}</p>
+                    <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
                       {[item.contentType.replace(/_/g, ' '), item.targetCountry, item.targetCourse]
                         .filter(Boolean).join(' · ') || 'No targeting set'}
                     </p>
@@ -324,14 +324,14 @@ export default function SeoManager() {
                     <Badge className={cn('rounded border font-semibold', STATUS_TONE[item.status] ?? STATUS_TONE.draft)}>
                       {statusLabel(item.status)}
                     </Badge>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] text-[var(--alo-text-muted)]">
                       {new Date(item.createdAt).toLocaleDateString('en-GB')}
                     </span>
                     {item.status !== 'approved' && (
                       <Button
-                        variant="outline"
-                        className="h-8 rounded-button border-emerald-300 px-3 text-[12px] font-semibold text-emerald-700"
-                        onClick={() => approve(item)}
+ variant="outline"
+ className=" rounded-button border-emerald-300 px-3 text-[12px] font-semibold text-emerald-700"
+ onClick={() => approve(item)}
                         disabled={approving === item.id}
                       >
                         {approving === item.id ? (
@@ -349,7 +349,7 @@ export default function SeoManager() {
           )}
         </div>
 
-        <p className="mt-4 flex items-start gap-1.5 text-[12px] leading-relaxed text-slate-500">
+        <p className="mt-4 flex items-start gap-1.5 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
           <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           Generated drafts may contain inaccurate fees, deadlines, entry requirements or visa rules. Check each claim
           against the official university or government source before approving, and record the source and
@@ -361,11 +361,11 @@ export default function SeoManager() {
 }
 
 function Metric({ label, value, tone = 'neutral' }: { label: string; value: number; tone?: 'neutral' | 'success' | 'danger' }) {
-  const toneClass = tone === 'success' ? 'text-emerald-600' : tone === 'danger' ? 'text-red-600' : 'text-slate-900';
+  const toneClass = tone === 'success' ? 'text-emerald-600' : tone === 'danger' ? 'text-red-600' : 'text-[var(--alo-text)]';
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
+    <div className="rounded-xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>
-      <p className="mt-1.5 text-[12px] font-medium text-slate-500">{label}</p>
+      <p className="mt-1.5 text-[12px] font-medium text-[var(--alo-text-muted)]">{label}</p>
     </div>
   );
 }

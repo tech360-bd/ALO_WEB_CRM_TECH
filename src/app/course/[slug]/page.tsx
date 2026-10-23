@@ -67,7 +67,7 @@ export default async function CourseDetailPageRoute({
       <main className="flex-1 pt-20 pb-16">
         <Suspense
           fallback={
-            <div className="p-12 text-center text-gray-500 font-medium">
+            <div className="p-12 text-center text-[var(--alo-text-muted)] font-medium">
               Loading course details…
             </div>
           }

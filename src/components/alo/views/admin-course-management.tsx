@@ -119,7 +119,7 @@ type Country = {
 
 const APPROVAL_COLORS: Record<string, string> = {
   PUBLISHED: "bg-emerald-100 text-emerald-700",
-  DRAFT: "bg-slate-100 text-slate-700",
+  DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PENDING_REVIEW: "bg-amber-100 text-amber-700",
   REJECTED: "bg-rose-100 text-rose-700",
 };
@@ -127,7 +127,7 @@ const APPROVAL_COLORS: Record<string, string> = {
 const VERIFICATION_COLORS: Record<string, string> = {
   VERIFIED: "bg-emerald-100 text-emerald-700",
   NEEDS_REVIEW: "bg-amber-100 text-amber-700",
-  UNVERIFIED: "bg-slate-100 text-slate-700",
+  UNVERIFIED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const LEVEL_OPTIONS = [
@@ -648,7 +648,7 @@ export function AdminCourseManagement() {
 
   // ---------------------------------------------------------------------------
   return (
-    <div className="space-y-6 bg-[#f7f9fc]">
+    <div className="space-y-6 bg-[var(--alo-page)]">
       <PageHeader
         title="Course Management"
         subtitle="Add, edit, manage, and publish courses. Full CRUD with audit logging."
@@ -658,14 +658,14 @@ export function AdminCourseManagement() {
             <Button
               onClick={navigateToCsv}
               variant="outline"
-              className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+              className="h-12 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             >
               <Icon name="FileSpreadsheet" className="size-4" />
               Import CSV
             </Button>
             <Button
               onClick={openAddDialog}
-              className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+              className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
             >
               <Icon name="Plus" className="size-4" />
               Add Course
@@ -763,7 +763,7 @@ export function AdminCourseManagement() {
             <div className="flex flex-wrap justify-center gap-2">
               <Button
                 onClick={openAddDialog}
-                className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Plus" className="size-4" />
                 Add Course
@@ -775,7 +775,7 @@ export function AdminCourseManagement() {
                     setStatusFilter("__all__");
                   }}
                   variant="outline"
-                  className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                  className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 >
                   <Icon name="RotateCcw" className="size-4" />
                   Clear filters
@@ -789,7 +789,7 @@ export function AdminCourseManagement() {
           <ScrollArea className="max-h-[70vh]">
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-white">
-                <TableRow className="border-b border-[#0057B8]/15">
+                <TableRow className="border-b border-[var(--alo-brand)]/15">
                   <TableHead className="min-w-[260px]">
                     <SortButton
                       label="Course"
@@ -825,7 +825,7 @@ export function AdminCourseManagement() {
               </TableHeader>
               <TableBody>
                 {sortedCourses.map((course) => (
-                  <TableRow key={course.id} className="border-b border-[#0057B8]/8 hover:bg-[#f7f9fc]">
+                  <TableRow key={course.id} className="border-b border-[var(--alo-brand)]/8 hover:bg-[var(--alo-page)]">
                     <TableCell className="align-top">
                       <p className="font-semibold text-foreground">{course.name}</p>
                       <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
@@ -843,15 +843,15 @@ export function AdminCourseManagement() {
                     </TableCell>
                     <TableCell className="align-top">
                       <div className="flex flex-wrap gap-1">
-                        <Badge className="bg-[#e8f0fb] text-[#0057B8] hover:bg-[#e8f0fb]">
+                        <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                           {course.level}
                         </Badge>
-                        <Badge variant="outline" className="border-[#0057B8]/30 text-[#0057B8]">
+                        <Badge variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)]">
                           {course.subject}
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="align-top text-sm font-semibold text-[#0057B8]">
+                    <TableCell className="align-top text-sm font-semibold text-[var(--alo-brand)]">
                       {course.tuition || "—"}
                     </TableCell>
                     <TableCell className="align-top text-xs text-muted-foreground">
@@ -861,7 +861,7 @@ export function AdminCourseManagement() {
                       <span
                         className={cn(
                           "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                          APPROVAL_COLORS[course.approvalStatus] || "bg-slate-100 text-slate-700",
+                          APPROVAL_COLORS[course.approvalStatus] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                         )}
                       >
                         {course.approvalStatus.replace(/_/g, " ")}
@@ -871,7 +871,7 @@ export function AdminCourseManagement() {
                       <span
                         className={cn(
                           "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                          VERIFICATION_COLORS[course.verificationStatus] || "bg-slate-100 text-slate-700",
+                          VERIFICATION_COLORS[course.verificationStatus] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                         )}
                       >
                         {course.verificationStatus.replace(/_/g, " ")}
@@ -886,7 +886,7 @@ export function AdminCourseManagement() {
                           onClick={() => openEditDialog(course)}
                           variant="outline"
                           size="sm"
-                          className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                          className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                         >
                           <Icon name="Pencil" className="size-3.5" />
                           Edit
@@ -941,9 +941,9 @@ export function AdminCourseManagement() {
       )}
 
       {/* Audit note */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40">
         <CardContent className="flex items-start gap-3 p-4">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
             <Icon name="ShieldCheck" className="size-4" />
           </div>
           <div className="text-sm">
@@ -961,8 +961,8 @@ export function AdminCourseManagement() {
       {/* Add/Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-h-[92vh] max-w-4xl overflow-hidden p-0">
-          <DialogHeader className="border-b border-[#0057B8]/10 px-5 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogHeader className="border-b border-[var(--alo-brand)]/10 px-5 py-4">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name={isEditMode ? "Pencil" : "PlusCircle"} className="size-5" />
               {isEditMode ? "Edit Course" : "Add New Course"}
             </DialogTitle>
@@ -975,7 +975,7 @@ export function AdminCourseManagement() {
 
           <div className="flex flex-col overflow-hidden">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-hidden">
-              <div className="border-b border-[#0057B8]/10 bg-[#f7f9fc] px-3">
+              <div className="border-b border-[var(--alo-brand)]/10 bg-[var(--alo-page)] px-3">
                 <ScrollArea className="w-full">
                   <TabsList className="h-auto justify-start bg-transparent p-2">
                     <TabsTrigger value="basic" className="data-[state=active]:bg-white">
@@ -1260,10 +1260,10 @@ export function AdminCourseManagement() {
                         ]}
                       />
                     </div>
-                    <Card className="rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/40">
+                    <Card className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40">
                       <CardContent className="p-3">
                         <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                           <span>
                             On save, <span className="font-mono">lastVerifiedAt</span> is
                             re-stamped automatically. Approval changes are audit-logged with actor
@@ -1278,7 +1278,7 @@ export function AdminCourseManagement() {
             </Tabs>
           </div>
 
-          <DialogFooter className="border-t border-[#0057B8]/10 bg-[#f7f9fc] px-5 py-3">
+          <DialogFooter className="border-t border-[var(--alo-brand)]/10 bg-[var(--alo-page)] px-5 py-3">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs text-muted-foreground">
                 {isEditMode ? "Editing" : "Creating"}:{" "}
@@ -1294,10 +1294,10 @@ export function AdminCourseManagement() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={submitForm}
-                  className="h-10 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
-                  disabled={saving}
-                >
+ onClick={submitForm}
+ className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ disabled={saving}
+ >
                   {saving ? (
                     <>
                       <Icon name="Loader2" className="size-4 animate-spin" />
@@ -1399,9 +1399,9 @@ function SortButton({
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition-colors hover:text-[#0057B8]",
+        "flex items-center gap-1 text-xs font-bold uppercase tracking-wide transition-colors hover:text-[var(--alo-brand)]",
         align === "right" ? "ml-auto" : "",
-        active ? "text-[#0057B8]" : "text-muted-foreground",
+        active ? "text-[var(--alo-brand)]" : "text-muted-foreground",
       )}
     >
       {label}

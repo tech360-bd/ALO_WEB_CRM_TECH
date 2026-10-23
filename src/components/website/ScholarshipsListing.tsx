@@ -29,9 +29,9 @@ const AMOUNT_BANDS = [
 const STATUS_CHIP: Record<string, string> = {
   OPEN: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   CLOSING_SOON: 'bg-amber-50 text-amber-700 border-amber-200',
-  UPCOMING: 'bg-blue-50 text-blue-700 border-blue-200',
+  UPCOMING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   CLOSED: 'bg-red-50 text-red-700 border-red-200',
-  NEEDS_VERIFICATION: 'bg-slate-100 text-slate-600 border-slate-200',
+  NEEDS_VERIFICATION: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
 export default function ScholarshipsListing() {
@@ -112,28 +112,28 @@ export default function ScholarshipsListing() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-20 space-y-8">
         {/* Hero — spec §14 exact copy */}
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 md:p-12 shadow-sm">
-          <Badge className="bg-[#E8501A]/10 text-[#E8501A] border-[#E8501A]/20 text-xs mb-4">Verified Scholarships Only</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] tracking-tight mb-4">Find Scholarships for Your Study Abroad Journey</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
+        <div className="border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] rounded-[20px] p-6 md:p-10">
+          <Badge className="bg-card text-[var(--alo-cta-active)] border-[var(--alo-border)] text-[11px] uppercase tracking-[0.07em] font-semibold mb-4">Verified Scholarships Only</Badge>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">Find Scholarships for Your Study Abroad Journey</h1>
+          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
-            <Link href="/book-consultation"><Button variant="outline" className="border-[#E2E8F0] h-12 px-6">Book Free Consultation</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/book-consultation"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </div>
 
         {/* Filters — spec §15 */}
-        <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm" aria-label="Scholarship filters">
+        <Card className="p-4 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm" aria-label="Scholarship filters">
           <div className="grid md:grid-cols-4 gap-3">
-            <div className="relative md:col-span-2"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search scholarships by name, university or keyword..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-12" aria-label="Search scholarships" /></div>
-            <select aria-label="Country" value={country} onChange={e => setCountry(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Countries</option>{['UK','USA','Canada','Australia','Germany'].map(c => <option key={c} value={c}>{c}</option>)}</select>
-            <select aria-label="University" value={university} onChange={e => setUniversity(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Universities</option>{universities.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
-            <select aria-label="Study level" value={studyLevel} onChange={e => setStudyLevel(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Study Levels</option><option value="undergraduate">Undergraduate</option><option value="postgraduate">Postgraduate</option><option value="phd">PhD</option><option value="foundation">Foundation</option></select>
-            <select aria-label="Subject" value={subject} onChange={e => setSubject(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Subjects</option>{['business','engineering','computer-science','health','law','arts'].map(s => <option key={s} value={s}>{s.replace(/-/g, ' ')}</option>)}</select>
-            <select aria-label="Scholarship type" value={scholarshipType} onChange={e => setScholarshipType(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12"><option value="">Any Scholarship Type</option>{SCHOLARSHIP_TYPES.filter(Boolean).map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}</select>
-            <select aria-label="Funding type" value={fundingType} onChange={e => setFundingType(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12"><option value="">Any Funding Type</option>{FUNDING_TYPES.filter(Boolean).map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}</select>
-            <select aria-label="Amount" value={amountBand} onChange={e => setAmountBand(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-sm h-12">{AMOUNT_BANDS.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}</select>
-            <Input aria-label="Intake" placeholder="Intake (e.g. September 2027)" value={intake} onChange={e => setIntake(e.target.value)} className="bg-white border-[#E2E8F0] h-12" />
+            <div className="relative md:col-span-2"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" /><Input placeholder="Search scholarships by name, university or keyword..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 bg-white border-[var(--alo-border)] h-12" aria-label="Search scholarships" /></div>
+            <select aria-label="Country" value={country} onChange={e => setCountry(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Countries</option>{['UK','USA','Canada','Australia','Germany'].map(c => <option key={c} value={c}>{c}</option>)}</select>
+            <select aria-label="University" value={university} onChange={e => setUniversity(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Universities</option>{universities.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
+            <select aria-label="Study level" value={studyLevel} onChange={e => setStudyLevel(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Study Levels</option><option value="undergraduate">Undergraduate</option><option value="postgraduate">Postgraduate</option><option value="phd">PhD</option><option value="foundation">Foundation</option></select>
+            <select aria-label="Subject" value={subject} onChange={e => setSubject(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"><option value="all">All Subjects</option>{['business','engineering','computer-science','health','law','arts'].map(s => <option key={s} value={s}>{s.replace(/-/g, ' ')}</option>)}</select>
+            <select aria-label="Scholarship type" value={scholarshipType} onChange={e => setScholarshipType(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"><option value="">Any Scholarship Type</option>{SCHOLARSHIP_TYPES.filter(Boolean).map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}</select>
+            <select aria-label="Funding type" value={fundingType} onChange={e => setFundingType(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"><option value="">Any Funding Type</option>{FUNDING_TYPES.filter(Boolean).map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}</select>
+            <select aria-label="Amount" value={amountBand} onChange={e => setAmountBand(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12">{AMOUNT_BANDS.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}</select>
+            <Input aria-label="Intake" placeholder="Intake (e.g. September 2027)" value={intake} onChange={e => setIntake(e.target.value)} className="bg-white border-[var(--alo-border)] h-12" />
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-2 mt-3 text-xs">
             {[
@@ -146,42 +146,42 @@ export default function ScholarshipsListing() {
               ['International students', internationalOnly, setInternationalOnly],
             ].map(([label, val, set]: any) => (
               <label key={label} className="inline-flex items-center gap-1.5 cursor-pointer select-none min-h-[32px]">
-                <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} className="w-3.5 h-3.5 accent-[#0057B8]" />
-                <span className="text-gray-700">{label}</span>
+                <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} className="w-3.5 h-3.5 accent-[var(--alo-brand)]" />
+                <span className="text-[var(--alo-body)]">{label}</span>
               </label>
             ))}
           </div>
         </Card>
 
-        {loading ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse" />)}</div> : filtered.length === 0 ? (
-          <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center"><Award className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-sm text-gray-600">No scholarships match these filters yet.</p><p className="text-xs text-gray-500 mt-2">ALO publishes only verified scholarship information — widen the filters or check back after new verifications.</p></Card>
+        {loading ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse" />)}</div> : filtered.length === 0 ? (
+          <Card className="p-12 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><Award className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" /><p className="text-sm text-[var(--alo-body)]">No scholarships match these filters yet.</p><p className="text-xs text-[var(--alo-text-muted)] mt-2">ALO publishes only verified scholarship information — widen the filters or check back after new verifications.</p></Card>
         ) : (
           <>
-            <p className="text-sm text-gray-500" role="status">{filtered.length} scholarship{filtered.length === 1 ? '' : 's'} found</p>
+            <p className="text-sm text-[var(--alo-text-muted)]" role="status">{filtered.length} scholarship{filtered.length === 1 ? '' : 's'} found</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((s: any) => {
                 const st = computeScholarshipStatus(s);
                 const badge = SCHOLARSHIP_STATUS_BADGES[st];
                 return (
-                  <Card key={s.id} className="p-6 bg-white border-[#E2E8F0] hover:border-[#0057B8] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
+                  <Card key={s.id} className="p-6 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] hover:shadow-md transition-all rounded-2xl h-full flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-3 gap-2">
-                        <Badge className="bg-[#E8501A]/10 text-[#E8501A] border-[#E8501A]/20 text-[10px]">{s.scholarshipType ? String(s.scholarshipType).replace(/_/g, ' ') : (s.fundingType || 'Scholarship')}</Badge>
-                        <Badge className={`text-[10px] border ${STATUS_CHIP[st]}`}>{badge.label}</Badge>
+                        <Badge className="bg-[var(--alo-cta)]/10 text-[var(--alo-cta)] border-[var(--alo-cta)]/20 text-[11px]">{s.scholarshipType ? String(s.scholarshipType).replace(/_/g, ' ') : (s.fundingType || 'Scholarship')}</Badge>
+                        <Badge className={`text-[11px] border ${STATUS_CHIP[st]}`}>{badge.label}</Badge>
                       </div>
-                      <h3 className="font-bold text-[#0F172A] mb-1.5 line-clamp-2">{s.name || s.scholarshipName}</h3>
-                      <p className="text-[11px] text-gray-500 mb-2">{s.university || 'Multiple universities'} • {s.country || 'Global'}</p>
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">{s.eligibility?.substring(0, 120) || s.overview?.substring(0, 120) || 'Eligibility summary — view details'}</p>
-                      <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3 space-y-1 text-xs">
-                        <div className="flex justify-between gap-2"><span className="text-gray-500">Funding:</span><span className="font-bold text-[#0F172A] text-right">{s.fundingAmount || `${s.currency || ''} ${s.amount || ''}`.trim() || 'Funding varies. Check official scholarship terms.'}</span></div>
-                        {s.fundingType && <div className="flex justify-between gap-2"><span className="text-gray-500">Funding type:</span><span className="font-medium text-right">{String(s.fundingType).replace(/_/g, ' ')}</span></div>}
-                        <div className="flex justify-between gap-2"><span className="text-gray-500">Deadline:</span><span className="font-semibold text-[#E8501A] text-right">{s.deadline || (s.deadlineDate ? new Date(s.deadlineDate).toLocaleDateString() : 'See official source')}</span></div>
-                        <p className="text-[10px] text-gray-500 pt-1 border-t border-[#E2E8F0] mt-1">Last verified: {s.lastVerifiedAt ? new Date(s.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • {s.verificationStatus || 'pending'}</p>
+                      <h3 className="font-bold text-[var(--alo-text)] mb-1.5 line-clamp-2">{s.name || s.scholarshipName}</h3>
+                      <p className="text-[11px] text-[var(--alo-text-muted)] mb-2">{s.university || 'Multiple universities'} • {s.country || 'Global'}</p>
+                      <p className="text-xs text-[var(--alo-body)] mb-2 line-clamp-2">{s.eligibility?.substring(0, 120) || s.overview?.substring(0, 120) || 'Eligibility summary — view details'}</p>
+                      <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 space-y-1 text-xs">
+                        <div className="flex justify-between gap-2"><span className="text-[var(--alo-text-muted)]">Funding:</span><span className="font-bold text-[var(--alo-text)] text-right">{s.fundingAmount || `${s.currency || ''} ${s.amount || ''}`.trim() || 'Funding varies. Check official scholarship terms.'}</span></div>
+                        {s.fundingType && <div className="flex justify-between gap-2"><span className="text-[var(--alo-text-muted)]">Funding type:</span><span className="font-medium text-right">{String(s.fundingType).replace(/_/g, ' ')}</span></div>}
+                        <div className="flex justify-between gap-2"><span className="text-[var(--alo-text-muted)]">Deadline:</span><span className="font-semibold text-[var(--alo-cta)] text-right">{s.deadline || (s.deadlineDate ? new Date(s.deadlineDate).toLocaleDateString() : 'See official source')}</span></div>
+                        <p className="text-[11px] text-[var(--alo-text-muted)] pt-1 border-t border-[var(--alo-border)] mt-1">Last verified: {s.lastVerifiedAt ? new Date(s.lastVerifiedAt).toLocaleDateString() : 'Not verified'} • {s.verificationStatus || 'pending'}</p>
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] h-12 text-xs font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
-                      <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[#E2E8F0] h-12 text-xs">Check Eligibility</Button></Link>
+                      <Link href={`/scholarships/${s.slug}`} aria-label={`View details of ${s.name}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 font-bold">View Details <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                      <Link href="/eligibility-check" aria-label={`Check eligibility for ${s.name}`}><Button variant="outline" className="w-full border-[var(--alo-border)] h-12 ">Check Eligibility</Button></Link>
                     </div>
                   </Card>
                 );
@@ -191,12 +191,12 @@ export default function ScholarshipsListing() {
         )}
 
         {/* Final CTA — spec §24 */}
-        <Card className="p-8 bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl text-white text-center">
+        <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
-          <p className="text-sm text-blue-100 mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
+          <p className="text-sm text-[var(--alo-brand-pale)] mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/eligibility-check"><Button className="bg-[#E8501A] text-black hover:bg-[#C84012] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
-            <Link href="/course-finder"><Button className="bg-white text-[#0057B8] hover:bg-blue-50 h-12 px-6 font-bold">Find Matching Courses</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Matching Courses</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Book Free Consultation</Button></Link>
           </div>
         </Card>

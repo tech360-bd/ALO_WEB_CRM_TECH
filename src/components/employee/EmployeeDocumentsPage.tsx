@@ -55,8 +55,8 @@ const STATUS_META: Record<string, { label: string; cls: string }> = {
 };
 
 function statusBadge(status: string) {
-  const meta = STATUS_META[status] || { label: status || 'Unknown', cls: 'bg-slate-100 text-slate-600' };
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  const meta = STATUS_META[status] || { label: status || 'Unknown', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function formatBytes(size?: number): string {
@@ -293,7 +293,7 @@ export default function EmployeeDocumentsPage() {
                             ) : null}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {document.category || 'uncategorised'}
                             </Badge>
                           </TableCell>

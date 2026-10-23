@@ -31,8 +31,8 @@ const iconMap: Record<string, any> = {
 };
 
 function SeverityBadge({ severity }: { severity: string }) {
-  if (severity === 'high') return <Badge variant="danger" className="text-[10px]">Critical</Badge>;
-  return <Badge variant="warning" className="text-[10px]">Warning</Badge>;
+  if (severity === 'high') return <Badge variant="danger" className="text-[11px]">Critical</Badge>;
+  return <Badge variant="warning" className="text-[11px]">Warning</Badge>;
 }
 
 export default function CeoDashboard() {
@@ -175,7 +175,7 @@ export default function CeoDashboard() {
                       <span className="text-xs text-alo-text-muted">Leads: {m.leads}</span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Badge variant={m.trend === 'up' ? 'success' : 'danger'} className="text-[10px]">
+                      <Badge variant={m.trend === 'up' ? 'success' : 'danger'} className="text-[11px]">
                         {m.trend === 'up' ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}{m.roi}
                       </Badge>
                     </div>

@@ -19,8 +19,8 @@ const iconMap: Record<string, any> = {
 };
 
 function DocStatusBadge({ status }: { status: string }) {
-  if (status === 'in_review') return <Badge variant="warning" className="text-[10px]">In Review</Badge>;
-  return <Badge variant="danger" className="text-[10px]">Pending</Badge>;
+  if (status === 'in_review') return <Badge variant="warning" className="text-[11px]">In Review</Badge>;
+  return <Badge variant="danger" className="text-[11px]">Pending</Badge>;
 }
 
 export default function DocumentReviewDashboard() {
@@ -151,10 +151,10 @@ export default function DocumentReviewDashboard() {
                   <div key={d.student} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{d.student}</p>
-                      <Badge variant="danger" className="text-[10px] shrink-0 ml-1">{d.doc}</Badge>
+                      <Badge variant="danger" className="text-[11px] shrink-0 ml-1">{d.doc}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{d.reason}</p>
-                    <p className="text-[10px] text-alo-text-muted mt-0.5">Rejected: {d.rejected}</p>
+                    <p className="text-[11px] text-alo-text-muted mt-0.5">Rejected: {d.rejected}</p>
                   </div>
                 ))}
               </div>
@@ -177,7 +177,7 @@ export default function DocumentReviewDashboard() {
                   <div key={d.student + d.doc} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
                     <p className="text-sm font-medium text-alo-text">{d.student} — {d.doc}</p>
                     <p className="text-[11px] text-alo-text-muted">Expired: {d.expired}</p>
-                    <p className="text-[10px] text-red-600 mt-0.5">{d.action}</p>
+                    <p className="text-[11px] text-red-600 mt-0.5">{d.action}</p>
                   </div>
                 ))}
               </div>
@@ -200,7 +200,7 @@ export default function DocumentReviewDashboard() {
                   <div key={d.student + d.doc} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{d.student}</p>
-                      <Badge variant="danger" className="text-[10px] shrink-0 ml-1">{d.daysLeft}d</Badge>
+                      <Badge variant="danger" className="text-[11px] shrink-0 ml-1">{d.daysLeft}d</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{d.university} — {d.doc}</p>
                   </div>

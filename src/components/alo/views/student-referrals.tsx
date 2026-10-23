@@ -123,21 +123,21 @@ export function StudentReferrals() {
         icon="Gift"
       />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="rounded-2xl border border-[#DCE8F5] bg-gradient-to-br from-[#EAF3FF] to-white">
+        <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-gradient-to-br from-[var(--alo-brand-light)] to-white">
           <CardContent className="p-4 text-center sm:p-6">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#0057B8] text-white">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[var(--alo-brand)] text-white">
               <Icon name="Gift" className="size-8" />
             </div>
-            <p className="mt-4 text-sm font-bold uppercase text-[#5A7299]">
+            <p className="mt-4 text-sm font-bold uppercase text-[var(--alo-text-muted)]">
               Your Referral Code
             </p>
-            <p className="mt-2 break-all text-2xl font-black text-[#0057B8]">
+            <p className="mt-2 break-all text-2xl font-black text-[var(--alo-brand)]">
               {code || "AEFR-XXXXXX"}
             </p>
             <Button
               onClick={copyCode}
               variant="outline"
-              className="mt-4 w-full border-[#0057B8] text-[#0057B8]"
+              className="mt-4 w-full border-[var(--alo-brand)] text-[var(--alo-brand)]"
             >
               <Icon name="Copy" className="mr-1.5 size-4" />
               Copy Code
@@ -145,9 +145,9 @@ export function StudentReferrals() {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2 rounded-2xl border border-[#DCE8F5] bg-white">
+        <Card className="lg:col-span-2 rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-4 sm:p-6">
-            <h3 className="text-lg font-bold text-[#0B2447]">Refer a Friend</h3>
+            <h3 className="text-lg font-bold text-[var(--alo-text)]">Refer a Friend</h3>
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <Label>Friend&apos;s Name</Label>
@@ -180,7 +180,7 @@ export function StudentReferrals() {
             <Button
               onClick={handleRefer}
               disabled={submitting}
-              className="mt-4 bg-[#E8501A] text-white hover:bg-[#D8590E]"
+              className="mt-4 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]"
             >
               <Icon name="Send" className="mr-1.5 size-4" />
               Send Referral
@@ -189,11 +189,11 @@ export function StudentReferrals() {
         </Card>
       </div>
 
-      <Card className="rounded-2xl border border-[#DCE8F5] bg-white">
+      <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
         <CardContent className="p-4 sm:p-6">
-          <h3 className="text-lg font-bold text-[#0B2447]">My Referrals</h3>
+          <h3 className="text-lg font-bold text-[var(--alo-text)]">My Referrals</h3>
           {loading ? (
-            <p className="mt-4 text-[#5A7299]">Loading...</p>
+            <p className="mt-4 text-[var(--alo-text-muted)]">Loading...</p>
           ) : referrals.length === 0 ? (
             <div className="mt-4">
               <EmptyState icon="Users" title="No referrals yet" description="Share your code to start earning rewards." />
@@ -203,13 +203,13 @@ export function StudentReferrals() {
               {referrals.map((r) => (
                 <div
                   key={r.id}
-                  className="flex flex-col gap-2 rounded-xl border border-[#DCE8F5] bg-[#F7FAFE] p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-2 rounded-xl border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
-                    <p className="font-semibold text-[#0B2447]">
+                    <p className="font-semibold text-[var(--alo-text)]">
                       {r.referredName || "Unknown"}
                     </p>
-                    <p className="text-xs text-[#5A7299]">
+                    <p className="text-xs text-[var(--alo-text-muted)]">
                       {r.referralCode}
                       {r.referredEmail ? ` · ${r.referredEmail}` : ""}
                     </p>

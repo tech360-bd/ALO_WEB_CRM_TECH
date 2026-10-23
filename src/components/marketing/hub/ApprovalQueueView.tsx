@@ -66,10 +66,10 @@ const STATUS_META: Record<string, { label: string; cls: string }> = {
 function statusBadge(status: string) {
   const meta = STATUS_META[status] || {
     label: status || 'Unknown',
-    cls: 'bg-gray-50 text-gray-600 border-gray-200',
+    cls: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]',
   };
   return (
-    <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>
+    <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>
       {meta.label}
     </Badge>
   );
@@ -384,7 +384,7 @@ export default function ApprovalQueueView() {
                               ) : null}
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="text-[10px]">
+                              <Badge variant="outline" className="text-[11px]">
                                 {approval.itemType || 'Unspecified'}
                               </Badge>
                             </TableCell>

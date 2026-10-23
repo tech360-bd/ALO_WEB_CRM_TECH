@@ -722,3 +722,477 @@ html[lang="bn"] h4, html[lang="bn"] h5, html[lang="bn"] h6 {
   font-family: "Montserrat", "Poppins", "Noto Sans Bengali", "Hind Siliguri",
     "SolaimanLipi", "Kalpurush", "Vrinda", "Bangla", ui-sans-serif, system-ui, sans-serif;
 }
+
+/* ============================================================
+   ALO SEMANTIC UTILITY LAYER (Master §17)
+   ------------------------------------------------------------
+   The CRM component kit (src/components/alo/*) and several portal
+   shells were written against a semantic utility layer — `body-text`,
+   `caption-text`, `card-title`, `crm-page-title`, `alo-shadow*`,
+   `alo-card-*`, `alo-scroll*`, `bg-alo-gradient`, `nx-*` — plus a
+   compatibility alias set of brand CSS variables. Neither the classes
+   nor those aliases were ever shipped, so every one of those names was
+   a no-op in the browser:
+
+     • `bg-[var(--alo-surface)]` / `bg-[var(--alo-blue-soft)]` resolved to
+       an invalid value → transparent cards and unreadable labels.
+     • `bg-alo-gradient text-white` on the active CRM nav item produced
+       WHITE TEXT ON THE WHITE SIDEBAR (active item effectively invisible).
+     • `alo-shadow*` produced no elevation at all, so panels read as flat
+       text blocks rather than cards.
+     • `caption-text` / `body-text` / `card-title` produced inherited type
+       sizes, breaking the CRM type scale.
+
+   This block defines the missing layer exactly once, against the master
+   palette in §03, so a single correction re-skins every consumer. It adds
+   no new design language: every value below maps to an approved token.
+   ============================================================ */
+
+/* ── 1. Compatibility variable aliases ───────────────────────────
+   Older CRM components reference short semantic aliases. Each one is
+   bound to the master token it was always meant to represent. */
+:root {
+  --alo-blue: var(--alo-brand);              /* #0057B8 */
+  --alo-blue-soft: var(--alo-brand-light);   /* #EAF3FF */
+  --alo-blue-strong: var(--alo-brand-deep);  /* #003F87 */
+  --alo-orange: var(--alo-cta);              /* #E8501A */
+  --alo-orange-soft: var(--alo-cta-soft);    /* #FFF1EA */
+  --alo-orange-strong: var(--alo-cta-hover); /* #C93D13 */
+  --alo-success-strong: var(--alo-success-dark);
+  --alo-warning-strong: #92400E;
+  --alo-danger: var(--alo-error);
+  --alo-danger-soft: var(--alo-error-soft);
+  --alo-danger-strong: #B91C1C;
+  --alo-info-soft: var(--alo-info-bg);
+  --alo-info-strong: var(--alo-info-text);
+  --alo-sunshine: var(--alo-warning);
+  --alo-sunshine-soft: var(--alo-warning-soft);
+  --alo-emerald: var(--alo-success);
+  --alo-violet: var(--alo-info);
+  --alo-surface: var(--card);
+  --alo-muted: var(--alo-text-muted);
+  --alo-gray-light: #F1F5F9;
+
+  /* Elevation aliases (Master §06). */
+  --alo-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --alo-shadow-sm: var(--shadow-card);
+  --alo-shadow-md: var(--shadow-md);
+  --alo-shadow-lg: var(--shadow-hover);
+  --alo-shadow-blue: 0 8px 24px rgba(0, 87, 184, 0.14);
+}
+
+.dark {
+  --alo-surface: var(--card);
+  --alo-muted: #94A3B8;
+  --alo-gray-light: #1E293B;
+  --alo-warning-strong: #FCD34D;
+  --alo-danger-strong: #FCA5A5;
+  --alo-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --alo-shadow-blue: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ── 2. Typography utilities (Master §04) ────────────────────────
+   Used by CRM cards, tables, metric tiles and page headers. */
+.body-text {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--alo-body);
+}
+
+.caption-text {
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--alo-text-muted);
+}
+
+/* Bengali labels must not be forced into uppercase tracking. */
+:lang(bn) .caption-text { text-transform: none; letter-spacing: 0; }
+
+.card-title {
+  font-family: var(--alo-font-heading);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--alo-text);
+}
+
+.badge-text {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.crm-page-title {
+  font-family: var(--alo-font-heading);
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--alo-text);
+}
+@media (min-width: 1024px) {
+  .crm-page-title { font-size: 30px; line-height: 38px; }
+}
+
+.crm-section-title {
+  font-family: var(--alo-font-heading);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--alo-text);
+}
+
+.page-title {
+  font-family: var(--alo-font-heading);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--alo-text);
+}
+
+/* ── 3. Surface / elevation utilities ────────────────────────── */
+
+/* Brand mark only — logo tile and avatar. Never a full-width section
+   background (Master §02: no dark or gradient page blocks). */
+.bg-alo-gradient,
+.alo-gradient {
+  background-image: linear-gradient(135deg, var(--alo-brand) 0%, var(--alo-brand-deep) 100%);
+}
+
+.alo-shadow { box-shadow: var(--alo-shadow-sm); }
+.alo-shadow-xs { box-shadow: var(--alo-shadow-xs); }
+.alo-shadow-sm { box-shadow: var(--alo-shadow-sm); }
+.alo-shadow-md { box-shadow: var(--alo-shadow-md); }
+.alo-shadow-lg { box-shadow: var(--alo-shadow-lg); }
+.alo-shadow-blue { box-shadow: var(--alo-shadow-blue); }
+
+/* Interactive card: border tint + elevation on hover, no layout shift. */
+.alo-card-hover {
+  transition: box-shadow 200ms ease-out, border-color 200ms ease-out,
+    transform 200ms ease-out;
+}
+.alo-card-hover:hover {
+  box-shadow: var(--alo-shadow-lg);
+  border-color: var(--alo-brand-border);
+}
+
+/* Card action row: keeps actions aligned across a grid of cards. */
+.alo-card-cta { margin-top: auto; }
+
+/* Card image: consistent crop + restrained zoom on hover of the card. */
+.alo-card-img {
+  transition: transform 320ms ease-out;
+}
+.alo-card-hover:hover .alo-card-img,
+.group:hover .alo-card-img {
+  transform: scale(1.03);
+}
+
+/* Entrance reveal for card grids (Master §15). */
+@keyframes alo-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.alo-card-anim { animation: alo-card-in 320ms ease-out both; }
+
+@keyframes alo-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in { animation: alo-fade-in 240ms ease-out both; }
+
+/* ── 4. Scroll containers ────────────────────────────────────── */
+.alo-scroll,
+.alo-scrollbar,
+.alo-scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+  overscroll-behavior: contain;
+}
+.alo-scroll::-webkit-scrollbar,
+.alo-scrollbar::-webkit-scrollbar,
+.alo-scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.alo-scroll::-webkit-scrollbar-track,
+.alo-scrollbar::-webkit-scrollbar-track,
+.alo-scroll-thin::-webkit-scrollbar-track { background: transparent; }
+.alo-scroll::-webkit-scrollbar-thumb,
+.alo-scrollbar::-webkit-scrollbar-thumb,
+.alo-scroll-thin::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+.alo-scroll::-webkit-scrollbar-thumb:hover,
+.alo-scrollbar::-webkit-scrollbar-thumb:hover,
+.alo-scroll-thin::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ── 5. Dashboard bento surfaces (nexabroad dashboard) ─────────
+   "Glass" is rendered as a plain white card with a hairline border:
+   no dark glassmorphism, no neon glow — Master §02. */
+.nx-glass {
+  background-color: var(--card);
+  border: 1px solid var(--alo-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--alo-shadow-sm);
+}
+.nx-glass-glow-blue { box-shadow: 0 0 0 1px var(--alo-brand-border), var(--alo-shadow-md); }
+.nx-glass-glow-orange { box-shadow: 0 0 0 1px #FFD5C4, var(--alo-shadow-md); }
+
+.nx-bento { display: grid; gap: 16px; grid-template-columns: repeat(1, minmax(0, 1fr)); }
+@media (min-width: 768px) {
+  .nx-bento { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .nx-bento-sm { grid-column: span 1; }
+  .nx-bento-md { grid-column: span 2; }
+  .nx-bento-lg { grid-column: span 4; }
+}
+
+.nx-progress-track {
+  height: 8px;
+  width: 100%;
+  border-radius: 999px;
+  background-color: #F1F5F9;
+  overflow: hidden;
+}
+.nx-progress-fill,
+.nx-progress-gradient {
+  height: 100%;
+  border-radius: 999px;
+  background-color: var(--alo-brand);
+  transition: width 400ms ease-out;
+}
+
+.nx-ai-active { border-color: var(--alo-brand-border); }
+.nx-btn-glow { box-shadow: var(--alo-shadow-blue); }
+
+@keyframes nx-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.nx-pulse { animation: nx-pulse 2.4s ease-in-out infinite; }
+
+/* ── 6. Hero letter-decoration layers (public shell) ─────────── */
+.cap-layer-1, .cap-layer-2, .cap-layer-3 { pointer-events: none; }
+.cap-delay-1 { animation-delay: 0ms; }
+.cap-delay-2 { animation-delay: 400ms; }
+.cap-delay-3 { animation-delay: 800ms; }
+.cap-delay-4 { animation-delay: 1200ms; }
+.cap-delay-5 { animation-delay: 1600ms; }
+.cap-delay-6 { animation-delay: 2000ms; }
+.cap-delay-7 { animation-delay: 2400ms; }
+.cap-delay-8 { animation-delay: 2800ms; }
+
+/* ── 7. Accessible focus ring for non-shadcn controls ────────── */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--alo-brand);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   MOTION, READING LAYOUT AND REMAINING UTILITIES
+   ------------------------------------------------------------
+   These classes are referenced throughout the app but were never
+   generated: `tailwindcss-animate` is not a dependency, so every
+   dialog/sheet/popover mounted with `animate-in fade-in-0 zoom-in-95`
+   (100+ call sites) simply appeared with no transition, and the blog,
+   news and resource pages used `prose` with no typography styles at all.
+   Rather than add dependencies, the subset that the product actually uses
+   is implemented here on the brand easing curve (Master §12: 150–250 ms,
+   ±8–16 px reveal, and fully disabled under prefers-reduced-motion).
+   ============================================================ */
+
+/* ── 1. Enter / exit animations (shadcn-compatible custom properties) ── */
+@keyframes alo-enter {
+  from {
+    opacity: var(--alo-enter-opacity, 1);
+    transform: translate3d(var(--alo-enter-translate-x, 0), var(--alo-enter-translate-y, 0), 0)
+      scale(var(--alo-enter-scale, 1))
+      rotate(var(--alo-enter-rotate, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) rotate(0);
+  }
+}
+
+@keyframes alo-exit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) rotate(0);
+  }
+  to {
+    opacity: var(--alo-exit-opacity, 1);
+    transform: translate3d(var(--alo-exit-translate-x, 0), var(--alo-exit-translate-y, 0), 0)
+      scale(var(--alo-exit-scale, 1))
+      rotate(var(--alo-exit-rotate, 0));
+  }
+}
+
+.animate-in {
+  animation-name: alo-enter;
+  animation-duration: 200ms;
+  animation-timing-function: var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  animation-fill-mode: both;
+}
+.animate-out {
+  animation-name: alo-exit;
+  animation-duration: 150ms;
+  animation-timing-function: var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+  animation-fill-mode: both;
+}
+
+.fade-in-0 { --alo-enter-opacity: 0; }
+.fade-out-0 { --alo-exit-opacity: 0; }
+.zoom-in-95 { --alo-enter-scale: 0.95; }
+.zoom-out-95 { --alo-exit-scale: 0.95; }
+.slide-in-from-top-1 { --alo-enter-translate-y: -0.25rem; }
+.slide-in-from-top-2 { --alo-enter-translate-y: -0.5rem; }
+.slide-in-from-top-4 { --alo-enter-translate-y: -1rem; }
+.slide-in-from-bottom-1 { --alo-enter-translate-y: 0.25rem; }
+.slide-in-from-bottom-2 { --alo-enter-translate-y: 0.5rem; }
+.slide-in-from-bottom-3 { --alo-enter-translate-y: 0.75rem; }
+.slide-in-from-bottom-4 { --alo-enter-translate-y: 1rem; }
+.slide-in-from-left-2 { --alo-enter-translate-x: -0.5rem; }
+.slide-in-from-left-4 { --alo-enter-translate-x: -1rem; }
+.slide-in-from-right-2 { --alo-enter-translate-x: 0.5rem; }
+.slide-in-from-right-4 { --alo-enter-translate-x: 1rem; }
+.slide-out-to-top-2 { --alo-exit-translate-y: -0.5rem; }
+.slide-out-to-bottom-2 { --alo-exit-translate-y: 0.5rem; }
+.slide-out-to-left-2 { --alo-exit-translate-x: -0.5rem; }
+.slide-out-to-right-2 { --alo-exit-translate-x: 0.5rem; }
+
+/* ── 2. Radix accordion + OTP caret (referenced by ui/accordion, ui/input-otp) ── */
+@keyframes alo-accordion-down {
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+@keyframes alo-accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
+}
+.animate-accordion-down {
+  animation: alo-accordion-down 220ms var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+}
+.animate-accordion-up {
+  animation: alo-accordion-up 180ms var(--alo-ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+}
+
+@keyframes alo-caret-blink {
+  0%, 70% { opacity: 1; }
+  71%, 100% { opacity: 0; }
+}
+.animate-caret-blink {
+  animation: alo-caret-blink 1.1s steps(1, end) infinite;
+}
+
+/* ── 3. Reading layout for blog / news / resource bodies (`.prose`) ── */
+.prose {
+  color: var(--alo-body);
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 72ch;
+}
+.prose > * + * { margin-top: 1.15em; }
+.prose :where(h1, h2, h3, h4) {
+  color: var(--alo-text);
+  font-family: var(--alo-font-heading);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  margin-top: 1.9em;
+}
+.prose :where(h1) { font-size: 30px; }
+.prose :where(h2) { font-size: 23px; }
+.prose :where(h3) { font-size: 19px; }
+.prose :where(h4) { font-size: 17px; }
+.prose :where(p, ul, ol, blockquote, figure, table) { margin-top: 1.15em; }
+.prose :where(ul) { list-style: disc; padding-left: 1.4em; }
+.prose :where(ol) { list-style: decimal; padding-left: 1.4em; }
+.prose :where(li) { margin-top: 0.4em; }
+.prose :where(a) {
+  color: var(--alo-brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose :where(a:hover) { color: var(--alo-brand-hover); }
+.prose :where(strong) { color: var(--alo-text); font-weight: 700; }
+.prose :where(blockquote) {
+  border-left: 3px solid var(--alo-brand-border);
+  color: var(--alo-text-secondary);
+  font-style: italic;
+  padding-left: 1.1em;
+}
+.prose :where(code) {
+  background: var(--alo-surface-muted);
+  border-radius: 6px;
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+}
+.prose :where(pre) {
+  background: var(--alo-text);
+  border-radius: 12px;
+  color: var(--alo-surface-muted);
+  font-size: 13px;
+  overflow-x: auto;
+  padding: 1em 1.15em;
+}
+.prose :where(img, video) { border-radius: 14px; width: 100%; }
+.prose :where(hr) { border-color: var(--alo-border); }
+.prose :where(table) { font-size: 14px; width: 100%; border-collapse: collapse; }
+.prose :where(th) { text-align: left; color: var(--alo-text); font-weight: 600; }
+.prose :where(th, td) { border-bottom: 1px solid var(--alo-border); padding: 0.6em 0.75em; }
+.prose-sm { font-size: 14px; }
+.prose-lg { font-size: 18px; line-height: 1.7; }
+.prose-slate, .prose-blue, .prose-headings { color: inherit; }
+
+/* ── 4. Remaining referenced-but-missing helpers ── */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.bg-alo-hero {
+  background-color: var(--alo-brand-pale);
+  background-image: radial-gradient(120% 140% at 82% -10%, var(--alo-brand-light) 0%, transparent 62%);
+}
+.bg-alo-gradient-orange {
+  background-image: linear-gradient(90deg, var(--alo-cta) 0%, var(--alo-cta-accent) 100%);
+}
+
+/* Graduate-cap marquee used by the public footer */
+@keyframes alo-cap-scroll-left {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes alo-cap-scroll-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.alo-cap-track {
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  width: max-content;
+  will-change: transform;
+}
+.alo-cap-stack { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.alo-cap-left { animation: alo-cap-scroll-left 42s linear infinite; }
+.alo-cap-right { animation: alo-cap-scroll-right 42s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .animate-out,
+  .animate-accordion-down,
+  .animate-accordion-up,
+  .animate-caret-blink,
+  .alo-cap-left,
+  .alo-cap-right {
+    animation: none !important;
+  }
+}

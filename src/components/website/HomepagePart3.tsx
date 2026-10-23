@@ -181,11 +181,11 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[#0057B8]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[var(--alo-brand)]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FFF7ED', color: '#C93D13' }}>
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: 'var(--alo-cta-soft)', color: 'var(--alo-cta-hover)' }}>
                       {sch.deadline}
                     </span>
                   </div>
@@ -329,7 +329,7 @@ function EnglishTestsSection() {
                           {test.name}
                         </h3>
                         {test.bestFor && (
-                          <Badge className="text-[10px] px-2 py-0.5 rounded-full shrink-0 ml-2" style={{ backgroundColor: '#EFF6FF', color: C.blue }}>
+                          <Badge className="text-[11px] px-2 py-0.5 rounded-full shrink-0 ml-2" style={{ backgroundColor: 'var(--alo-info-bg)', color: C.blue }}>
                             {test.bestFor}
                           </Badge>
                         )}
@@ -359,7 +359,7 @@ function EnglishTestsSection() {
 
                       {/* Score range badge */}
                       {test.scoreRange && (
-                        <div className="inline-flex self-start px-2.5 py-1 rounded-md text-xs font-medium mb-4" style={{ backgroundColor: '#F0FDF4', color: '#047857' }}>
+                        <div className="inline-flex self-start px-2.5 py-1 rounded-md text-xs font-medium mb-4" style={{ backgroundColor: 'var(--alo-success-soft)', color: '#047857' }}>
                           {test.scoreRange}
                         </div>
                       )}
@@ -370,20 +370,20 @@ function EnglishTestsSection() {
                       {/* Buttons */}
                       <div className="flex gap-2 mt-3">
                         <Button
-                          variant="outline"
-                          className="flex-1 h-10 rounded-lg text-xs font-medium border-[#E2E8F0]"
-                          style={{ color: C.blue }}
-                          asChild
-                        >
+ variant="outline"
+ className="flex-1 rounded-lg font-medium border-[var(--alo-border)]"
+ style={{ color: C.blue }}
+ asChild
+ >
                           <Link href={`/language-prep/${test.slug || test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                             Learn More
                           </Link>
                         </Button>
                         <Button
-                          className="flex-1 h-10 rounded-lg text-xs font-medium text-white"
-                          style={{ backgroundColor: C.orange }}
-                          asChild
-                        >
+ className="flex-1 rounded-lg font-medium text-white"
+ style={{ backgroundColor: C.orange }}
+ asChild
+ >
                           <Link href={`/language-prep/${test.slug || 'ielts'}`}>
                             Start Mock Test
                           </Link>
@@ -405,10 +405,10 @@ function EnglishTestsSection() {
             viewport={viewportOnce}
           >
             <Button
-              variant="outline"
-              className="h-10 rounded-lg text-sm font-medium"
-              style={{ borderColor: C.border, color: C.blue }}
-              onClick={() => setShowAll((v) => !v)}
+ variant="outline"
+ className=" rounded-lg text-sm font-medium"
+ style={{ borderColor: C.border, color: C.blue }}
+ onClick={() => setShowAll((v) => !v)}
             >
               {showAll ? 'Show Less' : `Show All ${tests.length} Tests`}
             </Button>
@@ -427,16 +427,16 @@ function EnglishTestsSection() {
             <h3 className="text-xl md:text-2xl font-bold" style={{ color: C.text }}>
               English Test Comparison
             </h3>
-            <Button asChild variant="outline" className="h-12 text-xs font-semibold rounded-lg border-[#0057B8] text-[#0057B8]"><Link href="/language-prep/comparison">
+            <Button asChild variant="outline" className="h-12 font-semibold rounded-lg border-[var(--alo-brand)] text-[var(--alo-brand)]"><Link href="/language-prep/comparison">
                 Full Comparison Matrix <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Link></Button>
           </div>
           <div className="rounded-2xl border shadow-sm overflow-hidden bg-white" style={{ borderColor: C.border }}>
             <Table>
               <TableHeader>
-                <TableRow style={{ backgroundColor: "#F8FAFC" }}>
-                  <TableHead className="text-[#64748B] font-semibold text-xs uppercase">Test</TableHead>
-                  <TableHead className="text-[#64748B] font-semibold text-xs uppercase">Accepted Destinations</TableHead>
+                <TableRow style={{ backgroundColor: 'var(--alo-page)' }}>
+                  <TableHead className="text-[var(--alo-text-muted)] font-semibold text-xs uppercase">Test</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] font-semibold text-xs uppercase">Accepted Destinations</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden md:table-cell">Format</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden lg:table-cell">Score Range</TableHead>
                   <TableHead className="text-white font-semibold text-xs uppercase hidden lg:table-cell">Result Time</TableHead>
@@ -445,7 +445,7 @@ function EnglishTestsSection() {
               </TableHeader>
               <TableBody>
                 {tests.map((test, i) => (
-                  <TableRow key={test.name + i} style={{ backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#F8FAFC' }}>
+                  <TableRow key={test.name + i} style={{ backgroundColor: i % 2 === 0 ? '#FFFFFF' : 'var(--alo-page)' }}>
                     <TableCell className="font-semibold" style={{ color: C.text }}>
                       <Link href={`/language-prep/${test.slug || test.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="hover:underline">
                         {test.name}
@@ -474,7 +474,7 @@ function EnglishTestsSection() {
           <motion.div variants={staggerItem}>
             <EnglishExamButton
               location="homepage_english_tests"
-              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[#E8501A] px-6 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[var(--alo-cta)] px-6 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
             >
               Take the English Test
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
@@ -615,7 +615,7 @@ function VisaSupportSection() {
         {/* Disclaimer Banner */}
         <motion.div
           className="mt-10 rounded-xl p-4 md:p-5 flex items-start gap-3"
-          style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A' }}
+          style={{ backgroundColor: 'var(--alo-warning-soft)', border: '1px solid #FDE68A' }}
           initial="hidden"
           whileInView="visible"
           viewport={viewportOnce}
@@ -1021,10 +1021,10 @@ function AiSupportTools() {
 
                     {/* Try Now button */}
                     <Button
-                      className="w-full h-10 rounded-lg text-xs font-semibold text-white self-end"
-                      style={{ backgroundColor: C.orange }}
-                      asChild
-                    >
+ className="w-full rounded-lg font-semibold text-white self-end"
+ style={{ backgroundColor: C.orange }}
+ asChild
+ >
                       <Link href={tool.href}>
                         <Sparkles className="mr-1.5 h-3.5 w-3.5" />
                         Try Now

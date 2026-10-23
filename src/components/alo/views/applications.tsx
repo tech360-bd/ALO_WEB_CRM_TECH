@@ -55,9 +55,9 @@ interface AppRow {
 
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
   URGENT: { label: "Urgent", cls: "bg-red-100 text-red-700" },
-  HIGH: { label: "High", cls: "bg-orange-100 text-orange-700" },
+  HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
-  LOW: { label: "Low", cls: "bg-slate-100 text-slate-600" },
+  LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
 
 const COUNTRY_FLAGS: Record<string, string> = {
@@ -203,25 +203,25 @@ export function ApplicationsView() {
           {APP_STAGES.map((stage) => {
             const count = stageCounts.get(stage) || 0;
             const active = count > 0;
-            const colorCls = STAGE_COLORS[stage] || "bg-slate-100 text-slate-700";
+            const colorCls = STAGE_COLORS[stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
             return (
               <button
                 key={stage}
                 onClick={() => setStageFilter(stageFilter === stage ? "ALL" : stage)}
                 className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
                   stageFilter === stage
-                    ? "border-[#0057B8] ring-2 ring-[#0057B8]/20"
+                    ? "border-[var(--alo-brand)] ring-2 ring-[var(--alo-brand)]/20"
                     : "border-transparent"
-                } ${active ? colorCls : "bg-slate-50 text-slate-400"}`}
+                } ${active ? colorCls : "bg-[var(--alo-page)] text-[var(--alo-text-muted)]"}`}
                 title={STAGE_LABELS[stage]}
               >
-                <span className="font-mono text-[10px] opacity-70">
+                <span className="font-mono text-[11px] opacity-70">
                   {APP_STAGES.indexOf(stage) + 1}
                 </span>
                 <span className="truncate max-w-[140px]">{STAGE_LABELS[stage]}</span>
                 <span
-                  className={`ml-1 inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${
-                    active ? "bg-white/70 text-current" : "bg-slate-200 text-slate-500"
+                  className={`ml-1 inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold ${
+                    active ? "bg-white/70 text-current" : "bg-slate-200 text-[var(--alo-text-muted)]"
                   }`}
                 >
                   {count}
@@ -238,7 +238,7 @@ export function ApplicationsView() {
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-muted-foreground">Stage</label>
             <Select value={stageFilter} onValueChange={setStageFilter}>
-              <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
+              <SelectTrigger className="h-10 w-full border-[var(--alo-brand)]/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -254,7 +254,7 @@ export function ApplicationsView() {
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-muted-foreground">Country</label>
             <Select value={countryFilter} onValueChange={setCountryFilter}>
-              <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
+              <SelectTrigger className="h-10 w-full border-[var(--alo-brand)]/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -304,18 +304,18 @@ export function ApplicationsView() {
               return (
                 <Card
                   key={app.id}
-                  className="rounded-2xl border-2 border-[#0057B8]/15 transition-colors hover:border-[#0057B8]/40"
+                  className="rounded-2xl border-2 border-[var(--alo-brand)]/15 transition-colors hover:border-[var(--alo-brand)]/40"
                 >
                   <CardContent className="space-y-3 pt-5">
                     {/* Top row */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                          <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                             {app.applicationId}
                           </span>
                           <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${priority.cls}`}
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${priority.cls}`}
                           >
                             {priority.label}
                           </span>
@@ -335,9 +335,9 @@ export function ApplicationsView() {
                     </div>
 
                     {/* Course details */}
-                    <div className="rounded-xl border border-[#0057B8]/10 bg-[#f7f9fc] p-3">
+                    <div className="rounded-xl border border-[var(--alo-brand)]/10 bg-[var(--alo-page)] p-3">
                       <div className="flex items-start gap-2">
-                        <Icon name="Building2" className="mt-0.5 size-4 shrink-0 text-[#0057B8]" />
+                        <Icon name="Building2" className="mt-0.5 size-4 shrink-0 text-[var(--alo-brand)]" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold text-foreground">
                             {app.university}
@@ -346,7 +346,7 @@ export function ApplicationsView() {
                         </div>
                         {flag && (
                           <span
-                            className="shrink-0 rounded border border-[#0057B8]/15 bg-white px-1.5 py-0.5 text-[10px] font-bold text-[#0057B8]"
+                            className="shrink-0 rounded border border-[var(--alo-brand)]/15 bg-white px-1.5 py-0.5 text-[11px] font-bold text-[var(--alo-brand)]"
                             title={app.country}
                           >
                             {flag} {app.country}
@@ -369,13 +369,13 @@ export function ApplicationsView() {
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-medium text-muted-foreground">Pipeline progress</span>
-                        <span className="font-semibold text-[#0057B8]">
+                        <span className="font-semibold text-[var(--alo-brand)]">
                           Stage {stageIdx + 1} / {APP_STAGES.length} · {pct}%
                         </span>
                       </div>
                       <Progress
                         value={pct}
-                        className="h-2 bg-[#e8f0fb]"
+                        className="h-2 bg-[var(--alo-brand-light)]"
                         // style for indicator color
                       />
                     </div>
@@ -408,17 +408,17 @@ export function ApplicationsView() {
                         {daysToDeadline !== null && daysToDeadline >= 0 && (
                           <Badge
                             variant="outline"
-                            className={`ml-1 px-1.5 py-0 text-[10px] ${
+                            className={`ml-1 px-1.5 py-0 text-[11px] ${
                               deadlineNear
                                 ? "border-amber-300 text-amber-700"
-                                : "border-[#0057B8]/20 text-[#0057B8]"
+                                : "border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
                             }`}
                           >
                             {daysToDeadline}d left
                           </Badge>
                         )}
                         {deadlinePassed && (
-                          <Badge variant="outline" className="ml-1 border-red-300 px-1.5 py-0 text-[10px] text-red-700">
+                          <Badge variant="outline" className="ml-1 border-red-300 px-1.5 py-0 text-[11px] text-red-700">
                             Overdue
                           </Badge>
                         )}
@@ -426,7 +426,7 @@ export function ApplicationsView() {
                       <Button
                         size="sm"
                         onClick={() => openUpdate(app)}
-                        className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                        className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                       >
                         <Icon name="GitCommitHorizontal" className="size-3.5" />
                         Update Stage
@@ -444,26 +444,26 @@ export function ApplicationsView() {
       <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0057B8]">Update application stage</DialogTitle>
+            <DialogTitle className="text-[var(--alo-brand)]">Update application stage</DialogTitle>
             <DialogDescription>
               {updateTarget?.university} — <span className="font-mono">{updateTarget?.applicationId}</span>
             </DialogDescription>
           </DialogHeader>
           {updateTarget && (
             <div className="space-y-4">
-              <div className="rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 p-3 text-xs">
+              <div className="rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[#0057B8]">Student</span>
+                  <span className="font-semibold text-[var(--alo-brand)]">Student</span>
                   <span>
                     {updateTarget.student?.fullName} ({updateTarget.student?.studentId})
                   </span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between">
-                  <span className="font-semibold text-[#0057B8]">Course</span>
+                  <span className="font-semibold text-[var(--alo-brand)]">Course</span>
                   <span className="text-right">{updateTarget.course}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between">
-                  <span className="font-semibold text-[#0057B8]">Current</span>
+                  <span className="font-semibold text-[var(--alo-brand)]">Current</span>
                   <span className="font-semibold text-foreground">
                     {STAGE_LABELS[updateTarget.stage] || updateTarget.stage}
                   </span>
@@ -471,15 +471,15 @@ export function ApplicationsView() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-[#0057B8]">New stage</label>
+                <label className="text-sm font-semibold text-[var(--alo-brand)]">New stage</label>
                 <Select value={newStage} onValueChange={setNewStage}>
-                  <SelectTrigger className="h-10 w-full border-[#0057B8]/20">
+                  <SelectTrigger className="h-10 w-full border-[var(--alo-brand)]/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="max-h-72">
                     {APP_STAGES.map((s, i) => (
                       <SelectItem key={s} value={s}>
-                        <span className="font-mono text-[10px] text-muted-foreground">
+                        <span className="font-mono text-[11px] text-muted-foreground">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <span className="ml-1">{STAGE_LABELS[s]}</span>
@@ -505,10 +505,10 @@ export function ApplicationsView() {
               Cancel
             </Button>
             <Button
-              onClick={submitUpdate}
-              disabled={saving || (updateTarget?.stage === newStage)}
-              className="h-10 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
-            >
+ onClick={submitUpdate}
+ disabled={saving || (updateTarget?.stage === newStage)}
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ >
               {saving ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />

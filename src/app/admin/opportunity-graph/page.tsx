@@ -74,21 +74,21 @@ interface Recommendation {
 type GraphState = 'idle' | 'loading' | 'ready' | 'not_configured' | 'denied' | 'empty' | 'error';
 
 const NODE_STYLE: Record<string, string> = {
-  STUDENT: 'bg-[#0057B8] text-white',
+  STUDENT: 'bg-[var(--alo-brand)] text-white',
   UNIVERSITY: 'bg-indigo-100 text-indigo-800',
   COURSE: 'bg-violet-100 text-violet-800',
   COUNTRY: 'bg-emerald-100 text-emerald-800',
   SCHOLARSHIP: 'bg-amber-100 text-amber-800',
-  APPLICATION: 'bg-blue-100 text-blue-800',
+  APPLICATION: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   VISA: 'bg-cyan-100 text-cyan-800',
-  PARTNER: 'bg-orange-100 text-orange-800',
-  COUNSELOR: 'bg-slate-200 text-slate-700',
+  PARTNER: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
+  COUNSELOR: 'bg-slate-200 text-[var(--alo-body)]',
   COMMISSION: 'bg-teal-100 text-teal-800',
 };
 
 function weightTone(weight: number): string {
   if (weight >= 0.9) return 'text-emerald-700';
-  if (weight >= 0.6) return 'text-slate-700';
+  if (weight >= 0.6) return 'text-[var(--alo-body)]';
   return 'text-amber-700';
 }
 
@@ -211,13 +211,13 @@ export default function OpportunityGraphPage() {
       <div className="space-y-5 p-6">
         <Header />
         <Lookup studentId={studentId} setStudentId={setStudentId} load={load} busy={state === 'loading'} />
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="flex flex-col items-center gap-3 pt-12 pb-12 text-center">
-            <IconCmp className={state === 'loading' ? 'size-9 animate-spin text-slate-400' : 'size-9 text-slate-400'} />
-            <h2 className="text-base font-bold text-slate-900">{shown.title}</h2>
-            <p className="max-w-lg text-sm text-slate-600">{message || shown.detail}</p>
+            <IconCmp className={state === 'loading' ? 'size-9 animate-spin text-[var(--alo-text-muted)]' : 'size-9 text-[var(--alo-text-muted)]'} />
+            <h2 className="text-base font-bold text-[var(--alo-text)]">{shown.title}</h2>
+            <p className="max-w-lg text-sm text-[var(--alo-body)]">{message || shown.detail}</p>
             {message && state !== 'loading' && state !== 'idle' && (
-              <p className="max-w-lg rounded-lg bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-500">
+              <p className="max-w-lg rounded-lg bg-[var(--alo-page)] px-3 py-2 font-mono text-[11px] text-[var(--alo-text-muted)]">
                 reason: {message}
               </p>
             )}
@@ -235,10 +235,10 @@ export default function OpportunityGraphPage() {
       <Lookup studentId={studentId} setStudentId={setStudentId} load={load} busy={false} />
 
       {state === 'empty' && (
-        <Card className="rounded-2xl border-2 border-slate-200">
-          <CardContent className="py-8 text-center text-sm text-slate-600">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
+          <CardContent className="py-8 text-center text-sm text-[var(--alo-body)]">
             {message}
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-[var(--alo-text-muted)]">
               The student node exists; nothing is invented to fill the graph.
             </p>
           </CardContent>
@@ -247,29 +247,29 @@ export default function OpportunityGraphPage() {
 
       {/* ---------------- Summary ---------------- */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="pt-5 pb-5">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Nodes</p>
-            <p className="text-2xl font-black text-slate-900">{graph.stats.TOTAL_NODES ?? graph.nodes.length}</p>
+            <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">Nodes</p>
+            <p className="text-2xl font-black text-[var(--alo-text)]">{graph.stats.TOTAL_NODES ?? graph.nodes.length}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="pt-5 pb-5">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Edges</p>
-            <p className="text-2xl font-black text-slate-900">{graph.stats.TOTAL_EDGES ?? graph.edges.length}</p>
+            <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">Edges</p>
+            <p className="text-2xl font-black text-[var(--alo-text)]">{graph.stats.TOTAL_EDGES ?? graph.edges.length}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="pt-5 pb-5">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Relations</p>
-            <p className="text-2xl font-black text-slate-900">{relations.length}</p>
+            <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">Relations</p>
+            <p className="text-2xl font-black text-[var(--alo-text)]">{relations.length}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="flex items-center justify-between pt-5 pb-5">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Recommendations</p>
-              <p className="text-2xl font-black text-slate-900">{recommendations.length}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">Recommendations</p>
+              <p className="text-2xl font-black text-[var(--alo-text)]">{recommendations.length}</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => void materialise()} disabled={materialising}>
               <Save className="mr-1.5 size-3.5" />
@@ -280,21 +280,21 @@ export default function OpportunityGraphPage() {
       </div>
 
       {/* ---------------- Nodes ---------------- */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="text-sm font-bold">Entities reached</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2.5">
           {Object.entries(nodesByType).map(([type, nodes]) => (
             <div key={type}>
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">
                 {type} ({nodes.length})
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {nodes.map((node) => (
                   <span
                     key={`${node.type}:${node.id}`}
-                    className={`rounded-md px-2 py-1 text-[11px] font-medium ${NODE_STYLE[node.type] ?? 'bg-slate-100 text-slate-700'}`}
+                    className={`rounded-md px-2 py-1 text-[11px] font-medium ${NODE_STYLE[node.type] ?? 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}
                     title={node.id}
                   >
                     {node.label || node.id}
@@ -307,17 +307,17 @@ export default function OpportunityGraphPage() {
       </Card>
 
       {/* ---------------- Edges with evidence ---------------- */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-sm font-bold">
             <span className="flex items-center gap-2">
-              <Database className="size-4 text-[#0057B8]" />
+              <Database className="size-4 text-[var(--alo-brand)]" />
               Relationships ({visibleEdges.length})
             </span>
             <select
               value={relationFilter}
               onChange={(event) => setRelationFilter(event.target.value)}
-              className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-xs font-normal"
+              className="h-8 rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs font-normal"
               aria-label="Filter by relation"
             >
               <option value="ALL">All relations</option>
@@ -329,11 +329,11 @@ export default function OpportunityGraphPage() {
         </CardHeader>
         <CardContent className="space-y-2">
           {visibleEdges.map((edge, index) => (
-            <div key={`${edge.relation}-${edge.sourceId}-${edge.targetId}-${index}`} className="rounded-xl border border-slate-200 p-3">
+            <div key={`${edge.relation}-${edge.sourceId}-${edge.targetId}-${index}`} className="rounded-xl border border-[var(--alo-border)] p-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-mono text-[11px] text-slate-800">
+                <p className="font-mono text-[11px] text-[var(--alo-text)]">
                   <span className="font-semibold">{edge.sourceType}</span>
-                  <span className="mx-1.5 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
+                  <span className="mx-1.5 rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 text-[11px] text-[var(--alo-body)]">
                     {edge.relation}
                   </span>
                   <span className="font-semibold">{edge.targetType}</span>
@@ -343,20 +343,20 @@ export default function OpportunityGraphPage() {
                 </span>
               </div>
 
-              {edge.label && <p className="mt-1 text-xs text-slate-700">{edge.label}</p>}
+              {edge.label && <p className="mt-1 text-xs text-[var(--alo-body)]">{edge.label}</p>}
 
               {/* Evidence is the point: show the real row behind every claim. */}
-              <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500">
+              <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--alo-text-muted)]">
                 <span className="font-semibold uppercase tracking-wide">evidence</span>
-                <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono">{edge.evidence.table}</code>
-                <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono">{edge.evidence.id}</code>
+                <code className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono">{edge.evidence.table}</code>
+                <code className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono">{edge.evidence.id}</code>
                 {edge.evidence.field && (
-                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono">.{edge.evidence.field}</code>
+                  <code className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono">.{edge.evidence.field}</code>
                 )}
               </p>
 
               {edge.label && /NEEDS_REVIEW|UNVERIFIED|NOT_VERIFIED/i.test(edge.label) && (
-                <p className="mt-1.5 flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[10px] text-amber-900">
+                <p className="mt-1.5 flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[11px] text-amber-900">
                   <ShieldAlert className="mt-0.5 size-3 shrink-0" />
                   Unverified data — weighted at {edge.weight.toFixed(2)} rather than 1.00. Confirm against
                   the official source before advising the student.
@@ -368,16 +368,16 @@ export default function OpportunityGraphPage() {
       </Card>
 
       {/* ---------------- Recommendations ---------------- */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm font-bold">
-            <Lightbulb className="size-4 text-[#0057B8]" />
+            <Lightbulb className="size-4 text-[var(--alo-brand)]" />
             Recommendations ({recommendations.length})
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2.5">
           {recommendations.length === 0 ? (
-            <p className="py-4 text-center text-sm text-slate-500">
+            <p className="py-4 text-center text-sm text-[var(--alo-text-muted)]">
               No opportunity follows from this student’s recorded activity. Nothing is suggested for its
               own sake.
             </p>
@@ -387,11 +387,11 @@ export default function OpportunityGraphPage() {
                 item.verificationStatus &&
                 !['VERIFIED', 'NOT_FOUND'].includes(item.verificationStatus.toUpperCase());
               return (
-                <div key={`${item.kind}-${item.id}`} className="rounded-xl border border-slate-200 p-3">
+                <div key={`${item.kind}-${item.id}`} className="rounded-xl border border-[var(--alo-border)] p-3">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-slate-900">{item.label}</p>
-                      <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                      <p className="truncate text-sm font-semibold text-[var(--alo-text)]">{item.label}</p>
+                      <p className="mt-0.5 text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">
                         {item.kind}
                       </p>
                     </div>
@@ -400,10 +400,10 @@ export default function OpportunityGraphPage() {
                         variant="outline"
                         className={
                           item.verificationStatus.toUpperCase() === 'VERIFIED'
-                            ? 'border-emerald-200 bg-emerald-50 text-[9px] text-emerald-800'
+                            ? 'border-emerald-200 bg-emerald-50 text-[11px] text-emerald-800'
                             : item.verificationStatus === 'NOT_FOUND'
-                              ? 'border-slate-200 bg-slate-50 text-[9px] text-slate-600'
-                              : 'border-amber-200 bg-amber-50 text-[9px] text-amber-800'
+                              ? 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[11px] text-[var(--alo-body)]'
+                              : 'border-amber-200 bg-amber-50 text-[11px] text-amber-800'
                         }
                       >
                         {item.verificationStatus}
@@ -411,17 +411,17 @@ export default function OpportunityGraphPage() {
                     )}
                   </div>
 
-                  <p className="mt-2 text-xs leading-relaxed text-slate-700">{item.reason}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-[var(--alo-body)]">{item.reason}</p>
 
                   {/* The becauseOf chain is what makes this explainable (s16). */}
                   {item.becauseOf.length > 0 && (
-                    <div className="mt-2 border-t border-slate-100 pt-2">
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                    <div className="mt-2 border-t border-[var(--alo-border)] pt-2">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">
                         because of
                       </p>
                       <div className="mt-1 flex flex-wrap gap-1.5">
                         {item.becauseOf.map((because, index) => (
-                          <span key={index} className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-600">
+                          <span key={index} className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--alo-body)]">
                             {because.relation} → {because.via}
                           </span>
                         ))}
@@ -430,7 +430,7 @@ export default function OpportunityGraphPage() {
                   )}
 
                   {unverified && (
-                    <p className="mt-2 flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[10px] text-amber-900">
+                    <p className="mt-2 flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[11px] text-amber-900">
                       <ShieldAlert className="mt-0.5 size-3 shrink-0" />
                       Not verified against an official source. Confirm before advising the student —
                       this is a lead to check, not a fact to quote.
@@ -443,7 +443,7 @@ export default function OpportunityGraphPage() {
         </CardContent>
       </Card>
 
-      <p className="flex items-start gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
+      <p className="flex items-start gap-1.5 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-[11px] text-[var(--alo-body)]">
         <Info className="mt-0.5 size-3.5 shrink-0" />
         Every edge above is derived from a real database row named in its evidence field. Relationships
         are never inferred, guessed or marked “probably related”. Weights encode real progression — an
@@ -457,15 +457,15 @@ export default function OpportunityGraphPage() {
 function Header({ generatedAt, studentId }: { generatedAt?: string; studentId?: string }) {
   return (
     <div>
-      <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-        <Network className="size-5 text-[#0057B8]" />
+      <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+        <Network className="size-5 text-[var(--alo-brand)]" />
         ALO Opportunity Graph
       </h1>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1 text-sm text-[var(--alo-body)]">
         Student ↔ country ↔ university ↔ course ↔ scholarship ↔ visa ↔ partner ↔ counselor, derived from
         live records.
         {generatedAt && studentId && (
-          <span className="text-slate-400">
+          <span className="text-[var(--alo-text-muted)]">
             {' '}
             · {studentId} · generated {new Date(generatedAt).toLocaleString()}
           </span>
@@ -487,7 +487,7 @@ function Lookup({
   busy: boolean;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-slate-200">
+    <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
       <CardContent className="flex flex-wrap items-end gap-2 pt-5 pb-5">
         <div className="min-w-[260px] flex-1 space-y-1.5">
           <Label htmlFor="og-student" className="text-xs font-semibold">Student id</Label>

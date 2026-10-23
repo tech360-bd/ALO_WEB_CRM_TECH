@@ -83,8 +83,8 @@ function StatusBadge({ status }: { status: string }) {
       : status === 'paused' || status === 'cancelled'
         ? 'bg-amber-50 text-amber-700'
         : status === 'sending' || status === 'queued'
-          ? 'bg-blue-50 text-blue-700'
-          : 'bg-gray-100 text-gray-700';
+          ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
+          : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   return <Badge className={tone}>{status}</Badge>;
 }
 
@@ -233,10 +233,10 @@ export default function EmailMarketingView() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#0F172A] flex items-center gap-2">
-          <Mail className="w-6 h-6 text-[#E8501A]" />Email Marketing
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] flex items-center gap-2">
+          <Mail className="w-6 h-6 text-[var(--alo-cta)]" />Email Marketing
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[var(--alo-text-muted)]">
           Drafts, confirmation, and a queue that sends under caps. Nothing is marked sent until the SMTP server accepts the message.
         </p>
       </div>
@@ -249,7 +249,7 @@ export default function EmailMarketingView() {
               ? 'bg-red-50 border-red-200 text-red-800'
               : sendBanner.tone === 'amber'
                 ? 'bg-amber-50 border-amber-200 text-amber-800'
-                : 'bg-gray-50 border-gray-200 text-gray-700'
+                : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'
         }`}
       >
         <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
@@ -257,7 +257,7 @@ export default function EmailMarketingView() {
       </div>
 
       {error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">{error}</p>}
-      {message && <p className="text-sm text-gray-800 bg-[#F8FAFC] border rounded-lg p-3">{message}</p>}
+      {message && <p className="text-sm text-[var(--alo-text)] bg-[var(--alo-page)] border rounded-lg p-3">{message}</p>}
 
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 space-y-4">
@@ -300,7 +300,7 @@ export default function EmailMarketingView() {
                 <input type="checkbox" className="mt-0.5" checked={draft.testMode} onChange={(e) => setDraft({ ...draft, testMode: e.target.checked })} />
                 <span>Test campaign: keep only the configured test recipients. Turn this off only for a real send.</span>
               </label>
-              <Button onClick={createDraft} disabled={busy} className="bg-[#E8501A] text-white">
+              <Button onClick={createDraft} disabled={busy} className="bg-[var(--alo-cta)] text-black">
                 {busy ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}Create draft (nothing is sent)
               </Button>
             </CardContent>
@@ -315,11 +315,11 @@ export default function EmailMarketingView() {
             </CardHeader>
             <CardContent>
               {campaigns.length === 0 ? (
-                <p className="text-xs text-gray-500">No campaigns yet.</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">No campaigns yet.</p>
               ) : (
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="text-left text-gray-500">
+                    <tr className="text-left text-[var(--alo-text-muted)]">
                       <th className="py-1">Name</th>
                       <th>Status</th>
                       <th>Recipients</th>
@@ -328,10 +328,10 @@ export default function EmailMarketingView() {
                   </thead>
                   <tbody>
                     {campaigns.map((row) => (
-                      <tr key={row.id} className={`border-t ${selectedId === row.id ? 'bg-orange-50' : ''}`}>
+                      <tr key={row.id} className={`border-t ${selectedId === row.id ? 'bg-[var(--alo-cta-soft)]' : ''}`}>
                         <td className="py-1.5 pr-2">
                           {row.name}
-                          {row.testMode && <span className="ml-1 text-[10px] text-amber-700">[test]</span>}
+                          {row.testMode && <span className="ml-1 text-[11px] text-amber-700">[test]</span>}
                         </td>
                         <td><StatusBadge status={row.status} /></td>
                         <td>{row.recipientCount}</td>
@@ -355,37 +355,37 @@ export default function EmailMarketingView() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
-              {!campaign && <p className="text-gray-500">Select a campaign to see its queue, events, and actions.</p>}
+              {!campaign && <p className="text-[var(--alo-text-muted)]">Select a campaign to see its queue, events, and actions.</p>}
               {campaign && detail && (
                 <>
                   <div>
                     <p className="font-semibold text-sm">{campaign.name}</p>
-                    <p className="text-gray-600">Subject: {campaign.subject}</p>
+                    <p className="text-[var(--alo-body)]">Subject: {campaign.subject}</p>
                     <p className="mt-1"><StatusBadge status={campaign.status} />{campaign.testMode && <span className="ml-2 text-amber-700">test campaign</span>}</p>
                     {campaign.lastErrorCode && <p className="text-amber-700 mt-1">Reason: {campaign.lastErrorCode}</p>}
-                    {campaign.consentBasis && <p className="text-gray-600 mt-1">Consent basis: {campaign.consentBasis}</p>}
+                    {campaign.consentBasis && <p className="text-[var(--alo-body)] mt-1">Consent basis: {campaign.consentBasis}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     {OUTBOX_ORDER.map((status) => (
                       <div key={status} className="p-2 bg-white border rounded-lg">
-                        <p className="text-gray-500">{status}</p>
+                        <p className="text-[var(--alo-text-muted)]">{status}</p>
                         <p className="font-semibold text-sm">{detail.outbox[status] ?? 0}</p>
                       </div>
                     ))}
                   </div>
 
                   {Object.keys(detail.events).length > 0 && (
-                    <p className="text-gray-600">Events: {Object.entries(detail.events).map(([k, v]) => `${k} ${v}`).join(' · ')}</p>
+                    <p className="text-[var(--alo-body)]">Events: {Object.entries(detail.events).map(([k, v]) => `${k} ${v}`).join(' · ')}</p>
                   )}
 
                   {campaign.status === 'draft' && (
                     <div className="border rounded-lg p-3 space-y-2">
                       <p className="font-semibold">Confirm before queueing</p>
-                      <p className="text-gray-600">Type the exact recipient count ({campaign.recipientCount}) and subject to queue this campaign.</p>
+                      <p className="text-[var(--alo-body)]">Type the exact recipient count ({campaign.recipientCount}) and subject to queue this campaign.</p>
                       <Input value={queueConfirm.recipientCount} onChange={(e) => setQueueConfirm({ ...queueConfirm, recipientCount: e.target.value })} placeholder={`Recipient count: ${campaign.recipientCount}`} className="h-8" />
                       <Input value={queueConfirm.subject} onChange={(e) => setQueueConfirm({ ...queueConfirm, subject: e.target.value })} placeholder="Subject (exact)" className="h-8" />
-                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[#E8501A] text-white">
+                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[var(--alo-cta)] text-black">
                         Queue {campaign.recipientCount} email(s)
                       </Button>
                     </div>

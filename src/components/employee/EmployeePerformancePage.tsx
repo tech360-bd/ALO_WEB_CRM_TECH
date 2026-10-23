@@ -10,7 +10,7 @@ import { CheckCircle2, Users, Clock, Star, TrendingUp, Award, BarChart3, Message
 
 const mockKpis = [
   { label: 'Tasks Completed', value: '47/50', change: '+5 this month', icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', pct: 94 },
-  { label: 'Student Conversions', value: '12', change: '+3 this month', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', pct: 80 },
+  { label: 'Student Conversions', value: '12', change: '+3 this month', icon: Users, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', pct: 80 },
   { label: 'Avg Response Time', value: '2.4 hrs', change: '-0.3 hrs improved', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', pct: 85 },
   { label: 'Client Satisfaction', value: '4.6/5', change: '+0.2 this quarter', icon: Star, color: 'text-purple-600', bg: 'bg-purple-50', pct: 92 },
 ];
@@ -34,7 +34,7 @@ function RatingStars({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={`w-3.5 h-3.5 ${i <= Math.round(rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`} />
+        <Star key={i} className={`w-3.5 h-3.5 ${i <= Math.round(rating) ? 'text-amber-400 fill-amber-400' : 'text-[var(--alo-placeholder)]'}`} />
       ))}
       <span className="ml-1.5 text-xs text-alo-text-muted">{rating}/5</span>
     </div>
@@ -81,11 +81,11 @@ export default function EmployeePerformancePage() {
                 <div className={`w-10 h-10 rounded-lg ${k.bg} flex items-center justify-center`}>
                   <k.icon className={`w-5 h-5 ${k.color}`} />
                 </div>
-                <Badge variant="success" className="text-[10px]">{k.change}</Badge>
+                <Badge variant="success" className="text-[11px]">{k.change}</Badge>
               </div>
               <p className="text-2xl font-bold text-alo-text">{k.value}</p>
               <p className="text-xs text-alo-text-muted mt-0.5">{k.label}</p>
-              <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="mt-2 h-1.5 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden">
                 <div className="h-full bg-alo-brand rounded-full transition-all" style={{ width: `${k.pct}%` }} />
               </div>
             </CardContent>

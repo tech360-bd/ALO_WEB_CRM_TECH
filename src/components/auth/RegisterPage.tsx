@@ -181,10 +181,10 @@ export default function RegisterPage() {
             <div className="mx-auto w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-6">
               <ShieldCheck className="w-8 h-8 text-emerald-600" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-3">
+            <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">
               Application Submitted
             </h2>
-            <p className="text-sm text-slate-500 leading-relaxed mb-8">
+            <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
               Your application is under review. We will notify you once approved.
             </p>
             <Button
@@ -240,7 +240,7 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={() => setView('portals')}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors mb-8 group cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-text)] transition-colors mb-8 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
             Back
@@ -257,10 +257,10 @@ export default function RegisterPage() {
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-slate-900 mb-1">
+          <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-1">
             {isStudent ? 'Create Student Account' : 'Apply as Partner'}
           </h2>
-          <p className="text-sm text-slate-500 mb-8">
+          <p className="text-sm text-[var(--alo-text-muted)] mb-8">
             {isStudent
               ? 'Start your study abroad journey today'
               : 'Grow your education consultancy with ALO'}
@@ -283,11 +283,11 @@ export default function RegisterPage() {
               <>
                 {/* Full Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-fullname" className="text-slate-700">
+                  <Label htmlFor="reg-fullname" className="text-[var(--alo-body)]">
                     Full Name
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-fullname"
                       type="text"
@@ -303,11 +303,11 @@ export default function RegisterPage() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-email" className="text-slate-700">
+                  <Label htmlFor="reg-email" className="text-[var(--alo-body)]">
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-email"
                       type="email"
@@ -323,11 +323,11 @@ export default function RegisterPage() {
 
                 {/* Phone / WhatsApp */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-phone" className="text-slate-700">
+                  <Label htmlFor="reg-phone" className="text-[var(--alo-body)]">
                     Phone / WhatsApp
                   </Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-phone"
                       type="tel"
@@ -343,11 +343,11 @@ export default function RegisterPage() {
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-password" className="text-slate-700">
+                  <Label htmlFor="reg-password" className="text-[var(--alo-body)]">
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-password"
                       type={showPassword ? 'text' : 'password'}
@@ -361,7 +361,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] transition-colors cursor-pointer"
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? (
@@ -375,11 +375,11 @@ export default function RegisterPage() {
 
                 {/* Confirm Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-confirm-password" className="text-slate-700">
+                  <Label htmlFor="reg-confirm-password" className="text-[var(--alo-body)]">
                     Confirm Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -393,7 +393,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] transition-colors cursor-pointer"
                       aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                     >
                       {showConfirmPassword ? (
@@ -415,7 +415,7 @@ export default function RegisterPage() {
                   />
                   <label
                     htmlFor="reg-terms"
-                    className="text-sm text-slate-600 leading-relaxed cursor-pointer select-none"
+                    className="text-sm text-[var(--alo-body)] leading-relaxed cursor-pointer select-none"
                   >
                     I agree to the{' '}
                     <span className="text-alo-brand hover:underline font-medium">
@@ -432,11 +432,11 @@ export default function RegisterPage() {
               <>
                 {/* Company Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-company" className="text-slate-700">
+                  <Label htmlFor="reg-company" className="text-[var(--alo-body)]">
                     Company Name
                   </Label>
                   <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-company"
                       type="text"
@@ -452,11 +452,11 @@ export default function RegisterPage() {
 
                 {/* Contact Person */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-contact" className="text-slate-700">
+                  <Label htmlFor="reg-contact" className="text-[var(--alo-body)]">
                     Contact Person Name
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-contact"
                       type="text"
@@ -472,11 +472,11 @@ export default function RegisterPage() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-partner-email" className="text-slate-700">
+                  <Label htmlFor="reg-partner-email" className="text-[var(--alo-body)]">
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-partner-email"
                       type="email"
@@ -492,11 +492,11 @@ export default function RegisterPage() {
 
                 {/* Phone */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-partner-phone" className="text-slate-700">
+                  <Label htmlFor="reg-partner-phone" className="text-[var(--alo-body)]">
                     Phone
                   </Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-partner-phone"
                       type="tel"
@@ -512,11 +512,11 @@ export default function RegisterPage() {
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="reg-partner-password" className="text-slate-700">
+                  <Label htmlFor="reg-partner-password" className="text-[var(--alo-body)]">
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)] pointer-events-none" />
                     <Input
                       id="reg-partner-password"
                       type={showPassword ? 'text' : 'password'}
@@ -530,7 +530,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] transition-colors cursor-pointer"
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? (
@@ -546,12 +546,12 @@ export default function RegisterPage() {
 
             {/* Submit Button */}
             <Button
-              type="submit"
-              variant="cta"
-              size="lg"
-              className="w-full h-11"
-              disabled={loginLoading}
-            >
+ type="submit"
+ variant="cta"
+ size="lg"
+ className="w-full "
+ disabled={loginLoading}
+ >
               {loginLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : null}
@@ -561,7 +561,7 @@ export default function RegisterPage() {
 
           {/* Sign in link */}
           <div className="mt-6">
-            <p className="text-sm text-slate-500 text-center">
+            <p className="text-sm text-[var(--alo-text-muted)] text-center">
               Already have an account?{' '}
               <button
                 type="button"
@@ -574,7 +574,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Security note */}
-          <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+          <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
             <Lock className="w-3 h-3" />
             <span>
               Protected by 256-bit encryption. Your data is safe with us.

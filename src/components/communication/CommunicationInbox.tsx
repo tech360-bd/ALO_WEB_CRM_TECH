@@ -14,8 +14,8 @@ import { SLA_STATES } from '@/lib/communications/sla-policy';
 
 // Reuse visibility badges
 const VISIBILITY_META: Record<string, { label: string; color: string }> = {
-  public_safe: { label: 'Public Safe', color: 'bg-gray-100 text-gray-700 border-gray-200' },
-  student_visible: { label: 'Student Visible', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  public_safe: { label: 'Public Safe', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
+  student_visible: { label: 'Student Visible', color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   partner_visible: { label: 'Partner Visible', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   counselor_visible: { label: 'Counselor Only', color: 'bg-purple-50 text-purple-700 border-purple-200' },
   application_team_visible: { label: 'App Team', color: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -73,10 +73,10 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
 
   return (
     <div className="space-y-4">
-      <Card className="border border-gray-200 shadow-sm">
-        <CardHeader className="pb-3 border-b bg-gray-50 flex flex-row items-center justify-between">
+      <Card className="border border-[var(--alo-border)] shadow-sm">
+        <CardHeader className="pb-3 border-b bg-[var(--alo-page)] flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-bold flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-[#0057B8]" /> Unified Inbox — All Channels (SLA-sorted)
+            <MessageSquare className="w-5 h-5 text-[var(--alo-brand)]" /> Unified Inbox — All Channels (SLA-sorted)
             <Badge variant="outline" className="ml-2 bg-white">{counts.total} threads</Badge>
             {counts.overdue > 0 && <Badge className="bg-red-100 text-red-700 border-red-200">{counts.overdue} SLA overdue</Badge>}
           </CardTitle>
@@ -139,7 +139,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
               </SelectContent>
             </Select>
             <Input placeholder="Lead/Student/App/Partner" value={filters.search} onChange={e => setFilters(s => ({ ...s, search: e.target.value }))} className="h-8 text-xs" />
-            <Button size="sm" className="h-8 bg-[#0057B8] hover:bg-[#004a9e]" onClick={fetchInbox}><Search className="w-3.5 h-3.5 mr-1" /> Search</Button>
+            <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[#004a9e]" onClick={fetchInbox}><Search className="w-3.5 h-3.5 mr-1" /> Search</Button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px]">
             <Input placeholder="Office" value={filters.office} onChange={e => setFilters(s => ({ ...s, office: e.target.value }))} className="h-7 text-xs" />
@@ -147,15 +147,15 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
             <Input placeholder="Country" value={filters.country} onChange={e => setFilters(s => ({ ...s, country: e.target.value }))} className="h-7 text-xs" />
             <Input placeholder="Course" value={filters.course} onChange={e => setFilters(s => ({ ...s, course: e.target.value }))} className="h-7 text-xs" />
             <div className="flex gap-1">
-              <Button size="sm" variant="outline" className="h-7 text-xs flex-1" onClick={() => setFilters({ channel: 'all', source: '', office: '', counselor: '', assigned: '', student: '', partner: '', application: '', country: '', course: '', status: '', unread: '', sla: '', priority: '', b2b: '', marketing: '', visa: '', document: '', search: '', dateFrom: '', dateTo: '' })}>Clear</Button>
-              <Badge variant="outline" className="text-[10px] bg-amber-50 hidden sm:flex">Bangladesh TZ: Asia/Dhaka</Badge>
+              <Button size="sm" variant="outline" className="h-7 flex-1" onClick={() => setFilters({ channel: 'all', source: '', office: '', counselor: '', assigned: '', student: '', partner: '', application: '', country: '', course: '', status: '', unread: '', sla: '', priority: '', b2b: '', marketing: '', visa: '', document: '', search: '', dateFrom: '', dateTo: '' })}>Clear</Button>
+              <Badge variant="outline" className="text-[11px] bg-amber-50 hidden sm:flex">Bangladesh TZ: Asia/Dhaka</Badge>
             </div>
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto border border-gray-200 rounded-lg">
+          <div className="overflow-x-auto border border-[var(--alo-border)] rounded-lg">
             <table className="w-full text-xs">
-              <thead className="bg-gray-50 border-b text-[11px] text-gray-600">
+              <thead className="bg-[var(--alo-page)] border-b text-[11px] text-[var(--alo-body)]">
                 {/* Spec §145 column set: Priority • SLA • Channel • Student •
                     Application • Sender • Message • Assigned Counselor • Intent •
                     Status • Last Response • Deadline */}
@@ -176,22 +176,22 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={12} className="px-4 py-8 text-center text-gray-400">Loading inbox…</td></tr>
+                  <tr><td colSpan={12} className="px-4 py-8 text-center text-[var(--alo-text-muted)]">Loading inbox…</td></tr>
                 ) : threads.length === 0 ? (
-                  <tr><td colSpan={12} className="px-4 py-8 text-center text-gray-400">No messages. Connect WhatsApp/Facebook or create a test thread.</td></tr>
+                  <tr><td colSpan={12} className="px-4 py-8 text-center text-[var(--alo-text-muted)]">No messages. Connect WhatsApp/Facebook or create a test thread.</td></tr>
                 ) : threads.map((t) => {
                   const Vis = VISIBILITY_META[t.visibility || 'public_safe'] || VISIBILITY_META.public_safe;
                   const ChanIcon = CHANNEL_ICON[t.channel] || MessageSquare;
                   const isB2B = t.visibility === 'b2b_confidential';
                   if (isB2B && !canViewB2B) return null;
                   return (
-                    <tr key={t.id} className="border-b hover:bg-blue-50/30 align-top">
+                    <tr key={t.id} className="border-b hover:bg-[var(--alo-brand-pale)]/30 align-top">
                       {/* Priority (§145) */}
                       <td className="px-2 py-2">
-                        <Badge variant="outline" className={`text-[10px] ${t.priority === 'urgent' || t.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' : t.priority === 'low' ? 'bg-gray-50 text-gray-600' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                        <Badge variant="outline" className={`text-[11px] ${t.priority === 'urgent' || t.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' : t.priority === 'low' ? 'bg-[var(--alo-page)] text-[var(--alo-body)]' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]'}`}>
                           {(t.priority || 'normal').toUpperCase()}
                         </Badge>
-                        <div className="mt-1"><Badge variant="outline" className={`text-[10px] ${Vis.color} border`}>{Vis.label}</Badge></div>
+                        <div className="mt-1"><Badge variant="outline" className={`text-[11px] ${Vis.color} border`}>{Vis.label}</Badge></div>
                       </td>
                       {/* SLA (§148) — icon + word + countdown, never colour alone */}
                       <td className="px-2 py-2">
@@ -206,56 +206,56 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
                           responded={t.slaResponded}
                           size="sm"
                         />
-                        {t.slaPolicyLabel && <div className="text-[10px] text-gray-400 mt-1">policy: {t.slaPolicyLabel} ({t.slaMinutes}m)</div>}
+                        {t.slaPolicyLabel && <div className="text-[11px] text-[var(--alo-text-muted)] mt-1">policy: {t.slaPolicyLabel} ({t.slaMinutes}m)</div>}
                       </td>
                       {/* Channel */}
                       <td className="px-2 py-2">
-                        <Badge variant="outline" className="text-[10px] flex w-fit items-center gap-1"><ChanIcon className="w-3 h-3" /> {t.channel}</Badge>
-                        <div className="text-[10px] text-gray-400 font-mono mt-1">{t.threadCode?.substring(0, 10) || t.id?.substring(0, 8)}</div>
+                        <Badge variant="outline" className="text-[11px] flex w-fit items-center gap-1"><ChanIcon className="w-3 h-3" /> {t.channel}</Badge>
+                        <div className="text-[11px] text-[var(--alo-text-muted)] font-mono mt-1">{t.threadCode?.substring(0, 10) || t.id?.substring(0, 8)}</div>
                       </td>
                       {/* Student / lead */}
                       <td className="px-2 py-2">
                         <div className="font-medium truncate max-w-[140px]">{t.contactName || t.lastSenderName || 'Unknown'}</div>
-                        <div className="text-[10px] text-gray-500">
+                        <div className="text-[11px] text-[var(--alo-text-muted)]">
                           {t.studentId ? `Student ${t.studentId.slice(0, 6)}` : t.leadId ? `Lead ${t.leadId.slice(0, 6)}` : 'Unlinked — POSSIBLE NEW CONTACT'}
                         </div>
-                        {t.contactPhone && <div className="text-[10px] text-gray-400">{t.contactPhone}</div>}
+                        {t.contactPhone && <div className="text-[11px] text-[var(--alo-text-muted)]">{t.contactPhone}</div>}
                       </td>
                       {/* Application */}
                       <td className="px-2 py-2 text-[11px]">
                         {t.applicationId ? (
                           <>
-                            <div className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-gray-400" /> {t.applicationId.slice(0, 6)}</div>
-                            {t.applicationLabel && <div className="text-[10px] text-gray-500 truncate max-w-[150px]">{t.applicationLabel}</div>}
-                            {t.applicationStage && <div className="text-[10px] text-gray-400">Stage: {t.applicationStage}</div>}
+                            <div className="flex items-center gap-1"><BookOpen className="w-3 h-3 text-[var(--alo-text-muted)]" /> {t.applicationId.slice(0, 6)}</div>
+                            {t.applicationLabel && <div className="text-[11px] text-[var(--alo-text-muted)] truncate max-w-[150px]">{t.applicationLabel}</div>}
+                            {t.applicationStage && <div className="text-[11px] text-[var(--alo-text-muted)]">Stage: {t.applicationStage}</div>}
                           </>
-                        ) : <span className="text-gray-400">—</span>}
-                        {t.partnerId && <div className="text-[10px] text-gray-500">Partner {t.partnerId.slice(0, 6)}</div>}
+                        ) : <span className="text-[var(--alo-text-muted)]">—</span>}
+                        {t.partnerId && <div className="text-[11px] text-[var(--alo-text-muted)]">Partner {t.partnerId.slice(0, 6)}</div>}
                       </td>
                       {/* Sender + message (§146 keeps the original channel visible) */}
                       <td className="px-2 py-2 max-w-[260px]">
-                        <div className="text-[10px] text-gray-500">
+                        <div className="text-[11px] text-[var(--alo-text-muted)]">
                           {t.lastMessageDir === 'outbound' ? 'Staff → Student' : 'Student → Staff'} · {t.lastSenderName || t.contactName || 'unknown sender'}
                         </div>
-                        <div className="text-[11px] text-gray-700 line-clamp-2" title={t.lastMessage}>{t.lastMessage || t.lastMessagePreview || '—'}</div>
-                        {t.unreadCount > 0 && <Badge className="mt-1 text-[9px] bg-blue-600">{t.unreadCount} unread</Badge>}
+                        <div className="text-[11px] text-[var(--alo-body)] line-clamp-2" title={t.lastMessage}>{t.lastMessage || t.lastMessagePreview || '—'}</div>
+                        {t.unreadCount > 0 && <Badge className="mt-1 text-[11px] bg-[var(--alo-brand)]">{t.unreadCount} unread</Badge>}
                       </td>
                       {/* Assigned counselor */}
                       <td className="px-2 py-2 text-[11px]">{t.assignedToName || (t.assignedToId ? t.assignedToId.slice(0, 6) : <span className="text-amber-600">Unassigned</span>)}</td>
                       {/* Intent */}
                       <td className="px-2 py-2">
-                        <Badge variant="outline" className="text-[10px] bg-gray-50">{(t.intent || 'general').replace(/_/g, ' ')}</Badge>
+                        <Badge variant="outline" className="text-[11px] bg-[var(--alo-page)]">{(t.intent || 'general').replace(/_/g, ' ')}</Badge>
                       </td>
                       {/* Status */}
                       <td className="px-2 py-2">
-                        <Badge className={`text-[10px] ${t.status === 'resolved' ? 'bg-emerald-100 text-emerald-700' : t.status === 'escalated' ? 'bg-rose-100 text-rose-700' : 'bg-blue-50 text-blue-700'}`}>{t.status}</Badge>
+                        <Badge className={`text-[11px] ${t.status === 'resolved' ? 'bg-emerald-100 text-emerald-700' : t.status === 'escalated' ? 'bg-rose-100 text-rose-700' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'}`}>{t.status}</Badge>
                       </td>
                       {/* Last response (§150) */}
-                      <td className="px-2 py-2 text-[11px] text-gray-600">
+                      <td className="px-2 py-2 text-[11px] text-[var(--alo-body)]">
                         {t.firstResponseAt ? (
                           <>
                             <div>{new Date(t.firstResponseAt).toLocaleString('en-GB')}</div>
-                            <div className="text-[10px] text-gray-400">
+                            <div className="text-[11px] text-[var(--alo-text-muted)]">
                               FRT {t.firstResponseMinutes != null ? `${t.firstResponseMinutes} min` : '—'}
                               {t.countsAsBreach ? ' · counted breach' : t.slaBreached ? ' · late (excluded)' : ' · within SLA'}
                             </div>
@@ -263,12 +263,12 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
                         ) : <span className="text-amber-600">No response yet</span>}
                       </td>
                       {/* Deadline */}
-                      <td className="px-2 py-2 text-[11px] text-gray-600">
+                      <td className="px-2 py-2 text-[11px] text-[var(--alo-body)]">
                         <div>{t.lastMessageAt ? new Date(t.lastMessageAt).toLocaleString('en-GB') : '—'}</div>
-                        <div className="text-[10px] text-gray-400">
+                        <div className="text-[11px] text-[var(--alo-text-muted)]">
                           due: {t.slaDueAt ? new Date(t.slaDueAt).toLocaleString('en-GB') : 'none'}
                         </div>
-                        <div className="text-[10px] text-gray-400">
+                        <div className="text-[11px] text-[var(--alo-text-muted)]">
                           {t.slaCalendarTime ? 'calendar-time clock' : 'office-hours clock'}
                         </div>
                       </td>
@@ -290,7 +290,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
             </table>
           </div>
 
-          <div className="flex flex-wrap gap-2 text-[11px] text-gray-500">
+          <div className="flex flex-wrap gap-2 text-[11px] text-[var(--alo-text-muted)]">
             <Badge variant="outline" className="bg-white">Reply</Badge> <span>Use template / AI draft reply</span>
             <Badge variant="outline" className="bg-white">Assign</Badge> <span>Assign to counselor</span>
             <Badge variant="outline" className="bg-white">Escalate</Badge> <span>Escalate to manager</span>

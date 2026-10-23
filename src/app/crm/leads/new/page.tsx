@@ -130,11 +130,11 @@ export default function ManualLeadPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <header className="mb-6">
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-[#0057B8]">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] px-3 py-1 text-xs font-semibold text-[var(--alo-brand)]">
           <UserPlus className="size-3.5" /> FORM C — MANUAL LEAD ADD
         </span>
-        <h1 className="mt-3 text-2xl font-bold text-[#0F172A]">Add a lead and complete counseling</h1>
-        <p className="mt-1 max-w-3xl text-sm text-slate-600">
+        <h1 className="mt-3 text-2xl font-bold text-[var(--alo-text)]">Add a lead and complete counseling</h1>
+        <p className="mt-1 max-w-3xl text-sm text-[var(--alo-body)]">
           The same sections the student fills in Form B, in the same order — so a phone or walk-in counseling session can
           be captured completely at the desk. Saving creates the CRM lead, attaches the student profile and marks every
           captured section complete, which is what later unlocks Apply Now for that student.
@@ -153,11 +153,11 @@ export default function ManualLeadPage() {
                   type="button"
                   onClick={() => setActiveSection(entry.key)}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
-                    isActive ? 'bg-[#0057B8] text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'
+                    isActive ? 'bg-[var(--alo-brand)] text-white shadow-sm' : 'text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]'
                   }`}
                 >
                   <span className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                    isActive ? 'bg-white/20 text-white' : captured ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
+                    isActive ? 'bg-white/20 text-white' : captured ? 'bg-green-100 text-green-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
                   }`}>
                     {!isActive && captured ? <CheckCircle2 className="size-3.5" /> : index + 1}
                   </span>
@@ -168,13 +168,13 @@ export default function ManualLeadPage() {
           </div>
         </nav>
 
-        <section className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white p-6">
+        <section className="min-w-0 flex-1 rounded-xl border border-[var(--alo-border)] bg-white p-6">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="flex items-center gap-2 text-lg font-bold text-[#0F172A]">
-                <ClipboardList className="size-4 text-[#0057B8]" /> {section.label}
+              <h2 className="flex items-center gap-2 text-lg font-bold text-[var(--alo-text)]">
+                <ClipboardList className="size-4 text-[var(--alo-brand)]" /> {section.label}
               </h2>
-              <p className="mt-1 text-sm text-slate-600">{section.description}</p>
+              <p className="mt-1 text-sm text-[var(--alo-body)]">{section.description}</p>
               {section.requiredForApplication && (
                 <p className="mt-1 text-xs font-semibold text-amber-700">Required before the student can apply.</p>
               )}
@@ -183,7 +183,7 @@ export default function ManualLeadPage() {
               <button
                 type="button"
                 onClick={() => addRow(section.key)}
-                className="shrink-0 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-[#0057B8] hover:bg-slate-50"
+                className="shrink-0 rounded-lg border border-[var(--alo-border)] px-3 py-2 text-xs font-semibold text-[var(--alo-brand)] hover:bg-[var(--alo-page)]"
               >
                 + Save row &amp; add another
               </button>
@@ -193,8 +193,8 @@ export default function ManualLeadPage() {
           {(extraRows[section.key] || []).length > 0 && (
             <ul className="mt-4 space-y-1">
               {(extraRows[section.key] || []).map((row, index) => (
-                <li key={index} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-                  <span className="truncate text-slate-600">
+                <li key={index} className="flex items-center justify-between rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] px-3 py-2 text-xs">
+                  <span className="truncate text-[var(--alo-body)]">
                     Row {index + 2}: {Object.values(row).filter(Boolean).slice(0, 3).join(' · ') || 'empty'}
                   </span>
                   <button type="button" onClick={() => removeRow(section.key, index)} className="font-semibold text-red-600">
@@ -209,9 +209,9 @@ export default function ManualLeadPage() {
             {visibleFields(section, sectionValues).map((field) => {
               const value = sectionValues[field.name];
               const label = (
-                <span className="text-xs font-semibold text-[#0F172A]">
+                <span className="text-xs font-semibold text-[var(--alo-text)]">
                   {field.label}{field.required ? ' *' : ''}
-                  <span className="ml-1 font-normal text-[10px] text-slate-400">→ {field.crm}</span>
+                  <span className="ml-1 font-normal text-[11px] text-[var(--alo-text-muted)]">→ {field.crm}</span>
                 </span>
               );
               const wide = field.type === 'textarea';
@@ -224,13 +224,13 @@ export default function ManualLeadPage() {
                       value={String(value || '')}
                       placeholder={field.placeholder}
                       onChange={(event) => setValue(field.name, event.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-lg border border-[var(--alo-border)] px-3 py-2 text-sm"
                     />
                   ) : field.type === 'select' ? (
                     <select
                       value={String(value || '')}
                       onChange={(event) => setValue(field.name, event.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-lg border border-[var(--alo-border)] px-3 py-2 text-sm"
                     >
                       <option value="">Select</option>
                       {(field.options || []).map((option) => (
@@ -238,7 +238,7 @@ export default function ManualLeadPage() {
                       ))}
                     </select>
                   ) : field.type === 'checkbox' ? (
-                    <span className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                    <span className="mt-2 flex items-center gap-2 text-sm text-[var(--alo-body)]">
                       <input
                         type="checkbox"
                         checked={value === true || value === 'true'}
@@ -250,7 +250,7 @@ export default function ManualLeadPage() {
                   ) : field.type === 'radio' ? (
                     <span className="mt-2 flex flex-wrap gap-3">
                       {(field.options || ['Yes', 'No']).map((option) => (
-                        <span key={option} className="flex items-center gap-1.5 text-sm text-slate-600">
+                        <span key={option} className="flex items-center gap-1.5 text-sm text-[var(--alo-body)]">
                           <input
                             type="radio"
                             name={`${section.key}-${field.name}`}
@@ -268,7 +268,7 @@ export default function ManualLeadPage() {
                       value={String(value || '')}
                       placeholder={field.placeholder}
                       onChange={(event) => setValue(field.name, event.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-lg border border-[var(--alo-border)] px-3 py-2 text-sm"
                     />
                   )}
                 </label>
@@ -276,17 +276,17 @@ export default function ManualLeadPage() {
             })}
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--alo-border)] pt-4">
             <div className="flex flex-wrap items-center gap-4">
-              <label className="text-xs font-semibold text-[#0F172A]">
+              <label className="text-xs font-semibold text-[var(--alo-text)]">
                 Assign to counselor ID (leave blank to keep it with you)
                 <input
                   value={counselorId}
                   onChange={(event) => setCounselorId(event.target.value)}
-                  className="mt-1 w-64 rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal"
+                  className="mt-1 w-64 rounded-lg border border-[var(--alo-border)] px-3 py-2 text-sm font-normal"
                 />
               </label>
-              <label className="flex items-center gap-2 text-xs font-semibold text-[#0F172A]">
+              <label className="flex items-center gap-2 text-xs font-semibold text-[var(--alo-text)]">
                 <input
                   type="checkbox"
                   checked={counselingMode}
@@ -300,14 +300,14 @@ export default function ManualLeadPage() {
               type="button"
               onClick={save}
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#0057B8] px-5 py-3 text-sm font-bold text-white disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--alo-brand)] px-5 py-3 text-sm font-bold text-white disabled:opacity-60"
             >
               {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
               Save lead &amp; sections
             </button>
           </div>
 
-          <p className="mt-3 text-[11px] text-slate-500">
+          <p className="mt-3 text-[11px] text-[var(--alo-text-muted)]">
             Captured sections so far: {filledSections.length > 0 ? filledSections.join(', ') : 'none yet'}.
             {values.notes?.sendWelcomeEmail === true || values.notes?.sendWelcomeEmail === 'true'
               ? ' A welcome email will be sent on save.'
@@ -325,8 +325,8 @@ export default function ManualLeadPage() {
                   {result.studentId && <p>Student profile: <span className="font-mono">{result.studentId}</span></p>}
                   {result.sections && <p>Sections marked complete: {result.sections.join(', ')}</p>}
                   <div className="mt-2 flex flex-wrap gap-2">
-                    <Link href="/crm/students" className="rounded-lg bg-[#0057B8] px-3 py-1.5 font-bold text-white">Open student</Link>
-                    <Link href="/crm/leads" className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-bold text-[#0057B8]">Lead queue</Link>
+                    <Link href="/crm/students" className="rounded-lg bg-[var(--alo-brand)] px-3 py-1.5 font-bold text-white">Open student</Link>
+                    <Link href="/crm/leads" className="rounded-lg border border-[var(--alo-border)] bg-white px-3 py-1.5 font-bold text-[var(--alo-brand)]">Lead queue</Link>
                   </div>
                 </div>
               )}

@@ -268,7 +268,7 @@ export default function StudentPayments() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-base font-bold text-alo-text">{paymentAmount(payment)}</span>
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-alo-text-muted">
+                      <code className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-alo-text-muted">
                         {payment.id}
                       </code>
                     </div>
@@ -395,7 +395,7 @@ function GuideCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xs text-alo-text-muted">Status:</span>
-            <Badge className={cn('text-[10px]', statusColor(status))}>{status}</Badge>
+            <Badge className={cn('text-[11px]', statusColor(status))}>{status}</Badge>
           </div>
         </div>
         <p className="text-[11px] leading-relaxed text-alo-text-muted">{statusNote}</p>

@@ -308,7 +308,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
             <Lock className="h-3 w-3" /> Login / Register required
           </span>
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-alo-text-heading sm:text-3xl">{course.courseTitle}</h1>
+        <h1 className="mt-4 text-2xl font-bold text-alo-text sm:text-3xl">{course.courseTitle}</h1>
         <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-alo-text-muted">
           <span className="inline-flex items-center gap-1">
             <Building2 className="h-4 w-4 text-alo-cta" />
@@ -342,7 +342,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
       {authState === 'anonymous' && (
         <section className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-alo-brand-border bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-alo-text-heading">Step 1 — Sign in or create your account</h2>
+            <h2 className="text-lg font-bold text-alo-text">Step 1 — Sign in or create your account</h2>
             <p className="mt-2 text-sm text-alo-text-muted">
               Applications live in your ALO student portal, so you need an account before we can open one.
               Registration takes a minute — we email you a 6-digit code to verify your address.
@@ -368,7 +368,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           </div>
 
           <form onSubmit={submitLead} className="rounded-2xl border border-alo-brand-border bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-alo-text-heading">Not ready to register? Send us your details</h2>
+            <h2 className="text-lg font-bold text-alo-text">Not ready to register? Send us your details</h2>
             <p className="mt-2 text-sm text-alo-text-muted">
               We will log your interest for this course and a counselor will call you back.
             </p>
@@ -380,23 +380,23 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
             ) : (
               <>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <label className="text-xs font-semibold text-alo-text-heading">
+                  <label className="text-xs font-semibold text-alo-text">
                     Full name *
                     <input required value={lead.name} onChange={(e) => setLead({ ...lead, name: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal" />
                   </label>
-                  <label className="text-xs font-semibold text-alo-text-heading">
+                  <label className="text-xs font-semibold text-alo-text">
                     Email *
                     <input required type="email" value={lead.email} onChange={(e) => setLead({ ...lead, email: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal" />
                   </label>
-                  <label className="text-xs font-semibold text-alo-text-heading">
+                  <label className="text-xs font-semibold text-alo-text">
                     Phone / WhatsApp *
                     <input required value={lead.phone} onChange={(e) => setLead({ ...lead, phone: e.target.value })}
                       placeholder="+8801XXXXXXXXX"
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal" />
                   </label>
-                  <label className="text-xs font-semibold text-alo-text-heading">
+                  <label className="text-xs font-semibold text-alo-text">
                     Preferred destination
                     <select value={lead.destination} onChange={(e) => setLead({ ...lead, destination: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal">
@@ -406,7 +406,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
                       ))}
                     </select>
                   </label>
-                  <label className="text-xs font-semibold text-alo-text-heading">
+                  <label className="text-xs font-semibold text-alo-text">
                     Intended intake
                     <select value={lead.intake} onChange={(e) => setLead({ ...lead, intake: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal">
@@ -414,7 +414,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
                       {intakes.map((option) => <option key={option.label} value={option.label}>{option.label}</option>)}
                     </select>
                   </label>
-                  <label className="text-xs font-semibold text-alo-text-heading">
+                  <label className="text-xs font-semibold text-alo-text">
                     Course level
                     <select value={lead.level} onChange={(e) => setLead({ ...lead, level: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal">
@@ -424,7 +424,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
                       ))}
                     </select>
                   </label>
-                  <label className="text-xs font-semibold text-alo-text-heading sm:col-span-2">
+                  <label className="text-xs font-semibold text-alo-text sm:col-span-2">
                     Anything we should know?
                     <textarea rows={3} value={lead.message} onChange={(e) => setLead({ ...lead, message: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal" />
@@ -451,7 +451,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
 
       {authState === 'student' && (
         <section className="rounded-2xl border border-alo-brand-border bg-white p-6 shadow-sm sm:p-8">
-          <h2 className="text-lg font-bold text-alo-text-heading">Step 2 — Application details</h2>
+          <h2 className="text-lg font-bold text-alo-text">Step 2 — Application details</h2>
           <p className="mt-1 text-sm text-alo-text-muted">
             Signed in{student?.name ? ` as ${student.name}` : ''}{student?.studentId ? ` (${student.studentId})` : ''}.
             Everything here travels into your student profile and to your counselor.
@@ -490,7 +490,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           )}
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <label className="text-xs font-semibold text-alo-text-heading">
+            <label className="text-xs font-semibold text-alo-text">
               Intake you are applying for *
               <select
                 value={selectedIntake}
@@ -505,11 +505,11 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
                 ))}
               </select>
             </label>
-            <label className="text-xs font-semibold text-alo-text-heading">
+            <label className="text-xs font-semibold text-alo-text">
               Course
               <input readOnly value={course.courseTitle} className="mt-1 w-full rounded-lg border border-alo-brand-border bg-alo-brand-light px-3 py-2 text-sm font-normal" />
             </label>
-            <label className="text-xs font-semibold text-alo-text-heading sm:col-span-2">
+            <label className="text-xs font-semibold text-alo-text sm:col-span-2">
               Notes for your counselor (optional)
               <textarea
                 rows={3}
@@ -524,7 +524,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           {intakes.length > 0 && (
             <div className="mt-4 rounded-xl border border-alo-brand-border bg-alo-brand-light p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-alo-text-muted">Recorded intakes for this course</p>
-              <ul className="mt-2 grid gap-1 text-[13px] text-alo-text-body sm:grid-cols-2">
+              <ul className="mt-2 grid gap-1 text-[13px] text-alo-body sm:grid-cols-2">
                 {intakes.map((option) => (
                   <li key={option.label} className="flex items-center gap-2">
                     <Clock className="h-3.5 w-3.5 text-alo-cta" />

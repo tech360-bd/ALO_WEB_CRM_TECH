@@ -136,7 +136,7 @@ export default function StudentOnboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Set Up Your Profile"
@@ -151,22 +151,22 @@ export default function StudentOnboarding() {
 
         {state === 'ready' && profile && (
           <>
-            <div className="mb-6 rounded-2xl border border-slate-200 bg-white px-5 py-4">
+            <div className="mb-6 rounded-2xl border border-[var(--alo-border)] bg-white px-5 py-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[13px] font-semibold text-slate-900">
+                <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                   {completedCount} of {STEPS.length} profile steps done
                 </p>
-                <span className="text-[12px] text-slate-500">
+                <span className="text-[12px] text-[var(--alo-text-muted)]">
                   Recorded progress: {storedPercent}%
                 </span>
               </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--alo-surface-muted)]">
                 <div
-                  className="h-full rounded-full bg-alo-blue transition-all"
+                  className="h-full rounded-full bg-alo-brand transition-all"
                   style={{ width: `${Math.max(0, Math.min(100, storedPercent))}%` }}
                 />
               </div>
-              <p className="mt-2 text-[12px] leading-relaxed text-slate-500">
+              <p className="mt-2 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                 The bar shows the progress value stored on your record. The checklist below shows what is still missing.
               </p>
             </div>
@@ -175,11 +175,11 @@ export default function StudentOnboarding() {
               className="mb-6"
               title="Your details"
               description="These must match your passport and transcripts"
-              icon={<User className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />}
+              icon={<User className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />}
             >
               <form className="space-y-3 px-5 py-4" onSubmit={save}>
                 <div className="space-y-1.5">
-                  <Label htmlFor="ob-name" className="text-[12px] font-semibold text-slate-700">Full name</Label>
+                  <Label htmlFor="ob-name" className="text-[12px] font-semibold text-[var(--alo-body)]">Full name</Label>
                   <Input
                     id="ob-name"
                     value={form.name}
@@ -192,7 +192,7 @@ export default function StudentOnboarding() {
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="ob-email" className="text-[12px] font-semibold text-slate-700">Email</Label>
+                    <Label htmlFor="ob-email" className="text-[12px] font-semibold text-[var(--alo-body)]">Email</Label>
                     <Input
                       id="ob-email"
                       type="email"
@@ -204,7 +204,7 @@ export default function StudentOnboarding() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="ob-phone" className="text-[12px] font-semibold text-slate-700">Phone</Label>
+                    <Label htmlFor="ob-phone" className="text-[12px] font-semibold text-[var(--alo-body)]">Phone</Label>
                     <Input
                       id="ob-phone"
                       value={form.phone}
@@ -218,7 +218,7 @@ export default function StudentOnboarding() {
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="ob-country" className="text-[12px] font-semibold text-slate-700">Current country</Label>
+                    <Label htmlFor="ob-country" className="text-[12px] font-semibold text-[var(--alo-body)]">Current country</Label>
                     <Input
                       id="ob-country"
                       value={form.currentCountry}
@@ -229,7 +229,7 @@ export default function StudentOnboarding() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="ob-city" className="text-[12px] font-semibold text-slate-700">Current city</Label>
+                    <Label htmlFor="ob-city" className="text-[12px] font-semibold text-[var(--alo-body)]">Current city</Label>
                     <Input
                       id="ob-city"
                       value={form.currentCity}
@@ -253,17 +253,17 @@ export default function StudentOnboarding() {
                 )}
 
                 <Button
-                  type="submit"
-                  disabled={saving}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
-                >
+ type="submit"
+ disabled={saving}
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                   {saving ? 'Saving…' : 'Save My Details'}
                 </Button>
               </form>
             </PortalCard>
 
             <PortalCard title="What to do next" description="Work through these in any order">
-              <ul className="divide-y divide-slate-200">
+              <ul className="divide-y divide-[var(--alo-border)]">
                 {STEPS.map((step, index) => {
                   const done = step.done(profile);
                   const Icon = done ? CheckCircle2 : CircleDashed;
@@ -272,18 +272,18 @@ export default function StudentOnboarding() {
                       <span
                         className={cn(
                           'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold',
-                          done ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500',
+                          done ? 'bg-emerald-600 text-white' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
                         )}
                       >
                         {index + 1}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] font-semibold text-slate-900">{step.label}</p>
-                        <p className="mt-0.5 text-[13px] leading-relaxed text-slate-600">{step.description}</p>
+                        <p className="text-[13px] font-semibold text-[var(--alo-text)]">{step.label}</p>
+                        <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{step.description}</p>
                         {step.href && (
                           <Link
                             href={step.href}
-                            className="mt-1.5 inline-block text-[13px] font-semibold text-alo-blue hover:underline"
+                            className="mt-1.5 inline-block text-[13px] font-semibold text-alo-brand hover:underline"
                           >
                             {step.id === 'courses' ? 'Open My Saved Courses' :
                               step.id === 'documents' ? 'Open Documents' : 'Book an Appointment'}
@@ -299,20 +299,20 @@ export default function StudentOnboarding() {
                   );
                 })}
               </ul>
-              <p className="px-5 py-3 text-[12px] leading-relaxed text-slate-500">
+              <p className="px-5 py-3 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                 Steps three to five are tracked on their own pages, so they show as pending here until your counselor
                 confirms them.
               </p>
             </PortalCard>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/student/appointments">
                   <GraduationCap className="mr-2 h-4 w-4" aria-hidden="true" />
                   Book a Consultation
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/ai/course-match">
                   <MapPin className="mr-2 h-4 w-4" aria-hidden="true" />
                   Find Matching Courses

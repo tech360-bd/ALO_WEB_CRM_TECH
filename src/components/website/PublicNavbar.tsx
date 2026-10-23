@@ -307,7 +307,7 @@ function BrandLockUp({ compact = false, onClick }: { compact?: boolean; onClick?
           ALO Education
         </span>
         <span
-          className={`mt-0.5 font-semibold italic text-alo-cta ${compact ? 'text-[10px]' : 'text-[11px]'}`}
+          className={`mt-0.5 font-semibold italic text-alo-cta ${compact ? 'text-[11px]' : 'text-[11px]'}`}
         >
           {TAGLINE}
         </span>

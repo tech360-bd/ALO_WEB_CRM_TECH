@@ -38,19 +38,19 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         
         <Link 
           href="/news" 
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0057B8] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to all news
         </Link>
 
         <div className="mb-8">
-          <Badge variant="outline" className="text-[#E8501A] border-[#E8501A]/30 bg-orange-50 mb-4 px-3 py-1">
+          <Badge variant="outline" className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)] mb-4 px-3 py-1">
             {article.category}
           </Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] mb-4 leading-tight">
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4 leading-tight">
             {article.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--alo-text-muted)]">
             <span className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" /> Published on {article.date}
             </span>
@@ -67,8 +67,8 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         </div>
 
         {/* Article Body */}
-        <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed space-y-6 text-lg mb-12">
-          <p className="text-xl font-medium text-slate-900 leading-relaxed">
+        <div className="prose prose-slate max-w-none text-[var(--alo-body)] leading-relaxed space-y-6 text-lg mb-12">
+          <p className="text-xl font-medium text-[var(--alo-text)] leading-relaxed">
             {article.excerpt}
           </p>
           
@@ -76,8 +76,8 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
             International education continues to evolve rapidly, presenting both fresh challenges and exciting opportunities for students planning to study abroad. At ALO Education, our primary commitment is to keep Bangladeshi students and their families updated with accurate, timely, and actionable insights.
           </p>
 
-          <h3 className="text-2xl font-bold text-[#0F172A] mt-8 mb-4">Key Takeaways for Applicants</h3>
-          <ul className="list-disc pl-6 space-y-2 text-slate-700">
+          <h3 className="text-2xl font-bold text-[var(--alo-text)] mt-8 mb-4">Key Takeaways for Applicants</h3>
+          <ul className="list-disc pl-6 space-y-2 text-[var(--alo-body)]">
             <li>Review all official destination and university eligibility criteria early.</li>
             <li>Ensure financial proof and bank documentation are fully compliant with visa guidelines.</li>
             <li>Prepare your English proficiency credentials (IELTS, PTE, TOEFL, or Duolingo) well before application deadlines.</li>
@@ -90,13 +90,13 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         </div>
 
         {/* Call to action */}
-        <div className="my-12 p-8 bg-slate-50 rounded-2xl border border-slate-200 text-center">
-          <h3 className="text-2xl font-bold text-[#0F172A] mb-2">Planning your study abroad journey?</h3>
-          <p className="text-slate-600 mb-6 max-w-xl mx-auto">
+        <div className="my-12 p-8 bg-[var(--alo-page)] rounded-2xl border border-[var(--alo-border)] text-center">
+          <h3 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Planning your study abroad journey?</h3>
+          <p className="text-[var(--alo-body)] mb-6 max-w-xl mx-auto">
             Speak with an expert ALO counselor to select the right university, prepare your application, and navigate visa requirements smoothly.
           </p>
           <Link href="/book-consultation">
-            <Button className="h-12 px-8 bg-[#E8501A] hover:bg-[#C93D13] text-black rounded-xl font-bold">
+            <Button className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black rounded-xl font-bold">
               Book Free Consultation
             </Button>
           </Link>
@@ -104,22 +104,22 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
 
         {/* Related News */}
         {relatedNews.length > 0 && (
-          <div className="pt-8 border-t border-slate-200">
-            <h3 className="text-2xl font-bold text-[#0F172A] mb-6">Related News & Articles</h3>
+          <div className="pt-8 border-t border-[var(--alo-border)]">
+            <h3 className="text-2xl font-bold text-[var(--alo-text)] mb-6">Related News & Articles</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedNews.map((rel) => (
-                <Card key={rel.slug} className="p-5 flex flex-col justify-between border border-slate-200 hover:border-[#0057B8] transition-colors">
+                <Card key={rel.slug} className="p-5 flex flex-col justify-between border border-[var(--alo-border)] hover:border-[var(--alo-brand)] transition-colors">
                   <div>
                     <Badge variant="secondary" className="mb-2 text-xs">
                       {rel.category}
                     </Badge>
-                    <h4 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 hover:text-[#0057B8]">
+                    <h4 className="font-bold text-[var(--alo-text)] text-sm mb-2 line-clamp-2 hover:text-[var(--alo-brand)]">
                       <Link href={`/news/${rel.slug}`}>
                         {rel.title}
                       </Link>
                     </h4>
                   </div>
-                  <Link href={`/news/${rel.slug}`} className="text-xs text-[#0057B8] font-semibold mt-4">
+                  <Link href={`/news/${rel.slug}`} className="text-xs text-[var(--alo-brand)] font-semibold mt-4">
                     Read article →
                   </Link>
                 </Card>

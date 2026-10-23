@@ -105,7 +105,7 @@ export function DiagramConnector({
             x={labelAt.x}
             y={labelAt.y + 3}
             textAnchor="middle"
-            className="font-mono text-[8px] uppercase tracking-[0.06em]"
+            className="font-mono text-[11px] uppercase tracking-[0.06em]"
             fill={tone === 'accent' ? T.accent : T.muted}
           >
             {label}
@@ -202,7 +202,7 @@ export function DiagramNode({
           x={rect.x + rect.w / 2}
           y={rect.y + rect.h - 10}
           textAnchor="middle"
-          className="font-mono text-[9px]"
+          className="font-mono text-[11px]"
           fill={T.muted}
         >
           {sub}
@@ -213,7 +213,7 @@ export function DiagramNode({
           x={rect.x + rect.w - 6}
           y={rect.y + 11}
           textAnchor="end"
-          className="font-mono text-[8px] uppercase tracking-[0.12em]"
+          className="font-mono text-[11px] uppercase tracking-[0.12em]"
           fill={T.soft}
         >
           {chip}
@@ -241,7 +241,7 @@ export function DiagramEyebrow({
       x={at.x}
       y={at.y}
       textAnchor={anchor}
-      className="font-mono text-[8px] font-medium uppercase tracking-[0.18em]"
+      className="font-mono text-[11px] font-medium uppercase tracking-[0.18em]"
       fill={fill}
     >
       {children}

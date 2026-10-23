@@ -223,7 +223,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
   return (
     <div className="bg-white pb-32">
       {/* Hero + Breadcrumb */}
-      <div className="border-b border-[#0057B8]/10 bg-gradient-to-b from-[#e8f0fb]/60 to-white">
+      <div className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-b from-[var(--alo-brand-light)]/60 to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
           <Breadcrumb
             items={[
@@ -243,7 +243,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
 
       <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
         {/* Filter bar */}
-        <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
+        <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white alo-shadow">
           <CardContent className="p-5 lg:p-6">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-1.5">
@@ -387,7 +387,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                     Clear all filters
                   </Button>
                 ) : (
-                  <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={handleConsultation}>
+                  <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={handleConsultation}>
                     <Icon name="CalendarCheck" className="size-4" />
                     Book a free consultation
                   </Button>
@@ -401,7 +401,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                 return (
                   <Card
                     key={`${s.name}-${i}`}
-                    className="flex flex-col rounded-2xl border-2 border-[#0057B8]/15 transition-all hover:border-[#0057B8]/40 hover:shadow-lg"
+                    className="flex flex-col rounded-2xl border-2 border-[var(--alo-brand)]/15 transition-all hover:border-[var(--alo-brand)]/40 hover:shadow-lg"
                   >
                     <CardContent className="flex flex-1 flex-col pt-5">
                       {/* Country + flag */}
@@ -409,7 +409,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                         <span className="text-lg leading-none" aria-hidden>
                           {s.flag || "🌍"}
                         </span>
-                        <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                        <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                           {s.country || "Global"}
                         </Badge>
                         {dl.near && !dl.overdue && (
@@ -427,13 +427,13 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                       </div>
 
                       {/* Name */}
-                      <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug text-[#0057B8]">
+                      <h3 className="mt-3 line-clamp-2 text-base font-bold leading-snug text-[var(--alo-brand)]">
                         {s.name || "Untitled Scholarship"}
                       </h3>
 
                       {/* Amount */}
                       <div className="mt-3 flex items-baseline gap-1.5">
-                        <span className="text-2xl font-black tabular-nums text-[#E8501A]">
+                        <span className="text-2xl font-black tabular-nums text-[var(--alo-cta)]">
                           {s.amount || "—"}
                         </span>
                         <span className="text-xs text-muted-foreground">award value</span>
@@ -466,7 +466,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                             href={s.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ml-auto inline-flex items-center gap-0.5 font-medium text-[#0057B8] hover:underline"
+                            className="ml-auto inline-flex items-center gap-0.5 font-medium text-[var(--alo-brand)] hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Icon name="ExternalLink" className="size-3" />
@@ -478,16 +478,16 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                       {/* Actions */}
                       <div className="mt-auto flex gap-2 pt-4">
                         <Button
-                          variant="outline"
-                          className="flex-1 h-10 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
-                          onClick={() => handleCheckEligibility(s)}
+ variant="outline"
+ className="flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleCheckEligibility(s)}
                         >
                           <Icon name="ClipboardCheck" className="size-4" />
                           Check Eligibility
                         </Button>
                         <Button
-                          className="flex-1 h-10 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
-                          onClick={() => handleApply(s)}
+ className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ onClick={() => handleApply(s)}
                         >
                           <Icon name="Send" className="size-4" />
                           Apply Now
@@ -503,14 +503,14 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
 
         {/* Bottom CTA */}
         <div className="mt-10">
-          <Card className="overflow-hidden rounded-2xl border-2 border-[#E8501A]/30 bg-gradient-to-br from-[#fdece4]/60 to-white">
+          <Card className="overflow-hidden rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-gradient-to-br from-[var(--alo-cta-soft)]/60 to-white">
             <CardContent className="flex flex-col items-start gap-4 pt-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-3">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#E8501A] text-white">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--alo-cta)] text-white">
                   <Icon name="Headset" className="size-6" />
                 </div>
                 <div>
-                  <p className="text-base font-bold text-[#E8501A]">Can’t find the right scholarship?</p>
+                  <p className="text-base font-bold text-[var(--alo-cta)]">Can’t find the right scholarship?</p>
                   <p className="mt-1 max-w-xl text-sm text-foreground/80">
                     Our counselors have access to 200+ university-specific bursaries, country-partnership awards, and
                     need-based grants not listed publicly. Book a free 30-minute consultation and we’ll shortlist
@@ -519,7 +519,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                 </div>
               </div>
               <Button
-                className="h-12 shrink-0 bg-[#E8501A] px-6 text-white hover:bg-[#E8501A]/90"
+                className="h-12 shrink-0 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90"
                 onClick={handleConsultation}
               >
                 <Icon name="CalendarCheck" className="size-4" />
@@ -528,7 +528,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
             </CardContent>
           </Card>
           <p className="mt-3 text-center text-xs text-muted-foreground">
-            Prefer to submit details now? Visit our <button className="font-medium text-[#0057B8] hover:underline" onClick={() => onNavigate("public-home")}>lead form</button> and an ALO counselor will contact you within 24 hours.
+            Prefer to submit details now? Visit our <button className="font-medium text-[var(--alo-brand)] hover:underline" onClick={() => onNavigate("public-home")}>lead form</button> and an ALO counselor will contact you within 24 hours.
           </p>
         </div>
 

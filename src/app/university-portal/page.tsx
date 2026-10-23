@@ -103,7 +103,7 @@ const PROPOSABLE_STAGES = [
 const DOC_STATUS_STYLE: Record<string, string> = {
   VERIFIED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
   APPROVED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  PENDING: 'border-blue-200 bg-blue-50 text-blue-800',
+  PENDING: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   REJECTED: 'border-red-200 bg-red-50 text-red-700',
   EXPIRED: 'border-amber-200 bg-amber-50 text-amber-800',
 };
@@ -350,17 +350,17 @@ export default function UniversityPortalPage() {
     const shown = copy[state];
     return (
       <div className="p-6">
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="flex flex-col items-center gap-3 pt-12 pb-12 text-center">
             {state === 'loading' ? (
-              <RefreshCw className="size-9 animate-spin text-slate-400" />
+              <RefreshCw className="size-9 animate-spin text-[var(--alo-text-muted)]" />
             ) : (
-              <Lock className="size-9 text-slate-400" />
+              <Lock className="size-9 text-[var(--alo-text-muted)]" />
             )}
-            <h1 className="text-base font-bold text-slate-900">{shown.title}</h1>
-            <p className="max-w-md text-sm text-slate-600">{message || shown.detail}</p>
+            <h1 className="text-base font-bold text-[var(--alo-text)]">{shown.title}</h1>
+            <p className="max-w-md text-sm text-[var(--alo-body)]">{message || shown.detail}</p>
             {message && state !== 'loading' && (
-              <p className="max-w-md rounded-lg bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-500">
+              <p className="max-w-md rounded-lg bg-[var(--alo-page)] px-3 py-2 font-mono text-[11px] text-[var(--alo-text-muted)]">
                 reason: {message}
               </p>
             )}
@@ -380,29 +380,29 @@ export default function UniversityPortalPage() {
     <div className="space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-            <Building2 className="size-5 text-[#0057B8]" />
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+            <Building2 className="size-5 text-[var(--alo-brand)]" />
             Institution Portal
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Applications addressed to your institution. Your institution is resolved from your
             account — it cannot be changed here.
           </p>
         </div>
         <div className="text-right">
-          <p className="font-mono text-xs font-semibold text-slate-800">{universityId}</p>
-          <p className="text-[11px] text-slate-500">{role.replace('_', ' ').toLowerCase()}</p>
+          <p className="font-mono text-xs font-semibold text-[var(--alo-text)]">{universityId}</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)]">{role.replace('_', ' ').toLowerCase()}</p>
         </div>
       </div>
 
       {/* Granted permissions, stated openly */}
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-[11px] font-semibold text-slate-600">Your permissions:</span>
+        <span className="text-[11px] font-semibold text-[var(--alo-body)]">Your permissions:</span>
         {permissions.length === 0 ? (
-          <span className="text-[11px] text-slate-500">none granted</span>
+          <span className="text-[11px] text-[var(--alo-text-muted)]">none granted</span>
         ) : (
           permissions.map((permission) => (
-            <Badge key={permission} variant="outline" className="font-mono text-[9px]">
+            <Badge key={permission} variant="outline" className="font-mono text-[11px]">
               {permission}
             </Badge>
           ))
@@ -411,16 +411,16 @@ export default function UniversityPortalPage() {
 
       {/* ---------------- Statistics ---------------- */}
       {can('view_recruitment_data') && (
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm font-bold">
-              <BarChart3 className="size-4 text-[#0057B8]" />
+              <BarChart3 className="size-4 text-[var(--alo-brand)]" />
               Recruitment statistics
             </CardTitle>
           </CardHeader>
           <CardContent>
             {statsError ? (
-              <p className="flex items-start gap-1.5 text-xs text-slate-600">
+              <p className="flex items-start gap-1.5 text-xs text-[var(--alo-body)]">
                 <Info className="mt-0.5 size-3.5 shrink-0" />
                 {statsError}
               </p>
@@ -433,9 +433,9 @@ export default function UniversityPortalPage() {
                     { label: 'Enrolled', value: stats.enrolled },
                     { label: 'Conversion', value: `${stats.conversionRate}%` },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{item.label}</p>
-                      <p className="text-2xl font-black text-slate-900">{item.value}</p>
+                    <div key={item.label} className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{item.label}</p>
+                      <p className="text-2xl font-black text-[var(--alo-text)]">{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -448,7 +448,7 @@ export default function UniversityPortalPage() {
                 {stats.byStage.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
                     {stats.byStage.map((row) => (
-                      <Badge key={row.stage} variant="outline" className="text-[10px]">
+                      <Badge key={row.stage} variant="outline" className="text-[11px]">
                         {row.stage}: {row.count}
                       </Badge>
                     ))}
@@ -456,7 +456,7 @@ export default function UniversityPortalPage() {
                 )}
               </div>
             ) : (
-              <p className="text-xs text-slate-500">Loading…</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">Loading…</p>
             )}
           </CardContent>
         </Card>
@@ -464,16 +464,16 @@ export default function UniversityPortalPage() {
 
       {/* ---------------- Deposits: counts only ---------------- */}
       {can('view_deposits') && (
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm font-bold">
-              <Wallet className="size-4 text-[#0057B8]" />
+              <Wallet className="size-4 text-[var(--alo-brand)]" />
               Deposits
             </CardTitle>
           </CardHeader>
           <CardContent>
             {depositsError ? (
-              <p className="flex items-start gap-1.5 text-xs text-slate-600">
+              <p className="flex items-start gap-1.5 text-xs text-[var(--alo-body)]">
                 <Info className="mt-0.5 size-3.5 shrink-0" />
                 {depositsError}
               </p>
@@ -485,29 +485,29 @@ export default function UniversityPortalPage() {
                     { label: 'Deposit pending', value: deposits.depositPending },
                     { label: 'Overdue', value: deposits.overdue },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{item.label}</p>
-                      <p className="text-2xl font-black text-slate-900">{item.value}</p>
+                    <div key={item.label} className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{item.label}</p>
+                      <p className="text-2xl font-black text-[var(--alo-text)]">{item.value}</p>
                     </div>
                   ))}
                 </div>
-                <p className="mt-2 text-[11px] text-slate-500">
+                <p className="mt-2 text-[11px] text-[var(--alo-text-muted)]">
                   Counts only. Payment amounts and payer identity are not exposed to institution
                   accounts.
                 </p>
               </>
             ) : (
-              <p className="text-xs text-slate-500">Loading…</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">Loading…</p>
             )}
           </CardContent>
         </Card>
       )}
 
       {/* ---------------- Applications ---------------- */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm font-bold">
-            <ClipboardCheck className="size-4 text-[#0057B8]" />
+            <ClipboardCheck className="size-4 text-[var(--alo-brand)]" />
             Applications ({total})
           </CardTitle>
         </CardHeader>
@@ -540,40 +540,40 @@ export default function UniversityPortalPage() {
           </div>
 
           {applications.length === 0 ? (
-            <p className="py-6 text-center text-sm text-slate-500">
+            <p className="py-6 text-center text-sm text-[var(--alo-text-muted)]">
               No applications match. Only applications addressed to your institution are ever listed.
             </p>
           ) : (
             <div className="space-y-2">
               {applications.map((application) => (
-                <div key={application.id} className="rounded-xl border border-slate-200">
+                <div key={application.id} className="rounded-xl border border-[var(--alo-border)]">
                   <button
                     type="button"
                     onClick={() => toggleApplication(application)}
-                    className="flex w-full flex-wrap items-center justify-between gap-2 p-3 text-left hover:bg-slate-50"
+                    className="flex w-full flex-wrap items-center justify-between gap-2 p-3 text-left hover:bg-[var(--alo-page)]"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-slate-900">
+                      <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                         {application.applicationCode || application.id}
                       </p>
-                      <p className="mt-0.5 truncate text-[11px] text-slate-600">
+                      <p className="mt-0.5 truncate text-[11px] text-[var(--alo-body)]">
                         {[application.courseName, application.level, application.intake, application.country]
                           .filter(Boolean)
                           .join(' · ') || 'No course details'}
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <Badge variant="outline" className="text-[10px]">{application.safeStatus || application.stage}</Badge>
+                      <Badge variant="outline" className="text-[11px]">{application.safeStatus || application.stage}</Badge>
                       {application.documentStatus && (
-                        <Badge variant="outline" className={`text-[9px] ${DOC_STATUS_STYLE[application.documentStatus] ?? ''}`}>
+                        <Badge variant="outline" className={`text-[11px] ${DOC_STATUS_STYLE[application.documentStatus] ?? ''}`}>
                           docs: {application.documentStatus}
                         </Badge>
                       )}
                       {application.offerStatus && (
-                        <Badge variant="outline" className="text-[9px]">offer: {application.offerStatus}</Badge>
+                        <Badge variant="outline" className="text-[11px]">offer: {application.offerStatus}</Badge>
                       )}
                       {application.deadlineDate && (
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[11px] text-[var(--alo-text-muted)]">
                           due {new Date(application.deadlineDate).toLocaleDateString()}
                         </span>
                       )}
@@ -581,37 +581,37 @@ export default function UniversityPortalPage() {
                   </button>
 
                   {openId === application.id && (
-                    <div className="space-y-3 border-t border-slate-200 p-3">
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] text-slate-500">
+                    <div className="space-y-3 border-t border-[var(--alo-border)] p-3">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-[var(--alo-text-muted)]">
                         <span>stage {application.stage}</span>
                         <span>CAS/I-20/CoE {application.casI20CoeStatus || '—'}</span>
                         <span>updated {new Date(application.updatedAt).toLocaleString()}</span>
                       </div>
 
                       <div>
-                        <p className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                          <FileText className="size-3.5 text-[#0057B8]" />
+                        <p className="flex items-center gap-1.5 text-xs font-bold text-[var(--alo-text)]">
+                          <FileText className="size-3.5 text-[var(--alo-brand)]" />
                           Documents ({documents.length})
                         </p>
                         {docsLoading ? (
-                          <p className="mt-1.5 text-[11px] text-slate-500">Loading documents…</p>
+                          <p className="mt-1.5 text-[11px] text-[var(--alo-text-muted)]">Loading documents…</p>
                         ) : docsError ? (
                           <p className="mt-1.5 rounded-lg border border-red-200 bg-red-50 p-2 text-[11px] text-red-700">
                             {docsError}
                           </p>
                         ) : documents.length === 0 ? (
-                          <p className="mt-1.5 text-[11px] text-slate-500">No documents attached.</p>
+                          <p className="mt-1.5 text-[11px] text-[var(--alo-text-muted)]">No documents attached.</p>
                         ) : (
                           <div className="mt-1.5 space-y-1">
                             {documents.map((document) => (
-                              <div key={document.id} className="flex items-center justify-between gap-2 rounded-lg border border-slate-100 bg-slate-50 px-2.5 py-1.5">
+                              <div key={document.id} className="flex items-center justify-between gap-2 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] px-2.5 py-1.5">
                                 <div className="min-w-0">
-                                  <p className="truncate text-[11px] font-semibold text-slate-800">{document.documentType}</p>
-                                  <p className="truncate font-mono text-[10px] text-slate-500">
+                                  <p className="truncate text-[11px] font-semibold text-[var(--alo-text)]">{document.documentType}</p>
+                                  <p className="truncate font-mono text-[11px] text-[var(--alo-text-muted)]">
                                     {document.fileName || 'no file name'} · v{document.version}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className={`shrink-0 text-[9px] ${DOC_STATUS_STYLE[document.status] ?? ''}`}>
+                                <Badge variant="outline" className={`shrink-0 text-[11px] ${DOC_STATUS_STYLE[document.status] ?? ''}`}>
                                   {document.status}
                                 </Badge>
                               </div>
@@ -620,7 +620,7 @@ export default function UniversityPortalPage() {
                         )}
                       </div>
 
-                      <div className="flex flex-wrap gap-1.5 border-t border-slate-100 pt-2.5">
+                      <div className="flex flex-wrap gap-1.5 border-t border-[var(--alo-border)] pt-2.5">
                         {can('request_documents') && (
                           <Button variant="outline" size="sm" onClick={() => void requestDocument(application)}>
                             <FileText className="mr-1.5 size-3.5" />
@@ -634,7 +634,7 @@ export default function UniversityPortalPage() {
                           </Button>
                         )}
                         {!can('request_documents') && !can('update_application_status') && (
-                          <p className="text-[11px] text-slate-500">
+                          <p className="text-[11px] text-[var(--alo-text-muted)]">
                             Your account has read access only for this application.
                           </p>
                         )}
@@ -650,14 +650,14 @@ export default function UniversityPortalPage() {
 
       {/* ---------------- Proposal dialog ---------------- */}
       {proposeFor && (
-        <Card className="rounded-2xl border-2 border-[#0057B8]/30">
+        <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/30">
           <CardHeader>
             <CardTitle className="text-sm font-bold">
               Propose a status change — {proposeFor.applicationCode || proposeFor.id}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="rounded-lg border border-blue-200 bg-blue-50 p-2.5 text-[11px] text-blue-900">
+            <p className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-2.5 text-[11px] text-[var(--alo-brand-deep)]">
               This creates a PROPOSAL for ALO to review. It does not change the student&apos;s record.
               Current stage: <strong className="font-mono">{proposeFor.stage}</strong>.
             </p>
@@ -666,7 +666,7 @@ export default function UniversityPortalPage() {
               <select
                 value={proposedStage}
                 onChange={(event) => setProposedStage(event.target.value)}
-                className="h-9 w-full max-w-sm rounded-lg border border-slate-200 bg-white px-2 text-xs"
+                className="h-9 w-full max-w-sm rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs"
               >
                 <option value="">Select a stage…</option>
                 {PROPOSABLE_STAGES.map((option) => (

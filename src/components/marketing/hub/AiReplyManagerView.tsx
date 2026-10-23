@@ -81,14 +81,14 @@ const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
   high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
   urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
   medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
-  low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
-  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+  low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
+  normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
 function priorityBadge(priority?: string) {
   const key = (priority || 'normal').toLowerCase();
   const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function formatTimestamp(value?: string | null): string {
@@ -335,7 +335,7 @@ export default function AiReplyManagerView() {
                         <TableRow key={trigger.id}>
                           <TableCell>
                             <p className="font-medium">{trigger.keyword}</p>
-                            <p className="text-muted-foreground text-[10px]">
+                            <p className="text-muted-foreground text-[11px]">
                               {trigger.keywordType || 'EXACT'}
                             </p>
                           </TableCell>
@@ -346,13 +346,13 @@ export default function AiReplyManagerView() {
                           <TableCell>
                             <div className="flex flex-wrap gap-1">
                               {trigger.autoCreateLead ? (
-                                <Badge variant="outline" className="text-[10px]">Lead</Badge>
+                                <Badge variant="outline" className="text-[11px]">Lead</Badge>
                               ) : null}
                               {trigger.autoAssignCounselor ? (
-                                <Badge variant="outline" className="text-[10px]">Assign</Badge>
+                                <Badge variant="outline" className="text-[11px]">Assign</Badge>
                               ) : null}
                               {trigger.sendPortalLink ? (
-                                <Badge variant="outline" className="text-[10px]">Portal link</Badge>
+                                <Badge variant="outline" className="text-[11px]">Portal link</Badge>
                               ) : null}
                             </div>
                           </TableCell>
@@ -360,10 +360,10 @@ export default function AiReplyManagerView() {
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className={`text-[10px] ${
+                              className={`text-[11px] ${
                                 trigger.status === 'ACTIVE'
                                   ? 'bg-green-100 text-green-700 border-green-200'
-                                  : 'bg-gray-100 text-gray-600 border-gray-200'
+                                  : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'
                               }`}
                             >
                               {trigger.status || 'UNKNOWN'}
@@ -442,7 +442,7 @@ export default function AiReplyManagerView() {
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className={`text-[10px] ${
+                              className={`text-[11px] ${
                                 thread.isAiHandled
                                   ? 'bg-violet-100 text-violet-700 border-violet-200'
                                   : 'bg-sky-100 text-sky-700 border-sky-200'
@@ -451,7 +451,7 @@ export default function AiReplyManagerView() {
                               {thread.isAiHandled ? 'AI' : 'Human'}
                             </Badge>
                             {thread.needsHumanTakeover ? (
-                              <Badge variant="outline" className="mt-1 bg-red-100 text-red-700 text-[10px]">
+                              <Badge variant="outline" className="mt-1 bg-red-100 text-red-700 text-[11px]">
                                 Needs takeover
                               </Badge>
                             ) : null}
@@ -532,11 +532,11 @@ export default function AiReplyManagerView() {
                             </p>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {(log.routingReason || 'unspecified').replace(/_/g, ' ')}
                             </Badge>
                             {log.fallbackUsed ? (
-                              <Badge variant="outline" className="mt-1 bg-amber-100 text-amber-700 text-[10px]">
+                              <Badge variant="outline" className="mt-1 bg-amber-100 text-amber-700 text-[11px]">
                                 Fallback used
                               </Badge>
                             ) : null}

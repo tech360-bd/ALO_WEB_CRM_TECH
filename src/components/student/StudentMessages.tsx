@@ -113,7 +113,7 @@ function SourceIcon({ source }: { source: MessageSource }) {
     case 'whatsapp':
       return <MessageSquare className="w-3 h-3 text-green-600" />;
     case 'email':
-      return <Mail className="w-3 h-3 text-slate-500" />;
+      return <Mail className="w-3 h-3 text-[var(--alo-text-muted)]" />;
     default:
       return null;
   }
@@ -146,10 +146,10 @@ function MessageBubble({ message }: { message: Message }) {
         <Avatar className="w-7 h-7 shrink-0 mt-1">
           <AvatarFallback
             className={cn(
-              'text-[10px] font-semibold',
+              'text-[11px] font-semibold',
               isAi
                 ? 'bg-purple-100 text-purple-700'
-                : 'bg-blue-100 text-blue-700'
+                : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
             )}
           >
             {isAi ? <Bot className="w-3.5 h-3.5" /> : 'SK'}
@@ -163,10 +163,10 @@ function MessageBubble({ message }: { message: Message }) {
           className={cn(
             'rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line',
             isSent
-              ? 'bg-blue-600 text-white rounded-tr-md'
+              ? 'bg-[var(--alo-brand)] text-white rounded-tr-md'
               : isAi
                 ? 'bg-purple-50 text-purple-900 border border-purple-200 rounded-tl-md'
-                : 'bg-slate-100 text-slate-900 rounded-tl-md'
+                : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-md'
           )}
         >
           {message.content}
@@ -181,14 +181,14 @@ function MessageBubble({ message }: { message: Message }) {
         >
           {/* Source icon */}
           <SourceIcon source={message.source} />
-          <span className="text-[10px] text-slate-400">{message.timestamp}</span>
+          <span className="text-[11px] text-[var(--alo-text-muted)]">{message.timestamp}</span>
           {/* Read receipt for sent messages */}
           {isSent && (
-            <span className="text-blue-500">
+            <span className="text-[var(--alo-brand)]">
               {message.isRead ? (
                 <CheckCheck className="w-3.5 h-3.5" />
               ) : (
-                <Check className="w-3.5 h-3.5 text-slate-400" />
+                <Check className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />
               )}
             </span>
           )}
@@ -200,14 +200,14 @@ function MessageBubble({ message }: { message: Message }) {
             {message.attachments.map((att) => (
               <div
                 key={att.id}
-                className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50 transition-colors cursor-pointer"
+                className="flex items-center gap-2 bg-white border border-[var(--alo-border)] rounded-lg px-3 py-1.5 hover:bg-[var(--alo-page)] transition-colors cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5 text-blue-600" />
+                <FileText className="w-3.5 h-3.5 text-[var(--alo-brand)]" />
                 <div>
-                  <p className="text-xs font-medium text-slate-700">{att.name}</p>
-                  <p className="text-[10px] text-slate-400">{att.size}</p>
+                  <p className="text-xs font-medium text-[var(--alo-body)]">{att.name}</p>
+                  <p className="text-[11px] text-[var(--alo-text-muted)]">{att.size}</p>
                 </div>
-                <Download className="w-3.5 h-3.5 text-slate-400 ml-1" />
+                <Download className="w-3.5 h-3.5 text-[var(--alo-text-muted)] ml-1" />
               </div>
             ))}
           </div>
@@ -352,8 +352,8 @@ export default function StudentMessages() {
           <Skeleton className="h-8 w-36 mb-2" />
           <Skeleton className="h-4 w-64" />
         </div>
-        <div className="flex-1 flex min-h-0 border border-slate-200 rounded-xl overflow-hidden">
-          <div className="w-80 border-r border-slate-200 p-4 space-y-3">
+        <div className="flex-1 flex min-h-0 border border-[var(--alo-border)] rounded-xl overflow-hidden">
+          <div className="w-80 border-r border-[var(--alo-border)] p-4 space-y-3">
             {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 rounded-lg" />)}
           </div>
           <div className="flex-1 p-4 space-y-3">
@@ -368,28 +368,28 @@ export default function StudentMessages() {
     <div className="h-[calc(100vh-8rem)] flex flex-col">
       {/* Page header */}
       <div className="shrink-0 mb-4">
-        <h1 className="text-2xl font-bold text-slate-900">Messages</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-[var(--alo-text)]">Messages</h1>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1">
           Communicate with your counselor and track application updates
         </p>
       </div>
 
       {/* Main messaging layout */}
-      <div className="flex-1 flex min-h-0 border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm">
+      <div className="flex-1 flex min-h-0 border border-[var(--alo-border)] rounded-xl bg-white overflow-hidden shadow-sm">
         {/* ============ LEFT: Conversation List ============ */}
         <div
           className={cn(
-            'w-80 border-r border-slate-200 flex flex-col shrink-0 bg-white',
+            'w-80 border-r border-[var(--alo-border)] flex flex-col shrink-0 bg-white',
             mobileShowThread ? 'hidden md:flex' : 'flex'
           )}
         >
           {/* Search */}
-          <div className="p-3 border-b border-slate-100">
+          <div className="p-3 border-b border-[var(--alo-border)]">
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" />
               <Input
                 placeholder="Search conversations..."
-                className="pl-9 h-9 text-sm bg-slate-50 border-slate-200"
+                className="pl-9 h-9 text-sm bg-[var(--alo-page)] border-[var(--alo-border)]"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -403,12 +403,12 @@ export default function StudentMessages() {
                 <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center">
                   <Sparkles className="w-3.5 h-3.5 text-purple-600" />
                 </div>
-                <span className="text-xs font-semibold text-slate-900 flex-1 text-left">
+                <span className="text-xs font-semibold text-[var(--alo-text)] flex-1 text-left">
                   Ask AI anything about your application
                 </span>
                 <ChevronDown
                   className={cn(
-                    'w-3.5 h-3.5 text-slate-400 transition-transform',
+                    'w-3.5 h-3.5 text-[var(--alo-text-muted)] transition-transform',
                     aiOpen && 'rotate-180'
                   )}
                 />
@@ -442,8 +442,8 @@ export default function StudentMessages() {
                 className={cn(
                   'text-[11px] px-2.5 py-1 rounded-full transition-colors font-medium',
                   activeFilter === opt.value
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[var(--alo-brand)] text-white'
+                    : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200'
                 )}
               >
                 {opt.label}
@@ -462,11 +462,11 @@ export default function StudentMessages() {
                    could not check. */
                 <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
                   <AlertTriangle className="size-8 text-amber-500 mb-3" />
-                  <p className="text-sm font-semibold text-slate-800">
+                  <p className="text-sm font-semibold text-[var(--alo-text)]">
                     Messages could not be loaded
                   </p>
-                  <p className="mt-1 text-xs text-slate-500 max-w-[220px]">{loadError}</p>
-                  <p className="mt-2 text-[11px] text-slate-400 max-w-[220px]">
+                  <p className="mt-1 text-xs text-[var(--alo-text-muted)] max-w-[220px]">{loadError}</p>
+                  <p className="mt-2 text-[11px] text-[var(--alo-text-muted)] max-w-[220px]">
                     This does not mean you have no messages.
                   </p>
                   <Button
@@ -482,18 +482,18 @@ export default function StudentMessages() {
               ) : loading ? (
                 <div className="space-y-2 p-2">
                   {[0, 1, 2].map((row) => (
-                    <div key={row} className="h-16 animate-pulse rounded-lg bg-slate-100" />
+                    <div key={row} className="h-16 animate-pulse rounded-lg bg-[var(--alo-surface-muted)]" />
                   ))}
                 </div>
               ) : filteredConversations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
-                  <MessageSquare className="size-8 text-slate-300 mb-3" />
-                  <p className="text-sm font-medium text-slate-500">
+                  <MessageSquare className="size-8 text-[var(--alo-placeholder)] mb-3" />
+                  <p className="text-sm font-medium text-[var(--alo-text-muted)]">
                     {conversations.length === 0
                       ? 'No conversations yet'
                       : 'No conversations match this filter'}
                   </p>
-                  <p className="mt-1 text-xs text-slate-400 max-w-[220px]">
+                  <p className="mt-1 text-xs text-[var(--alo-text-muted)] max-w-[220px]">
                     {conversations.length === 0
                       ? 'Messages from your counselor and the ALO team will appear here.'
                       : 'Try a different filter or search term.'}
@@ -507,8 +507,8 @@ export default function StudentMessages() {
                   className={cn(
                     'w-full flex items-start gap-3 p-3 rounded-lg transition-colors text-left',
                     activeThreadId === conv.id
-                      ? 'bg-blue-50 border-l-[3px] border-blue-600'
-                      : 'hover:bg-slate-50'
+                      ? 'bg-[var(--alo-brand-pale)] border-l-[3px] border-[var(--alo-brand)]'
+                      : 'hover:bg-[var(--alo-page)]'
                   )}
                 >
                   <div className="relative shrink-0">
@@ -519,8 +519,8 @@ export default function StudentMessages() {
                           conv.type === 'ai'
                             ? 'bg-purple-100 text-purple-700'
                             : conv.type === 'application'
-                              ? 'bg-orange-100 text-orange-700'
-                              : 'bg-blue-100 text-blue-700'
+                              ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
+                              : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                         )}
                       >
                         {conv.type === 'ai' ? (
@@ -540,33 +540,33 @@ export default function StudentMessages() {
                       <span
                         className={cn(
                           'text-sm font-medium truncate',
-                          activeThreadId === conv.id ? 'text-blue-700' : 'text-slate-900'
+                          activeThreadId === conv.id ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]'
                         )}
                       >
                         {conv.name}
                       </span>
-                      <span className="text-[10px] text-slate-400 shrink-0">
+                      <span className="text-[11px] text-[var(--alo-text-muted)] shrink-0">
                         {conv.lastTimestamp}
                       </span>
                     </div>
                     <Badge
                       variant="secondary"
                       className={cn(
-                        'text-[9px] px-1 py-0 mb-1',
-                        conv.type === 'counselor' && 'bg-blue-50 text-blue-600',
-                        conv.type === 'application' && 'bg-orange-50 text-orange-600',
+                        'text-[11px] px-1 py-0 mb-1',
+                        conv.type === 'counselor' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+                        conv.type === 'application' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
                         conv.type === 'ai' && 'bg-purple-50 text-purple-600'
                       )}
                     >
                       {conv.role}
                     </Badge>
-                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                    <p className="text-xs text-[var(--alo-text-muted)] line-clamp-1 mt-0.5">
                       {conv.lastMessage}
                     </p>
                   </div>
 
                   {conv.unreadCount > 0 && (
-                    <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold shrink-0 mt-1">
+                    <span className="w-5 h-5 rounded-full bg-[var(--alo-brand)] text-white text-[11px] flex items-center justify-center font-bold shrink-0 mt-1">
                       {conv.unreadCount}
                     </span>
                   )}
@@ -586,7 +586,7 @@ export default function StudentMessages() {
           {activeThread && visibleMessages ? (
             <>
               {/* Thread header */}
-              <div className="shrink-0 px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+              <div className="shrink-0 px-4 py-3 border-b border-[var(--alo-border)] flex items-center gap-3">
                 {/* Back button (mobile) */}
                 <Button
                   variant="ghost"
@@ -604,8 +604,8 @@ export default function StudentMessages() {
                       activeThread.type === 'ai'
                         ? 'bg-purple-100 text-purple-700'
                         : activeThread.type === 'application'
-                          ? 'bg-orange-100 text-orange-700'
-                          : 'bg-blue-100 text-blue-700'
+                          ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
+                          : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                     )}
                   >
                     {activeThread.type === 'ai' ? (
@@ -618,15 +618,15 @@ export default function StudentMessages() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-900 truncate">
+                    <span className="text-sm font-semibold text-[var(--alo-text)] truncate">
                       {activeThread.name}
                     </span>
                     <Badge
                       variant="secondary"
                       className={cn(
-                        'text-[10px] px-1.5 py-0',
-                        activeThread.type === 'counselor' && 'bg-blue-50 text-blue-600',
-                        activeThread.type === 'application' && 'bg-orange-50 text-orange-600',
+                        'text-[11px] px-1.5 py-0',
+                        activeThread.type === 'counselor' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+                        activeThread.type === 'application' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
                         activeThread.type === 'ai' && 'bg-purple-50 text-purple-600'
                       )}
                     >
@@ -635,7 +635,7 @@ export default function StudentMessages() {
                     {activeThread.isOnline && (
                       <span className="flex items-center gap-1">
                         <span className="w-2 h-2 bg-emerald-500 rounded-full" />
-                        <span className="text-[10px] text-emerald-600 font-medium">Online</span>
+                        <span className="text-[11px] text-emerald-600 font-medium">Online</span>
                       </span>
                     )}
                   </div>
@@ -653,19 +653,19 @@ export default function StudentMessages() {
               </ScrollArea>
 
               {/* Message input */}
-              <div className="shrink-0 border-t border-slate-100 p-3">
+              <div className="shrink-0 border-t border-[var(--alo-border)] p-3">
                 <div className="flex items-end gap-2">
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="ghost"
                     size="icon"
-                    className="shrink-0 text-slate-400 hover:text-slate-600"
+                    className="shrink-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
                   <div className="flex-1 relative">
                     <Textarea
                       placeholder="Type a message..."
-                      className="min-h-[40px] max-h-32 resize-none text-sm pr-10 bg-slate-50 border-slate-200 rounded-xl"
+                      className="min-h-[40px] max-h-32 resize-none text-sm pr-10 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-xl"
                       rows={1}
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}
@@ -678,11 +678,11 @@ export default function StudentMessages() {
                     />
                   </div>
                   <Button
-                    size="icon"
-                    className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 w-10"
-                    onClick={handleSend}
-                    disabled={!messageInput.trim()}
-                  >
+ size="icon"
+ className="shrink-0 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-xl size-12 "
+ onClick={handleSend}
+ disabled={!messageInput.trim()}
+ >
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
@@ -691,8 +691,8 @@ export default function StudentMessages() {
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <MessageSquare className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-sm text-slate-500">Select a conversation to start messaging</p>
+                <MessageSquare className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                <p className="text-sm text-[var(--alo-text-muted)]">Select a conversation to start messaging</p>
               </div>
             </div>
           )}

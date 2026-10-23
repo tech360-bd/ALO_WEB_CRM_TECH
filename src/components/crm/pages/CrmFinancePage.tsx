@@ -14,8 +14,8 @@ const statusColors: Record<string, string> = {
   completed: 'bg-emerald-100 text-emerald-700',
   pending: 'bg-yellow-100 text-yellow-700',
   failed: 'bg-red-100 text-red-700',
-  refunded: 'bg-gray-100 text-gray-600',
-  partial: 'bg-orange-100 text-orange-700',
+  refunded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
+  partial: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
 };
 
 export default function CrmFinancePage() {
@@ -113,12 +113,12 @@ export default function CrmFinancePage() {
                   </thead>
                   <tbody>
                     {filtered.map((p) => (
-                      <tr key={p.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                      <tr key={p.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                         <td className="py-3 font-medium text-alo-text">{p.studentName || p.studentId || 'N/A'}</td>
                         <td className="py-3 text-alo-text-secondary">{p.paymentType || p.type}</td>
                         <td className="py-3 font-semibold text-alo-text">{p.currency === 'BDT' ? '৳' : '$'}{p.amount}</td>
                         <td className="py-3 text-alo-text-secondary">{p.currency}</td>
-                        <td className="py-3"><Badge className={statusColors[p.status] || 'bg-gray-100 text-gray-700'}>{p.status}</Badge></td>
+                        <td className="py-3"><Badge className={statusColors[p.status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{p.status}</Badge></td>
                         <td className="py-3 text-alo-text-muted">{p.createdAt?.substring(0, 10)}</td>
                         <td className="py-3 text-right">
                           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>

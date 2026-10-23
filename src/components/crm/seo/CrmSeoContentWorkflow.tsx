@@ -55,9 +55,9 @@ interface ReviewItem {
 // ── Mock Data ────────────────────────────────────────────────────────────────
 
 const pipelineCards = [
-  { label: 'Research', count: 12, color: 'bg-blue-500/10 text-blue-600 border-blue-500/20', icon: Search },
+  { label: 'Research', count: 12, color: 'bg-blue-500/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20', icon: Search },
   { label: 'Draft', count: 8, color: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20', icon: PenLine },
-  { label: 'In Review', count: 5, color: 'bg-orange-500/10 text-orange-600 border-orange-500/20', icon: ClipboardCheck },
+  { label: 'In Review', count: 5, color: 'bg-[var(--alo-cta)]/10 text-[var(--alo-cta-active)] border-[var(--alo-cta)]/20', icon: ClipboardCheck },
   { label: 'Approved', count: 3, color: 'bg-green-500/10 text-green-600 border-green-500/20', icon: CheckCircle2 },
   { label: 'Published', count: 24, color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', icon: Globe },
 ];
@@ -95,12 +95,12 @@ const priorityColor: Record<Priority, string> = { P0: 'bg-red-500/10 text-red-60
 const contentTypeColor: Record<ContentType, string> = { 'Money Page': 'bg-violet-500/10 text-violet-600 border-violet-500/20', 'Support': 'bg-sky-500/10 text-sky-600 border-sky-500/20', 'Trust': 'bg-teal-500/10 text-teal-600 border-teal-500/20', 'Cluster': 'bg-pink-500/10 text-pink-600 border-pink-500/20' };
 const riskColor: Record<ReviewRisk, string> = { High: 'bg-red-500/10 text-red-600 border-red-500/20', Medium: 'bg-amber-500/10 text-amber-600 border-amber-500/20', Low: 'bg-green-500/10 text-green-600 border-green-500/20' };
 const reviewTypeIcon: Record<ReviewType, React.ElementType> = { 'Immigration Fact-check': ShieldCheck, 'SEO Review': BarChart3, 'Compliance': Gavel };
-const approvalColor: Record<string, string> = { Pending: 'bg-yellow-500/10 text-yellow-600', Approved: 'bg-green-500/10 text-green-600', 'Changes Requested': 'bg-orange-500/10 text-orange-600', Rejected: 'bg-red-500/10 text-red-600' };
+const approvalColor: Record<string, string> = { Pending: 'bg-yellow-500/10 text-yellow-600', Approved: 'bg-green-500/10 text-green-600', 'Changes Requested': 'bg-[var(--alo-cta)]/10 text-[var(--alo-cta-active)]', Rejected: 'bg-red-500/10 text-red-600' };
 
 const kanbanColumns: KanbanStatus[] = ['TO DO', 'DRAFT', 'IN REVIEW', 'PUBLISHED'];
 
 const destinationColor = (d: string) => {
-  const map: Record<string, string> = { UK: 'bg-blue-100 text-blue-700', USA: 'bg-red-100 text-red-700', Canada: 'bg-red-100 text-red-800', Australia: 'bg-amber-100 text-amber-700', Germany: 'bg-yellow-100 text-yellow-700' };
+  const map: Record<string, string> = { UK: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', USA: 'bg-red-100 text-red-700', Canada: 'bg-red-100 text-red-800', Australia: 'bg-amber-100 text-amber-700', Germany: 'bg-yellow-100 text-yellow-700' };
   return map[d] || 'bg-zinc-100 text-zinc-700';
 };
 
@@ -138,13 +138,13 @@ function ContentKanbanCard({ item }: { item: ContentCard }) {
         <span className="truncate">{item.url}</span>
       </div>
       <div className="flex flex-wrap gap-1">
-        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${destinationColor(item.destination)}`}>{item.destination}</Badge>
-        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${priorityColor[item.priority]}`}>{item.priority}</Badge>
-        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${contentTypeColor[item.contentType]}`}>{item.contentType}</Badge>
+        <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${destinationColor(item.destination)}`}>{item.destination}</Badge>
+        <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${priorityColor[item.priority]}`}>{item.priority}</Badge>
+        <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${contentTypeColor[item.contentType]}`}>{item.contentType}</Badge>
       </div>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{item.wordCount > 0 ? `${item.wordCount.toLocaleString()} words` : 'Not started'}</span>
-        <span className={`text-[10px] px-1.5 py-0 rounded ${approvalColor[item.approvalStatus]}`}>{item.approvalStatus}</span>
+        <span className={`text-[11px] px-1.5 py-0 rounded ${approvalColor[item.approvalStatus]}`}>{item.approvalStatus}</span>
       </div>
       <Separator className="my-1" />
       <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -165,7 +165,7 @@ function KanbanBoard() {
           <div key={col} className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={`w-2.5 h-2.5 rounded-full ${col === 'TO DO' ? 'bg-zinc-400' : col === 'DRAFT' ? 'bg-yellow-500' : col === 'IN REVIEW' ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                <div className={`w-2.5 h-2.5 rounded-full ${col === 'TO DO' ? 'bg-zinc-400' : col === 'DRAFT' ? 'bg-yellow-500' : col === 'IN REVIEW' ? 'bg-[var(--alo-cta)]' : 'bg-emerald-500'}`} />
                 <h3 className="text-sm font-semibold">{col}</h3>
               </div>
               <Badge variant="secondary" className="text-xs h-5 min-w-[24px] flex items-center justify-center">{items.length}</Badge>
@@ -214,16 +214,16 @@ function ContentBacklog() {
                   <td className="px-3 py-2.5 max-w-[200px]"><span className="font-medium line-clamp-1 block">{c.title}</span></td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground font-mono whitespace-nowrap">{c.url}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate">{c.targetKeyword}</td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className="text-[10px] px-1.5 py-0">{c.intent}</Badge></td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${priorityColor[c.priority]}`}>{c.priority}</Badge></td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${approvalColor[c.approvalStatus]}`}>{c.approvalStatus}</Badge></td>
-                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${contentTypeColor[c.contentType]}`}>{c.contentType}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className="text-[11px] px-1.5 py-0">{c.intent}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${priorityColor[c.priority]}`}>{c.priority}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${approvalColor[c.approvalStatus]}`}>{c.approvalStatus}</Badge></td>
+                  <td className="px-3 py-2.5"><Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${contentTypeColor[c.contentType]}`}>{c.contentType}</Badge></td>
                   <td className="px-3 py-2.5 text-xs tabular-nums">{c.wordCount > 0 ? c.wordCount.toLocaleString() : '—'}</td>
                   <td className="px-3 py-2.5 text-xs whitespace-nowrap">{c.writer.split(' ')[0]}</td>
                   <td className="px-3 py-2.5 text-xs whitespace-nowrap">{c.reviewer.split(' ')[0]}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">{c.lastUpdated}</td>
                   <td className="px-3 py-2.5">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 text-xs"><Eye className="h-3 w-3 mr-1" />View</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 "><Eye className="h-3 w-3 mr-1" />View</Button>
                   </td>
                 </tr>
               ))}
@@ -246,8 +246,8 @@ function ReviewQueuePanel() {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-sm font-semibold">{r.title}</p>
-                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${riskColor[r.riskLevel]}`}>{r.riskLevel} Risk</Badge>
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-muted"><Icon className="h-3 w-3 mr-1 inline" />{r.reviewType}</Badge>
+                  <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${riskColor[r.riskLevel]}`}>{r.riskLevel} Risk</Badge>
+                  <Badge variant="outline" className="text-[11px] px-1.5 py-0 bg-muted"><Icon className="h-3 w-3 mr-1 inline" />{r.reviewType}</Badge>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1"><User className="h-3 w-3" />{r.reviewer}</span>
@@ -255,9 +255,9 @@ function ReviewQueuePanel() {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-8 text-xs bg-green-600 hover:bg-green-700"><ThumbsUp className="h-3 w-3 mr-1" />Approve</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-xs"><Edit3 className="h-3 w-3 mr-1" />Changes</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"><XCircle className="h-3 w-3 mr-1" />Reject</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className=" bg-green-600 hover:bg-green-700"><ThumbsUp className="h-3 w-3 mr-1" />Approve</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" "><Edit3 className="h-3 w-3 mr-1" />Changes</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-red-600 hover:text-red-700 hover:bg-red-50"><XCircle className="h-3 w-3 mr-1" />Reject</Button>
               </div>
             </div>
           </Card>
@@ -312,7 +312,7 @@ function SourceVerificationPanel() {
               <div className="flex items-center gap-2 mb-1">
                 <r.icon className={`h-4 w-4 ${r.needed ? 'text-amber-600' : 'text-muted-foreground'}`} />
                 <p className="text-xs font-semibold">{r.role}</p>
-                {r.needed && <Badge variant="outline" className="text-[10px] px-1.5 py-0 ml-auto text-amber-600 border-amber-500/30">Required</Badge>}
+                {r.needed && <Badge variant="outline" className="text-[11px] px-1.5 py-0 ml-auto text-amber-600 border-amber-500/30">Required</Badge>}
               </div>
               <p className="text-[11px] text-muted-foreground">{r.desc}</p>
             </div>
@@ -321,8 +321,8 @@ function SourceVerificationPanel() {
       </div>
       <Separator />
       <div className="flex items-center gap-3">
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="text-xs"><RefreshCw className="h-3 w-3 mr-1" />Re-verify Sources</Button>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-xs"><Send className="h-3 w-3 mr-1" />Request Expert Review</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className=""><RefreshCw className="h-3 w-3 mr-1" />Re-verify Sources</Button>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=""><Send className="h-3 w-3 mr-1" />Request Expert Review</Button>
       </div>
     </Card>
   );
@@ -331,7 +331,7 @@ function SourceVerificationPanel() {
 // ── Main Component ───────────────────────────────────────────────────────────
 
 export default function CrmSeoContentWorkflow() {
- return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Content Workflow</h1><p role="status">The historical workflow mock is not a persisted publishing queue. Use the existing draft workbench; approval is not publication.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Content Workflow</h1><p role="status">The historical workflow mock is not a persisted publishing queue. Use the existing draft workbench; approval is not publication.</p><a href="/crm/seo-manager" className="text-[var(--alo-brand)] underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
 }
 /** Historical design fixture; not an operational dashboard. */
 function LegacyUnverifiedCrmSeoContentWorkflow() {

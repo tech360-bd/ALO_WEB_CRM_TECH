@@ -100,7 +100,7 @@ export default function HrDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Users className="w-4 h-4 text-alo-brand" /> Employee Directory
                 </CardTitle>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-xs text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className=" text-alo-brand">View All <ChevronRight className="w-3.5 h-3.5" /></Button>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
@@ -123,7 +123,7 @@ export default function HrDashboard() {
                         <TableCell className="text-sm text-alo-text-secondary">{e.dept}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary">{e.branch}</TableCell>
                         <TableCell className="text-right">
-                          <Badge variant={e.status === 'present' ? 'success' : e.status === 'leave' ? 'warning' : 'danger'} className="text-[10px]">
+                          <Badge variant={e.status === 'present' ? 'success' : e.status === 'leave' ? 'warning' : 'danger'} className="text-[11px]">
                             {e.status}
                           </Badge>
                         </TableCell>
@@ -150,7 +150,7 @@ export default function HrDashboard() {
                       <p className="text-sm font-medium text-alo-text">{d.name}</p>
                     </div>
                     <div className="flex-1">
-                      <div className="relative h-7 rounded-lg bg-gray-100 overflow-hidden">
+                      <div className="relative h-7 rounded-lg bg-[var(--alo-surface-muted)] overflow-hidden">
                         <div className="h-full bg-emerald-500 rounded-l-lg" style={{ width: `${(d.present / d.headcount) * 100}%` }} />
                         <div className="absolute inset-0 flex items-center justify-center text-[11px] font-medium text-alo-text">
                           {d.present} present / {d.onLeave} leave
@@ -183,13 +183,13 @@ export default function HrDashboard() {
                   <div key={l.employee} className="p-2.5 rounded-lg border border-alo-border hover:bg-alo-brand-light/20 transition-colors">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{l.employee}</p>
-                      <Badge variant={l.status === 'approved' ? 'success' : 'warning'} className="text-[10px]">{l.status}</Badge>
+                      <Badge variant={l.status === 'approved' ? 'success' : 'warning'} className="text-[11px]">{l.status}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">{l.type} · {l.from} to {l.to} ({l.days}d)</p>
                     {l.status === 'pending' && (
                       <div className="flex gap-1 mt-1.5">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[10px] h-6 px-2">Approve</Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[10px] h-6 px-2">Reject</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[11px] h-6 px-2">Approve</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[11px] h-6 px-2">Reject</Button>
                       </div>
                     )}
                   </div>
@@ -219,7 +219,7 @@ export default function HrDashboard() {
                       <p className="text-sm font-medium text-alo-text">{s.month}</p>
                       <p className="text-[11px] text-alo-text-muted">{s.amount}</p>
                     </div>
-                    <Badge variant={s.status === 'paid' ? 'success' : 'warning'} className="text-[10px]">{s.status}</Badge>
+                    <Badge variant={s.status === 'paid' ? 'success' : 'warning'} className="text-[11px]">{s.status}</Badge>
                   </div>
                 ))}
               </div>

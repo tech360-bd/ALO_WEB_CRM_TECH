@@ -227,9 +227,9 @@ export default function EnglishTestHub() {
                   description: 'Try a different search term, or clear the filters to see every English and standardised test we support.',
                   action: (
                     <Button
-                      variant="outline"
-                      className="mt-2 h-11 rounded-button border-alo-border px-5 text-[14px] font-semibold"
-                      onClick={() => {
+ variant="outline"
+ className="mt-2 rounded-button border-alo-border px-5 text-[14px] font-semibold"
+ onClick={() => {
                         setQuery('');
                         setType('all');
                       }}

@@ -51,11 +51,11 @@ function renderCellValue(course: Course, key: string): React.ReactNode {
       return course.hasScholarship ? (
         <Badge className="bg-emerald-600 text-white text-xs">Available</Badge>
       ) : (
-        <span className="text-slate-400">None</span>
+        <span className="text-[var(--alo-text-muted)]">None</span>
       );
     case 'studyLevel':
       return (
-        <Badge variant="secondary" className="bg-slate-100 text-slate-700 text-xs">
+        <Badge variant="secondary" className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)] text-xs">
           {course.studyLevel}
         </Badge>
       );
@@ -80,11 +80,11 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
   if (courses.length === 0) {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center text-center p-8">
-        <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-          <GitCompare className="size-10 text-slate-300" />
+        <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-4">
+          <GitCompare className="size-10 text-[var(--alo-placeholder)]" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-700">Select courses to compare</h3>
-        <p className="text-sm text-slate-500 mt-1 max-w-md">
+        <h3 className="text-lg font-semibold text-[var(--alo-body)]">Select courses to compare</h3>
+        <p className="text-sm text-[var(--alo-text-muted)] mt-1 max-w-md">
           Use the &quot;Compare&quot; button on course cards to add up to 3 courses for side-by-side comparison.
         </p>
       </div>
@@ -97,7 +97,7 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <GitCompare className="size-5 text-emerald-600" />
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-[var(--alo-text)]">
             Compare Courses
           </h2>
           <Badge variant="secondary" className="bg-emerald-50 text-emerald-700">
@@ -124,19 +124,19 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
       </div>
 
       {/* Comparison Table */}
-      <Card className="overflow-hidden border-slate-200">
+      <Card className="overflow-hidden border-[var(--alo-border)]">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4 w-32">
+              <tr className="bg-[var(--alo-page)] border-b border-[var(--alo-border)]">
+                <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4 w-32">
                   Attribute
                 </th>
                 {courses.map((course) => (
                   <th key={course.id} className="text-left p-4 min-w-[220px] relative">
                     <button
                       onClick={() => onRemove(course.id)}
-                      className="absolute top-2 right-2 text-slate-400 hover:text-red-500 transition-colors"
+                      className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-red-500 transition-colors"
                       aria-label={`Remove ${course.courseTitle}`}
                     >
                       <X className="size-4" />
@@ -148,8 +148,8 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
                 ))}
                 {/* Fill remaining columns for visual consistency */}
                 {Array.from({ length: 3 - courses.length }).map((_, i) => (
-                  <th key={`empty-${i}`} className="p-4 min-w-[220px] border-l border-dashed border-slate-200">
-                    <div className="flex flex-col items-center justify-center py-4 text-slate-300">
+                  <th key={`empty-${i}`} className="p-4 min-w-[220px] border-l border-dashed border-[var(--alo-border)]">
+                    <div className="flex flex-col items-center justify-center py-4 text-[var(--alo-placeholder)]">
                       <Plus className="size-6" />
                       <span className="text-xs mt-1">Add course</span>
                     </div>
@@ -161,22 +161,22 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
               {COMPARE_ROWS.map((row, idx) => (
                 <tr
                   key={row.key}
-                  className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}
+                  className={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--alo-page)]/50'}
                 >
-                  <td className="text-sm font-medium text-slate-600 p-4 border-r border-slate-100">
+                  <td className="text-sm font-medium text-[var(--alo-body)] p-4 border-r border-[var(--alo-border)]">
                     {row.label}
                   </td>
                   {courses.map((course) => (
                     <td
                       key={course.id}
-                      className="text-sm text-slate-800 p-4"
+                      className="text-sm text-[var(--alo-text)] p-4"
                     >
                       {renderCellValue(course, row.key)}
                     </td>
                   ))}
                   {Array.from({ length: 3 - courses.length }).map((_, i) => (
-                    <td key={`empty-val-${i}`} className="p-4 border-l border-dashed border-slate-200">
-                      <span className="text-slate-300">—</span>
+                    <td key={`empty-val-${i}`} className="p-4 border-l border-dashed border-[var(--alo-border)]">
+                      <span className="text-[var(--alo-placeholder)]">—</span>
                     </td>
                   ))}
                 </tr>

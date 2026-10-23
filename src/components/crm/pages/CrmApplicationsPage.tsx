@@ -19,12 +19,12 @@ const stageLabels: Record<string, string> = {
 };
 
 const stageColors: Record<string, string> = {
-  research: 'bg-gray-100 text-gray-700', shortlisted: 'bg-blue-100 text-blue-700',
+  research: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', shortlisted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   counseling: 'bg-cyan-100 text-cyan-700', document_ready: 'bg-yellow-100 text-yellow-700',
-  submitted: 'bg-blue-100 text-blue-700', under_review: 'bg-purple-100 text-purple-700',
-  offer_received: 'bg-green-100 text-green-700', conditional: 'bg-orange-100 text-orange-700',
+  submitted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', under_review: 'bg-purple-100 text-purple-700',
+  offer_received: 'bg-green-100 text-green-700', conditional: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   unconditional: 'bg-green-100 text-green-700', enrolled: 'bg-emerald-100 text-emerald-700',
-  rejected: 'bg-red-100 text-red-700', withdrawn: 'bg-gray-100 text-gray-600',
+  rejected: 'bg-red-100 text-red-700', withdrawn: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   visa_applied: 'bg-indigo-100 text-indigo-700', visa_approved: 'bg-emerald-100 text-emerald-700',
 };
 
@@ -74,7 +74,7 @@ export default function CrmApplicationsPage() {
       </div>
       {loadError && <p role="alert" className="text-sm text-red-700">{loadError}</p>}
       <Dialog open={!!selected} onOpenChange={open => { if (!open) setSelectedId(null); }}><DialogContent><DialogHeader><DialogTitle>Application information</DialogTitle><DialogDescription>Persisted record from the authenticated CRM API. No stage changes are made in this view.</DialogDescription></DialogHeader>{selected && <dl className="space-y-2 text-sm">{Object.entries({ Student: selected.studentProfile?.fullName || 'Not recorded', University: selected.university, Course: selected.course, Stage: selected.stage, Country: selected.country, Intake: selected.intake }).map(([label, value]) => <div key={label}><dt className="font-semibold">{label}</dt><dd>{String(value || 'Not recorded')}</dd></div>)}</dl>}</DialogContent></Dialog>
-      {view === 'board' ? <><p className="text-xs text-slate-500">Read-only board of the loaded records (up to 100). Stage editing needs an audited transition API; it is not simulated here.</p><KanbanPipeline stages={Object.keys(stageLabels)} items={apps.map(app => ({ id: app.id, title: `${app.university || 'University not recorded'} · ${app.course || 'Course not recorded'}`, subtitle: app.studentProfile?.fullName, stage: app.stage }))} onOpen={setSelectedId} /></> : <Card className="bg-white rounded-xl border border-alo-border">
+      {view === 'board' ? <><p className="text-xs text-[var(--alo-text-muted)]">Read-only board of the loaded records (up to 100). Stage editing needs an audited transition API; it is not simulated here.</p><KanbanPipeline stages={Object.keys(stageLabels)} items={apps.map(app => ({ id: app.id, title: `${app.university || 'University not recorded'} · ${app.course || 'Course not recorded'}`, subtitle: app.studentProfile?.fullName, stage: app.stage }))} onOpen={setSelectedId} /></> : <Card className="bg-white rounded-xl border border-alo-border">
         <CardContent className="p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-4">
             <div className="relative max-w-sm">
@@ -107,13 +107,13 @@ export default function CrmApplicationsPage() {
               </thead>
               <tbody>
                 {apps.map((app) => (
-                  <tr key={app.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                  <tr key={app.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                     <td className="py-3 font-medium text-alo-text">{app.studentProfile?.fullName || 'N/A'}</td>
                     <td className="py-3 text-alo-text-secondary">{app.university}</td>
                     <td className="py-3 text-alo-text-secondary max-w-[160px] truncate">{app.course}</td>
                     <td className="py-3 text-alo-text-secondary">{app.country}</td>
                     <td className="py-3 text-alo-text-secondary">{app.intake}</td>
-                    <td className="py-3"><Badge className={stageColors[app.stage] || 'bg-gray-100 text-gray-700'}>{stageLabels[app.stage] || app.stage}</Badge></td>
+                    <td className="py-3"><Badge className={stageColors[app.stage] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{stageLabels[app.stage] || app.stage}</Badge></td>
                     <td className="py-3 text-alo-text-muted">{app.updatedAt?.substring(0, 10)}</td>
                     <td className="py-3 text-right">
                       <div className="flex justify-end gap-1">

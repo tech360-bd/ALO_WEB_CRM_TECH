@@ -49,16 +49,16 @@ function channelMeta(value: string) {
 }
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
-  open: { label: 'Open', className: 'bg-blue-100 text-blue-700' },
+  open: { label: 'Open', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
   escalated: { label: 'Escalated', className: 'bg-red-100 text-red-700' },
   resolved: { label: 'Resolved', className: 'bg-green-100 text-green-700' },
-  closed: { label: 'Closed', className: 'bg-gray-100 text-gray-600' },
+  closed: { label: 'Closed', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
   pending: { label: 'Pending', className: 'bg-amber-100 text-amber-700' },
 };
 
 function statusMeta(value: string) {
   const key = (value || '').toLowerCase();
-  return STATUS_META[key] ?? { label: value || 'Unknown', className: 'bg-gray-100 text-gray-600' };
+  return STATUS_META[key] ?? { label: value || 'Unknown', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
 }
 
 function formatTime(value: string) {
@@ -195,12 +195,12 @@ export default function CrmInboxPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600 rounded-lg">
+          <div className="p-2 bg-[var(--alo-brand)] rounded-lg">
             <Inbox className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Inbox</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="text-xl font-bold text-[var(--alo-text)]">Inbox</h1>
+            <p className="text-sm text-[var(--alo-text-muted)]">
               {total} thread{total === 1 ? '' : 's'} · {meta.totalUnread} unread · {meta.escalatedCount} escalated
             </p>
           </div>
@@ -219,7 +219,7 @@ export default function CrmInboxPage() {
             <TabsTrigger value="escalated" className="text-xs">Escalated</TabsTrigger>
           </TabsList>
           <div className="relative flex-1 sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--alo-text-muted)]" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -236,9 +236,9 @@ export default function CrmInboxPage() {
             <div className="flex items-start gap-3" role="alert">
               <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-destructive" />
               <div>
-                <p className="text-sm font-semibold text-gray-900">Inbox is unavailable</p>
-                <p className="text-xs text-gray-500 mt-0.5">{loadError}</p>
-                <Button size="sm" variant="outline" className="mt-2 h-7 text-xs" onClick={() => void loadThreads()}>
+                <p className="text-sm font-semibold text-[var(--alo-text)]">Inbox is unavailable</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{loadError}</p>
+                <Button size="sm" variant="outline" className="mt-2 h-7 " onClick={() => void loadThreads()}>
                   Try again
                 </Button>
               </div>
@@ -253,13 +253,13 @@ export default function CrmInboxPage() {
           <CardContent className="p-0 overflow-y-auto max-h-[32rem]">
             {loading && !loadError ? (
               <div className="p-3 space-y-2" aria-busy="true" aria-live="polite">
-                {[0, 1, 2, 3, 4].map((i) => <div key={i} className="h-16 animate-pulse rounded bg-gray-100" />)}
+                {[0, 1, 2, 3, 4].map((i) => <div key={i} className="h-16 animate-pulse rounded bg-[var(--alo-surface-muted)]" />)}
               </div>
             ) : threads.length === 0 && !loadError ? (
               <div className="p-10 text-center">
-                <MailOpen className="h-8 w-8 mx-auto text-gray-300" />
-                <p className="text-sm font-semibold text-gray-900 mt-2">No threads</p>
-                <p className="text-xs text-gray-500 mt-1">
+                <MailOpen className="h-8 w-8 mx-auto text-[var(--alo-placeholder)]" />
+                <p className="text-sm font-semibold text-[var(--alo-text)] mt-2">No threads</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">
                   {total === 0
                     ? 'No conversations have been recorded yet. Threads appear once a channel is connected.'
                     : 'No threads match this filter.'}
@@ -275,35 +275,35 @@ export default function CrmInboxPage() {
                   <button
                     key={thread.id}
                     onClick={() => handleSelect(thread)}
-                    className={`w-full text-left p-3 border-b hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50/70 border-l-2 border-l-blue-600' : ''}`}
+                    className={`w-full text-left p-3 border-b hover:bg-[var(--alo-page)] transition-colors ${isSelected ? 'bg-[var(--alo-brand-pale)]/70 border-l-2 border-l-blue-600' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          {thread.unreadCount > 0 && <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" aria-label="unread" />}
-                          <span className={`text-sm truncate ${thread.unreadCount > 0 ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'}`}>
+                          {thread.unreadCount > 0 && <span className="w-2 h-2 rounded-full bg-[var(--alo-brand)] shrink-0" aria-label="unread" />}
+                          <span className={`text-sm truncate ${thread.unreadCount > 0 ? 'font-semibold text-[var(--alo-text)]' : 'font-medium text-[var(--alo-body)]'}`}>
                             {thread.subject || thread.threadCode || 'Untitled thread'}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
+                        <p className="text-xs text-[var(--alo-text-muted)] mt-0.5 line-clamp-2">
                           {thread.lastMessagePreview || 'No message preview stored.'}
                         </p>
                         <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                          <Badge variant="outline" className="text-[9px] font-normal">
+                          <Badge variant="outline" className="text-[11px] font-normal">
                             <CIcon className="h-2.5 w-2.5 mr-0.5" />{cMeta.label}
                           </Badge>
-                          <Badge className={`text-[9px] ${sMeta.className}`}>{sMeta.label}</Badge>
+                          <Badge className={`text-[11px] ${sMeta.className}`}>{sMeta.label}</Badge>
                           {thread.needsHumanTakeover && (
-                            <Badge className="text-[9px] bg-amber-100 text-amber-700">
+                            <Badge className="text-[11px] bg-amber-100 text-amber-700">
                               <Flag className="h-2.5 w-2.5 mr-0.5" />Needs human
                             </Badge>
                           )}
                           {thread.isAiHandled && (
-                            <Badge variant="muted" className="text-[9px]">AI handled</Badge>
+                            <Badge variant="muted" className="text-[11px]">AI handled</Badge>
                           )}
                         </div>
                       </div>
-                      <span className="text-[10px] text-gray-400 shrink-0 flex items-center gap-1">
+                      <span className="text-[11px] text-[var(--alo-text-muted)] shrink-0 flex items-center gap-1">
                         <Clock className="h-2.5 w-2.5" />{formatTime(thread.lastMessageAt)}
                       </span>
                     </div>
@@ -331,23 +331,23 @@ export default function CrmInboxPage() {
           <CardContent className="flex-1 flex flex-col gap-3">
             {!selected ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-                <Inbox className="h-8 w-8 text-gray-300" />
-                <p className="text-sm text-gray-500 mt-2">Select a thread to read the conversation.</p>
+                <Inbox className="h-8 w-8 text-[var(--alo-placeholder)]" />
+                <p className="text-sm text-[var(--alo-text-muted)] mt-2">Select a thread to read the conversation.</p>
               </div>
             ) : (
               <>
-                <div className="rounded-lg border border-gray-100 bg-gray-50/60 p-3 text-xs text-gray-600 space-y-1">
-                  <p><span className="text-gray-400">Thread:</span> {selected.threadCode || selected.id}</p>
-                  <p><span className="text-gray-400">Student ref:</span> {selected.studentId || '—'}</p>
-                  <p><span className="text-gray-400">Channel:</span> {channelMeta(selected.channel).label}</p>
-                  <p><span className="text-gray-400">Assigned to:</span> {selected.assignedToName || 'Unassigned'}</p>
-                  <p><span className="text-gray-400">Intent:</span> {selected.intent || '—'}</p>
-                  <p><span className="text-gray-400">SLA:</span> {selected.slaStatus || 'none'}</p>
+                <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)]/60 p-3 text-xs text-[var(--alo-body)] space-y-1">
+                  <p><span className="text-[var(--alo-text-muted)]">Thread:</span> {selected.threadCode || selected.id}</p>
+                  <p><span className="text-[var(--alo-text-muted)]">Student ref:</span> {selected.studentId || '—'}</p>
+                  <p><span className="text-[var(--alo-text-muted)]">Channel:</span> {channelMeta(selected.channel).label}</p>
+                  <p><span className="text-[var(--alo-text-muted)]">Assigned to:</span> {selected.assignedToName || 'Unassigned'}</p>
+                  <p><span className="text-[var(--alo-text-muted)]">Intent:</span> {selected.intent || '—'}</p>
+                  <p><span className="text-[var(--alo-text-muted)]">SLA:</span> {selected.slaStatus || 'none'}</p>
                 </div>
 
-                <div className="rounded-lg border border-gray-100 p-3">
-                  <p className="text-[11px] text-gray-400 mb-1">Latest message preview</p>
-                  <p className="text-sm text-gray-800 whitespace-pre-wrap">
+                <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                  <p className="text-[11px] text-[var(--alo-text-muted)] mb-1">Latest message preview</p>
+                  <p className="text-sm text-[var(--alo-text)] whitespace-pre-wrap">
                     {selected.lastMessagePreview || 'No message content stored for this thread.'}
                   </p>
                 </div>
@@ -361,14 +361,14 @@ export default function CrmInboxPage() {
                     className="text-sm resize-y"
                   />
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[10px] text-gray-400">
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">
                       Replies are recorded against the thread. Delivery depends on the connected channel.
                     </p>
                     <Button
                       size="sm"
                       onClick={() => void handleReply()}
                       disabled={sending || !replyText.trim()}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]"
                     >
                       <Reply className="h-3.5 w-3.5 mr-1" />
                       {sending ? 'Sending…' : 'Send reply'}
@@ -382,7 +382,7 @@ export default function CrmInboxPage() {
       </div>
 
       {busyId && <span className="sr-only" role="status">Updating thread…</span>}
-      <p className="text-[11px] text-gray-400 flex items-center gap-1.5">
+      <p className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1.5">
         <Send className="h-3 w-3" />
         Thread data comes from stored communication records. Sender email addresses and full message bodies are not exposed here.
       </p>

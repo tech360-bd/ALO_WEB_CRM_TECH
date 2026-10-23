@@ -220,17 +220,17 @@ export default function StudentMigrationCenter() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-[#0a0f1e] min-h-screen text-white">
+    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
       {/* Top Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057B8] to-[#E8501A] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
               <Database className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Old CRM Student Migration Center</h1>
-              <p className="text-gray-400 text-sm">Super Admin Data Ingestion, Deduplication, Staging & Approval Engine</p>
+              <p className="text-[var(--alo-text-muted)] text-sm">Super Admin Data Ingestion, Deduplication, Staging & Approval Engine</p>
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function StudentMigrationCenter() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => { setActiveTab('upload'); setMessage(null); }}
-            className="bg-[#0057B8] hover:bg-[#0046a0] text-white flex items-center gap-2"
+            className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white flex items-center gap-2"
           >
             <Upload className="w-4 h-4" />
             <span>New Import</span>
@@ -246,7 +246,7 @@ export default function StudentMigrationCenter() {
           <Button
             onClick={() => { fetchBatches(); }}
             variant="outline"
-            className="border-white/10 text-gray-300 hover:text-white"
+            className="border-white/10 text-[var(--alo-placeholder)] hover:text-white"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
@@ -268,7 +268,7 @@ export default function StudentMigrationCenter() {
         <button
           onClick={() => setActiveTab('batches')}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'batches' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'batches' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
           }`}
         >
           Import Batches ({batches.length})
@@ -276,7 +276,7 @@ export default function StudentMigrationCenter() {
         <button
           onClick={() => setActiveTab('upload')}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'upload' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
+            activeTab === 'upload' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
           }`}
         >
           Upload & Map
@@ -285,7 +285,7 @@ export default function StudentMigrationCenter() {
           <button
             onClick={() => setActiveTab('preview')}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-              activeTab === 'preview' ? 'border-[#0057B8] text-white' : 'border-transparent text-gray-400 hover:text-white'
+              activeTab === 'preview' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
             }`}
           >
             Batch Preview: {selectedBatch.fileName || selectedBatch.id}
@@ -297,31 +297,31 @@ export default function StudentMigrationCenter() {
       {activeTab === 'batches' && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-[#0d1526] border-white/10 text-white">
+            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
               <CardContent className="p-4">
-                <p className="text-xs text-gray-400">Total Import Batches</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Total Import Batches</p>
                 <p className="text-2xl font-bold mt-1">{batches.length}</p>
               </CardContent>
             </Card>
-            <Card className="bg-[#0d1526] border-white/10 text-white">
+            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
               <CardContent className="p-4">
-                <p className="text-xs text-gray-400">Total Rows Staged</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Total Rows Staged</p>
                 <p className="text-2xl font-bold mt-1 text-blue-400">
                   {batches.reduce((acc, b) => acc + (b.totalRows || 0), 0)}
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-[#0d1526] border-white/10 text-white">
+            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
               <CardContent className="p-4">
-                <p className="text-xs text-gray-400">Duplicate Candidates</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Duplicate Candidates</p>
                 <p className="text-2xl font-bold mt-1 text-amber-400">
                   {batches.reduce((acc, b) => acc + (b.duplicateCount || 0), 0)}
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-[#0d1526] border-white/10 text-white">
+            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
               <CardContent className="p-4">
-                <p className="text-xs text-gray-400">Completed Imports</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Completed Imports</p>
                 <p className="text-2xl font-bold mt-1 text-emerald-400">
                   {batches.filter(b => b.status === 'completed').length}
                 </p>
@@ -329,7 +329,7 @@ export default function StudentMigrationCenter() {
             </Card>
           </div>
 
-          <Card className="bg-[#0d1526] border-white/10 text-white">
+          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
             <CardHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between">
               <CardTitle className="text-base font-semibold">Staging & Import History</CardTitle>
             </CardHeader>
@@ -337,7 +337,7 @@ export default function StudentMigrationCenter() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
+                    <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
                       <th className="p-3 font-medium">Batch ID</th>
                       <th className="p-3 font-medium">Source CRM</th>
                       <th className="p-3 font-medium">File Name</th>
@@ -352,7 +352,7 @@ export default function StudentMigrationCenter() {
                   <tbody>
                     {batches.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="p-8 text-center text-gray-500">
+                        <td colSpan={9} className="p-8 text-center text-[var(--alo-text-muted)]">
                           No import batches found. Click &quot;New Import&quot; to upload student records from old CRM.
                         </td>
                       </tr>
@@ -361,28 +361,28 @@ export default function StudentMigrationCenter() {
                         <tr key={b.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                           <td className="p-3 font-mono text-xs text-blue-400">{b.id}</td>
                           <td className="p-3">{b.sourceCrmName}</td>
-                          <td className="p-3 text-gray-300">{b.fileName || 'data.csv'}</td>
+                          <td className="p-3 text-[var(--alo-placeholder)]">{b.fileName || 'data.csv'}</td>
                           <td className="p-3 font-semibold">{b.totalRows}</td>
                           <td className="p-3 text-emerald-400">{b.newCount}</td>
                           <td className="p-3 text-amber-400">{b.duplicateCount}</td>
                           <td className="p-3">
                             <Badge className={
                               b.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                              b.status === 'approved' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                              b.status === 'approved' ? 'bg-blue-500/20 text-blue-400 border-[var(--alo-brand)]/30' :
                               b.status === 'ready_for_review' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                              'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                              'bg-gray-500/20 text-[var(--alo-text-muted)] border-gray-500/30'
                             }>
                               {b.status.replace(/_/g, ' ').toUpperCase()}
                             </Badge>
                           </td>
-                          <td className="p-3 text-gray-400 text-xs">{new Date(b.createdAt).toLocaleDateString()}</td>
+                          <td className="p-3 text-[var(--alo-text-muted)] text-xs">{new Date(b.createdAt).toLocaleDateString()}</td>
                           <td className="p-3 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <Button
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => handleSelectBatch(b)}
-                                className="text-gray-300 hover:text-white"
+                                className="text-[var(--alo-placeholder)] hover:text-white"
                               >
                                 <Eye className="w-4 h-4 mr-1" />
                                 Inspect
@@ -392,7 +392,7 @@ export default function StudentMigrationCenter() {
                                   size="sm"
                                   onClick={() => handleApproveBatch(b.id)}
                                   disabled={processing}
-                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                  className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                                 >
                                   <Check className="w-3.5 h-3.5 mr-1" />
                                   Approve
@@ -436,15 +436,15 @@ export default function StudentMigrationCenter() {
 
       {/* TAB 2: Upload & Map */}
       {activeTab === 'upload' && (
-        <Card className="bg-[#0d1526] border-white/10 text-white max-w-2xl mx-auto">
+        <Card className="bg-[var(--alo-text)] border-white/10 text-white max-w-2xl mx-auto">
           <CardHeader className="p-6 border-b border-white/10">
             <CardTitle className="text-lg font-bold">Upload Old CRM Student Export</CardTitle>
-            <p className="text-xs text-gray-400">Upload CSV/XLSX file. The system will stage, validate, and compute duplicate scores before committing to live database.</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Upload CSV/XLSX file. The system will stage, validate, and compute duplicate scores before committing to live database.</p>
           </CardHeader>
           <CardContent className="p-6">
             <form onSubmit={handleFileUpload} className="space-y-6">
               <div>
-                <label className="block text-xs font-medium text-gray-300 mb-2">Source CRM Name</label>
+                <label className="block text-xs font-medium text-[var(--alo-placeholder)] mb-2">Source CRM Name</label>
                 <Input
                   value={sourceCrmName}
                   onChange={e => setSourceCrmName(e.target.value)}
@@ -455,8 +455,8 @@ export default function StudentMigrationCenter() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-300 mb-2">Select CSV or Excel File</label>
-                <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-[#0057B8] transition-colors cursor-pointer bg-white/5">
+                <label className="block text-xs font-medium text-[var(--alo-placeholder)] mb-2">Select CSV or Excel File</label>
+                <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-[var(--alo-brand)] transition-colors cursor-pointer bg-white/5">
                   <input
                     type="file"
                     accept=".csv,.xlsx"
@@ -469,20 +469,20 @@ export default function StudentMigrationCenter() {
                     {file ? (
                       <div>
                         <p className="font-semibold text-white">{file.name}</p>
-                        <p className="text-xs text-gray-400 mt-1">{(file.size / 1024).toFixed(1)} KB</p>
+                        <p className="text-xs text-[var(--alo-text-muted)] mt-1">{(file.size / 1024).toFixed(1)} KB</p>
                       </div>
                     ) : (
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Click to upload or drag & drop</p>
-                        <p className="text-xs text-gray-500 mt-1">CSV or XLSX up to 20MB</p>
+                        <p className="text-sm font-medium text-[var(--alo-placeholder)]">Click to upload or drag & drop</p>
+                        <p className="text-xs text-[var(--alo-text-muted)] mt-1">CSV or XLSX up to 20MB</p>
                       </div>
                     )}
                   </label>
                 </div>
               </div>
 
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-xs text-blue-300 space-y-1">
-                <p className="font-semibold text-blue-200">Automated Pipeline Safeguards:</p>
+              <div className="bg-blue-500/10 border border-[var(--alo-brand)]/20 rounded-xl p-4 text-xs text-blue-300 space-y-1">
+                <p className="font-semibold text-[var(--alo-brand-pale)]">Automated Pipeline Safeguards:</p>
                 <p>1. Data is placed into staging table first — never touches live database immediately.</p>
                 <p>2. Duplicate detector matches against phone, email, WhatsApp, and passport.</p>
                 <p>3. Super Admin approval is required before live AE-YYYY student code assignment.</p>
@@ -491,7 +491,7 @@ export default function StudentMigrationCenter() {
               <Button
                 type="submit"
                 disabled={!file || uploading}
-                className="w-full bg-[#0057B8] hover:bg-[#0046a0] text-white py-3"
+                className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white py-3"
               >
                 {uploading ? (
                   <span className="flex items-center gap-2">
@@ -511,14 +511,14 @@ export default function StudentMigrationCenter() {
       {/* TAB 3: Batch Preview */}
       {activeTab === 'preview' && selectedBatch && (
         <div className="space-y-6">
-          <Card className="bg-[#0d1526] border-white/10 text-white">
+          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
             <CardHeader className="p-4 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="border-blue-400 text-blue-400">{selectedBatch.id}</Badge>
                   <h2 className="text-lg font-bold">{selectedBatch.fileName || 'Batch Inspection'}</h2>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Source: {selectedBatch.sourceCrmName} | Uploaded: {new Date(selectedBatch.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">Source: {selectedBatch.sourceCrmName} | Uploaded: {new Date(selectedBatch.createdAt).toLocaleString()}</p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -526,7 +526,7 @@ export default function StudentMigrationCenter() {
                   <Button
                     onClick={() => handleApproveBatch(selectedBatch.id)}
                     disabled={processing}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white"
                   >
                     <Check className="w-4 h-4 mr-1.5" /> Approve Batch
                   </Button>
@@ -556,7 +556,7 @@ export default function StudentMigrationCenter() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-left text-gray-400 bg-white/5">
+                    <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
                       <th className="p-3 font-medium">Student Name</th>
                       <th className="p-3 font-medium">Phone</th>
                       <th className="p-3 font-medium">Email</th>
@@ -570,7 +570,7 @@ export default function StudentMigrationCenter() {
                   <tbody>
                     {stagedStudents.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="p-6 text-center text-gray-500">
+                        <td colSpan={8} className="p-6 text-center text-[var(--alo-text-muted)]">
                           No records loaded for this batch.
                         </td>
                       </tr>
@@ -579,10 +579,10 @@ export default function StudentMigrationCenter() {
                         <tr key={s.id} className="border-b border-white/5 hover:bg-white/5">
                           <td className="p-3 font-semibold">{s.studentName}</td>
                           <td className="p-3 font-mono text-xs">{s.phone}</td>
-                          <td className="p-3 text-gray-300">{s.email}</td>
+                          <td className="p-3 text-[var(--alo-placeholder)]">{s.email}</td>
                           <td className="p-3 font-mono text-xs">{s.passportNumber || 'N/A'}</td>
                           <td className="p-3">{s.countryInterest}</td>
-                          <td className="p-3 text-xs text-gray-300">{s.courseInterest} - {s.universityInterest}</td>
+                          <td className="p-3 text-xs text-[var(--alo-placeholder)]">{s.courseInterest} - {s.universityInterest}</td>
                           <td className="p-3">
                             <Badge className={
                               s.duplicateRiskLevel === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
@@ -593,7 +593,7 @@ export default function StudentMigrationCenter() {
                             </Badge>
                           </td>
                           <td className="p-3">
-                            <Badge variant="outline" className="text-gray-400 border-white/10">
+                            <Badge variant="outline" className="text-[var(--alo-text-muted)] border-white/10">
                               {s.status}
                             </Badge>
                           </td>

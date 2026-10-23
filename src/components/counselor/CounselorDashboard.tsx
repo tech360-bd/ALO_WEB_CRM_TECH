@@ -7,8 +7,8 @@ import {
 } from 'lucide-react';
 
 const stats = [
-  { label: 'Active Students', value: '24', icon: Users, color: 'bg-blue-50 text-blue-600' },
-  { label: 'Pending Applications', value: '8', icon: FileText, color: 'bg-orange-50 text-orange-600' },
+  { label: 'Active Students', value: '24', icon: Users, color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
+  { label: 'Pending Applications', value: '8', icon: FileText, color: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]' },
   { label: 'New Leads', value: '12', icon: Target, color: 'bg-green-50 text-green-600' },
   { label: 'Upcoming Appointments', value: '5', icon: CalendarDays, color: 'bg-purple-50 text-purple-600' },
 ];
@@ -75,7 +75,7 @@ export default function CounselorDashboard() {
                   ) : activity.type === 'warning' ? (
                     <AlertCircle className="w-4 h-4 text-amber-500" />
                   ) : (
-                    <Clock className="w-4 h-4 text-blue-500" />
+                    <Clock className="w-4 h-4 text-[var(--alo-brand)]" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -105,10 +105,10 @@ export default function CounselorDashboard() {
                 <Badge
                   variant="secondary"
                   className={cn(
-                    'text-[10px] shrink-0',
+                    'text-[11px] shrink-0',
                     item.priority === 'high' && 'bg-red-50 text-red-600 border-red-200',
                     item.priority === 'medium' && 'bg-amber-50 text-amber-600 border-amber-200',
-                    item.priority === 'low' && 'bg-slate-50 text-slate-600 border-slate-200'
+                    item.priority === 'low' && 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'
                   )}
                 >
                   {item.priority}

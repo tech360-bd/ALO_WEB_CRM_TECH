@@ -70,8 +70,8 @@ export default function StudentEnglishPrepProfile() {
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <div className="w-8 h-8 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-sm text-slate-500">Loading your English prep profile...</p>
+        <div className="w-8 h-8 border-2 border-[var(--alo-brand)] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm text-[var(--alo-text-muted)]">Loading your English prep profile...</p>
       </div>
     );
   }
@@ -79,38 +79,38 @@ export default function StudentEnglishPrepProfile() {
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#0057B8] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
+        <div className="w-10 h-10 rounded-xl bg-[var(--alo-brand)] text-white flex items-center justify-center"><BookOpen className="w-5 h-5" /></div>
         <div>
-          <h1 className="text-xl font-extrabold text-[#0F172A]">My English Prep — Student Portal</h1>
-          <p className="text-xs text-slate-500">Store preferred_test, current_score, target_score, test_date, preparation_status — DB-driven, no fake</p>
+          <h1 className="text-xl font-extrabold text-[var(--alo-text)]">My English Prep — Student Portal</h1>
+          <p className="text-xs text-[var(--alo-text-muted)]">Store preferred_test, current_score, target_score, test_date, preparation_status — DB-driven, no fake</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <Card className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
-          <div className="flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-[#0057B8]" /><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Current → Target</span></div>
-          <p className="text-lg font-black text-[#0F172A]">{formData.currentScore || '—'} → {formData.targetScore || '—'}</p>
-          <p className="text-[11px] text-slate-500 mt-1">Gap: {formData.currentScore && formData.targetScore ? (parseFloat(formData.targetScore) - parseFloat(formData.currentScore)).toFixed(1) : '—'}</p>
+        <Card className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
+          <div className="flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-[var(--alo-brand)]" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Current → Target</span></div>
+          <p className="text-lg font-black text-[var(--alo-text)]">{formData.currentScore || '—'} → {formData.targetScore || '—'}</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Gap: {formData.currentScore && formData.targetScore ? (parseFloat(formData.targetScore) - parseFloat(formData.currentScore)).toFixed(1) : '—'}</p>
         </Card>
-        <Card className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
-          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-emerald-600" /><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Progress</span></div>
-          <p className="text-lg font-black text-[#0F172A]">{profile?.progress || 0}%</p>
-          <p className="text-[11px] text-slate-500 mt-1">Status: {formData.preparationStatus}</p>
+        <Card className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
+          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-emerald-600" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Progress</span></div>
+          <p className="text-lg font-black text-[var(--alo-text)]">{profile?.progress || 0}%</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Status: {formData.preparationStatus}</p>
         </Card>
-        <Card className="p-5 bg-white border border-[#E2E8F0] rounded-2xl">
-          <div className="flex items-center gap-2 mb-2"><Award className="w-4 h-4 text-amber-600" /><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Weakest Module</span></div>
-          <p className="text-sm font-bold text-[#0F172A]">{formData.weakestModule || 'Not set'}</p>
-          <p className="text-[11px] text-slate-500 mt-1">Focus: {formData.weakestModule ? `Practice ${formData.weakestModule}` : 'Diagnostic needed'}</p>
+        <Card className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
+          <div className="flex items-center gap-2 mb-2"><Award className="w-4 h-4 text-amber-600" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Weakest Module</span></div>
+          <p className="text-sm font-bold text-[var(--alo-text)]">{formData.weakestModule || 'Not set'}</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Focus: {formData.weakestModule ? `Practice ${formData.weakestModule}` : 'Diagnostic needed'}</p>
         </Card>
       </div>
 
-      <Card className="p-6 bg-white border border-[#E2E8F0] rounded-2xl">
-        <h3 className="font-bold text-sm text-[#0F172A] mb-4">English Preparation Profile — Personalization</h3>
+      <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl">
+        <h3 className="font-bold text-sm text-[var(--alo-text)] mb-4">English Preparation Profile — Personalization</h3>
         <form onSubmit={handleSave} className="space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Preferred Test</label>
-              <select value={formData.preferredTest} onChange={e => setFormData({ ...formData, preferredTest: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[#E2E8F0] bg-white text-sm">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Preferred Test</label>
+              <select value={formData.preferredTest} onChange={e => setFormData({ ...formData, preferredTest: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] bg-white text-sm">
                 <option value="ielts">IELTS Academic</option>
                 <option value="ielts-ukvi">IELTS UKVI</option>
                 <option value="pte-academic">PTE Academic</option>
@@ -124,8 +124,8 @@ export default function StudentEnglishPrepProfile() {
               </select>
             </div>
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Preparation Status</label>
-              <select value={formData.preparationStatus} onChange={e => setFormData({ ...formData, preparationStatus: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[#E2E8F0] bg-white text-sm">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Preparation Status</label>
+              <select value={formData.preparationStatus} onChange={e => setFormData({ ...formData, preparationStatus: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] bg-white text-sm">
                 <option value="not_started">Not Started</option>
                 <option value="assessment">Assessment</option>
                 <option value="in_progress">In Progress</option>
@@ -135,20 +135,20 @@ export default function StudentEnglishPrepProfile() {
               </select>
             </div>
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Current Score</label>
-              <Input value={formData.currentScore} onChange={e => setFormData({ ...formData, currentScore: e.target.value })} placeholder="e.g. 6.0" className="h-11 rounded-xl border-[#E2E8F0]" />
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Current Score</label>
+              <Input value={formData.currentScore} onChange={e => setFormData({ ...formData, currentScore: e.target.value })} placeholder="e.g. 6.0" className="h-11 rounded-xl border-[var(--alo-border)]" />
             </div>
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Target Score</label>
-              <Input value={formData.targetScore} onChange={e => setFormData({ ...formData, targetScore: e.target.value })} placeholder="e.g. 7.0" className="h-11 rounded-xl border-[#E2E8F0]" />
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Target Score</label>
+              <Input value={formData.targetScore} onChange={e => setFormData({ ...formData, targetScore: e.target.value })} placeholder="e.g. 7.0" className="h-11 rounded-xl border-[var(--alo-border)]" />
             </div>
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Test Date</label>
-              <Input type="date" value={formData.testDate} onChange={e => setFormData({ ...formData, testDate: e.target.value })} className="h-11 rounded-xl border-[#E2E8F0]" />
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Test Date</label>
+              <Input type="date" value={formData.testDate} onChange={e => setFormData({ ...formData, testDate: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
             </div>
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Weakest Module</label>
-              <select value={formData.weakestModule} onChange={e => setFormData({ ...formData, weakestModule: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[#E2E8F0] bg-white text-sm">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Weakest Module</label>
+              <select value={formData.weakestModule} onChange={e => setFormData({ ...formData, weakestModule: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] bg-white text-sm">
                 <option value="">Select weakest</option>
                 <option value="Listening">Listening</option>
                 <option value="Reading">Reading</option>
@@ -159,25 +159,25 @@ export default function StudentEnglishPrepProfile() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-[#0057B8] hover:bg-[#003F87] text-white font-bold h-11 rounded-xl">Save English Prep Profile</Button>
+          <Button type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl">Save English Prep Profile</Button>
         </form>
 
         {profile && (
-          <div className="mt-6 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs space-y-1">
-            <p><span className="text-slate-500">Recommended:</span> <span className="font-bold">{profile.recommendedTest || formData.preferredTest}</span></p>
-            <p><span className="text-slate-500">Counselor:</span> <span className="font-semibold">{profile.counselorName || 'Not assigned'}</span></p>
-            <p><span className="text-slate-500">Last Updated:</span> <span className="font-semibold">{profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}</span></p>
+          <div className="mt-6 p-4 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs space-y-1">
+            <p><span className="text-[var(--alo-text-muted)]">Recommended:</span> <span className="font-bold">{profile.recommendedTest || formData.preferredTest}</span></p>
+            <p><span className="text-[var(--alo-text-muted)]">Counselor:</span> <span className="font-semibold">{profile.counselorName || 'Not assigned'}</span></p>
+            <p><span className="text-[var(--alo-text-muted)]">Last Updated:</span> <span className="font-semibold">{profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}</span></p>
             <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100 mt-2">Personalization: My English Prep Current/Target/Progress/Recommended/Weakest/Counselor — Only if logged in, DB-driven, no fake</p>
           </div>
         )}
       </Card>
 
-      <Card className="p-5 bg-gradient-to-br from-[#0057B8] to-[#003F87] text-white border-0 rounded-2xl">
+      <Card className="p-5 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 rounded-2xl">
         <h4 className="font-bold text-sm">Need Help Choosing Test?</h4>
-        <p className="text-xs text-blue-100 mt-1 leading-relaxed">Tell us your destination, university and course — our counselor can help you understand relevant English requirement.</p>
+        <p className="text-xs text-[var(--alo-brand-pale)] mt-1 leading-relaxed">Tell us your destination, university and course — our counselor can help you understand relevant English requirement.</p>
         <div className="flex gap-2 mt-3">
-          <Button asChild className="w-full bg-white text-[#0057B8] hover:bg-slate-50 font-bold h-9 rounded-xl text-xs"><a href="/language-prep" className="flex-1">Explore Test Prep →</a></Button>
-          <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold h-9 rounded-xl text-xs"><a href="/language-prep/comparison">Compare Tests</a></Button>
+          <Button asChild className="w-full bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-page)] font-bold rounded-xl "><a href="/language-prep" className="flex-1">Explore Test Prep →</a></Button>
+          <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl "><a href="/language-prep/comparison">Compare Tests</a></Button>
         </div>
       </Card>
     </div>

@@ -68,10 +68,10 @@ interface MatchedCourse {
 
 const VERIFICATION_META: Record<string, { label: string; className: string; icon: React.ElementType }> = {
   VERIFIED: { label: 'Verified', className: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  OFFICIAL_SOURCE_FOUND: { label: 'Official source found', className: 'bg-blue-100 text-blue-700', icon: CheckCircle2 },
+  OFFICIAL_SOURCE_FOUND: { label: 'Official source found', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: CheckCircle2 },
   NEEDS_REVIEW: { label: 'Needs review', className: 'bg-amber-100 text-amber-700', icon: Info },
   PARTIAL: { label: 'Partially verified', className: 'bg-amber-100 text-amber-700', icon: Info },
-  UNVERIFIED: { label: 'Unverified', className: 'bg-gray-100 text-gray-600', icon: AlertTriangle },
+  UNVERIFIED: { label: 'Unverified', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', icon: AlertTriangle },
   EXPIRED_SOURCE: { label: 'Source expired', className: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
   CONFLICT_FOUND: { label: 'Conflict found', className: 'bg-red-100 text-red-700', icon: AlertTriangle },
   REJECTED: { label: 'Rejected', className: 'bg-red-100 text-red-700', icon: AlertTriangle },
@@ -79,7 +79,7 @@ const VERIFICATION_META: Record<string, { label: string; className: string; icon
 
 function verificationMeta(value: string) {
   const key = (value || '').toUpperCase();
-  return VERIFICATION_META[key] ?? { label: value || 'Status unknown', className: 'bg-gray-100 text-gray-600', icon: Info };
+  return VERIFICATION_META[key] ?? { label: value || 'Status unknown', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', icon: Info };
 }
 
 function formatMoney(amount: number, currency: string) {
@@ -107,39 +107,39 @@ function CourseCard({ course }: { course: MatchedCourse }) {
   const ranking = uni?.ranking ?? 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 flex flex-col gap-3 hover:border-blue-300 transition-colors">
+    <div className="rounded-xl border border-[var(--alo-border)] bg-white p-5 flex flex-col gap-3 hover:border-blue-300 transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="font-semibold text-slate-900 leading-snug">{course.courseTitle}</h3>
-          <p className="text-sm text-slate-600 mt-0.5 truncate">
+          <h3 className="font-semibold text-[var(--alo-text)] leading-snug">{course.courseTitle}</h3>
+          <p className="text-sm text-[var(--alo-body)] mt-0.5 truncate">
             {uni?.name || 'University record not linked'}
           </p>
         </div>
-        <Badge className={`text-[10px] shrink-0 ${vMeta.className}`}>
+        <Badge className={`text-[11px] shrink-0 ${vMeta.className}`}>
           <VIcon className="size-3 mr-1" />
           {vMeta.label}
         </Badge>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-600">
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--alo-body)]">
         {location && (
-          <span className="flex items-center gap-1"><Globe className="size-3.5 text-slate-400" />{location}</span>
+          <span className="flex items-center gap-1"><Globe className="size-3.5 text-[var(--alo-text-muted)]" />{location}</span>
         )}
         {(course.studyLevel || course.programLevel) && (
           <span className="flex items-center gap-1">
-            <GraduationCap className="size-3.5 text-slate-400" />
+            <GraduationCap className="size-3.5 text-[var(--alo-text-muted)]" />
             {course.studyLevel || course.programLevel}
           </span>
         )}
         {course.durationMonths > 0 && (
           <span className="flex items-center gap-1">
-            <Clock className="size-3.5 text-slate-400" />
+            <Clock className="size-3.5 text-[var(--alo-text-muted)]" />
             {course.durationMonths} months
           </span>
         )}
         {(course.subjectArea || course.disciplineArea) && (
           <span className="flex items-center gap-1">
-            <BookOpen className="size-3.5 text-slate-400" />
+            <BookOpen className="size-3.5 text-[var(--alo-text-muted)]" />
             {course.subjectArea || course.disciplineArea}
           </span>
         )}
@@ -149,12 +149,12 @@ function CourseCard({ course }: { course: MatchedCourse }) {
 
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div>
-          <p className="text-[11px] text-slate-500">Tuition</p>
-          <p className="font-medium text-slate-800">{tuition ?? 'Not published'}</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)]">Tuition</p>
+          <p className="font-medium text-[var(--alo-text)]">{tuition ?? 'Not published'}</p>
         </div>
         <div>
-          <p className="text-[11px] text-slate-500">Application deadline</p>
-          <p className="font-medium text-slate-800">{formatDate(course.deadline) ?? 'Not published'}</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)]">Application deadline</p>
+          <p className="font-medium text-[var(--alo-text)]">{formatDate(course.deadline) ?? 'Not published'}</p>
         </div>
       </div>
 
@@ -162,21 +162,21 @@ function CourseCard({ course }: { course: MatchedCourse }) {
         <div className="grid grid-cols-2 gap-3 text-sm">
           {tuitionRange && (
             <div>
-              <p className="text-[11px] text-slate-500">University fee range</p>
-              <p className="font-medium text-slate-800">{tuitionRange}</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)]">University fee range</p>
+              <p className="font-medium text-[var(--alo-text)]">{tuitionRange}</p>
             </div>
           )}
           {ranking > 0 && (
             <div>
-              <p className="text-[11px] text-slate-500">Recorded ranking</p>
-              <p className="font-medium text-slate-800">#{ranking}</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)]">Recorded ranking</p>
+              <p className="font-medium text-[var(--alo-text)]">#{ranking}</p>
             </div>
           )}
         </div>
       )}
 
       <div className="flex items-center justify-between gap-2 pt-1">
-        <p className="text-[11px] text-slate-400">
+        <p className="text-[11px] text-[var(--alo-text-muted)]">
           {course.lastVerifiedAt
             ? `Last verified ${formatDate(course.lastVerifiedAt)}`
             : 'No verification date recorded'}
@@ -186,7 +186,7 @@ function CourseCard({ course }: { course: MatchedCourse }) {
             href={course.officialUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--alo-brand)] hover:text-[var(--alo-brand)]"
           >
             Official source<ArrowUpRight className="size-3.5" />
           </a>
@@ -247,7 +247,7 @@ export default function StudentAiMatch() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Header ─────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-[#0057B8] to-[#003d8f] px-4 py-8 md:py-10">
+      <section className="bg-gradient-to-r from-[var(--alo-brand)] to-[#003d8f] px-4 py-8 md:py-10">
         <div className="max-w-5xl mx-auto">
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 md:p-8">
             <div className="flex items-start gap-4">
@@ -268,7 +268,7 @@ export default function StudentAiMatch() {
             {/* Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-3 mt-6">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -289,9 +289,9 @@ export default function StudentAiMatch() {
                 </SelectContent>
               </Select>
               <Button
-                variant="secondary"
-                className="h-10 rounded-lg"
-                onClick={() => void loadCourses()}
+ variant="secondary"
+ className=" rounded-lg"
+ onClick={() => void loadCourses()}
                 disabled={loading}
               >
                 <RefreshCw className={`size-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
@@ -305,11 +305,11 @@ export default function StudentAiMatch() {
       {/* ─── Results ────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-          <p className="text-sm text-slate-500">
-            Showing <span className="font-semibold text-slate-800">{courses.length}</span>
+          <p className="text-sm text-[var(--alo-text-muted)]">
+            Showing <span className="font-semibold text-[var(--alo-text)]">{courses.length}</span>
             {total > courses.length ? ` of ${total}` : ''} catalogue courses
             {courses.length > 0 && (
-              <span className="text-slate-400"> · {verifiedCount} verified</span>
+              <span className="text-[var(--alo-text-muted)]"> · {verifiedCount} verified</span>
             )}
           </p>
           <Badge variant="brand" className="text-xs">
@@ -317,9 +317,9 @@ export default function StudentAiMatch() {
           </Badge>
         </div>
 
-        <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-blue-100 bg-blue-50/60 p-3">
-          <Info className="size-4 shrink-0 text-blue-600 mt-0.5" />
-          <p className="text-xs text-blue-900 leading-relaxed">
+        <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 p-3">
+          <Info className="size-4 shrink-0 text-[var(--alo-brand)] mt-0.5" />
+          <p className="text-xs text-[var(--alo-brand-deep)] leading-relaxed">
             This list shows catalogue records, not a prediction of your chances. Admission decisions are
             made by the university and visa decisions by the issuing government, so no approval or
             acceptance percentage is shown. Use the Eligibility Check for a rule-based assessment of your
@@ -329,9 +329,9 @@ export default function StudentAiMatch() {
 
         {loadError && (
           <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 mb-6">
-            <p className="text-sm font-semibold text-slate-900">Course matches are unavailable</p>
-            <p className="text-xs text-slate-600 mt-0.5">{loadError}</p>
-            <Button size="sm" variant="outline" className="mt-3 h-8" onClick={() => void loadCourses()}>
+            <p className="text-sm font-semibold text-[var(--alo-text)]">Course matches are unavailable</p>
+            <p className="text-xs text-[var(--alo-body)] mt-0.5">{loadError}</p>
+            <Button size="sm" variant="outline" className="mt-3 " onClick={() => void loadCourses()}>
               Try again
             </Button>
           </div>
@@ -340,7 +340,7 @@ export default function StudentAiMatch() {
         {loading && !loadError && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" aria-busy="true" aria-live="polite">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-56 animate-pulse rounded-xl bg-slate-100" />
+              <div key={i} className="h-56 animate-pulse rounded-xl bg-[var(--alo-surface-muted)]" />
             ))}
           </div>
         )}
@@ -355,9 +355,9 @@ export default function StudentAiMatch() {
 
         {!loading && !loadError && courses.length === 0 && (
           <div className="text-center py-16">
-            <Calendar className="size-12 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-700 mb-1">No courses match your filters</h3>
-            <p className="text-sm text-slate-500 max-w-md mx-auto">
+            <Calendar className="size-12 text-[var(--alo-placeholder)] mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-1">No courses match your filters</h3>
+            <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto">
               {total === 0
                 ? 'The verified course catalogue has no published courses yet. Your counselor can search on your behalf in the meantime.'
                 : 'Try a broader search term or a different programme level.'}

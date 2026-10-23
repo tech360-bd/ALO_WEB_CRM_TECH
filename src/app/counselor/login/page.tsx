@@ -61,14 +61,14 @@ export default function CounselorLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <Card className="w-full max-w-md border-slate-200 bg-white shadow-xl">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--alo-page)] p-4">
+      <Card className="w-full max-w-md border-[var(--alo-border)] bg-white shadow-xl">
         <CardHeader className="pb-2 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]">
             <Headset className="h-6 w-6" aria-hidden="true" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900">Counselor Workspace</CardTitle>
-          <CardDescription className="text-xs text-slate-600">
+          <CardTitle className="text-2xl font-bold text-[var(--alo-text)]">Counselor Workspace</CardTitle>
+          <CardDescription className="text-xs text-[var(--alo-body)]">
             Sign in to manage your assigned leads, student applications, visa files and daily tasks.
           </CardDescription>
         </CardHeader>
@@ -83,9 +83,9 @@ export default function CounselorLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="counselor-email" className="text-xs font-medium text-slate-700">Staff email</Label>
+              <Label htmlFor="counselor-email" className="text-xs font-medium text-[var(--alo-body)]">Staff email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" aria-hidden="true" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-[var(--alo-text-muted)]" aria-hidden="true" />
                 <Input
                   id="counselor-email"
                   type="email"
@@ -94,15 +94,15 @@ export default function CounselorLoginPage() {
                   required
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="h-11 border-slate-200 pl-9 text-sm"
+                  className="h-11 border-[var(--alo-border)] pl-9 text-sm"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="counselor-password" className="text-xs font-medium text-slate-700">Password</Label>
+              <Label htmlFor="counselor-password" className="text-xs font-medium text-[var(--alo-body)]">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" aria-hidden="true" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-[var(--alo-text-muted)]" aria-hidden="true" />
                 <Input
                   id="counselor-password"
                   type={showPassword ? 'text' : 'password'}
@@ -110,39 +110,39 @@ export default function CounselorLoginPage() {
                   required
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  className="h-11 border-slate-200 pl-9 pr-10 text-sm"
+                  className="h-11 border-[var(--alo-border)] pl-9 pr-10 text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((value) => !value)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-3 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                 </button>
               </div>
             </div>
 
-            <Button type="submit" disabled={loading} className="h-11 w-full rounded-button bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700">
+            <Button type="submit" disabled={loading} className=" w-full rounded-button bg-[var(--alo-brand)] text-sm font-semibold text-white hover:bg-[var(--alo-brand-hover)]">
               {loading ? 'Signing in…' : 'Sign In to Counselor Workspace'}
               {!loading && <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />}
             </Button>
           </form>
 
-          <p className="mt-4 flex items-start gap-1.5 text-[11px] leading-relaxed text-slate-500">
+          <p className="mt-4 flex items-start gap-1.5 text-[11px] leading-relaxed text-[var(--alo-text-muted)]">
             <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             Counselors sign in with their staff account. What you can see and change is enforced by the server based
             on your assigned role — not by this page.
           </p>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-3 border-t border-slate-100 pt-4 text-xs">
-            <Link href="/employee/login" className="font-medium text-slate-600 hover:text-slate-900 hover:underline">
+          <div className="mt-4 flex flex-wrap justify-center gap-3 border-t border-[var(--alo-border)] pt-4 text-xs">
+            <Link href="/employee/login" className="font-medium text-[var(--alo-body)] hover:text-[var(--alo-text)] hover:underline">
               Staff &amp; Counselor Portal
             </Link>
-            <Link href="/student/login" className="font-medium text-slate-600 hover:text-slate-900 hover:underline">
+            <Link href="/student/login" className="font-medium text-[var(--alo-body)] hover:text-[var(--alo-text)] hover:underline">
               Student Login
             </Link>
-            <Link href="/partner/login" className="font-medium text-slate-600 hover:text-slate-900 hover:underline">
+            <Link href="/partner/login" className="font-medium text-[var(--alo-body)] hover:text-[var(--alo-text)] hover:underline">
               Partner Login
             </Link>
           </div>

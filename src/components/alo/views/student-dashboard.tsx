@@ -118,8 +118,8 @@ function QuickAction({
   accent?: "blue" | "orange" | "violet" | "emerald" | "amber";
 }) {
   const accentMap: Record<string, string> = {
-    blue: "bg-[#e8f0fb] text-[#0057B8] group-hover:bg-[#0057B8] group-hover:text-white",
-    orange: "bg-[#fdece4] text-[#E8501A] group-hover:bg-[#E8501A] group-hover:text-white",
+    blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)] group-hover:bg-[var(--alo-brand)] group-hover:text-white",
+    orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] group-hover:bg-[var(--alo-cta)] group-hover:text-white",
     violet: "bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white",
     emerald: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white",
     amber: "bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white",
@@ -127,7 +127,7 @@ function QuickAction({
   return (
     <button
       onClick={onClick}
-      className="group flex flex-col items-start gap-2 rounded-xl border border-[#0057B8]/15 bg-white p-3 text-left transition-all hover:border-[#0057B8]/40 hover:shadow-sm"
+      className="group flex flex-col items-start gap-2 rounded-xl border border-[var(--alo-brand)]/15 bg-white p-3 text-left transition-all hover:border-[var(--alo-brand)]/40 hover:shadow-sm"
     >
       <div className={`flex size-9 items-center justify-center rounded-lg transition-colors ${accentMap[accent]}`}>
         <Icon name={icon} className="size-4" />
@@ -140,36 +140,36 @@ function QuickAction({
 // ---------- Timeline item ----------
 function TimelineItem({ ev }: { ev: TimelineEventRow }) {
   const iconMap: Record<string, { icon: string; color: string }> = {
-    PROFILE_UPDATED: { icon: "UserCog", color: "bg-[#0057B8] text-white" },
+    PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand)] text-white" },
     DOC_UPLOADED: { icon: "Upload", color: "bg-sky-500 text-white" },
     DOC_APPROVED: { icon: "CheckCircle2", color: "bg-emerald-500 text-white" },
     APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-violet-500 text-white" },
-    VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-orange-500 text-white" },
+    VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta)] text-white" },
     INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-rose-500 text-white" },
     MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-amber-500 text-white" },
     AI_ACTION: { icon: "Bot", color: "bg-indigo-500 text-white" },
     MESSAGE_SENT: { icon: "MessageSquare", color: "bg-teal-500 text-white" },
     PAYMENT: { icon: "CreditCard", color: "bg-emerald-600 text-white" },
     NOTE: { icon: "StickyNote", color: "bg-slate-500 text-white" },
-    LEAD_CREATED: { icon: "UserPlus", color: "bg-[#0057B8] text-white" },
+    LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand)] text-white" },
   };
-  const cfg = iconMap[ev.type] || { icon: "Activity", color: "bg-[#0057B8] text-white" };
+  const cfg = iconMap[ev.type] || { icon: "Activity", color: "bg-[var(--alo-brand)] text-white" };
   return (
     <div className="flex gap-3">
       <div className="flex flex-col items-center">
         <div className={`flex size-8 shrink-0 items-center justify-center rounded-full ${cfg.color}`}>
           <Icon name={cfg.icon} className="size-3.5" />
         </div>
-        <div className="w-px flex-1 bg-[#0057B8]/15" />
+        <div className="w-px flex-1 bg-[var(--alo-brand)]/15" />
       </div>
       <div className="min-w-0 flex-1 pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-sm font-semibold text-foreground">{ev.title}</p>
-          <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">{timeAgo(ev.createdAt)}</span>
+          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{timeAgo(ev.createdAt)}</span>
         </div>
         {ev.description && <p className="mt-0.5 text-xs text-muted-foreground">{ev.description}</p>}
         {ev.user && (
-          <p className="mt-0.5 text-[10px] text-muted-foreground">
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
             by <span className="font-medium text-foreground/80">{ev.user.name}</span>
           </p>
         )}
@@ -180,7 +180,7 @@ function TimelineItem({ ev }: { ev: TimelineEventRow }) {
 
 // ---------- Readiness helper ----------
 function readinessColor(r?: string | null) {
-  if (!r) return "bg-slate-100 text-slate-700";
+  if (!r) return "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
   if (r === "ready") return "bg-emerald-100 text-emerald-700";
   if (r === "needs_practice") return "bg-amber-100 text-amber-700";
   if (r === "high_risk") return "bg-red-100 text-red-700";
@@ -260,8 +260,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
         description={error || "Once your counselor creates your student record, your mission-control dashboard will appear here."}
         action={
           <Button
-            className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-11"
-            onClick={() => onNavigate("student-profile")}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("student-profile")}
           >
             <Icon name="ArrowRight" className="size-4" />
             Go to Profile Form
@@ -330,21 +330,21 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
     <TooltipProvider>
       <div className="space-y-6">
         {/* Welcome header */}
-        <div className="relative overflow-hidden rounded-2xl border-2 border-[#0057B8]/15 bg-white p-5 sm:p-6">
-          <div className="absolute -right-12 -top-12 size-44 rounded-full bg-[#e8f0fb]/70 blur-2xl" aria-hidden />
-          <div className="absolute right-24 top-8 size-24 rounded-full bg-[#fdece4]/70 blur-xl" aria-hidden />
+        <div className="relative overflow-hidden rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white p-5 sm:p-6">
+          <div className="absolute -right-12 -top-12 size-44 rounded-full bg-[var(--alo-brand-light)]/70 blur-2xl" aria-hidden />
+          <div className="absolute right-24 top-8 size-24 rounded-full bg-[var(--alo-cta-soft)]/70 blur-xl" aria-hidden />
           <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
               <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-alo-gradient text-lg font-black text-white alo-shadow">
                 {s.firstName?.[0]?.toUpperCase() || "S"}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#E8501A]">Student Portal</p>
-                <h1 className="mt-0.5 text-2xl font-bold text-[#0057B8] sm:text-3xl">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--alo-cta)]">Student Portal</p>
+                <h1 className="mt-0.5 text-2xl font-bold text-[var(--alo-brand)] sm:text-3xl">
                   Welcome back, {s.firstName}!
                 </h1>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Badge variant="outline" className="border-[#0057B8]/30 bg-[#e8f0fb] font-mono text-xs font-semibold text-[#0057B8]">
+                  <Badge variant="outline" className="border-[var(--alo-brand)]/30 bg-[var(--alo-brand-light)] font-mono text-xs font-semibold text-[var(--alo-brand)]">
                     <Icon name="Hash" className="size-3" />
                     {s.studentId}
                   </Badge>
@@ -354,8 +354,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 </div>
                 <div className="mt-3">
                   <Button
-                    className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-10"
-                    onClick={() => onNavigate("student-profile")}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("student-profile")}
                   >
                     <Icon name="UserSquare" className="size-4" />
                     View Profile
@@ -403,14 +403,14 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
         </div>
 
         {/* Recommended action banner */}
-        <div className="relative overflow-hidden rounded-2xl border-2 border-[#E8501A]/30 bg-gradient-to-r from-[#fdece4] via-[#fef5f0] to-white p-5 sm:p-6">
+        <div className="relative overflow-hidden rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-gradient-to-r from-[var(--alo-cta-soft)] via-[#fef5f0] to-white p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E8501A] text-white shadow-md">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white shadow-md">
                 <Icon name="Sparkles" className="size-5" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">AI Recommended Next Action</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">AI Recommended Next Action</p>
                 <p className="mt-1 text-sm font-semibold text-foreground sm:text-base">
                   Complete your bank statement upload to unblock your visa documents stage.
                 </p>
@@ -421,16 +421,16 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
             </div>
             <div className="flex shrink-0 gap-2">
               <Button
-                variant="outline"
-                className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-11"
-                onClick={() => onNavigate("document-hub")}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("document-hub")}
               >
                 <Icon name="Upload" className="size-4" />
                 Upload Now
               </Button>
               <Button
-                className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-11"
-                onClick={() => toast({ title: "Reminder snoozed", description: "We'll remind you tomorrow morning." })}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => toast({ title: "Reminder snoozed", description: "We'll remind you tomorrow morning." })}
               >
                 <Icon name="BellOff" className="size-4" />
                 Snooze
@@ -449,7 +449,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
               description={`${apps.length} ${apps.length === 1 ? "application" : "applications"} in progress`}
               icon="ClipboardList"
               action={
-                <Button variant="ghost" size="sm" className="text-[#0057B8] hover:bg-[#e8f0fb]" onClick={() => onNavigate("applications")}>
+                <Button variant="ghost" size="sm" className="text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]" onClick={() => onNavigate("applications")}>
                   View all
                   <Icon name="ArrowRight" className="size-4" />
                 </Button>
@@ -469,13 +469,13 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     return (
                       <div
                         key={app.id}
-                        className="rounded-xl border border-[#0057B8]/12 bg-gradient-to-br from-white to-[#f7f9fc] p-4"
+                        className="rounded-xl border border-[var(--alo-brand)]/12 bg-gradient-to-br from-white to-[var(--alo-page)] p-4"
                       >
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <p className="truncate font-semibold text-foreground">{app.university}</p>
-                              <Badge variant="outline" className="border-[#0057B8]/20 text-[10px] text-muted-foreground">
+                              <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[11px] text-muted-foreground">
                                 {app.country}
                               </Badge>
                             </div>
@@ -487,11 +487,11 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                         </div>
                         <div className="mt-3 flex items-center gap-3">
                           <Progress value={pct} className="h-2 flex-1 bg-muted" />
-                          <span className="shrink-0 text-xs font-semibold tabular-nums text-[#0057B8]">
+                          <span className="shrink-0 text-xs font-semibold tabular-nums text-[var(--alo-brand)]">
                             {stageIdx + 1}/{APP_STAGES.length}
                           </span>
                         </div>
-                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
+                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
                           <span className="font-mono">{app.applicationId}</span>
                           <span>·</span>
                           <span>Stage {stageIdx + 1} of 20</span>
@@ -514,7 +514,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-[#0057B8] hover:bg-[#e8f0fb]"
+                  className="text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   onClick={() => toast({ title: "Timeline refreshed", description: "Showing latest 20 events." })}
                 >
                   <Icon name="RefreshCw" className="size-4" />
@@ -564,23 +564,23 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                   <p className="text-xs text-muted-foreground">Senior Education Counselor</p>
                   <div className="mt-1 flex items-center gap-1.5">
                     <span className="size-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-[10px] font-medium text-emerald-600">Online · responds in ~2h</span>
+                    <span className="text-[11px] font-medium text-emerald-600">Online · responds in ~2h</span>
                   </div>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <Button
-                  variant="outline"
-                  className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
-                  onClick={() => toast({ title: "Message sent", description: `Your counselor ${counselName} will reply shortly.` })}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => toast({ title: "Message sent", description: `Your counselor ${counselName} will reply shortly.` })}
                 >
                   <Icon name="MessageSquare" className="size-4" />
                   Message
                 </Button>
                 <Button
-                  variant="outline"
-                  className="border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
-                  onClick={() => toast({ title: "Call scheduled", description: "A 15-min slot has been added to your calendar." })}
+ variant="outline"
+ className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => toast({ title: "Call scheduled", description: "A 15-min slot has been added to your calendar." })}
                 >
                   <Icon name="PhoneCall" className="size-4" />
                   Book Call
@@ -594,7 +594,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-3xl font-bold tabular-nums text-[#0057B8]">
+                      <p className="text-3xl font-bold tabular-nums text-[var(--alo-brand)]">
                         {(() => {
                           try {
                             const sc = latestInterview.scores ? JSON.parse(latestInterview.scores) : null;
@@ -613,14 +613,14 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </span>
                   </div>
                   {latestInterview.feedback && (
-                    <div className="rounded-lg bg-[#e8f0fb]/60 p-3">
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-[#0057B8]">AI Feedback</p>
+                    <div className="rounded-lg bg-[var(--alo-brand-light)]/60 p-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-brand)]">AI Feedback</p>
                       <p className="mt-1 text-xs text-foreground/80">{latestInterview.feedback}</p>
                     </div>
                   )}
                   <Button
-                    className="w-full bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-10"
-                    onClick={() => onNavigate("ai-interview")}
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("ai-interview")}
                   >
                     <Icon name="Mic" className="size-4" />
                     Practice Again
@@ -628,7 +628,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 </div>
               ) : (
                 <div className="space-y-3 text-center">
-                  <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name="MicOff" className="size-6" />
                   </div>
                   <div>
@@ -638,8 +638,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </p>
                   </div>
                   <Button
-                    className="w-full bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-10"
-                    onClick={() => onNavigate("ai-interview")}
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("ai-interview")}
                   >
                     <Icon name="Sparkles" className="size-4" />
                     Practice Now
@@ -654,14 +654,14 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-3xl font-bold tabular-nums text-[#0057B8]">
+                      <p className="text-3xl font-bold tabular-nums text-[var(--alo-brand)]">
                         {Number.isInteger(latestScore) ? latestScore.toFixed(1) : latestScore}
                       </p>
                       <p className="text-xs text-muted-foreground">Overall · {scoreType}</p>
                     </div>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex size-7 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0057B8]">
+                        <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="flex size-7 items-center justify-center rounded-full bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                           <Icon name="Info" className="size-3.5" />
                         </button>
                       </TooltipTrigger>
@@ -680,9 +680,9 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     ))}
                   </div>
                   <Button
-                    variant="outline"
-                    className="w-full border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb] h-10"
-                    onClick={() => onNavigate("english-test")}
+ variant="outline"
+ className="w-full border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] "
+ onClick={() => onNavigate("english-test")}
                   >
                     <Icon name="Plus" className="size-4" />
                     Take New Mock Test
@@ -695,8 +695,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                   description="Take a free mock test to estimate your IELTS/PTE band score."
                   action={
                     <Button
-                      className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-10"
-                      onClick={() => onNavigate("english-test")}
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ onClick={() => onNavigate("english-test")}
                     >
                       <Icon name="Sparkles" className="size-4" />
                       Take Free Mock

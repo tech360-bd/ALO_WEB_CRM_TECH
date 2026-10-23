@@ -22,8 +22,8 @@ const aiActions = [
 ];
 
 function UrgencyBadge({ urgency }: { urgency: string }) {
-  if (urgency === 'hot') return <Badge variant="danger" className="text-[10px]">🔥 Hot</Badge>;
-  return <Badge variant="warning" className="text-[10px]">Warm</Badge>;
+  if (urgency === 'hot') return <Badge variant="danger" className="text-[11px]">🔥 Hot</Badge>;
+  return <Badge variant="warning" className="text-[11px]">Warm</Badge>;
 }
 
 export default function CounselorDashboard() {
@@ -140,7 +140,7 @@ export default function CounselorDashboard() {
             <CardHeader className="pb-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-orange-500" /> Hot Leads
+                  <Flame className="w-4 h-4 text-[var(--alo-cta)]" /> Hot Leads
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{hotLeads.length} leads</Badge>
               </div>
@@ -189,8 +189,8 @@ export default function CounselorDashboard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-xs px-2"><Phone className="w-3 h-3 mr-1" /> Call</Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 text-xs px-2"><MessageSquare className="w-3 h-3 mr-1" /> Chat</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 px-2"><Phone className="w-3 h-3 mr-1" /> Call</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-7 px-2"><MessageSquare className="w-3 h-3 mr-1" /> Chat</Button>
                       </div>
                     </div>
                   ))
@@ -211,7 +211,7 @@ export default function CounselorDashboard() {
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-alo-brand" /> AI Recommended Actions
                 </CardTitle>
-                <Badge variant="brand" className="text-[10px]">Smart Queue</Badge>
+                <Badge variant="brand" className="text-[11px]">Smart Queue</Badge>
               </div>
             </CardHeader>
             <CardContent>
@@ -280,7 +280,7 @@ export default function CounselorDashboard() {
                   <p className="text-[11px] text-alo-text-muted">Urgent</p>
                 </div>
               </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full mt-3 text-xs">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full mt-3 ">
                 <MessageSquare className="w-3.5 h-3.5" /> Open Inbox
               </Button>
             </CardContent>

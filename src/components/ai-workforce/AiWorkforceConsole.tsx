@@ -48,7 +48,7 @@ const statusTone: Record<string, string> = {
   COMPLETED: 'bg-emerald-100 text-emerald-800',
   HEALTHY: 'bg-emerald-100 text-emerald-800',
   DEPLOYED: 'bg-emerald-100 text-emerald-800',
-  DRAFT: 'bg-slate-100 text-slate-700',
+  DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   VALIDATED: 'bg-sky-100 text-sky-800',
   TESTED: 'bg-indigo-100 text-indigo-800',
   APPROVED: 'bg-violet-100 text-violet-800',
@@ -62,7 +62,7 @@ const statusTone: Record<string, string> = {
 };
 
 function StatusBadge({ value }: { value: string }) {
-  return <Badge className={statusTone[value] || 'bg-slate-100 text-slate-700'}>{value}</Badge>;
+  return <Badge className={statusTone[value] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{value}</Badge>;
 }
 
 function Stat({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
@@ -529,7 +529,7 @@ function TestLab({ agents }: { agents: Json[] }) {
               <span>runtime {String((result.runtimeKeys as string[] | undefined)?.join(', ') ?? '')}</span>
               {result.humanReviewRequired ? <Badge className="bg-amber-100 text-amber-800">human review required</Badge> : null}
             </div>
-            <pre className="max-h-96 overflow-auto rounded bg-slate-950 p-3 text-xs text-slate-100">{JSON.stringify(result, null, 2)}</pre>
+            <pre className="max-h-96 overflow-auto rounded-[12px] border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 text-[11px] leading-5 text-[var(--alo-text)]">{JSON.stringify(result, null, 2)}</pre>
           </div>
         ) : null}
         <p className="flex items-center gap-1 text-xs text-muted-foreground">

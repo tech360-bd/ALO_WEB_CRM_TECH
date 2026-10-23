@@ -155,7 +155,7 @@ function SidebarContent() {
                 />
                 <span className="flex-1 text-left truncate">{item.label}</span>
                 {item.badge === 'unread-messages' && unreadMessages > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold shrink-0">
                     {unreadMessages > 9 ? '9+' : unreadMessages}
                   </span>
                 )}
@@ -279,7 +279,7 @@ export default function StudentPortalShell({
           {user && (
             <Badge
               variant="secondary"
-              className="font-mono text-xs bg-slate-100 text-slate-600 hidden sm:inline-flex"
+              className="font-mono text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hidden sm:inline-flex"
             >
               ID: {user.id.slice(0, 8).toUpperCase()}
             </Badge>
@@ -298,7 +298,7 @@ export default function StudentPortalShell({
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -315,13 +315,13 @@ export default function StudentPortalShell({
                         updates is indistinguishable from an empty inbox. */}
                     <span
                       className={cn(
-                        'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold',
+                        'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold',
                         realtimeStatus === 'connected' && 'bg-emerald-100 text-emerald-700',
-                        realtimeStatus === 'connecting' && 'bg-blue-100 text-blue-700',
+                        realtimeStatus === 'connecting' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
                         realtimeStatus === 'reconnecting' && 'bg-amber-100 text-amber-800',
-                        realtimeStatus === 'not_configured' && 'bg-slate-200 text-slate-600',
+                        realtimeStatus === 'not_configured' && 'bg-slate-200 text-[var(--alo-body)]',
                         realtimeStatus === 'error' && 'bg-red-100 text-red-700',
-                        realtimeStatus === 'idle' && 'bg-slate-100 text-slate-500',
+                        realtimeStatus === 'idle' && 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
                       )}
                       title={REALTIME_STATUS_HINT[realtimeStatus] ?? ''}
                     >

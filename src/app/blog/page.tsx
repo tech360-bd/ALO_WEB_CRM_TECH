@@ -17,17 +17,21 @@ export default function BlogPage() {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-[#0057B8] text-white py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Blog & Insights</h1>
-          <p className="text-lg md:text-xl text-blue-100">
+      <section className="border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)] py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-secondary)] ring-1 ring-inset ring-[var(--alo-border)]">
+            <span className="size-1.5 rounded-full bg-[var(--alo-brand)]" aria-hidden="true" />
+            <span className="text-[var(--alo-brand)]">Editorial</span>
+          </span>
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">Blog & Insights</h1>
+          <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] md:text-base">
             Your ultimate knowledge hub for studying abroad. Discover expert guides on visas, scholarships, universities, and test preparation.
           </p>
         </div>
       </section>
 
       {/* Blog Grid Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      <section className="py-16 md:py-24 bg-[var(--alo-page)]">
         <div className="container mx-auto px-4 md:px-6">
           
           {/* Category Filter Tabs */}
@@ -37,8 +41,8 @@ export default function BlogPage() {
                 key={category} 
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   category === 'All' 
-                    ? 'bg-[#E8501A] text-black'
-                    : 'bg-white text-gray-700 hover:bg-gray-200 border border-gray-200'
+                    ? 'bg-[var(--alo-cta)] text-black'
+                    : 'bg-white text-[var(--alo-body)] hover:bg-gray-200 border border-[var(--alo-border)]'
                 }`}
               >
                 {category}
@@ -48,7 +52,7 @@ export default function BlogPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {MASTER_BLOGS_DATA.map((blog) => (
-              <Link key={blog.id} href={`/blog/${blog.slug}`} className="group h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
+              <Link key={blog.id} href={`/blog/${blog.slug}`} className="group h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-[var(--alo-border)]">
                 <div className="relative h-56 overflow-hidden">
                   <Image 
                     src={blog.heroImage} 
@@ -57,23 +61,23 @@ export default function BlogPage() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="inline-block bg-[#0057B8] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    <span className="inline-block bg-[var(--alo-brand)] text-white text-xs font-semibold px-3 py-1 rounded-full">
                       {blog.category}
                     </span>
                   </div>
                 </div>
                 
                 <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#E8501A] transition-colors line-clamp-2">
+                  <h3 className="text-xl font-bold text-[var(--alo-text)] mb-3 group-hover:text-[var(--alo-cta)] transition-colors line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-gray-600 mb-6 line-clamp-3 text-sm">
+                  <p className="text-[var(--alo-body)] mb-6 line-clamp-3 text-sm">
                     {blog.excerpt}
                   </p>
                   
-                  <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                  <div className="mt-auto pt-4 border-t border-[var(--alo-border)] flex items-center justify-between text-xs text-[var(--alo-text-muted)]">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[#0057B8] font-bold">
+                      <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[var(--alo-brand)] font-bold">
                         {blog.author.charAt(0)}
                       </div>
                       <span>{blog.author}</span>

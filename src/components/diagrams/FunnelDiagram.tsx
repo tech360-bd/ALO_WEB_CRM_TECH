@@ -47,7 +47,7 @@ export default function FunnelDiagram({
   const invalid = stages.some((stage) => !Number.isFinite(stage.value) || stage.value < 0);
   const maximum = Math.max(0, ...stages.map((stage) => stage.value));
   if (!stages.length || invalid) {
-    return <figure className="rounded-2xl border border-slate-200 bg-white p-6"><figcaption className="font-semibold">{title}</figcaption><p className="mt-2 text-sm text-slate-500">{invalid ? 'Counts unavailable: each stage needs a finite, non-negative value.' : 'No funnel counts available yet.'}</p></figure>;
+    return <figure className="rounded-2xl border border-[var(--alo-border)] bg-white p-6"><figcaption className="font-semibold">{title}</figcaption><p className="mt-2 text-sm text-[var(--alo-text-muted)]">{invalid ? 'Counts unavailable: each stage needs a finite, non-negative value.' : 'No funnel counts available yet.'}</p></figure>;
   }
   // Scale to the largest stage, not the first. Zero really has zero width.
   const widths = stages.map((stage) => maximum > 0 ? MAX_W * (stage.value / maximum) : 0);
@@ -59,15 +59,15 @@ export default function FunnelDiagram({
   const focalIndex = stages.length - 1;
 
   return (
-    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+    <figure className="rounded-2xl border border-[var(--alo-border)] bg-white p-4 sm:p-6">
       <figcaption className="mb-4 flex items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">{eyebrow}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--alo-brand)]">{eyebrow}</p>
           ) : null}
-          <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
+          <h2 className="mt-1 text-base font-bold text-[var(--alo-text)]">{title}</h2>
         </div>
-        <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">
+        <span className="rounded-full border border-[var(--alo-border)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-text-muted)]">
           supplied counts
         </span>
       </figcaption>
@@ -87,7 +87,7 @@ export default function FunnelDiagram({
             x={28}
             y={HEADER_H + bodyH / 2}
             textAnchor="middle"
-            className="font-mono text-[8px] uppercase tracking-[0.14em]"
+            className="font-mono text-[11px] uppercase tracking-[0.14em]"
             fill={T.soft}
           >
             drop-off
@@ -135,7 +135,7 @@ export default function FunnelDiagram({
                         x={CX}
                         y={midY + 12}
                         textAnchor="middle"
-                        className="font-mono text-[9px]"
+                        className="font-mono text-[11px]"
                         fill={T.muted}
                       >
                         {stage.value.toLocaleString()} · {stage.sublabel}
@@ -145,7 +145,7 @@ export default function FunnelDiagram({
                         x={CX}
                         y={midY + 12}
                         textAnchor="middle"
-                        className="font-mono text-[9px]"
+                        className="font-mono text-[11px]"
                         fill={T.muted}
                       >
                         {stage.value.toLocaleString()}
@@ -170,7 +170,7 @@ export default function FunnelDiagram({
                     <text
                       x={LABEL_X}
                       y={midY + 12}
-                      className="font-mono text-[9px]"
+                      className="font-mono text-[11px]"
                       fill={T.muted}
                     >
                       {stage.value.toLocaleString()}
@@ -182,7 +182,7 @@ export default function FunnelDiagram({
                   <text
                     x={CX + wTop / 2 + 12}
                     y={yTop + 14}
-                    className="font-mono text-[8px]"
+                    className="font-mono text-[11px]"
                     fill={T.soft}
                   >
                     {drop >= 0 ? `−${drop}%` : `+${-drop}%`}
@@ -204,10 +204,10 @@ export default function FunnelDiagram({
             stroke={T.accent}
             strokeWidth={1.25}
           />
-          <text x={CX - 18} y={height - 15} className="font-mono text-[8px]" fill={T.muted}>
+          <text x={CX - 18} y={height - 15} className="font-mono text-[11px]" fill={T.muted}>
             conversion stage
           </text>
-          <text x={CX + 60} y={height - 15} className="font-mono text-[8px]" fill={T.soft}>
+          <text x={CX + 60} y={height - 15} className="font-mono text-[11px]" fill={T.soft}>
             stage-edge widths proportional to counts · −% = drop-off vs previous stage
           </text>
         </DiagramRoot>

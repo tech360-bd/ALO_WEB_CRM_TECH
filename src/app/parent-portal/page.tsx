@@ -106,7 +106,7 @@ function money(value: number, currency: string): string {
 function Withheld({ shown, label }: { shown: boolean; label: string }) {
   if (shown) return null;
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500">
+    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--alo-text-muted)]">
       <EyeOff className="size-3" />
       {label} withheld at your access level
     </span>
@@ -162,8 +162,8 @@ export default function ParentPortalPage() {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-56 rounded-lg bg-slate-200" />
-          <div className="h-40 rounded-2xl bg-slate-100" />
-          <div className="h-40 rounded-2xl bg-slate-100" />
+          <div className="h-40 rounded-2xl bg-[var(--alo-surface-muted)]" />
+          <div className="h-40 rounded-2xl bg-[var(--alo-surface-muted)]" />
         </div>
       </div>
     );
@@ -193,12 +193,12 @@ export default function ParentPortalPage() {
     const shown = copy[state as keyof typeof copy];
     return (
       <div className="p-6">
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="flex flex-col items-center gap-3 pt-10 pb-10 text-center">
-            <Lock className="size-9 text-slate-400" />
-            <h1 className="text-base font-bold text-slate-900">{shown.title}</h1>
-            <p className="max-w-md text-sm text-slate-600">{message || shown.detail}</p>
-            <p className="max-w-md rounded-lg bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-500">
+            <Lock className="size-9 text-[var(--alo-text-muted)]" />
+            <h1 className="text-base font-bold text-[var(--alo-text)]">{shown.title}</h1>
+            <p className="max-w-md text-sm text-[var(--alo-body)]">{message || shown.detail}</p>
+            <p className="max-w-md rounded-lg bg-[var(--alo-page)] px-3 py-2 font-mono text-[11px] text-[var(--alo-text-muted)]">
               reason: {message || 'unknown'}
             </p>
             <Button variant="outline" size="sm" onClick={() => void load()}>
@@ -220,11 +220,11 @@ export default function ParentPortalPage() {
     <div className="space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-            <Users className="size-5 text-[#0057B8]" />
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+            <Users className="size-5 text-[var(--alo-brand)]" />
             Parent &amp; Guardian Portal
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             A controlled view of the student journey. What you can see is set by the access level ALO
             granted you.
           </p>
@@ -236,18 +236,18 @@ export default function ParentPortalPage() {
       </div>
 
       {/* Access level is stated openly, not silently enforced */}
-      <Card className="rounded-2xl border-2 border-blue-200 bg-blue-50/50">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50">
         <CardContent className="flex items-start gap-3 pt-5 pb-5">
-          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-[#0057B8]" />
+          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-[var(--alo-brand)]" />
           <div>
-            <p className="text-sm font-bold text-slate-900">
+            <p className="text-sm font-bold text-[var(--alo-text)]">
               Access level: {data.accessLevel.replace('_', ' ')}
             </p>
-            <p className="mt-0.5 text-xs text-slate-700">{ACCESS_EXPLAINER[data.accessLevel] ?? ''}</p>
+            <p className="mt-0.5 text-xs text-[var(--alo-body)]">{ACCESS_EXPLAINER[data.accessLevel] ?? ''}</p>
             {data.capabilities.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
                 {data.capabilities.map((capability) => (
-                  <Badge key={capability} variant="outline" className="bg-white font-mono text-[9px]">
+                  <Badge key={capability} variant="outline" className="bg-white font-mono text-[11px]">
                     {capability}
                   </Badge>
                 ))}
@@ -258,26 +258,26 @@ export default function ParentPortalPage() {
       </Card>
 
       {/* Student */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm font-bold">
-            <GraduationCap className="size-4 text-[#0057B8]" />
+            <GraduationCap className="size-4 text-[var(--alo-brand)]" />
             Student
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-1.5 text-sm">
           {data.student ? (
             <>
-              <p className="text-base font-bold text-slate-900">{data.student.name}</p>
-              <p className="text-xs text-slate-600">
+              <p className="text-base font-bold text-[var(--alo-text)]">{data.student.name}</p>
+              <p className="text-xs text-[var(--alo-body)]">
                 Journey stage: <span className="font-semibold">{data.student.journeyStage || 'not recorded'}</span>
               </p>
               {fullJourney ? (
-                <div className="space-y-0.5 text-xs text-slate-600">
+                <div className="space-y-0.5 text-xs text-[var(--alo-body)]">
                   {data.student.email && <p>Email: {data.student.email}</p>}
                   {data.student.phone && <p>Phone: {data.student.phone}</p>}
                   {!data.student.email && !data.student.phone && (
-                    <p className="text-slate-400">No contact details recorded.</p>
+                    <p className="text-[var(--alo-text-muted)]">No contact details recorded.</p>
                   )}
                 </div>
               ) : (
@@ -285,31 +285,31 @@ export default function ParentPortalPage() {
               )}
             </>
           ) : (
-            <p className="text-xs text-slate-500">No student record is available at your access level.</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">No student record is available at your access level.</p>
           )}
         </CardContent>
       </Card>
 
       {/* Applications */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="text-sm font-bold">Applications ({data.applications.length})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2.5">
           {data.applications.length === 0 ? (
-            <p className="py-4 text-center text-sm text-slate-500">No applications recorded yet.</p>
+            <p className="py-4 text-center text-sm text-[var(--alo-text-muted)]">No applications recorded yet.</p>
           ) : (
             data.applications.map((application) => (
-              <div key={application.id} className="rounded-xl border border-slate-200 p-3">
+              <div key={application.id} className="rounded-xl border border-[var(--alo-border)] p-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900">
+                    <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                       {fullJourney && application.universityName
                         ? application.universityName
                         : 'Application'}
                     </p>
                     {fullJourney ? (
-                      <p className="mt-0.5 truncate text-xs text-slate-600">
+                      <p className="mt-0.5 truncate text-xs text-[var(--alo-body)]">
                         {[application.courseName, application.country, application.intake]
                           .filter(Boolean)
                           .join(' · ') || 'No course details recorded'}
@@ -318,12 +318,12 @@ export default function ParentPortalPage() {
                       <Withheld shown={false} label="University and course" />
                     )}
                   </div>
-                  <Badge variant="outline" className="shrink-0 text-[10px]">
+                  <Badge variant="outline" className="shrink-0 text-[11px]">
                     {application.status || 'UNKNOWN'}
                   </Badge>
                 </div>
                 {application.deadlineDate && (
-                  <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-600">
+                  <p className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--alo-body)]">
                     <CalendarClock className="size-3.5" />
                     Deadline {new Date(application.deadlineDate).toLocaleDateString()}
                   </p>
@@ -335,16 +335,16 @@ export default function ParentPortalPage() {
       </Card>
 
       {/* Deadlines */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-sm font-bold">
-            <CalendarClock className="size-4 text-[#0057B8]" />
+            <CalendarClock className="size-4 text-[var(--alo-brand)]" />
             Upcoming deadlines ({upcoming.length})
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {upcoming.length === 0 ? (
-            <p className="py-3 text-center text-sm text-slate-500">
+            <p className="py-3 text-center text-sm text-[var(--alo-text-muted)]">
               {data.deadlines.length > 0
                 ? 'All recorded deadlines have passed. Contact your counselor if you expected an upcoming date.'
                 : 'No deadlines recorded.'}
@@ -357,15 +357,15 @@ export default function ParentPortalPage() {
                 <div
                   key={`${deadline.applicationId}-${deadline.date}`}
                   className={`flex items-center justify-between rounded-lg border p-2.5 text-xs ${
-                    urgent ? 'border-red-200 bg-red-50' : 'border-slate-200'
+                    urgent ? 'border-red-200 bg-red-50' : 'border-[var(--alo-border)]'
                   }`}
                 >
-                  <span className="font-mono text-slate-600">{deadline.applicationId}</span>
+                  <span className="font-mono text-[var(--alo-body)]">{deadline.applicationId}</span>
                   <span className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--alo-text)]">
                       {new Date(deadline.date).toLocaleDateString()}
                     </span>
-                    <Badge variant="outline" className={urgent ? 'border-red-300 bg-white text-[9px] text-red-700' : 'text-[9px]'}>
+                    <Badge variant="outline" className={urgent ? 'border-red-300 bg-white text-[11px] text-red-700' : 'text-[11px]'}>
                       {days} day{days === 1 ? '' : 's'}
                     </Badge>
                   </span>
@@ -378,24 +378,24 @@ export default function ParentPortalPage() {
 
       {/* Finance — only with the capability, only real recorded responsibilities */}
       {data.finance && (
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm font-bold">
-              <Wallet className="size-4 text-[#0057B8]" />
+              <Wallet className="size-4 text-[var(--alo-brand)]" />
               Payment responsibilities
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {data.finance.responsibilities === 0 ? (
-              <p className="py-3 text-center text-sm text-slate-500">
+              <p className="py-3 text-center text-sm text-[var(--alo-text-muted)]">
                 No payment responsibility has been recorded against you.
               </p>
             ) : (
               <>
                 <div className="grid gap-2.5 sm:grid-cols-3">
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Total</p>
-                    <p className="text-xl font-black text-slate-900">
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">Total</p>
+                    <p className="text-xl font-black text-[var(--alo-text)]">
                       {money(data.finance.totalAmount, data.finance.byParent[0]?.currency ?? 'GBP')}
                     </p>
                   </div>
@@ -416,7 +416,7 @@ export default function ParentPortalPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[11px]">
                     <thead>
-                      <tr className="border-b border-slate-200 text-left font-bold text-slate-600">
+                      <tr className="border-b border-[var(--alo-border)] text-left font-bold text-[var(--alo-body)]">
                         <th className="p-2">Responsible</th>
                         <th className="p-2">Scope</th>
                         <th className="p-2">Amount</th>
@@ -427,16 +427,16 @@ export default function ParentPortalPage() {
                     </thead>
                     <tbody>
                       {data.finance.byParent.map((item, index) => (
-                        <tr key={`${item.parentId}-${index}`} className="border-b border-slate-100">
+                        <tr key={`${item.parentId}-${index}`} className="border-b border-[var(--alo-border)]">
                           <td className="p-2">
-                            {item.parentName} <span className="text-slate-400">({item.relationship})</span>
+                            {item.parentName} <span className="text-[var(--alo-text-muted)]">({item.relationship})</span>
                           </td>
                           <td className="p-2">{item.scope}</td>
                           <td className="p-2 font-mono">{money(item.amount, item.currency)}</td>
                           <td className="p-2 font-mono">{money(item.paidAmount, item.currency)}</td>
                           <td className="p-2 font-mono font-semibold">{money(item.outstanding, item.currency)}</td>
                           <td className="p-2">
-                            <Badge variant="outline" className="text-[9px]">{item.status}</Badge>
+                            <Badge variant="outline" className="text-[11px]">{item.status}</Badge>
                           </td>
                         </tr>
                       ))}
@@ -449,7 +449,7 @@ export default function ParentPortalPage() {
         </Card>
       )}
 
-      <p className="flex items-start gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-3 text-[11px] text-slate-600">
+      <p className="flex items-start gap-1.5 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-[11px] text-[var(--alo-body)]">
         <Info className="mt-0.5 size-3.5 shrink-0" />
         Internal counseling notes, commission arrangements and partner information are never shown in
         this portal. If a detail you need is missing, contact your ALO counselor rather than assuming

@@ -883,7 +883,7 @@ export function WhatsAppCommandCenter() {
                               <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                                 {conv.studentName || conv.fromPhone || "Unknown"}
                               </p>
-                              <span className="shrink-0 text-[10px] text-[var(--alo-muted)]">
+                              <span className="shrink-0 text-[11px] text-[var(--alo-muted)]">
                                 {timeAgo(conv.lastMessageAt)}
                               </span>
                             </div>
@@ -898,11 +898,11 @@ export function WhatsAppCommandCenter() {
                                   sev !== "NORMAL" && "pulse-dot"
                                 )}
                               />
-                              <span className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                              <span className="text-[11px] uppercase tracking-wide text-[var(--alo-muted)]">
                                 {SEVERITY_LABEL[sev]}
                               </span>
                               {conv.unread > 0 && (
-                                <Badge variant="warning" className="ml-auto h-4 px-1 text-[10px]">
+                                <Badge variant="warning" className="ml-auto h-4 px-1 text-[11px]">
                                   {conv.unread}
                                 </Badge>
                               )}
@@ -944,7 +944,7 @@ export function WhatsAppCommandCenter() {
                       <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                         {selected.studentName || selected.fromPhone || "Unknown contact"}
                       </p>
-                      <Badge variant="success" className="gap-1 text-[10px]">
+                      <Badge variant="success" className="gap-1 text-[11px]">
                         <Icon name="MessageCircle" className="size-2.5" /> WhatsApp
                       </Badge>
                     </div>
@@ -967,14 +967,14 @@ export function WhatsAppCommandCenter() {
                 <div className="flex flex-wrap items-center gap-2 border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)]/40 px-3 py-2 text-xs">
                   <Icon name="Orbit" className="size-3.5 text-[var(--alo-blue)]" />
                   <span className="font-semibold text-[var(--alo-blue-strong)]">Student</span>
-                  <Badge variant="blue" className="text-[10px]">{student.studentId}</Badge>
+                  <Badge variant="blue" className="text-[11px]">{student.studentId}</Badge>
                   {student.counselor?.name && (
                     <span className="text-[var(--alo-text-secondary)]">
                       Counselor: <span className="font-medium">{student.counselor.name}</span>
                     </span>
                   )}
                   {activeApplications[0]?.stage && (
-                    <Badge variant="warning" className="text-[10px]">
+                    <Badge variant="warning" className="text-[11px]">
                       Stage: {activeApplications[0].stage.replace(/_/g, " ").toLowerCase()}
                     </Badge>
                   )}
@@ -1005,7 +1005,7 @@ export function WhatsAppCommandCenter() {
                           >
                             {!isOutbound && (
                               <Avatar className="size-7">
-                                <AvatarFallback className="bg-[var(--alo-surface-muted)] text-[10px] font-semibold text-[var(--alo-text-secondary)]">
+                                <AvatarFallback className="bg-[var(--alo-surface-muted)] text-[11px] font-semibold text-[var(--alo-text-secondary)]">
                                   {initials(selected.studentName || selected.fromPhone)}
                                 </AvatarFallback>
                               </Avatar>
@@ -1019,7 +1019,7 @@ export function WhatsAppCommandCenter() {
                               )}
                             >
                               {m.aiAssisted && (
-                                <span className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
+                                <span className="mb-1 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
                                   <Icon name="Sparkles" className="size-2.5" />
                                   AI-assisted
                                 </span>
@@ -1038,14 +1038,14 @@ export function WhatsAppCommandCenter() {
                                     >
                                       <Icon name={fileTypeIcon(a.name)} className="size-3.5 text-[var(--alo-blue)]" />
                                       <span className="max-w-[120px] truncate" title={a.name}>{a.name}</span>
-                                      <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(a.size)}</span>
+                                      <span className="text-[11px] text-[var(--alo-muted)]">{fileSizeLabel(a.size)}</span>
                                     </a>
                                   ))}
                                 </div>
                               )}
                               <div
                                 className={cn(
-                                  "mt-1 flex items-center gap-1 text-[10px] text-[var(--alo-muted)]",
+                                  "mt-1 flex items-center gap-1 text-[11px] text-[var(--alo-muted)]",
                                   isOutbound ? "justify-end" : "justify-start"
                                 )}
                               >
@@ -1225,7 +1225,7 @@ export function WhatsAppCommandCenter() {
                         >
                           <Icon name={fileTypeIcon(f.name)} className="size-3.5 text-[var(--alo-blue)]" />
                           <span className="truncate max-w-[120px]" title={f.name}>{f.name}</span>
-                          <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(f.size)}</span>
+                          <span className="text-[11px] text-[var(--alo-muted)]">{fileSizeLabel(f.size)}</span>
                           <button
                             type="button"
                             onClick={() => setAttachments((a) => a.filter((_, idx) => idx !== i))}
@@ -1283,7 +1283,7 @@ export function WhatsAppCommandCenter() {
                 </div>
 
                 {/* Status bar */}
-                <div className="mt-3 flex items-center justify-between border-t border-[var(--alo-border)] pt-2 text-[10px] text-[var(--alo-muted)]">
+                <div className="mt-3 flex items-center justify-between border-t border-[var(--alo-border)] pt-2 text-[11px] text-[var(--alo-muted)]">
                   <span className="flex items-center gap-1">
                     <Icon name="Check" className="size-2.5" /> Sent
                   </span>
@@ -1436,7 +1436,7 @@ function StudentContextPanel({
                 <p className="text-[var(--alo-muted)]">
                   {a.courseName || "—"}
                 </p>
-                <Badge variant="warning" className="mt-1 text-[10px]">
+                <Badge variant="warning" className="mt-1 text-[11px]">
                   {a.stage.replace(/_/g, " ").toLowerCase()}
                 </Badge>
               </div>
@@ -1450,7 +1450,7 @@ function StudentContextPanel({
           <p className="caption-text text-[var(--alo-muted)]">Missing documents</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {missingDocuments.slice(0, 6).map((d) => (
-              <Badge key={d.id} variant="danger" className="text-[10px]">
+              <Badge key={d.id} variant="danger" className="text-[11px]">
                 {d.name}
               </Badge>
             ))}
@@ -1630,7 +1630,7 @@ function AiClassificationPanel({
   return (
     <SectionCard title="AI Message Classification" icon="BrainCircuit" accent="violet">
       <div className="space-y-2">
-        <InfoRow label="Detected intent" value={<Badge variant="info" className="text-[10px]">{intent.replace(/_/g, " ")}</Badge>} />
+        <InfoRow label="Detected intent" value={<Badge variant="info" className="text-[11px]">{intent.replace(/_/g, " ")}</Badge>} />
         <InfoRow label="Linked application" value={linkedApp} />
       </div>
       <div className="mt-3">
@@ -1698,7 +1698,7 @@ function DocumentReceiptPanel({
                 <>
                   {activeApplications.length > 0 ? (
                     <div>
-                      <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                      <Label className="text-[11px] uppercase tracking-wide text-[var(--alo-muted)]">
                         Match to application
                       </Label>
                       <Select value={selectedAppId} onValueChange={setSelectedAppId}>
@@ -1718,7 +1718,7 @@ function DocumentReceiptPanel({
                     <p className="text-xs text-[var(--alo-muted)]">No active application is available; you can still link this file to the student profile.</p>
                   )}
                   <div>
-                    <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                    <Label className="text-[11px] uppercase tracking-wide text-[var(--alo-muted)]">
                       Match to document requirement
                     </Label>
                     <Select value={selectedDocRequirement} onValueChange={setSelectedDocRequirement}>

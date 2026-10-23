@@ -61,23 +61,23 @@ export default function CrmScholarshipsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Scholarships</h1><p className="text-gray-500">Browse and manage scholarship opportunities for students</p></div>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500 hover:bg-orange-600"><Award className="w-4 h-4 mr-2" />Add Scholarship</Button>
+        <div><h1 className="text-2xl font-bold text-[var(--alo-text)]">Scholarships</h1><p className="text-[var(--alo-text-muted)]">Browse and manage scholarship opportunities for students</p></div>
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Award className="w-4 h-4 mr-2" />Add Scholarship</Button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Scholarships', value: stats.total, icon: Award, color: 'text-blue-600 bg-blue-50' },
+          { label: 'Total Scholarships', value: stats.total, icon: Award, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
           { label: 'Active', value: stats.active, icon: GraduationCap, color: 'text-green-600 bg-green-50' },
           { label: 'Countries', value: stats.countries, icon: Globe, color: 'text-amber-600 bg-amber-50' },
           { label: 'Avg. Award', value: `${stats.avgAmount.toLocaleString()}`, icon: DollarSign, color: 'text-purple-600 bg-purple-50' },
         ].map(s => (
-          <Card key={s.label}><CardContent className="p-4 flex items-center gap-3"><div className={`p-2 rounded-lg ${s.color}`}><s.icon className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-gray-500">{s.label}</p></div></CardContent></Card>
+          <Card key={s.label}><CardContent className="p-4 flex items-center gap-3"><div className={`p-2 rounded-lg ${s.color}`}><s.icon className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-[var(--alo-text-muted)]">{s.label}</p></div></CardContent></Card>
         ))}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /><Input placeholder="Search scholarships..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
+        <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" /><Input placeholder="Search scholarships..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" /></div>
         <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
           {COUNTRIES.map(c => <option key={c}>{c}</option>)}
         </select>
@@ -97,26 +97,26 @@ export default function CrmScholarshipsPage() {
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-900 text-sm leading-tight">{s.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{s.university}</p>
+                    <p className="font-semibold text-[var(--alo-text)] text-sm leading-tight">{s.name}</p>
+                    <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{s.university}</p>
                   </div>
-                  <Badge className={s.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-500'}>{s.status}</Badge>
+                  <Badge className={s.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}>{s.status}</Badge>
                 </div>
-                <p className="text-xs text-blue-600 font-medium">{s.course}</p>
+                <p className="text-xs text-[var(--alo-brand)] font-medium">{s.course}</p>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-lg font-bold text-orange-600"><DollarSign className="w-4 h-4" />{s.amount.toLocaleString()} <span className="text-xs text-gray-400 font-normal">{s.currency}</span></div>
-                  <div className="flex items-center gap-1 text-xs text-gray-400"><Calendar className="w-3 h-3" />{s.deadline}</div>
+                  <div className="flex items-center gap-1 text-lg font-bold text-[var(--alo-cta-active)]"><DollarSign className="w-4 h-4" />{s.amount.toLocaleString()} <span className="text-xs text-[var(--alo-text-muted)] font-normal">{s.currency}</span></div>
+                  <div className="flex items-center gap-1 text-xs text-[var(--alo-text-muted)]"><Calendar className="w-3 h-3" />{s.deadline}</div>
                 </div>
                 <div className="pt-2 border-t space-y-1">
-                  <div className="flex items-center gap-2 text-xs"><Globe className="w-3 h-3 text-gray-400" /><span>{s.country}</span><span className="text-gray-300">|</span><GraduationCap className="w-3 h-3 text-gray-400" /><span>{s.level}</span></div>
-                  <p className="text-xs text-gray-500"><Filter className="w-3 h-3 inline mr-1" />{s.eligibility}</p>
+                  <div className="flex items-center gap-2 text-xs"><Globe className="w-3 h-3 text-[var(--alo-text-muted)]" /><span>{s.country}</span><span className="text-[var(--alo-placeholder)]">|</span><GraduationCap className="w-3 h-3 text-[var(--alo-text-muted)]" /><span>{s.level}</span></div>
+                  <p className="text-xs text-[var(--alo-text-muted)]"><Filter className="w-3 h-3 inline mr-1" />{s.eligibility}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
-      {!loading && filtered.length === 0 && <Card><CardContent className="p-12 text-center text-gray-400"><Award className="w-12 h-12 mx-auto mb-3 opacity-30" /><p>No scholarships found</p></CardContent></Card>}
+      {!loading && filtered.length === 0 && <Card><CardContent className="p-12 text-center text-[var(--alo-text-muted)]"><Award className="w-12 h-12 mx-auto mb-3 opacity-30" /><p>No scholarships found</p></CardContent></Card>}
       {filtered.length > 24 && <div className="text-center py-4"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline">Load More ({filtered.length - 24} remaining)</Button></div>}
     </div>
   );

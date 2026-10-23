@@ -70,12 +70,12 @@ export default function CrmVisaPage() {
               </thead>
               <tbody>
                 {filtered.map((vc) => (
-                  <tr key={vc.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                  <tr key={vc.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                     <td className="py-3 font-medium text-alo-text">{vc.caseCode || 'N/A'}</td>
                     <td className="py-3 text-alo-text-secondary">{vc.studentName || 'N/A'}</td>
                     <td className="py-3 text-alo-text-secondary">{vc.university}</td>
                     <td className="py-3 text-alo-text-secondary">{vc.destinationCountry}</td>
-                    <td className="py-3"><Badge className="bg-blue-100 text-blue-700">{vc.currentStage?.replace(/_/g, ' ')}</Badge></td>
+                    <td className="py-3"><Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{vc.currentStage?.replace(/_/g, ' ')}</Badge></td>
                     <td className="py-3 text-alo-text-secondary">{vc.readinessScore}%</td>
                     <td className="py-3 text-alo-text-muted">{vc.updatedAt?.substring(0, 10)}</td>
                     <td className="py-3 text-right">

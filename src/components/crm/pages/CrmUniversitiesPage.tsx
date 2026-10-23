@@ -154,7 +154,7 @@ export default function CrmUniversitiesPage() {
                       </div>
                     </div>
                     {uni.worldRanking > 0 && (
-                      <Badge variant={uni.worldRanking <= 50 ? 'brand' : uni.worldRanking <= 100 ? 'default' : 'muted'} className="text-[10px] shrink-0">
+                      <Badge variant={uni.worldRanking <= 50 ? 'brand' : uni.worldRanking <= 100 ? 'default' : 'muted'} className="text-[11px] shrink-0">
                         QS #{uni.worldRanking}
                       </Badge>
                     )}
@@ -182,10 +182,10 @@ export default function CrmUniversitiesPage() {
 
                   <div className="flex items-center justify-between pt-2 border-t border-alo-border">
                     <div className="flex items-center gap-1.5">
-                      <Badge variant="muted" className="text-[10px]">{uni.type}</Badge>
-                      <Badge variant="muted" className="text-[10px]">Est. {uni.founded}</Badge>
+                      <Badge variant="muted" className="text-[11px]">{uni.type}</Badge>
+                      <Badge variant="muted" className="text-[11px]">Est. {uni.founded}</Badge>
                       {uni.scholarships && (
-                        <Badge className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-200">
+                        <Badge className="text-[11px] bg-emerald-50 text-emerald-700 border-emerald-200">
                           Scholarships
                         </Badge>
                       )}

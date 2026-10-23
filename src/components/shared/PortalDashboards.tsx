@@ -16,10 +16,10 @@ function RangeFilter({ value, onChange }: { value: string; onChange: (v:string)=
 }
 
 // Skeleton for loading states (required)
-function SkeletonCards() { return <div className="grid grid-cols-2 lg:grid-cols-4 gap-3"><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse"/></div>; }
+function SkeletonCards() { return <div className="grid grid-cols-2 lg:grid-cols-4 gap-3"><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/><div className="h-24 bg-[var(--alo-surface-muted)] rounded-xl animate-pulse"/></div>; }
 
 // Generic empty
-function EmptyState({ title, desc, actionLabel, onAction }: any) { return <div className="py-12 text-center space-y-3"><p className="text-sm font-bold text-slate-900">{title}</p><p className="text-sm text-slate-500">{desc}</p>{onAction && <Button size="sm" onClick={onAction}>{actionLabel}</Button>}</div>; }
+function EmptyState({ title, desc, actionLabel, onAction }: any) { return <div className="py-12 text-center space-y-3"><p className="text-sm font-bold text-[var(--alo-text)]">{title}</p><p className="text-sm text-[var(--alo-text-muted)]">{desc}</p>{onAction && <Button size="sm" onClick={onAction}>{actionLabel}</Button>}</div>; }
 
 // ===== Student Dashboard (unchanged feature set, format only) =====
 export function StudentDashboard({ stats, onAction }: any) {
@@ -27,7 +27,7 @@ export function StudentDashboard({ stats, onAction }: any) {
   const [range,setRange]=React.useState('This Month');
   return (
     <div className="space-y-6">
-      <PageHeader title="Welcome back" subtitle="Your study abroad journey at a glance" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-orange-500" onClick={()=> setView('student-course-finder')}><Plus className="w-4 h-4 mr-1"/> Find Courses</Button>} />
+      <PageHeader title="Welcome back" subtitle="Your study abroad journey at a glance" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('student-course-finder')}><Plus className="w-4 h-4 mr-1"/> Find Courses</Button>} />
       <KpiGrid>
         <KpiCard title="Applications" value={stats?.applications ?? 3} subtitle="2 in review" icon={FileText} drillDown={()=> setView('student-applications')} />
         <KpiCard title="Shortlisted" value={stats?.shortlisted ?? 5} subtitle="Courses saved" icon={BookOpen} drillDown={()=> setView('student-favorites')} />
@@ -53,7 +53,7 @@ export function CounselorDashboard({ stats, leads, onSearch }: any) {
   if (!stats) return <SkeletonCards />;
   return (
     <div className="space-y-6">
-      <PageHeader title="Counselor Workspace" subtitle="Leads, follow-ups, applications assigned to you" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-orange-500" onClick={()=> setView('employee-leads')}><Plus className="w-4 h-4 mr-1"/> New Lead</Button>} />
+      <PageHeader title="Counselor Workspace" subtitle="Leads, follow-ups, applications assigned to you" dateFilter={<RangeFilter value={range} onChange={setRange} />} actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('employee-leads')}><Plus className="w-4 h-4 mr-1"/> New Lead</Button>} />
       <KpiGrid>
         <KpiCard title="Assigned Leads" value={stats.leadsAssigned ?? 18} icon={Target} drillDown={()=> setView('employee-leads')} />
         <KpiCard title="Follow-ups Today" value={stats.followupsDue ?? 7} trend="up" icon={Clock} drillDown={()=> setView('employee-tasks')} />
@@ -120,7 +120,7 @@ export function VisaDashboard({ stats }: any) {
   const { setView } = usePortalStore() as any;
   return (
     <div className="space-y-6">
-      <PageHeader title="Visa & Compliance" subtitle="CAS/I-20/CoE, checklists, interview readiness" actions={<Button className="bg-orange-500" onClick={()=> setView('crm-visa-cases')}><Plus className="w-4 h-4 mr-1"/> New Case</Button>} />
+      <PageHeader title="Visa & Compliance" subtitle="CAS/I-20/CoE, checklists, interview readiness" actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('crm-visa-cases')}><Plus className="w-4 h-4 mr-1"/> New Case</Button>} />
       <KpiGrid>
         <KpiCard title="Active Cases" value={stats?.active ?? 19} icon={Plane} />
         <KpiCard title="Checklists Overdue" value={stats?.overdue ?? 5} trend="up" icon={AlertTriangle} />
@@ -128,7 +128,7 @@ export function VisaDashboard({ stats }: any) {
         <KpiCard title="Ready to Submit" value={stats?.ready ?? 7} icon={FileCheck} />
       </KpiGrid>
       <div className="grid lg:grid-cols-2 gap-4">
-        <SectionCard title="Case Aging"><div className="h-32 flex items-center justify-center text-sm text-slate-500">Chart: days since assigned (recharts)</div></SectionCard>
+        <SectionCard title="Case Aging"><div className="h-32 flex items-center justify-center text-sm text-[var(--alo-text-muted)]">Chart: days since assigned (recharts)</div></SectionCard>
         <SectionCard title="Deadline Alerts"><Table><TableHeader><TableRow><TableHead>Student</TableHead><TableHead>Issue</TableHead></TableRow></TableHeader><TableBody><TableRow><TableCell>SA-301</TableCell><TableCell>Bank statement expires</TableCell></TableRow></TableBody></Table></SectionCard>
       </div>
     </div>
@@ -139,7 +139,7 @@ export function FrontDeskDashboard({ stats }: any) {
   const { setView } = usePortalStore() as any;
   return (
     <div className="space-y-6">
-      <PageHeader title="Front Desk" subtitle="Queue, appointments, handover" actions={<Button className="bg-orange-500" onClick={()=> setView('crm-leads')}><Plus className="w-4 h-4 mr-1"/> New Enquiry</Button>} />
+      <PageHeader title="Front Desk" subtitle="Queue, appointments, handover" actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('crm-leads')}><Plus className="w-4 h-4 mr-1"/> New Enquiry</Button>} />
       <KpiGrid>
         <KpiCard title="Walk-ins Today" value={stats?.walkins ?? 14} icon={Users} />
         <KpiCard title="Upcoming Appointments" value={stats?.appts ?? 9} icon={Calendar} />
@@ -155,7 +155,7 @@ export function MarketingDashboard({ stats }: any) {
   const { setView } = usePortalStore() as any;
   return (
     <div className="space-y-6">
-      <PageHeader title="Marketing Overview" subtitle="Campaigns, content, attribution" actions={<Button className="bg-orange-500" onClick={()=> setView('marketing-campaigns')}><Megaphone className="w-4 h-4 mr-1"/> New Campaign</Button>} />
+      <PageHeader title="Marketing Overview" subtitle="Campaigns, content, attribution" actions={<Button className="bg-[var(--alo-cta)]" onClick={()=> setView('marketing-campaigns')}><Megaphone className="w-4 h-4 mr-1"/> New Campaign</Button>} />
       <KpiGrid>
         <KpiCard title="Active Campaigns" value={stats?.active ?? 6} icon={Megaphone} />
         <KpiCard title="Leads (Attribution)" value={stats?.leads ?? 143} trend="up" icon={Target} />
@@ -186,7 +186,7 @@ export function PartnerDashboard({ stats }: any) {
 export function DataDashboard({ stats }: any) {
   return (
     <div className="space-y-6">
-      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-orange-500"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
+      <PageHeader title="University Data Management" subtitle="Coverage, freshness, validation" actions={<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-cta)]"><Plus className="w-4 h-4 mr-1"/> Add University</Button>} />
       <KpiGrid>
         <KpiCard title="Universities" value={stats?.unis ?? 0} icon={Building2} />
         <KpiCard title="Courses" value={stats?.courses ?? 0} icon={BookOpen} />
@@ -246,7 +246,7 @@ export function HRDashboard({ stats }: any) {
         <KpiCard title="Leave Pending" value={stats?.leave ?? 7} icon={Calendar} />
         <KpiCard title="Payroll Pending Approval" value={stats?.payroll ?? 2} icon={DollarSign} />
       </KpiGrid>
-      <SectionCard title="Role Widgets"><div className="text-sm text-slate-500">HrWidgets injected for non-student portals (see EnterpriseHRMS)</div></SectionCard>
+      <SectionCard title="Role Widgets"><div className="text-sm text-[var(--alo-text-muted)]">HrWidgets injected for non-student portals (see EnterpriseHRMS)</div></SectionCard>
     </div>
   );
 }
@@ -277,8 +277,8 @@ export function COODashboard({ stats }: any) {
         <KpiCard title="Integrations Health" value="99.2%" icon={Settings} />
       </KpiGrid>
       <div className="grid lg:grid-cols-2 gap-4">
-        <SectionCard title="Department Comparison"><div className="h-36 flex items-center justify-center text-sm text-slate-500">Bar chart: Counselor / Admissions / Visa throughput</div></SectionCard>
-        <SectionCard title="AI Activity (24h)"><div className="text-sm text-slate-600">AI payroll calc: 64 payslips • AI visa checklist: 18 suggestions • Avg approval time 1.2h</div></SectionCard>
+        <SectionCard title="Department Comparison"><div className="h-36 flex items-center justify-center text-sm text-[var(--alo-text-muted)]">Bar chart: Counselor / Admissions / Visa throughput</div></SectionCard>
+        <SectionCard title="AI Activity (24h)"><div className="text-sm text-[var(--alo-body)]">AI payroll calc: 64 payslips • AI visa checklist: 18 suggestions • Avg approval time 1.2h</div></SectionCard>
       </div>
     </div>
   );

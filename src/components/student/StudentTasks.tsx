@@ -74,13 +74,13 @@ export default function StudentTasks() {
   }, [tasks]);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-5xl">
         <PortalPageHeader
           title="My Tasks"
           description="Everything outstanding across your applications, with deadlines and priority."
           action={
-            <Button variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold" onClick={reload}>
+            <Button variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold" onClick={reload}>
               <Filter className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
               Refresh
             </Button>
@@ -108,8 +108,8 @@ export default function StudentTasks() {
                   className={cn(
                     'rounded-button border px-3 py-1.5 text-[12px] font-semibold transition-colors',
                     filter === option.id
-                      ? 'border-slate-900 bg-slate-900 text-white'
-                      : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50',
+                      ? 'border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white'
+                      : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)]',
                   )}
                 >
                   {option.label}
@@ -136,10 +136,10 @@ export default function StudentTasks() {
               }
               action={
                 <>
-                  <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <Link href="/student/applications">View Applications</Link>
                   </Button>
-                  <Button asChild className="h-9 rounded-button bg-orange-600 px-4 text-[13px] font-semibold text-white hover:bg-orange-700">
+                  <Button asChild className=" rounded-button bg-[var(--alo-cta-hover)] px-4 text-[13px] font-semibold text-white hover:bg-orange-700">
                     <Link href="/student/messages">Message My Counselor</Link>
                   </Button>
                 </>
@@ -148,7 +148,7 @@ export default function StudentTasks() {
           )}
 
           {state === 'ready' && tasks.length > 0 && (
-            <ul className="divide-y divide-slate-200">
+            <ul className="divide-y divide-[var(--alo-border)]">
               {tasks.map((task) => {
                 const days = daysUntil(task.dueDate);
                 const overdue = task.status !== 'COMPLETED' && days !== null && days < 0;
@@ -158,17 +158,17 @@ export default function StudentTasks() {
                     <Icon
                       className={cn(
                         'mt-0.5 h-5 w-5 shrink-0',
-                        task.status === 'COMPLETED' ? 'text-emerald-600' : task.status === 'IN_PROGRESS' ? 'text-blue-600' : 'text-slate-400',
+                        task.status === 'COMPLETED' ? 'text-emerald-600' : task.status === 'IN_PROGRESS' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text-muted)]',
                       )}
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="text-[14px] font-semibold text-slate-900">{task.taskTitle}</p>
+                      <p className="text-[14px] font-semibold text-[var(--alo-text)]">{task.taskTitle}</p>
                       {task.taskDescription && (
-                        <p className="mt-0.5 text-[13px] leading-relaxed text-slate-600">{task.taskDescription}</p>
+                        <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{task.taskDescription}</p>
                       )}
-                      <p className="mt-1.5 text-[12px] text-slate-500">
-                        <Link href={`/student/applications/${task.application.id}`} className="font-medium text-slate-700 hover:underline">
+                      <p className="mt-1.5 text-[12px] text-[var(--alo-text-muted)]">
+                        <Link href={`/student/applications/${task.application.id}`} className="font-medium text-[var(--alo-body)] hover:underline">
                           {task.application.universityName || task.application.applicationCode}
                         </Link>
                         {task.application.courseName ? ` — ${task.application.courseName}` : ''}
@@ -182,7 +182,7 @@ export default function StudentTasks() {
                       {task.dueDate ? (
                         <span className={cn(
                           'inline-flex items-center gap-1 text-[12px] font-medium',
-                          overdue ? 'text-red-600' : 'text-slate-500',
+                          overdue ? 'text-red-600' : 'text-[var(--alo-text-muted)]',
                         )}>
                           <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
                           {overdue
@@ -192,7 +192,7 @@ export default function StudentTasks() {
                               : `Due in ${days} day${days === 1 ? '' : 's'}`}
                         </span>
                       ) : (
-                        <span className="text-[12px] text-slate-400">No deadline set</span>
+                        <span className="text-[12px] text-[var(--alo-text-muted)]">No deadline set</span>
                       )}
                     </div>
                   </li>
@@ -208,11 +208,11 @@ export default function StudentTasks() {
 
 function SummaryTile({ label, value, tone }: { label: string; value: number; tone: 'neutral' | 'info' | 'success' | 'danger' }) {
   const toneClass =
-    tone === 'danger' ? 'text-red-600' : tone === 'success' ? 'text-emerald-600' : tone === 'info' ? 'text-blue-600' : 'text-slate-900';
+    tone === 'danger' ? 'text-red-600' : tone === 'success' ? 'text-emerald-600' : tone === 'info' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]';
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+    <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>
-      <p className="mt-1.5 text-[12px] font-medium text-slate-500">{label}</p>
+      <p className="mt-1.5 text-[12px] font-medium text-[var(--alo-text-muted)]">{label}</p>
     </div>
   );
 }

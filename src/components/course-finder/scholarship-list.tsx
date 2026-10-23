@@ -74,7 +74,7 @@ const MOCK_UNIVERSITY_NAMES = [
 
 function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow border-slate-200">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-4 flex flex-col gap-3">
         {/* University */}
         <p className="text-sm font-medium text-emerald-600">
@@ -82,10 +82,10 @@ function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
         </p>
 
         {/* Course */}
-        <p className="text-xs text-slate-500">{scholarship.courseName}</p>
+        <p className="text-xs text-[var(--alo-text-muted)]">{scholarship.courseName}</p>
 
         {/* Scholarship Name */}
-        <h3 className="font-semibold text-slate-900 text-sm leading-snug">
+        <h3 className="font-semibold text-[var(--alo-text)] text-sm leading-snug">
           {scholarship.scholarshipName}
         </h3>
 
@@ -93,19 +93,19 @@ function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
         <div className="flex items-center gap-2">
           <Award className="size-5 text-emerald-500" />
           <div>
-            <span className="text-xl font-bold text-slate-900">
+            <span className="text-xl font-bold text-[var(--alo-text)]">
               {scholarship.currency} {scholarship.amount.toLocaleString()}
             </span>
             {scholarship.currency !== 'KRW' && scholarship.currency !== 'JPY' && scholarship.currency !== 'MYR' && (
-              <span className="text-xs text-slate-500 ml-1">per year</span>
+              <span className="text-xs text-[var(--alo-text-muted)] ml-1">per year</span>
             )}
           </div>
         </div>
 
         {/* Enquire */}
         <Button
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-9 text-sm mt-1"
-          onClick={() => toast.success(`Enquiry sent for "${scholarship.scholarshipName}"`)}
+ className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm mt-1"
+ onClick={() => toast.success(`Enquiry sent for "${scholarship.scholarshipName}"`)}
         >
           <Send className="size-4 mr-1.5" />
           Enquire
@@ -181,7 +181,7 @@ export function ScholarshipList() {
         <div className="flex flex-col sm:flex-row gap-3">
           <Select value={countryFilter} onValueChange={setCountryFilter}>
             <SelectTrigger className="w-full sm:w-48">
-              <Globe className="size-4 mr-1.5 text-slate-400" />
+              <Globe className="size-4 mr-1.5 text-[var(--alo-text-muted)]" />
               <SelectValue placeholder="All Countries" />
             </SelectTrigger>
             <SelectContent>
@@ -196,7 +196,7 @@ export function ScholarshipList() {
 
           <Select value={universityFilter} onValueChange={setUniversityFilter}>
             <SelectTrigger className="w-full sm:w-64">
-              <Building2 className="size-4 mr-1.5 text-slate-400" />
+              <Building2 className="size-4 mr-1.5 text-[var(--alo-text-muted)]" />
               <SelectValue placeholder="All Universities" />
             </SelectTrigger>
             <SelectContent>
@@ -215,7 +215,7 @@ export function ScholarshipList() {
                 setCountryFilter('all');
                 setUniversityFilter('all');
               }}
-              className="text-xs text-slate-500"
+              className="text-xs text-[var(--alo-text-muted)]"
             >
               Clear filters
             </Button>
@@ -231,16 +231,16 @@ export function ScholarshipList() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-              <SearchX className="size-10 text-slate-300" />
+            <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-4">
+              <SearchX className="size-10 text-[var(--alo-placeholder)]" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700">No scholarships found</h3>
-            <p className="text-sm text-slate-500 mt-1">Try adjusting your filters.</p>
+            <h3 className="text-lg font-semibold text-[var(--alo-body)]">No scholarships found</h3>
+            <p className="text-sm text-[var(--alo-text-muted)] mt-1">Try adjusting your filters.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-slate-500">
-              <span className="font-medium text-slate-700">{filtered.length}</span>{' '}
+            <p className="text-sm text-[var(--alo-text-muted)]">
+              <span className="font-medium text-[var(--alo-body)]">{filtered.length}</span>{' '}
               {filtered.length === 1 ? 'scholarship' : 'scholarships'} available
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -56,7 +56,10 @@ describe('ALO master design tokens', () => {
     expect(heroBlock).not.toContain('from-black');
     expect(heroBlock).not.toContain('/95 via');
     expect(heroBlock).toContain('bg-white');
-    expect(heroBlock).toContain('text-[#0057B8]');
+    // The accent is now expressed through the shared token rather than raw
+    // hex, so the hero follows the theme layer (and any future palette swap).
+    expect(heroBlock).toContain('var(--alo-brand)');
+    expect(heroBlock).not.toMatch(/text-\[#0057B8\]/);
   });
 });
 
@@ -95,6 +98,36 @@ describe('rendered-copy hygiene (feedback round)', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('public copy never leaks build instructions or database vocabulary', async () => {
+    // Regression guard for the redesign pass: several public components were
+    // rendering their own implementation notes ("Count from database — not
+    // hardcoded", "Dynamic from DB", "ESTIMATE ONLY — Never present…",
+    // "White card • Blue accent • Route: /language-prep").
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const patterns = [
+      /\bcount from database\b/i,
+      /\bnot hardcoded\b/i,
+      /\bdynamic from db\b/i,
+      /route:\s*\/[a-z-]+/i,
+      /white card •/i,
+    ];
+    const offenders: string[] = [];
+    for (const dir of ['src/app', 'src/components']) {
+      const walk = (root: string) => {
+        for (const name of readdirSync(root)) {
+          const p = join(root, name);
+          if (statSync(p).isDirectory()) { walk(p); continue; }
+          if (!p.endsWith('.tsx')) continue;
+          const text = readFileSync(p, 'utf8');
+          if (patterns.some((re) => re.test(text))) offenders.push(p);
+        }
+      };
+      walk(join(process.cwd(), dir));
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it('no hotlinked stock photography anywhere in src (local approved assets only)', async () => {
     const { readFileSync, readdirSync, statSync } = await import('node:fs');
     const { join } = await import('node:path');
@@ -117,5 +150,111 @@ describe('rendered-copy hygiene (feedback round)', () => {
     const text = readFileSync(join(process.cwd(), 'src/components/website/PremiumCountryPage.tsx'), 'utf8');
     expect(text).not.toContain('images.unsplash.com');
     expect(text).toContain('destinationCardImage');
+  });
+});
+
+/**
+ * Redesign guardrails (2026-10-24).
+ *
+ * These lock in the invariants the visual pass established so a future edit
+ * cannot silently regress them. They scan source text only — no rendering.
+ */
+describe('redesign guardrails', () => {
+  const scan = (pattern: RegExp, roots = ['src']) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync, readdirSync, statSync } = require('node:fs') as typeof import('node:fs');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { join } = require('node:path') as typeof import('node:path');
+    const hits: { file: string; match: string }[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const p = join(dir, name);
+        if (statSync(p).isDirectory()) { walk(p); continue; }
+        if (!/\.tsx?$/.test(p)) continue;
+        const text = readFileSync(p, 'utf8');
+        const m = text.match(pattern);
+        if (m) hits.push({ file: p.replace(process.cwd() + '/', ''), match: m[0] });
+      }
+    };
+    for (const root of roots) walk(join(process.cwd(), root));
+    return hits;
+  };
+
+  it('never renders type below the 11px metadata floor (Master §04)', () => {
+    expect(scan(/\btext-\[(?:[0-9]|10)px\]/)).toEqual([]);
+  });
+
+  it('keeps the neutral scale on design tokens, not Tailwind greys (Master §03)', () => {
+    expect(scan(/\btext-(?:gray|slate)-(?:400|500)\b/)).toEqual([]);
+  });
+
+  it('expresses the brand palette through tokens, not raw hex classes (Master §03)', () => {
+    // Social brand colours and pure white are legitimately literal.
+    const allowed = ['bg-[#FFFFFF]', 'bg-[#1877F2]', 'text-[#1877F2]'];
+    const hits = scan(/\b(?:bg|text|border)-\[#0057B8\]|\b(?:bg|text|border)-\[#E8501A\]/);
+    expect(hits.filter((h) => !allowed.some((a) => h.match.startsWith(a)))).toEqual([]);
+  });
+
+  it('has no opaque near-black page or card panels outside the documented exceptions', async () => {
+    // `dark:` variants and translucent scrims (bg-slate-900/60) are legitimate;
+    // any other opaque slate-900/950 surface is a black block and must not exist.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync, readdirSync, statSync } = require('node:fs') as typeof import('node:fs');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { join } = require('node:path') as typeof import('node:path');
+    const allowedFiles = [
+      'src/components/student/StudentSopCvStudio.tsx',            // "Modern" CV template preview swatch
+      'src/components/website/YouTubeEmbed.tsx',                  // video letterbox behind the poster
+      'src/components/crm/pages/CrmSocialPage.tsx',               // TikTok brand tile colour
+      'src/components/marketing/hub/SocialMediaAutomationView.tsx',// TikTok brand tile colour
+      'src/components/social/SocialMediaManagementHub.tsx',        // TikTok brand tile colour
+    ];
+    const offenders: { file: string; token: string }[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const p = join(dir, name);
+        if (statSync(p).isDirectory()) { walk(p); continue; }
+        if (!/\.tsx$/.test(p)) continue;
+        const rel = p.replace(process.cwd() + '/', '');
+        if (allowedFiles.includes(rel)) continue;
+        const text = readFileSync(p, 'utf8');
+        const re = /(dark:)?bg-(?:slate|gray|neutral)-(?:900|950)(\/\d+)?/g;
+        let m;
+        while ((m = re.exec(text))) {
+          if (m[1] || m[2]) continue; // dark-mode variant or translucent scrim
+          offenders.push({ file: rel, token: m[0] });
+        }
+      }
+    };
+    walk(join(process.cwd(), 'src'));
+    expect(offenders).toEqual([]);
+  });
+
+  it('gives every shared control a 48px touch target (Master §07)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { join } = require('node:path') as typeof import('node:path');
+    const button = readFileSync(join(process.cwd(), 'src/components/ui/button.tsx'), 'utf8');
+    const input = readFileSync(join(process.cwd(), 'src/components/ui/input.tsx'), 'utf8');
+    const tabs = readFileSync(join(process.cwd(), 'src/components/ui/tabs.tsx'), 'utf8');
+    expect(button).not.toMatch(/(?:xs|sm|default|lg):\s*"h-(?:8|9|10|11)\b/);
+    expect(input).toContain('h-12');
+    expect(tabs).toContain('h-12');
+  });
+
+  it('defines the motion utilities the app relies on (no silent no-ops)', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { join } = require('node:path') as typeof import('node:path');
+    const css = readFileSync(join(process.cwd(), 'src/app/globals.css'), 'utf8');
+    for (const cls of [
+      '.animate-in', '.animate-out', '.fade-in-0', '.zoom-in-95',
+      '.slide-in-from-bottom-2', '.animate-accordion-down', '.animate-caret-blink',
+      '.prose', '.alo-cap-track', '.no-scrollbar', '.bg-alo-hero',
+    ]) {
+      expect(css).toContain(cls);
+    }
   });
 });

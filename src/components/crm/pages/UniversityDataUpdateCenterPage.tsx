@@ -101,38 +101,38 @@ export default function UniversityDataUpdateCenterPage() {
   };
 
   return (
-    <div className="space-y-6 bg-slate-50/50 min-h-screen p-4 lg:p-6">
+    <div className="space-y-6 bg-[var(--alo-page)]/50 min-h-screen p-4 lg:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-[var(--alo-border)] shadow-xs">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-indigo-600" />
             University &amp; Course Data Update Center (Weekly AI Agent)
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
             Weekly AI Agent scans official university websites, detects tuition/intake/deadline changes, and submits update requests for Super Admin approval.
           </p>
         </div>
 
         <Button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-9"
-          onClick={handleRunWeeklyAiAgent}
-          disabled={runningAgent}
-        >
+ className="bg-indigo-600 hover:bg-indigo-700 text-white "
+ onClick={handleRunWeeklyAiAgent}
+ disabled={runningAgent}
+ >
           {runningAgent ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-1" />}
           Run Weekly AI Agent Scan Now
         </Button>
       </div>
 
       {/* Pending Update Requests Table */}
-      <Card className="bg-white border-slate-200 shadow-xs">
-        <CardHeader className="pb-3 border-b border-slate-100">
-          <CardTitle className="text-sm font-bold text-slate-900">Pending University Data Update Requests</CardTitle>
-          <CardDescription className="text-xs text-slate-500">Review old vs new values here. Approving changes nothing live; a Super Admin applies approved changes at <a className="underline" href="/admin/change-approval">/admin/change-approval</a>, and approval never marks a record verified.</CardDescription>
+      <Card className="bg-white border-[var(--alo-border)] shadow-xs">
+        <CardHeader className="pb-3 border-b border-[var(--alo-border)]">
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Pending University Data Update Requests</CardTitle>
+          <CardDescription className="text-xs text-[var(--alo-text-muted)]">Review old vs new values here. Approving changes nothing live; a Super Admin applies approved changes at <a className="underline" href="/admin/change-approval">/admin/change-approval</a>, and approval never marks a record verified.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="bg-slate-50">
+            <TableHeader className="bg-[var(--alo-page)]">
               <TableRow>
                 <TableHead className="text-xs font-semibold">Entity / Course</TableHead>
                 <TableHead className="text-xs font-semibold">Country</TableHead>
@@ -146,7 +146,7 @@ export default function UniversityDataUpdateCenterPage() {
             <TableBody>
               {updates.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-xs text-slate-500">
+                  <TableCell colSpan={7} className="text-center py-8 text-xs text-[var(--alo-text-muted)]">
                     No pending university data update requests. Click &quot;Run Weekly AI Agent Scan Now&quot; to trigger a website scan.
                   </TableCell>
                 </TableRow>
@@ -155,21 +155,21 @@ export default function UniversityDataUpdateCenterPage() {
                   <TableRow key={u.id}>
                     <TableCell>
                       <div>
-                        <span className="text-xs font-bold text-slate-900 block">{u.entityName}</span>
-                        <span className="text-[10px] text-slate-400">Type: {u.entityType}</span>
+                        <span className="text-xs font-bold text-[var(--alo-text)] block">{u.entityName}</span>
+                        <span className="text-[11px] text-[var(--alo-text-muted)]">Type: {u.entityType}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-xs font-medium text-slate-700">{u.country}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px] font-mono">{u.fieldName}</Badge></TableCell>
-                    <TableCell className="text-xs text-slate-500 line-through">{u.oldValue}</TableCell>
+                    <TableCell className="text-xs font-medium text-[var(--alo-body)]">{u.country}</TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] font-mono">{u.fieldName}</Badge></TableCell>
+                    <TableCell className="text-xs text-[var(--alo-text-muted)] line-through">{u.oldValue}</TableCell>
                     <TableCell className="text-xs font-bold text-indigo-600">{u.newValue}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Badge className="bg-emerald-50 text-emerald-700 text-[10px]">
+                        <Badge className="bg-emerald-50 text-emerald-700 text-[11px]">
                           {Math.round(u.aiConfidence * 100)}% Match
                         </Badge>
                         {u.evidenceUrl && (
-                          <a href={u.evidenceUrl} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-indigo-600">
+                          <a href={u.evidenceUrl} target="_blank" rel="noreferrer" className="text-[var(--alo-text-muted)] hover:text-indigo-600">
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
@@ -178,15 +178,15 @@ export default function UniversityDataUpdateCenterPage() {
                     <TableCell className="text-right">
                       {['pending_approval', 'pending', 'apply_failed', 'approved'].includes(u.status) || (u.status === 'reviewed_unverified' && u.approvalFingerprint && u.approvalFingerprint !== 'valid') ? (
                         <div className="flex items-center justify-end gap-1">
-                          <Button size="sm" className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApproveUpdate(u.id)}>
+                          <Button size="sm" className="h-7 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApproveUpdate(u.id)}>
                             {u.status === 'pending_approval' || u.status === 'pending' ? 'Approve (not applied)' : 'Re-approve'}
                           </Button>
-                          <Button size="sm" variant="outline" className="h-7 text-xs text-rose-600 border-rose-200" onClick={() => handleRejectUpdate(u.id)}>
+                          <Button size="sm" variant="outline" className="h-7 text-rose-600 border-rose-200" onClick={() => handleRejectUpdate(u.id)}>
                             Reject
                           </Button>
                         </div>
                       ) : (
-                        <Badge className={`text-[10px] ${u.status === 'applied' || u.status === 'reviewed_unverified' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                        <Badge className={`text-[11px] ${u.status === 'applied' || u.status === 'reviewed_unverified' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
                           {PROPOSAL_STATUS_LABELS[u.status] ?? u.status}
                         </Badge>
                       )}

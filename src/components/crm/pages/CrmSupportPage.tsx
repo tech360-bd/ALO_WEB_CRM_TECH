@@ -30,15 +30,15 @@ interface SupportTicket {
 }
 
 const statusColors: Record<TicketStatus, string> = {
-  'Open': 'bg-blue-100 text-blue-700',
+  'Open': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   'In Progress': 'bg-amber-100 text-amber-700',
   'Resolved': 'bg-emerald-100 text-emerald-700',
-  'Closed': 'bg-gray-100 text-gray-600',
+  'Closed': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 const priorityColors: Record<TicketPriority, string> = {
   'High': 'bg-red-100 text-red-700',
-  'Medium': 'bg-orange-100 text-orange-700',
+  'Medium': 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   'Low': 'bg-green-100 text-green-700',
 };
 
@@ -88,7 +88,7 @@ export default function CrmSupportPage() {
   const highPriorityCount = tickets.filter(t => t.priority === 'High' && t.status !== 'Closed' && t.status !== 'Resolved').length;
 
   const statsCards = [
-    { label: 'Open Tickets', value: openCount, icon: AlertCircle, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Open Tickets', value: openCount, icon: AlertCircle, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
     { label: 'In Progress', value: inProgressCount, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
     { label: 'Resolved', value: resolvedCount, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'High Priority', value: highPriorityCount, icon: Headphones, color: 'text-red-600', bg: 'bg-red-50' },
@@ -181,7 +181,7 @@ export default function CrmSupportPage() {
                 </thead>
                 <tbody>
                   {filtered.map(ticket => (
-                    <tr key={ticket.id} className="border-b border-alo-border/50 hover:bg-gray-50 transition-colors">
+                    <tr key={ticket.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)] transition-colors">
                       <td className="py-3 font-mono text-xs text-alo-text-muted">{ticket.id}</td>
                       <td className="py-3">
                         <div>

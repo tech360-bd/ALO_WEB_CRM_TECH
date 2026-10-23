@@ -71,7 +71,7 @@ export function StudentVisaChecklist() {
   }
 
   if (loading) {
-    return <div className="p-6 text-center text-[#5A7299]">Loading...</div>;
+    return <div className="p-6 text-center text-[var(--alo-text-muted)]">Loading...</div>;
   }
 
   const checklist = data?.checklist || [];
@@ -114,11 +114,11 @@ export function StudentVisaChecklist() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {checklist.map((item) => (
-            <Card key={item.id} className="rounded-2xl border border-[#DCE8F5] bg-white">
+            <Card key={item.id} className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
               <CardContent className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-semibold text-[#0B2447]">{item.itemName}</p>
+                    <p className="font-semibold text-[var(--alo-text)]">{item.itemName}</p>
                     {item.category && (
                       <Badge variant="outline" className="mt-1">
                         {item.category}

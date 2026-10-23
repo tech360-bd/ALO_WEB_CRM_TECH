@@ -22,29 +22,29 @@ function money(cents: number | undefined | null): string {
 }
 
 const statusBadge = (status: string): string => ({
-  DRAFT: 'bg-gray-100 text-gray-600',
-  SUBMITTED: 'bg-blue-100 text-blue-700',
+  DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
+  SUBMITTED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   PENDING_APPROVAL: 'bg-yellow-100 text-yellow-700',
   APPROVED: 'bg-emerald-100 text-emerald-700',
   REJECTED: 'bg-red-100 text-red-700',
   CONVERTED: 'bg-purple-100 text-purple-700',
-  SENT: 'bg-blue-100 text-blue-700',
-  PARTIALLY_RECEIVED: 'bg-orange-100 text-orange-700',
+  SENT: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  PARTIALLY_RECEIVED: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   RECEIVED: 'bg-emerald-100 text-emerald-700',
-  CANCELLED: 'bg-gray-100 text-gray-600',
+  CANCELLED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   MATCHED: 'bg-emerald-100 text-emerald-700',
   PAID: 'bg-emerald-100 text-emerald-700',
-  PARTIALLY_PAID: 'bg-orange-100 text-orange-700',
+  PARTIALLY_PAID: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   DISPUTED: 'bg-red-100 text-red-700',
   IN_USE: 'bg-emerald-100 text-emerald-700',
-  IN_STORAGE: 'bg-blue-100 text-blue-700',
+  IN_STORAGE: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   MAINTENANCE: 'bg-yellow-100 text-yellow-700',
-  RETIRED: 'bg-gray-100 text-gray-600',
-  DISPOSED: 'bg-gray-100 text-gray-600',
+  RETIRED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
+  DISPOSED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   ACTIVE: 'bg-emerald-100 text-emerald-700',
   SUSPENDED: 'bg-yellow-100 text-yellow-700',
   BLACKLISTED: 'bg-red-100 text-red-700',
-}[status] ?? 'bg-gray-100 text-gray-600');
+}[status] ?? 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]');
 
 export default function CrmProcurementPage() {
   const [tab, setTab] = useState('requests');
@@ -108,8 +108,8 @@ export default function CrmProcurementPage() {
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Procurement & Assets</h1>
-          <p className="text-xs text-slate-500">Vendors, purchase requests/orders, vendor invoices, fixed assets and depreciation — ledger-integrated</p>
+          <h1 className="text-xl font-bold text-[var(--alo-text)]">Procurement & Assets</h1>
+          <p className="text-xs text-[var(--alo-text-muted)]">Vendors, purchase requests/orders, vendor invoices, fixed assets and depreciation — ledger-integrated</p>
         </div>
         <Button size="sm" variant="outline" onClick={loadAll} disabled={loading}>
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} Refresh
@@ -124,20 +124,20 @@ export default function CrmProcurementPage() {
         </Card>
       )}
       {actionError && (
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="pt-4 text-sm text-orange-700">{actionError}</CardContent>
+        <Card className="border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]">
+          <CardContent className="pt-4 text-sm text-[var(--alo-cta-active)]">{actionError}</CardContent>
         </Card>
       )}
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Vendors</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{vendors.length}</div><p className="text-xs text-slate-500">{vendors.filter((v) => v.status === 'ACTIVE').length} active</p></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Open requests</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{requests.filter((r) => ['DRAFT', 'SUBMITTED'].includes(r.status)).length}</div><p className="text-xs text-slate-500">{requests.length} total</p></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Outstanding payable</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{money(invoices.filter((i) => i.status !== 'PAID' && i.status !== 'DISPUTED').reduce((s, i) => s + (i.total - i.amountPaid), 0))}</div><p className="text-xs text-slate-500">{invoices.length} vendor invoices</p></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-slate-600">Asset net book value</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold">{assetTotals ? money(assetTotals.netBookValueCents) : '—'}</div><p className="text-xs text-slate-500">{assets.length} fixed assets</p></CardContent></Card>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Vendors</CardTitle></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{vendors.length}</div><p className="text-xs text-[var(--alo-text-muted)]">{vendors.filter((v) => v.status === 'ACTIVE').length} active</p></CardContent></Card>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Open requests</CardTitle></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{requests.filter((r) => ['DRAFT', 'SUBMITTED'].includes(r.status)).length}</div><p className="text-xs text-[var(--alo-text-muted)]">{requests.length} total</p></CardContent></Card>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Outstanding payable</CardTitle></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{money(invoices.filter((i) => i.status !== 'PAID' && i.status !== 'DISPUTED').reduce((s, i) => s + (i.total - i.amountPaid), 0))}</div><p className="text-xs text-[var(--alo-text-muted)]">{invoices.length} vendor invoices</p></CardContent></Card>
+        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-[var(--alo-body)]">Asset net book value</CardTitle></CardHeader>
+          <CardContent><div className="text-2xl font-bold">{assetTotals ? money(assetTotals.netBookValueCents) : '—'}</div><p className="text-xs text-[var(--alo-text-muted)]">{assets.length} fixed assets</p></CardContent></Card>
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
@@ -151,10 +151,10 @@ export default function CrmProcurementPage() {
 
         <TabsContent value="requests" className="space-y-4">
           <Card><CardContent className="pt-4">
-            {loading ? <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
-              : requests.length === 0 ? <p className="text-sm text-slate-500">No purchase requests yet. Create one via POST /api/procurement/purchase-requests.</p> : (
+            {loading ? <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
+              : requests.length === 0 ? <p className="text-sm text-[var(--alo-text-muted)]">No purchase requests yet. Create one via POST /api/procurement/purchase-requests.</p> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm">
-                  <thead><tr className="border-b text-left text-xs uppercase text-slate-500"><th className="py-2 pr-4">PR #</th><th className="py-2 pr-4">Title</th><th className="py-2 pr-4">Amount</th><th className="py-2 pr-4">Status</th><th className="py-2">Actions</th></tr></thead>
+                  <thead><tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]"><th className="py-2 pr-4">PR #</th><th className="py-2 pr-4">Title</th><th className="py-2 pr-4">Amount</th><th className="py-2 pr-4">Status</th><th className="py-2">Actions</th></tr></thead>
                   <tbody>{requests.map((r: any) => (
                     <tr key={r.id} className="border-b last:border-0">
                       <td className="py-2 pr-4 font-mono text-xs">{r.prNumber}</td>
@@ -174,10 +174,10 @@ export default function CrmProcurementPage() {
 
         <TabsContent value="orders" className="space-y-4">
           <Card><CardContent className="pt-4">
-            {loading ? <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
-              : orders.length === 0 ? <p className="text-sm text-slate-500">No purchase orders yet. Convert an approved request.</p> : (
+            {loading ? <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
+              : orders.length === 0 ? <p className="text-sm text-[var(--alo-text-muted)]">No purchase orders yet. Convert an approved request.</p> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm">
-                  <thead><tr className="border-b text-left text-xs uppercase text-slate-500"><th className="py-2 pr-4">PO #</th><th className="py-2 pr-4">Vendor</th><th className="py-2 pr-4">Total</th><th className="py-2 pr-4">Journal</th><th className="py-2 pr-4">Status</th><th className="py-2">Actions</th></tr></thead>
+                  <thead><tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]"><th className="py-2 pr-4">PO #</th><th className="py-2 pr-4">Vendor</th><th className="py-2 pr-4">Total</th><th className="py-2 pr-4">Journal</th><th className="py-2 pr-4">Status</th><th className="py-2">Actions</th></tr></thead>
                   <tbody>{orders.map((o: any) => (
                     <tr key={o.id} className="border-b last:border-0">
                       <td className="py-2 pr-4 font-mono text-xs">{o.poNumber}</td>
@@ -197,10 +197,10 @@ export default function CrmProcurementPage() {
 
         <TabsContent value="invoices" className="space-y-4">
           <Card><CardContent className="pt-4">
-            {loading ? <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
-              : invoices.length === 0 ? <p className="text-sm text-slate-500">No vendor invoices recorded yet.</p> : (
+            {loading ? <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
+              : invoices.length === 0 ? <p className="text-sm text-[var(--alo-text-muted)]">No vendor invoices recorded yet.</p> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm">
-                  <thead><tr className="border-b text-left text-xs uppercase text-slate-500"><th className="py-2 pr-4">Invoice</th><th className="py-2 pr-4">Vendor</th><th className="py-2 pr-4">Total</th><th className="py-2 pr-4">Paid</th><th className="py-2 pr-4">Status</th><th className="py-2">Actions</th></tr></thead>
+                  <thead><tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]"><th className="py-2 pr-4">Invoice</th><th className="py-2 pr-4">Vendor</th><th className="py-2 pr-4">Total</th><th className="py-2 pr-4">Paid</th><th className="py-2 pr-4">Status</th><th className="py-2">Actions</th></tr></thead>
                   <tbody>{invoices.map((i: any) => (
                     <tr key={i.id} className="border-b last:border-0">
                       <td className="py-2 pr-4 font-mono text-xs">{i.invoiceNumber}</td>
@@ -219,10 +219,10 @@ export default function CrmProcurementPage() {
 
         <TabsContent value="vendors" className="space-y-4">
           <Card><CardContent className="pt-4">
-            {loading ? <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
-              : vendors.length === 0 ? <p className="text-sm text-slate-500">No vendors yet. Create one via POST /api/procurement/vendors.</p> : (
+            {loading ? <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
+              : vendors.length === 0 ? <p className="text-sm text-[var(--alo-text-muted)]">No vendors yet. Create one via POST /api/procurement/vendors.</p> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm">
-                  <thead><tr className="border-b text-left text-xs uppercase text-slate-500"><th className="py-2 pr-4">Code</th><th className="py-2 pr-4">Name</th><th className="py-2 pr-4">Category</th><th className="py-2 pr-4">Terms</th><th className="py-2">Status</th></tr></thead>
+                  <thead><tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]"><th className="py-2 pr-4">Code</th><th className="py-2 pr-4">Name</th><th className="py-2 pr-4">Category</th><th className="py-2 pr-4">Terms</th><th className="py-2">Status</th></tr></thead>
                   <tbody>{vendors.map((v: any) => (
                     <tr key={v.id} className="border-b last:border-0">
                       <td className="py-2 pr-4 font-mono text-xs">{v.code}</td>
@@ -240,20 +240,20 @@ export default function CrmProcurementPage() {
             <CardHeader><CardTitle className="text-sm font-medium">Monthly depreciation run</CardTitle></CardHeader>
             <CardContent className="flex flex-wrap items-end gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-600">Period (YYYY-MM)</label>
+                <label className="text-xs font-medium text-[var(--alo-body)]">Period (YYYY-MM)</label>
                 <Input value={period} onChange={(e) => setPeriod(e.target.value)} placeholder="2026-10" className="w-40" />
               </div>
-              <Button className="bg-[#E8501A] hover:bg-[#D04010] text-white" disabled={busy} onClick={runDepreciation}>
+              <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" disabled={busy} onClick={runDepreciation}>
                 <Package className="h-4 w-4" /> Run depreciation
               </Button>
-              <p className="text-xs text-slate-500">Posts DR 5200 / CR 1510 per asset; idempotent per asset and period.</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">Posts DR 5200 / CR 1510 per asset; idempotent per asset and period.</p>
             </CardContent>
           </Card>
           <Card><CardContent className="pt-4">
-            {loading ? <div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
-              : assets.length === 0 ? <p className="text-sm text-slate-500">No fixed assets registered yet.</p> : (
+            {loading ? <div className="flex items-center gap-2 text-sm text-[var(--alo-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>
+              : assets.length === 0 ? <p className="text-sm text-[var(--alo-text-muted)]">No fixed assets registered yet.</p> : (
                 <div className="overflow-x-auto"><table className="w-full text-sm">
-                  <thead><tr className="border-b text-left text-xs uppercase text-slate-500"><th className="py-2 pr-4">Tag</th><th className="py-2 pr-4">Name</th><th className="py-2 pr-4">Cost</th><th className="py-2 pr-4">Accum. dep.</th><th className="py-2 pr-4">NBV</th><th className="py-2 pr-4">Status</th></tr></thead>
+                  <thead><tr className="border-b text-left text-xs uppercase text-[var(--alo-text-muted)]"><th className="py-2 pr-4">Tag</th><th className="py-2 pr-4">Name</th><th className="py-2 pr-4">Cost</th><th className="py-2 pr-4">Accum. dep.</th><th className="py-2 pr-4">NBV</th><th className="py-2 pr-4">Status</th></tr></thead>
                   <tbody>{assets.map((a: any) => (
                     <tr key={a.id} className="border-b last:border-0">
                       <td className="py-2 pr-4 font-mono text-xs">{a.assetTag}</td>

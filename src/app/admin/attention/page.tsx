@@ -55,9 +55,9 @@ interface AttentionReport {
 
 const SEVERITY_STYLE: Record<Severity, { className: string; icon: typeof Info }> = {
   CRITICAL: { className: 'bg-red-100 text-red-700 border-red-200', icon: ShieldAlert },
-  URGENT: { className: 'bg-orange-100 text-orange-700 border-orange-200', icon: AlertTriangle },
+  URGENT: { className: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25', icon: AlertTriangle },
   WARNING: { className: 'bg-amber-100 text-amber-800 border-amber-200', icon: AlertTriangle },
-  INFO: { className: 'bg-blue-100 text-blue-700 border-blue-200', icon: Info },
+  INFO: { className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]', icon: Info },
 };
 
 const SCOPES = [
@@ -111,10 +111,10 @@ export default function AttentionPage() {
           <div className="h-8 w-64 rounded-lg bg-slate-200" />
           <div className="grid gap-4 md:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-24 rounded-2xl bg-slate-100" />
+              <div key={i} className="h-24 rounded-2xl bg-[var(--alo-surface-muted)]" />
             ))}
           </div>
-          <div className="h-64 rounded-2xl bg-slate-100" />
+          <div className="h-64 rounded-2xl bg-[var(--alo-surface-muted)]" />
         </div>
       </div>
     );
@@ -129,7 +129,7 @@ export default function AttentionPage() {
             <h2 className="text-base font-bold">
               {unauthorized ? 'Management access required' : 'Attention engine unavailable'}
             </h2>
-            <p className="max-w-md text-sm text-slate-600">{failure}</p>
+            <p className="max-w-md text-sm text-[var(--alo-body)]">{failure}</p>
             <Button variant="outline" size="sm" onClick={() => void load(scope)}>
               <RefreshCw className="mr-1.5 size-3.5" />
               Retry
@@ -150,11 +150,11 @@ export default function AttentionPage() {
     <div className="space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-            <Activity className="size-5 text-[#0057B8]" />
+          <h1 className="flex items-center gap-2 text-xl font-bold text-[var(--alo-text)]">
+            <Activity className="size-5 text-[var(--alo-brand)]" />
             What needs attention?
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Generated {new Date(report.generatedAt).toLocaleString()} · scope {report.scope}
             {report.scopeId ? ` ${report.scopeId}` : ''} · every figure links to the underlying records
           </p>
@@ -163,7 +163,7 @@ export default function AttentionPage() {
           <select
             value={scope}
             onChange={(event) => setScope(event.target.value)}
-            className="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs font-medium"
+            className="h-9 rounded-lg border border-[var(--alo-border)] bg-white px-2 text-xs font-medium"
             aria-label="Attention scope"
           >
             {SCOPES.map((option) => (
@@ -204,13 +204,13 @@ export default function AttentionPage() {
             </Card>
           );
         })}
-        <Card className="rounded-2xl border-2 border-slate-200">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="flex items-center justify-between pt-5 pb-5">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Total items</p>
-              <p className="text-2xl font-black text-slate-900">{report.totals.total}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">Total items</p>
+              <p className="text-2xl font-black text-[var(--alo-text)]">{report.totals.total}</p>
             </div>
-            <ArrowRight className="size-6 text-slate-400" />
+            <ArrowRight className="size-6 text-[var(--alo-text-muted)]" />
           </CardContent>
         </Card>
       </div>
@@ -230,7 +230,7 @@ export default function AttentionPage() {
             </p>
             {erroredBuckets.map((bucket) => (
               <div key={bucket.key} className="rounded-lg border border-red-200 bg-white p-2.5">
-                <p className="text-xs font-bold text-slate-900">{bucket.label}</p>
+                <p className="text-xs font-bold text-[var(--alo-text)]">{bucket.label}</p>
                 <p className="mt-0.5 font-mono text-[11px] text-red-700">{bucket.error || 'Unknown error'}</p>
               </div>
             ))}
@@ -239,7 +239,7 @@ export default function AttentionPage() {
       )}
 
       {/* Actionable buckets, most severe first */}
-      <Card className="rounded-2xl border-2 border-slate-200">
+      <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
         <CardHeader>
           <CardTitle className="text-sm font-bold">
             Needs action ({actionable.length})
@@ -247,7 +247,7 @@ export default function AttentionPage() {
         </CardHeader>
         <CardContent>
           {actionable.length === 0 ? (
-            <p className="py-6 text-center text-sm text-slate-500">
+            <p className="py-6 text-center text-sm text-[var(--alo-text-muted)]">
               Nothing is currently flagged across the evaluated checks.
             </p>
           ) : (
@@ -255,15 +255,15 @@ export default function AttentionPage() {
               {actionable.map((bucket) => {
                 const style = SEVERITY_STYLE[bucket.severity];
                 return (
-                  <div key={bucket.key} className="rounded-xl border-2 border-slate-200 p-3">
+                  <div key={bucket.key} className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-slate-900">{bucket.label}</p>
-                        <p className="mt-0.5 line-clamp-2 text-[11px] text-slate-600">{bucket.description}</p>
+                        <p className="truncate text-sm font-bold text-[var(--alo-text)]">{bucket.label}</p>
+                        <p className="mt-0.5 line-clamp-2 text-[11px] text-[var(--alo-body)]">{bucket.description}</p>
                       </div>
                       <div className="shrink-0 text-right">
-                        <p className="text-2xl font-black leading-none text-slate-900">{bucket.count}</p>
-                        <Badge variant="outline" className={`mt-1 text-[9px] ${style.className}`}>
+                        <p className="text-2xl font-black leading-none text-[var(--alo-text)]">{bucket.count}</p>
+                        <Badge variant="outline" className={`mt-1 text-[11px] ${style.className}`}>
                           {bucket.severity}
                         </Badge>
                       </div>
@@ -274,7 +274,7 @@ export default function AttentionPage() {
                         {bucket.sample.map((id) => (
                           <span
                             key={id}
-                            className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-600"
+                            className="rounded bg-[var(--alo-surface-muted)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--alo-body)]"
                             title={id}
                           >
                             {id.length > 14 ? `${id.slice(0, 14)}…` : id}
@@ -285,7 +285,7 @@ export default function AttentionPage() {
 
                     <Link
                       href={bucket.linkTo}
-                      className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-semibold text-[#0057B8] hover:underline"
+                      className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--alo-brand)] hover:underline"
                     >
                       Open these records
                       <ExternalLink className="size-3" />
@@ -306,7 +306,7 @@ export default function AttentionPage() {
           </CardHeader>
           <CardContent className="flex flex-wrap gap-1.5">
             {clear.map((bucket) => (
-              <Badge key={bucket.key} variant="outline" className="border-emerald-200 bg-white text-[10px] text-emerald-800">
+              <Badge key={bucket.key} variant="outline" className="border-emerald-200 bg-white text-[11px] text-emerald-800">
                 {bucket.label}: 0
               </Badge>
             ))}
@@ -314,7 +314,7 @@ export default function AttentionPage() {
         </Card>
       )}
 
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[11px] text-[var(--alo-text-muted)]">
         Counts are computed from live database rows at request time. A check that could not run is
         reported above as unknown rather than being counted as clear.
       </p>

@@ -120,7 +120,7 @@ const PLATFORM_META: Record<
     label: "WhatsApp",
     icon: "MessageCircle",
     brand: "#25D366",
-    bg: "bg-[#25D366]",
+    bg: "bg-[var(--alo-whatsapp)]",
     text: "text-white",
   },
   LINKEDIN: {
@@ -469,7 +469,7 @@ function SocialAccountCard({
             {account.accountName}
           </p>
           {account.accountId && (
-            <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--alo-muted)]">
+            <p className="mt-0.5 truncate font-mono text-[11px] text-[var(--alo-muted)]">
               {account.accountId}
             </p>
           )}
@@ -478,14 +478,14 @@ function SocialAccountCard({
         {/* Owner */}
         {account.owner && (
           <div className="flex items-center gap-2">
-            <div className="flex size-6 items-center justify-center rounded-full bg-[var(--alo-blue-soft)] text-[10px] font-bold text-[var(--alo-blue-strong)]">
+            <div className="flex size-6 items-center justify-center rounded-full bg-[var(--alo-blue-soft)] text-[11px] font-bold text-[var(--alo-blue-strong)]">
               {account.owner.name.charAt(0)}
             </div>
             <div className="min-w-0">
               <p className="truncate text-xs font-medium text-[var(--alo-text)]">
                 {account.owner.name}
               </p>
-              <p className="text-[10px] text-[var(--alo-muted)]">{account.owner.role}</p>
+              <p className="text-[11px] text-[var(--alo-muted)]">{account.owner.role}</p>
             </div>
           </div>
         )}
@@ -560,7 +560,7 @@ function SocialAccountCard({
               <Badge
                 key={p}
                 variant={p === "canSend" ? "blue" : p === "canManage" ? "orange" : "neutral"}
-                className="text-[10px]"
+                className="text-[11px]"
               >
                 {p.replace(/^can/, "").toLowerCase()}
               </Badge>
@@ -585,25 +585,25 @@ function SocialAccountCard({
 
         {/* Actions */}
         <div className="mt-auto flex flex-wrap gap-1.5 border-t border-[var(--alo-border)] pt-3">
-          <Button size="sm" variant="outline" onClick={onConfigure} className="h-7 px-2 text-xs">
+          <Button size="sm" variant="outline" onClick={onConfigure} className="h-7 px-2 ">
             <Icon name="Settings2" className="size-3" />
             Configure
           </Button>
           <Button
-            size="sm"
-            variant="ghost"
-            onClick={onSync}
-            className="h-7 px-2 text-xs text-[var(--alo-blue-strong)] hover:bg-[var(--alo-blue-soft)]"
-          >
+ size="sm"
+ variant="ghost"
+ onClick={onSync}
+ className="h-7 px-2 text-[var(--alo-blue-strong)] hover:bg-[var(--alo-blue-soft)]"
+ >
             <Icon name="RefreshCw" className="size-3" />
             Sync
           </Button>
           <Button
-            size="sm"
-            variant="ghost"
-            onClick={onDisconnect}
-            className="ml-auto h-7 px-2 text-xs text-[var(--alo-danger-strong)] hover:bg-[var(--alo-danger-soft)]"
-          >
+ size="sm"
+ variant="ghost"
+ onClick={onDisconnect}
+ className="ml-auto h-7 px-2 text-[var(--alo-danger-strong)] hover:bg-[var(--alo-danger-soft)]"
+ >
             <Icon name="Unplug" className="size-3" />
             Disconnect
           </Button>
@@ -660,16 +660,16 @@ function WebhookEventsTable({ events }: { events: WebhookEvent[] }) {
       header: "Event ID",
       cell: (r) =>
         r.eventId ? (
-          <span className="font-mono text-[10px] text-[var(--alo-muted)]">{r.eventId}</span>
+          <span className="font-mono text-[11px] text-[var(--alo-muted)]">{r.eventId}</span>
         ) : (
-          <span className="text-[10px] text-[var(--alo-muted)]">—</span>
+          <span className="text-[11px] text-[var(--alo-muted)]">—</span>
         ),
     },
     {
       key: "eventType",
       header: "Event Type",
       cell: (r) => (
-        <Badge variant="neutral" className="font-mono text-[10px]">
+        <Badge variant="neutral" className="font-mono text-[11px]">
           {r.eventType}
         </Badge>
       ),
@@ -679,11 +679,11 @@ function WebhookEventsTable({ events }: { events: WebhookEvent[] }) {
       header: "Verified",
       cell: (r) =>
         r.verified ? (
-          <Badge variant="success" className="gap-1 text-[10px]">
+          <Badge variant="success" className="gap-1 text-[11px]">
             <Icon name="ShieldCheck" className="size-3" /> Verified
           </Badge>
         ) : (
-          <Badge variant="danger" className="gap-1 text-[10px]">
+          <Badge variant="danger" className="gap-1 text-[11px]">
             <Icon name="ShieldAlert" className="size-3" /> Unverified
           </Badge>
         ),
@@ -693,11 +693,11 @@ function WebhookEventsTable({ events }: { events: WebhookEvent[] }) {
       header: "Processed",
       cell: (r) =>
         r.processed ? (
-          <Badge variant="success" className="gap-1 text-[10px]">
+          <Badge variant="success" className="gap-1 text-[11px]">
             <Icon name="CheckCircle2" className="size-3" /> Yes
           </Badge>
         ) : (
-          <Badge variant="warning" className="gap-1 text-[10px]">
+          <Badge variant="warning" className="gap-1 text-[11px]">
             <Icon name="Clock" className="size-3" /> Pending
           </Badge>
         ),
@@ -1133,7 +1133,7 @@ function ConfigurePermissionsDialog({
                     Read-only access — see inbox, analytics, and historical messages.
                   </p>
                 </div>
-                <Badge variant="neutral" className="text-[10px]">read</Badge>
+                <Badge variant="neutral" className="text-[11px]">read</Badge>
               </label>
 
               <label className="flex cursor-pointer items-center gap-3 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface)] p-3 hover:bg-[var(--alo-surface-muted)]">
@@ -1147,7 +1147,7 @@ function ConfigurePermissionsDialog({
                     Send messages on behalf of the account (subject to draft approval workflow).
                   </p>
                 </div>
-                <Badge variant="blue" className="text-[10px]">send</Badge>
+                <Badge variant="blue" className="text-[11px]">send</Badge>
               </label>
 
               <label className="flex cursor-pointer items-center gap-3 rounded-md border border-[var(--alo-border)] bg-[var(--alo-surface)] p-3 hover:bg-[var(--alo-surface-muted)]">
@@ -1161,7 +1161,7 @@ function ConfigurePermissionsDialog({
                     Manage settings, webhooks, and other employees' permissions.
                   </p>
                 </div>
-                <Badge variant="orange" className="text-[10px]">manage</Badge>
+                <Badge variant="orange" className="text-[11px]">manage</Badge>
               </label>
             </div>
           </div>

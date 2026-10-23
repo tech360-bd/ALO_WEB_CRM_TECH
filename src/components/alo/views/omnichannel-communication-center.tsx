@@ -205,12 +205,12 @@ interface DashboardResponse {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ACCOUNT_STATUS_COLORS: Record<string, string> = {
-  NOT_VERIFIED: "bg-slate-100 text-slate-700 border border-slate-200",
+  NOT_VERIFIED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border)]",
   CONNECTED: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-  DISCONNECTED: "bg-slate-100 text-slate-700 border border-slate-200",
+  DISCONNECTED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border)]",
   EXPIRED: "bg-amber-100 text-amber-700 border border-amber-200",
   PERMISSION_ERROR: "bg-rose-100 text-rose-700 border border-rose-200",
-  RECONNECT_REQUIRED: "bg-orange-100 text-orange-700 border border-orange-200",
+  RECONNECT_REQUIRED: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border border-[var(--alo-cta)]/25",
 };
 
 const ACCOUNT_STATUS_LABELS: Record<string, string> = {
@@ -227,15 +227,15 @@ const PLATFORM_META: Record<
   { label: string; icon: string; color: string; bg: string; text: string }
 > = {
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#10B981", bg: "bg-green-50", text: "text-green-700" },
-  FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-blue-50", text: "text-blue-700" },
+  FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
   INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-pink-50", text: "text-pink-700" },
   GMAIL: { label: "Gmail", icon: "Mail", color: "#0284C7", bg: "bg-violet-50", text: "text-violet-700" },
-  OUTLOOK: { label: "Outlook", icon: "Mail", color: "#0057B8", bg: "bg-[#EFF6FF]", text: "text-[#0057B8]" },
+  OUTLOOK: { label: "Outlook", icon: "Mail", color: "#0057B8", bg: "bg-[var(--alo-info-bg)]", text: "text-[var(--alo-brand)]" },
   SMS_GATEWAY: { label: "SMS Gateway", icon: "MessageSquare", color: "#047857", bg: "bg-emerald-50", text: "text-emerald-700" },
-  CALL_CENTER: { label: "Call Center", icon: "Phone", color: "#C93D13", bg: "bg-orange-50", text: "text-orange-700" },
+  CALL_CENTER: { label: "Call Center", icon: "Phone", color: "#C93D13", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta-active)]" },
   TELEGRAM: { label: "Telegram", icon: "Send", color: "#0088cc", bg: "bg-sky-50", text: "text-sky-700" },
-  LINKEDIN: { label: "LinkedIn", icon: "Linkedin", color: "#0a66c2", bg: "bg-blue-50", text: "text-blue-700" },
-  TWITTER: { label: "Twitter / X", icon: "Twitter", color: "#0f172a", bg: "bg-slate-100", text: "text-slate-700" },
+  LINKEDIN: { label: "LinkedIn", icon: "Linkedin", color: "#0a66c2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
+  TWITTER: { label: "Twitter / X", icon: "Twitter", color: "#0f172a", bg: "bg-[var(--alo-surface-muted)]", text: "text-[var(--alo-body)]" },
 };
 
 const CHANNEL_META: Record<
@@ -243,57 +243,57 @@ const CHANNEL_META: Record<
   { label: string; icon: string; bg: string; text: string; dot: string }
 > = {
   WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
-  FACEBOOK: { label: "Facebook", icon: "Facebook", bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
+  FACEBOOK: { label: "Facebook", icon: "Facebook", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]", dot: "bg-blue-500" },
   INSTAGRAM: { label: "Instagram", icon: "Instagram", bg: "bg-pink-50", text: "text-pink-700", dot: "bg-pink-500" },
   EMAIL: { label: "Email", icon: "Mail", bg: "bg-violet-50", text: "text-violet-700", dot: "bg-violet-500" },
   SMS: { label: "SMS", icon: "MessageSquare", bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  PHONE: { label: "Phone", icon: "Phone", bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
-  CRM: { label: "CRM", icon: "Activity", bg: "bg-slate-100", text: "text-slate-700", dot: "bg-slate-500" },
+  PHONE: { label: "Phone", icon: "Phone", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta-active)]", dot: "bg-[var(--alo-cta)]" },
+  CRM: { label: "CRM", icon: "Activity", bg: "bg-[var(--alo-surface-muted)]", text: "text-[var(--alo-body)]", dot: "bg-slate-500" },
   MESSENGER: { label: "Messenger", icon: "Send", bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
 };
 
 const CALL_TYPE_COLORS: Record<string, string> = {
-  INCOMING: "bg-blue-100 text-blue-700",
+  INCOMING: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   OUTGOING: "bg-emerald-100 text-emerald-700",
   MISSED: "bg-rose-100 text-rose-700",
 };
 
 const DELIVERY_COLORS: Record<string, string> = {
-  SENT: "bg-blue-100 text-blue-700",
+  SENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   DELIVERED: "bg-emerald-100 text-emerald-700",
   FAILED: "bg-rose-100 text-rose-700",
   PENDING: "bg-amber-100 text-amber-700",
 };
 
 const FOLDER_COLORS: Record<string, string> = {
-  INBOX: "bg-blue-100 text-blue-700",
+  INBOX: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   SENT: "bg-emerald-100 text-emerald-700",
   DRAFT: "bg-amber-100 text-amber-700",
-  ARCHIVE: "bg-slate-100 text-slate-700",
+  ARCHIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
   URGENT: "bg-rose-100 text-rose-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  NORMAL: "bg-blue-100 text-blue-700",
-  LOW: "bg-slate-100 text-slate-700",
+  HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  COMMUNICATION: "bg-blue-100 text-blue-700",
+  COMMUNICATION: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   DOCUMENT: "bg-violet-100 text-violet-700",
   DEADLINE: "bg-rose-100 text-rose-700",
   APPLICATION: "bg-emerald-100 text-emerald-700",
   PAYMENT: "bg-amber-100 text-amber-700",
-  VISA: "bg-orange-100 text-orange-700",
-  SYSTEM: "bg-slate-100 text-slate-700",
+  VISA: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  SYSTEM: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   MARKETING: "bg-pink-100 text-pink-700",
 };
 
 const CONSENT_COLORS: Record<string, string> = {
   OPTED_IN: "bg-emerald-100 text-emerald-700",
   OPTED_OUT: "bg-rose-100 text-rose-700",
-  UNKNOWN: "bg-slate-100 text-slate-700",
+  UNKNOWN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PENDING: "bg-amber-100 text-amber-700",
 };
 
@@ -301,7 +301,7 @@ const REVIEW_STATUS_COLORS: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   REJECTED: "bg-rose-100 text-rose-700",
-  IN_REVIEW: "bg-blue-100 text-blue-700",
+  IN_REVIEW: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const DOC_TYPES_27 = [
@@ -448,7 +448,7 @@ export function OmnichannelCommunicationCenter() {
         action={
           <Button
             variant="outline"
-            className="h-12 border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC]"
+            className="h-12 border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)]"
             onClick={() => void fetchData()}
           >
             <Icon name="RefreshCw" className="size-4 mr-2" />
@@ -547,30 +547,30 @@ export function OmnichannelCommunicationCenter() {
 
       {/* ─── Tabs ─── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5">
-        <div className="overflow-x-auto alo-scroll rounded-xl border border-[#E2E8F0] bg-white p-1.5">
+        <div className="overflow-x-auto alo-scroll rounded-xl border border-[var(--alo-border)] bg-white p-1.5">
           <TabsList className="h-auto w-max gap-1 bg-transparent">
-            <TabsTrigger value="connected-accounts" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="connected-accounts" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Link" className="size-3.5 mr-1.5" /> Connected Accounts
             </TabsTrigger>
-            <TabsTrigger value="unified-timeline" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="unified-timeline" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Layers" className="size-3.5 mr-1.5" /> Unified Timeline
             </TabsTrigger>
-            <TabsTrigger value="phone-calls" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="phone-calls" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Phone" className="size-3.5 mr-1.5" /> Phone Calls
             </TabsTrigger>
-            <TabsTrigger value="emails" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="emails" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Mail" className="size-3.5 mr-1.5" /> Emails
             </TabsTrigger>
-            <TabsTrigger value="sms" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="sms" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="MessageSquare" className="size-3.5 mr-1.5" /> SMS
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Bell" className="size-3.5 mr-1.5" /> Notifications
             </TabsTrigger>
-            <TabsTrigger value="consent" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="consent" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="ShieldCheck" className="size-3.5 mr-1.5" /> Consent Management
             </TabsTrigger>
-            <TabsTrigger value="ai-classification" className="data-[state=active]:bg-[#EFF6FF] data-[state=active]:text-[#0057B8]">
+            <TabsTrigger value="ai-classification" className="data-[state=active]:bg-[var(--alo-info-bg)] data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="Sparkles" className="size-3.5 mr-1.5" /> AI Document Classification
             </TabsTrigger>
           </TabsList>
@@ -617,28 +617,28 @@ export function OmnichannelCommunicationCenter() {
       <SectionCard
         title="Chairman Command Center"
         icon="Crown"
-        className="border-[#0057B8]/20 bg-[#EFF6FF]/40"
+        className="border-[var(--alo-brand)]/20 bg-[var(--alo-info-bg)]/40"
       >
-        <p className="body-text text-[#0F172A]">
+        <p className="body-text text-[var(--alo-text)]">
           Chairman can monitor all official communication accounts, assign channels to branches,
           departments, and employees, and view traffic, unread, pending, failures, and sync errors
           across the entire organization.
         </p>
         <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Total Channels</p>
-            <p className="mt-1 text-xl font-bold text-[#0F172A]">{stats.connectedAccounts}</p>
+          <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Total Channels</p>
+            <p className="mt-1 text-xl font-bold text-[var(--alo-text)]">{stats.connectedAccounts}</p>
           </div>
-          <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Active</p>
+          <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Active</p>
             <p className="mt-1 text-xl font-bold text-emerald-600">{stats.connectedActive}</p>
           </div>
-          <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Expired / Errors</p>
+          <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Expired / Errors</p>
             <p className="mt-1 text-xl font-bold text-amber-600">{stats.expiredAccounts}</p>
           </div>
-          <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Unread / Pending</p>
+          <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Unread / Pending</p>
             <p className="mt-1 text-xl font-bold text-rose-600">
               {stats.unreadNotifications + stats.unreadEmails + stats.pendingReview}
             </p>
@@ -652,7 +652,7 @@ export function OmnichannelCommunicationCenter() {
         icon="UserPlus"
         className="border-emerald-200 bg-emerald-50/40"
       >
-        <p className="body-text text-[#0F172A]">
+        <p className="body-text text-[var(--alo-text)]">
           When communication arrives from an unknown contact, the system automatically: identifies
           sender → searches CRM by phone / email / passport / student ID → if not found, creates Lead
           with ID → assigns counselor → notifies Chairman → saves to timeline.
@@ -663,9 +663,9 @@ export function OmnichannelCommunicationCenter() {
       <SectionCard
         title="Document Version & Deletion Rules"
         icon="FileLock2"
-        className="border-[#C93D13]/30 bg-orange-50/40"
+        className="border-[var(--alo-cta-hover)]/30 bg-[var(--alo-cta-soft)]/40"
       >
-        <p className="body-text text-[#0F172A]">
+        <p className="body-text text-[var(--alo-text)]">
           Each document type supports maximum <strong>2 versions</strong>. Students, partners,
           counselors, visa officers, marketing, and HR cannot delete documents. Only{" "}
           <strong>Super Admin</strong> and <strong>Admin</strong> can permanently delete with reason,
@@ -705,13 +705,13 @@ function ConnectedAccountsTab({
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">Connected Communication Accounts</p>
-          <p className="body-text text-[#64748B]">
+          <p className="card-title text-[var(--alo-text)]">Connected Communication Accounts</p>
+          <p className="body-text text-[var(--alo-text-muted)]">
             Account records are disconnected placeholders until official provider OAuth and live verification are implemented.
           </p>
         </div>
         <Button
-          className="h-12 bg-[#C93D13] text-white hover:bg-[#C93D13]/90"
+          className="h-12 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
           onClick={() => setOpen(true)}
         >
           <Icon name="Plus" className="size-4 mr-2" />
@@ -719,10 +719,10 @@ function ConnectedAccountsTab({
         </Button>
       </div>
 
-      <div className="rounded-xl border border-[#E2E8F0] bg-[#EFF6FF]/30 px-4 py-3">
+      <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-info-bg)]/30 px-4 py-3">
         <div className="flex items-start gap-2.5">
-          <Icon name="ShieldCheck" className="size-4 mt-0.5 text-[#0057B8] shrink-0" />
-          <p className="body-text text-[#0F172A]">
+          <Icon name="ShieldCheck" className="size-4 mt-0.5 text-[var(--alo-brand)] shrink-0" />
+          <p className="body-text text-[var(--alo-text)]">
             <strong>Integration status:</strong> No provider token is collected here. Existing provider states are NOT VERIFIED, and local disconnect does not revoke access at the provider.
           </p>
         </div>
@@ -741,13 +741,13 @@ function ConnectedAccountsTab({
               label: acc.platform,
               icon: "Plug",
               color: "#64748B",
-              bg: "bg-slate-100",
-              text: "text-slate-700",
+              bg: "bg-[var(--alo-surface-muted)]",
+              text: "text-[var(--alo-body)]",
             };
             const status = acc.connectionStatus;
             const isDisconnected = status === "DISCONNECTED";
             return (
-              <Card key={acc.id} className="rounded-2xl border border-[#E2E8F0] bg-white alo-shadow">
+              <Card key={acc.id} className="rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow">
                 <CardContent className="pt-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
@@ -755,8 +755,8 @@ function ConnectedAccountsTab({
                         <Icon name={meta.icon} className="size-5" />
                       </div>
                       <div className="min-w-0">
-                        <p className="card-title text-[#0F172A] truncate">{meta.label}</p>
-                        <p className="body-text text-[#64748B] truncate">{acc.accountName}</p>
+                        <p className="card-title text-[var(--alo-text)] truncate">{meta.label}</p>
+                        <p className="body-text text-[var(--alo-text-muted)] truncate">{acc.accountName}</p>
                       </div>
                     </div>
                     <StatusBadge
@@ -768,20 +768,20 @@ function ConnectedAccountsTab({
 
                   <div className="mt-4 space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-[#64748B]">Account ID</span>
-                      <span className="font-mono text-[#0F172A]">{acc.accountId}</span>
+                      <span className="text-[var(--alo-text-muted)]">Account ID</span>
+                      <span className="font-mono text-[var(--alo-text)]">{acc.accountId}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-[#64748B]">Assigned To</span>
-                      <span className="text-[#0F172A]">{acc.assignedTo || "—"}</span>
+                      <span className="text-[var(--alo-text-muted)]">Assigned To</span>
+                      <span className="text-[var(--alo-text)]">{acc.assignedTo || "—"}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-[#64748B]">Last Sync</span>
-                      <span className="text-[#0F172A]">{acc.lastSync ? timeAgo(acc.lastSync) : "—"}</span>
+                      <span className="text-[var(--alo-text-muted)]">Last Sync</span>
+                      <span className="text-[var(--alo-text)]">{acc.lastSync ? timeAgo(acc.lastSync) : "—"}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-[#64748B]">Last Activity</span>
-                      <span className="text-[#0F172A]">{acc.lastActivity ? timeAgo(acc.lastActivity) : "—"}</span>
+                      <span className="text-[var(--alo-text-muted)]">Last Activity</span>
+                      <span className="text-[var(--alo-text)]">{acc.lastActivity ? timeAgo(acc.lastActivity) : "—"}</span>
                     </div>
                   </div>
 
@@ -792,11 +792,11 @@ function ConnectedAccountsTab({
                     </Button>
                     {!isDisconnected && (
                       <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-9 border-rose-200 text-rose-700 hover:bg-rose-50"
-                        disabled={busyId === acc.id}
-                        onClick={() => void handleAction(acc)}
+ size="sm"
+ variant="outline"
+ className=" border-rose-200 text-rose-700 hover:bg-rose-50"
+ disabled={busyId === acc.id}
+ onClick={() => void handleAction(acc)}
                         title="Clears local credentials only; no provider-side revocation is performed"
                       >
                         <Icon name="Unplug" className="size-3.5 mr-1.5" />
@@ -875,7 +875,7 @@ function ConnectAccountDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Link" className="size-5 text-[#0057B8]" />
+            <Icon name="Link" className="size-5 text-[var(--alo-brand)]" />
             Connect Communication Account
           </DialogTitle>
           <DialogDescription>
@@ -884,7 +884,7 @@ function ConnectAccountDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-[#0F172A]">Platform</Label>
+            <Label className="text-[var(--alo-text)]">Platform</Label>
             <Select value={platform} onValueChange={setPlatform}>
               <SelectTrigger className="h-11">
                 <SelectValue />
@@ -905,7 +905,7 @@ function ConnectAccountDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-[#0F172A]">Account Name *</Label>
+            <Label className="text-[var(--alo-text)]">Account Name *</Label>
             <Input
               className="h-11"
               placeholder="e.g. ALO Education Official"
@@ -914,7 +914,7 @@ function ConnectAccountDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[#0F172A]">Account ID (optional)</Label>
+            <Label className="text-[var(--alo-text)]">Account ID (optional)</Label>
             <Input
               className="h-11"
               placeholder="Optional account identifier, if known"
@@ -923,7 +923,7 @@ function ConnectAccountDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[#0F172A]">Assigned To</Label>
+            <Label className="text-[var(--alo-text)]">Assigned To</Label>
             <Select value={assignedTo} onValueChange={setAssignedTo}>
               <SelectTrigger className="h-11">
                 <SelectValue />
@@ -945,14 +945,14 @@ function ConnectAccountDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
-            className="h-11 bg-[#C93D13] text-white hover:bg-[#C93D13]/90"
-            disabled={submitting}
-            onClick={submit}
-          >
+ className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
+ disabled={submitting}
+ onClick={submit}
+ >
             {submitting ? (
               <>
                 <Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Connecting…
@@ -1022,10 +1022,10 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
         description="This view merges available local CRM records. External channels, live ingestion, and synchronization are not verified; it does not represent every interaction."
         action={
           <Button
-            variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
-            onClick={exportFiltered}
-          >
+ variant="outline"
+ className=" border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ onClick={exportFiltered}
+ >
             <Icon name="Download" className="size-4 mr-2" />
             Export Timeline
           </Button>
@@ -1033,7 +1033,7 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#64748B]" />
+            <Icon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
             <Input
               className="h-11 pl-9"
               placeholder="Search timeline by title, description, type…"
@@ -1070,7 +1070,7 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
           <div className="relative max-h-[40rem] overflow-y-auto alo-scroll pr-2">
             <div className="relative pl-6">
               {/* Vertical connector */}
-              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#0057B8] via-[#0057B8] to-[#E2E8F0]" />
+              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-[var(--alo-brand)] via-[var(--alo-brand)] to-[var(--alo-border)]" />
               <ul className="space-y-5">
                 {filtered.map((ev, idx) => {
                   const meta =
@@ -1078,8 +1078,8 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
                     CHANNEL_META[ev.type] || {
                       label: ev.channel,
                       icon: "Activity",
-                      bg: "bg-slate-100",
-                      text: "text-slate-700",
+                      bg: "bg-[var(--alo-surface-muted)]",
+                      text: "text-[var(--alo-body)]",
                       dot: "bg-slate-500",
                     };
                   return (
@@ -1093,9 +1093,9 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
                       >
                         <Icon name={meta.icon} className="size-3.5" />
                       </span>
-                      <div className="rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 alo-shadow transition hover:alo-shadow-lg">
+                      <div className="rounded-xl border border-[var(--alo-border)] bg-white px-4 py-3 alo-shadow transition hover:alo-shadow-lg">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="card-title text-[#0F172A]">{ev.title || ev.type}</p>
+                          <p className="card-title text-[var(--alo-text)]">{ev.title || ev.type}</p>
                           <div className="flex items-center gap-2">
                             <span
                               className={cn(
@@ -1106,18 +1106,18 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
                             >
                               {meta.label}
                             </span>
-                            <span className="badge-text text-[#64748B]">
+                            <span className="badge-text text-[var(--alo-text-muted)]">
                               {fmtDate(ev.timestamp)} · {fmtTime(ev.timestamp)}
                             </span>
                           </div>
                         </div>
                         {ev.description && (
-                          <p className="mt-1 body-text text-[#475569] line-clamp-2">
+                          <p className="mt-1 body-text text-[var(--alo-text-secondary)] line-clamp-2">
                             {ev.description}
                           </p>
                         )}
                         {ev.user && (
-                          <p className="mt-1.5 badge-text text-[#64748B]">
+                          <p className="mt-1.5 badge-text text-[var(--alo-text-muted)]">
                             by {ev.user}
                           </p>
                         )}
@@ -1151,10 +1151,10 @@ function PhoneCallsTab({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">Phone Call Log</p>
-          <p className="body-text text-[#64748B]">All incoming, outgoing, and missed calls.</p>
+          <p className="card-title text-[var(--alo-text)]">Phone Call Log</p>
+          <p className="body-text text-[var(--alo-text-muted)]">All incoming, outgoing, and missed calls.</p>
         </div>
-        <Button className="h-12 bg-[#C93D13] text-white hover:bg-[#C93D13]/90" onClick={() => setOpen(true)}>
+        <Button className="h-12 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" onClick={() => setOpen(true)}>
           <Icon name="PhoneCall" className="size-4 mr-2" />
           Log Call
         </Button>
@@ -1166,39 +1166,39 @@ function PhoneCallsTab({
         <SectionCard title={`Call Log (${calls.length})`} icon="Phone">
           <div className="max-h-[40rem] overflow-auto alo-scroll">
             <Table>
-              <TableHeader className="sticky top-0 bg-[#F8FAFC] z-10">
-                <TableRow className="border-[#E2E8F0] hover:bg-transparent">
-                  <TableHead className="text-[#64748B]">Type</TableHead>
-                  <TableHead className="text-[#64748B]">From</TableHead>
-                  <TableHead className="text-[#64748B]">To</TableHead>
-                  <TableHead className="text-[#64748B]">Duration</TableHead>
-                  <TableHead className="text-[#64748B]">Disposition</TableHead>
-                  <TableHead className="text-[#64748B]">Notes</TableHead>
-                  <TableHead className="text-[#64748B] text-right">Date</TableHead>
+              <TableHeader className="sticky top-0 bg-[var(--alo-page)] z-10">
+                <TableRow className="border-[var(--alo-border)] hover:bg-transparent">
+                  <TableHead className="text-[var(--alo-text-muted)]">Type</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">From</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">To</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Duration</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Disposition</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Notes</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] text-right">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {calls.map((c) => (
-                  <TableRow key={c.id} className="border-[#E2E8F0]">
+                  <TableRow key={c.id} className="border-[var(--alo-border)]">
                     <TableCell>
                       <StatusBadge status={c.callType} colorMap={CALL_TYPE_COLORS} />
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-[#0F172A]">{c.fromNumber}</TableCell>
-                    <TableCell className="font-mono text-xs text-[#0F172A]">{c.toNumber}</TableCell>
-                    <TableCell className="tabular-nums text-[#0F172A]">{fmtDuration(c.duration)}</TableCell>
+                    <TableCell className="font-mono text-xs text-[var(--alo-text)]">{c.fromNumber}</TableCell>
+                    <TableCell className="font-mono text-xs text-[var(--alo-text)]">{c.toNumber}</TableCell>
+                    <TableCell className="tabular-nums text-[var(--alo-text)]">{fmtDuration(c.duration)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="border-[#E2E8F0] text-[#475569]">
+                      <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-secondary)]">
                         {c.disposition}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-xs">
-                      <p className="body-text text-[#475569] line-clamp-2">
+                      <p className="body-text text-[var(--alo-text-secondary)] line-clamp-2">
                         {c.callNotes || "—"}
                       </p>
                     </TableCell>
                     <TableCell className="text-right">
-                      <p className="body-text text-[#0F172A]">{fmtDate(c.createdAt)}</p>
-                      <p className="badge-text text-[#64748B]">{fmtTime(c.createdAt)}</p>
+                      <p className="body-text text-[var(--alo-text)]">{fmtDate(c.createdAt)}</p>
+                      <p className="badge-text text-[var(--alo-text-muted)]">{fmtTime(c.createdAt)}</p>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -1269,7 +1269,7 @@ function LogCallDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="PhoneCall" className="size-5 text-[#0057B8]" />
+            <Icon name="PhoneCall" className="size-5 text-[var(--alo-brand)]" />
             Log Phone Call
           </DialogTitle>
           <DialogDescription>
@@ -1279,7 +1279,7 @@ function LogCallDialog({
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">Call Type</Label>
+              <Label className="text-[var(--alo-text)]">Call Type</Label>
               <Select value={callType} onValueChange={setCallType}>
                 <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -1290,7 +1290,7 @@ function LogCallDialog({
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">Disposition</Label>
+              <Label className="text-[var(--alo-text)]">Disposition</Label>
               <Select value={disposition} onValueChange={setDisposition}>
                 <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -1304,20 +1304,20 @@ function LogCallDialog({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">From</Label>
+              <Label className="text-[var(--alo-text)]">From</Label>
               <Input className="h-11 font-mono" value={fromNumber} onChange={(e) => setFromNumber(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">To *</Label>
+              <Label className="text-[var(--alo-text)]">To *</Label>
               <Input className="h-11 font-mono" placeholder="+8801805020100" value={toNumber} onChange={(e) => setToNumber(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Duration (seconds)</Label>
+            <Label className="text-[var(--alo-text)]">Duration (seconds)</Label>
             <Input className="h-11" type="number" value={duration} onChange={(e) => setDuration(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Call Notes</Label>
+            <Label className="text-[var(--alo-text)]">Call Notes</Label>
             <Textarea
               className="min-h-[80px]"
               placeholder="Summary of conversation, student intent, follow-up actions…"
@@ -1327,8 +1327,8 @@ function LogCallDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[#C93D13] text-white hover:bg-[#C93D13]/90" disabled={submitting} onClick={submit}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" disabled={submitting} onClick={submit}>
             {submitting ? (
               <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Saving…</>
             ) : (
@@ -1358,8 +1358,8 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">Email Sync</p>
-          <p className="body-text text-[#64748B]">Inbox, sent, drafts — auto-matched to CRM contacts.</p>
+          <p className="card-title text-[var(--alo-text)]">Email Sync</p>
+          <p className="body-text text-[var(--alo-text-muted)]">Inbox, sent, drafts — auto-matched to CRM contacts.</p>
         </div>
         <div className="flex items-center gap-2">
           <Select value={folder} onValueChange={setFolder}>
@@ -1375,9 +1375,9 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
             </SelectContent>
           </Select>
           <Button
-            variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
-            onClick={() => toast({ title: "Email sync started", description: "Checking for new messages…" })}
+ variant="outline"
+ className=" border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ onClick={() => toast({ title: "Email sync started", description: "Checking for new messages…" })}
           >
             <Icon name="RefreshCw" className="size-4 mr-2" />
             Sync Email
@@ -1391,36 +1391,36 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
         <SectionCard title={`Emails (${filtered.length})`} icon="Mail">
           <div className="max-h-[40rem] overflow-auto alo-scroll">
             <Table>
-              <TableHeader className="sticky top-0 bg-[#F8FAFC] z-10">
-                <TableRow className="border-[#E2E8F0] hover:bg-transparent">
-                  <TableHead className="text-[#64748B]">From</TableHead>
-                  <TableHead className="text-[#64748B]">To</TableHead>
-                  <TableHead className="text-[#64748B]">Subject</TableHead>
-                  <TableHead className="text-[#64748B]">Folder</TableHead>
-                  <TableHead className="text-[#64748B]">Read</TableHead>
-                  <TableHead className="text-[#64748B]">CRM Match</TableHead>
-                  <TableHead className="text-[#64748B] text-right">Date</TableHead>
+              <TableHeader className="sticky top-0 bg-[var(--alo-page)] z-10">
+                <TableRow className="border-[var(--alo-border)] hover:bg-transparent">
+                  <TableHead className="text-[var(--alo-text-muted)]">From</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">To</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Subject</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Folder</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Read</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">CRM Match</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] text-right">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((e) => (
-                  <TableRow key={e.id} className={cn("border-[#E2E8F0]", !e.isRead && "bg-[#EFF6FF]/40")}>
-                    <TableCell className="text-xs text-[#0F172A]">{e.fromEmail}</TableCell>
-                    <TableCell className="text-xs text-[#0F172A]">{e.toEmail}</TableCell>
+                  <TableRow key={e.id} className={cn("border-[var(--alo-border)]", !e.isRead && "bg-[var(--alo-info-bg)]/40")}>
+                    <TableCell className="text-xs text-[var(--alo-text)]">{e.fromEmail}</TableCell>
+                    <TableCell className="text-xs text-[var(--alo-text)]">{e.toEmail}</TableCell>
                     <TableCell>
-                      <p className={cn("body-text", e.isRead ? "text-[#475569] font-normal" : "text-[#0F172A] font-semibold")}>
+                      <p className={cn("body-text", e.isRead ? "text-[var(--alo-text-secondary)] font-normal" : "text-[var(--alo-text)] font-semibold")}>
                         {e.subject}
                       </p>
-                      <p className="badge-text text-[#64748B] line-clamp-1">{e.bodyText?.slice(0, 80)}</p>
+                      <p className="badge-text text-[var(--alo-text-muted)] line-clamp-1">{e.bodyText?.slice(0, 80)}</p>
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={e.folder} colorMap={FOLDER_COLORS} />
                     </TableCell>
                     <TableCell>
                       {e.isRead ? (
-                        <Badge variant="outline" className="border-[#E2E8F0] text-[#64748B]">Read</Badge>
+                        <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-muted)]">Read</Badge>
                       ) : (
-                        <Badge className="bg-blue-100 text-blue-700">Unread</Badge>
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">Unread</Badge>
                       )}
                     </TableCell>
                     <TableCell>
@@ -1429,14 +1429,14 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
                           <Icon name="Check" className="size-3 mr-1" /> Matched
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="border-[#E2E8F0] text-[#64748B]">
+                        <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-muted)]">
                           <Icon name="X" className="size-3 mr-1" /> No match
                         </Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <p className="body-text text-[#0F172A]">{fmtDate(e.createdAt)}</p>
-                      <p className="badge-text text-[#64748B]">{fmtTime(e.createdAt)}</p>
+                      <p className="body-text text-[var(--alo-text)]">{fmtDate(e.createdAt)}</p>
+                      <p className="badge-text text-[var(--alo-text-muted)]">{fmtTime(e.createdAt)}</p>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -1458,8 +1458,8 @@ function SmsTab({ sms }: { sms: SmsLog[] }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">SMS Log</p>
-          <p className="body-text text-[#64748B]">Outbound & inbound SMS with delivery status.</p>
+          <p className="card-title text-[var(--alo-text)]">SMS Log</p>
+          <p className="body-text text-[var(--alo-text-muted)]">Outbound & inbound SMS with delivery status.</p>
         </div>
         <Button className="h-12" variant="outline" disabled title="No authorized SMS provider is configured">
           <Icon name="ShieldAlert" className="size-4 mr-2" />
@@ -1473,49 +1473,49 @@ function SmsTab({ sms }: { sms: SmsLog[] }) {
         <SectionCard title={`SMS Log (${sms.length})`} icon="MessageSquare">
           <div className="max-h-[40rem] overflow-auto alo-scroll">
             <Table>
-              <TableHeader className="sticky top-0 bg-[#F8FAFC] z-10">
-                <TableRow className="border-[#E2E8F0] hover:bg-transparent">
-                  <TableHead className="text-[#64748B]">Direction</TableHead>
-                  <TableHead className="text-[#64748B]">From</TableHead>
-                  <TableHead className="text-[#64748B]">To</TableHead>
-                  <TableHead className="text-[#64748B]">Message</TableHead>
-                  <TableHead className="text-[#64748B]">Delivery</TableHead>
-                  <TableHead className="text-[#64748B]">Read</TableHead>
-                  <TableHead className="text-[#64748B] text-right">Date</TableHead>
+              <TableHeader className="sticky top-0 bg-[var(--alo-page)] z-10">
+                <TableRow className="border-[var(--alo-border)] hover:bg-transparent">
+                  <TableHead className="text-[var(--alo-text-muted)]">Direction</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">From</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">To</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Message</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Delivery</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Read</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] text-right">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {sms.map((s) => (
-                  <TableRow key={s.id} className="border-[#E2E8F0]">
+                  <TableRow key={s.id} className="border-[var(--alo-border)]">
                     <TableCell>
                       <Badge
                         className={cn(
                           s.direction === "OUTBOUND"
-                            ? "bg-blue-100 text-blue-700"
+                            ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"
                             : "bg-emerald-100 text-emerald-700"
                         )}
                       >
                         {s.direction === "OUTBOUND" ? "Out" : "In"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-[#0F172A]">{s.fromNumber}</TableCell>
-                    <TableCell className="font-mono text-xs text-[#0F172A]">{s.toNumber}</TableCell>
+                    <TableCell className="font-mono text-xs text-[var(--alo-text)]">{s.fromNumber}</TableCell>
+                    <TableCell className="font-mono text-xs text-[var(--alo-text)]">{s.toNumber}</TableCell>
                     <TableCell className="max-w-xs">
-                      <p className="body-text text-[#475569] line-clamp-2">{s.messageText}</p>
+                      <p className="body-text text-[var(--alo-text-secondary)] line-clamp-2">{s.messageText}</p>
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={s.deliveryStatus} colorMap={DELIVERY_COLORS} />
                     </TableCell>
                     <TableCell>
                       {s.readStatus ? (
-                        <Badge variant="outline" className="border-[#E2E8F0] text-[#64748B]">Read</Badge>
+                        <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-muted)]">Read</Badge>
                       ) : (
                         <Badge className="bg-amber-100 text-amber-700">Unread</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <p className="body-text text-[#0F172A]">{fmtDate(s.createdAt)}</p>
-                      <p className="badge-text text-[#64748B]">{fmtTime(s.createdAt)}</p>
+                      <p className="body-text text-[var(--alo-text)]">{fmtDate(s.createdAt)}</p>
+                      <p className="badge-text text-[var(--alo-text-muted)]">{fmtTime(s.createdAt)}</p>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -1597,8 +1597,8 @@ function NotificationsTab({
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">Notification Engine</p>
-          <p className="body-text text-[#64748B]">In-app, email, push, and SMS notifications.</p>
+          <p className="card-title text-[var(--alo-text)]">Notification Engine</p>
+          <p className="body-text text-[var(--alo-text-muted)]">In-app, email, push, and SMS notifications.</p>
         </div>
         <div className="flex items-center gap-2">
           <Select value={category} onValueChange={setCategory}>
@@ -1617,11 +1617,11 @@ function NotificationsTab({
             </SelectContent>
           </Select>
           <Button
-            variant="outline"
-            className="h-11 border-[#E2E8F0] text-[#0057B8] hover:bg-[#EFF6FF]"
-            disabled={busy}
-            onClick={markAllRead}
-          >
+ variant="outline"
+ className=" border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ disabled={busy}
+ onClick={markAllRead}
+ >
             <Icon name="CheckCheck" className="size-4 mr-2" />
             Mark All Read
           </Button>
@@ -1639,32 +1639,32 @@ function NotificationsTab({
                 className={cn(
                   "rounded-xl border px-4 py-3 transition",
                   n.isRead
-                    ? "border-[#E2E8F0] bg-white"
-                    : "border-[#0057B8]/30 bg-[#EFF6FF]/40"
+                    ? "border-[var(--alo-border)] bg-white"
+                    : "border-[var(--alo-brand)]/30 bg-[var(--alo-info-bg)]/40"
                 )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       {!n.isRead && (
-                        <span className="inline-block size-2 rounded-full bg-[#C93D13]" />
+                        <span className="inline-block size-2 rounded-full bg-[var(--alo-cta-hover)]" />
                       )}
-                      <p className={cn("card-title", n.isRead ? "text-[#475569]" : "text-[#0F172A]")}>
+                      <p className={cn("card-title", n.isRead ? "text-[var(--alo-text-secondary)]" : "text-[var(--alo-text)]")}>
                         {n.title}
                       </p>
                       <StatusBadge status={n.category} colorMap={CATEGORY_COLORS} />
                       <StatusBadge status={n.priority} colorMap={PRIORITY_COLORS} />
                     </div>
-                    <p className="mt-1 body-text text-[#475569]">{n.message}</p>
-                    <p className="mt-1.5 badge-text text-[#64748B]">
+                    <p className="mt-1 body-text text-[var(--alo-text-secondary)]">{n.message}</p>
+                    <p className="mt-1.5 badge-text text-[var(--alo-text-muted)]">
                       {n.recipientType} · {n.channel} · {fmtDate(n.createdAt)} {fmtTime(n.createdAt)}
                     </p>
                   </div>
                   <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 text-[#0057B8] hover:bg-[#EFF6FF]"
-                    onClick={() => markOne(n.id, n.isRead)}
+ size="sm"
+ variant="ghost"
+ className=" text-[var(--alo-brand)] hover:bg-[var(--alo-info-bg)]"
+ onClick={() => markOne(n.id, n.isRead)}
                   >
                     {n.isRead ? "Mark unread" : "Mark read"}
                   </Button>
@@ -1713,22 +1713,22 @@ function ConsentTab({
           <p className="mt-1 text-3xl font-bold text-rose-700 tabular-nums">{optedOut}</p>
           <p className="body-text text-rose-700/80">No marketing contact</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div className="rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-slate-700">Unknown / Pending</p>
-            <Icon name="HelpCircle" className="size-5 text-slate-600" />
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-body)]">Unknown / Pending</p>
+            <Icon name="HelpCircle" className="size-5 text-[var(--alo-body)]" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-slate-700 tabular-nums">{unknown}</p>
-          <p className="body-text text-slate-700/80">Request consent before sending</p>
+          <p className="mt-1 text-3xl font-bold text-[var(--alo-body)] tabular-nums">{unknown}</p>
+          <p className="body-text text-[var(--alo-body)]/80">Request consent before sending</p>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">Consent Records</p>
-          <p className="body-text text-[#64748B]">GDPR / data-protection compliant consent ledger.</p>
+          <p className="card-title text-[var(--alo-text)]">Consent Records</p>
+          <p className="body-text text-[var(--alo-text-muted)]">GDPR / data-protection compliant consent ledger.</p>
         </div>
-        <Button className="h-12 bg-[#C93D13] text-white hover:bg-[#C93D13]/90" onClick={() => setOpen(true)}>
+        <Button className="h-12 bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" onClick={() => setOpen(true)}>
           <Icon name="RefreshCw" className="size-4 mr-2" />
           Update Consent
         </Button>
@@ -1740,31 +1740,31 @@ function ConsentTab({
         <SectionCard title={`Consent Ledger (${records.length})`} icon="ScrollText">
           <div className="max-h-[40rem] overflow-auto alo-scroll">
             <Table>
-              <TableHeader className="sticky top-0 bg-[#F8FAFC] z-10">
-                <TableRow className="border-[#E2E8F0] hover:bg-transparent">
-                  <TableHead className="text-[#64748B]">Student / Lead</TableHead>
-                  <TableHead className="text-[#64748B]">Channel</TableHead>
-                  <TableHead className="text-[#64748B]">Status</TableHead>
-                  <TableHead className="text-[#64748B]">Preferred Language</TableHead>
-                  <TableHead className="text-[#64748B]">Consent Date</TableHead>
-                  <TableHead className="text-[#64748B]">Opt-Out Date</TableHead>
+              <TableHeader className="sticky top-0 bg-[var(--alo-page)] z-10">
+                <TableRow className="border-[var(--alo-border)] hover:bg-transparent">
+                  <TableHead className="text-[var(--alo-text-muted)]">Student / Lead</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Channel</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Status</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Preferred Language</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Consent Date</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Opt-Out Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {records.map((r) => (
-                  <TableRow key={r.id} className="border-[#E2E8F0]">
-                    <TableCell className="font-mono text-xs text-[#0F172A]">{r.studentId}</TableCell>
+                  <TableRow key={r.id} className="border-[var(--alo-border)]">
+                    <TableCell className="font-mono text-xs text-[var(--alo-text)]">{r.studentId}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="border-[#E2E8F0] text-[#475569]">
+                      <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-secondary)]">
                         {r.channel}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={r.consentStatus} colorMap={CONSENT_COLORS} />
                     </TableCell>
-                    <TableCell className="text-[#0F172A]">{r.preferredLanguage || "—"}</TableCell>
-                    <TableCell className="text-[#0F172A]">{fmtDate(r.consentDate)}</TableCell>
-                    <TableCell className="text-[#0F172A]">{fmtDate(r.optOutDate)}</TableCell>
+                    <TableCell className="text-[var(--alo-text)]">{r.preferredLanguage || "—"}</TableCell>
+                    <TableCell className="text-[var(--alo-text)]">{fmtDate(r.consentDate)}</TableCell>
+                    <TableCell className="text-[var(--alo-text)]">{fmtDate(r.optOutDate)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -1773,10 +1773,10 @@ function ConsentTab({
         </SectionCard>
       )}
 
-      <div className="rounded-xl border border-[#C93D13]/30 bg-orange-50/40 px-4 py-3">
+      <div className="rounded-xl border border-[var(--alo-cta-hover)]/30 bg-[var(--alo-cta-soft)]/40 px-4 py-3">
         <div className="flex items-start gap-2.5">
-          <Icon name="ShieldAlert" className="size-4 mt-0.5 text-[#C93D13] shrink-0" />
-          <p className="body-text text-[#0F172A]">
+          <Icon name="ShieldAlert" className="size-4 mt-0.5 text-[var(--alo-cta-hover)] shrink-0" />
+          <p className="body-text text-[var(--alo-text)]">
             <strong>Compliance:</strong> Never send marketing without recorded consent. Respect
             opt-in, opt-out, STOP, UNSUBSCRIBE, BLOCK commands.
           </p>
@@ -1851,7 +1851,7 @@ function UpdateConsentDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="ShieldCheck" className="size-5 text-[#0057B8]" />
+            <Icon name="ShieldCheck" className="size-5 text-[var(--alo-brand)]" />
             Update Consent
           </DialogTitle>
           <DialogDescription>
@@ -1860,12 +1860,12 @@ function UpdateConsentDialog({
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Student / Lead ID *</Label>
+            <Label className="text-[var(--alo-text)]">Student / Lead ID *</Label>
             <Input className="h-11 font-mono" placeholder="ALO-S-XXXXX" value={studentId} onChange={(e) => setStudentId(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">Channel</Label>
+              <Label className="text-[var(--alo-text)]">Channel</Label>
               <Select value={channel} onValueChange={setChannel}>
                 <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -1879,7 +1879,7 @@ function UpdateConsentDialog({
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">Consent Status</Label>
+              <Label className="text-[var(--alo-text)]">Consent Status</Label>
               <Select value={consentStatus} onValueChange={setConsentStatus}>
                 <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -1892,14 +1892,14 @@ function UpdateConsentDialog({
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">Evidence note or record reference</Label>
+            <Label className="text-[var(--alo-text)]">Evidence note or record reference</Label>
             <Input className="h-11" maxLength={250} placeholder="Required for opt-in or opt-out" value={evidenceReference} onChange={(e) => setEvidenceReference(e.target.value)} />
-            <p className="text-xs text-[#64748B]">Stored in the audit trail as a manual assertion; it does not prove provider-side consent.</p>
+            <p className="text-xs text-[var(--alo-text-muted)]">Stored in the audit trail as a manual assertion; it does not prove provider-side consent.</p>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="h-11 bg-[#C93D13] text-white hover:bg-[#C93D13]/90" disabled={submitting} onClick={submit}>
+          <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90" disabled={submitting} onClick={submit}>
             {submitting ? (
               <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Saving…</>
             ) : (
@@ -1934,32 +1934,32 @@ function AiClassificationTab({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
+        <div className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Classified</p>
-            <Icon name="Sparkles" className="size-5 text-[#0057B8]" />
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Classified</p>
+            <Icon name="Sparkles" className="size-5 text-[var(--alo-brand)]" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-[#0F172A] tabular-nums">{classifications.length}</p>
+          <p className="mt-1 text-3xl font-bold text-[var(--alo-text)] tabular-nums">{classifications.length}</p>
         </div>
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
+        <div className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Avg Confidence</p>
-            <Icon name="Target" className="size-5 text-[#047857]" />
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Avg Confidence</p>
+            <Icon name="Target" className="size-5 text-[var(--alo-success-dark)]" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-[#047857] tabular-nums">
+          <p className="mt-1 text-3xl font-bold text-[var(--alo-success-dark)] tabular-nums">
             {Math.round(avgConfidence * 100)}%
           </p>
         </div>
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
+        <div className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Human Verified</p>
-            <Icon name="BadgeCheck" className="size-5 text-[#C93D13]" />
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Human Verified</p>
+            <Icon name="BadgeCheck" className="size-5 text-[var(--alo-cta-hover)]" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-[#C93D13] tabular-nums">{humanVerified}</p>
+          <p className="mt-1 text-3xl font-bold text-[var(--alo-cta-hover)] tabular-nums">{humanVerified}</p>
         </div>
-        <div className="rounded-2xl border border-[#E2E8F0] bg-white p-4">
+        <div className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-[#64748B]">Not human verified</p>
+            <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Not human verified</p>
             <Icon name="Wand2" className="size-5 text-violet-600" />
           </div>
           <p className="mt-1 text-3xl font-bold text-violet-600 tabular-nums">
@@ -1970,8 +1970,8 @@ function AiClassificationTab({
 
       <div className="flex items-center justify-between">
         <div>
-          <p className="card-title text-[#0F172A]">AI Document Classification</p>
-          <p className="body-text text-[#64748B]">Classification is disabled until an approved private OCR/AI pipeline and data-retention controls are configured.</p>
+          <p className="card-title text-[var(--alo-text)]">AI Document Classification</p>
+          <p className="body-text text-[var(--alo-text-muted)]">Classification is disabled until an approved private OCR/AI pipeline and data-retention controls are configured.</p>
         </div>
         <Button className="h-12" variant="outline" disabled title="OCR/AI pipeline is not configured">
           <Icon name="ShieldAlert" className="size-4 mr-2" />
@@ -1989,28 +1989,28 @@ function AiClassificationTab({
         <SectionCard title={`Classification Log (${classifications.length})`} icon="Sparkles">
           <div className="max-h-[40rem] overflow-auto alo-scroll">
             <Table>
-              <TableHeader className="sticky top-0 bg-[#F8FAFC] z-10">
-                <TableRow className="border-[#E2E8F0] hover:bg-transparent">
-                  <TableHead className="text-[#64748B]">Document</TableHead>
-                  <TableHead className="text-[#64748B]">Detected Type</TableHead>
-                  <TableHead className="text-[#64748B]">Confidence</TableHead>
-                  <TableHead className="text-[#64748B]">Human Verified</TableHead>
-                  <TableHead className="text-[#64748B] text-right">Date</TableHead>
+              <TableHeader className="sticky top-0 bg-[var(--alo-page)] z-10">
+                <TableRow className="border-[var(--alo-border)] hover:bg-transparent">
+                  <TableHead className="text-[var(--alo-text-muted)]">Document</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Detected Type</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Confidence</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)]">Human Verified</TableHead>
+                  <TableHead className="text-[var(--alo-text-muted)] text-right">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {classifications.map((c) => (
-                  <TableRow key={c.id} className="border-[#E2E8F0]">
-                    <TableCell className="font-mono text-xs text-[#0F172A]">{c.documentId}</TableCell>
+                  <TableRow key={c.id} className="border-[var(--alo-border)]">
+                    <TableCell className="font-mono text-xs text-[var(--alo-text)]">{c.documentId}</TableCell>
                     <TableCell>
-                      <Badge className="bg-[#EFF6FF] text-[#0057B8] border border-[#0057B8]/30">
+                      <Badge className="bg-[var(--alo-info-bg)] text-[var(--alo-brand)] border border-[var(--alo-brand)]/30">
                         {c.detectedType}
                       </Badge>
                     </TableCell>
                     <TableCell className="min-w-[140px]">
                       <div className="flex items-center gap-2">
                         <Progress value={Math.round((c.confidence || 0) * 100)} className="h-2 flex-1" />
-                        <span className="badge-text tabular-nums text-[#0F172A]">
+                        <span className="badge-text tabular-nums text-[var(--alo-text)]">
                           {Math.round((c.confidence || 0) * 100)}%
                         </span>
                       </div>
@@ -2027,8 +2027,8 @@ function AiClassificationTab({
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <p className="body-text text-[#0F172A]">{fmtDate(c.createdAt)}</p>
-                      <p className="badge-text text-[#64748B]">{fmtTime(c.createdAt)}</p>
+                      <p className="body-text text-[var(--alo-text)]">{fmtDate(c.createdAt)}</p>
+                      <p className="badge-text text-[var(--alo-text-muted)]">{fmtTime(c.createdAt)}</p>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -2044,12 +2044,12 @@ function AiClassificationTab({
           {DOC_TYPES_27.map((t) => (
             <div
               key={t.code}
-              className="flex items-center gap-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2"
+              className="flex items-center gap-2 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] px-3 py-2"
             >
-              <Icon name="FileCheck2" className="size-3.5 text-[#0057B8] shrink-0" />
+              <Icon name="FileCheck2" className="size-3.5 text-[var(--alo-brand)] shrink-0" />
               <div className="min-w-0">
-                <p className="badge-text font-mono text-[#0F172A] truncate">{t.code}</p>
-                <p className="text-[11px] text-[#64748B] truncate">{t.label}</p>
+                <p className="badge-text font-mono text-[var(--alo-text)] truncate">{t.code}</p>
+                <p className="text-[11px] text-[var(--alo-text-muted)] truncate">{t.label}</p>
               </div>
             </div>
           ))}
@@ -2060,7 +2060,7 @@ function AiClassificationTab({
       <div className="rounded-xl border border-violet-200 bg-violet-50/40 px-4 py-3">
         <div className="flex items-start gap-2.5">
           <Icon name="ScanText" className="size-4 mt-0.5 text-violet-600 shrink-0" />
-          <p className="body-text text-[#0F172A]">
+          <p className="body-text text-[var(--alo-text)]">
             <strong>OCR extraction:</strong> AI extracts Full Name, DOB, Gender, Nationality,
             Passport Number, Issue/Expiry Date, Institution, CGPA, Band Score, Account Number, Bank
             Name. Auto-fills student profile. <strong>Never overwrites manually verified data</strong>{" "}
@@ -2149,7 +2149,7 @@ function RunClassificationDialog({
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon name="Sparkles" className="size-5 text-[#0057B8]" />
+            <Icon name="Sparkles" className="size-5 text-[var(--alo-brand)]" />
             Run AI Document Classification
           </DialogTitle>
           <DialogDescription>
@@ -2160,16 +2160,16 @@ function RunClassificationDialog({
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">Document ID *</Label>
+              <Label className="text-[var(--alo-text)]">Document ID *</Label>
               <Input className="h-11 font-mono" placeholder="doc-uuid" value={documentId} onChange={(e) => setDocumentId(e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#0F172A]">File Name *</Label>
+              <Label className="text-[var(--alo-text)]">File Name *</Label>
               <Input className="h-11" placeholder="passport_scan.pdf" value={fileName} onChange={(e) => setFileName(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[#0F172A]">OCR Text (optional)</Label>
+            <Label className="text-[var(--alo-text)]">OCR Text (optional)</Label>
             <Textarea
               className="min-h-[100px]"
               placeholder="Paste extracted OCR text or leave blank to classify by filename…"
@@ -2179,11 +2179,11 @@ function RunClassificationDialog({
           </div>
 
           {result && (
-            <div className="rounded-xl border border-[#0057B8]/30 bg-[#EFF6FF]/40 p-4">
+            <div className="rounded-xl border border-[var(--alo-brand)]/30 bg-[var(--alo-info-bg)]/40 p-4">
               <div className="flex items-center justify-between">
-                <p className="card-title text-[#0F172A]">AI Result</p>
+                <p className="card-title text-[var(--alo-text)]">AI Result</p>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-[#0057B8] text-white">{result.detectedType}</Badge>
+                  <Badge className="bg-[var(--alo-brand)] text-white">{result.detectedType}</Badge>
                   <Badge className="bg-emerald-100 text-emerald-700">
                     {Math.round(result.confidence * 100)}% confidence
                   </Badge>
@@ -2195,16 +2195,16 @@ function RunClassificationDialog({
               {Object.keys(result.extractedData).length > 0 && (
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   {Object.entries(result.extractedData).map(([k, v]) => (
-                    <div key={k} className="rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5">
-                      <p className="badge-text uppercase tracking-wide text-[#64748B]">{k}</p>
-                      <p className="body-text text-[#0F172A] truncate">
+                    <div key={k} className="rounded-lg border border-[var(--alo-border)] bg-white px-2.5 py-1.5">
+                      <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">{k}</p>
+                      <p className="body-text text-[var(--alo-text)] truncate">
                         {v === null || v === undefined ? "—" : String(v)}
                       </p>
                     </div>
                   ))}
                 </div>
               )}
-              <p className="mt-3 badge-text text-[#64748B]">
+              <p className="mt-3 badge-text text-[var(--alo-text-muted)]">
                 <Icon name="ShieldAlert" className="size-3 inline mr-1" />
                 Verify extracted data before applying to student profile.
               </p>
@@ -2213,14 +2213,14 @@ function RunClassificationDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" className="h-11" onClick={reset}>
+          <Button variant="outline" className="" onClick={reset}>
             Close
           </Button>
           <Button
-            className="h-11 bg-[#C93D13] text-white hover:bg-[#C93D13]/90"
-            disabled={submitting}
-            onClick={submit}
-          >
+ className=" bg-[var(--alo-cta-hover)] text-white hover:bg-[var(--alo-cta-hover)]/90"
+ disabled={submitting}
+ onClick={submit}
+ >
             {submitting ? (
               <><Icon name="Loader2" className="size-4 mr-2 animate-spin" /> Classifying…</>
             ) : (

@@ -198,22 +198,29 @@ function SidebarNavItem({
   const button = (
     <button
       onClick={onClick}
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer',
+        'relative w-full flex items-center gap-3 px-3 py-2 rounded-[10px] text-[14px] font-medium transition-colors duration-150 cursor-pointer',
         isActive
           ? 'bg-alo-brand-light text-alo-brand font-semibold'
-          : 'text-alo-text-secondary hover:bg-alo-page hover:text-alo-text'
+          : 'text-alo-text-secondary hover:bg-alo-brand-pale hover:text-alo-brand'
       )}
     >
+      {isActive && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-alo-brand"
+        />
+      )}
       <Icon
         className={cn(
           'w-[18px] h-[18px] shrink-0',
-          isActive ? 'text-alo-brand' : 'text-alo-text-muted/60'
+          isActive ? 'text-alo-brand' : 'text-alo-text-muted'
         )}
       />
       <span className="flex-1 text-left truncate">{item.label}</span>
       {item.badge && !isActive && (
-        <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 shrink-0">
+        <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-crm-danger-bg text-crm-danger-text shrink-0">
           {item.badge}
         </span>
       )}
@@ -273,10 +280,10 @@ function SidebarContent() {
       {/* Sign Out */}
       <div className="p-3">
         <Button
-          variant="ghost"
-          className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 h-10 cursor-pointer"
-          onClick={logout}
-        >
+ variant="ghost"
+ className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 cursor-pointer"
+ onClick={logout}
+ >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
@@ -317,7 +324,7 @@ function NotificationDropdown() {
           >
             <Bell className="w-5 h-5 text-alo-text-secondary" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#E8501A] text-white text-[10px] flex items-center justify-center font-bold px-1">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[var(--alo-cta)] text-white text-[11px] flex items-center justify-center font-bold px-1">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
@@ -401,13 +408,13 @@ export default function CrmAdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="h-screen flex flex-col bg-alo-page overflow-hidden">
       {/* ========== Top Header Bar ========== */}
-      <header className="h-14 bg-white border-b border-alo-border flex items-center justify-between px-4 lg:px-6 shrink-0 z-30">
+      <header className="h-16 bg-white border-b border-alo-border flex items-center justify-between px-4 lg:px-6 shrink-0 z-30">
         {/* Left: Mobile menu + Logo + Role Badge */}
         <div className="flex items-center gap-3">
           {/* Mobile hamburger */}
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden cursor-pointer">
+              <Button variant="ghost" size="icon" className="lg:hidden cursor-pointer" aria-label="Open navigation menu">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>
@@ -426,7 +433,7 @@ export default function CrmAdminShell({ children }: { children: ReactNode }) {
 
           {/* Role Badge (hidden on smallest screens) */}
           <div className="hidden sm:block ml-2 lg:ml-4">
-            <Badge className="text-[11px] font-semibold bg-alo-brand-light text-alo-brand border border-blue-200 hover:bg-alo-brand-light">
+            <Badge className="text-[11px] font-semibold bg-alo-brand-light text-alo-brand border border-[var(--alo-border)] hover:bg-alo-brand-light">
               {roleDisplay}
             </Badge>
           </div>
@@ -457,7 +464,7 @@ export default function CrmAdminShell({ children }: { children: ReactNode }) {
       {/* ========== Body: Sidebar + Content ========== */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex w-64 flex-col bg-white border-r border-alo-border shrink-0">
+        <aside className="hidden lg:flex w-[264px] flex-col bg-white border-r border-alo-border shrink-0">
           <SidebarContent />
         </aside>
 

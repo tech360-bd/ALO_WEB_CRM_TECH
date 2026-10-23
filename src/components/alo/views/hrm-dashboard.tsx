@@ -146,7 +146,7 @@ interface HrmResponse {
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
   ACTIVE: "bg-emerald-100 text-emerald-700",
   ON_LEAVE: "bg-amber-100 text-amber-700",
-  RESIGNED: "bg-slate-100 text-slate-600",
+  RESIGNED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   TERMINATED: "bg-red-100 text-red-700",
   PROBATION: "bg-sky-100 text-sky-700",
 };
@@ -154,10 +154,10 @@ const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
 const ATTENDANCE_STATUS_COLORS: Record<string, string> = {
   PRESENT: "bg-emerald-100 text-emerald-700",
   LATE: "bg-amber-100 text-amber-700",
-  LEAVE: "bg-blue-100 text-blue-700",
+  LEAVE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   ABSENT: "bg-red-100 text-red-700",
   HALF_DAY: "bg-violet-100 text-violet-700",
-  HOLIDAY: "bg-slate-100 text-slate-600",
+  HOLIDAY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const COMMISSION_STATUS_COLORS: Record<string, string> = {
@@ -193,7 +193,7 @@ function PrivateAmount({
       <span className={cn("inline-flex items-center gap-1.5 tabular-nums", className)}>
         <span className="text-sm font-semibold">{display}</span>
         {privacyOn && revealed && (
-          <button onClick={rehide} className="text-muted-foreground hover:text-[#0057B8]" title="Hide again">
+          <button onClick={rehide} className="text-muted-foreground hover:text-[var(--alo-brand)]" title="Hide again">
             <Icon name="EyeOff" className="size-3" />
           </button>
         )}
@@ -207,7 +207,7 @@ function PrivateAmount({
         <span className="select-none font-mono text-sm font-semibold blur-sm">{display}</span>
         <button
           onClick={() => setShowPin(true)}
-          className="inline-flex items-center gap-0.5 rounded border border-[#0057B8]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#0057B8] hover:bg-[#e8f0fb]"
+          className="inline-flex items-center gap-0.5 rounded border border-[var(--alo-brand)]/30 px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
           title="Click to reveal (requires PIN)"
         >
           <Icon name="Lock" className="size-2.5" />
@@ -223,15 +223,15 @@ function PrivateAmount({
           }}
         >
           <div
-            className="w-full max-w-xs rounded-2xl border-2 border-[#0057B8]/20 bg-white p-5 shadow-xl"
+            className="w-full max-w-xs rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-white p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name="ShieldCheck" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#0057B8]">Reveal amount</p>
+                <p className="text-sm font-bold text-[var(--alo-brand)]">Reveal amount</p>
                 <p className="text-xs text-muted-foreground">Enter your PIN to view this amount</p>
               </div>
             </div>
@@ -250,14 +250,14 @@ function PrivateAmount({
               className="mt-3 h-10 w-full rounded-md border border-input bg-background text-center font-mono tracking-widest"
               autoFocus
             />
-            <p className="mt-2 text-[10px] text-muted-foreground">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               This action will be audit-logged as <code className="font-mono">sensitive_data_revealed</code>.
             </p>
             <div className="mt-3 flex gap-2">
               <Button
-                variant="outline"
-                className="flex-1 h-9"
-                onClick={() => {
+ variant="outline"
+ className="flex-1 "
+ onClick={() => {
                   setShowPin(false);
                   setPin("");
                 }}
@@ -265,9 +265,9 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
-                disabled={pin.length < 4}
-                onClick={() => {
+ className="flex-1 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={pin.length < 4}
+ onClick={() => {
                   reveal(id);
                   setShowPin(false);
                   setPin("");
@@ -437,7 +437,7 @@ export function HrmDashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
               <CardContent className="pt-5">
                 <SensitiveField
                   id="hrm-payroll-total"
@@ -448,7 +448,7 @@ export function HrmDashboard() {
                 />
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
               <CardContent className="pt-5">
                 <SensitiveField
                   id="hrm-avg-salary"
@@ -463,7 +463,7 @@ export function HrmDashboard() {
                 />
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
               <CardContent className="pt-5">
                 <InfoRow label="Pending Commissions" value={metrics?.pendingCommissions ?? 0} mono />
                 <InfoRow label="Pending Bonuses" value={metrics?.pendingBonuses ?? 0} mono />
@@ -538,15 +538,15 @@ export function HrmDashboard() {
                     {employees.map((emp) => {
                       const leadsPct = emp.targetLeads > 0 ? Math.min(100, Math.round((emp.achievedLeads / emp.targetLeads) * 100)) : 0;
                       return (
-                        <TableRow key={emp.id} className="hover:bg-[#e8f0fb]/40">
+                        <TableRow key={emp.id} className="hover:bg-[var(--alo-brand-light)]/40">
                           <TableCell>
-                            <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                            <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                               {emp.employeeId}
                             </span>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <div className="flex size-7 items-center justify-center rounded-full bg-[#e8f0fb] text-[#0057B8]">
+                              <div className="flex size-7 items-center justify-center rounded-full bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                                 <Icon name="User" className="size-3.5" />
                               </div>
                               <span className="text-sm font-semibold text-foreground">
@@ -579,7 +579,7 @@ export function HrmDashboard() {
                             <div className="flex items-center gap-2">
                               <Progress
                                 value={emp.performanceScore}
-                                className="h-1.5 w-16 bg-[#e8f0fb]"
+                                className="h-1.5 w-16 bg-[var(--alo-brand-light)]"
                               />
                               <span
                                 className={cn(
@@ -594,7 +594,7 @@ export function HrmDashboard() {
                                 {emp.performanceScore}%
                               </span>
                             </div>
-                            <div className="mt-1 text-[10px] text-muted-foreground">
+                            <div className="mt-1 text-[11px] text-muted-foreground">
                               Leads: {emp.achievedLeads}/{emp.targetLeads} ({leadsPct}%)
                             </div>
                           </TableCell>
@@ -603,7 +603,7 @@ export function HrmDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleViewProfile(emp)}
-                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                             >
                               <Icon name="Eye" className="size-3.5" />
                               <span className="hidden md:inline">View Profile</span>
@@ -643,13 +643,13 @@ export function HrmDashboard() {
                   </TableHeader>
                   <TableBody>
                     {attendance.map((a) => (
-                      <TableRow key={a.id} className="hover:bg-[#e8f0fb]/40">
+                      <TableRow key={a.id} className="hover:bg-[var(--alo-brand-light)]/40">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="text-sm font-semibold text-foreground">
                               {getEmployeeName(a.userId)}
                             </span>
-                            <span className="font-mono text-[10px] text-muted-foreground">
+                            <span className="font-mono text-[11px] text-muted-foreground">
                               {getEmployeeSub(a.userId)}
                             </span>
                           </div>
@@ -707,13 +707,13 @@ export function HrmDashboard() {
                   </TableHeader>
                   <TableBody>
                     {commissions.map((c) => (
-                      <TableRow key={c.id} className="hover:bg-[#e8f0fb]/40">
+                      <TableRow key={c.id} className="hover:bg-[var(--alo-brand-light)]/40">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="text-sm font-semibold text-foreground">
                               {getEmployeeName(c.userId)}
                             </span>
-                            <span className="font-mono text-[10px] text-muted-foreground">
+                            <span className="font-mono text-[11px] text-muted-foreground">
                               {getEmployeeSub(c.userId)}
                             </span>
                           </div>
@@ -738,7 +738,7 @@ export function HrmDashboard() {
                             variant="outline"
                             onClick={() => handleApproveCommission(c)}
                             disabled={c.status !== "PENDING"}
-                            className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                            className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                           >
                             <Icon name="CheckCheck" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -777,13 +777,13 @@ export function HrmDashboard() {
                   </TableHeader>
                   <TableBody>
                     {bonuses.map((b) => (
-                      <TableRow key={b.id} className="hover:bg-[#e8f0fb]/40">
+                      <TableRow key={b.id} className="hover:bg-[var(--alo-brand-light)]/40">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="text-sm font-semibold text-foreground">
                               {getEmployeeName(b.userId)}
                             </span>
-                            <span className="font-mono text-[10px] text-muted-foreground">
+                            <span className="font-mono text-[11px] text-muted-foreground">
                               {getEmployeeSub(b.userId)}
                             </span>
                           </div>
@@ -806,7 +806,7 @@ export function HrmDashboard() {
                             variant="outline"
                             onClick={() => handleApproveBonus(b)}
                             disabled={b.status !== "PENDING"}
-                            className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                            className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                           >
                             <Icon name="CheckCheck" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -848,13 +848,13 @@ export function HrmDashboard() {
                     {increments.map((inc) => {
                       const positive = inc.newSalary >= inc.oldSalary;
                       return (
-                        <TableRow key={inc.id} className="hover:bg-[#e8f0fb]/40">
+                        <TableRow key={inc.id} className="hover:bg-[var(--alo-brand-light)]/40">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="text-sm font-semibold text-foreground">
                                 {getEmployeeName(inc.userId)}
                               </span>
-                              <span className="font-mono text-[10px] text-muted-foreground">
+                              <span className="font-mono text-[11px] text-muted-foreground">
                                 {getEmployeeSub(inc.userId)}
                               </span>
                             </div>
@@ -868,7 +868,7 @@ export function HrmDashboard() {
                           <TableCell>
                             <span
                               className={cn(
-                                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
+                                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold",
                                 positive
                                   ? "bg-emerald-100 text-emerald-700"
                                   : "bg-red-100 text-red-700"
@@ -891,7 +891,7 @@ export function HrmDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleApproveIncrement(inc)}
-                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                             >
                               <Icon name="CheckCheck" className="size-3.5" />
                               <span className="hidden md:inline">Approve</span>
@@ -935,13 +935,13 @@ export function HrmDashboard() {
                       const color =
                         p.score >= 80 ? "#10b981" : p.score >= 50 ? "#E8501A" : "#ef4444";
                       return (
-                        <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
+                        <TableRow key={p.id} className="hover:bg-[var(--alo-brand-light)]/40">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="text-sm font-semibold text-foreground">
                                 {getEmployeeName(p.userId)}
                               </span>
-                              <span className="font-mono text-[10px] text-muted-foreground">
+                              <span className="font-mono text-[11px] text-muted-foreground">
                                 {getEmployeeSub(p.userId)}
                               </span>
                             </div>
@@ -951,7 +951,7 @@ export function HrmDashboard() {
                           </TableCell>
                           <TableCell>
                             <div className="flex w-32 items-center gap-2">
-                              <Progress value={p.score} className="h-1.5 bg-[#e8f0fb]" />
+                              <Progress value={p.score} className="h-1.5 bg-[var(--alo-brand-light)]" />
                               <span
                                 className="text-xs font-bold tabular-nums"
                                 style={{ color }}
@@ -1011,8 +1011,8 @@ export function HrmDashboard() {
         description="How sensitive HRM data is protected."
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
               <Icon name="Lock" className="size-4" />
             </div>
             <div>
@@ -1022,8 +1022,8 @@ export function HrmDashboard() {
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-2.5 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fdece4] text-[#E8501A]">
+          <div className="flex items-start gap-2.5 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
               <Icon name="KeyRound" className="size-4" />
             </div>
             <div>

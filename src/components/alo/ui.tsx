@@ -863,7 +863,7 @@ export function Timeline({ items, className }: { items: TimelineItem[]; classNam
                     <div className="mt-1.5 flex items-center gap-1.5">
                       <Avatar className="size-5">
                         <AvatarImage src={item.actor.avatar} />
-                        <AvatarFallback className="text-[10px]">{item.actor.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="text-[11px]">{item.actor.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <span className="text-xs text-[var(--alo-muted)]">{item.actor.name}</span>
                     </div>

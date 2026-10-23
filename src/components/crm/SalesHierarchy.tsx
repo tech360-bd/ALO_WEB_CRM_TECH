@@ -22,14 +22,14 @@ export default function SalesHierarchy({ initial, onChange }: { initial: Hierarc
     const nt=rec(tree); setTree(nt); onChange?.(nt);
   };
   const NodeView = ({ node, depth=0 }: { node: HierarchyNode; depth?: number })=> (
-    <div className="ml-4 border-l border-slate-200 pl-3 py-1">
+    <div className="ml-4 border-l border-[var(--alo-border)] pl-3 py-1">
       <div className="flex items-center gap-2 bg-white rounded-lg border p-2">
-        <GripVertical className="w-3.5 h-3.5 text-slate-400"/>
+        <GripVertical className="w-3.5 h-3.5 text-[var(--alo-text-muted)]"/>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">{node.name}</p>
-          <p className="text-xs text-slate-500">{node.role}</p>
+          <p className="text-xs text-[var(--alo-text-muted)]">{node.role}</p>
         </div>
-        <Badge variant="outline" className="text-[10px]">{node.children.length} reports</Badge>
+        <Badge variant="outline" className="text-[11px]">{node.children.length} reports</Badge>
         <Button size="icon" variant="ghost" className="h-7 w-7" onClick={()=> addNode(node.id)}><Plus className="w-3.5 h-3.5"/></Button>
         <Button size="icon" variant="ghost" className="h-7 w-7" onClick={()=> removeNode(node.id)}><Trash2 className="w-3.5 h-3.5"/></Button>
       </div>
@@ -42,8 +42,8 @@ export default function SalesHierarchy({ initial, onChange }: { initial: Hierarc
         <h3 className="text-sm font-bold flex items-center gap-2"><Network className="w-4 h-4"/> Sales Hierarchy</h3>
         <Button size="sm" variant="outline" onClick={()=> addNode(null)}><Plus className="w-3.5 h-3.5 mr-1"/>Add Root</Button>
       </div>
-      {tree.length===0? <p className="text-xs text-slate-500 p-3 border border-dashed rounded-lg text-center">No hierarchy — add Chairman → Managers → Counselors</p> : tree.map(n=> <NodeView key={n.id} node={n} />)}
-      <p className="text-[11px] text-slate-500">Drag to reorder (frappe pattern) — permissions cascade to reports. Manager sees only their subtree.</p>
+      {tree.length===0? <p className="text-xs text-[var(--alo-text-muted)] p-3 border border-dashed rounded-lg text-center">No hierarchy — add Chairman → Managers → Counselors</p> : tree.map(n=> <NodeView key={n.id} node={n} />)}
+      <p className="text-[11px] text-[var(--alo-text-muted)]">Drag to reorder (frappe pattern) — permissions cascade to reports. Manager sees only their subtree.</p>
     </Card>
   );
 }

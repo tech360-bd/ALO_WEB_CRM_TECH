@@ -275,7 +275,7 @@ export default function PartnerLeadsPage() {
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><UserPlus className="w-4 h-4 text-blue-500" /><span className="text-xs text-alo-text-muted">New</span></div>
+            <div className="flex items-center gap-2 mb-1"><UserPlus className="w-4 h-4 text-[var(--alo-brand)]" /><span className="text-xs text-alo-text-muted">New</span></div>
             <p className="text-2xl font-bold text-alo-text">{statusCounts.new}</p>
           </CardContent>
         </Card>

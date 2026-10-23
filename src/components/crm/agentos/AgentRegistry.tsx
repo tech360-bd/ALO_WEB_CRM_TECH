@@ -79,10 +79,10 @@ interface ApiResponse {
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode; bgClass: string }> = {
   active:      { label: "Active",      color: "text-emerald-700",  bgClass: "bg-emerald-50",  icon: <Activity className="w-3.5 h-3.5" /> },
-  idle:        { label: "Idle",        color: "text-gray-500",    bgClass: "bg-gray-50",     icon: <Clock className="w-3.5 h-3.5" /> },
+  idle:        { label: "Idle",        color: "text-[var(--alo-text-muted)]",    bgClass: "bg-[var(--alo-page)]",     icon: <Clock className="w-3.5 h-3.5" /> },
   paused:      { label: "Paused",      color: "text-amber-600",   bgClass: "bg-amber-50",    icon: <Pause className="w-3.5 h-3.5" /> },
   error:       { label: "Error",       color: "text-red-600",     bgClass: "bg-red-50",      icon: <AlertTriangle className="w-3.5 h-3.5" /> },
-  maintenance: { label: "Maintenance", color: "text-blue-600",    bgClass: "bg-blue-50",     icon: <Wrench className="w-3.5 h-3.5" /> },
+  maintenance: { label: "Maintenance", color: "text-[var(--alo-brand)]",    bgClass: "bg-[var(--alo-brand-pale)]",     icon: <Wrench className="w-3.5 h-3.5" /> },
 };
 
 const healthConfig: Record<string, { label: string; dotColor: string; barColor: string }> = {
@@ -173,11 +173,11 @@ export default function AgentRegistry() {
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
               <Brain className="w-5 h-5 text-emerald-600" />
               AI Command Center
             </h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-[var(--alo-text-muted)] mt-0.5">
               Real-time registry of all {stats?.totalAgents ?? "..."} AI agents across {stats?.departments ?? "..."} departments
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function AgentRegistry() {
             <Button variant="outline" size="sm" onClick={() => fetchData()}>
               <RefreshCw className="w-3.5 h-3.5 mr-1" /> Refresh
             </Button>
-            <span className="text-xs text-gray-400 hidden sm:inline">
+            <span className="text-xs text-[var(--alo-text-muted)] hidden sm:inline">
               Updated {timeAgo(lastRefresh.toISOString())}
             </span>
           </div>
@@ -203,11 +203,11 @@ export default function AgentRegistry() {
         {/* ── Stats Cards ── */}
         {stats && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <StatCard icon={<Bot className="w-4 h-4" />} label="Total Agents" value={stats.totalAgents} sub={`${stats.departments} depts`} color="text-gray-900" />
+            <StatCard icon={<Bot className="w-4 h-4" />} label="Total Agents" value={stats.totalAgents} sub={`${stats.departments} depts`} color="text-[var(--alo-text)]" />
             <StatCard icon={<Activity className="w-4 h-4" />} label="Active" value={stats.activeAgents} sub={`${((stats.activeAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-emerald-600" />
             <StatCard icon={<HeartPulse className="w-4 h-4" />} label="Healthy" value={stats.healthyAgents} sub={`${((stats.healthyAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-emerald-600" />
-            <StatCard icon={<AlertOctagon className="w-4 h-4" />} label="Errors" value={stats.errorAgents} sub="24h window" color={stats.errorAgents > 0 ? "text-red-600" : "text-gray-400"} />
-            <StatCard icon={<Zap className="w-4 h-4" />} label="Tasks Today" value={stats.totalTasksToday} sub={`Avg ${(stats.avgSuccessRate * 100).toFixed(1)}% success`} color="text-blue-600" />
+            <StatCard icon={<AlertOctagon className="w-4 h-4" />} label="Errors" value={stats.errorAgents} sub="24h window" color={stats.errorAgents > 0 ? "text-red-600" : "text-[var(--alo-text-muted)]"} />
+            <StatCard icon={<Zap className="w-4 h-4" />} label="Tasks Today" value={stats.totalTasksToday} sub={`Avg ${(stats.avgSuccessRate * 100).toFixed(1)}% success`} color="text-[var(--alo-brand)]" />
             <StatCard icon={<UserCheck className="w-4 h-4" />} label="Approval Queue" value={stats.approvalQueueDepth} sub="pending items" color="text-amber-600" />
           </div>
         )}
@@ -217,7 +217,7 @@ export default function AgentRegistry() {
           <Card>
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-sm font-semibold flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-gray-400" /> Department Health Overview
+                <Layers className="w-4 h-4 text-[var(--alo-text-muted)]" /> Department Health Overview
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
@@ -228,16 +228,16 @@ export default function AgentRegistry() {
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => handleDeptClick(dept.name)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${filterDept === dept.name ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${filterDept === dept.name ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-white border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"}`}
                         >
                           <span className={`w-2 h-2 rounded-full ${dept.healthy === dept.total ? "bg-emerald-500" : dept.healthy > 0 ? "bg-amber-500" : "bg-red-500"}`} />
                           <span className="max-w-[140px] truncate">{dept.name}</span>
-                          <span className="text-gray-400 font-normal">{dept.active}/{dept.total}</span>
+                          <span className="text-[var(--alo-text-muted)] font-normal">{dept.active}/{dept.total}</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" className="text-xs">
                         <div className="font-medium">{dept.name}</div>
-                        <div className="text-gray-400 mt-1">
+                        <div className="text-[var(--alo-text-muted)] mt-1">
                           {dept.total} agents | {dept.active} active | {dept.healthy} healthy | {dept.degraded} degraded
                         </div>
                       </TooltipContent>
@@ -254,7 +254,7 @@ export default function AgentRegistry() {
           <CardContent className="p-3">
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1 relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" />
                 <Input
                   placeholder="Search agents by name, ID, or department..."
                   className="pl-9 h-9 text-sm"
@@ -284,7 +284,7 @@ export default function AgentRegistry() {
                 </SelectContent>
               </Select>
               {(search || filterDept !== "all" || filterStatus !== "all" || filterHealth !== "all") && (
-                <Button variant="ghost" size="sm" className="h-9 text-xs" onClick={() => { setSearch(""); setFilterDept("all"); setFilterStatus("all"); setFilterHealth("all"); }}>
+                <Button variant="ghost" size="sm" className=" " onClick={() => { setSearch(""); setFilterDept("all"); setFilterStatus("all"); setFilterHealth("all"); }}>
                   <Filter className="w-3 h-3 mr-1" /> Clear
                 </Button>
               )}
@@ -312,31 +312,31 @@ export default function AgentRegistry() {
               <div className="p-12 text-center">
                 <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
                 <p className="text-sm text-red-600 font-medium">Failed to load agents</p>
-                <p className="text-xs text-gray-400 mt-1">{error}</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">{error}</p>
                 <Button variant="outline" size="sm" className="mt-3" onClick={() => fetchData()}>Retry</Button>
               </div>
             ) : agents.length === 0 ? (
               <div className="p-12 text-center">
-                <Search className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500 font-medium">No agents match your filters</p>
-                <p className="text-xs text-gray-400 mt-1">Try adjusting your search or filter criteria</p>
+                <Search className="w-8 h-8 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                <p className="text-sm text-[var(--alo-text-muted)] font-medium">No agents match your filters</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">Try adjusting your search or filter criteria</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-50 hover:bg-gray-50">
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[100px]">ID</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 min-w-[160px]">Agent</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 min-w-[140px]">Department</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[90px]">Status</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[90px]">Health</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[80px]">Success</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[90px]">Latency</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[80px]">Tasks/Day</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[80px]">Queue</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[70px]">Approval</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[80px]">Uptime</TableHead>
-                    <TableHead className="text-xs font-semibold text-gray-600 w-[100px]">Last Active</TableHead>
+                  <TableRow className="bg-[var(--alo-page)] hover:bg-[var(--alo-page)]">
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[100px]">ID</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] min-w-[160px]">Agent</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] min-w-[140px]">Department</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[90px]">Status</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[90px]">Health</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[80px]">Success</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[90px]">Latency</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[80px]">Tasks/Day</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[80px]">Queue</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[70px]">Approval</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[80px]">Uptime</TableHead>
+                    <TableHead className="text-xs font-semibold text-[var(--alo-body)] w-[100px]">Last Active</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -344,10 +344,10 @@ export default function AgentRegistry() {
                     const sc = statusConfig[agent.status];
                     const hc = healthConfig[agent.health];
                     return (
-                      <TableRow key={agent.id} className="hover:bg-gray-50/50">
+                      <TableRow key={agent.id} className="hover:bg-[var(--alo-page)]/50">
                         {/* ID */}
                         <TableCell className="py-2.5">
-                          <span className="text-xs font-mono text-gray-500">{agent.id}</span>
+                          <span className="text-xs font-mono text-[var(--alo-text-muted)]">{agent.id}</span>
                         </TableCell>
 
                         {/* Agent Name */}
@@ -357,8 +357,8 @@ export default function AgentRegistry() {
                               <Bot className="w-3.5 h-3.5" />
                             </div>
                             <div className="min-w-0">
-                              <div className="text-sm font-medium text-gray-900 truncate">{agent.name}</div>
-                              <div className="text-xs text-gray-400 truncate max-w-[200px]" title={agent.description}>{agent.description}</div>
+                              <div className="text-sm font-medium text-[var(--alo-text)] truncate">{agent.name}</div>
+                              <div className="text-xs text-[var(--alo-text-muted)] truncate max-w-[200px]" title={agent.description}>{agent.description}</div>
                             </div>
                           </div>
                         </TableCell>
@@ -386,7 +386,7 @@ export default function AgentRegistry() {
                             <TooltipTrigger asChild>
                               <div className="flex items-center gap-1.5">
                                 <span className={`w-2 h-2 rounded-full ${hc.dotColor} ${agent.health === "critical" ? "animate-pulse" : ""}`} />
-                                <span className="text-xs text-gray-600">{hc.label}</span>
+                                <span className="text-xs text-[var(--alo-body)]">{hc.label}</span>
                               </div>
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="text-xs">
@@ -400,7 +400,7 @@ export default function AgentRegistry() {
                         <TableCell className="py-2.5">
                           {agent.status === "active" ? (
                             <div className="flex items-center gap-1.5">
-                              <div className="w-12 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="w-12 h-1.5 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden">
                                 <div
                                   className={`h-full rounded-full ${agent.successRate >= 0.95 ? "bg-emerald-500" : agent.successRate >= 0.85 ? "bg-amber-500" : "bg-red-500"}`}
                                   style={{ width: `${agent.successRate * 100}%` }}
@@ -411,27 +411,27 @@ export default function AgentRegistry() {
                               </span>
                             </div>
                           ) : (
-                            <span className="text-xs text-gray-300">--</span>
+                            <span className="text-xs text-[var(--alo-placeholder)]">--</span>
                           )}
                         </TableCell>
 
                         {/* Latency */}
                         <TableCell className="py-2.5">
                           {agent.status === "active" ? (
-                            <span className={`text-xs font-mono ${agent.latencyMs > 500 ? "text-red-600" : agent.latencyMs > 200 ? "text-amber-600" : "text-gray-600"}`}>
+                            <span className={`text-xs font-mono ${agent.latencyMs > 500 ? "text-red-600" : agent.latencyMs > 200 ? "text-amber-600" : "text-[var(--alo-body)]"}`}>
                               {agent.latencyMs}ms
                             </span>
                           ) : (
-                            <span className="text-xs text-gray-300">--</span>
+                            <span className="text-xs text-[var(--alo-placeholder)]">--</span>
                           )}
                         </TableCell>
 
                         {/* Tasks Today */}
                         <TableCell className="py-2.5">
                           {agent.status === "active" ? (
-                            <span className="text-xs font-medium text-gray-700">{agent.tasksToday.toLocaleString()}</span>
+                            <span className="text-xs font-medium text-[var(--alo-body)]">{agent.tasksToday.toLocaleString()}</span>
                           ) : (
-                            <span className="text-xs text-gray-300">0</span>
+                            <span className="text-xs text-[var(--alo-placeholder)]">0</span>
                           )}
                         </TableCell>
 
@@ -442,7 +442,7 @@ export default function AgentRegistry() {
                               {agent.queueDepth}
                             </Badge>
                           ) : (
-                            <span className="text-xs text-gray-300">0</span>
+                            <span className="text-xs text-[var(--alo-placeholder)]">0</span>
                           )}
                         </TableCell>
 
@@ -458,18 +458,18 @@ export default function AgentRegistry() {
                               <TooltipContent>This agent requires human approval for critical actions</TooltipContent>
                             </Tooltip>
                           ) : (
-                            <span className="text-xs text-gray-300">Auto</span>
+                            <span className="text-xs text-[var(--alo-placeholder)]">Auto</span>
                           )}
                         </TableCell>
 
                         {/* Uptime */}
                         <TableCell className="py-2.5">
-                          <span className="text-xs text-gray-600">{formatUptime(agent.uptimeHours)}</span>
+                          <span className="text-xs text-[var(--alo-body)]">{formatUptime(agent.uptimeHours)}</span>
                         </TableCell>
 
                         {/* Last Active */}
                         <TableCell className="py-2.5">
-                          <span className="text-xs text-gray-500">{timeAgo(agent.lastActive)}</span>
+                          <span className="text-xs text-[var(--alo-text-muted)]">{timeAgo(agent.lastActive)}</span>
                         </TableCell>
                       </TableRow>
                     );
@@ -481,8 +481,8 @@ export default function AgentRegistry() {
 
           {/* Pagination */}
           {pagination && (
-            <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
-              <div className="text-xs text-gray-500">
+            <div className="flex items-center justify-between px-4 py-3 border-t bg-[var(--alo-page)]">
+              <div className="text-xs text-[var(--alo-text-muted)]">
                 Showing {(pagination.page - 1) * pagination.limit + 1}{"-"}{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} agents
               </div>
               <div className="flex items-center gap-2">
@@ -496,13 +496,13 @@ export default function AgentRegistry() {
                   </SelectContent>
                 </Select>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8" disabled={pagination.page <= 1} onClick={() => setPage(pagination.page - 1)}>
+                  <Button variant="outline" size="icon" className="size-12 " disabled={pagination.page <= 1} onClick={() => setPage(pagination.page - 1)}>
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
-                  <span className="text-xs text-gray-600 px-2">
+                  <span className="text-xs text-[var(--alo-body)] px-2">
                     {pagination.page} / {pagination.totalPages}
                   </span>
-                  <Button variant="outline" size="icon" className="h-8 w-8" disabled={pagination.page >= pagination.totalPages} onClick={() => setPage(pagination.page + 1)}>
+                  <Button variant="outline" size="icon" className="size-12 " disabled={pagination.page >= pagination.totalPages} onClick={() => setPage(pagination.page + 1)}>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -526,8 +526,8 @@ function StatCard({ icon, label, value, sub, color }: {
         <div className={`mt-0.5 ${color}`}>{icon}</div>
         <div>
           <div className="text-xl font-bold">{value.toLocaleString()}</div>
-          <div className="text-xs text-gray-500">{label}</div>
-          <div className="text-[10px] text-gray-400 mt-0.5">{sub}</div>
+          <div className="text-xs text-[var(--alo-text-muted)]">{label}</div>
+          <div className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">{sub}</div>
         </div>
       </CardContent>
     </Card>

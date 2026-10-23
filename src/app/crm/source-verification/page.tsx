@@ -5,11 +5,11 @@ export const metadata = {
 
 export default function SourceVerificationPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-8 text-slate-950">
+    <main className="min-h-screen bg-[var(--alo-page)] px-6 py-8 text-slate-950">
       <section className="mx-auto max-w-6xl">
         <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">ALO Data Governance</p>
         <h1 className="mt-2 text-3xl font-bold">Source Verification</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--alo-body)]">
           University and course records stay quarantined until official institution pages, fee pages,
           intake pages, requirements, scholarship pages, and ranking sources are verified and approved.
         </p>
@@ -20,9 +20,9 @@ export default function SourceVerificationPage() {
             ['Official Source', 'Only official university, government, or ranking-provider pages can verify facts.'],
             ['Publication', 'Publishing requires admin review and source-backed fields.'],
           ].map(([title, body]) => (
-            <article key={title} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <article key={title} className="rounded-lg border border-[var(--alo-border)] bg-white p-5 shadow-sm">
               <h2 className="text-base font-semibold">{title}</h2>
-              <p className="mt-2 text-sm text-slate-600">{body}</p>
+              <p className="mt-2 text-sm text-[var(--alo-body)]">{body}</p>
             </article>
           ))}
         </div>

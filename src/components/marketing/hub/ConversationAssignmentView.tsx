@@ -433,12 +433,12 @@ const MOCK_RULES: AutoAssignRule[] = [
 const CHANNEL_ICON = (ch: string) => {
   switch (ch) {
     case 'whatsapp': return { icon: MessageCircle, className: 'text-green-600', bg: 'bg-green-100' };
-    case 'email': return { icon: Mail, className: 'text-blue-600', bg: 'bg-blue-100' };
+    case 'email': return { icon: Mail, className: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' };
     case 'phone': return { icon: Phone, className: 'text-purple-600', bg: 'bg-purple-100' };
     case 'live_chat': return { icon: Globe, className: 'text-teal-600', bg: 'bg-teal-100' };
     case 'instagram': return { icon: MessageSquare, className: 'text-pink-600', bg: 'bg-pink-100' };
-    case 'sms': return { icon: Volume2, className: 'text-orange-600', bg: 'bg-orange-100' };
-    default: return { icon: MessageSquare, className: 'text-gray-600', bg: 'bg-gray-100' };
+    case 'sms': return { icon: Volume2, className: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' };
+    default: return { icon: MessageSquare, className: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-surface-muted)]' };
   }
 };
 
@@ -525,7 +525,7 @@ function AutoAssignPanel({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-medium">{rule.name}</span>
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-[11px]">
                 Priority {rule.priority}
               </Badge>
             </div>
@@ -607,7 +607,7 @@ function AssignDialog({
                     }}
                   />
                   <span className="text-sm">{conv.contactName}</span>
-                  <Badge variant="outline" className="text-[10px] ml-auto">
+                  <Badge variant="outline" className="text-[11px] ml-auto">
                     {conv.channel}
                   </Badge>
                 </label>
@@ -863,7 +863,7 @@ export default function ConversationAssignmentView() {
           <TabsTrigger value="tasks">
             Follow-up Tasks
             {overdueTasks > 0 && (
-              <Badge variant="destructive" className="ml-1 text-[10px] px-1.5">
+              <Badge variant="destructive" className="ml-1 text-[11px] px-1.5">
                 {overdueTasks}
               </Badge>
             )}
@@ -1008,7 +1008,7 @@ export default function ConversationAssignmentView() {
                       </TableCell>
                       <TableCell>
                         {isUnassigned ? (
-                          <Badge variant="destructive" className="text-[10px]">
+                          <Badge variant="destructive" className="text-[11px]">
                             <UserMinus className="h-3 w-3 mr-0.5" />
                             Unassigned
                           </Badge>
@@ -1024,7 +1024,7 @@ export default function ConversationAssignmentView() {
                               statusCfg.dotClass
                             )}
                           />
-                          <Badge variant={statusCfg.variant} className="text-[10px]">
+                          <Badge variant={statusCfg.variant} className="text-[11px]">
                             {statusCfg.label}
                           </Badge>
                         </div>
@@ -1046,7 +1046,7 @@ export default function ConversationAssignmentView() {
                             <Select
                               onValueChange={(val) => handleQuickAssign(conv.id, val)}
                             >
-                              <SelectTrigger className="w-auto h-7 text-[10px] px-1.5">
+                              <SelectTrigger className="w-auto h-7 text-[11px] px-1.5">
                                 <UserPlus className="h-3 w-3 mr-0.5" />
                                 Assign
                               </SelectTrigger>
@@ -1170,12 +1170,12 @@ export default function ConversationAssignmentView() {
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-sm font-medium truncate">{task.task}</p>
                         {task.priority === 'high' && (
-                          <Badge variant="destructive" className="text-[10px] px-1.5">
+                          <Badge variant="destructive" className="text-[11px] px-1.5">
                             High
                           </Badge>
                         )}
                         {task.priority === 'medium' && (
-                          <Badge variant="warning" className="text-[10px] px-1.5">
+                          <Badge variant="warning" className="text-[11px] px-1.5">
                             Medium
                           </Badge>
                         )}
@@ -1204,7 +1204,7 @@ export default function ConversationAssignmentView() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 ml-3">
-                    <Badge variant={taskCfg.variant} className="text-[10px]">
+                    <Badge variant={taskCfg.variant} className="text-[11px]">
                       {taskCfg.label}
                     </Badge>
                     <Select
@@ -1218,7 +1218,7 @@ export default function ConversationAssignmentView() {
                         );
                       }}
                     >
-                      <SelectTrigger className="w-auto h-7 text-[10px] px-1.5">
+                      <SelectTrigger className="w-auto h-7 text-[11px] px-1.5">
                         {task.assignedTo ? 'Reassign' : 'Assign'}
                       </SelectTrigger>
                       <SelectContent>

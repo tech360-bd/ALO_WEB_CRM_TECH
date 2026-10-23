@@ -108,7 +108,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -117,14 +117,14 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="Calendar" className="mr-1 size-3" />
               Free to Attend
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Events &amp; <span className="text-[#0057B8]">Webinars</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Events &amp; <span className="text-[var(--alo-brand)]">Webinars</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Join our free webinars, workshops, info sessions, and in-person events. Learn about study destinations,
               English tests, visa requirements, scholarship applications, and meet your future counselors.
             </p>
@@ -139,7 +139,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             onClick={() => setFilter("upcoming")}
             className={cn(
               "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
-              filter === "upcoming" ? "bg-[#0057B8] text-white" : "border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+              filter === "upcoming" ? "bg-[var(--alo-brand)] text-white" : "border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             )}
           >
             Upcoming Events
@@ -148,7 +148,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             onClick={() => setFilter("all")}
             className={cn(
               "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
-              filter === "all" ? "bg-[#0057B8] text-white" : "border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+              filter === "all" ? "bg-[var(--alo-brand)] text-white" : "border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
             )}
           >
             All Events
@@ -158,17 +158,17 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
         {/* Featured */}
         {!loading && featured.length > 0 && (
           <div className="mb-10">
-            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[#E8501A]">⭐ Featured Events</h2>
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">⭐ Featured Events</h2>
             <div className="grid gap-5 lg:grid-cols-2">
               {featured.slice(0, 2).map((event) => (
                 <Card
                   key={event.id}
-                  className="alo-card-hover group cursor-pointer rounded-2xl border-2 border-[#E8501A]/25 bg-gradient-to-br from-[#FFF3EA]/30 to-white transition-all hover:-translate-y-1 hover:shadow-lg"
+                  className="alo-card-hover group cursor-pointer rounded-2xl border-2 border-[var(--alo-cta)]/25 bg-gradient-to-br from-[var(--alo-cta-soft)]/30 to-white transition-all hover:-translate-y-1 hover:shadow-lg"
                   onClick={() => onNavigate("public-events", event.slug)}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between gap-2">
-                      <Badge className="bg-[#E8501A] text-white hover:bg-[#E8501A]">
+                      <Badge className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]">
                         <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="mr-1 size-3" />
                         {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                       </Badge>
@@ -176,23 +176,23 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                         Free
                       </span>
                     </div>
-                    <h3 className="mt-3 text-lg font-bold text-[#0B2447] group-hover:text-[#E8501A]">{event.title}</h3>
+                    <h3 className="mt-3 text-lg font-bold text-[var(--alo-text)] group-hover:text-[var(--alo-cta)]">{event.title}</h3>
                     {event.subtitle && (
-                      <p className="mt-1 text-sm text-[#5A7299]">{event.subtitle}</p>
+                      <p className="mt-1 text-sm text-[var(--alo-text-muted)]">{event.subtitle}</p>
                     )}
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{event.description}</p>
-                    <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[#5A7299]">
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--alo-text-muted)]">{event.description}</p>
+                    <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[var(--alo-text-muted)]">
                       <span className="flex items-center gap-1.5">
-                        <Icon name="Calendar" className="size-3.5 text-[#0057B8]" />
+                        <Icon name="Calendar" className="size-3.5 text-[var(--alo-brand)]" />
                         {fmtDate(event.eventDate)}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <Icon name="MapPin" className="size-3.5 text-[#0057B8]" />
+                        <Icon name="MapPin" className="size-3.5 text-[var(--alo-brand)]" />
                         {event.location}
                       </span>
                     </div>
                     {event.capacity && (
-                      <div className="mt-3 flex items-center gap-2 text-xs text-[#5A7299]">
+                      <div className="mt-3 flex items-center gap-2 text-xs text-[var(--alo-text-muted)]">
                         <Icon name="Users" className="size-3.5" />
                         {event.registeredCount} / {event.capacity} registered
                       </div>
@@ -205,9 +205,9 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
         )}
 
         {/* All events */}
-        <h2 className="mb-4 text-lg font-bold text-[#0B2447]">
+        <h2 className="mb-4 text-lg font-bold text-[var(--alo-text)]">
           {filter === "upcoming" ? "Upcoming Events" : "All Events"}{" "}
-          <span className="text-sm font-medium text-[#5A7299]">({regular.length})</span>
+          <span className="text-sm font-medium text-[var(--alo-text-muted)]">({regular.length})</span>
         </h2>
 
         {loading ? (
@@ -218,7 +218,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             title="No events scheduled"
             description="We're planning our next events — check back soon or contact us if you have a topic request."
             action={
-              <Button onClick={() => onNavigate("public-contact")} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+              <Button onClick={() => onNavigate("public-contact")} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
                 <Icon name="Phone" className="size-4" /> Contact Us
               </Button>
             }
@@ -228,37 +228,37 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
             {regular.map((event) => (
               <Card
                 key={event.id}
-                className="alo-card-hover group flex cursor-pointer flex-col rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                className="alo-card-hover group flex cursor-pointer flex-col rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
                 onClick={() => onNavigate("public-events", event.slug)}
               >
                 <CardContent className="flex flex-1 flex-col p-5">
-                  <div className="mb-3 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+                  <div className="mb-3 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
                     <div className="flex h-full items-center justify-center">
-                      <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="size-10 text-[#0057B8]/30" />
+                      <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="size-10 text-[var(--alo-brand)]/30" />
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-[#EAF3FF] text-[#0057B8]">
+                    <Badge variant="outline" className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                     </Badge>
                     <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                       {event.isFree ? "Free" : event.price}
                     </span>
                   </div>
-                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[#0B2447] group-hover:text-[#0057B8]">{event.title}</h3>
-                  <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#5A7299]">{event.description}</p>
-                  <div className="mt-auto flex flex-col gap-2 pt-4 text-xs text-[#5A7299]">
+                  <h3 className="mt-2 line-clamp-2 text-base font-bold text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{event.title}</h3>
+                  <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[var(--alo-text-muted)]">{event.description}</p>
+                  <div className="mt-auto flex flex-col gap-2 pt-4 text-xs text-[var(--alo-text-muted)]">
                     <span className="flex items-center gap-1.5">
-                      <Icon name="Calendar" className="size-3.5 text-[#0057B8]" />
+                      <Icon name="Calendar" className="size-3.5 text-[var(--alo-brand)]" />
                       {fmtDate(event.eventDate)}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Icon name="MapPin" className="size-3.5 text-[#0057B8]" />
+                      <Icon name="MapPin" className="size-3.5 text-[var(--alo-brand)]" />
                       {event.location}
                     </span>
                     {event.capacity && (
                       <span className="flex items-center gap-1.5">
-                        <Icon name="Users" className="size-3.5 text-[#0057B8]" />
+                        <Icon name="Users" className="size-3.5 text-[var(--alo-brand)]" />
                         {event.registeredCount} / {event.capacity} registered
                       </span>
                     )}
@@ -372,7 +372,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
             title="Event not found"
             description={error || "We couldn't find that event."}
             action={
-              <Button onClick={() => onNavigate("public-events")} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+              <Button onClick={() => onNavigate("public-events")} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
                 <Icon name="ArrowLeft" className="size-4" /> Back to Events
               </Button>
             }
@@ -391,7 +391,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6 lg:py-14">
           <Breadcrumb
             items={[
@@ -403,53 +403,53 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-[#E8501A] text-white hover:bg-[#E8501A]">
+                <Badge className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]">
                   <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="mr-1 size-3" />
                   {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                 </Badge>
                 {event.country && (
-                  <Badge variant="outline" className="bg-white text-[#0B2447]">{event.country}</Badge>
+                  <Badge variant="outline" className="bg-white text-[var(--alo-text)]">{event.country}</Badge>
                 )}
                 <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                   {event.isFree ? "Free to attend" : event.price}
                 </span>
                 {isPast && (
-                  <Badge variant="outline" className="bg-slate-100 text-slate-600">Completed</Badge>
+                  <Badge variant="outline" className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">Completed</Badge>
                 )}
               </div>
-              <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-[#0B2447] sm:text-4xl">
+              <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-[var(--alo-text)] sm:text-4xl">
                 {event.title}
               </h1>
               {event.subtitle && (
-                <p className="mt-3 text-base leading-relaxed text-[#5A7299] sm:text-lg">{event.subtitle}</p>
+                <p className="mt-3 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">{event.subtitle}</p>
               )}
-              <p className="mt-4 text-base leading-relaxed text-[#5A7299]">{event.description}</p>
+              <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)]">{event.description}</p>
             </div>
             {/* Register card */}
-            <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white alo-shadow">
               <CardContent className="p-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#0057B8]">Event details</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-brand)]">Event details</p>
                 <div className="mt-4 space-y-3 text-sm">
                   <div className="flex items-start gap-2.5">
-                    <Icon name="Calendar" className="mt-0.5 size-4 text-[#0057B8]" />
+                    <Icon name="Calendar" className="mt-0.5 size-4 text-[var(--alo-brand)]" />
                     <div>
-                      <p className="font-semibold text-[#0B2447]">{fmtDate(event.eventDate)}</p>
-                      <p className="text-xs text-[#5A7299]">{new Date(event.eventDate).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} (BST)</p>
+                      <p className="font-semibold text-[var(--alo-text)]">{fmtDate(event.eventDate)}</p>
+                      <p className="text-xs text-[var(--alo-text-muted)]">{new Date(event.eventDate).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} (BST)</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <Icon name="MapPin" className="mt-0.5 size-4 text-[#0057B8]" />
-                    <p className="font-medium text-[#0B2447]">{event.location}</p>
+                    <Icon name="MapPin" className="mt-0.5 size-4 text-[var(--alo-brand)]" />
+                    <p className="font-medium text-[var(--alo-text)]">{event.location}</p>
                   </div>
                   {event.capacity && (
                     <div className="flex items-start gap-2.5">
-                      <Icon name="Users" className="mt-0.5 size-4 text-[#0057B8]" />
-                      <p className="font-medium text-[#0B2447]">{event.registeredCount} / {event.capacity} registered</p>
+                      <Icon name="Users" className="mt-0.5 size-4 text-[var(--alo-brand)]" />
+                      <p className="font-medium text-[var(--alo-text)]">{event.registeredCount} / {event.capacity} registered</p>
                     </div>
                   )}
                 </div>
                 {!isPast && !registered && (
-                  <Button onClick={register} disabled={registering} className="mt-5 h-12 w-full bg-[#E8501A] text-white hover:bg-[#c8451a]">
+                  <Button onClick={register} disabled={registering} className="mt-5 h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]">
                     {registering ? (
                       <><Icon name="Loader2" className="size-4 animate-spin" /> Registering...</>
                     ) : (
@@ -465,9 +465,9 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                   </div>
                 )}
                 {isPast && (
-                  <div className="mt-5 rounded-xl border border-slate-300 bg-slate-50 p-4 text-center">
-                    <p className="text-sm font-bold text-slate-700">This event has ended</p>
-                    <p className="mt-1 text-xs text-slate-600">Browse other upcoming events.</p>
+                  <div className="mt-5 rounded-xl border border-[var(--alo-border-strong)] bg-[var(--alo-page)] p-4 text-center">
+                    <p className="text-sm font-bold text-[var(--alo-body)]">This event has ended</p>
+                    <p className="mt-1 text-xs text-[var(--alo-body)]">Browse other upcoming events.</p>
                   </div>
                 )}
               </CardContent>
@@ -481,10 +481,10 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
         {blocks.length > 0 && (
           <div className="space-y-6">
             {blocks.map((block, idx) => {
-              if (block.type === "h2") return <h2 key={idx} className="mt-8 text-2xl font-black text-[#0B2447]">{block.text}</h2>;
-              if (block.type === "h3") return <h3 key={idx} className="mt-6 text-xl font-bold text-[#0B2447]">{block.text}</h3>;
+              if (block.type === "h2") return <h2 key={idx} className="mt-8 text-2xl font-black text-[var(--alo-text)]">{block.text}</h2>;
+              if (block.type === "h3") return <h3 key={idx} className="mt-6 text-xl font-bold text-[var(--alo-text)]">{block.text}</h3>;
               if (block.type === "quote") return (
-                <blockquote key={idx} className="border-l-4 border-[#E8501A] bg-[#FFF3EA]/50 px-5 py-4 text-base italic text-[#0B2447]">
+                <blockquote key={idx} className="border-l-4 border-[var(--alo-cta)] bg-[var(--alo-cta-soft)]/50 px-5 py-4 text-base italic text-[var(--alo-text)]">
                   {block.text}
                 </blockquote>
               );
@@ -492,15 +492,15 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                 return (
                   <ul key={idx} className="space-y-2">
                     {block.items.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-[15px] leading-relaxed text-[#0B2447]">
-                        <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[#0057B8]" />
+                      <li key={i} className="flex items-start gap-2 text-[15px] leading-relaxed text-[var(--alo-text)]">
+                        <Icon name="ChevronRight" className="mt-1 size-4 shrink-0 text-[var(--alo-brand)]" />
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
                 );
               }
-              return <p key={idx} className="text-[15px] leading-relaxed text-[#5A7299]">{block.text}</p>;
+              return <p key={idx} className="text-[15px] leading-relaxed text-[var(--alo-text-muted)]">{block.text}</p>;
             })}
           </div>
         )}

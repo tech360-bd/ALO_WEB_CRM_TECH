@@ -28,10 +28,10 @@ export default function SocialAccountActions({ connected, accountId }: { connect
   return (
     <div className="mt-3">
       <div className="flex flex-wrap gap-2">
-        <button type="button" disabled title="OAuth token exchange and live provider verification are not configured" className="cursor-not-allowed rounded bg-slate-300 px-3 py-1.5 text-xs text-slate-600">
+        <button type="button" disabled title="OAuth token exchange and live provider verification are not configured" className="cursor-not-allowed rounded bg-slate-300 px-3 py-1.5 text-xs text-[var(--alo-body)]">
           Connect OAuth — unavailable
         </button>
-        <button type="button" disabled title="Official-access request workflow is not implemented" className="cursor-not-allowed rounded border px-3 py-1.5 text-xs text-slate-500">
+        <button type="button" disabled title="Official-access request workflow is not implemented" className="cursor-not-allowed rounded border px-3 py-1.5 text-xs text-[var(--alo-text-muted)]">
           Request Official Access — unavailable
         </button>
         {connected && accountId ? (

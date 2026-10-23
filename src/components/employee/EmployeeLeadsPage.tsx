@@ -54,7 +54,7 @@ const mockLeads: Lead[] = [
 ];
 
 const statusColors: Record<LeadStatus, string> = {
-  New: 'bg-blue-100 text-blue-700 border-blue-200',
+  New: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   Contacted: 'bg-amber-100 text-amber-700 border-amber-200',
   Qualified: 'bg-purple-100 text-purple-700 border-purple-200',
   Converted: 'bg-emerald-100 text-emerald-700 border-emerald-200',
@@ -152,7 +152,7 @@ export default function EmployeeLeadsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Total Leads', value: kpis.total, icon: Users, color: 'text-alo-brand bg-alo-brand-light' },
-          { label: 'New This Week', value: kpis.newWeek, icon: UserPlus, color: 'text-blue-600 bg-blue-100' },
+          { label: 'New This Week', value: kpis.newWeek, icon: UserPlus, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
           { label: 'Conversion Rate', value: kpis.convRate + '%', icon: TrendingUp, color: 'text-emerald-600 bg-emerald-100' },
           { label: 'Avg Response', value: kpis.avgResp, icon: Clock, color: 'text-amber-600 bg-amber-100' },
         ].map((kpi) => (
@@ -225,10 +225,10 @@ export default function EmployeeLeadsPage() {
                 </div>
                 <div className="flex items-center gap-2 lg:gap-3 shrink-0">
                   <span className="text-[11px] text-alo-text-muted hidden md:block">Added {new Date(lead.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                  <Button variant="outline" size="sm" className="h-8 text-xs" onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setNoteText(''); setShowNoteDialog(true); }}>
+                  <Button variant="outline" size="sm" className=" " onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setNoteText(''); setShowNoteDialog(true); }}>
                     <StickyNote className="w-3.5 h-3.5" /> Note
                   </Button>
-                  <Button variant="brand-outline" size="sm" className="h-8 text-xs" onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setNewStatus(lead.status); setShowStatusDialog(true); }}>
+                  <Button variant="brand-outline" size="sm" className=" " onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setNewStatus(lead.status); setShowStatusDialog(true); }}>
                     <RefreshCw className="w-3.5 h-3.5" /> Status
                   </Button>
                 </div>

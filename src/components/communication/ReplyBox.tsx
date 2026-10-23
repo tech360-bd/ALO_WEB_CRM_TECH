@@ -36,7 +36,7 @@ export default function ReplyBox({
   };
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-2">
+    <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 space-y-2">
       <div className="flex flex-wrap gap-2">
         <Select value={channel} onValueChange={setChannel}>
           <SelectTrigger className="h-7 text-xs bg-white w-[160px]"><SelectValue placeholder="Channel" /></SelectTrigger>
@@ -63,14 +63,14 @@ export default function ReplyBox({
             {canUseB2B && <SelectItem value="b2b_confidential">B2B Confidential 🔒</SelectItem>}
           </SelectContent>
         </Select>
-        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setShowTemplates(!showTemplates)}><FileText className="w-3.5 h-3.5 mr-1" /> Templates</Button>
-        <Button size="sm" variant="outline" className="h-7 text-xs bg-purple-50 text-purple-700 border-purple-200" onClick={handleAiDraft}><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Draft</Button>
+        <Button size="sm" variant="outline" className="h-7 " onClick={() => setShowTemplates(!showTemplates)}><FileText className="w-3.5 h-3.5 mr-1" /> Templates</Button>
+        <Button size="sm" variant="outline" className="h-7 bg-purple-50 text-purple-700 border-purple-200" onClick={handleAiDraft}><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Draft</Button>
       </div>
       {showTemplates && <TemplateSelector onSelect={(t, rendered) => setBody(rendered)} />}
       <Textarea value={body} onChange={e => setBody(e.target.value)} placeholder={`Write message linked to ${entityType} #${entityId} — will be saved to timeline with visibility ${visibility}...`} className="min-h-[80px] text-xs bg-white" />
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-gray-400 flex items-center gap-1"><Paperclip className="w-3 h-3" /> Attachment placeholder (stored as path) • Every message saved to timeline + audit</span>
-        <Button size="sm" className="h-8 bg-[#0057B8] hover:bg-[#004a9e] text-xs" onClick={handleSend} disabled={loading || !body.trim()}><Send className="w-3.5 h-3.5 mr-1" /> Send & Log</Button>
+        <span className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1"><Paperclip className="w-3 h-3" /> Attachment placeholder (stored as path) • Every message saved to timeline + audit</span>
+        <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[#004a9e] " onClick={handleSend} disabled={loading || !body.trim()}><Send className="w-3.5 h-3.5 mr-1" /> Send & Log</Button>
       </div>
     </div>
   );

@@ -92,7 +92,7 @@ export function StudentNotifications() {
         icon="Bell"
       />
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : notifications.length === 0 ? (
         <EmptyState icon="Bell" title="No notifications" description="You're all caught up!" />
       ) : (
@@ -102,7 +102,7 @@ export function StudentNotifications() {
               key={n.id}
               className={cn(
                 "rounded-2xl border bg-white transition-colors",
-                n.isRead ? "border-[#DCE8F5]" : "border-[#0057B8]/30 bg-[#EAF3FF]/30"
+                n.isRead ? "border-[var(--alo-brand-border)]" : "border-[var(--alo-brand)]/30 bg-[var(--alo-brand-light)]/30"
               )}
             >
               <CardContent className="flex items-start justify-between gap-3 p-4">
@@ -110,17 +110,17 @@ export function StudentNotifications() {
                   <div
                     className={cn(
                       "flex size-10 shrink-0 items-center justify-center rounded-lg",
-                      n.isRead ? "bg-slate-100 text-slate-500" : "bg-[#EAF3FF] text-[#0057B8]"
+                      n.isRead ? "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]" : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                     )}
                   >
                     <Icon name="Bell" className="size-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-[#0B2447]">{n.title}</p>
+                    <p className="font-semibold text-[var(--alo-text)]">{n.title}</p>
                     {n.message && (
-                      <p className="text-sm text-[#5A7299]">{n.message}</p>
+                      <p className="text-sm text-[var(--alo-text-muted)]">{n.message}</p>
                     )}
-                    <p className="mt-1 text-xs text-[#5A7299]">
+                    <p className="mt-1 text-xs text-[var(--alo-text-muted)]">
                       {n.createdAt ? fmtDate(n.createdAt) : ""}
                     </p>
                   </div>

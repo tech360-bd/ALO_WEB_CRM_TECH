@@ -101,7 +101,7 @@ const READINESS_COLORS: Record<string, string> = {
   ready: "bg-emerald-100 text-emerald-700",
   needs_practice: "bg-amber-100 text-amber-700",
   high_risk: "bg-rose-100 text-rose-700",
-  human_review_required: "bg-orange-100 text-orange-700",
+  human_review_required: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const RISK_COLORS: Record<string, string> = {
@@ -424,16 +424,16 @@ function SetupPhase({
                 className={cn(
                   "flex flex-col items-start gap-2 rounded-2xl border-2 p-4 text-left transition-all",
                   selected
-                    ? "border-[#0057B8] bg-[#e8f0fb] shadow-sm"
-                    : "border-border bg-background hover:border-[#0057B8]/40 hover:bg-[#e8f0fb]/30"
+                    ? "border-[var(--alo-brand)] bg-[var(--alo-brand-light)] shadow-sm"
+                    : "border-border bg-background hover:border-[var(--alo-brand)]/40 hover:bg-[var(--alo-brand-light)]/30"
                 )}
               >
                 <div
                   className={cn(
                     "flex size-10 items-center justify-center rounded-xl",
                     selected
-                      ? "bg-[#0057B8] text-white"
-                      : "bg-[#e8f0fb] text-[#0057B8]"
+                      ? "bg-[var(--alo-brand)] text-white"
+                      : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                   )}
                 >
                   <Icon
@@ -448,7 +448,7 @@ function SetupPhase({
                   </p>
                 </div>
                 {selected && (
-                  <Badge className="bg-[#0057B8] text-white">
+                  <Badge className="bg-[var(--alo-brand)] text-white">
                     <Icon name="CircleCheck" className="mr-1 size-3" />
                     Selected
                   </Badge>
@@ -544,7 +544,7 @@ function SetupPhase({
           icon="Lightbulb"
         >
           <div className="space-y-4">
-            <div className="rounded-xl bg-[#e8f0fb] p-3 text-sm text-foreground/80">
+            <div className="rounded-xl bg-[var(--alo-brand-light)] p-3 text-sm text-foreground/80">
               The AI interviewer will ask <strong>one question at a time</strong>,
               listen to your answer, ask follow-ups, and at the end give you a score
               across 9 dimensions + a readiness report saved to your CRM timeline.
@@ -561,7 +561,7 @@ function SetupPhase({
                   >
                     <Icon
                       name="CircleCheck"
-                      className="size-3.5 shrink-0 text-[#0057B8]"
+                      className="size-3.5 shrink-0 text-[var(--alo-brand)]"
                     />
                     {d.label}
                   </li>
@@ -577,7 +577,7 @@ function SetupPhase({
         <Button
           onClick={onStart}
           disabled={!canStart}
-          className="h-12 bg-[#E8501A] px-8 text-white hover:bg-[#E8501A]/90 disabled:opacity-50"
+          className="h-12 bg-[var(--alo-cta)] px-8 text-black hover:bg-[var(--alo-cta)]/90 disabled:opacity-50"
         >
           <Icon name="Mic" className="size-5" />
           Start Interview
@@ -641,7 +641,7 @@ function InterviewPhase({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20">
         <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-5">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-xl bg-alo-gradient text-white">
@@ -655,14 +655,14 @@ function InterviewPhase({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge className="bg-[#e8f0fb] text-[#0057B8]">
+            <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
               Question {questionCount}
             </Badge>
             <Button
               onClick={onEnd}
               disabled={!canEnd || thinking}
               variant="outline"
-              className="border-[#E8501A] text-[#E8501A] hover:bg-[#E8501A]/10"
+              className="border-[var(--alo-cta)] text-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/10"
             >
               <Icon name="Flag" className="size-4" />
               End & Get Report
@@ -746,13 +746,13 @@ function InterviewPhase({
                 onChange={(e) => onAnswerChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type your answer… (⌘/Ctrl + Enter to send)"
-                className="min-h-[60px] flex-1 resize-none border-2 focus-visible:border-[#0057B8]"
+                className="min-h-[60px] flex-1 resize-none border-2 focus-visible:border-[var(--alo-brand)]"
                 disabled={thinking}
               />
               <Button
                 onClick={onSend}
                 disabled={thinking || !answer.trim()}
-                className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#E8501A]/90 sm:w-auto"
+                className="h-12 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90 sm:w-auto"
               >
                 <Icon name="Send" className="size-4" />
                 Send Answer
@@ -781,7 +781,7 @@ function Avatar({ role, initial }: { role: "ai" | "user"; initial?: string }) {
     );
   }
   return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#E8501A] text-base font-bold text-white">
+    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[var(--alo-cta)] text-base font-bold text-white">
       {initial || "U"}
     </div>
   );
@@ -811,8 +811,8 @@ function ChatBubble({
         className={cn(
           "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
           isAI
-            ? "rounded-tl-sm border border-[#0057B8]/20 bg-[#e8f0fb] text-foreground"
-            : "rounded-tr-sm bg-[#E8501A] text-white",
+            ? "rounded-tl-sm border border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)] text-foreground"
+            : "rounded-tr-sm bg-[var(--alo-cta)] text-white",
           past && "opacity-90"
         )}
       >
@@ -850,11 +850,11 @@ function ReportPhase({
   return (
     <div className="space-y-4">
       {/* Top hero */}
-      <Card className="overflow-hidden rounded-2xl border-2 border-[#0057B8]/20">
+      <Card className="overflow-hidden rounded-2xl border-2 border-[var(--alo-brand)]/20">
         <CardContent className="grid grid-cols-1 gap-6 pt-6 md:grid-cols-3">
           {/* Readiness */}
-          <div className="flex flex-col items-center justify-center rounded-2xl bg-[#e8f0fb] p-5 text-center">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#0057B8]">
+          <div className="flex flex-col items-center justify-center rounded-2xl bg-[var(--alo-brand-light)] p-5 text-center">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--alo-brand)]">
               Overall Readiness
             </p>
             <div className="relative my-3">
@@ -866,7 +866,7 @@ function ReportPhase({
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="10"
-                  className="text-[#0057B8]/15"
+                  className="text-[var(--alo-brand)]/15"
                 />
                 <circle
                   cx="60"
@@ -1003,7 +1003,7 @@ function ReportPhase({
                 key={i}
                 className="flex items-start gap-2.5 rounded-xl border border-border bg-muted/20 p-3 text-sm"
               >
-                <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#0057B8] text-[10px] font-bold text-white">
+                <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--alo-brand)] text-[11px] font-bold text-white">
                   {i + 1}
                 </div>
                 <span className="text-foreground/80">{tip}</span>
@@ -1020,14 +1020,14 @@ function ReportPhase({
       </SectionCard>
 
       {/* Actions */}
-      <div className="flex flex-col items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-[#0057B8]/30 bg-[#f7f9fc] p-5 sm:flex-row">
+      <div className="flex flex-col items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-[var(--alo-brand)]/30 bg-[var(--alo-page)] p-5 sm:flex-row">
         <div className="text-sm text-muted-foreground">
-          <Icon name="BookmarkCheck" className="mr-1 inline size-4 text-[#0057B8]" />
+          <Icon name="BookmarkCheck" className="mr-1 inline size-4 text-[var(--alo-brand)]" />
           This report has been saved to the student&apos;s CRM timeline. Counselors can review it anytime.
         </div>
         <Button
           onClick={onReset}
-          className="h-12 bg-[#E8501A] px-6 text-white hover:bg-[#E8501A]/90"
+          className="h-12 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90"
         >
           <Icon name="RotateCcw" className="size-4" />
           Practice Again

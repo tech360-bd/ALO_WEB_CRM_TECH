@@ -168,7 +168,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+              className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               onClick={() => handleSave("SLA")}
             >
               Save
@@ -178,7 +178,7 @@ export function CrmSettings() {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-xs text-[#5A7299]">First Response (min)</Label>
+                <Label className="text-xs text-[var(--alo-text-muted)]">First Response (min)</Label>
                 <Input
                   type="number"
                   value={sla.firstResponse}
@@ -187,7 +187,7 @@ export function CrmSettings() {
                 />
               </div>
               <div>
-                <Label className="text-xs text-[#5A7299]">Follow-up Window (min)</Label>
+                <Label className="text-xs text-[var(--alo-text-muted)]">Follow-up Window (min)</Label>
                 <Input
                   type="number"
                   value={sla.followUp}
@@ -196,7 +196,7 @@ export function CrmSettings() {
                 />
               </div>
               <div>
-                <Label className="text-xs text-[#5A7299]">Escalation Level 40% (hrs)</Label>
+                <Label className="text-xs text-[var(--alo-text-muted)]">Escalation Level 40% (hrs)</Label>
                 <Input
                   type="number"
                   value={sla.escalation40}
@@ -205,7 +205,7 @@ export function CrmSettings() {
                 />
               </div>
               <div>
-                <Label className="text-xs text-[#5A7299]">Escalation Level 50% (hrs)</Label>
+                <Label className="text-xs text-[var(--alo-text-muted)]">Escalation Level 50% (hrs)</Label>
                 <Input
                   type="number"
                   value={sla.escalation50}
@@ -214,7 +214,7 @@ export function CrmSettings() {
                 />
               </div>
             </div>
-            <div className="rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#0057B8]">
+            <div className="rounded-lg bg-[var(--alo-brand-light)] p-3 text-xs text-[var(--alo-brand)]">
               <Icon name="Info" className="mr-1 inline size-3.5" />
               Escalations notify the counselor's manager and senior leadership.
             </div>
@@ -229,7 +229,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+              className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               onClick={() => void saveOfficeHours()}
               disabled={officeHours.loading || officeHours.saving || !officeHours.canManage}
             >
@@ -238,7 +238,7 @@ export function CrmSettings() {
           }
         >
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#EAF3FF] p-3 text-xs text-[#0057B8]">
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[var(--alo-brand-light)] p-3 text-xs text-[var(--alo-brand)]">
               <span><Icon name="Info" className="mr-1 inline size-3.5" />Default: Saturday–Thursday, 09:00–18:00; Friday closed.</span>
               <Badge variant="outline">{officeHours.timeZone}</Badge>
             </div>
@@ -253,11 +253,11 @@ export function CrmSettings() {
               </p>
             )}
             {officeHours.loading ? (
-              <p className="py-4 text-sm text-[#5A7299]">Loading the persisted office-hours schedule…</p>
+              <p className="py-4 text-sm text-[var(--alo-text-muted)]">Loading the persisted office-hours schedule…</p>
             ) : (
               <div className="space-y-2">
                 {officeHours.days.map((day) => (
-                  <div key={day.dayOfWeek} className="grid grid-cols-[1fr_auto_1fr_1fr_auto] items-center gap-2 rounded-lg border border-[#E2E8F0] p-2">
+                  <div key={day.dayOfWeek} className="grid grid-cols-[1fr_auto_1fr_1fr_auto] items-center gap-2 rounded-lg border border-[var(--alo-border)] p-2">
                     <Label className="text-xs font-medium">{OFFICE_DAY_NAMES[day.dayOfWeek]}</Label>
                     <Switch
                       checked={day.isWorkDay}
@@ -287,7 +287,7 @@ export function CrmSettings() {
                     />
                   </div>
                 ))}
-                <div className="grid grid-cols-[1fr_auto_1fr_1fr_auto] gap-2 px-2 text-[10px] text-[#5A7299]">
+                <div className="grid grid-cols-[1fr_auto_1fr_1fr_auto] gap-2 px-2 text-[11px] text-[var(--alo-text-muted)]">
                   <span />
                   <span>Open</span>
                   <span>Start</span>
@@ -296,7 +296,7 @@ export function CrmSettings() {
                 </div>
               </div>
             )}
-            <p className="text-[11px] text-[#5A7299]">After-hours reply drafts are not sent automatically by this settings screen. Human review and provider configuration remain separate.</p>
+            <p className="text-[11px] text-[var(--alo-text-muted)]">After-hours reply drafts are not sent automatically by this settings screen. Human review and provider configuration remain separate.</p>
           </div>
         </SectionCard>
 
@@ -308,7 +308,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+              className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               onClick={() => handleSave("Scoring")}
             >
               Save
@@ -341,7 +341,7 @@ export function CrmSettings() {
               },
             ].map((row) => (
               <div key={row.key} className="flex items-center justify-between">
-                <span className="text-sm text-[#0B2447]">{row.label}</span>
+                <span className="text-sm text-[var(--alo-text)]">{row.label}</span>
                 <Input
                   type="number"
                   className="w-20"
@@ -352,13 +352,13 @@ export function CrmSettings() {
                 />
               </div>
             ))}
-            <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-[#F7FAFE] p-3">
+            <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-[var(--alo-page)] p-3">
               <div>
-                <p className="text-xs text-[#5A7299]">Hot Lead Threshold</p>
-                <Badge className="mt-1 bg-[#E8501A] text-white">≥ {scoring.hotTier}</Badge>
+                <p className="text-xs text-[var(--alo-text-muted)]">Hot Lead Threshold</p>
+                <Badge className="mt-1 bg-[var(--alo-cta)] text-white">≥ {scoring.hotTier}</Badge>
               </div>
               <div>
-                <p className="text-xs text-[#5A7299]">Urgent Threshold</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Urgent Threshold</p>
                 <Badge className="mt-1 bg-rose-600 text-white">≥ {scoring.urgentTier}</Badge>
               </div>
             </div>
@@ -373,7 +373,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+              className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               onClick={() => handleSave("Assignment")}
             >
               Save
@@ -382,7 +382,7 @@ export function CrmSettings() {
         >
           <div className="space-y-3">
             <div>
-              <Label className="text-xs text-[#5A7299]">Assignment Mode</Label>
+              <Label className="text-xs text-[var(--alo-text-muted)]">Assignment Mode</Label>
               <Select
                 value={assignment.mode}
                 onValueChange={(v) => setAssignment({ ...assignment, mode: v })}
@@ -408,7 +408,7 @@ export function CrmSettings() {
               />
             </div>
             <div>
-              <Label className="text-xs text-[#5A7299]">
+              <Label className="text-xs text-[var(--alo-text-muted)]">
                 Max Students per Counselor
               </Label>
               <Input
@@ -442,7 +442,7 @@ export function CrmSettings() {
               />
             </div>
             <div>
-              <Label className="text-xs text-[#5A7299]">
+              <Label className="text-xs text-[var(--alo-text-muted)]">
                 Auto-escalate after (hours, no response)
               </Label>
               <Input
@@ -466,7 +466,7 @@ export function CrmSettings() {
           action={
             <Button
               size="sm"
-              className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+              className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
               onClick={() => handleSave("Auto-reply")}
             >
               Save
@@ -486,9 +486,9 @@ export function CrmSettings() {
             ].map((row) => (
               <div
                 key={row.key}
-                className="flex items-center justify-between rounded-lg border border-[#DCE8F5] bg-[#F7FAFE] px-3 py-2"
+                className="flex items-center justify-between rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] px-3 py-2"
               >
-                <Label className="text-sm text-[#0B2447]">{row.label}</Label>
+                <Label className="text-sm text-[var(--alo-text)]">{row.label}</Label>
                 <Switch
                   checked={(autoReply as any)[row.key]}
                   onCheckedChange={(v) => setAutoReply({ ...autoReply, [row.key]: v })}

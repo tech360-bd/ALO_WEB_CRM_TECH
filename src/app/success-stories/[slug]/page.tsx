@@ -73,25 +73,25 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           href="/success-stories" 
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0057B8] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to all stories
         </Link>
 
-        <div className="bg-gradient-to-r from-[#0057B8] to-[#003F87] rounded-3xl p-8 md:p-12 text-white mb-10 shadow-xl relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl p-8 md:p-12 text-white mb-10 shadow-xl relative overflow-hidden">
           <Quote className="absolute -right-6 -bottom-6 h-48 w-48 text-white/10 rotate-12" />
           <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
-            <div className="h-32 w-32 md:h-40 md:w-40 rounded-full bg-white flex items-center justify-center text-[#0057B8] font-bold text-5xl shadow-lg border-4 border-white/20 shrink-0">
+            <div className="h-32 w-32 md:h-40 md:w-40 rounded-full bg-white flex items-center justify-center text-[var(--alo-brand)] font-bold text-5xl shadow-lg border-4 border-white/20 shrink-0">
               {story.name[0]}
             </div>
             <div>
               <div className="flex gap-1 mb-4 justify-center md:justify-start">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="h-5 w-5 fill-[#E8501A] text-[#E8501A]" />
+                  <Star key={star} className="h-5 w-5 fill-[var(--alo-cta)] text-[var(--alo-cta)]" />
                 ))}
               </div>
               <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center md:text-left">{story.name}</h1>
-              <p className="text-blue-100 text-lg text-center md:text-left flex flex-col md:flex-row md:items-center gap-2">
+              <p className="text-[var(--alo-brand-pale)] text-lg text-center md:text-left flex flex-col md:flex-row md:items-center gap-2">
                 <span><BookOpen className="inline h-4 w-4 mr-1"/> {story.course}</span>
                 <span className="hidden md:inline">•</span>
                 <span><Building2 className="inline h-4 w-4 mr-1"/> {story.university}</span>
@@ -102,31 +102,31 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-2 space-y-8">
-            <Card className="p-8 border-slate-100 shadow-sm relative">
-              <Quote className="absolute top-6 left-6 h-8 w-8 text-[#0057B8]/20" />
-              <p className="text-lg text-slate-700 italic leading-relaxed pt-8">
+            <Card className="p-8 border-[var(--alo-border)] shadow-sm relative">
+              <Quote className="absolute top-6 left-6 h-8 w-8 text-[var(--alo-brand)]/20" />
+              <p className="text-lg text-[var(--alo-body)] italic leading-relaxed pt-8">
                 "{story.quote}"
               </p>
             </Card>
 
             <div>
-              <h2 className="text-2xl font-bold text-[#0F172A] mb-4">The Journey</h2>
-              <Card className="p-6 border-slate-100 shadow-sm">
+              <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-4">The Journey</h2>
+              <Card className="p-6 border-[var(--alo-border)] shadow-sm">
                 <div className="space-y-6">
                   {story.timeline.map((item, index) => (
                     <div key={index} className="flex gap-4">
                       <div className="flex flex-col items-center">
-                        <div className="h-3 w-3 rounded-full bg-[#E8501A] mt-1.5" />
+                        <div className="h-3 w-3 rounded-full bg-[var(--alo-cta)] mt-1.5" />
                         {index !== story.timeline.length - 1 && (
                           <div className="w-px h-full bg-slate-200 my-1" />
                         )}
                       </div>
                       <div className="pb-2">
-                        <span className="text-xs font-semibold text-[#0057B8] bg-blue-50 px-2 py-1 rounded-full mb-1 inline-block">
+                        <span className="text-xs font-semibold text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] px-2 py-1 rounded-full mb-1 inline-block">
                           {item.date}
                         </span>
-                        <h4 className="font-bold text-slate-800">{item.step}</h4>
-                        <p className="text-sm text-slate-600 mt-1">{item.description}</p>
+                        <h4 className="font-bold text-[var(--alo-text)]">{item.step}</h4>
+                        <p className="text-sm text-[var(--alo-body)] mt-1">{item.description}</p>
                       </div>
                     </div>
                   ))}
@@ -136,33 +136,33 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
           </div>
 
           <div className="space-y-6">
-            <Card className="p-6 bg-slate-50 border-none">
-              <h3 className="font-bold text-[#0F172A] mb-4">Highlights</h3>
+            <Card className="p-6 bg-[var(--alo-page)] border-none">
+              <h3 className="font-bold text-[var(--alo-text)] mb-4">Highlights</h3>
               
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold uppercase mb-1 flex items-center gap-1.5">
-                    <Award className="h-3.5 w-3.5 text-[#E8501A]" /> Scholarship
+                  <p className="text-xs text-[var(--alo-text-muted)] font-semibold uppercase mb-1 flex items-center gap-1.5">
+                    <Award className="h-3.5 w-3.5 text-[var(--alo-cta)]" /> Scholarship
                   </p>
-                  <p className="text-sm font-medium text-slate-800">{story.scholarship}</p>
+                  <p className="text-sm font-medium text-[var(--alo-text)]">{story.scholarship}</p>
                 </div>
                 
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold uppercase mb-1 flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5 text-[#0057B8]" /> ALO Advisor
+                  <p className="text-xs text-[var(--alo-text-muted)] font-semibold uppercase mb-1 flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5 text-[var(--alo-brand)]" /> ALO Advisor
                   </p>
-                  <p className="text-sm font-medium text-slate-800">{story.advisor}</p>
+                  <p className="text-sm font-medium text-[var(--alo-text)]">{story.advisor}</p>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-6 bg-[#0057B8] text-white border-none text-center">
+            <Card className="p-6 bg-[var(--alo-brand)] text-white border-none text-center">
               <h3 className="font-bold mb-2">Start Your Own Journey</h3>
-              <p className="text-blue-100 text-sm mb-4">
+              <p className="text-[var(--alo-brand-pale)] text-sm mb-4">
                 Let our experts help you achieve your study abroad dreams just like {story.name.split(' ')[0]}.
               </p>
               <Link href="/eligibility-check">
-                <Button className="w-full bg-[#E8501A] hover:bg-[#C93D13] text-black">
+                <Button className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black">
                   Check Your Eligibility
                 </Button>
               </Link>
@@ -171,22 +171,22 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
         </div>
 
         {relatedStories.length > 0 && (
-          <div className="border-t border-slate-200 pt-10">
-            <h2 className="text-2xl font-bold text-[#0F172A] mb-6">More Success Stories</h2>
+          <div className="border-t border-[var(--alo-border)] pt-10">
+            <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-6">More Success Stories</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {relatedStories.map((rs) => (
                 <Card key={rs.slug} className="p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#0057B8] to-[#003F87] flex items-center justify-center text-white font-bold text-lg shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] flex items-center justify-center text-white font-bold text-lg shrink-0">
                       {rs.name[0]}
                     </div>
                     <div>
-                      <h4 className="font-bold text-[#0F172A]">{rs.name}</h4>
-                      <p className="text-xs text-[#0057B8] line-clamp-1">{rs.course}</p>
+                      <h4 className="font-bold text-[var(--alo-text)]">{rs.name}</h4>
+                      <p className="text-xs text-[var(--alo-brand)] line-clamp-1">{rs.course}</p>
                     </div>
                   </div>
                   <Link href={`/success-stories/${rs.slug}`}>
-                    <Button variant="outline" className="w-full text-xs">Read Full Story</Button>
+                    <Button variant="outline" className="w-full ">Read Full Story</Button>
                   </Link>
                 </Card>
               ))}

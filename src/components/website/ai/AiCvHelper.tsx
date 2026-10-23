@@ -198,7 +198,7 @@ export default function AiCvHelper() {
                 <Input value={entry.endDate ?? ''} onChange={(e) => updateEducation(index, { endDate: e.target.value })} placeholder="End (e.g. 2023)" aria-label={`Education ${index + 1} end`} className="h-11 rounded-input border-alo-border" />
               </div>
               {(profile.education ?? []).length > 1 && (
-                <Button variant="ghost" className="mt-2 h-8 rounded-button px-2 text-[12px] font-semibold text-alo-error" onClick={() => patch({ education: (profile.education ?? []).filter((_, i) => i !== index) })}>
+                <Button variant="ghost" className="mt-2 rounded-button px-2 text-[12px] font-semibold text-alo-error" onClick={() => patch({ education: (profile.education ?? []).filter((_, i) => i !== index) })}>
                   <Trash2 className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
                   Remove entry
                 </Button>
@@ -230,7 +230,7 @@ export default function AiCvHelper() {
                 <Input value={entry.endDate ?? ''} onChange={(e) => updateExperience(index, { endDate: e.target.value })} placeholder="End or Present" aria-label={`Experience ${index + 1} end`} className="h-11 rounded-input border-alo-border" />
               </div>
               <Textarea value={entry.summary ?? ''} onChange={(e) => updateExperience(index, { summary: e.target.value })} rows={3} placeholder="What you did and what resulted from it." aria-label={`Experience ${index + 1} summary`} className="mt-3 rounded-input border-alo-border text-[14px]" />
-              <Button variant="ghost" className="mt-2 h-8 rounded-button px-2 text-[12px] font-semibold text-alo-error" onClick={() => patch({ experience: (profile.experience ?? []).filter((_, i) => i !== index) })}>
+              <Button variant="ghost" className="mt-2 rounded-button px-2 text-[12px] font-semibold text-alo-error" onClick={() => patch({ experience: (profile.experience ?? []).filter((_, i) => i !== index) })}>
                 <Trash2 className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
                 Remove entry
               </Button>

@@ -90,11 +90,11 @@ export default function StudentDocumentDetail() {
   const Icon = document ? STATUS_ICON[document.status as keyof typeof STATUS_ICON] ?? FileWarning : FileWarning;
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-3xl">
         <Link
           href="/student/documents"
-          className="mb-4 inline-block text-[13px] font-semibold text-slate-500 hover:text-alo-blue hover:underline"
+          className="mb-4 inline-block text-[13px] font-semibold text-[var(--alo-text-muted)] hover:text-alo-brand hover:underline"
         >
           ← All documents
         </Link>
@@ -110,7 +110,7 @@ export default function StudentDocumentDetail() {
               title="Document not found"
               description="This document may have been removed, or it belongs to another account."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/documents">Back to Documents</Link>
                 </Button>
               }
@@ -142,22 +142,22 @@ export default function StudentDocumentDetail() {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="break-words text-[15px] font-bold text-slate-900">
+                  <p className="break-words text-[15px] font-bold text-[var(--alo-text)]">
                     {document.fileName || 'Untitled document'}
                   </p>
-                  <p className="mt-1 text-[13px] text-slate-600">{document.category}</p>
+                  <p className="mt-1 text-[13px] text-[var(--alo-body)]">{document.category}</p>
                   <dl className="mt-3 grid gap-x-6 gap-y-1.5 text-[12px] sm:grid-cols-2">
                     <div className="flex gap-2">
-                      <dt className="text-slate-500">Size:</dt>
-                      <dd className="text-slate-800">{formatBytes(document.fileSize)}</dd>
+                      <dt className="text-[var(--alo-text-muted)]">Size:</dt>
+                      <dd className="text-[var(--alo-text)]">{formatBytes(document.fileSize)}</dd>
                     </div>
                     <div className="flex gap-2">
-                      <dt className="text-slate-500">Type:</dt>
-                      <dd className="text-slate-800">{document.mimeType ?? 'Not recorded'}</dd>
+                      <dt className="text-[var(--alo-text-muted)]">Type:</dt>
+                      <dd className="text-[var(--alo-text)]">{document.mimeType ?? 'Not recorded'}</dd>
                     </div>
                     <div className="flex gap-2">
-                      <dt className="text-slate-500">Uploaded:</dt>
-                      <dd className="text-slate-800">
+                      <dt className="text-[var(--alo-text-muted)]">Uploaded:</dt>
+                      <dd className="text-[var(--alo-text)]">
                         {new Date(document.uploadedAt).toLocaleString('en-GB', {
                           day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                         })}
@@ -165,8 +165,8 @@ export default function StudentDocumentDetail() {
                     </div>
                     {document.reviewedAt && (
                       <div className="flex gap-2">
-                        <dt className="text-slate-500">Reviewed:</dt>
-                        <dd className="text-slate-800">
+                        <dt className="text-[var(--alo-text-muted)]">Reviewed:</dt>
+                        <dd className="text-[var(--alo-text)]">
                           {new Date(document.reviewedAt).toLocaleDateString('en-GB')}
                           {document.reviewedBy ? ` by ${document.reviewedBy}` : ''}
                         </dd>
@@ -185,7 +185,7 @@ export default function StudentDocumentDetail() {
                   <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-red-900">
                     {document.rejectionReason}
                   </p>
-                  <Button asChild className="mt-3 h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500">
+                  <Button asChild className="mt-3 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                     <Link href="/student/documents">Upload a Replacement</Link>
                   </Button>
                 </div>
@@ -201,22 +201,22 @@ export default function StudentDocumentDetail() {
               )}
 
               {document.isArchived && (
-                <div className="border-t border-slate-200 bg-slate-50 px-5 py-3">
-                  <p className="text-[12px] font-semibold text-slate-600">
+                <div className="border-t border-[var(--alo-border)] bg-[var(--alo-page)] px-5 py-3">
+                  <p className="text-[12px] font-semibold text-[var(--alo-body)]">
                     This document is archived. The current version appears on your Documents page.
                   </p>
                 </div>
               )}
 
               {!document.isArchived && (
-                <div className="border-t border-slate-200 px-5 py-3">
-                  <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                <div className="border-t border-[var(--alo-border)] px-5 py-3">
+                  <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                     <a href={document.downloadUrl}>
                       <Download className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                       Download Document
                     </a>
                   </Button>
-                  <p className="mt-2 flex items-start gap-1.5 text-[12px] leading-relaxed text-slate-500">
+                  <p className="mt-2 flex items-start gap-1.5 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                     <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     Downloads are recorded and the stored file is integrity-checked before it is served.
                   </p>
@@ -229,27 +229,27 @@ export default function StudentDocumentDetail() {
                 className="mt-5"
                 title="Activity"
                 description="Everyone who has viewed, reviewed or changed this document"
-                icon={<History className="mr-2 h-4 w-4 text-slate-400" aria-hidden="true" />}
+                icon={<History className="mr-2 h-4 w-4 text-[var(--alo-text-muted)]" aria-hidden="true" />}
               >
-                <ol className="divide-y divide-slate-200">
+                <ol className="divide-y divide-[var(--alo-border)]">
                   {audit.map((entry) => (
                     <li key={entry.id} className="px-5 py-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-[13px] font-semibold text-slate-900">
+                        <span className="text-[13px] font-semibold text-[var(--alo-text)]">
                           {entry.action.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
                         </span>
-                        <span className="text-[12px] text-slate-400">
+                        <span className="text-[12px] text-[var(--alo-text-muted)]">
                           {new Date(entry.createdAt).toLocaleString('en-GB', {
                             day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                           })}
                         </span>
                       </div>
-                      <p className="mt-0.5 text-[12px] text-slate-500">
+                      <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
                         {entry.actorName || 'System'}
                         {entry.actorRole ? ` · ${entry.actorRole}` : ''}
                         {entry.newStatus ? ` · ${entry.newStatus}` : ''}
                       </p>
-                      {entry.note && <p className="mt-1 text-[13px] leading-relaxed text-slate-600">{entry.note}</p>}
+                      {entry.note && <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-body)]">{entry.note}</p>}
                     </li>
                   ))}
                 </ol>

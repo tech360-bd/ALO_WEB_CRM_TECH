@@ -95,19 +95,19 @@ const statusColor = (s: string) => {
 const priorityColor = (p: string) => {
   if (p === 'High') return 'bg-red-100 text-red-800';
   if (p === 'Medium') return 'bg-amber-100 text-amber-800';
-  return 'bg-slate-100 text-slate-700';
+  return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 };
 
 function CheckIcon({ val }: { val: boolean }) {
   return val ? (
     <span className="text-emerald-600 font-semibold text-sm">&#10003;</span>
   ) : (
-    <span className="text-slate-300 text-sm">&#8212;</span>
+    <span className="text-[var(--alo-placeholder)] text-sm">&#8212;</span>
   );
 }
 
 export default function CrmSeoCompetitorAnalysis() {
- return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Competitor Analysis</h1><p role="status">No authenticated competitor or backlink data source is connected here. Historical mock competitor rankings are not displayed as facts.</p><a href="/crm/seo-manager" className="text-blue-700 underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
+ return <section className="space-y-4 rounded-xl border bg-white p-6"><h1 className="text-2xl font-bold">SEO Competitor Analysis</h1><p role="status">No authenticated competitor or backlink data source is connected here. Historical mock competitor rankings are not displayed as facts.</p><a href="/crm/seo-manager" className="text-[var(--alo-brand)] underline">Open existing SEO draft and approval workbench</a><p className="text-sm">Live provider and production workflows remain unverified.</p></section>;
 }
 /** Historical design fixture; not an operational dashboard. */
 function LegacyUnverifiedCrmSeoCompetitorAnalysis() {

@@ -72,50 +72,50 @@ export default function HrmProfilePage() {
     finally { setSaving(false); }
   };
 
-  if (loading) return <div className="min-h-screen bg-white p-6 text-xs text-slate-400">Loading private profile…</div>;
+  if (loading) return <div className="min-h-screen bg-white p-6 text-xs text-[var(--alo-text-muted)]">Loading private profile…</div>;
   if (!data) return <div className="min-h-screen bg-white p-6 text-sm">No accessible HR profile found. Contact HR.</div>;
 
   const safeValue = (value: unknown) => value === null || value === undefined ? '' : String(value);
   const renderInputs = (fields: Array<[string, string, boolean?]>, editable: boolean) => fields.map(([key, label]) => (
     <div key={key} className={key.toLowerCase().includes('address') ? 'md:col-span-2 lg:col-span-3' : ''}>
-      <Label htmlFor={key} className="text-xs text-slate-600">{label}</Label>
-      <Input id={key} name={key} defaultValue={safeValue(data[key])} readOnly={!editable || !EDITABLE_FIELDS.has(key)} className="h-9 text-sm bg-white border-slate-200 read-only:bg-slate-50" />
+      <Label htmlFor={key} className="text-xs text-[var(--alo-body)]">{label}</Label>
+      <Input id={key} name={key} defaultValue={safeValue(data[key])} readOnly={!editable || !EDITABLE_FIELDS.has(key)} className="h-9 text-sm bg-white border-[var(--alo-border)] read-only:bg-[var(--alo-page)]" />
     </div>
   ));
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <div><h1 className="text-xl font-bold text-slate-900">Employee Private Profile</h1><p className="text-xs text-slate-500">Access and fields are enforced by server-side HR permissions. Reads and changes are audited.</p></div>
+        <div><h1 className="text-xl font-bold text-[var(--alo-text)]">Employee Private Profile</h1><p className="text-xs text-[var(--alo-text-muted)]">Access and fields are enforced by server-side HR permissions. Reads and changes are audited.</p></div>
         <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">Private</Badge>
       </div>
       <Tabs defaultValue="personal">
-        <TabsList className="bg-slate-100 h-9 flex-wrap">
+        <TabsList className="bg-[var(--alo-surface-muted)] h-9 flex-wrap">
           <TabsTrigger value="personal" className="text-xs">Personal</TabsTrigger><TabsTrigger value="employment" className="text-xs">Employment</TabsTrigger>
           <TabsTrigger value="bank" className="text-xs">Bank & Payroll</TabsTrigger><TabsTrigger value="education" className="text-xs">Education & Skills</TabsTrigger>
         </TabsList>
         <form onSubmit={onSave} className="mt-4 space-y-4">
-          <TabsContent value="personal"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Personal Information</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div><Label className="text-xs text-slate-600">Employee ID</Label><Input value={safeValue(data.employeeId)} readOnly className="h-9 text-sm bg-slate-50" /></div>
+          <TabsContent value="personal"><Card className="bg-white border-[var(--alo-border)]"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Personal Information</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div><Label className="text-xs text-[var(--alo-body)]">Employee ID</Label><Input value={safeValue(data.employeeId)} readOnly className="h-9 text-sm bg-[var(--alo-page)]" /></div>
             {renderInputs(PERSONAL_FIELDS.filter(([key]) => key !== 'officialEmail'), Boolean(data.canEdit))}
-            {data.officialEmail !== undefined && <div><Label className="text-xs text-slate-600">Official Email</Label><Input value={safeValue(data.officialEmail)} readOnly className="h-9 text-sm bg-slate-50" /></div>}
+            {data.officialEmail !== undefined && <div><Label className="text-xs text-[var(--alo-body)]">Official Email</Label><Input value={safeValue(data.officialEmail)} readOnly className="h-9 text-sm bg-[var(--alo-page)]" /></div>}
           </CardContent></Card></TabsContent>
-          <TabsContent value="employment"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Employment Information</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{renderInputs(EMPLOYMENT_FIELDS, false)}</CardContent></Card></TabsContent>
-          <TabsContent value="bank"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Bank & Compensation</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.fieldAccess?.payroll ? renderInputs(PAYROLL_FIELDS, false) : <p className="text-sm text-slate-500 md:col-span-3">Payroll calculation details are not available to this account.</p>}
-            {!data.fieldAccess?.bank && <p className="text-sm text-slate-500 md:col-span-3">Bank details are not available to this account.</p>}
+          <TabsContent value="employment"><Card className="bg-white border-[var(--alo-border)]"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Employment Information</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{renderInputs(EMPLOYMENT_FIELDS, false)}</CardContent></Card></TabsContent>
+          <TabsContent value="bank"><Card className="bg-white border-[var(--alo-border)]"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Bank & Compensation</CardTitle></CardHeader><CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.fieldAccess?.payroll ? renderInputs(PAYROLL_FIELDS, false) : <p className="text-sm text-[var(--alo-text-muted)] md:col-span-3">Payroll calculation details are not available to this account.</p>}
+            {!data.fieldAccess?.bank && <p className="text-sm text-[var(--alo-text-muted)] md:col-span-3">Bank details are not available to this account.</p>}
           </CardContent></Card></TabsContent>
-          <TabsContent value="education"><Card className="bg-white border-slate-200"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Education • Experience • Skills • Languages</CardTitle></CardHeader><CardContent className="p-4 space-y-4 text-xs text-slate-600">
-            <section><p className="font-semibold text-slate-700">Education</p>{data.education?.length ? data.education.map((item: any) => <div key={item.id} className="mt-1 p-2 bg-slate-50 border rounded">{item.degree} — {item.institution} ({item.passingYear}) — {item.result}</div>) : <p className="text-slate-400">No education records.</p>}</section>
-            <section><p className="font-semibold text-slate-700">Experience</p>{data.experience?.length ? data.experience.map((item: any) => <div key={item.id} className="mt-1 p-2 bg-slate-50 border rounded">{item.company} — {item.designation} ({item.fromDate} to {item.toDate || 'Present'})</div>) : <p className="text-slate-400">No experience records.</p>}</section>
-            <section><p className="font-semibold text-slate-700">Skills</p><div className="mt-1 flex flex-wrap gap-1">{data.skills?.length ? data.skills.map((item: any) => <Badge key={item.id} variant="outline">{item.name} — {item.level}</Badge>) : <span className="text-slate-400">No skills.</span>}</div></section>
-            <section><p className="font-semibold text-slate-700">Languages</p><div className="mt-1 flex flex-wrap gap-1">{data.languages?.length ? data.languages.map((item: any) => <Badge key={item.id} variant="outline">{item.name}: {item.speaking}/{item.writing}</Badge>) : <span className="text-slate-400">No languages.</span>}</div></section>
+          <TabsContent value="education"><Card className="bg-white border-[var(--alo-border)]"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Education • Experience • Skills • Languages</CardTitle></CardHeader><CardContent className="p-4 space-y-4 text-xs text-[var(--alo-body)]">
+            <section><p className="font-semibold text-[var(--alo-body)]">Education</p>{data.education?.length ? data.education.map((item: any) => <div key={item.id} className="mt-1 p-2 bg-[var(--alo-page)] border rounded">{item.degree} — {item.institution} ({item.passingYear}) — {item.result}</div>) : <p className="text-[var(--alo-text-muted)]">No education records.</p>}</section>
+            <section><p className="font-semibold text-[var(--alo-body)]">Experience</p>{data.experience?.length ? data.experience.map((item: any) => <div key={item.id} className="mt-1 p-2 bg-[var(--alo-page)] border rounded">{item.company} — {item.designation} ({item.fromDate} to {item.toDate || 'Present'})</div>) : <p className="text-[var(--alo-text-muted)]">No experience records.</p>}</section>
+            <section><p className="font-semibold text-[var(--alo-body)]">Skills</p><div className="mt-1 flex flex-wrap gap-1">{data.skills?.length ? data.skills.map((item: any) => <Badge key={item.id} variant="outline">{item.name} — {item.level}</Badge>) : <span className="text-[var(--alo-text-muted)]">No skills.</span>}</div></section>
+            <section><p className="font-semibold text-[var(--alo-body)]">Languages</p><div className="mt-1 flex flex-wrap gap-1">{data.languages?.length ? data.languages.map((item: any) => <Badge key={item.id} variant="outline">{item.name}: {item.speaking}/{item.writing}</Badge>) : <span className="text-[var(--alo-text-muted)]">No languages.</span>}</div></section>
           </CardContent></Card></TabsContent>
           <div className="flex gap-2">
-            {data.canEdit && <Button type="submit" disabled={saving} className="bg-[#E8501A] hover:bg-[#D04010] text-white h-9 text-sm">{saving ? 'Saving…' : 'Save personal-profile fields'}</Button>}
+            {data.canEdit && <Button type="submit" disabled={saving} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black text-sm">{saving ? 'Saving…' : 'Save personal-profile fields'}</Button>}
             <Button type="button" variant="outline" onClick={() => void fetchProfile()} className="h-9 text-sm">Reload</Button>
           </div>
-          <p className="text-xs text-slate-400">Employment, role, branch, access, lifecycle, salary and bank changes must use their dedicated reviewed workflows; they cannot be changed here.</p>
+          <p className="text-xs text-[var(--alo-text-muted)]">Employment, role, branch, access, lifecycle, salary and bank changes must use their dedicated reviewed workflows; they cannot be changed here.</p>
         </form>
       </Tabs>
     </div>

@@ -68,7 +68,7 @@ export function CrmSms() {
       />
 
       {loading ? (
-        <div className="text-center text-[#5A7299]">Loading...</div>
+        <div className="text-center text-[var(--alo-text-muted)]">Loading...</div>
       ) : conversations.length === 0 ? (
         <EmptyState
           icon="MessageCircle"
@@ -99,30 +99,30 @@ export function CrmSms() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <Card className="rounded-2xl border border-[#DCE8F5] bg-white lg:col-span-1">
+            <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white lg:col-span-1">
               <CardContent className="p-0">
-                <div className="border-b border-[#DCE8F5] px-4 py-3">
-                  <h3 className="font-bold text-[#0B2447]">Conversations</h3>
+                <div className="border-b border-[var(--alo-brand-border)] px-4 py-3">
+                  <h3 className="font-bold text-[var(--alo-text)]">Conversations</h3>
                 </div>
-                <div className="max-h-[600px] overflow-y-auto divide-y divide-[#DCE8F5]">
+                <div className="max-h-[600px] overflow-y-auto divide-y divide-[var(--alo-brand-border)]">
                   {conversations.map((c) => (
                     <button
                       key={c.key}
                       onClick={() => setSelected(c)}
-                      className={`flex w-full flex-col gap-1 px-4 py-3 text-left transition-colors hover:bg-[#EAF3FF] ${
-                        selected?.key === c.key ? "bg-[#EAF3FF]" : ""
+                      className={`flex w-full flex-col gap-1 px-4 py-3 text-left transition-colors hover:bg-[var(--alo-brand-light)] ${
+                        selected?.key === c.key ? "bg-[var(--alo-brand-light)]" : ""
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-semibold text-[#0B2447]">
+                        <p className="text-sm font-semibold text-[var(--alo-text)]">
                           {c.studentName || c.fromName || "Unknown"}
                         </p>
                         {c.unread > 0 && (
-                          <Badge className="bg-[#E8501A] text-white">{c.unread}</Badge>
+                          <Badge className="bg-[var(--alo-cta)] text-white">{c.unread}</Badge>
                         )}
                       </div>
-                      <p className="text-xs text-[#5A7299]">{c.fromPhone}</p>
-                      <p className="truncate text-xs text-[#5A7299]">
+                      <p className="text-xs text-[var(--alo-text-muted)]">{c.fromPhone}</p>
+                      <p className="truncate text-xs text-[var(--alo-text-muted)]">
                         {c.messages?.[c.messages.length - 1]?.body?.slice(0, 50)}
                       </p>
                     </button>
@@ -131,30 +131,30 @@ export function CrmSms() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl border border-[#DCE8F5] bg-white lg:col-span-2">
+            <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white lg:col-span-2">
               <CardContent className="flex h-[600px] flex-col p-0">
                 {selected ? (
                   <>
-                    <div className="border-b border-[#DCE8F5] px-4 py-3">
-                      <p className="font-bold text-[#0B2447]">
+                    <div className="border-b border-[var(--alo-brand-border)] px-4 py-3">
+                      <p className="font-bold text-[var(--alo-text)]">
                         {selected.studentName || selected.fromName || "Unknown"}
                       </p>
-                      <p className="text-xs text-[#5A7299]">{selected.fromPhone}</p>
+                      <p className="text-xs text-[var(--alo-text-muted)]">{selected.fromPhone}</p>
                     </div>
-                    <div className="flex-1 space-y-2 overflow-y-auto bg-[#F7FAFE] p-4">
+                    <div className="flex-1 space-y-2 overflow-y-auto bg-[var(--alo-page)] p-4">
                       {(selected.messages || []).map((m: any) => (
                         <div
                           key={m.id}
                           className={`rounded-2xl px-3 py-2 text-sm ${
                             m.direction === "OUTBOUND"
-                              ? "ml-auto max-w-[75%] bg-[#0057B8] text-white"
-                              : "max-w-[75%] bg-white text-[#0B2447]"
+                              ? "ml-auto max-w-[75%] bg-[var(--alo-brand)] text-white"
+                              : "max-w-[75%] bg-white text-[var(--alo-text)]"
                           }`}
                         >
                           <p>{m.body}</p>
                           <p
-                            className={`mt-1 text-[10px] ${
-                              m.direction === "OUTBOUND" ? "text-blue-100" : "text-[#5A7299]"
+                            className={`mt-1 text-[11px] ${
+                              m.direction === "OUTBOUND" ? "text-[var(--alo-brand-pale)]" : "text-[var(--alo-text-muted)]"
                             }`}
                           >
                             {new Date(m.receivedAt).toLocaleTimeString("en-GB", {
@@ -165,30 +165,30 @@ export function CrmSms() {
                         </div>
                       ))}
                     </div>
-                    <div className="border-t border-[#DCE8F5] p-3">
+                    <div className="border-t border-[var(--alo-brand-border)] p-3">
                       <div className="flex gap-2">
                         <Input
                           value={reply}
                           onChange={(e) => setReply(e.target.value)}
                           placeholder="Type SMS..."
                           maxLength={160}
-                          className="border-[#DCE8F5]"
+                          className="border-[var(--alo-brand-border)]"
                         />
                         <Button
                           onClick={handleSend}
                           disabled={sending || !reply.trim()}
-                          className="bg-[#0057B8] text-white hover:bg-[#003F87]"
+                          className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]"
                         >
                           <Icon name="Send" className="size-4" />
                         </Button>
                       </div>
-                      <p className="mt-1 text-right text-[10px] text-[#5A7299]">
+                      <p className="mt-1 text-right text-[11px] text-[var(--alo-text-muted)]">
                         {reply.length}/160
                       </p>
                     </div>
                   </>
                 ) : (
-                  <div className="flex h-full items-center justify-center text-[#5A7299]">
+                  <div className="flex h-full items-center justify-center text-[var(--alo-text-muted)]">
                     Select a conversation
                   </div>
                 )}

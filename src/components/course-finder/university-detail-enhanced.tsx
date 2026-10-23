@@ -144,24 +144,24 @@ function getTypeBadgeClasses(type: string | null | undefined): string {
     case 'PUBLIC': return 'bg-emerald-100 text-emerald-700';
     case 'PRIVATE': return 'bg-violet-100 text-violet-700';
     case 'SPECIALISED': return 'bg-amber-100 text-amber-700';
-    default: return 'bg-slate-100 text-slate-600';
+    default: return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
 
 function getLevelBadgeClasses(level: string | undefined): string {
   switch (level?.toLowerCase()) {
     case 'undergraduate': case 'bachelor':
-      return 'bg-[#0057B8]/10 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]';
     case 'postgraduate': case 'master':
-      return 'bg-[#0057B8]/20 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/20 text-[var(--alo-brand)]';
     case 'phd': case 'doctorate':
-      return 'bg-[#0057B8]/30 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/30 text-[var(--alo-brand)]';
     case 'foundation':
       return 'bg-sky-100 text-sky-800';
     case 'diploma': case 'certificate':
-      return 'bg-[#0057B8]/15 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]';
     default:
-      return 'bg-slate-100 text-slate-700';
+      return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
 
@@ -217,11 +217,11 @@ function NotFoundState({ onBack }: { onBack: () => void }) {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-8">
       <div className="text-center max-w-md">
-        <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-6">
-          <SearchX className="size-10 text-slate-300" />
+        <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mx-auto mb-6">
+          <SearchX className="size-10 text-[var(--alo-placeholder)]" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">University Not Found</h2>
-        <p className="text-slate-500 mb-6">
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">University Not Found</h2>
+        <p className="text-[var(--alo-text-muted)] mb-6">
           The university you&apos;re looking for doesn&apos;t exist or is not yet verified in our directory.
         </p>
         <div className="flex gap-3 justify-center">
@@ -238,7 +238,7 @@ function NotFoundState({ onBack }: { onBack: () => void }) {
 // ─── Course Card ──────────────────────────────────────────────────────────────
 function CourseCard({ course }: { course: CourseData }) {
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow border-slate-200">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-5 space-y-3">
         <div className="flex items-start justify-between gap-2">
           {course.studyLevel && (
@@ -256,34 +256,34 @@ function CourseCard({ course }: { course: CourseData }) {
             </Badge>
           )}
         </div>
-        <h3 className="font-semibold text-slate-900 leading-snug line-clamp-2">
+        <h3 className="font-semibold text-[var(--alo-text)] leading-snug line-clamp-2">
           {course.title}
         </h3>
         {course.qualification && (
-          <p className="text-sm text-slate-500">{course.qualification}</p>
+          <p className="text-sm text-[var(--alo-text-muted)]">{course.qualification}</p>
         )}
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
           {course.duration && (
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Clock className="size-3.5 text-slate-400" />
+            <div className="flex items-center gap-1.5 text-[var(--alo-body)]">
+              <Clock className="size-3.5 text-[var(--alo-text-muted)]" />
               <span>{course.duration}</span>
             </div>
           )}
           {course.tuitionFee != null && (
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <DollarSign className="size-3.5 text-slate-400" />
+            <div className="flex items-center gap-1.5 text-[var(--alo-body)]">
+              <DollarSign className="size-3.5 text-[var(--alo-text-muted)]" />
               <span>{course.tuitionCurrency || 'GBP'} {course.tuitionFee.toLocaleString()}</span>
             </div>
           )}
           {course.ieltsMin != null && (
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <GraduationCap className="size-3.5 text-slate-400" />
+            <div className="flex items-center gap-1.5 text-[var(--alo-body)]">
+              <GraduationCap className="size-3.5 text-[var(--alo-text-muted)]" />
               <span>IELTS {course.ieltsMin}</span>
             </div>
           )}
           {course.nextIntake && (
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Calendar className="size-3.5 text-slate-400" />
+            <div className="flex items-center gap-1.5 text-[var(--alo-body)]">
+              <Calendar className="size-3.5 text-[var(--alo-text-muted)]" />
               <span>{course.nextIntake}</span>
             </div>
           )}
@@ -293,7 +293,7 @@ function CourseCard({ course }: { course: CourseData }) {
             href={course.officialCourseUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-[#0057B8] hover:underline mt-1"
+            className="inline-flex items-center gap-1 text-xs text-[var(--alo-brand)] hover:underline mt-1"
           >
             View on Official Website <ExternalLink className="size-3" />
           </a>
@@ -313,7 +313,7 @@ function RelatedUniversityCard({
 }) {
   return (
     <Card
-      className="min-w-[260px] max-w-[280px] hover:shadow-md transition-shadow border-slate-200 cursor-pointer flex-shrink-0"
+      className="min-w-[260px] max-w-[280px] hover:shadow-md transition-shadow border-[var(--alo-border)] cursor-pointer flex-shrink-0"
       onClick={() => onClick(uni.slug)}
     >
       <CardContent className="p-4 space-y-2">
@@ -327,13 +327,13 @@ function RelatedUniversityCard({
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <h4 className="font-semibold text-sm text-slate-900 leading-snug line-clamp-2">
+            <h4 className="font-semibold text-sm text-[var(--alo-text)] leading-snug line-clamp-2">
               {uni.officialName || uni.name}
             </h4>
           </div>
         </div>
         {uni.city && (
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
             <MapPin className="size-3" />
             <span>{uni.city}, {uni.country}</span>
           </div>
@@ -350,7 +350,7 @@ function RelatedUniversityCard({
           {uni.institutionType && (
             <Badge
               variant="secondary"
-              className={`text-[10px] px-1.5 py-0 ${getTypeBadgeClasses(uni.institutionType)}`}
+              className={`text-[11px] px-1.5 py-0 ${getTypeBadgeClasses(uni.institutionType)}`}
             >
               {uni.institutionType}
             </Badge>
@@ -513,8 +513,8 @@ export function UniversityDetailEnhanced({
           <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
             <SearchX className="size-10 text-red-300" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Error Loading University</h2>
-          <p className="text-slate-500 mb-6">{error || 'Unable to load university data.'}</p>
+          <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Error Loading University</h2>
+          <p className="text-[var(--alo-text-muted)] mb-6">{error || 'Unable to load university data.'}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Try Again
           </Button>
@@ -535,28 +535,28 @@ export function UniversityDetailEnhanced({
     <div className="min-h-screen bg-white">
       {/* ═══ Breadcrumb ═══ */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
           <button
             onClick={onBack}
-            className="hover:text-[#0057B8] transition-colors flex items-center gap-1"
+            className="hover:text-[var(--alo-brand)] transition-colors flex items-center gap-1"
           >
             <ChevronUp className="size-3 rotate-[-90deg]" />
             Universities
           </button>
           <ChevronRight className="size-3" />
-          <span className="font-medium text-slate-700 truncate">{uni.officialName || uni.name}</span>
+          <span className="font-medium text-[var(--alo-body)] truncate">{uni.officialName || uni.name}</span>
         </nav>
       </div>
 
       {/* ═══ Hero Section ═══ */}
       <section
-        className="relative bg-gradient-to-br from-[#0057B8]/5 via-white to-[#0057B8]/10"
+        className="relative bg-gradient-to-br from-[var(--alo-brand)]/5 via-white to-[var(--alo-brand)]/10"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
           {/* Back Button */}
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] transition-colors mb-6"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] transition-colors mb-6"
           >
             <ArrowLeft className="size-4" />
             Back to University Directory
@@ -609,14 +609,14 @@ export function UniversityDetailEnhanced({
               </div>
 
               {/* Name */}
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--alo-text)] mb-2">
                 {uni.officialName || uni.name}
               </h1>
 
               {/* Location + Type + Established */}
-              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--alo-body)]">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="size-4 text-slate-400" />
+                  <MapPin className="size-4 text-[var(--alo-text-muted)]" />
                   <span>
                     {[uni.city, uni.state, uni.country].filter(Boolean).join(', ')}
                   </span>
@@ -632,7 +632,7 @@ export function UniversityDetailEnhanced({
                 )}
                 {uni.establishedYear && (
                   <span className="flex items-center gap-1">
-                    <Sparkles className="size-3.5 text-slate-400" />
+                    <Sparkles className="size-3.5 text-[var(--alo-text-muted)]" />
                     Est. {uni.establishedYear}
                   </span>
                 )}
@@ -644,39 +644,39 @@ export function UniversityDetailEnhanced({
 
       {/* ═══ Quick Stats Bar ═══ */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-2 relative z-10">
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div className="bg-white rounded-xl border border-[var(--alo-border)] shadow-sm p-4 sm:p-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {/* Courses */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <BookOpen className="size-4" style={{ color: ALO_BLUE }} />
-                <span className="text-xl sm:text-2xl font-bold text-slate-900">
+                <span className="text-xl sm:text-2xl font-bold text-[var(--alo-text)]">
                   {courseCount}
                 </span>
               </div>
-              <span className="text-xs sm:text-sm text-slate-500">Published Courses</span>
+              <span className="text-xs sm:text-sm text-[var(--alo-text-muted)]">Published Courses</span>
             </div>
 
             {/* Scholarship */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Award className="size-4" style={{ color: ALO_BLUE }} />
-                <span className="text-xl sm:text-2xl font-bold text-slate-900">
+                <span className="text-xl sm:text-2xl font-bold text-[var(--alo-text)]">
                   {uni.scholarshipAvailable ? 'Yes' : '—'}
                 </span>
               </div>
-              <span className="text-xs sm:text-sm text-slate-500">Scholarships</span>
+              <span className="text-xs sm:text-sm text-[var(--alo-text-muted)]">Scholarships</span>
             </div>
 
             {/* Key Intakes */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Calendar className="size-4" style={{ color: ALO_BLUE }} />
-                <span className="text-sm sm:text-lg font-bold text-slate-900 truncate max-w-[140px] mx-auto" title={uni.keyIntakes || undefined}>
+                <span className="text-sm sm:text-lg font-bold text-[var(--alo-text)] truncate max-w-[140px] mx-auto" title={uni.keyIntakes || undefined}>
                   {uni.keyIntakes || 'N/A'}
                 </span>
               </div>
-              <span className="text-xs sm:text-sm text-slate-500">Key Intakes</span>
+              <span className="text-xs sm:text-sm text-[var(--alo-text-muted)]">Key Intakes</span>
             </div>
 
             {/* Ranking */}
@@ -684,14 +684,14 @@ export function UniversityDetailEnhanced({
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Trophy className="size-4 text-amber-500" />
                 {rankings.length > 0 && rankings[0].value > 0 ? (
-                  <span className="text-xl sm:text-2xl font-bold text-slate-900">
+                  <span className="text-xl sm:text-2xl font-bold text-[var(--alo-text)]">
                     #{rankings[0].value}
                   </span>
                 ) : (
-                  <span className="text-sm sm:text-base font-bold text-slate-400">N/A</span>
+                  <span className="text-sm sm:text-base font-bold text-[var(--alo-text-muted)]">N/A</span>
                 )}
               </div>
-              <span className="text-xs sm:text-sm text-slate-500 truncate">
+              <span className="text-xs sm:text-sm text-[var(--alo-text-muted)] truncate">
                 {rankings.length > 0
                   ? `${rankings[0].provider || 'Ranking'} ${rankings[0].year || ''}`
                   : 'Ranking unavailable'}
@@ -704,36 +704,36 @@ export function UniversityDetailEnhanced({
       {/* ═══ Eligibility Profile Section ═══ */}
       {eligibilityProfile && (
         <section className="max-w-6xl mx-auto px-4 sm:px-6 mt-6">
-          <Card className="border-[#0057B8]/20 bg-[#0057B8]/5">
+          <Card className="border-[var(--alo-brand)]/20 bg-[var(--alo-brand)]/5">
             <CardContent className="p-5">
-              <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+              <h3 className="font-semibold text-[var(--alo-text)] mb-4 flex items-center gap-2">
                 <Heart className="size-4" style={{ color: ALO_ORANGE }} />
                 Your Profile at {uni.name}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                 <div className="text-center">
                   <div className="text-lg font-bold text-emerald-600">{eligibilityProfile.eligible}</div>
-                  <div className="text-xs text-slate-500">Eligible</div>
+                  <div className="text-xs text-[var(--alo-text-muted)]">Eligible</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">{eligibilityProfile.likely}</div>
-                  <div className="text-xs text-slate-500">Likely Match</div>
+                  <div className="text-lg font-bold text-[var(--alo-brand)]">{eligibilityProfile.likely}</div>
+                  <div className="text-xs text-[var(--alo-text-muted)]">Likely Match</div>
                 </div>
                 <div className="text-center">
                   <div className="text-lg font-bold text-amber-600">{eligibilityProfile.conditional}</div>
-                  <div className="text-xs text-slate-500">Conditional</div>
+                  <div className="text-xs text-[var(--alo-text-muted)]">Conditional</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-slate-400">{eligibilityProfile.notEligible}</div>
-                  <div className="text-xs text-slate-500">Not Eligible</div>
+                  <div className="text-lg font-bold text-[var(--alo-text-muted)]">{eligibilityProfile.notEligible}</div>
+                  <div className="text-xs text-[var(--alo-text-muted)]">Not Eligible</div>
                 </div>
                 <div className="col-span-2 sm:col-span-1 text-center">
-                  <div className="text-sm font-semibold text-slate-700">
+                  <div className="text-sm font-semibold text-[var(--alo-body)]">
                     From {eligibilityProfile.lowestTuition ? `$${eligibilityProfile.lowestTuition.toLocaleString()}` : 'N/A'}
                   </div>
-                  <div className="text-xs text-slate-500">Lowest Tuition</div>
+                  <div className="text-xs text-[var(--alo-text-muted)]">Lowest Tuition</div>
                   {eligibilityProfile.earliestIntake && (
-                    <div className="text-xs text-slate-400 mt-1">{eligibilityProfile.earliestIntake}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">{eligibilityProfile.earliestIntake}</div>
                   )}
                 </div>
               </div>
@@ -749,7 +749,7 @@ export function UniversityDetailEnhanced({
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="courses">
               Courses
-              <Badge variant="secondary" className="ml-1.5 text-[10px] px-1.5 py-0">{courseCount}</Badge>
+              <Badge variant="secondary" className="ml-1.5 text-[11px] px-1.5 py-0">{courseCount}</Badge>
             </TabsTrigger>
             <TabsTrigger value="scholarships">Scholarships</TabsTrigger>
             <TabsTrigger value="rankings">Rankings</TabsTrigger>
@@ -761,11 +761,11 @@ export function UniversityDetailEnhanced({
             {/* Description */}
             {uni.description && (
               <div>
-                <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-[var(--alo-text)] mb-3 flex items-center gap-2">
                   <Sparkles className="size-5" style={{ color: ALO_BLUE }} />
                   About {uni.name}
                 </h2>
-                <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed text-slate-700 whitespace-pre-line">
+                <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed text-[var(--alo-body)] whitespace-pre-line">
                   {uni.description}
                 </div>
               </div>
@@ -775,7 +775,7 @@ export function UniversityDetailEnhanced({
 
             {/* Official Links */}
             <div>
-              <h3 className="text-base font-semibold text-slate-900 mb-3 flex items-center gap-2">
+              <h3 className="text-base font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
                 <Globe className="size-4" style={{ color: ALO_BLUE }} />
                 Official Links
               </h3>
@@ -785,14 +785,14 @@ export function UniversityDetailEnhanced({
                     href={uni.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0057B8]/30 hover:bg-[#0057B8]/5 transition-colors"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-[var(--alo-border)] hover:border-[var(--alo-brand)]/30 hover:bg-[var(--alo-brand)]/5 transition-colors"
                   >
-                    <Globe className="size-4 text-slate-400" />
+                    <Globe className="size-4 text-[var(--alo-text-muted)]" />
                     <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium text-slate-900 truncate">Official Website</div>
-                      <div className="text-xs text-slate-500 truncate">{uni.websiteUrl}</div>
+                      <div className="text-sm font-medium text-[var(--alo-text)] truncate">Official Website</div>
+                      <div className="text-xs text-[var(--alo-text-muted)] truncate">{uni.websiteUrl}</div>
                     </div>
-                    <ExternalLink className="size-3.5 text-slate-400 flex-shrink-0" />
+                    <ExternalLink className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
                   </a>
                 )}
                 {uni.admissionsUrl && (
@@ -800,14 +800,14 @@ export function UniversityDetailEnhanced({
                     href={uni.admissionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0057B8]/30 hover:bg-[#0057B8]/5 transition-colors"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-[var(--alo-border)] hover:border-[var(--alo-brand)]/30 hover:bg-[var(--alo-brand)]/5 transition-colors"
                   >
-                    <FileText className="size-4 text-slate-400" />
+                    <FileText className="size-4 text-[var(--alo-text-muted)]" />
                     <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium text-slate-900 truncate">Admissions</div>
-                      <div className="text-xs text-slate-500 truncate">{uni.admissionsUrl}</div>
+                      <div className="text-sm font-medium text-[var(--alo-text)] truncate">Admissions</div>
+                      <div className="text-xs text-[var(--alo-text-muted)] truncate">{uni.admissionsUrl}</div>
                     </div>
-                    <ExternalLink className="size-3.5 text-slate-400 flex-shrink-0" />
+                    <ExternalLink className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
                   </a>
                 )}
                 {uni.internationalUrl && (
@@ -815,14 +815,14 @@ export function UniversityDetailEnhanced({
                     href={uni.internationalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-[#0057B8]/30 hover:bg-[#0057B8]/5 transition-colors"
+                    className="flex items-center gap-2 p-3 rounded-lg border border-[var(--alo-border)] hover:border-[var(--alo-brand)]/30 hover:bg-[var(--alo-brand)]/5 transition-colors"
                   >
-                    <Languages className="size-4 text-slate-400" />
+                    <Languages className="size-4 text-[var(--alo-text-muted)]" />
                     <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium text-slate-900 truncate">International Students</div>
-                      <div className="text-xs text-slate-500 truncate">{uni.internationalUrl}</div>
+                      <div className="text-sm font-medium text-[var(--alo-text)] truncate">International Students</div>
+                      <div className="text-xs text-[var(--alo-text-muted)] truncate">{uni.internationalUrl}</div>
                     </div>
-                    <ExternalLink className="size-3.5 text-slate-400 flex-shrink-0" />
+                    <ExternalLink className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
                   </a>
                 )}
               </div>
@@ -832,45 +832,45 @@ export function UniversityDetailEnhanced({
 
             {/* Key Facts */}
             <div>
-              <h3 className="text-base font-semibold text-slate-900 mb-3 flex items-center gap-2">
+              <h3 className="text-base font-semibold text-[var(--alo-text)] mb-3 flex items-center gap-2">
                 <Building2 className="size-4" style={{ color: ALO_BLUE }} />
                 Key Facts
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {uni.establishedYear && (
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                  <div className="p-3 rounded-lg bg-[var(--alo-page)]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-1">
                       <Calendar className="size-3" />
                       Established
                     </div>
-                    <div className="text-sm font-semibold text-slate-900">{uni.establishedYear}</div>
+                    <div className="text-sm font-semibold text-[var(--alo-text)]">{uni.establishedYear}</div>
                   </div>
                 )}
                 {uni.studentCount && (
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                  <div className="p-3 rounded-lg bg-[var(--alo-page)]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-1">
                       <Users className="size-3" />
                       Total Students
                     </div>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--alo-text)]">
                       {uni.studentCount.toLocaleString()}
                     </div>
                   </div>
                 )}
                 {uni.internationalStudentCount && (
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                  <div className="p-3 rounded-lg bg-[var(--alo-page)]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-1">
                       <Globe className="size-3" />
                       International Students
                     </div>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--alo-text)]">
                       {uni.internationalStudentCount.toLocaleString()}
                     </div>
                   </div>
                 )}
                 {uni.accommodationAvailable && (
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                  <div className="p-3 rounded-lg bg-[var(--alo-page)]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-1">
                       <Home className="size-3" />
                       Accommodation
                     </div>
@@ -878,8 +878,8 @@ export function UniversityDetailEnhanced({
                   </div>
                 )}
                 {uni.careerSupport && (
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                  <div className="p-3 rounded-lg bg-[var(--alo-page)]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-1">
                       <Briefcase className="size-3" />
                       Career Support
                     </div>
@@ -887,12 +887,12 @@ export function UniversityDetailEnhanced({
                   </div>
                 )}
                 {uni.employabilityRate && (
-                  <div className="p-3 rounded-lg bg-slate-50">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                  <div className="p-3 rounded-lg bg-[var(--alo-page)]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-1">
                       <TrendingUp className="size-3" />
                       Employability Rate
                     </div>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--alo-text)]">
                       {uni.employabilityRate}%
                     </div>
                   </div>
@@ -920,13 +920,13 @@ export function UniversityDetailEnhanced({
               )}
 
               {courses.length === 0 ? (
-                <div className="text-center py-12 bg-slate-50 rounded-xl">
-                  <BookOpen className="size-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500 font-medium">No published courses available yet.</p>
-                  <p className="text-slate-400 text-sm mt-1">
+                <div className="text-center py-12 bg-[var(--alo-page)] rounded-xl">
+                  <BookOpen className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                  <p className="text-[var(--alo-text-muted)] font-medium">No published courses available yet.</p>
+                  <p className="text-[var(--alo-text-muted)] text-sm mt-1">
                     We are continuously adding courses. Check back soon or{' '}
                     <button
-                      className="text-[#0057B8] hover:underline"
+                      className="text-[var(--alo-brand)] hover:underline"
                       onClick={() => toast.info('Connecting you with a counsellor...')}
                     >
                       speak to a counsellor
@@ -936,8 +936,8 @@ export function UniversityDetailEnhanced({
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-slate-500">
-                    Showing <span className="font-semibold text-slate-700">{courses.length}</span>{' '}
+                  <p className="text-sm text-[var(--alo-text-muted)]">
+                    Showing <span className="font-semibold text-[var(--alo-body)]">{courses.length}</span>{' '}
                     published {courses.length === 1 ? 'course' : 'courses'} at {uni.name}
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -962,10 +962,10 @@ export function UniversityDetailEnhanced({
                           <Award className="size-5 text-emerald-600" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-900 mb-1">
+                          <h3 className="font-semibold text-[var(--alo-text)] mb-1">
                             Scholarships Available
                           </h3>
-                          <p className="text-sm text-slate-600 leading-relaxed">
+                          <p className="text-sm text-[var(--alo-body)] leading-relaxed">
                             {uni.name} offers scholarship opportunities for international students.
                             Scholarship eligibility varies by programme and student profile. Contact an
                             ALO Education counsellor to explore the scholarship options that match your
@@ -979,7 +979,7 @@ export function UniversityDetailEnhanced({
                   {/* Scholarship courses */}
                   {courses.filter((c) => c.scholarshipAvailable).length > 0 && (
                     <>
-                      <h4 className="font-semibold text-slate-800">
+                      <h4 className="font-semibold text-[var(--alo-text)]">
                         Courses with Scholarships ({courses.filter((c) => c.scholarshipAvailable).length})
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1007,7 +1007,7 @@ export function UniversityDetailEnhanced({
                     </Button>
                     <Button
                       variant="outline"
-                      className="text-[#E8501A] border-[#E8501A]/30 hover:bg-[#E8501A]/5"
+                      className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 hover:bg-[var(--alo-cta)]/5"
                       onClick={() => toast.info('Connecting you with a counsellor...')}
                     >
                       <MessageCircle className="size-4 mr-2" />
@@ -1016,10 +1016,10 @@ export function UniversityDetailEnhanced({
                   </div>
                 </>
               ) : (
-                <div className="text-center py-12 bg-slate-50 rounded-xl">
-                  <Award className="size-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500 font-medium">No scholarship information available</p>
-                  <p className="text-slate-400 text-sm mt-1">
+                <div className="text-center py-12 bg-[var(--alo-page)] rounded-xl">
+                  <Award className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                  <p className="text-[var(--alo-text-muted)] font-medium">No scholarship information available</p>
+                  <p className="text-[var(--alo-text-muted)] text-sm mt-1">
                     Scholarship data for this university has not been published yet. Speak to an
                     ALO Education counsellor to explore funding options that may be available.
                   </p>
@@ -1039,16 +1039,16 @@ export function UniversityDetailEnhanced({
           {/* ── Rankings Tab ── */}
           <TabsContent value="rankings">
             <div className="space-y-4">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--alo-text-muted)]">
                 Rankings are sourced from verified ranking publishers. Always refer to the
                 official ranking source for the most up-to-date positions.
               </p>
 
               {rankings.length === 0 ? (
-                <div className="text-center py-12 bg-slate-50 rounded-xl">
-                  <Trophy className="size-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500 font-medium">Ranking unavailable</p>
-                  <p className="text-slate-400 text-sm mt-1">
+                <div className="text-center py-12 bg-[var(--alo-page)] rounded-xl">
+                  <Trophy className="size-10 text-[var(--alo-placeholder)] mx-auto mb-3" />
+                  <p className="text-[var(--alo-text-muted)] font-medium">Ranking unavailable</p>
+                  <p className="text-[var(--alo-text-muted)] text-sm mt-1">
                     This university is not listed in the current edition of the ranking
                     providers we track, or its ranking data has not yet been verified.
                   </p>
@@ -1063,20 +1063,20 @@ export function UniversityDetailEnhanced({
                             <span className="text-xl font-bold text-amber-700">#{r.value}</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-slate-900 mb-1">
+                            <h4 className="font-semibold text-[var(--alo-text)] mb-1">
                               {r.provider || 'Ranking'}
                               {r.year ? ` — ${r.year}` : ''}
                             </h4>
                             {r.name && (
-                              <p className="text-sm text-slate-600 mb-1">{r.name}</p>
+                              <p className="text-sm text-[var(--alo-body)] mb-1">{r.name}</p>
                             )}
                             {r.edition && (
-                              <p className="text-xs text-slate-500">Edition: {r.edition}</p>
+                              <p className="text-xs text-[var(--alo-text-muted)]">Edition: {r.edition}</p>
                             )}
                             {r.category && (
                               <Badge
                                 variant="secondary"
-                                className="mt-2 text-xs bg-slate-100 text-slate-600"
+                                className="mt-2 text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"
                               >
                                 {r.category}
                               </Badge>
@@ -1086,7 +1086,7 @@ export function UniversityDetailEnhanced({
                                 href={r.sourceUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-[#0057B8] hover:underline mt-2"
+                                className="inline-flex items-center gap-1 text-xs text-[var(--alo-brand)] hover:underline mt-2"
                               >
                                 View Official Source <ExternalLink className="size-3" />
                               </a>
@@ -1105,10 +1105,10 @@ export function UniversityDetailEnhanced({
           <TabsContent value="apply">
             <div className="space-y-6">
               <div>
-                <h2 className="text-lg font-bold text-slate-900 mb-2">
+                <h2 className="text-lg font-bold text-[var(--alo-text)] mb-2">
                   Apply to {uni.name} with ALO Education
                 </h2>
-                <p className="text-sm text-slate-600 leading-relaxed">
+                <p className="text-sm text-[var(--alo-body)] leading-relaxed">
                   ALO Education provides end-to-end support for your application to this university.
                   From initial assessment to enrolment, our experienced counsellors guide you through
                   every step of the process, ensuring a smooth and successful journey.
@@ -1133,8 +1133,8 @@ export function UniversityDetailEnhanced({
                     </div>
                     {/* Content */}
                     <div className="pb-8">
-                      <h3 className="font-semibold text-slate-900 mb-1">{step.title}</h3>
-                      <p className="text-sm text-slate-600 leading-relaxed">{step.description}</p>
+                      <h3 className="font-semibold text-[var(--alo-text)] mb-1">{step.title}</h3>
+                      <p className="text-sm text-[var(--alo-body)] leading-relaxed">{step.description}</p>
                     </div>
                   </div>
                 ))}
@@ -1175,7 +1175,7 @@ export function UniversityDetailEnhanced({
         <>
           <Separator className="max-w-6xl mx-auto mt-8" />
           <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-bold text-[var(--alo-text)] mb-6 flex items-center gap-2">
               <Building2 className="size-5" style={{ color: ALO_BLUE }} />
               Related Universities in {uni.country}
             </h2>
@@ -1193,13 +1193,13 @@ export function UniversityDetailEnhanced({
       )}
 
       {/* ═══ CTA Section ═══ */}
-      <div className="bg-gradient-to-r from-[#0057B8]/5 via-[#0057B8]/10 to-[#0057B8]/5">
+      <div className="bg-gradient-to-r from-[var(--alo-brand)]/5 via-[var(--alo-brand)]/10 to-[var(--alo-brand)]/5">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
           <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-[var(--alo-text)] mb-2">
               Ready to Apply to {uni.name}?
             </h2>
-            <p className="text-sm text-slate-600 max-w-xl mx-auto">
+            <p className="text-sm text-[var(--alo-body)] max-w-xl mx-auto">
               Let ALO Education handle your application from start to finish. Our expert
               counsellors maximise your chances of receiving an offer.
             </p>
@@ -1231,7 +1231,7 @@ export function UniversityDetailEnhanced({
 
       {/* ═══ Footer: Citations & Provenance ═══ */}
       <footer className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <div className="space-y-3 text-xs text-slate-400">
+        <div className="space-y-3 text-xs text-[var(--alo-text-muted)]">
           {rankings.length > 0 && rankings[0].value > 0 && (
             <p className="flex items-start gap-1.5">
               <ShieldCheck className="size-3.5 mt-0.5 flex-shrink-0" />

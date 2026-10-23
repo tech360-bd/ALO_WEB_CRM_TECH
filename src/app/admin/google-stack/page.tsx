@@ -218,7 +218,7 @@ function verdictBadge(verdict: Verdict) {
   const styles: Record<Verdict, string> = {
     PASS: 'border-emerald-300 bg-emerald-50 text-emerald-800',
     PARTIAL: 'border-sky-300 bg-sky-50 text-sky-900',
-    NOT_CONFIGURED: 'border-slate-300 bg-slate-100 text-slate-700',
+    NOT_CONFIGURED: 'border-[var(--alo-border-strong)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
     NOT_VERIFIED: 'border-amber-300 bg-amber-50 text-amber-900',
     BLOCKED: 'border-red-300 bg-red-50 text-red-800',
   };
@@ -388,8 +388,8 @@ export default function GoogleStackAdminPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Google Free Stack</h1>
-          <p className="mt-1 text-sm text-slate-600">
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">Google Free Stack</h1>
+          <p className="mt-1 text-sm text-[var(--alo-body)]">
             Configuration, live verification and acquisition reporting for ALO&rsquo;s Google
             integrations. Everything here is free-first: no service ALO runs requires a billing
             account.
@@ -427,19 +427,19 @@ export default function GoogleStackAdminPage() {
           <CardContent className="space-y-3 text-sm">
             <div className="flex flex-wrap gap-x-6 gap-y-2">
               <span>
-                <span className="font-medium text-slate-700">Environment:</span>{' '}
+                <span className="font-medium text-[var(--alo-body)]">Environment:</span>{' '}
                 <Badge variant="outline">{status.environment}</Badge>
               </span>
               <span>
-                <span className="font-medium text-slate-700">Site:</span> {status.siteUrl}
+                <span className="font-medium text-[var(--alo-body)]">Site:</span> {status.siteUrl}
               </span>
               <span>
-                <span className="font-medium text-slate-700">Tag loader:</span>{' '}
+                <span className="font-medium text-[var(--alo-body)]">Tag loader:</span>{' '}
                 <Badge variant="outline">{status.tagLoader.loader.toUpperCase()}</Badge>{' '}
                 {status.tagLoader.id ? <code className="text-xs">{status.tagLoader.id}</code> : null}
               </span>
               <span>
-                <span className="font-medium text-slate-700">Live checks run:</span>{' '}
+                <span className="font-medium text-[var(--alo-body)]">Live checks run:</span>{' '}
                 {status.liveChecksPerformed ? 'yes' : 'no — configuration only'}
               </span>
             </div>
@@ -480,19 +480,19 @@ export default function GoogleStackAdminPage() {
               <CardContent className="space-y-2 text-sm">
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
                   <span>
-                    <span className="font-medium text-slate-600">Configured:</span>{' '}
+                    <span className="font-medium text-[var(--alo-body)]">Configured:</span>{' '}
                     {service.configured ? 'yes' : 'no'}
                   </span>
                   <span>
-                    <span className="font-medium text-slate-600">Live verified:</span>{' '}
+                    <span className="font-medium text-[var(--alo-body)]">Live verified:</span>{' '}
                     {service.liveVerified === null ? 'not testable from the server' : service.liveVerified ? 'yes' : 'no'}
                   </span>
                   <span>
-                    <span className="font-medium text-slate-600">Billing account:</span>{' '}
+                    <span className="font-medium text-[var(--alo-body)]">Billing account:</span>{' '}
                     {service.billingRequired ? 'REQUIRED' : 'not required'}
                   </span>
                 </div>
-                <p className="text-slate-700">{service.reason}</p>
+                <p className="text-[var(--alo-body)]">{service.reason}</p>
                 {key === 'SEARCH_CONSOLE' ? (
                   <div className="flex flex-wrap gap-2 pt-1">
                     <Button size="sm" variant="outline" disabled={loadingPerformance} onClick={() => void loadPerformance()}>
@@ -547,7 +547,7 @@ export default function GoogleStackAdminPage() {
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="border-b text-slate-600">
+                    <thead className="border-b text-[var(--alo-body)]">
                       <tr>
                         <th className="p-2">Query</th>
                         <th className="p-2 text-right">Clicks</th>
@@ -569,7 +569,7 @@ export default function GoogleStackAdminPage() {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[var(--alo-text-muted)]">
                   Position is the impression-weighted average Google reported. Search Console is not
                   a rank tracker and does not return a position for an arbitrary keyword.
                 </p>
@@ -601,7 +601,7 @@ export default function GoogleStackAdminPage() {
                 </div>
                 <p className="text-xs">
                   Expected sitemap:{' '}
-                  <code className="rounded bg-slate-100 px-1">{sitemaps.expectedSitemapUrl}</code>{' '}
+                  <code className="rounded bg-[var(--alo-surface-muted)] px-1">{sitemaps.expectedSitemapUrl}</code>{' '}
                   {sitemaps.expectedSitemapSubmitted ? (
                     <Badge className="border-emerald-300 bg-emerald-50 text-emerald-800">submitted to Google</Badge>
                   ) : (
@@ -612,14 +612,14 @@ export default function GoogleStackAdminPage() {
                   {sitemaps.sitemaps.map((sitemap) => (
                     <li key={sitemap.path} className="flex flex-wrap justify-between gap-2 border-b py-1 last:border-0">
                       <code className="truncate">{sitemap.path}</code>
-                      <span className="text-slate-600">
+                      <span className="text-[var(--alo-body)]">
                         {(sitemap.contents ?? []).map((content) => `${content.indexed ?? 0}/${content.submitted ?? 0} indexed`).join(', ') || 'no contents reported'}
                         {sitemap.lastSubmitted ? ` · submitted ${sitemap.lastSubmitted.slice(0, 10)}` : ''}
                       </span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[var(--alo-text-muted)]">
                   A gap between submitted and indexed is normal — Google chooses what to index and
                   does not explain every exclusion.
                 </p>
@@ -653,7 +653,7 @@ export default function GoogleStackAdminPage() {
                 {profile.locations.map((location) => (
                   <div key={location.locationId} className="rounded-lg border p-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-semibold text-slate-900">{location.title || 'Untitled location'}</p>
+                      <p className="font-semibold text-[var(--alo-text)]">{location.title || 'Untitled location'}</p>
                       {location.rating !== null ? (
                         <Badge variant="outline">
                           {location.rating.toFixed(1)} ★ · {location.reviewCount ?? 0} reviews
@@ -661,13 +661,13 @@ export default function GoogleStackAdminPage() {
                       ) : null}
                     </div>
                     <dl className="mt-2 grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2">
-                      <div><dt className="inline font-medium text-slate-600">Phone: </dt><dd className="inline">{location.primaryPhone || '—'}</dd></div>
-                      <div><dt className="inline font-medium text-slate-600">Category: </dt><dd className="inline">{location.primaryCategory || '—'}</dd></div>
-                      <div><dt className="inline font-medium text-slate-600">Website: </dt><dd className="inline">{location.websiteUri || '—'}</dd></div>
-                      <div><dt className="inline font-medium text-slate-600">Address: </dt><dd className="inline">{[location.addressLine, location.locality, location.country].filter(Boolean).join(', ') || '—'}</dd></div>
+                      <div><dt className="inline font-medium text-[var(--alo-body)]">Phone: </dt><dd className="inline">{location.primaryPhone || '—'}</dd></div>
+                      <div><dt className="inline font-medium text-[var(--alo-body)]">Category: </dt><dd className="inline">{location.primaryCategory || '—'}</dd></div>
+                      <div><dt className="inline font-medium text-[var(--alo-body)]">Website: </dt><dd className="inline">{location.websiteUri || '—'}</dd></div>
+                      <div><dt className="inline font-medium text-[var(--alo-body)]">Address: </dt><dd className="inline">{[location.addressLine, location.locality, location.country].filter(Boolean).join(', ') || '—'}</dd></div>
                     </dl>
                     {location.hoursSummary ? (
-                      <p className="mt-2 text-xs text-slate-600"><span className="font-medium">Hours:</span> {location.hoursSummary}</p>
+                      <p className="mt-2 text-xs text-[var(--alo-body)]"><span className="font-medium">Hours:</span> {location.hoursSummary}</p>
                     ) : null}
                   </div>
                 ))}
@@ -701,7 +701,7 @@ export default function GoogleStackAdminPage() {
                 id="funnel-group"
                 value={groupBy}
                 onChange={(event) => setGroupBy(event.target.value)}
-                className="h-9 rounded-md border border-slate-300 bg-white px-2 text-sm"
+                className="h-9 rounded-md border border-[var(--alo-border-strong)] bg-white px-2 text-sm"
               >
                 {GROUP_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>{option.label}</option>
@@ -717,7 +717,7 @@ export default function GoogleStackAdminPage() {
                 max={365}
                 value={days}
                 onChange={(event) => setDays(event.target.value)}
-                className="h-9 w-24 rounded-md border border-slate-300 px-2 text-sm"
+                className="h-9 w-24 rounded-md border border-[var(--alo-border-strong)] px-2 text-sm"
               />
             </div>
             <Button
@@ -733,7 +733,7 @@ export default function GoogleStackAdminPage() {
 
           {funnel ? (
             <>
-              <div className="flex flex-wrap gap-x-6 gap-y-2 rounded-lg border bg-slate-50 p-3 text-xs">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 rounded-lg border bg-[var(--alo-page)] p-3 text-xs">
                 <span><span className="font-semibold">Leads:</span> {funnel.totals.leads}</span>
                 <span><span className="font-semibold">Qualified:</span> {funnel.totals.qualified}</span>
                 <span><span className="font-semibold">Applications:</span> {funnel.totals.applications}</span>
@@ -744,7 +744,7 @@ export default function GoogleStackAdminPage() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b text-slate-600">
+                  <thead className="border-b text-[var(--alo-body)]">
                     <tr>
                       <th className="p-2">{GROUP_OPTIONS.find((option) => option.value === funnel.groupBy)?.label ?? 'Group'}</th>
                       <th className="p-2 text-right">Leads</th>
@@ -760,9 +760,9 @@ export default function GoogleStackAdminPage() {
                     {funnel.rows.map((row) => (
                       <tr key={row.key} className="border-b last:border-0">
                         <td className="max-w-xs p-2">
-                          <span className="block truncate font-medium text-slate-900">{row.key}</span>
+                          <span className="block truncate font-medium text-[var(--alo-text)]">{row.key}</span>
                           {row.landingPage !== 'unknown' ? (
-                            <span className="block truncate text-slate-500">{row.landingPage}</span>
+                            <span className="block truncate text-[var(--alo-text-muted)]">{row.landingPage}</span>
                           ) : null}
                         </td>
                         <td className="p-2 text-right">{row.leads}</td>
@@ -780,7 +780,7 @@ export default function GoogleStackAdminPage() {
                     ))}
                     {funnel.rows.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="p-4 text-center text-slate-500">
+                        <td colSpan={8} className="p-4 text-center text-[var(--alo-text-muted)]">
                           No leads in this window. Nothing is displayed rather than a zeroed row,
                           because an empty period and a broken query must not look identical.
                         </td>
@@ -790,8 +790,8 @@ export default function GoogleStackAdminPage() {
                 </table>
               </div>
 
-              <div className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                <p className="font-semibold text-slate-700">How to read this</p>
+              <div className="space-y-1 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]">
+                <p className="font-semibold text-[var(--alo-body)]">How to read this</p>
                 {funnel.caveats.map((caveat) => (
                   <p key={caveat}>• {caveat}</p>
                 ))}
@@ -844,7 +844,7 @@ export default function GoogleStackAdminPage() {
       </Card>
 
       {status?.note ? (
-        <p className="text-xs text-slate-500">{status.note}</p>
+        <p className="text-xs text-[var(--alo-text-muted)]">{status.note}</p>
       ) : null}
     </div>
   );

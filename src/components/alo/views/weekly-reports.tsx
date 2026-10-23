@@ -131,7 +131,7 @@ const TILES_BY_TYPE: Record<ReportType, Tile[]> = {
 // -----------------------------------------------------------------------------
 
 const REPORT_STATUS_COLORS: Record<string, string> = {
-  GENERATED: "bg-slate-100 text-slate-700",
+  GENERATED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   SENT: "bg-sky-100 text-sky-700",
   VIEWED: "bg-emerald-100 text-emerald-700",
   DRAFT: "bg-amber-100 text-amber-700",
@@ -149,8 +149,8 @@ function MetricTile({
   value: any;
 }) {
   const accentMap: Record<string, string> = {
-    blue: "bg-[#e8f0fb] text-[#0057B8]",
-    orange: "bg-[#fdece4] text-[#E8501A]",
+    blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
+    orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
     emerald: "bg-emerald-50 text-emerald-600",
     amber: "bg-amber-50 text-amber-600",
     violet: "bg-violet-50 text-violet-600",
@@ -159,7 +159,7 @@ function MetricTile({
   const isEmpty = value === undefined || value === null || value === "";
 
   return (
-    <div className="rounded-xl border border-[#0057B8]/10 bg-white p-3">
+    <div className="rounded-xl border border-[var(--alo-brand)]/10 bg-white p-3">
       <div className="flex items-center gap-2">
         <div
           className={cn(
@@ -185,17 +185,17 @@ function ReportCard({ report }: { report: WeeklyReport }) {
   const summary = report.summary || {};
 
   return (
-    <Card className="overflow-hidden rounded-2xl border-2 border-[#0057B8]/15">
-      <CardHeader className="flex-row items-center justify-between space-y-0 bg-[#e8f0fb]/40">
+    <Card className="overflow-hidden rounded-2xl border-2 border-[var(--alo-brand)]/15">
+      <CardHeader className="flex-row items-center justify-between space-y-0 bg-[var(--alo-brand-light)]/40">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
             <Icon
               name={TABS.find((t) => t.key === report.type)?.icon || "BarChart3"}
               className="size-5"
             />
           </div>
           <div>
-            <CardTitle className="text-sm text-[#0057B8]">
+            <CardTitle className="text-sm text-[var(--alo-brand)]">
               {fmtDate(report.periodStart)} → {fmtDate(report.periodEnd)}
             </CardTitle>
             <CardDescription className="text-xs">
@@ -207,7 +207,7 @@ function ReportCard({ report }: { report: WeeklyReport }) {
         <Badge
           className={cn(
             "border",
-            REPORT_STATUS_COLORS[report.status] || "bg-slate-100 text-slate-700"
+            REPORT_STATUS_COLORS[report.status] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"
           )}
         >
           {report.status}
@@ -324,7 +324,7 @@ export function WeeklyReports() {
         action={
           <Button
             onClick={handleGenerate}
-            className="h-12 bg-[#E8501A] hover:bg-[#E8501A]/90 text-white"
+            className="h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
           >
             <Icon name="Sparkles" className="size-4" />
             Generate New Report
@@ -333,12 +333,12 @@ export function WeeklyReports() {
       />
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ReportType)}>
-        <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-2xl bg-[#e8f0fb] p-1.5">
+        <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-2xl bg-[var(--alo-brand-light)] p-1.5">
           {TABS.map((t) => (
             <TabsTrigger
               key={t.key}
               value={t.key}
-              className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm"
+              className="flex-1 rounded-xl px-3 py-2 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm"
             >
               <Icon name={t.icon} className="mr-1.5 size-3.5" />
               <span className="hidden sm:inline">{t.label}</span>

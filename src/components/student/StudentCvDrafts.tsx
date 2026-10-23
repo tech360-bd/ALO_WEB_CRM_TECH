@@ -42,7 +42,7 @@ const SEVERITY_ICON = {
 const SEVERITY_STYLE = {
   error: 'text-red-600',
   warning: 'text-amber-600',
-  info: 'text-slate-400',
+  info: 'text-[var(--alo-text-muted)]',
 } as const;
 
 /**
@@ -121,23 +121,23 @@ export default function StudentCv() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-5xl">
         <PortalPageHeader
           title="Academic CV"
           description="Build the CV your university applications will use, with automatic completeness checks."
           action={
             <div className="flex flex-wrap gap-2">
-              <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 bg-white px-4 text-[13px] font-semibold">
+              <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] bg-white px-4 text-[13px] font-semibold">
                 <Link href="/ai/cv-helper">
                   <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />
                   Open CV Helper
                 </Link>
               </Button>
               <Button
-                type="button"
-                className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
-                onClick={() => setCreating((value) => !value)}
+ type="button"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ onClick={() => setCreating((value) => !value)}
               >
                 {creating ? 'Cancel' : 'New Draft'}
               </Button>
@@ -153,7 +153,7 @@ export default function StudentCv() {
           <PortalCard className="mb-6" title="New CV draft" description="You can keep editing it afterwards">
             <form className="space-y-3 px-5 py-4" onSubmit={createDraft}>
               <div className="space-y-1.5">
-                <Label htmlFor="cv-title" className="text-[12px] font-semibold text-slate-700">Title</Label>
+                <Label htmlFor="cv-title" className="text-[12px] font-semibold text-[var(--alo-body)]">Title</Label>
                 <Input
                   id="cv-title"
                   value={form.title}
@@ -164,7 +164,7 @@ export default function StudentCv() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="cv-content" className="text-[12px] font-semibold text-slate-700">Content</Label>
+                <Label htmlFor="cv-content" className="text-[12px] font-semibold text-[var(--alo-body)]">Content</Label>
                 <Textarea
                   id="cv-content"
                   value={form.content}
@@ -180,17 +180,17 @@ export default function StudentCv() {
               )}
               <div className="flex gap-2">
                 <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500"
-                >
+ type="submit"
+ disabled={submitting}
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                   {submitting ? 'Saving…' : 'Save Draft'}
                 </Button>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold"
-                  onClick={() => setCreating(false)}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={() => setCreating(false)}
                 >
                   Cancel
                 </Button>
@@ -206,14 +206,14 @@ export default function StudentCv() {
               description="The CV Helper builds one from your education and experience, or you can start a blank draft here."
               action={
                 <div className="flex flex-wrap justify-center gap-2">
-                  <Button asChild className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500">
+                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                     <Link href="/ai/cv-helper">Build CV with Helper</Link>
                   </Button>
                   <Button
-                    type="button"
-                    variant="outline"
-                    className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold"
-                    onClick={() => setCreating(true)}
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={() => setCreating(true)}
                   >
                     Create Blank Draft
                   </Button>
@@ -226,27 +226,27 @@ export default function StudentCv() {
         {state === 'ready' && drafts.length > 0 && (
           <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
             <PortalCard>
-              <div className="border-b border-slate-200 px-5 py-3">
-                <h2 className="text-[13px] font-bold uppercase tracking-[0.06em] text-slate-500">
+              <div className="border-b border-[var(--alo-border)] px-5 py-3">
+                <h2 className="text-[13px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">
                   Drafts ({drafts.length})
                 </h2>
               </div>
-              <ul className="divide-y divide-slate-200">
+              <ul className="divide-y divide-[var(--alo-border)]">
                 {drafts.map((draft) => (
                   <li key={draft.id}>
                     <button
                       type="button"
-                      className={`w-full px-5 py-3 text-left transition-colors hover:bg-slate-50 ${
-                        selected?.id === draft.id ? 'bg-blue-50' : ''
+                      className={`w-full px-5 py-3 text-left transition-colors hover:bg-[var(--alo-page)] ${
+                        selected?.id === draft.id ? 'bg-[var(--alo-brand-pale)]' : ''
                       }`}
                       onClick={() => setSelectedId(draft.id)}
                     >
-                      <p className="text-[13px] font-semibold text-slate-900">
+                      <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                         {draft.content ? draft.content.split('\n')[0].slice(0, 40) || 'Untitled draft' : 'Untitled draft'}
                       </p>
                       <div className="mt-1.5 flex items-center gap-1.5">
                         <StatusBadge value={draft.status} />
-                        <span className="text-[11px] text-slate-400">v{draft.version}</span>
+                        <span className="text-[11px] text-[var(--alo-text-muted)]">v{draft.version}</span>
                       </div>
                     </button>
                   </li>
@@ -262,13 +262,13 @@ export default function StudentCv() {
                     description={`Updated ${new Date(selected.updatedAt).toLocaleDateString('en-GB')}`}
                   >
                     {selected.reviewerNote && (
-                      <div className="border-b border-slate-200 bg-amber-50 px-5 py-3">
+                      <div className="border-b border-[var(--alo-border)] bg-amber-50 px-5 py-3">
                         <p className="text-[12px] font-semibold text-amber-800">Counselor note</p>
                         <p className="mt-0.5 text-[13px] leading-relaxed text-amber-900">{selected.reviewerNote}</p>
                       </div>
                     )}
                     {selected.content?.trim() ? (
-                      <pre className="whitespace-pre-wrap px-5 py-4 font-sans text-[13px] leading-relaxed text-slate-700">
+                      <pre className="whitespace-pre-wrap px-5 py-4 font-sans text-[13px] leading-relaxed text-[var(--alo-body)]">
                         {selected.content}
                       </pre>
                     ) : (
@@ -280,14 +280,14 @@ export default function StudentCv() {
                       </div>
                     )}
                     {(selected.exportedPdfUrl || selected.exportedDocxUrl) && (
-                      <div className="flex flex-wrap gap-2 border-t border-slate-200 px-5 py-3">
+                      <div className="flex flex-wrap gap-2 border-t border-[var(--alo-border)] px-5 py-3">
                         {selected.exportedPdfUrl && (
-                          <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                          <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                             <a href={selected.exportedPdfUrl}>Download PDF</a>
                           </Button>
                         )}
                         {selected.exportedDocxUrl && (
-                          <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                          <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                             <a href={selected.exportedDocxUrl}>Download DOCX</a>
                           </Button>
                         )}
@@ -300,21 +300,21 @@ export default function StudentCv() {
                       title="Completeness review"
                       description={`Automatic checks · completeness ${review.completenessScore}/100`}
                     >
-                      <ul className="divide-y divide-slate-200">
+                      <ul className="divide-y divide-[var(--alo-border)]">
                         {review.findings.map((finding: Finding, index: number) => {
                           const Icon = SEVERITY_ICON[finding.severity];
                           return (
                             <li key={finding.id || index} className="flex gap-3 px-5 py-3">
                               <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${SEVERITY_STYLE[finding.severity]}`} aria-hidden="true" />
                               <div className="min-w-0">
-                                <p className="text-[13px] font-semibold text-slate-900">{finding.label}</p>
-                                <p className="mt-0.5 text-[13px] leading-relaxed text-slate-600">{finding.detail}</p>
+                                <p className="text-[13px] font-semibold text-[var(--alo-text)]">{finding.label}</p>
+                                <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--alo-body)]">{finding.detail}</p>
                               </div>
                             </li>
                           );
                         })}
                       </ul>
-                      <p className="px-5 py-3 text-[12px] leading-relaxed text-slate-500">
+                      <p className="px-5 py-3 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                         This measures whether the usual sections are present. It reads your draft as plain text, so it
                         cannot judge the quality of what you have written.
                       </p>

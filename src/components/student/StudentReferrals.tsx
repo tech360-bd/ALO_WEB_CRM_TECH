@@ -90,7 +90,7 @@ export default function StudentReferrals() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Refer a Friend"
@@ -105,20 +105,20 @@ export default function StudentReferrals() {
           <>
             <PortalCard className="mb-6" title="Your referral code">
               <div className="flex flex-wrap items-center gap-3 px-5 py-4">
-                <code className="rounded-button border border-slate-200 bg-slate-50 px-4 py-2 font-mono text-[15px] font-bold tracking-[0.08em] text-slate-900">
+                <code className="rounded-button border border-[var(--alo-border)] bg-[var(--alo-page)] px-4 py-2 font-mono text-[15px] font-bold tracking-[0.08em] text-[var(--alo-text)]">
                   {data?.referralCode ?? '—'}
                 </code>
                 <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold"
-                  onClick={copyCode}
-                >
+ type="button"
+ variant="outline"
+ className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold"
+ onClick={copyCode}
+ >
                   <Copy className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
                   {copied ? 'Copied' : 'Copy Code'}
                 </Button>
               </div>
-              <p className="px-5 pb-4 text-[12px] leading-relaxed text-slate-500">
+              <p className="px-5 pb-4 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
                 Share this code directly. Any reward depends on your friend completing an eligible enrolment, and the
                 terms shown to them at that point are what apply.
               </p>
@@ -127,7 +127,7 @@ export default function StudentReferrals() {
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
               <PortalCard>
                 <PortalSectionTitle>
-                  <Users className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />
+                  <Users className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />
                   Your Referrals
                 </PortalSectionTitle>
 
@@ -137,15 +137,15 @@ export default function StudentReferrals() {
                     description="When someone uses your code or you add them below, their progress appears here."
                   />
                 ) : (
-                  <ul className="divide-y divide-slate-200">
+                  <ul className="divide-y divide-[var(--alo-border)]">
                     {referrals.map((referral) => (
                       <li key={referral.id} className="px-5 py-4">
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <p className="text-[13px] font-semibold text-slate-900">
+                            <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                               {referral.referredName ?? 'Friend'}
                             </p>
-                            <p className="mt-0.5 text-[12px] text-slate-500">
+                            <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">
                               {referral.referralCode}
                               {referral.source ? ` · via ${referral.source}` : ''}
                             </p>
@@ -153,10 +153,10 @@ export default function StudentReferrals() {
                           <StatusBadge value={referral.status} />
                         </div>
                         {referral.referredEmail && (
-                          <p className="mt-1 text-[12px] text-slate-500">{referral.referredEmail}</p>
+                          <p className="mt-1 text-[12px] text-[var(--alo-text-muted)]">{referral.referredEmail}</p>
                         )}
                         {referral.rewardOffered && (
-                          <p className="mt-1.5 text-[12px] text-slate-600">
+                          <p className="mt-1.5 text-[12px] text-[var(--alo-body)]">
                             Reward: {referral.rewardOffered}
                             {referral.rewardStatus ? ` · ${referral.rewardStatus.replace(/_/g, ' ').toLowerCase()}` : ''}
                           </p>
@@ -175,7 +175,7 @@ export default function StudentReferrals() {
               <PortalCard title="Add Someone" description="If you referred them offline">
                 <form className="space-y-3 px-5 py-4" onSubmit={submit}>
                   <div className="space-y-1.5">
-                    <Label htmlFor="ref-name" className="text-[12px] font-semibold text-slate-700">Their name</Label>
+                    <Label htmlFor="ref-name" className="text-[12px] font-semibold text-[var(--alo-body)]">Their name</Label>
                     <Input
                       id="ref-name"
                       value={form.referredName}
@@ -186,7 +186,7 @@ export default function StudentReferrals() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="ref-phone" className="text-[12px] font-semibold text-slate-700">Phone</Label>
+                    <Label htmlFor="ref-phone" className="text-[12px] font-semibold text-[var(--alo-body)]">Phone</Label>
                     <Input
                       id="ref-phone"
                       value={form.referredPhone}
@@ -197,7 +197,7 @@ export default function StudentReferrals() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="ref-email" className="text-[12px] font-semibold text-slate-700">Email (optional)</Label>
+                    <Label htmlFor="ref-email" className="text-[12px] font-semibold text-[var(--alo-body)]">Email (optional)</Label>
                     <Input
                       id="ref-email"
                       type="email"
@@ -208,7 +208,7 @@ export default function StudentReferrals() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] font-semibold text-slate-700">How did you share it?</Label>
+                    <Label className="text-[12px] font-semibold text-[var(--alo-body)]">How did you share it?</Label>
                     <Select value={form.source} onValueChange={(value) => setForm((prev) => ({ ...prev, source: value }))}>
                       <SelectTrigger className="h-9 rounded-input"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -227,10 +227,10 @@ export default function StudentReferrals() {
                   )}
 
                   <Button
-                    type="submit"
-                    disabled={submitting}
-                    className="h-9 w-full rounded-button bg-alo-cta text-[13px] font-semibold text-white hover:bg-orange-500"
-                  >
+ type="submit"
+ disabled={submitting}
+ className=" w-full rounded-button bg-alo-cta text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ >
                     {submitting ? 'Saving…' : 'Save Referral'}
                   </Button>
                 </form>

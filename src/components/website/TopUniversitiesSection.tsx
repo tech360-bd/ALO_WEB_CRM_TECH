@@ -148,13 +148,13 @@ export default function TopUniversitiesSection() {
     <section aria-labelledby="top-universities-heading" className="bg-white py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
-          <span className="mb-4 inline-block rounded-full border border-[#0057B8]/20 bg-[#EAF3FF] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#0057B8]">
+          <span className="mb-4 inline-block rounded-full border border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[var(--alo-brand)]">
             Top Universities
           </span>
-          <h2 id="top-universities-heading" className="font-heading text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl">
+          <h2 id="top-universities-heading" className="font-heading text-3xl font-extrabold tracking-tight text-[var(--alo-text)] sm:text-4xl">
             {active.heading}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-[#555555]">
+          <p className="mx-auto mt-3 max-w-2xl text-base text-[var(--alo-text-secondary)]">
             Published, verified universities from the ALO catalogue — ranked where a world ranking is
             recorded, with the next intake from their own live courses.
           </p>
@@ -170,8 +170,8 @@ export default function TopUniversitiesSection() {
               onClick={() => setTab(t.id)}
               className={`rounded-full min-h-[48px] px-5 py-2.5 font-heading text-[13px] font-bold transition-colors ${
                 tab === t.id
-                  ? 'bg-[#E8501A] text-black shadow-sm'
-                  : 'border border-[#E2E8F0] bg-white text-[#0F172A] hover:border-[#0057B8] hover:text-[#0057B8]'
+                  ? 'bg-[var(--alo-cta)] text-black shadow-sm'
+                  : 'border border-[var(--alo-border)] bg-white text-[var(--alo-text)] hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)]'
               }`}
             >
               {t.label}
@@ -182,17 +182,17 @@ export default function TopUniversitiesSection() {
         {loading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" aria-busy="true">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-72 animate-pulse rounded-2xl bg-slate-100" />
+              <div key={i} className="h-72 animate-pulse rounded-2xl bg-[var(--alo-surface-muted)]" />
             ))}
           </div>
         ) : universities.length === 0 ? (
-          <p className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-8 text-center text-sm text-[#555555]">
+          <p className="rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-8 text-center text-sm text-[var(--alo-text-secondary)]">
             No published universities for {active.label} are in the catalogue yet.{' '}
-            <Link href="/course-finder" className="font-semibold text-[#0057B8] underline">
+            <Link href="/course-finder" className="font-semibold text-[var(--alo-brand)] underline">
               Search the Course Finder
             </Link>{' '}
             or{' '}
-            <Link href={`/destinations/${tab}`} className="font-semibold text-[#0057B8] underline">
+            <Link href={`/destinations/${tab}`} className="font-semibold text-[var(--alo-brand)] underline">
               view the {active.label} guide
             </Link>
             .
@@ -202,7 +202,7 @@ export default function TopUniversitiesSection() {
             {universities.map((uni) => (
               <article
                 key={uni.slug}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--alo-border)] bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
               >
                 {/* Relevant country image */}
                 <div className="relative h-36 w-full overflow-hidden">
@@ -214,56 +214,56 @@ export default function TopUniversitiesSection() {
                     loading="lazy"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#003F87]/70 via-transparent to-transparent" aria-hidden="true" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--alo-brand-hover)]/70 via-transparent to-transparent" aria-hidden="true" />
                   {/* University logo / monogram */}
-                  <div className="absolute bottom-3 left-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white font-heading text-sm font-extrabold text-[#0057B8] shadow-md" aria-hidden="true">
+                  <div className="absolute bottom-3 left-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white font-heading text-sm font-extrabold text-[var(--alo-brand)] shadow-md" aria-hidden="true">
                     {initials(uni.name)}
                   </div>
                   {uni.worldRanking ? (
-                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-[#0F172A]">
-                      <Trophy className="h-3.5 w-3.5 text-[#FFB347]" aria-hidden="true" />
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-[var(--alo-text)]">
+                      <Trophy className="h-3.5 w-3.5 text-[var(--alo-cta-accent)]" aria-hidden="true" />
                       World #{uni.worldRanking}
                     </span>
                   ) : null}
                 </div>
 
                 <div className="flex flex-1 flex-col gap-2 p-5">
-                  <h3 className="font-heading text-[15px] font-bold leading-snug text-[#0F172A]">
-                    <Link href={`/universities/${encodeURIComponent(uni.slug)}`} className="hover:text-[#0057B8]">
+                  <h3 className="font-heading text-[15px] font-bold leading-snug text-[var(--alo-text)]">
+                    <Link href={`/universities/${encodeURIComponent(uni.slug)}`} className="hover:text-[var(--alo-brand)]">
                       {uni.name}
                     </Link>
                   </h3>
-                  <p className="flex items-center gap-1.5 text-xs text-[#555555]">
-                    <MapPin className="h-3.5 w-3.5 shrink-0 text-[#E8501A]" aria-hidden="true" />
+                  <p className="flex items-center gap-1.5 text-xs text-[var(--alo-text-secondary)]">
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-[var(--alo-cta)]" aria-hidden="true" />
                     {[uni.city, uni.country].filter(Boolean).join(', ') || 'Region / city not recorded'}
                   </p>
-                  <p className="text-xs text-[#555555]">
-                    <span className="font-semibold text-[#0F172A]">Ranking:</span>{' '}
+                  <p className="text-xs text-[var(--alo-text-secondary)]">
+                    <span className="font-semibold text-[var(--alo-text)]">Ranking:</span>{' '}
                     {uni.worldRanking ? `World #${uni.worldRanking}` : 'Not recorded'}
                   </p>
-                  <p className="flex items-center gap-1.5 text-xs text-[#555555]">
-                    <CalendarDays className="h-3.5 w-3.5 shrink-0 text-[#E8501A]" aria-hidden="true" />
+                  <p className="flex items-center gap-1.5 text-xs text-[var(--alo-text-secondary)]">
+                    <CalendarDays className="h-3.5 w-3.5 shrink-0 text-[var(--alo-cta)]" aria-hidden="true" />
                     <span>
-                      <span className="font-semibold text-[#0F172A]">Next Intake:</span>{' '}
+                      <span className="font-semibold text-[var(--alo-text)]">Next Intake:</span>{' '}
                       {nextIntakes[uni.slug] || 'See courses'}
                     </span>
                   </p>
                   {uni.courseCount > 0 && (
-                    <p className="text-[11px] text-[#64748B]">{uni.courseCount} published course{uni.courseCount === 1 ? '' : 's'}</p>
+                    <p className="text-[11px] text-[var(--alo-text-muted)]">{uni.courseCount} published course{uni.courseCount === 1 ? '' : 's'}</p>
                   )}
 
                   <div className="mt-auto pt-3">
                     <Link
                       href={`/universities/${encodeURIComponent(uni.slug)}`}
                       aria-label={`View University — ${uni.name}`}
-                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#E8501A] font-heading text-[13px] font-bold text-black transition-colors hover:bg-[#C93D13]"
+                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--alo-cta)] font-heading text-[13px] font-bold text-black transition-colors hover:bg-[var(--alo-cta-hover)]"
                     >
                       View University
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                     <Link
                       href={`/universities/${encodeURIComponent(uni.slug)}`}
-                      className="mt-2 block text-center text-xs font-semibold text-[#0057B8] hover:underline"
+                      className="mt-2 block text-center text-xs font-semibold text-[var(--alo-brand)] hover:underline"
                     >
                       Learn More
                     </Link>
@@ -277,7 +277,7 @@ export default function TopUniversitiesSection() {
         <div className="mt-10 text-center">
           <Link
             href="/universities"
-            className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-[#0057B8] px-8 font-heading text-sm font-bold text-[#0057B8] transition-colors hover:bg-[#EAF3FF]"
+            className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-[var(--alo-brand)] px-8 font-heading text-sm font-bold text-[var(--alo-brand)] transition-colors hover:bg-[var(--alo-brand-light)]"
           >
             View All Universities
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

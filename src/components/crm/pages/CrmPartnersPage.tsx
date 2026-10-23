@@ -27,7 +27,7 @@ const statusColors: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-700',
   approved: 'bg-emerald-100 text-emerald-700',
   pending: 'bg-yellow-100 text-yellow-700',
-  suspended: 'bg-orange-100 text-orange-700',
+  suspended: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   terminated: 'bg-red-100 text-red-700',
 };
 
@@ -137,9 +137,9 @@ export default function CrmPartnersPage() {
                   </thead>
                   <tbody>
                     {filtered.length === 0 ? (
-                      <tr><td colSpan={7} className="py-8 text-center text-gray-400">No partners found</td></tr>
+                      <tr><td colSpan={7} className="py-8 text-center text-[var(--alo-text-muted)]">No partners found</td></tr>
                     ) : filtered.map((p) => (
-                      <tr key={p.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                      <tr key={p.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                         <td className="py-3 font-mono text-xs text-alo-brand font-medium">{p.partnerId || p.id.substring(0, 8)}</td>
                         <td className="py-3 font-medium text-alo-text">{p.companyName}</td>
                         <td className="py-3 text-alo-text-secondary">{p.contactPerson}</td>

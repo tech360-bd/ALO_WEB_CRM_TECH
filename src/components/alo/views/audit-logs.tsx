@@ -73,21 +73,21 @@ interface AuditLog {
 const AUDIT_ACTION_COLORS: Record<string, string> = {
   LOGIN: "bg-emerald-100 text-emerald-700",
   FAILED_LOGIN: "bg-red-100 text-red-700",
-  LOGOUT: "bg-slate-100 text-slate-700",
-  DOC_UPLOAD: "bg-blue-100 text-blue-700",
+  LOGOUT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  DOC_UPLOAD: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   DOC_APPROVE: "bg-emerald-100 text-emerald-700",
   DOC_REJECT: "bg-red-100 text-red-700",
-  APP_STATUS_CHANGE: "bg-orange-100 text-orange-700",
-  VISA_STATUS_CHANGE: "bg-orange-100 text-orange-700",
+  APP_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  VISA_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   AI_ACTION: "bg-violet-100 text-violet-700",
-  PROFILE_UPDATE: "bg-blue-100 text-blue-700",
-  MESSAGE_ACTION: "bg-slate-100 text-slate-700",
+  PROFILE_UPDATE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  MESSAGE_ACTION: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   DATA_IMPORT: "bg-amber-100 text-amber-700",
   ROLE_CHANGE: "bg-violet-100 text-violet-700",
   PERMISSION_CHANGE: "bg-violet-100 text-violet-700",
   SALARY_ACCESS: "bg-amber-100 text-amber-700",
   COMMISSION_APPROVE: "bg-emerald-100 text-emerald-700",
-  MOCK_CREDIT_CHANGE: "bg-orange-100 text-orange-700",
+  MOCK_CREDIT_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const ACTION_FILTERS = [
@@ -136,8 +136,8 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_BADGE_COLORS: Record<string, string> = {
   SUPER_ADMIN: "bg-violet-100 text-violet-700",
-  ADMIN: "bg-[#e8f0fb] text-[#0057B8]",
-  STUDENT: "bg-slate-100 text-slate-700",
+  ADMIN: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
+  STUDENT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   COUNSELOR: "bg-emerald-100 text-emerald-700",
 };
 
@@ -221,7 +221,7 @@ function roleLabel(role: string): string {
 }
 
 function roleBadgeClass(role: string): string {
-  return ROLE_BADGE_COLORS[role] ?? "bg-slate-100 text-slate-700";
+  return ROLE_BADGE_COLORS[role] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
 }
 
 // -----------------------------------------------------------------------------
@@ -327,7 +327,7 @@ export function AuditLogs() {
             variant="outline"
             onClick={() => fetchLogs(true)}
             disabled={refreshing}
-            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-12 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
           >
             <Icon name={refreshing ? "Loader2" : "RefreshCw"} className={cn("size-4", refreshing && "animate-spin")} />
             Refresh
@@ -348,14 +348,14 @@ export function AuditLogs() {
       )}
 
       {/* Security summary */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-[#0057B8] text-white">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
               <Icon name="ShieldCheck" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#0057B8]">Security &amp; Compliance Posture</CardTitle>
+              <CardTitle className="text-base text-[var(--alo-brand)]">Security &amp; Compliance Posture</CardTitle>
               <CardDescription className="text-xs">
                 Every access to ALO Education data is enforced by these non-negotiable policies.
               </CardDescription>
@@ -366,7 +366,7 @@ export function AuditLogs() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {SECURITY_POINTS.map((p) => (
               <div key={p.title} className="flex items-start gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-[#0057B8] shadow-sm">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-[var(--alo-brand)] shadow-sm">
                   <Icon name={p.icon} className="size-4" />
                 </div>
                 <div className="min-w-0">
@@ -389,7 +389,7 @@ export function AuditLogs() {
           description={`${filtered.length} of ${logs.length} events${hasActiveFilters ? " (filtered)" : ""}`}
           action={
             hasActiveFilters ? (
-              <Button size="sm" variant="ghost" onClick={resetFilters} className="h-8 text-xs">
+              <Button size="sm" variant="ghost" onClick={resetFilters} className=" ">
                 <Icon name="X" className="size-3.5" /> Clear filters
               </Button>
             ) : undefined
@@ -456,7 +456,7 @@ export function AuditLogs() {
               }
               action={
                 hasActiveFilters ? (
-                  <Button variant="outline" onClick={resetFilters} className="h-10">
+                  <Button variant="outline" onClick={resetFilters} className="">
                     <Icon name="RotateCcw" className="size-4" /> Reset filters
                   </Button>
                 ) : undefined
@@ -500,7 +500,7 @@ export function AuditLogs() {
                             <div>
                               <div className="text-xs font-medium text-foreground">{log.resource}</div>
                               {log.resourceId && (
-                                <div className="font-mono text-[10px] text-muted-foreground">
+                                <div className="font-mono text-[11px] text-muted-foreground">
                                   {log.resourceId}
                                 </div>
                               )}
@@ -516,12 +516,12 @@ export function AuditLogs() {
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 <Badge
                                   variant="outline"
-                                  className={cn("h-4 px-1.5 text-[10px] font-medium", roleBadgeClass(log.user.role))}
+                                  className={cn("h-4 px-1.5 text-[11px] font-medium", roleBadgeClass(log.user.role))}
                                 >
                                   {roleLabel(log.user.role)}
                                 </Badge>
                               </div>
-                              <div className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                              <div className="mt-0.5 truncate text-[11px] text-muted-foreground">
                                 {log.user.email}
                               </div>
                             </div>
@@ -554,10 +554,10 @@ export function AuditLogs() {
                         </TableCell>
                         <TableCell className="align-top text-right">
                           <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 px-2 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
-                            onClick={() => setSelected(log)}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => setSelected(log)}
                           >
                             <Icon name="Eye" className="size-3.5" /> View
                           </Button>
@@ -582,7 +582,7 @@ export function AuditLogs() {
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="FileSearch" className="size-5" />
               Audit Event Detail
             </DialogTitle>
@@ -595,7 +595,7 @@ export function AuditLogs() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="rounded-lg border border-border/60 p-3">
-                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     Action
                   </p>
                   <div className="mt-1.5">
@@ -606,7 +606,7 @@ export function AuditLogs() {
                   </div>
                 </div>
                 <div className="rounded-lg border border-border/60 p-3">
-                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     Timestamp
                   </p>
                   <p className="mt-1.5 font-mono text-xs text-foreground">
@@ -614,20 +614,20 @@ export function AuditLogs() {
                   </p>
                 </div>
                 <div className="rounded-lg border border-border/60 p-3">
-                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     Resource
                   </p>
                   <p className="mt-1.5 text-xs font-medium text-foreground">
                     {selected.resource ?? "—"}
                   </p>
                   {selected.resourceId && (
-                    <p className="font-mono text-[10px] text-muted-foreground">
+                    <p className="font-mono text-[11px] text-muted-foreground">
                       {selected.resourceId}
                     </p>
                   )}
                 </div>
                 <div className="rounded-lg border border-border/60 p-3">
-                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                     IP Address
                   </p>
                   <p className="mt-1.5 font-mono text-xs text-foreground">
@@ -636,14 +636,14 @@ export function AuditLogs() {
                 </div>
                 {selected.user && (
                   <div className="rounded-lg border border-border/60 p-3 sm:col-span-2">
-                    <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                       Performed by
                     </p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-2">
                       <span className="text-xs font-semibold text-foreground">{selected.user.name}</span>
                       <Badge
                         variant="outline"
-                        className={cn("text-[10px]", roleBadgeClass(selected.user.role))}
+                        className={cn("text-[11px]", roleBadgeClass(selected.user.role))}
                       >
                         {roleLabel(selected.user.role)}
                       </Badge>
@@ -666,9 +666,9 @@ export function AuditLogs() {
 
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <Button
-                  variant="outline"
-                  className="h-10"
-                  onClick={() => {
+ variant="outline"
+ className=""
+ onClick={() => {
                     navigator.clipboard?.writeText(prettyJSON(selected.details));
                     toast({ title: "Copied", description: "Audit details copied to clipboard." });
                   }}
@@ -676,7 +676,7 @@ export function AuditLogs() {
                   <Icon name="Copy" className="size-4" /> Copy JSON
                 </Button>
                 <Button
-                  className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                  className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
                   onClick={() => {
                     toast({
                       title: "Event flagged for review",

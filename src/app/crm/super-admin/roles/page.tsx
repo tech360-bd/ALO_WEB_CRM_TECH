@@ -54,55 +54,55 @@ export default function RolesManagementPage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Loading RBAC matrix...</div>;
+  if (loading) return <div className="p-8 text-center text-[var(--alo-text-muted)]">Loading RBAC matrix...</div>;
   if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Shield className="w-8 h-8 text-[#0057B8]" />
+          <h1 className="text-3xl font-bold text-[var(--alo-text)] flex items-center gap-2">
+            <Shield className="w-8 h-8 text-[var(--alo-brand)]" />
             Role-Based Access Control (RBAC)
           </h1>
-          <p className="text-gray-500 mt-2">Manage enterprise roles, permissions, and acting-as capabilities.</p>
+          <p className="text-[var(--alo-text-muted)] mt-2">Manage enterprise roles, permissions, and acting-as capabilities.</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow border border-[var(--alo-border)] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 border-b border-gray-200 text-gray-900 font-semibold">
+          <table className="w-full text-left text-sm text-[var(--alo-body)]">
+            <thead className="bg-[var(--alo-page)] border-b border-[var(--alo-border)] text-[var(--alo-text)] font-semibold">
               <tr>
                 <th className="px-6 py-4">Permission / Module</th>
                 {permissionsData?.dbRoles?.map((role: any) => (
-                  <th key={role.id} className="px-6 py-4 text-center border-l border-gray-200 min-w-[150px]">
+                  <th key={role.id} className="px-6 py-4 text-center border-l border-[var(--alo-border)] min-w-[150px]">
                     <div className="flex flex-col items-center justify-center">
                       <span className="font-bold">{role.label}</span>
-                      <span className="text-xs text-gray-500 font-normal mt-1">{role.isSystem ? 'System' : 'Custom'}</span>
+                      <span className="text-xs text-[var(--alo-text-muted)] font-normal mt-1">{role.isSystem ? 'System' : 'Custom'}</span>
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-[var(--alo-border)]">
               {permissionsData?.permissions?.map((perm: any) => (
-                <tr key={perm.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={perm.id} className="hover:bg-[var(--alo-page)] transition-colors">
                   <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{perm.feature} : {perm.action}</div>
-                    <div className="text-xs text-gray-500 mt-1">{perm.description}</div>
+                    <div className="font-medium text-[var(--alo-text)]">{perm.feature} : {perm.action}</div>
+                    <div className="text-xs text-[var(--alo-text-muted)] mt-1">{perm.description}</div>
                   </td>
                   {permissionsData?.dbRoles?.map((role: any) => {
                     const isGranted = perm[role.name];
                     return (
-                      <td key={role.id} className="px-6 py-4 text-center border-l border-gray-200">
+                      <td key={role.id} className="px-6 py-4 text-center border-l border-[var(--alo-border)]">
                         <button
                           onClick={() => handleTogglePermission(role.id, perm.id, isGranted)}
                           disabled={role.isSystem}
                           className={`inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
                             isGranted
-                              ? "bg-[#0057B8]/10 text-[#0057B8] hover:bg-[#0057B8]/20"
-                              : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                              ? "bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/20"
+                              : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] hover:bg-gray-200"
                           } ${role.isSystem ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                           title={role.isSystem ? "System roles cannot be modified" : "Click to toggle"}
                         >

@@ -120,13 +120,13 @@ function formatDate(iso: string | null | undefined): string {
 function getLevelBadgeClasses(level: string): string {
   switch (level?.toLowerCase()) {
     case 'undergraduate': case 'bachelor':
-      return 'bg-[#0057B8]/10 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]';
     case 'postgraduate': case 'master':
-      return 'bg-[#0057B8]/20 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/20 text-[var(--alo-brand)]';
     case 'phd': case 'doctorate':
-      return 'bg-[#0057B8]/30 text-[#0057B8]';
+      return 'bg-[var(--alo-brand)]/30 text-[var(--alo-brand)]';
     default:
-      return 'bg-slate-100 text-slate-700';
+      return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
 
@@ -188,7 +188,7 @@ function CourseSearch({ onSelect, disabled }: {
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
         <Input
           placeholder="Search courses to compare..."
           value={query}
@@ -197,18 +197,18 @@ function CourseSearch({ onSelect, disabled }: {
           disabled={disabled}
           className="pl-10"
         />
-        {searching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 animate-spin" />}
+        {searching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)] animate-spin" />}
       </div>
       {open && results.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-72 overflow-y-auto">
+        <div className="absolute z-50 mt-1 w-full bg-white border border-[var(--alo-border)] rounded-lg shadow-lg max-h-72 overflow-y-auto">
           {results.map((r) => (
             <button
               key={r.id}
-              className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+              className="w-full text-left px-4 py-3 hover:bg-[var(--alo-page)] border-b border-[var(--alo-border)] last:border-0 transition-colors"
               onClick={() => { onSelect(r); setQuery(''); setOpen(false); }}
             >
-              <p className="text-sm font-medium text-slate-900 truncate">{r.title}</p>
-              <p className="text-xs text-slate-500">{COUNTRY_FLAGS[r.country] || ''} {r.universityName} · {r.studyLevel}</p>
+              <p className="text-sm font-medium text-[var(--alo-text)] truncate">{r.title}</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">{COUNTRY_FLAGS[r.country] || ''} {r.universityName} · {r.studyLevel}</p>
             </button>
           ))}
         </div>
@@ -249,7 +249,7 @@ function UniversitySearch({ onSelect, disabled }: {
   return (
     <div className="relative">
       <div className="relative">
-        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
         <Input
           placeholder="Search universities to compare..."
           value={query}
@@ -258,18 +258,18 @@ function UniversitySearch({ onSelect, disabled }: {
           disabled={disabled}
           className="pl-10"
         />
-        {searching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 animate-spin" />}
+        {searching && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)] animate-spin" />}
       </div>
       {open && results.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-72 overflow-y-auto">
+        <div className="absolute z-50 mt-1 w-full bg-white border border-[var(--alo-border)] rounded-lg shadow-lg max-h-72 overflow-y-auto">
           {results.map((r) => (
             <button
               key={r.id}
-              className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+              className="w-full text-left px-4 py-3 hover:bg-[var(--alo-page)] border-b border-[var(--alo-border)] last:border-0 transition-colors"
               onClick={() => { onSelect(r); setQuery(''); setOpen(false); }}
             >
-              <p className="text-sm font-medium text-slate-900 truncate">{r.name}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-sm font-medium text-[var(--alo-text)] truncate">{r.name}</p>
+              <p className="text-xs text-[var(--alo-text-muted)]">
                 {COUNTRY_FLAGS[r.country] || ''} {r.city ? `${r.city}, ` : ''}{r.country}
                 {r.rankingValue ? ` · #${r.rankingValue}` : ''}
               </p>
@@ -291,7 +291,7 @@ function CompareSkeleton() {
         <Card className="overflow-hidden">
           <div className="p-4">
             <div className="flex">
-              <div className="w-44 border-r border-slate-200 pr-4 space-y-4">
+              <div className="w-44 border-r border-[var(--alo-border)] pr-4 space-y-4">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <Skeleton key={i} className="h-4 w-28" />
                 ))}
@@ -469,18 +469,18 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
   const courseRows: CompareRow[] = [
     {
       key: 'eligibility', label: 'Eligibility', icon: CheckCircle,
-      render: () => <span className="text-xs text-slate-400 italic">Run eligibility check</span>,
+      render: () => <span className="text-xs text-[var(--alo-text-muted)] italic">Run eligibility check</span>,
     },
     {
       key: 'matchScore', label: 'Match Score', icon: Star,
-      render: () => <span className="text-xs text-slate-400 italic">Profile required</span>,
+      render: () => <span className="text-xs text-[var(--alo-text-muted)] italic">Profile required</span>,
     },
     {
       key: 'university', label: 'University', icon: GraduationCap,
       render: (c) => (
         <Link
           href={c.university?.slug ? `/course-finder?slug=${c.university.slug}` : '#'}
-          className="font-medium text-[#0057B8] hover:underline text-sm"
+          className="font-medium text-[var(--alo-brand)] hover:underline text-sm"
         >
           {c.university?.name || 'N/A'}
           {c.university?.rankingValue && (
@@ -495,18 +495,18 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
     {
       key: 'country', label: 'Country', icon: MapPin,
       render: (c) => (
-        <span className="text-sm text-slate-700">
+        <span className="text-sm text-[var(--alo-body)]">
           {COUNTRY_FLAGS[c.country || ''] || ''} {c.country || 'N/A'}
         </span>
       ),
     },
     {
       key: 'city', label: 'City', icon: MapPin,
-      render: (c) => <span className="text-sm text-slate-700">{c.city || 'N/A'}</span>,
+      render: (c) => <span className="text-sm text-[var(--alo-body)]">{c.city || 'N/A'}</span>,
     },
     {
       key: 'qualification', label: 'Qualification', icon: BookOpen,
-      render: (c) => <span className="text-sm text-slate-700">{c.qualification || 'N/A'}</span>,
+      render: (c) => <span className="text-sm text-[var(--alo-body)]">{c.qualification || 'N/A'}</span>,
     },
     {
       key: 'studyLevel', label: 'Study Level', icon: BookOpen,
@@ -514,21 +514,21 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
         <Badge variant="secondary" className={`text-xs font-medium ${getLevelBadgeClasses(c.studyLevel)}`}>
           {c.studyLevel}
         </Badge>
-      ) : <span className="text-sm text-slate-400">N/A</span>,
+      ) : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>,
     },
     {
       key: 'duration', label: 'Duration', icon: Clock,
-      render: (c) => <span className="text-sm text-slate-700">{c.duration || 'N/A'}{c.durationMonths ? ` (${c.durationMonths}mo)` : ''}</span>,
+      render: (c) => <span className="text-sm text-[var(--alo-body)]">{c.duration || 'N/A'}{c.durationMonths ? ` (${c.durationMonths}mo)` : ''}</span>,
     },
     {
       key: 'tuitionFee', label: 'Tuition Fee', icon: DollarSign,
       render: (c) => {
-        if (c.tuitionFee == null) return <span className="text-sm text-slate-400">N/A</span>;
+        if (c.tuitionFee == null) return <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>;
         const isBest = c.tuitionFee === bestFee;
         return (
-          <span className={`text-sm font-medium ${isBest ? 'text-emerald-600' : 'text-slate-800'}`}>
+          <span className={`text-sm font-medium ${isBest ? 'text-emerald-600' : 'text-[var(--alo-text)]'}`}>
             {c.tuitionCurrency || 'GBP'} {c.tuitionFee.toLocaleString()}{c.tuitionPeriod ? `/${c.tuitionPeriod}` : ''}
-            {isBest && <span className="ml-1 text-[10px] text-emerald-500">LOWEST</span>}
+            {isBest && <span className="ml-1 text-[11px] text-emerald-500">LOWEST</span>}
           </span>
         );
       },
@@ -536,17 +536,17 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
     {
       key: 'deposit', label: 'Deposit', icon: DollarSign,
       render: (c) => c.depositRequired ? (
-        <span className="text-sm text-slate-700">{c.depositAmount ? `${c.tuitionCurrency || 'GBP'} ${c.depositAmount.toLocaleString()}` : 'Required'}</span>
-      ) : <span className="text-sm text-slate-400">Not required</span>,
+        <span className="text-sm text-[var(--alo-body)]">{c.depositAmount ? `${c.tuitionCurrency || 'GBP'} ${c.depositAmount.toLocaleString()}` : 'Required'}</span>
+      ) : <span className="text-sm text-[var(--alo-text-muted)]">Not required</span>,
     },
     {
       key: 'ieltsMin', label: 'IELTS', icon: GraduationCap,
       render: (c) => {
-        if (c.ieltsMin == null) return <span className="text-sm text-slate-400">N/A</span>;
+        if (c.ieltsMin == null) return <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>;
         const isBest = c.ieltsMin === lowestIelts;
         return (
-          <span className={`text-sm font-medium ${isBest ? 'text-emerald-600' : 'text-slate-700'}`}>
-            {c.ieltsMin}{isBest && <span className="ml-1 text-[10px] text-emerald-500">LOWEST</span>}
+          <span className={`text-sm font-medium ${isBest ? 'text-emerald-600' : 'text-[var(--alo-body)]'}`}>
+            {c.ieltsMin}{isBest && <span className="ml-1 text-[11px] text-emerald-500">LOWEST</span>}
           </span>
         );
       },
@@ -554,27 +554,27 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
     {
       key: 'pteMin', label: 'PTE', icon: GraduationCap,
       render: (c) => c.pteMin != null
-        ? <span className="text-sm text-slate-700">{c.pteMin}</span>
-        : <span className="text-sm text-slate-400">N/A</span>,
+        ? <span className="text-sm text-[var(--alo-body)]">{c.pteMin}</span>
+        : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>,
     },
     {
       key: 'applicationFee', label: 'Application Fee', icon: DollarSign,
       render: (c) => c.applicationFee != null
-        ? <span className="text-sm text-slate-700">{c.applicationFeeCurrency || c.tuitionCurrency || 'GBP'} {c.applicationFee.toLocaleString()}</span>
+        ? <span className="text-sm text-[var(--alo-body)]">{c.applicationFeeCurrency || c.tuitionCurrency || 'GBP'} {c.applicationFee.toLocaleString()}</span>
         : <span className="text-sm text-emerald-600">Free</span>,
     },
     {
       key: 'deadline', label: 'Deadline', icon: Calendar,
-      render: (c) => <span className="text-sm text-slate-700">{c.applicationDeadline || 'N/A'}</span>,
+      render: (c) => <span className="text-sm text-[var(--alo-body)]">{c.applicationDeadline || 'N/A'}</span>,
     },
     {
       key: 'intake', label: 'Intake', icon: Calendar,
-      render: (c) => <span className="text-sm text-slate-700">{c.nextIntake || 'N/A'}</span>,
+      render: (c) => <span className="text-sm text-[var(--alo-body)]">{c.nextIntake || 'N/A'}</span>,
     },
     {
       key: 'academicReq', label: 'Academic Req.', icon: FileText,
       render: (c) => (
-        <div className="text-xs text-slate-600 max-w-[180px]">
+        <div className="text-xs text-[var(--alo-body)] max-w-[180px]">
           {c.academicRequirement
             ? <span className="line-clamp-2">{c.academicRequirement}</span>
             : 'N/A'}
@@ -586,12 +586,12 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       key: 'englishReq', label: 'English Req.', icon: BookOpen,
       render: (c) => (
         <div className="flex gap-1 flex-wrap">
-          {c.ieltsMin != null && <Badge variant="secondary" className="text-[10px]">IELTS {c.ieltsMin}</Badge>}
-          {c.pteMin != null && <Badge variant="secondary" className="text-[10px]">PTE {c.pteMin}</Badge>}
-          {c.toeflMin != null && <Badge variant="secondary" className="text-[10px]">TOEFL {c.toeflMin}</Badge>}
-          {c.duolingoMin != null && <Badge variant="secondary" className="text-[10px]">Duolingo {c.duolingoMin}</Badge>}
+          {c.ieltsMin != null && <Badge variant="secondary" className="text-[11px]">IELTS {c.ieltsMin}</Badge>}
+          {c.pteMin != null && <Badge variant="secondary" className="text-[11px]">PTE {c.pteMin}</Badge>}
+          {c.toeflMin != null && <Badge variant="secondary" className="text-[11px]">TOEFL {c.toeflMin}</Badge>}
+          {c.duolingoMin != null && <Badge variant="secondary" className="text-[11px]">Duolingo {c.duolingoMin}</Badge>}
           {c.ieltsMin == null && c.pteMin == null && c.toeflMin == null && c.duolingoMin == null && (
-            <span className="text-sm text-slate-400">N/A</span>
+            <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>
           )}
         </div>
       ),
@@ -600,24 +600,24 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       key: 'workExp', label: 'Work Exp. Required', icon: Briefcase,
       render: (c) => c.workExperienceRequired
         ? <Badge className="bg-amber-100 text-amber-700 text-xs">Required</Badge>
-        : <span className="text-sm text-slate-400">No</span>,
+        : <span className="text-sm text-[var(--alo-text-muted)]">No</span>,
     },
     {
       key: 'placement', label: 'Placement', icon: Award,
       render: (c) => c.placementAvailable
         ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
-        : <span className="text-sm text-slate-400">N/A</span>,
+        : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>,
     },
     {
       key: 'scholarship', label: 'Scholarship', icon: Award,
       render: (c) => c.scholarshipAvailable
         ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
-        : <span className="text-sm text-slate-400">None listed</span>,
+        : <span className="text-sm text-[var(--alo-text-muted)]">None listed</span>,
     },
     {
       key: 'documents', label: 'Required Documents', icon: FileText,
       render: () => (
-        <div className="text-xs text-slate-500 space-y-0.5">
+        <div className="text-xs text-[var(--alo-text-muted)] space-y-0.5">
           <p>Passport, Certificates, Transcripts</p>
           <p>English Test, CV, SOP, References</p>
         </div>
@@ -625,38 +625,38 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
     },
     {
       key: 'missingReq', label: 'Missing Requirements', icon: AlertTriangle,
-      render: () => <span className="text-xs text-slate-400 italic">Complete profile to see</span>,
+      render: () => <span className="text-xs text-[var(--alo-text-muted)] italic">Complete profile to see</span>,
     },
     {
       key: 'improvement', label: 'Improvement Steps', icon: CheckCircle,
-      render: () => <span className="text-xs text-slate-400 italic">Complete profile to see</span>,
+      render: () => <span className="text-xs text-[var(--alo-text-muted)] italic">Complete profile to see</span>,
     },
     {
       key: 'verified', label: 'Verified', icon: ShieldCheck,
-      render: (c) => <span className="text-xs text-slate-400">{formatDate(c.lastVerifiedAt)}</span>,
+      render: (c) => <span className="text-xs text-[var(--alo-text-muted)]">{formatDate(c.lastVerifiedAt)}</span>,
     },
   ];
 
   // ── University comparison rows ──
   const universityRows = [
     { key: 'ranking', label: 'Ranking', icon: Star, render: (u: UniversityCompareData) => u.rankingValue ? (
-      <span className="text-sm font-bold text-slate-900">#{u.rankingValue}</span>
-    ) : <span className="text-sm text-slate-400">N/A</span> },
+      <span className="text-sm font-bold text-[var(--alo-text)]">#{u.rankingValue}</span>
+    ) : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span> },
     { key: 'country', label: 'Country', icon: MapPin, render: (u: UniversityCompareData) => (
-      <span className="text-sm text-slate-700">{COUNTRY_FLAGS[u.country || ''] || ''} {u.country || 'N/A'}</span>
+      <span className="text-sm text-[var(--alo-body)]">{COUNTRY_FLAGS[u.country || ''] || ''} {u.country || 'N/A'}</span>
     )},
-    { key: 'city', label: 'City', icon: MapPin, render: (u: UniversityCompareData) => <span className="text-sm text-slate-700">{u.city || 'N/A'}</span> },
-    { key: 'type', label: 'Type', icon: Building2, render: (u: UniversityCompareData) => <span className="text-sm text-slate-700">{u.institutionType || 'N/A'}</span> },
-    { key: 'courses', label: 'Courses', icon: BookOpen, render: (u: UniversityCompareData) => <span className="text-sm text-slate-700">{u.courseCount || 'N/A'} courses listed</span> },
+    { key: 'city', label: 'City', icon: MapPin, render: (u: UniversityCompareData) => <span className="text-sm text-[var(--alo-body)]">{u.city || 'N/A'}</span> },
+    { key: 'type', label: 'Type', icon: Building2, render: (u: UniversityCompareData) => <span className="text-sm text-[var(--alo-body)]">{u.institutionType || 'N/A'}</span> },
+    { key: 'courses', label: 'Courses', icon: BookOpen, render: (u: UniversityCompareData) => <span className="text-sm text-[var(--alo-body)]">{u.courseCount || 'N/A'} courses listed</span> },
     { key: 'scholarship', label: 'Scholarships', icon: Award, render: (u: UniversityCompareData) => u.scholarshipAvailable
       ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
-      : <span className="text-sm text-slate-400">N/A</span> },
+      : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span> },
     { key: 'accommodation', label: 'Accommodation', icon: Building2, render: (u: UniversityCompareData) => u.accommodationAvailable
       ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
-      : <span className="text-sm text-slate-400">N/A</span> },
+      : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span> },
     { key: 'employability', label: 'Employability', icon: Briefcase, render: (u: UniversityCompareData) => u.employabilityRate
-      ? <span className="text-sm font-medium text-slate-800">{u.employabilityRate}%</span>
-      : <span className="text-sm text-slate-400">N/A</span> },
+      ? <span className="text-sm font-medium text-[var(--alo-text)]">{u.employabilityRate}%</span>
+      : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span> },
   ];
 
   // ── Loading ──
@@ -672,7 +672,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
         <button
           onClick={() => window.history.back()}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0057B8] transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] transition-colors mb-6"
         >
           <ArrowLeft className="size-4" />
           Back
@@ -680,12 +680,12 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#0057B8]/10 flex items-center justify-center">
-              <GitCompare className="size-5 text-[#0057B8]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--alo-brand)]/10 flex items-center justify-center">
+              <GitCompare className="size-5 text-[var(--alo-brand)]" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Compare</h1>
-              <p className="text-sm text-slate-500">
+              <h1 className="text-xl sm:text-2xl font-bold text-[var(--alo-text)]">Compare</h1>
+              <p className="text-sm text-[var(--alo-text-muted)]">
                 {hasItems
                   ? `Comparing ${items.length} ${isCourseMode ? 'course' : 'universit'}${items.length > 1 ? (isCourseMode ? 's' : 'ies') : (isCourseMode ? '' : 'y')} (max ${MAX_ITEMS})`
                   : 'Select items to compare side-by-side'
@@ -693,23 +693,23 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
               </p>
             </div>
             {hasItems && (
-              <Badge variant="secondary" className="bg-[#0057B8]/10 text-[#0057B8]">
+              <Badge variant="secondary" className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]">
                 {items.length}/{MAX_ITEMS}
               </Badge>
             )}
           </div>
 
           {/* Mode Toggle */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-1">
+          <div className="flex items-center bg-[var(--alo-surface-muted)] rounded-lg p-1">
             <button
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'courses' ? 'bg-white text-[#0057B8] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'courses' ? 'bg-white text-[var(--alo-brand)] shadow-sm' : 'text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]'}`}
               onClick={() => setMode('courses')}
             >
               <GraduationCap className="size-4 inline mr-1.5" />
               Courses
             </button>
             <button
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'universities' ? 'bg-white text-[#0057B8] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'universities' ? 'bg-white text-[var(--alo-brand)] shadow-sm' : 'text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]'}`}
               onClick={() => setMode('universities')}
             >
               <Building2 className="size-4 inline mr-1.5" />
@@ -737,11 +737,11 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       {!hasItems && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-6">
-              <GitCompare className="size-12 text-slate-300" />
+            <div className="w-24 h-24 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-6">
+              <GitCompare className="size-12 text-[var(--alo-placeholder)]" />
             </div>
-            <h2 className="text-xl font-bold text-slate-700 mb-2">No items to compare</h2>
-            <p className="text-sm text-slate-500 max-w-md">
+            <h2 className="text-xl font-bold text-[var(--alo-body)] mb-2">No items to compare</h2>
+            <p className="text-sm text-[var(--alo-text-muted)] max-w-md">
               Add {isCourseMode ? 'courses' : 'universities'} to compare by clicking the bookmark icon on any {isCourseMode ? 'course' : 'university'} card, or search above.
             </p>
             <Link href="/course-finder" className="mt-6">
@@ -757,20 +757,20 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       {/* ═══ Course Comparison Table ═══ */}
       {isCourseMode && courses.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-          <Card className="overflow-hidden border-slate-200">
+          <Card className="overflow-hidden border-[var(--alo-border)]">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[800px]">
                 {/* ── Header Row ── */}
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4 w-44 sticky left-0 bg-slate-50 z-10">
+                  <tr className="bg-[var(--alo-page)] border-b border-[var(--alo-border)]">
+                    <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4 w-44 sticky left-0 bg-[var(--alo-page)] z-10">
                       Attribute
                     </th>
                     {courses.map((course) => (
                       <th key={course.id} className="text-left p-4 min-w-[220px] relative">
                         <button
                           onClick={() => handleRemoveCourse(course.id)}
-                          className="absolute top-2 right-2 text-slate-400 hover:text-red-500 transition-colors z-10"
+                          className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-red-500 transition-colors z-10"
                           aria-label={`Remove ${course.title}`}
                           disabled={removing === course.id}
                         >
@@ -785,10 +785,10 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                             className="mt-1"
                           />
                           <Link href={`/course-finder?slug=${course.slug}`} className="group block">
-                            <p className="text-sm font-semibold text-[#0057B8] group-hover:underline leading-snug line-clamp-2">
+                            <p className="text-sm font-semibold text-[var(--alo-brand)] group-hover:underline leading-snug line-clamp-2">
                               {course.title}
                             </p>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-xs text-[var(--alo-text-muted)] mt-1">
                               {course.university?.name || 'Unknown University'}
                             </p>
                           </Link>
@@ -796,8 +796,8 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                       </th>
                     ))}
                     {Array.from({ length: MAX_ITEMS - courses.length }).map((_, i) => (
-                      <th key={`empty-${i}`} className="p-4 min-w-[200px] border-l border-dashed border-slate-200">
-                        <div className="flex flex-col items-center justify-center py-6 text-slate-300">
+                      <th key={`empty-${i}`} className="p-4 min-w-[200px] border-l border-dashed border-[var(--alo-border)]">
+                        <div className="flex flex-col items-center justify-center py-6 text-[var(--alo-placeholder)]">
                           <Plus className="size-6" />
                           <span className="text-xs mt-1.5">Add course</span>
                         </div>
@@ -813,11 +813,11 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                     return (
                       <tr
                         key={row.key}
-                        className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}
+                        className={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--alo-page)]/50'}
                       >
-                        <td className="text-sm font-medium text-slate-600 p-3 sm:p-4 border-r border-slate-100 sticky left-0 z-10 bg-inherit">
+                        <td className="text-sm font-medium text-[var(--alo-body)] p-3 sm:p-4 border-r border-[var(--alo-border)] sticky left-0 z-10 bg-inherit">
                           <div className="flex items-center gap-2">
-                            <RowIcon className="size-3.5 text-slate-400 flex-shrink-0" />
+                            <RowIcon className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
                             <span className="whitespace-nowrap">{row.label}</span>
                           </div>
                         </td>
@@ -827,8 +827,8 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                           </td>
                         ))}
                         {Array.from({ length: MAX_ITEMS - courses.length }).map((_, i) => (
-                          <td key={`empty-val-${row.key}-${i}`} className="p-3 sm:p-4 border-l border-dashed border-slate-200">
-                            <span className="text-slate-300">—</span>
+                          <td key={`empty-val-${row.key}-${i}`} className="p-3 sm:p-4 border-l border-dashed border-[var(--alo-border)]">
+                            <span className="text-[var(--alo-placeholder)]">—</span>
                           </td>
                         ))}
                       </tr>
@@ -853,7 +853,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+              className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-6"
               onClick={handleSave}
             >
               <Save className="size-5 mr-2" />
@@ -862,7 +862,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+              className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-6"
               onClick={handleShare}
             >
               <Share2 className="size-5 mr-2" />
@@ -871,7 +871,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+              className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-6"
               onClick={handlePrint}
             >
               <Printer className="size-5 mr-2" />
@@ -902,36 +902,36 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       {/* ═══ University Comparison Table ═══ */}
       {!isCourseMode && universities.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-          <Card className="overflow-hidden border-slate-200">
+          <Card className="overflow-hidden border-[var(--alo-border)]">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[600px]">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider p-4 w-40 sticky left-0 bg-slate-50 z-10">
+                  <tr className="bg-[var(--alo-page)] border-b border-[var(--alo-border)]">
+                    <th className="text-left text-xs font-medium text-[var(--alo-text-muted)] uppercase tracking-wider p-4 w-40 sticky left-0 bg-[var(--alo-page)] z-10">
                       Attribute
                     </th>
                     {universities.map((uni) => (
                       <th key={uni.id} className="text-left p-4 min-w-[200px] relative">
                         <button
                           onClick={() => handleRemoveUniversity(uni.id)}
-                          className="absolute top-2 right-2 text-slate-400 hover:text-red-500 transition-colors z-10"
+                          className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-red-500 transition-colors z-10"
                           aria-label={`Remove ${uni.name}`}
                         >
                           <X className="size-4" />
                         </button>
                         <Link href={`/course-finder?slug=${uni.slug}`} className="block pr-6 group">
-                          <p className="text-sm font-semibold text-[#0057B8] group-hover:underline leading-snug">
+                          <p className="text-sm font-semibold text-[var(--alo-brand)] group-hover:underline leading-snug">
                             {uni.name}
                           </p>
-                          <p className="text-xs text-slate-500 mt-1">
+                          <p className="text-xs text-[var(--alo-text-muted)] mt-1">
                             {COUNTRY_FLAGS[uni.country || ''] || ''} {uni.city ? `${uni.city}, ` : ''}{uni.country}
                           </p>
                         </Link>
                       </th>
                     ))}
                     {Array.from({ length: MAX_ITEMS - universities.length }).map((_, i) => (
-                      <th key={`empty-${i}`} className="p-4 min-w-[180px] border-l border-dashed border-slate-200">
-                        <div className="flex flex-col items-center justify-center py-6 text-slate-300">
+                      <th key={`empty-${i}`} className="p-4 min-w-[180px] border-l border-dashed border-[var(--alo-border)]">
+                        <div className="flex flex-col items-center justify-center py-6 text-[var(--alo-placeholder)]">
                           <Plus className="size-6" />
                           <span className="text-xs mt-1.5">Add university</span>
                         </div>
@@ -943,10 +943,10 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                   {universityRows.map((row, idx) => {
                     const RowIcon = row.icon;
                     return (
-                      <tr key={row.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
-                        <td className="text-sm font-medium text-slate-600 p-3 sm:p-4 border-r border-slate-100 sticky left-0 z-10 bg-inherit">
+                      <tr key={row.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--alo-page)]/50'}>
+                        <td className="text-sm font-medium text-[var(--alo-body)] p-3 sm:p-4 border-r border-[var(--alo-border)] sticky left-0 z-10 bg-inherit">
                           <div className="flex items-center gap-2">
-                            <RowIcon className="size-3.5 text-slate-400 flex-shrink-0" />
+                            <RowIcon className="size-3.5 text-[var(--alo-text-muted)] flex-shrink-0" />
                             <span className="whitespace-nowrap">{row.label}</span>
                           </div>
                         </td>
@@ -956,8 +956,8 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                           </td>
                         ))}
                         {Array.from({ length: MAX_ITEMS - universities.length }).map((_, i) => (
-                          <td key={`empty-val-${row.key}-${i}`} className="p-3 sm:p-4 border-l border-dashed border-slate-200">
-                            <span className="text-slate-300">—</span>
+                          <td key={`empty-val-${row.key}-${i}`} className="p-3 sm:p-4 border-l border-dashed border-[var(--alo-border)]">
+                            <span className="text-[var(--alo-placeholder)]">—</span>
                           </td>
                         ))}
                       </tr>
@@ -973,7 +973,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+              className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-6"
               onClick={handleSave}
             >
               <Save className="size-5 mr-2" />
@@ -982,7 +982,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+              className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-6"
               onClick={handleShare}
             >
               <Share2 className="size-5 mr-2" />
@@ -991,7 +991,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+              className="border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:bg-[var(--alo-page)] px-6"
               onClick={handlePrint}
             >
               <Printer className="size-5 mr-2" />

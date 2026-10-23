@@ -643,7 +643,7 @@ function PendingJustifications({
         ).map(([cat, count]) => {
           const meta = JUSTIFICATION_CATEGORY_META[cat] || JUSTIFICATION_CATEGORY_META.OTHER;
           return (
-            <Badge key={cat} variant="neutral" className="gap-1 text-[10px]">
+            <Badge key={cat} variant="neutral" className="gap-1 text-[11px]">
               <Icon name={meta.icon} className="size-3" />
               {meta.label} · {count}
             </Badge>
@@ -717,7 +717,7 @@ function SlaPoliciesTable({ policies }: { policies: SlaPolicy[] }) {
       key: "studentType",
       header: "Student Type",
       cell: (r) => (
-        <Badge variant="neutral" className="text-[10px]">
+        <Badge variant="neutral" className="text-[11px]">
           {r.studentType}
         </Badge>
       ),
@@ -827,7 +827,7 @@ function CounselorPerformanceTable({ incidents }: { incidents: SlaIncident[] }) 
         <div className="flex items-center gap-2">
           <div
             className={cn(
-              "flex size-7 items-center justify-center rounded-full text-[10px] font-bold",
+              "flex size-7 items-center justify-center rounded-full text-[11px] font-bold",
               r.warningIssued
                 ? "bg-[var(--alo-danger-soft)] text-[var(--alo-danger-strong)]"
                 : "bg-[var(--alo-blue-soft)] text-[var(--alo-blue-strong)]",
@@ -839,7 +839,7 @@ function CounselorPerformanceTable({ incidents }: { incidents: SlaIncident[] }) 
             <p className="truncate text-xs font-semibold text-[var(--alo-text)]">
               {r.counselor?.name || `Counselor ${r.counselorId.slice(-6)}`}
             </p>
-            <p className="text-[10px] text-[var(--alo-muted)]">
+            <p className="text-[11px] text-[var(--alo-muted)]">
               {r.counselor?.role || "—"}
             </p>
           </div>
@@ -928,12 +928,12 @@ function CounselorPerformanceTable({ incidents }: { incidents: SlaIncident[] }) 
       header: "Warning",
       cell: (r) =>
         r.warningIssued ? (
-          <Badge variant="danger" className="gap-1 text-[10px]">
+          <Badge variant="danger" className="gap-1 text-[11px]">
             <Icon name="AlertOctagon" className="size-3" />
             Issued
           </Badge>
         ) : (
-          <Badge variant="neutral" className="text-[10px]">
+          <Badge variant="neutral" className="text-[11px]">
             None
           </Badge>
         ),
@@ -1019,13 +1019,13 @@ function EscalationFeed({
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <Badge variant="danger" className="text-[10px]">
+                  <Badge variant="danger" className="text-[11px]">
                     {e.type.replace(/_/g, " ")}
                   </Badge>
-                  <Badge variant="neutral" className="text-[10px]">
+                  <Badge variant="neutral" className="text-[11px]">
                     Level {e.level}
                   </Badge>
-                  <span className="text-[10px] text-[var(--alo-muted)]">
+                  <span className="text-[11px] text-[var(--alo-muted)]">
                     {timeAgo(e.createdAt)}
                   </span>
                 </div>
@@ -1427,7 +1427,7 @@ function ReviewJustificationDialog({
               </div>
               <Badge
                 variant="neutral"
-                className="gap-1 text-[10px]"
+                className="gap-1 text-[11px]"
               >
                 <Icon name={cat.icon} className="size-3" />
                 {cat.label}

@@ -28,7 +28,7 @@ interface SettingsSection {
 const initialSections: SettingsSection[] = [
   {
     id: 'general', title: 'General Settings', description: 'Company name, timezone, language, and basic configuration.',
-    icon: Building2, color: 'text-alo-brand bg-orange-50',
+    icon: Building2, color: 'text-alo-brand bg-[var(--alo-cta-soft)]',
     fields: [
       { label: 'Company Name', type: 'text', value: 'ALO Education Ltd.' },
       { label: 'Timezone', type: 'text', value: 'Asia/Dhaka (UTC+6)' },
@@ -39,7 +39,7 @@ const initialSections: SettingsSection[] = [
   },
   {
     id: 'email', title: 'Email Settings', description: 'SMTP configuration for transactional and marketing emails.',
-    icon: Mail, color: 'text-blue-600 bg-blue-50',
+    icon: Mail, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]',
     fields: [
       { label: 'SMTP Host', type: 'text', value: 'smtp.gmail.com' },
       { label: 'SMTP Port', type: 'number', value: '587' },

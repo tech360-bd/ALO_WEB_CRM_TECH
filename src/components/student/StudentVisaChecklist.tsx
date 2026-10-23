@@ -52,13 +52,13 @@ export default function StudentVisaChecklist() {
   const categories = Array.from(new Set(checklist.map((item) => item.category || 'general'))).sort();
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Visa Document Checklist"
           description="Every document your visa file needs, grouped by category."
           action={
-            <Button asChild className="h-9 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500">
+            <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
               <Link href="/student/documents">
                 <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
                 Upload Documents
@@ -77,7 +77,7 @@ export default function StudentVisaChecklist() {
               title="Your checklist has not been created"
               description="A visa checklist is built from your application and destination once you reach the visa stage. Your counselor can create it earlier on request."
               action={
-                <Button asChild variant="outline" className="h-9 rounded-button border-slate-200 px-4 text-[13px] font-semibold">
+                <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">
                   <Link href="/student/messages">Contact Your Counselor</Link>
                 </Button>
               }
@@ -87,11 +87,11 @@ export default function StudentVisaChecklist() {
 
         {state === 'ready' && checklist.length > 0 && (
           <>
-            <div className="mb-6 rounded-2xl border border-slate-200 bg-white px-5 py-4">
-              <p className="text-[13px] font-semibold text-slate-900">
+            <div className="mb-6 rounded-2xl border border-[var(--alo-border)] bg-white px-5 py-4">
+              <p className="text-[13px] font-semibold text-[var(--alo-text)]">
                 {checklist.filter((item) => item.status === 'completed' || item.status === 'approved').length} of {checklist.length} items complete
               </p>
-              <p className="mt-1 text-[12px] text-slate-500">
+              <p className="mt-1 text-[12px] text-[var(--alo-text-muted)]">
                 {(data?.blockingItems ?? 0) > 0
                   ? `${data?.blockingItems} item${(data?.blockingItems ?? 0) === 1 ? '' : 's'} still blocking your file.`
                   : 'No blocking items remain.'}
@@ -103,19 +103,19 @@ export default function StudentVisaChecklist() {
                 const items = checklist.filter((item) => (item.category || 'general') === category);
                 return (
                   <PortalCard key={category} title={CATEGORY_LABELS[category] ?? category} description={`${items.length} item${items.length === 1 ? '' : 's'}`}>
-                    <ul className="divide-y divide-slate-200">
+                    <ul className="divide-y divide-[var(--alo-border)]">
                       {items.map((item) => {
                         const done = item.status === 'completed' || item.status === 'approved';
                         const Icon = done ? CheckCircle2 : CircleDashed;
                         return (
                           <li key={item.id} className="flex flex-wrap items-start gap-3 px-5 py-3.5">
-                            <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-emerald-600' : 'text-slate-400')} aria-hidden="true" />
+                            <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-emerald-600' : 'text-[var(--alo-text-muted)]')} aria-hidden="true" />
                             <div className="min-w-0 flex-1">
-                              <p className="text-[13px] font-semibold text-slate-900">{item.item}</p>
+                              <p className="text-[13px] font-semibold text-[var(--alo-text)]">{item.item}</p>
                               {item.documentName && (
-                                <p className="mt-0.5 text-[12px] text-slate-500">{item.documentName}</p>
+                                <p className="mt-0.5 text-[12px] text-[var(--alo-text-muted)]">{item.documentName}</p>
                               )}
-                              {item.reason && <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{item.reason}</p>}
+                              {item.reason && <p className="mt-1 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">{item.reason}</p>}
                               {item.deadline && (
                                 <p className="mt-1 text-[12px] font-medium text-amber-700">
                                   Due {new Date(item.deadline).toLocaleDateString('en-GB')}
@@ -137,7 +137,7 @@ export default function StudentVisaChecklist() {
               })}
             </div>
 
-            <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
+            <p className="mt-4 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">
               This list reflects what your counselor has recorded for your file. Always confirm the current document
               requirements with the official immigration source before submitting.
             </p>

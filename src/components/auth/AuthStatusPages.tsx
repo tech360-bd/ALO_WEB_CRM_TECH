@@ -16,10 +16,10 @@ export function AccountSuspended() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">Account Suspended</h2>
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">Account Suspended</h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-500 leading-relaxed mb-8">
+        <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
           {authMessage ||
             'Your account has been suspended. Please contact ALO Education support for assistance.'}
         </p>
@@ -71,12 +71,12 @@ export function AccountPending() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">
           Account Pending Approval
         </h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-500 leading-relaxed mb-8">
+        <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
           Your account is currently under review. You will be notified once your
           account is approved and ready to use.
         </p>
@@ -117,10 +117,10 @@ export function Unauthorized() {
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">Access Denied</h2>
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">Access Denied</h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-500 leading-relaxed mb-8">
+        <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
           You do not have permission to access this resource. If you believe this
           is an error, contact your administrator.
         </p>

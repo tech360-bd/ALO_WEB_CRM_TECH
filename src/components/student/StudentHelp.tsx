@@ -129,7 +129,7 @@ const PORTAL_PAGES: HelpLink[] = [
 
 export default function StudentHelp() {
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--alo-page)] px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl">
         <PortalPageHeader
           title="Help"
@@ -138,19 +138,19 @@ export default function StudentHelp() {
 
         <PortalCard className="mb-5">
           <PortalSectionTitle>
-            <LifeBuoy className="mr-2 h-4 w-4 text-alo-blue" aria-hidden="true" />
+            <LifeBuoy className="mr-2 h-4 w-4 text-alo-brand" aria-hidden="true" />
             What do you need help with?
           </PortalSectionTitle>
-          <ul className="divide-y divide-slate-200">
+          <ul className="divide-y divide-[var(--alo-border)]">
             {COMMON_TOPICS.map((topic) => (
               <li key={topic.href + topic.label}>
-                <Link href={topic.href} className="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-slate-50">
-                  <topic.icon className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
+                <Link href={topic.href} className="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-[var(--alo-page)]">
+                  <topic.icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-semibold text-slate-900">{topic.label}</span>
-                    <span className="mt-0.5 block text-[13px] leading-relaxed text-slate-600">{topic.description}</span>
+                    <span className="block text-[13px] font-semibold text-[var(--alo-text)]">{topic.label}</span>
+                    <span className="mt-0.5 block text-[13px] leading-relaxed text-[var(--alo-body)]">{topic.description}</span>
                   </span>
-                  <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" aria-hidden="true" />
+                  <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-[var(--alo-placeholder)]" aria-hidden="true" />
                 </Link>
               </li>
             ))}
@@ -159,15 +159,15 @@ export default function StudentHelp() {
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
           <PortalCard title="Portal pages" description="Everything you can do from your account">
-            <ul className="divide-y divide-slate-200">
+            <ul className="divide-y divide-[var(--alo-border)]">
               {PORTAL_PAGES.map((page) => (
                 <li key={page.href}>
-                  <Link href={page.href} className="flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-slate-50">
+                  <Link href={page.href} className="flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-[var(--alo-page)]">
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[13px] font-semibold text-slate-900">{page.label}</span>
-                      <span className="mt-0.5 block text-[12px] leading-relaxed text-slate-500">{page.description}</span>
+                      <span className="block text-[13px] font-semibold text-[var(--alo-text)]">{page.label}</span>
+                      <span className="mt-0.5 block text-[12px] leading-relaxed text-[var(--alo-text-muted)]">{page.description}</span>
                     </span>
-                    <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" aria-hidden="true" />
+                    <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-[var(--alo-placeholder)]" aria-hidden="true" />
                   </Link>
                 </li>
               ))}
@@ -177,23 +177,23 @@ export default function StudentHelp() {
           <div className="space-y-5">
             <PortalCard title="Contact us">
               <div className="px-5 py-4">
-                <p className="text-[13px] leading-relaxed text-slate-700">
+                <p className="text-[13px] leading-relaxed text-[var(--alo-body)]">
                   The fastest route is a message on your file, because your counselor can see your applications and
                   documents.
                 </p>
-                <Button asChild className="mt-3 h-9 w-full rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-orange-500">
+                <Button asChild className="mt-3 w-full rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
                   <Link href="/student/messages">
                     <MessageSquare className="mr-2 h-4 w-4" aria-hidden="true" />
                     Message Your Counselor
                   </Link>
                 </Button>
 
-                <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">
+                <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">
                   General enquiries
                 </p>
                 <a
                   href="mailto:info@aloeducation.com"
-                  className="mt-1.5 flex items-center gap-2 text-[13px] font-semibold text-alo-blue hover:underline"
+                  className="mt-1.5 flex items-center gap-2 text-[13px] font-semibold text-alo-brand hover:underline"
                 >
                   <Mail className="h-4 w-4" aria-hidden="true" />
                   info@aloeducation.com
@@ -202,7 +202,7 @@ export default function StudentHelp() {
             </PortalCard>
 
             <PortalCard title="Before you ask">
-              <div className="space-y-3 px-5 py-4 text-[13px] leading-relaxed text-slate-700">
+              <div className="space-y-3 px-5 py-4 text-[13px] leading-relaxed text-[var(--alo-body)]">
                 <p>
                   <span className="font-semibold">Deadlines move.</span> Always check the date on your application page
                   rather than an older email.
