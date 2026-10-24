@@ -1,3 +1,4 @@
+import { unoRouterConfiguration } from '@/lib/ai-providers/unorouter';
 import { firstConfiguredFreeProvider } from '@/lib/ai-providers/resolve';
 
 /**
@@ -19,8 +20,18 @@ export function requiresLocalAI(taskType?: string, privateData = false): boolean
 
 const COMPLEX_TASKS = new Set(['SOP_DRAFT', 'VISA_CHECK', 'UNIVERSITY_RESEARCH', 'COURSE_MATCH', 'MARKET_RADAR', 'RAG_ANSWER', 'ENRICHMENT']);
 
-export async function routeModel(opts: { taskType?: string; department?: string; modelHint?: string; privateData?: boolean }): Promise<ModelRoute> {
+export async function routeModel(opts: { taskType?: string; department?: string; modelHint?: string; privateData?: boolean; providerHint?: 'local' | 'unorouter' }): Promise<ModelRoute> {
   const task = (opts.taskType || '').toUpperCase();
+  if (opts.providerHint === 'unorouter') {
+    if (requiresLocalAI(task, opts.privateData)) throw new Error('Private AI requests cannot use an external provider');
+    const uno = unoRouterConfiguration(); const model = opts.modelHint || uno.defaultModel;
+    if (!uno.enabled || !uno.keyConfigured || !uno.configurationValid || !uno.approvedModels.includes(model)) throw new Error('UnoRouter free-only provider is not configured for this model');
+    return { provider: 'unorouter', model, reason: 'explicitly_approved_free_only' };
+  }
+  if (opts.providerHint === 'local') {
+    if (!process.env.LOCAL_AI_URL || !process.env.LOCAL_AI_MODEL || (opts.modelHint && opts.modelHint !== process.env.LOCAL_AI_MODEL)) throw new Error('Configured local AI model required');
+    return { provider: 'local', model: process.env.LOCAL_AI_MODEL, reason: 'explicit_local_only' };
+  }
   // Privacy is evaluated before model hints. No private-data cloud fallback.
   if (requiresLocalAI(task, opts.privateData)) {
     if (!process.env.LOCAL_AI_URL || !process.env.LOCAL_AI_MODEL) throw new Error('Private AI tasks require LOCAL_AI_URL and LOCAL_AI_MODEL');

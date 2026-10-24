@@ -1,6 +1,7 @@
 // AI wrapper supporting multi-provider fallback (Groq, OpenRouter, ZAI/GLM),
 // plus any OpenAI-compatible free tier catalogued in src/lib/ai-providers.
 import ZAI from 'z-ai-web-dev-sdk';
+import { generateUnoRouterFree } from '@/lib/ai-providers/unorouter';
 import { z } from 'zod';
 import { getProviderDefinition } from '@/lib/ai-providers/catalog';
 import { assertCloudInferenceAllowed, resolveFreeProvider, toChatCompletionsUrl } from '@/lib/ai-providers/resolve';
@@ -100,6 +101,7 @@ const completionSchema = z.object({
 
 /** One provider, one request. Private/local requests never transit a cloud fallback. */
 async function requestText(provider: TextProvider, options: GenerateTextOptions): Promise<GenerateTextResult> {
+  if (provider === 'unorouter') return generateUnoRouterFree(options);
   if (provider !== 'local') assertCloudInferenceAllowed(provider);
   const messages: Array<{ role: 'system' | 'user'; content: string }> = [];
   if (options.systemPrompt) messages.push({ role: 'system', content: options.systemPrompt });
