@@ -215,6 +215,11 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
       && actingSession.expiresAt > now
       && actingSession.deviceName.startsWith(marker);
 
+    const isStopRequest = request.method === 'POST' && new URL(request.url).pathname === '/api/portal-auth/acting-as/stop';
+    if (!isBoundActiveSession && !isStopRequest) {
+      return NextResponse.json({ success: false, error: 'Acting-As session expired or revoked. Stop Acting-As before continuing.' }, { status: 403 });
+    }
+
     if (isBoundActiveSession) {
       const targetUserId = actingSession.deviceName.slice(marker.length);
       const [targetUser, targetEmployee] = await Promise.all([
@@ -300,13 +305,15 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
   if (result instanceof NextResponse) return result;
   const pathname = new URL(request.url).pathname;
   const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll') || pathname === '/api/finance' || pathname.startsWith('/api/finance/') || pathname.startsWith('/api/crm/finance');
-  if (employeeRoute) {
+  // Employee deactivation applies across every CRM/communication/AI route,
+  // not only HR endpoints. Revalidate the effective employee on every request.
+  const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true } });
+  if (employee && employee.status.toLowerCase() !== 'active') {
+    return NextResponse.json({ success: false, error: 'Employee account is not active.' }, { status: 403 });
+  }
+  if (employeeRoute || pathname === '/api/employee' || pathname.startsWith('/api/employee/')) {
     if (['STUDENT', 'PARTNER'].includes(result.userType.toUpperCase())) {
       return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });
-    }
-    const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true } });
-    if (employee && employee.status.toLowerCase() !== 'active') {
-      return NextResponse.json({ success: false, error: 'Employee account is not active.' }, { status: 403 });
     }
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
       const origin = request.headers.get('origin');
@@ -385,12 +392,11 @@ export function withAuth(
 
     const auth = authResult as AuthContext;
 
-    // Super Admin or Admin userType bypasses all role/permission checks upfront (Fixes Problem 9)
+    // Only the exact Super Admin authority bypasses configured permissions.
+    // ADMIN remains subject to the same explicit permission checks as staff.
     if (
       auth.userType === 'SUPER_ADMIN' ||
-      auth.userType === 'ADMIN' ||
       auth.roles.includes('super_admin') ||
-      auth.roles.includes('admin') ||
       auth.roles.includes('SUPER_ADMIN')
     ) {
       return handler(request, auth, context);

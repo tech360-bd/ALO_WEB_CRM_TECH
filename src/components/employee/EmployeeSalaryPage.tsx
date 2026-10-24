@@ -9,34 +9,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Download, Wallet, TrendingUp, Building2, CreditCard, PiggyBank, ChevronDown, ChevronUp } from 'lucide-react';
 
-const mockSalaryBreakdown = [
-  { label: 'Basic Salary', amount: 40000, type: 'earning' },
-  { label: 'House Rent Allowance', amount: 12000, type: 'earning' },
-  { label: 'Medical Allowance', amount: 3000, type: 'earning' },
-  { label: 'Transport Allowance', amount: 2000, type: 'earning' },
-  { label: 'Performance Bonus', amount: 5000, type: 'earning' },
-  { label: 'Income Tax', amount: -6000, type: 'deduction' },
-  { label: 'Provident Fund', amount: -3600, type: 'deduction' },
-  { label: 'Professional Tax', amount: -200, type: 'deduction' },
-];
+type SalaryLine = { label: string; amount: number; type: string };
+type Payslip = { id: string; month: string; gross: number; deductions: number; net: number; status: string; paidOn: string };
 
-const mockPayslipHistory = [
-  { id: '1', month: 'January 2025', gross: 62000, deductions: 9800, net: 52200, status: 'paid', paidOn: '2025-01-31' },
-  { id: '2', month: 'December 2024', gross: 60000, deductions: 9600, net: 50400, status: 'paid', paidOn: '2024-12-31' },
-  { id: '3', month: 'November 2024', gross: 57000, deductions: 9200, net: 47800, status: 'paid', paidOn: '2024-11-30' },
-  { id: '4', month: 'October 2024', gross: 57000, deductions: 9200, net: 47800, status: 'paid', paidOn: '2024-10-31' },
-  { id: '5', month: 'September 2024', gross: 57000, deductions: 9200, net: 47800, status: 'paid', paidOn: '2024-09-30' },
-  { id: '6', month: 'August 2024', gross: 55000, deductions: 8800, net: 46200, status: 'paid', paidOn: '2024-08-31' },
-];
-
-const formatTaka = (n: number) => `৳${Math.abs(n).toLocaleString('en-BD')}`;
+const formatTaka = (n: number) => Math.abs(n).toLocaleString('en-BD');
 
 export default function EmployeeSalaryPage() {
   const { user } = usePortalStore();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(true);
-  const [salaryBreakdown, setSalaryBreakdown] = useState(mockSalaryBreakdown);
-  const [payslipHistory, setPayslipHistory] = useState(mockPayslipHistory);
+  const [salaryBreakdown, setSalaryBreakdown] = useState<SalaryLine[]>([]);
+  const [payslipHistory, setPayslipHistory] = useState<Payslip[]>([]);
   const [downloading, setDownloading] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,22 +29,25 @@ export default function EmployeeSalaryPage() {
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
     fetch('/api/employee/salary', { headers })
-      .then(r => r.ok ? r.json() : null)
+      .then(async r => { const data = await r.json(); if (!r.ok || !data.success) throw new Error(data.error || 'Salary could not be loaded.'); return data; })
       .then(data => {
         if (data?.breakdown) setSalaryBreakdown(data.breakdown);
         if (data?.payslips) setPayslipHistory(data.payslips);
       })
-      .catch(() => {})
+      .catch(error => setError(error instanceof Error ? error.message : 'Salary could not be loaded.'))
       .finally(() => { setLoading(false); });
   }, []);
 
-  const handleDownloadPdf = (p: typeof payslipHistory[0]) => {
+  const handleDownloadPdf = async (p: Payslip) => {
     setDownloading(p.id);
-    toast.info(`Generating PDF for ${p.month}...`);
-    setTimeout(() => {
-      toast.info('PDF download will be available in production. Please contact HR for payslips.');
-      setDownloading(null);
-    }, 1500);
+    try {
+      const response = await fetch(`/api/employee/salary?download=${encodeURIComponent(p.id)}`);
+      if (!response.ok) throw new Error('Payslip download failed.');
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a'); link.href = url; link.download = `alo-payslip-${p.month}.html`; link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) { toast.error(error instanceof Error ? error.message : 'Payslip download failed.'); }
+    finally { setDownloading(null); }
   };
 
   const gross = salaryBreakdown.filter(s => s.type === 'earning').reduce((a, s) => a + s.amount, 0);
@@ -69,11 +56,14 @@ export default function EmployeeSalaryPage() {
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-48 w-full" /><Skeleton className="h-64 w-full" /></div>;
 
+  if (error) return <div role="alert" className="p-6 text-red-700">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+  if (!payslipHistory.length) return <div className="p-6">No approved salary records yet.</div>;
+
   return (
     <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
       <div>
         <h1 className="text-2xl font-bold text-alo-text">Salary &amp; Payslips</h1>
-        <p className="text-sm text-alo-text-muted">View your salary breakdown and download payslips</p>
+        <p className="text-sm text-alo-text-muted">View approved salary amounts and download payslips. Confirm the payroll currency with HR.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -165,7 +155,7 @@ export default function EmployeeSalaryPage() {
                     <td className="py-2.5 px-3 text-alo-text-muted text-xs">{p.paidOn}</td>
                     <td className="py-2.5 px-3">
                       <Button variant="ghost" size="sm" className="h-7 text-alo-brand" disabled={downloading === p.id} onClick={() => handleDownloadPdf(p)}>
-                        {downloading === p.id ? 'Generating...' : <><Download className="w-3 h-3 mr-1" /> PDF</>}
+                        {downloading === p.id ? 'Generating...' : <><Download className="w-3 h-3 mr-1" /> Payslip</>}
                       </Button>
                     </td>
                   </tr>

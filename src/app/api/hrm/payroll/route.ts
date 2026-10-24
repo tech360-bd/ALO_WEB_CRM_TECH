@@ -30,7 +30,7 @@ async function listPayroll(request: Request, auth: AuthContext) {
   const period = assertPayrollPeriod(url.searchParams.get("monthYear") || url.searchParams.get("period") || new Date().toISOString().slice(0, 7));
   const employeeId = url.searchParams.get("employeeId");
   const view = url.searchParams.get("view") || "list";
-  const canViewAll = canApproveOrPay(auth);
+  const canViewAll = isSuperAdmin(auth) || auth.permissions?.includes("employee.fields.salary.view_all") === true;
 
   if (view === "run") {
     if (!canManagePayroll(auth)) return NextResponse.json({ success: false, error: "Only HR/Finance can view payroll runs" }, { status: 403 });
@@ -45,7 +45,7 @@ async function listPayroll(request: Request, auth: AuthContext) {
     }
   }
 
-  const where: Record<string, unknown> = { period, ...(employeeId ? { employeeId } : {}) };
+  const where: Record<string, unknown> = { ...(!canViewAll ? { status: { in: ["approved", "paid"] } } : {}), period, ...(employeeId ? { employeeId } : {}) };
   if (!canViewAll && !employeeId) {
     const ownEmployee = await (db as any).employee.findFirst({ where: { userId: auth.userId }, select: { id: true } });
     if (!ownEmployee) return NextResponse.json({ success: true, data: [] });
@@ -58,13 +58,11 @@ async function listPayroll(request: Request, auth: AuthContext) {
     include: { items: true },
   });
 
-  if (view === "slip" && !canViewAll) {
-    return NextResponse.json({
-      success: true,
-      data: payrolls[0]
-        ? { period, employeeId: payrolls[0].employeeId, netSalary: payrolls[0].netSalary, status: payrolls[0].status, note: "Detailed breakdown visible only to HR/Finance" }
-        : null,
-    });
+  await db.portalAuditLog.create({ data: { actorUserId: auth.actorUserId, action: 'SALARY_VIEWED', entityType: 'EmployeePayroll', entityId: employeeId || auth.userId,
+    metadata: JSON.stringify({ effectiveUserId: auth.userId, period, actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole }) } });
+  if (!canViewAll) {
+    const visible = payrolls.map((payroll: any) => ({ id: payroll.id, period: payroll.period, employeeId: payroll.employeeId, netSalary: payroll.netSalary, status: payroll.status, paidAt: payroll.paidAt }));
+    return NextResponse.json({ success: true, data: view === 'slip' ? visible[0] || null : visible });
   }
   return NextResponse.json({ success: true, data: payrolls });
 }

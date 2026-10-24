@@ -100,6 +100,18 @@ export async function validateRequestAccess(
   if (roles.some(role => ['STUDENT', 'PARTNER'].includes(role.toUpperCase()))) {
     return { allowed: false, reason: 'Employee permission required.' };
   }
+  // Legacy feature rules have no scope/action columns. A bare feature permits
+  // viewing owned records only; other actions require their exact permission key.
+  const keys = [`${featureKey}.${action.toLowerCase()}`];
+  if (action.toLowerCase() === 'view') keys.push(featureKey);
+  const rules = await db.featureAccessRule.findMany({ where: {
+    ownerType: { in: ['employee', 'EMPLOYEE', 'user', 'USER'] },
+    ownerId: { in: [account.id, ...(employee ? [employee.id] : [])] },
+    featureKey: { in: keys },
+  } });
+  if (rules.some(rule => !rule.isEnabled || rule.requiresApproval)) {
+    return { allowed: false, reason: 'Permission disabled or approval required.' };
+  }
   const own = !!targetObject && [targetObject.ownerId, targetObject.assigneeId]
     .some(id => !!id && (id === account.id || id === employee?.id));
   if (own && action.toLowerCase() === 'view' && ['employee.profile.private', 'employee.fields.salary', 'employee.fields.bankAccount', 'employee.fields.nid', 'employee.fields.passport'].includes(featureKey)) {
@@ -146,18 +158,6 @@ export async function validateRequestAccess(
         if (scope === 'DEPARTMENT' && targetObject?.departmentId && employee.department === targetObject.departmentId && permission.scopeId === targetObject.departmentId) return { allowed: true, scope: 'DEPARTMENT' };
       }
     }
-  }
-  // Legacy feature rules have no scope/action columns. A bare feature permits
-  // viewing owned records only; other actions require their exact permission key.
-  const keys = [`${featureKey}.${action.toLowerCase()}`];
-  if (action.toLowerCase() === 'view') keys.push(featureKey);
-  const rules = await db.featureAccessRule.findMany({ where: {
-    ownerType: { in: ['employee', 'EMPLOYEE', 'user', 'USER'] },
-    ownerId: { in: [account.id, ...(employee ? [employee.id] : [])] },
-    featureKey: { in: keys },
-  } });
-  if (rules.some(rule => !rule.isEnabled || rule.requiresApproval)) {
-    return { allowed: false, reason: 'Permission disabled or approval required.' };
   }
   if (rules.some(rule => rule.isEnabled) && own) return { allowed: true, scope: 'OWN' };
   return { allowed: false, reason: 'No permission for this action and record scope.' };

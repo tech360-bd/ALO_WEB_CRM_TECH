@@ -188,6 +188,10 @@ export default function EmployeeCalendarPage() {
       setSaveError('Give the appointment a title.');
       return;
     }
+    if (!form.studentId.trim()) {
+      setSaveError('Enter an assigned student ID.');
+      return;
+    }
     if (!form.scheduledAt) {
       setSaveError('Choose the date and time for the appointment.');
       return;
@@ -200,10 +204,10 @@ export default function EmployeeCalendarPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: form.title.trim(),
-          studentId: form.studentId.trim() || undefined,
+          studentId: form.studentId.trim(),
           purpose: form.type,
           venue: form.notes.trim() || undefined,
-          scheduledAt: form.scheduledAt,
+          scheduledAt: new Date(form.scheduledAt).toISOString(),
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -539,7 +543,7 @@ export default function EmployeeCalendarPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="appt-student">Student ID (optional)</Label>
+              <Label htmlFor="appt-student">Assigned student ID</Label>
               <Input
                 id="appt-student"
                 value={form.studentId}
