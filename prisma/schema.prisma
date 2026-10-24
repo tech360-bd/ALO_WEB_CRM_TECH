@@ -8713,6 +8713,68 @@ model InterviewAnswer {
   @@index([questionId])
 }
 
+/// Preliminary interview assessment produced by the deterministic rubric
+/// (spec §41). One row per practice session; the human decision that follows
+/// lives in InterviewReviewDecision, which is append-only so a decision can
+/// never be quietly rewritten.
+model InterviewAssessment {
+  id             String    @id @default(cuid())
+  sessionId      String    @unique
+  studentId      String
+  applicationId  String    @default("")
+  engine         String    @default("DETERMINISTIC_RUBRIC")
+  engineVersion  String    @default("1.0.0")
+  verdict        String
+  confidence     String    @default("LOW")
+  overallScore   Int       @default(0)
+  dimensions     String    @default("[]") @db.LongText
+  strengths      String    @default("[]") @db.LongText
+  improvements   String    @default("[]") @db.LongText
+  evidence       String    @default("[]") @db.LongText
+  limitations    String    @default("[]") @db.LongText
+  answerCount    Int       @default(0)
+  averageWords   Int       @default(0)
+  reviewStatus   String    @default("PENDING")
+  finalVerdict   String?
+  studentMessage String    @default("") @db.Text
+  reviewedById   String?
+  reviewedByName String    @default("")
+  reviewedAt     DateTime?
+  generatedAt    DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([reviewStatus])
+  @@index([reviewedAt])
+}
+
+/// Append-only record of a human decision on a preliminary assessment
+/// (spec §41). A revision adds a row and points at the row it supersedes;
+/// nothing here is ever updated or deleted.
+model InterviewReviewDecision {
+  id             String   @id @default(cuid())
+  assessmentId   String
+  sessionId      String
+  studentId      String
+  aiVerdict      String
+  finalVerdict   String
+  overridden     Boolean  @default(false)
+  direction      String   @default("AGREED")
+  rationale      String   @db.Text
+  studentMessage String   @default("") @db.Text
+  internalNotes  String   @default("") @db.Text
+  reviewerId     String
+  reviewerName   String   @default("")
+  reviewerRole   String   @default("")
+  supersedesId   String   @default("")
+  decidedAt      DateTime @default(now())
+
+  @@index([assessmentId])
+  @@index([studentId])
+  @@index([decidedAt])
+}
+
 /// 72-hour interview practice window (spec §38).
 ///
 /// One window per student per application ('' = all applications). The window

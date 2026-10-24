@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import PracticeWindowPanel from '@/components/student/PracticeWindowPanel';
+import InterviewAssessmentPanel from '@/components/student/InterviewAssessmentPanel';
 import {
   AlertTriangle,
   ArrowRight,
@@ -255,6 +256,8 @@ export default function StudentInterviewPrep() {
           )}
 
           <PracticeWindowPanel applicationId={data.selectedApplicationId} />
+
+          <InterviewAssessmentPanel />
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Card className="rounded-2xl border-[var(--alo-border)]">

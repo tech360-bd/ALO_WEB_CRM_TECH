@@ -397,15 +397,44 @@ now vs from the existing end, extension shorter than the original (ignored), ear
 lock-out, 409→restart path, foreign application rejection, counselor scope re-check, mandatory reason, close-without-delete.
 Full suite: **281 files passed, 3,208 tests**.
 
-### AG-5. What this pass did **not** do
+### AG-6. Preliminary assessment and human final review (spec §41, §71, §119)
+
+The specification asks for an AI **preliminary** assessment with three labels, then a human final review that
+**overrides** it. Before this slice the practice session produced nothing: `/finish` wrote zeros with the verdict
+`human_review_required`, and no surface existed where a human could decide anything.
+
+This is implemented as a **deterministic rubric over the recorded transcript**, not a model call. That is a deliberate
+limit, not a shortcut: a rubric cannot invent a fact about a student, produces the same result for the same transcript,
+and is fully inspectable. It also cannot score accent — the transcript is text, and scoring pronunciation from text
+would be fabricated evidence, so the output says so in as many words.
+
+| Artefact | Purpose |
+|---|---|
+| `src/lib/interview/preliminary-assessment.ts` | Rubric over answers: structure, specificity, and per-category coverage. `READY` requires ≥72, ≥3 categories and ≥3 answers, so a narrow transcript can never be graded READY on prose alone. Returns dimensions with their basis, strengths, improvements, evidence, confidence and limitations. `reviewOutcome()` records agreement vs upgrade/downgrade. |
+| `InterviewAssessment` + `InterviewReviewDecision` + migration `20261024210000_interview_assessment_review` | One assessment per session with `reviewStatus` PENDING/REVIEWED; decisions are **append-only**, and a correction adds a superseding row. |
+| `/api/visa/ai-interview/[sessionId]/finish` | Generates and stores the assessment as PENDING. Rejects any body containing scores or a verdict, so a student cannot post their own result. The legacy `AiInterviewResult` row now carries `pending_human_review` — never a human-sounding verdict. |
+| `/api/crm/interview-review` | Scoped queue + decision. The AI verdict is read **from the database**, not the request, so a caller cannot claim the machine said something it did not. Rationale (20–2000 chars) is mandatory; a student-facing message is mandatory whenever the human overrides. Revision is admin-only and appends. |
+| `/api/student/interview-assessment` | Returns the preliminary result labelled "Preliminary" with a reviewer-pending notice, or the counselor's verdict with the name of the reviewer. Internal notes, reviewer IDs and the raw rationale are never returned. |
+| `InterviewAssessmentPanel` + `/crm/interview-review` | Student panel (final verdict leads once reviewed; an override is stated explicitly) and the reviewer queue with the rubric evidence in front of the decision form. |
+
+Evidence: `tests/unit/preliminary-assessment.test.ts` (15) — empty transcript never grades upward, strong transcript
+reaches READY, thin answers cannot, accent is explicitly not scored, hedging penalised, determinism, unknown categories
+fall back to GENERAL. `tests/unit/interview-review-api.test.ts` (14) — scope, B2B concealment, AI verdict read from the
+database, override requires a student message, decisions cannot be overwritten, admin-only revision with `supersedesId`.
+`tests/unit/interview-finish-assessment.test.ts` (8) — student cannot submit scores, PENDING on create, legacy verdict
+is `pending_human_review`, no answer leakage across students. `tests/unit/student-interview-assessment-api.test.ts` (6) —
+no internal fields leak. Full suite after this slice: **285 files, 3,251 tests**.
+
+### AG-7. What this pass did **not** do
 
 * No MySQL was available, so the new migration was **not applied** and no query was executed against real data.
-* Practice access is now bounded by a real 72-hour window (AG-5). Still unimplemented: video recording (§39) and the
-  human final-review queue (§41) — an AI assessment has no reviewer decision surface yet.
+* Practice access is bounded by a real 72-hour window (AG-5) and assessments now have a human decision path (AG-6).
+  Still unimplemented: video recording/transcription (§39) — the `audioUrl`/`videoUrl` columns on `AiInterviewSession`
+  exist but nothing writes to them, so they are not counted as a feature.
 * `StudentWorldState` (§51) still has no model; student memory exists only as `AiStudentMemory`.
 * The 2,000-agent target (§L of wave 1) is unchanged at 1,020 seeded rows.
 
-**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation. This work removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression and a destructive fake-data seeder; it replaced a mis-wired student route with a real interview workspace; and it made the existing (previously unused) interview-honesty layer actually govern what is published. The unit suite went from red (13 failures at `main`) to green (3,208 passing).
+**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation. This work removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression and a destructive fake-data seeder; it replaced a mis-wired student route with a real interview workspace; and it made the existing (previously unused) interview-honesty layer actually govern what is published. The unit suite went from red (13 failures at `main`) to green (3,251 passing).
 
 It is still not a "COMPLETE" end-to-end delivery, for two distinct reasons that should not be conflated:
 
@@ -413,7 +442,10 @@ It is still not a "COMPLETE" end-to-end delivery, for two distinct reasons that 
    `next build`, Playwright and the 89 DB-backed tests cannot execute here. Those must run on CI before anything is called
    production-ready.
 2. **Genuinely unfinished scope** — items AF-1…AF-5 (approval-center path, 1,020 vs 2,000 agents, 14 dead cron paths,
-   fictional CRM-SEO views, abandoned mock course-finder) plus video interview recording, the human final-review queue,
-   `StudentWorldState`, RAG 2.0 retrieval and the AI evaluation harness are not implemented.
+   fictional CRM-SEO views, abandoned mock course-finder) plus video interview recording, `StudentWorldState`,
+   RAG 2.0 retrieval and the AI evaluation harness are not implemented.
 
-The 72-hour practice window (§38) moved from *not implemented* to *implemented* in wave 3 — see AG-5.
+Wave 3 moved two of the earlier gaps to *implemented*: the 72-hour practice window (§38) and the preliminary
+assessment + human final review (§41) — see AG-5 and AG-6. Video recording (§39) is still absent: `AiInterviewSession`
+has `audioUrl`/`videoUrl` columns, but no upload, storage or transcription path is wired to them, so the columns are
+not evidence of a working feature and are not claimed as one.

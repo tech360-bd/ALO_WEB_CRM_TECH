@@ -2,7 +2,7 @@
 // Each portal keeps its own role-appropriate structure, grouped headings, icons, active states, badges, submenus
 
 import {
-  LayoutDashboard, User, Search, FolderHeart, FolderOpen, FileText, FileUp, MessageSquare, Award, CreditCard, ClipboardList, Calendar, Clock, GraduationCap, Building2, BookOpen, Shield, Users, Target, Plane, BarChart3, Megaphone, UserCog, Bot, Headphones, CheckSquare, Wallet, DollarSign, FileSearch, Globe, GitCompare, ShieldCheck, AlertTriangle, Database, Settings, Lock, ScrollText, Briefcase, CalendarDays, TrendingUp, HelpCircle, LogOut, Map, FileCheck, Video, Newspaper, Handshake, Library, Landmark, Receipt, Laptop, Share2, Lightbulb, Mail, Contact, FileSignature, MapPinned, BookMarked, Send
+  LayoutDashboard, User, Search, FolderHeart, FolderOpen, FileText, FileUp, MessageSquare, Award, CreditCard, ClipboardList, Calendar, Clock, GraduationCap, Building2, BookOpen, Shield, Users, Target, Plane, BarChart3, Megaphone, UserCog, Bot, Headphones, CheckSquare, Wallet, DollarSign, FileSearch, Globe, GitCompare, ShieldCheck, AlertTriangle, Database, Settings, Lock, ScrollText, Briefcase, CalendarDays, TrendingUp, HelpCircle, LogOut, Map, FileCheck, Video, Newspaper, Handshake, Library, Landmark, Receipt, Laptop, Share2, Lightbulb, Mail, Contact, FileSignature, MapPinned, BookMarked, Send, ClipboardCheck
 } from 'lucide-react';
 
 export type NavItem = { label: string; icon: any; href?: string; view?: string; badge?: string; children?: NavItem[] };
@@ -387,6 +387,7 @@ const AI_INTELLIGENCE_GROUP: NavGroup = {
     { label:'AI Command Center', icon: Bot, href:'/crm/ai-command-center', badge:'AI' },
     { label:'Interview Library', icon: Video, href:'/crm/interview-library' },
     { label:'Practice Windows', icon: Clock, href:'/crm/interview-practice' },
+    { label:'Assessment Review', icon: ClipboardCheck, href:'/crm/interview-review' },
   ]
 };
 

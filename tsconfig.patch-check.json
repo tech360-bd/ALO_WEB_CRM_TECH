@@ -29,7 +29,13 @@
     "src/app/api/crm/interview-practice/route.ts",
     "src/app/api/visa/ai-interview/start/route.ts",
     "src/components/student/PracticeWindowPanel.tsx",
-    "src/app/crm/interview-practice/page.tsx"
+    "src/app/crm/interview-practice/page.tsx",
+    "src/lib/interview/preliminary-assessment.ts",
+    "src/app/api/visa/ai-interview/[sessionId]/finish/route.ts",
+    "src/app/api/crm/interview-review/route.ts",
+    "src/app/api/student/interview-assessment/route.ts",
+    "src/components/student/InterviewAssessmentPanel.tsx",
+    "src/app/crm/interview-review/page.tsx"
   ],
   "exclude": [
     "node_modules",

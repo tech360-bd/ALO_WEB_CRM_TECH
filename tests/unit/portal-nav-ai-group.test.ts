@@ -19,6 +19,8 @@ describe('portal navigation — AI & interview intelligence', () => {
       const hrefs = hrefsFor(role);
       expect(hrefs, role).toContain('/crm/ai-command-center');
       expect(hrefs, role).toContain('/crm/interview-library');
+      expect(hrefs, role).toContain('/crm/interview-practice');
+      expect(hrefs, role).toContain('/crm/interview-review');
     }
   });
 
@@ -26,6 +28,8 @@ describe('portal navigation — AI & interview intelligence', () => {
     const hrefs = hrefsFor('student');
     expect(hrefs).not.toContain('/crm/ai-command-center');
     expect(hrefs).not.toContain('/crm/interview-library');
+    expect(hrefs).not.toContain('/crm/interview-practice');
+    expect(hrefs).not.toContain('/crm/interview-review');
     expect(getNavForRole('student').some((group) => group.title === 'HR Center')).toBe(false);
   });
 
