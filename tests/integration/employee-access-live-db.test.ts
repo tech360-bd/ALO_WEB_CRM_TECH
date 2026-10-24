@@ -38,8 +38,10 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
   afterAll(async () => {
     await prisma.appointment.deleteMany({ where: { studentId: { in: [ownStudentId, otherStudentId] } } });
     await prisma.student.deleteMany({ where: { id: { in: [ownStudentId, otherStudentId] } } });
-    await prisma.employeePayroll.deleteMany({ where: { employeeId } });
-    await prisma.featureAccessRule.deleteMany({ where: { ownerId: employeeId } });
+    if (employeeId) {
+      await prisma.employeePayroll.deleteMany({ where: { employeeId } });
+      await prisma.featureAccessRule.deleteMany({ where: { ownerId: employeeId } });
+    }
     await prisma.portalAuditLog.deleteMany({ where: { actorUserId: staff } });
     await prisma.portalSession.deleteMany({ where: { userId: staff } });
     await prisma.employee.deleteMany({ where: { userId: staff } });
