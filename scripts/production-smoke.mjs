@@ -119,7 +119,7 @@ if (failures.length === 0) {
 } else {
   console.error(`✗ ${failures.length}/${results.length} anonymous checks failed against ${origin.origin}:`);
   for (const f of failures) console.error(`  - ${f.path}: ${f.detail}`);
-  if (edgeGaps > 0 || missingApis > 0) {
+  if (readinessOk && (edgeGaps > 0 || missingApis > 0)) {
     console.error('');
     console.error('Diagnosis: /api/health proved the app and database are up, yet the hosting server answered 404 for');
     console.error('routes that exist in this repository. That is a deployment/routing gap, not an application outage:');
@@ -130,7 +130,7 @@ if (failures.length === 0) {
   }
   if (!readinessOk) {
     console.error('');
-    console.error('Diagnosis: /api/health itself failed. Treat this as an outage/configuration incident first.');
+    console.error('Diagnosis: /api/health failed; app/database readiness and the responding origin are NOT VERIFIED. Investigate hosting, routing, WAF and application configuration before choosing remediation.');
   }
   process.exitCode = 1;
 }

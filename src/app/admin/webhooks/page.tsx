@@ -274,19 +274,19 @@ export default function WebhooksAdminPage() {
   }
 
   async function removeSubscription(subscription: Subscription) {
-    if (!window.confirm(`Delete ${subscription.name}? Queued deliveries for it will stop.`)) return;
+    if (!window.confirm(`Archive ${subscription.name}? Delivery history will be preserved and queued deliveries will stop.`)) return;
     setBusyId(subscription.id);
     try {
       const res = await fetch(`/api/webhooks/subscriptions/${subscription.id}`, { method: 'DELETE' });
       const json = await res.json().catch(() => null);
       if (!res.ok || !json?.success) {
-        toast.error(json?.error || 'Delete failed.');
+        toast.error(json?.error || 'Archive failed.');
         return;
       }
-      toast.success('Subscription deleted.');
+      toast.success('Subscription archived; history preserved.');
       await loadSubscriptions();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Delete failed.');
+      toast.error(error instanceof Error ? error.message : 'Archive failed.');
     } finally {
       setBusyId(null);
     }
@@ -582,7 +582,7 @@ export default function WebhooksAdminPage() {
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => void removeSubscription(subscription)} disabled={busyId === subscription.id}>
                           <Trash2 className="mr-1.5 size-3.5 text-red-600" />
-                          Delete
+                          Archive
                         </Button>
                         <span className="ml-auto font-mono text-[11px] text-[var(--alo-text-muted)]">
                           retries {subscription.maxRetries} · timeout {subscription.timeoutMs}ms
