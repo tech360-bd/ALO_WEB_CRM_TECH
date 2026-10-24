@@ -17,7 +17,7 @@ function decode<T>(value: string): T {
   if (!plain) throw new UnoRouterError('HISTORY_UNAVAILABLE', 'Encrypted chat history cannot be read with the current server key.');
   try { return JSON.parse(plain) as T; } catch { throw new UnoRouterError('HISTORY_UNAVAILABLE', 'Stored chat history is invalid.'); }
 }
-export async function readOwnerChat(auth: AuthContext, conversationId?: string) {
+export async function readOwnerChat(auth: AuthContext, conversationId?: string, request?: Request) {
   const recent = await db.awfRun.findMany({ where: { actorUserId: auth.userId, trigger: TRIGGER }, orderBy: { startedAt: 'desc' }, take: 100, select: { entityId: true, provider: true, model: true, startedAt: true } });
   const conversations = [...new Map([...recent].reverse().map(row => [row.entityId, { id: row.entityId, provider: row.provider, model: row.model, startedAt: row.startedAt }])).values()].reverse().slice(0, 20);
   const selected = conversationId || recent[0]?.entityId;
@@ -27,10 +27,10 @@ export async function readOwnerChat(auth: AuthContext, conversationId?: string) 
     const output = row.status === 'COMPLETED' ? decode<{ text: string }>(row.output) : null;
     return { id: row.id, runCode: row.runCode, message: payload.message, reply: output?.text || null, status: row.status, provider: row.provider, model: row.model, createdAt: row.startedAt, error: row.errorCategory || null };
   });
-  await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'AI_CHAT_HISTORY_VIEWED', 'AwfRun', selected || auth.userId, { turns: messages.length }); });
+  await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'AI_CHAT_HISTORY_VIEWED', 'AwfRun', selected || auth.userId, { turns: messages.length }, request); });
   return { conversationId: selected || null, conversations, messages };
 }
-export async function runOwnerChat(auth: AuthContext, input: OwnerChatInput) {
+export async function runOwnerChat(auth: AuthContext, input: OwnerChatInput, request?: Request) {
   requireEncryptionKey();
   if (input.provider === 'unorouter') {
     const config = unoRouterConfiguration();
@@ -58,7 +58,7 @@ export async function runOwnerChat(auth: AuthContext, input: OwnerChatInput) {
       if (last) throw new UnoRouterError('RATE_LIMITED', 'This free model is limited to one request per minute. No paid fallback is used.', 429, Math.max(1, Math.ceil((last.startedAt.getTime() + 60000 - Date.now()) / 1000)));
     }
     const run = await tx.awfRun.create({ data: { runCode: `OWNER-CHAT-${randomUUID()}`, trigger: TRIGGER, entityType: 'OWNER_CHAT', entityId: input.conversationId, actorUserId: auth.userId, actorRole: 'SUPER_ADMIN', provider: input.provider, model: input.model, runtimeKey: input.provider === 'local' ? 'owner-local' : 'owner-unorouter-free', status: 'RUNNING', automationMode: 'AI_ASSISTED', input: encryptedInput, output: '', idempotencyKey: key, correlationId: input.requestId, toolCallCount: 0, fallbackUsed: false } });
-    await writePortalAudit(tx, auth, 'AI_CHAT_REQUESTED', 'AwfRun', run.id, { provider: input.provider, model: input.model, messageChars: input.message.length, externalConsent: input.externalConsent, toolsEnabled: false });
+    await writePortalAudit(tx, auth, 'AI_CHAT_REQUESTED', 'AwfRun', run.id, { provider: input.provider, model: input.model, messageChars: input.message.length, externalConsent: input.externalConsent, toolsEnabled: false }, request);
     return { run, replay: false };
   }, { isolationLevel: 'Serializable' });
   const run = reservation.run;
@@ -77,14 +77,14 @@ export async function runOwnerChat(auth: AuthContext, input: OwnerChatInput) {
     if (response.provider !== input.provider || response.model !== input.model || response.text.length > 20000) throw new UnoRouterError('INVALID_RESPONSE', 'AI response identity or size could not be verified.');
     await db.$transaction(async tx => {
       await tx.awfRun.update({ where: { id: run.id }, data: { status: 'COMPLETED', endedAt: new Date(), durationMs: Date.now() - run.startedAt.getTime(), output: encryptToken(JSON.stringify({ text: response.text, usage: response.usage })), fallbackUsed: false } });
-      await writePortalAudit(tx, auth, 'AI_CHAT_COMPLETED', 'AwfRun', run.id, { provider: input.provider, model: input.model, usage: response.usage, toolsExecuted: 0 });
+      await writePortalAudit(tx, auth, 'AI_CHAT_COMPLETED', 'AwfRun', run.id, { provider: input.provider, model: input.model, usage: response.usage, toolsExecuted: 0 }, request);
     });
     return { id: run.id, runCode: run.runCode, status: 'COMPLETED', reply: response.text, replay: false };
   } catch (error) {
     const code = error instanceof UnoRouterError ? error.code : 'INFERENCE_FAILED';
     await db.$transaction(async tx => {
       await tx.awfRun.update({ where: { id: run.id }, data: { status: 'FAILED', endedAt: new Date(), errorCategory: code, errorMessage: 'AI reply was not completed. No production action was executed.' } });
-      await writePortalAudit(tx, auth, 'AI_CHAT_FAILED', 'AwfRun', run.id, { provider: input.provider, model: input.model, code });
+      await writePortalAudit(tx, auth, 'AI_CHAT_FAILED', 'AwfRun', run.id, { provider: input.provider, model: input.model, code }, request);
     });
     if (error instanceof UnoRouterError) throw error;
     throw new UnoRouterError('INFERENCE_FAILED', 'AI reply was not completed. No production action or paid fallback was executed.');

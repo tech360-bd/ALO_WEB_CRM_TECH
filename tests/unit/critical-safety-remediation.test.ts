@@ -97,12 +97,11 @@ describe('Fix 2: AI Command Center schema mutation is disabled', () => {
   afterEach(() => { m.auth.current = null; });
 
   const admin = { userId: 'admin-1', userType: 'admin', roles: ['ADMIN'] };
-  const superAdmin = { userId: 'super-1', userType: 'admin', roles: ['SUPER_ADMIN'] };
+  const superAdmin = { userId: 'super-1', actorUserId: 'super-1', userType: 'admin', roles: ['SUPER_ADMIN'] };
   const staff = { userId: 'staff-1', userType: 'employee', roles: ['COUNSELOR'] };
 
   it.each([
-    ['ordinary admin', admin],
-    ['Super Admin', superAdmin],
+        ['Super Admin', superAdmin],
   ])('%s gets 503 for approve-plan and rollback, and nothing is executed', async (_label, who) => {
     m.auth.current = who;
     const { POST } = await load();
@@ -112,6 +111,12 @@ describe('Fix 2: AI Command Center schema mutation is disabled', () => {
       const json = await res.json();
       expect(json).toMatchObject({ success: false, code: 'SCHEMA_MUTATION_DISABLED' });
     }
+    expect(m.exec).not.toHaveBeenCalled();
+  });
+
+  it('ordinary Admin cannot run maintenance or use schema mutation endpoints', async () => {
+    m.auth.current = admin; const { POST } = await load();
+    for (const action of ['execute-terminal', 'approve-plan', 'rollback']) expect((await POST(post({ action, command: 'run-tests' }))).status).toBe(403);
     expect(m.exec).not.toHaveBeenCalled();
   });
 

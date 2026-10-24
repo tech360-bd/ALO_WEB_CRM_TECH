@@ -38,13 +38,15 @@ ENCRYPTION_KEY=<stable-64-hex-character-server-secret>
 - Local mode remains local. Private task hints cannot select UnoRouter. Chat has no shell, payment, permission, publishing, deployment or CRM mutation tools.
 - Serializable DB reservation, globally one request/minute per free model for this chat, owner 20 requests/minute, idempotent retries, bounded prompt/output/timeouts, safe errors and Retry-After responses. Upstream limits may be stricter or shared with other apps using the same account.
 - Audit must persist before inference and alongside completion/failure. Saved input/output are AES-256-GCM encrypted. Owner history is filtered server-side and HTTP responses are private/no-store.
-- The chat no longer claims that tests succeeded, files were changed or agents are online merely because a command was typed. Explicit existing maintenance controls remain separate. Applying schema changes over HTTP remains disabled.
+- The chat no longer claims that tests succeeded, files were changed or agents are online merely because a command was typed. Explicit existing maintenance controls remain separate, restricted to non-acting Super Admin, same-origin requests and mandatory request/result audit, with a fixed command allowlist and bounded runtime/output. Applying schema changes over HTTP remains disabled.
 
 ## Verification and limits
 
 Unit tests cover paid/unapproved/unknown-price/offline rejection, fixed endpoints, response model mismatch, consent, rate limits, owner-only APIs, client authority injection, encryption, idempotency, history isolation, global pause and audit failure. Provider responses in tests are deliberately mocked; they are not evidence of live provider inference.
 
 `tests/integration/owner-ai-chat-live-db.test.ts` requires the existing explicitly configured disposable test database. It tests real sessions, backend authorization, encrypted persistence, idempotency, owner isolation and audit with a mocked inference response. It skips without that database.
+
+Local verification: 3,040 tests passed, 89 database-dependent tests skipped; changed-file lint, Prisma validation/client generation, environment classification and diff whitespace checks passed. The first full-suite run found a design-token violation in the new panel; it was corrected and the suite rerun. One browser test passed against the actual Next development server without API interception: main-dashboard chat, unauthorized error state, disabled sending, empty model list and panel widths at 390/768/1440 pixels. This does not prove authenticated model replies, production rendering or all dashboard responsiveness. MySQL integration and production-build results are tracked by the PR CI runs.
 
 No real UnoRouter API key has been supplied to this implementation session. No live completion, production account consent, delivery SLA, production migration or deployment is claimed. Free availability and provider privacy policies remain external dependencies. Whole employee/CRM acceptance is NOT COMPLETE; see `docs/employee-access/2026-10-24-follow-up.md`.
 
@@ -56,6 +58,6 @@ Set `UNOROUTER_ENABLED=false` and redeploy the previous reviewed application rev
 
 - https://unorouter.com/en/docs/platform/models-and-pricing — `:free` routing, no balance consumption, availability limits.
 - https://unorouter.com/en/docs/platform/platform-api — public pricing catalog and inference API keys.
-- https://unorouter.com/en/docs/platform/rate-limits — free-model request limits and Retry-After.
+- https://unorouter.com/en/docs/platform/errors-and-rate-limits — free-model request limits and Retry-After.
 - https://unorouter.com/en/docs/platform/consents — provider retention/training and consent restrictions; consent is never automatically granted.
-- https://unorouter.com/en/docs/quickstart — OpenAI-compatible API and authentication.
+- https://unorouter.com/en/docs/platform/quickstart — OpenAI-compatible API and authentication.

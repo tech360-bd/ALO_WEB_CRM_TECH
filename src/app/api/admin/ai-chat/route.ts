@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     if (conversation && !z.string().uuid().safeParse(conversation).success) return json({ success: false, error: 'Invalid conversation ID.' }, { status: 400 });
     const config = unoRouterConfiguration(); let models: Awaited<ReturnType<typeof loadUnoFreeModels>> = []; let catalogError: string | null = null;
     if (config.enabled) { try { models = await loadUnoFreeModels(); } catch { catalogError = 'Free model catalog is unavailable. No remote inference is enabled without pricing verification.'; } }
-    const history = await readOwnerChat(auth, conversation || undefined);
+    const history = await readOwnerChat(auth, conversation || undefined, req);
     return json({ success: true, ...history, local: { configured: !!process.env.LOCAL_AI_URL && !!process.env.LOCAL_AI_MODEL, model: process.env.LOCAL_AI_MODEL || null }, unorouter: { ...config, models, catalogError }, policy: { freeOnly: true, paidFallbackAllowed: false, automaticCrmContext: false, toolsEnabled: false } });
   } catch (error) { return failure(error); }
 }
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (origin && origin !== new URL(process.env.NEXTAUTH_URL || req.url).origin) return json({ success: false, error: 'Cross-origin AI request denied.' }, { status: 403 });
     const parsed = Input.safeParse(await req.json().catch(() => null));
     if (!parsed.success) return json({ success: false, error: 'Invalid owner chat message, model or request identifiers.' }, { status: 400 });
-    const result = await runOwnerChat(auth, parsed.data);
+    const result = await runOwnerChat(auth, parsed.data, req);
     return json({ success: result.status !== 'FAILED', ...result }, { status: result.status === 'RUNNING' ? 202 : result.status === 'FAILED' ? 503 : 200 });
   } catch (error) { return failure(error); }
 }

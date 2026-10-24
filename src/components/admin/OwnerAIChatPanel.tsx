@@ -47,7 +47,7 @@ export default function OwnerAIChatPanel({ focus }: { focus: string }) {
   async function send(event: React.FormEvent) {
     event.preventDefault(); if (!ready || !message.trim() || busy) return;
     setBusy(true); setError(''); setNotice('');
-    const body = { conversationId: conversation, message: message.trim(), provider, model, externalConsent: provider === 'unorouter' && consent };
+    const body = { conversationId: conversation, message: `Planning focus: ${focus}\n\n${message.trim()}`, provider, model, externalConsent: provider === 'unorouter' && consent };
     const prior = pending.current;
     const requestId = prior && Object.entries(body).every(([key, value]) => prior[key as keyof typeof prior] === value) ? prior.requestId : crypto.randomUUID();
     pending.current = { ...body, requestId };
@@ -101,8 +101,8 @@ export default function OwnerAIChatPanel({ focus }: { focus: string }) {
       </div>
       <form onSubmit={send} className="space-y-2">
         <label htmlFor="owner-ai-message" className="text-xs font-medium">Message</label>
-        <textarea id="owner-ai-message" rows={3} maxLength={4000} value={message} onChange={e => setMessage(e.target.value)} disabled={!state || busy} className="w-full rounded-xl border p-3 text-sm focus:outline-orange-500" />
-        <div className="flex justify-between items-center gap-2"><span className="text-xs text-[var(--alo-text-muted)]">{message.length}/4000 · Encrypted saved history</span><Button type="submit" disabled={!ready || !message.trim() || busy || loading} className="bg-orange-500 hover:bg-orange-600 text-white"><Send size={15} className="mr-1" />{busy ? 'Waiting for reply…' : 'Send'}</Button></div>
+        <textarea id="owner-ai-message" rows={3} maxLength={3900} value={message} onChange={e => setMessage(e.target.value)} disabled={!state || busy} className="w-full rounded-xl border p-3 text-sm focus:outline-orange-500" />
+        <div className="flex justify-between items-center gap-2"><span className="text-xs text-[var(--alo-text-muted)]">{message.length}/3900 · Encrypted saved history</span><Button type="submit" disabled={!ready || !message.trim() || busy || loading} className="bg-orange-500 hover:bg-orange-600 text-white"><Send size={15} className="mr-1" />{busy ? 'Waiting for reply…' : 'Send'}</Button></div>
       </form>
     </CardContent>
   </Card>;
