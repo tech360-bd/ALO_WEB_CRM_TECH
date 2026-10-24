@@ -133,7 +133,7 @@ describe('POST /api/interview-questions', () => {
   });
 
   it('reports a sanitized failure when the write fails', async () => {
-    m.create.mockRejectedValue(new Error('duplicate key mysql://root:secret@db'));
+    m.create.mockRejectedValue(new Error('duplicate key mysql://dummy-user:dummy-password@db.invalid'));
     const response = await POST(post({ category: 'COURSE', question: 'Why?' }));
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain('secret');

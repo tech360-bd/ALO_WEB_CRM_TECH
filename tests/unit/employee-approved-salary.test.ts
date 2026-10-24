@@ -3,6 +3,7 @@ const m = vi.hoisted(() => ({
   employee: vi.fn(),
   profile: vi.fn(),
   salary: vi.fn(),
+  payroll: vi.fn(),
   commission: vi.fn(),
   bonus: vi.fn(),
   increment: vi.fn(),
@@ -21,6 +22,7 @@ vi.mock('@/lib/db', () => ({
     employee: { findUnique: m.employee },
     employeeProfile: { findUnique: m.profile },
     employeeSalary: { findMany: m.salary },
+    employeePayroll: { findMany: m.payroll },
     employeeCommission: { findMany: m.commission },
     employeeBonus: { findMany: m.bonus },
     employeeIncrement: { findMany: m.increment },
@@ -39,6 +41,7 @@ beforeEach(() => {
   m.employee.mockResolvedValue({ id: 'employee-db-id', userId: 'staff', employeeId: 'EMP-1', status: 'active' });
   m.profile.mockResolvedValue({ employeeId: 'EMP-1' });
   m.salary.mockResolvedValue([]);
+  m.payroll.mockResolvedValue([]);
   m.commission.mockResolvedValue([]);
   m.bonus.mockResolvedValue([]);
   m.increment.mockResolvedValue([]);
@@ -49,13 +52,12 @@ describe('employee own-salary access', () => {
   it('scopes every read to the authenticated employee and ignores a client-supplied employeeId', async () => {
     const response = await GET(request('?employeeId=someone-else'));
     expect(response.status).toBe(200);
-    const expected = expect.objectContaining({ where: { employeeId: { in: ['employee-db-id', 'staff', 'EMP-1'] } } });
-    expect(m.salary).toHaveBeenCalledWith(expected);
-    expect(m.commission).toHaveBeenCalledWith(expected);
-    expect(m.bonus).toHaveBeenCalledWith(expected);
-    expect(m.increment).toHaveBeenCalledWith(expected);
+    expect(m.payroll).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: 'employee-db-id', status: { in: ['approved', 'paid'] } } }));
+    expect(m.salary).not.toHaveBeenCalled();
+    expect(m.increment).not.toHaveBeenCalled();
+    for (const read of [m.commission, m.bonus]) expect(read).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: 'employee-db-id', status: { in: ['approved', 'paid'] } } }));
     expect(m.audit).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ action: 'EMPLOYEE_OWN_SALARY_VIEWED', actorUserId: 'staff' }),
+      data: expect.objectContaining({ action: 'SALARY_VIEWED', actorUserId: 'staff' }),
     }));
   });
 
