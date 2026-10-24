@@ -13,6 +13,7 @@ cannot be merged without reverting work. Details and evidence below.
 | Open pull requests | **0** (`gh pr list --state open` → `[]`) |
 | Pull requests already merged | **#10 – #19**, the last three being #17 (CRM hardening), #18 (**this redesign**), #19 (university catalogue + monitoring) |
 | Redesign present in `main`? | yes — `src/components/website/PublicHero.tsx`, `scripts/audit/class-verify.cjs`, the six redesign guardrail tests and the final report revision (`595 files`) are all in `origin/main` |
+| Remote branches | **67** after the `imports/alaminn-info-full` deletion (§8) |
 | `origin/main` history | **a single squashed commit** (`9b74934c`, dated 2026‑10‑24) with **no common ancestor** to any branch |
 
 That last row is the reason this is not a normal merge job: every branch is an
@@ -47,13 +48,13 @@ The union of everything that exists on *any* branch but not on `main` is:
 | Category | Volume | Status |
 |---|---|---|
 | `alo-cpanel/`, `CPANEL_DEPLOY_*.txt`, `.live-cpanel-evidence-dir` | present on **57 of the 66 branches** | **removed on purpose** (PR #11, "CPANEL removal"). `main` deploys via the Next.js app + Prisma/MySQL. |
-| `imports/alaminn-info-full*` | **11,846 files** on one branch | a raw import dump; never part of the product |
+| `imports/alaminn-info-full*` | 11,787 files — **branch deleted 2026‑10‑24, see §8** | a raw zip import of a *different* project (alaminn.info); never part of the product |
 | `_reference_repos/*` | ~20 directories | third-party reference clones, not our code |
 | `documentation/`, `docs/runtime-standard` | a handful | superseded by the reports in the repo root |
 | `src/**` | **8 files** (see §4) | every one superseded by a rename or an architectural decision |
 
 Merging any of these would re-introduce deployment scaffolding that was removed
-deliberately, and in one case 11,846 files of foreign data.
+deliberately, and in one case 11,787 files of foreign data.
 
 ---
 
@@ -76,7 +77,8 @@ None of these is a lost feature. Every one has a live, newer counterpart in `mai
 ## 5. Per-branch record
 
 `Commits` is the branch's own history length (branch histories were not squashed;
-`main` was). `Files only on branch` is the tree comparison from §2.
+`main` was). `Files only on branch` is the tree comparison from §2. This table is
+the snapshot taken **before** the `imports/alaminn-info-full` deletion.
 
 | Branch | Last commit | Commits | Files only on branch | …of which under `src/` | Verdict |
 |---|---|---|---|---|---|
@@ -95,7 +97,7 @@ None of these is a lost feature. Every one has a live, newer counterpart in `mai
 | `origin/integration/ai-builder-alo-verified-20261013` | 2026-10-13 | 434 | 86 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
 | `origin/imports/alo-education-source-20261013` | 2026-10-13 | 434 | 10 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
 | `origin/imports/alo-education-full-20261013` | 2026-10-13 | 434 | 10 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
-| `origin/imports/alaminn-info-full-20261013` | 2026-10-13 | 434 | 11799 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
+| `origin/imports/alaminn-info-full-20261013` | 2026-10-13 | 434 | 11799 | 0 | **DELETED 2026‑10‑24** (see §8) — only CPANEL/import/reference artefacts main deleted on purpose |
 | `origin/arena/5656dd34-alo-web-crm-tech` | 2026-10-13 | 442 | 11858 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
 | `origin/arena/06d71c20-alo-web-crm-tech` | 2026-10-13 | 451 | 11 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
 | `origin/codex/aloeducation-access-content-repair` | 2026-10-12 | 409 | 10 | 0 | only CPANEL/import/reference artefacts main deleted on purpose |
@@ -162,12 +164,50 @@ None of these is a lost feature. Every one has a live, newer counterpart in `mai
 
 ---
 
-## 7. What this session did and did not do
+## 8. Cleanup log
+
+### 2026‑10‑24 — `imports/alaminn-info-full-20261013` deleted
+
+| | |
+|---|---|
+| Last commit | `85aaa4ad0bead01670682c4fde5f01817b530beb` — *"Import complete unchanged alaminn-info-FULL-project (1).zip"*, 2026‑10‑13 |
+| Content | 11,787 files under `imports/alaminn-info-full/` (a different website, **alaminn.info**, imported whole) + 12 CPANEL/reference artefacts |
+| Why safe | none of it is referenced by `src/`, `tests/`, `package.json` or any route; `main` never contained it; the work on that branch was PR #16-era Google-stack work already merged |
+| Restore, if ever needed | the commit object is still in the local clone — `git push origin 85aaa4ad0bead01670682c4fde5f01817b530beb:refs/heads/imports/alaminn-info-full-20261013` |
+
+Remote heads after deletion: **67** (was 68).
+
+### Still carrying weight
+
+`main` itself holds **67,992 files**, of which **61,193 (90 %) are vendored
+imports**:
+
+| Path in `main` | Files | Note |
+|---|---|---|
+| `imports/alo-education-full/` | **59,608** | a full copy of this same project, committed as a snapshot |
+| `imports/legacy-branch-references/` | 735 | exported copies of old branches |
+| `imports/alo-education-source/` | 850 | older source snapshot |
+| `alo-education-web-crm-final/` | 1,518 | another deploy copy |
+| `src/` — the actual product | **2,381** | |
+
+Removing those is a **history rewrite** on `main` (`git filter-repo` + force push),
+which is a different risk class from deleting a branch: it invalidates every open
+clone and every SHA in the reports. That needs an explicit decision; it has **not**
+been attempted. Two other `imports/*` branches also still exist remotely
+(`imports/alo-education-full-20261013`, `imports/alo-education-source-20261013`);
+both have `branch-only = 10`, i.e. nothing to merge either.
+
+---
+
+## 9. What this session did and did not do
 
 **Did:** audited every remote branch by tree comparison
 (`scripts/audit/branch-content-audit.py`), verified `main` contains the redesign,
 verified 0 open PRs.
 
-**Did not:** merge any branch, force-push, delete any branch, or modify `main`.
+**Did:** deleted `imports/alaminn-info-full-20261013` on request (see §8).
+
+**Did not:** merge any branch, force-push, rewrite history, delete any other
+branch, or modify `main`.
 The working tree of `arena/a95f5448-alo-web-crm-tech` is otherwise unchanged
 (it is already identical to `main` apart from this audit record).
