@@ -71,7 +71,10 @@ const DEFAULT_DESTINATIONS = [
 
 const RESOURCE_ITEMS = [
   { label: 'Blogs', href: '/blog' },
-  { label: 'Articles', href: '/resources/articles' },
+  // "Articles" previously pointed at /resources/articles, which is not a
+  // canonical resource category (the slug list has `blogs`) and had no route,
+  // so the header produced a 404. /resources/blogs is the DB-driven listing.
+  { label: 'Articles', href: '/resources/blogs' },
   { label: 'Scholarships by Country', href: '/scholarships' },
   { label: 'Visa Guides', href: '/visa' },
   { label: 'Success Stories', href: '/success-stories' },

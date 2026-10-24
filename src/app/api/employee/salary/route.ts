@@ -16,7 +16,9 @@ export async function GET(request: Request) {
     if (!employee || employee.status.toLowerCase() !== 'active') {
       return NextResponse.json({ success: false, error: 'An active employee record is required.' }, { status: 403 });
     }
-    if (!auth.permissions.includes('h6')) {
+    // Fail closed when the resolved auth context carries no permission list:
+    // an incomplete context must never be treated as an implicit grant.
+    if (!(auth.permissions ?? []).includes('h6')) {
       return NextResponse.json({ success: false, error: 'Own-salary permission is required.' }, { status: 403 });
     }
 

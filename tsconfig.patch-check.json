@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": "/tmp/alo-patch-check.tsbuildinfo"
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/components/admin/AICommandCenterAgent.tsx",
+    "src/components/alo/views/counselor-student-360.tsx",
+    "src/components/website/HomepagePart3.tsx",
+    "src/components/website/PublicNavbar.tsx",
+    "src/app/counselor/students/[id]/page.tsx",
+    "src/app/api/employee/salary/route.ts",
+    "src/app/api/employee-access/feature-access/route.ts",
+    "src/app/crm/students/page.tsx",
+    "src/app/crm/students/[id]/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "prisma",
+    "scripts",
+    ".next"
+  ]
+}

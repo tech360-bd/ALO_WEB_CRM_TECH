@@ -942,15 +942,17 @@ function PartnerPortalPreview() {
 /* ═══════════════════════════════════════════════════════════════
    SECTION 18 — AI SUPPORT TOOLS
    ═══════════════════════════════════════════════════════════════ */
+// Only tools that exist as live routes are listed here. The homepage must
+// never advertise a card that resolves to a 404: interview practice, document
+// checklists and cost estimates live inside the gated student portal, so the
+// last card links there instead of inventing public tool URLs.
 const AI_TOOLS = [
   { icon: Sparkles, title: 'AI Course Match', description: 'Describe your profile and preferences, get matched with the best courses and universities.', href: '/ai/course-match' },
+  { icon: Award, title: 'AI Scholarship Match', description: 'Find scholarships that match your profile, grades, and destination country.', href: '/ai/scholarship-match' },
   { icon: PenTool, title: 'AI SOP Helper', description: 'Generate polished, university-specific Statements of Purpose in minutes.', href: '/ai/sop-helper' },
   { icon: FileText, title: 'AI CV Helper', description: 'Build a professional CV tailored to your target programme and country.', href: '/ai/cv-helper' },
   { icon: ShieldCheck, title: 'AI Visa Coach', description: 'Prepare for your visa interview with AI-powered practice and feedback.', href: '/ai/visa-coach' },
-  { icon: MessageSquare, title: 'AI Interview Practice', description: 'Practice university admissions interviews with realistic AI conversations.', href: '/ai/interview' },
-  { icon: ClipboardCheck, title: 'AI Document Checklist', description: 'Get smart, personalised document checklists based on your destination.', href: '/ai/checklist' },
-  { icon: Award, title: 'AI Scholarship Match', description: 'Find scholarships that match your profile, grades, and destination country.', href: '/ai/scholarship' },
-  { icon: Calculator, title: 'AI Study Cost Estimate', description: 'Get estimated costs for tuition, living expenses, and more based on your profile.', href: '/ai/cost-estimate' },
+  { icon: ClipboardCheck, title: 'Student Portal Tools', description: 'Mock interviews, document checklists and visa preparation — sign in to your ALO student portal.', href: '/student/login' },
 ];
 
 function AiSupportTools() {

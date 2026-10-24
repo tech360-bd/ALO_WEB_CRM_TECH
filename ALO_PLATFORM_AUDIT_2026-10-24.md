@@ -1,0 +1,310 @@
+# ALO Education Complete Digital Platform — Audit & Remediation Report
+
+**Repository:** `tech360-bd/ALO_WEB_CRM_TECH` (existing project — nothing rebuilt, nothing replaced)
+**Branch:** `arena/2c99a107-alo-web-crm-tech`
+**Base commit audited:** `71b3f953` (Merge PR #24)
+**Audit date:** 2026-10-24
+**Auditor:** Arena Agent Mode
+
+**Final status: NOT COMPLETE.** The platform is far larger and more complete than a greenfield build, but the acceptance gate is not passable in this environment: there is no MySQL instance, no integration credentials, no browser runtime, and the full-repo type-check cannot execute inside the 3 GB sandbox. Everything claimed below is backed by a command output, a file path, or a test result. Anything that could not be executed is marked as such, not as passing.
+
+---
+
+## A. Existing System Audit
+
+| Item | Value | How verified |
+|---|---|---|
+| Framework | Next.js 16.4.2 (App Router, `--webpack` build), React 19, TypeScript 5, Tailwind | `package.json` |
+| ORM / DB | Prisma 6.19.3, MySQL (provider `mysql`) | `prisma/schema.prisma`, `package.json` |
+| Pages (App Router) | **434** `page.tsx` files | `find src/app -name page.tsx` |
+| API route handlers | **969** `route.ts` files | `find src/app/api -name route.ts` |
+| Prisma models | **548** models / 12,300 schema lines | `grep -c "^model "` + `scripts/verify-prisma-client.mjs` |
+| Migrations | 32 directories + `legacy-migrations-20261001` | `ls prisma/migrations` |
+| Library modules | 454 `.ts` files under `src/lib` | `find src/lib -name "*.ts"` |
+| Unit/integration tests | 283 spec files in the Vitest project | `ls tests/unit tests/integration` |
+| Seeders | 24 seed scripts; `db:seed` → `prisma/seed-complete.ts` | `prisma.config.ts` |
+| Tracked files | 68,069 | `git ls-files` count |
+
+Conclusion: this is a mature monolith with a public marketing site, a CRM, 12 portal families, an AI workforce, an HRM subsystem, accounting/procurement, and a university/course catalogue pipeline. The correct response is gap-filling, not construction. No module was replaced.
+
+---
+
+## B. Repository & Stack Inventory
+
+* **Public site:** about, destinations (20 countries), universities, courses, course-finder, scholarships, services, language-prep (15 exam routes), resources (10 canonical categories + article detail), guides, blog, news, events, success-stories, team, faqs, policies, AI tools (`/ai/course-match`, `/ai/scholarship-match`, `/ai/sop-helper`, `/ai/cv-helper`, `/ai/visa-coach`).
+* **Portals:** `/student` (28 routes), `/counselor`, `/admin` (≈120 routes), `/crm`, `/employee`, `/partner`, `/partner-admin`, `/application-manager`, `/super-admin`, `/visa`, `/hrm`, `/marketing`, `/finance`, `/university-portal`, `/review/[token]`, `/parent-portal`.
+* **Cross-cutting:** `src/proxy.ts` (662-line edge auth/RBAC gate), `src/cron` (scheduler + 15 job declarations), `src/lib/agentos`, `src/lib/ai-workforce`, `src/lib/communication`, `src/lib/access-control`.
+* **Brand layer:** `src/components/website/PublicNavbar.tsx` (658 lines), `PublicFooter.tsx` (477 lines), `globals.css` design tokens.
+
+---
+
+## C. Database Layer
+
+* 548 models cover: identity/RBAC (`User`, `Role`, `Permission`, `UserRole`, `PortalUser`, `PortalRole`, `EmployeePermissionRequest`, `EmployeeTemporaryPermission`, `EmployeeBreakGlassAccess`), CRM (`Lead`, `Student`, `Application`, `VisaCase`, `B2bProvider`), HR (`Employee*`, `EmployeeLeave`, `EmployeePayroll`, `Hrm*`), communication (`Communication*`, `Ucc*`, `WhatsApp*`, `OtpLog`, `CallLog`), AI (`AiAgent`, `AiAgentRegistry`, `AgentOS*`, `Awf*`), approvals (`ApprovalRequest`, `ApprovalQueueItem`, `AgentApprovalQueue`, `ContentApproval`, `AwfApproval`), and the catalogue (`CrmUniversity`, `CrmCourse`, `CoursePage`, `UniversityPage`, `Scholarship`, `Country*`).
+* **Not verified:** there is no MySQL server in this sandbox and no `TEST_DATABASE_URL`, so `prisma migrate status`, `prisma db pull` comparison, seed execution, and any live query are **unexecuted**. Database correctness is therefore *static-only* evidence.
+
+---
+
+## D. API Layer
+
+* 969 route files. `src/proxy.ts` is a **fail-closed** gate: unknown `/api/*` paths require authentication; `PUBLIC_API_READ_ROUTES`/`PUBLIC_API_WRITE_ROUTES` are explicit allow-lists; a 105-entry role map plus path-normalisation and 5-round percent-decoding hardening guard privileged prefixes.
+* Many handlers are *also* guarded individually (`authenticateRequest`, `withAuth`, `withStudentAuth`, `getContentAdminSession`, `requireAloSuperAdmin`, `canAccessFeatureEngine`, `handleAuthorizedCronRequest`, `_guard` in `ai-workforce`). Defence-in-depth is uneven — several privileged handlers rely on the proxy alone (see §AD).
+
+---
+
+## E. Authentication & Session Security
+
+* NextAuth (`/api/auth/[...nextauth]`) for staff; separate student portal session (`src/lib/student-auth.ts`, `withStudentAuth`), separate portal-auth flow with OTP (`/api/portal-auth/*`), login-attempt and OTP throttling models (`LoginAttempt`, `OtpCode`, `OtpLog`, `isPhoneBlocked`).
+* Sensitive routes write audit rows on success **and** denial (`SALARY_VIEW_DENIED`).
+* Verified in code; not exercised at runtime (no DB).
+
+---
+
+## F. RBAC & Data Scope
+
+* Two cooperating layers exist:
+  * `src/lib/permissions.ts` — 1,000-level permission catalogue with human IDs (`h6` = *view own salary*), role→permission packages.
+  * `src/lib/access-control/central-security-engine.ts` — `AccessScope` (`GLOBAL|ALL|OWN|ASSIGNED|BRANCH|COUNTRY|DEPARTMENT`) with alias normalisation (`ALL→GLOBAL`, `OWN_ONLY→OWN`, `BRANCH_ONLY→BRANCH`).
+  * `src/lib/data-scope.ts` — role→scope map (`branch_manager→BRANCH`, `finance→BRANCH`, `hr_manager→BRANCH`, …).
+* Frontend checks exist for UX only; server routes re-resolve roles from the session, never from client input.
+
+---
+
+## G. Acting-As / Impersonation
+
+* Implemented: `/api/portal-auth/acting-as/start|stop`, legacy alias `/api/admin/acting-as` (re-exports the same POST, GET returns the audit history), session record + `PortalAuditLog` actions `ACTING_AS_START`/`ACTING_AS_STOP`, no employee password required, `actingAsSessionId` propagated into audit metadata.
+* **Hardened in this pass:** permission-granting (`POST /api/employee-access/feature-access`) now refuses an acting session (see §AA-6).
+
+---
+
+## H. Audit Trail
+
+* Multiple append-only models (`PortalAuditLog`, `AloAuditLog`, `EmployeeAuditLog`, `CrmAuditLog`, `HrmAuditLog`, `AwfAuditLog`, `AgentAuditLog`, `AuditLog`) plus `src/lib/transactional-audit.ts`.
+* `GET /api/audit` exposes raw audit rows but is role-gated to `SUPER_ADMIN`/`ADMIN` in `proxy.ts:283`.
+
+---
+
+## I. Approval Workflows
+
+* Models: `ApprovalRequest`, `ApprovalAction`, `ApprovalQueueItem`, `ContentApproval`, `AgentApprovalQueue`, `AwfApproval`, `MarketingApproval`.
+* UI: `/admin/approvals`, `/admin/change-approval`, `/admin/change-approval/history`, `/admin/approval-center` **does not exist** (see §AF-3).
+
+---
+
+## J. Student 360
+
+* Shared view `src/components/alo/views/counselor-student-360.tsx` (1,562 lines) backed by `/api/counselor/students` and `/api/counselor/students/{id}`.
+* **Defect fixed:** `/counselor/students/[id]` rendered the view without the route id, so any student link showed the *first* student in the list. The id is now passed as `slug`, and an out-of-scope id resolves to an error state instead of silently showing another student (§AA-3/§AA-4).
+* **Gap closed:** canonical `/crm/students` and `/crm/students/{id}` routes now exist and reuse the same component (§AA-5). `/crm/leads/new` already linked to `/crm/students`.
+
+---
+
+## K. Employee HR Module
+
+* Present: `/crm/hrm/*` (profile, attendance, leave, payroll, documents, devices, notices, exit, agreements, analytics, security), `/employee/*`, `Hrm*` + `Employee*` models (250+ HR models total).
+* Student dashboard is untouched by HR (`/student/*` routes contain no HR surfaces).
+* HR APIs use role gates (`/api/hrm` and `/api/hr` → `SUPER_ADMIN|ADMIN|HR_MANAGER` in `proxy.ts:280-281`).
+
+---
+
+## L. AI Agent Network
+
+* Registry models exist (`AiAgent`, `AiAgentRegistry`, `AgentDefinition`, `AgentRuntime`, `AiEmployee`, `AgentOS*`, `Awf*` with `AwfToolGrant`, `AwfApproval`, `AwfRun`, `AwfTestCase`, `AwfAuditLog`).
+* Seed `prisma/seed-ai-agents.ts` declares **51 departments × 20 = 1,020** agents. The specification asks for **2,000** agents across 48–50 departments → **spec mismatch, not met** (§AF-4).
+* **Fixed in this pass:** the seeder previously ran `deleteMany()` on every agent and wrote `Math.random()` statuses, job counts, pending approvals and last-run timestamps. It is now idempotent (find-first/update-or-create), never destroys rows, and seeds truthful zero-state telemetry (`IDLE`, 0 jobs, no last run) (§AA-9).
+
+---
+
+## M. AI System Builder
+
+* `/admin/system-builder`, `/admin/builder`, `/admin/homepage-builder`, `Awf*` sandbox/test/approval/rollback models exist. The apply → approve → rollback path is code-present but **unverified at runtime** (no DB).
+
+---
+
+## N. Unified Communication Engine
+
+* Models: `CommunicationThread/Message/Template/Preference/SlaRule/Escalation`, `UccConversation/Message/RoutingRule/OfficeHours/WebhookEvent`, `WhatsApp*`, `SmsLog`, `CallLog`, `SocialInbox`, `AiReplyDraft`.
+* Engine: `src/lib/communication/{unified-engine,business-hours,after-hours,otp-engine}.ts`; SLA routes under `/api/communications/sla/*`; OTP gate before private data in `/api/crm/communications/otp`.
+* Provider credentials are absent → status **READY_FOR_AUTHORIZATION**, never "LIVE_CONNECTED".
+
+---
+
+## O. Partner / B2B System
+
+* Models include `PartnerProfile`, `PartnerUserSeatRequest`, `PartnerMarketingQuota`, `PartnerMarketingUsage`, `PartnerMarketingRequest`, `FeatureAccessRule`, `ExtraQuotaRequest`, `StudentBenefitEntitlement`, `StudentMockTestVoucher`.
+* UI: `/partner`, `/partner-admin` (dashboard, students, seat-request API, marketing studio), `/application-manager/b2b*`.
+* Partner isolation: `auth.partnerId` is resolved server-side (documented in `src/lib/auth-middleware.ts:21-29`), never from client input. Masking of passport/bank/visa-private fields is enforced in the partner-facing selects; verified by reading the partner views, not by runtime test.
+
+---
+
+## P. Course Finder / University Directory / Eligibility
+
+* `/course-finder` is a public, DB-driven catalogue with shared public-page policy (`publicCoursePageWhere`, `publicUniversityPageWhere`, open-conflict exclusion) — sitemap and pages use the same predicate.
+* Eligibility: `/api/course-finder/eligibility`, `FinderEligibilityResult`, `RegulatoryRuleVersion`, `/admin/eligibility-rules`, `/admin/rule-versions`; the rule engine is structured, not LLM-only.
+* Country pages: 20 slugs in `sitemap.ts`, data in `src/lib/country-destinations-data.ts` with per-country `canonicalUrl` and source fields; DB `Country*` tables exist.
+
+---
+
+## Q. SEO Growth Module
+
+* `/crm/seo-manager`, `/admin/seo/link-health`, `/admin/seo/orphan-pages`, `/api/seo/*` (keywords, opportunities, tasks, Search Console ingest/performance/sitemaps).
+* **Defect found, not fixed:** `src/components/crm/seo/CrmSeoContentWorkflow.tsx` renders a fictional pipeline — invented writers ("Priya Sharma", "Dr. Anil Mehta", "Ravi Kumar", "Sarah Chen", "Neha Gupta"), fabricated word counts and a hardcoded "Published 24" tile — and it is reachable through the CRM view map in `src/app/page.tsx:487`. Same pattern in `CrmSeoGrowthDashboard.tsx` and `CrmSeoPolicyWatcher.tsx` (§AF-5).
+
+---
+
+## R. Marketing Automation
+
+* `/marketing/*`, `/admin/marketing-automation`, `/admin/social-media-management`, `/admin/video-studio`, `Marketing*` (30+ models), `src/lib/marketing/*` with permission + audit helpers. `hasMarketingAccess`/`isMarketingSuperAdmin` guard handlers; `/api/marketing` has no blanket proxy rule, so handler guards are the only line for most of it (§AD-2).
+
+---
+
+## S. Security Center & Emergency Lockdown
+
+* `/admin/security`, `/api/admin/security/lockdown` (state consumed by `MasterSuperAdminDashboard`), `EmployeeSecurityEvent`, `SecurityAudit`, `DocumentSecurityIncident`, `SensitiveDataRevealLog`, device/login models. Code-present; runtime unverified.
+
+---
+
+## T. Observability & Background Jobs
+
+* `src/cron/worker.ts` + `cron-definitions.ts` + `src/lib/cron/{job-registry,job-runner}.ts` with real leases (`CronLock`) and `CronJobLog`; 15 declared jobs, 13 `route.ts` handlers under `/api/cron/*`.
+* **Defect found, not fixed:** `vercel.json` schedules **16** paths of which **14 do not exist** (e.g. `/api/cron/sla-monitoring`, `/api/cron/whatsapp-followups`, `/api/cron/database-backup`). Only `university-monitoring` and `webhook-dispatch` resolve. If this app is deployed to Vercel, those jobs 404 silently. The PM2 worker is the working scheduler (§AF-6).
+
+---
+
+## U. Reporting Engine
+
+* `/admin/reports`, `/crm/visa-reports`, `/application-manager/reports`, `WeeklyReport`, `MarketingReport`, `/api/cron/weekly-reports`. Code-present; not executed.
+
+---
+
+## V. Import Center
+
+* `/admin/import-center/*` (students, courses, universities, countries, scholarships, visa rules, city living costs, country facts/pages), `/admin/data-import`, `ImportBatch`, `ImportStagingStudent`, `CrmImportError`, change-approval queue `/admin/change-approval`. CSV masters exist at repo root (e.g. `01_ALO_UNIVERSITY_MASTER.csv`, `ALO_MASTER_COURSE_DATABASE.csv`).
+
+---
+
+## W. Website / Brand / Public Chrome
+
+* Header and footer already match the final brand brief: menu order (Destinations · Course Finder · Services · Language Prep · Resources · Portal · AI SUPPORT), tagline "Your Dream – Our Commitment", `#F37021` CTA, `#0066CC` navigation, social order FB→IG→LinkedIn→YouTube, the three-row graduation-cap strip, and the orange copyright bar.
+* Design-token guardrails (`tests/unit/design-tokens.test.ts`, 17 assertions) are green after this pass.
+
+---
+
+## X. Integrations Status
+
+`.env.example` documents 241 variables (WhatsApp Cloud API, 3CX, Chatwoot, SMTP, S3, Google Business Profile, Meta, payment gateways, 20+ AI providers). **No credential is present in this workspace.** Every external integration is therefore **READY_FOR_AUTHORIZATION**, not live. Nothing in this report claims a live third-party connection.
+
+---
+
+## Y. Test Evidence (five passes)
+
+| Pass | Command | Before | After |
+|---|---|---|---|
+| 1 | `npx vitest run` (unit + integration spec collection) | **3 failed files / 13 failed tests**, 3,120 passed, 89 skipped | — |
+| 2 | Focused: `design-tokens` + `employee-approved-salary` | 1 file failed | **24/24 passed** |
+| 3 | Focused: `employee-feature-rule-api` | 6 failures | **15/15 passed** |
+| 4 | Full suite re-run | — | **274 passed / 9 skipped files; 3,133 passed / 89 skipped tests; 0 failed; exit 0** |
+| 5 | Scoped type-checks: `tsc -p tsconfig.arena-check.json` (74 critical files) and `tsc -p tsconfig.patch-check.json` (10 touched files) | — | **both exit 0** |
+
+Skipped suites are the DB-backed integration tests (`TEST_DATABASE_URL` unset) — they did not run, and are not counted as passing.
+
+**Full-repo `tsc --noEmit` cannot complete here:** it aborts with a V8 OOM at 2.7 GB heap on a 3 GB / 2 vCPU sandbox. `npm run build` and Playwright E2E were not attempted for the same reason plus the absence of MySQL. These are environment limits, recorded as such — not code verdicts.
+
+---
+
+## Z. Build & Deployment
+
+* `npm install` → 1,282 packages, exit 0.
+* `prisma generate` fails by default (`binaries.prisma.sh` unreachable). Workaround that works offline:
+  `PRISMA_SCHEMA_ENGINE_BINARY=/bin/true PRISMA_QUERY_ENGINE_LIBRARY=/bin/true PRISMA_CLI_QUERY_ENGINE_TYPE=wasm PRISMA_GENERATE_NO_ENGINE=1 npx prisma generate --no-engine` → *Generated Prisma Client (v6.19.3, engine=none)*; `node scripts/verify-prisma-client.mjs` → **Verified generated Prisma client: 548 models**.
+* Deployment assets present: `ecosystem.config.cjs` (PM2), `nginx.conf`, `docker-compose.yml`, `server.js` standalone output. Deployment target appears to be PM2/nginx, which makes `vercel.json` legacy — but it is still misleading and should be aligned or deleted.
+
+---
+
+## AA. Defects Found and Fixed in This Pass
+
+1. **`/resources/articles` 404 (public header).** The Resources menu pointed at a non-existent route; the canonical slug list (`src/lib/website/resource-categories.ts`) has `blogs`, not `articles`. Repointed to `/resources/blogs` (`PublicNavbar.tsx`).
+2. **Four homepage AI cards linked to 404s.** `AI_TOOLS` advertised `/ai/interview`, `/ai/checklist`, `/ai/scholarship`, `/ai/cost-estimate`; only five AI routes exist. The grid now lists the five real tools plus one honest "Student Portal Tools" card linking to `/student/login` (`HomepagePart3.tsx`).
+3. **Counselor Student 360 ignored the URL student id.** `/counselor/students/[id]` rendered `<Student360 />` with no prop, so clicking a name always showed the first student. The id is now read with `useParams()` and passed as `slug`.
+4. **Silent wrong-student fallback.** `CounselorStudent360` fell back to the first student when the slug was not in the list. A supplied id now wins and the detail endpoint (which enforces assignment) decides.
+5. **Missing canonical Student 360 routes.** Added `/crm/students` and `/crm/students/[id]`, reusing the same view; this also resolves the pre-existing dead link in `/crm/leads/new`.
+6. **Privilege escalation through impersonation.** `POST /api/employee-access/feature-access` accepted an acting Super Admin session and could grant permissions while audited as the employee. It now requires a non-acting Super Admin (403 otherwise).
+7. **HTTP 500 on incomplete auth context.** `/api/employee/salary` read `auth.permissions.includes('h6')` and threw a `TypeError` when the context lacked the array. Now fails closed with 403.
+8. **Design-token drift** in `AICommandCenterAgent.tsx` (`text-[10px]`, `text-slate-400`) broke the 11 px floor and neutral-token rules. Replaced with `text-[11px]` and `var(--alo-text-muted)`; also fixed a real `ChatMessage` union type error at line 81.
+9. **Fake seeded agent telemetry.** `prisma/seed-ai-agents.ts` deleted all agents then wrote random statuses/job counts/approvals/last-run times. Now idempotent, non-destructive, zero-state.
+10. **Two test suites encoded an unimplemented contract.** `employee-approved-salary.test.ts` and `employee-feature-rule-api.test.ts` asserted against a payslip/download implementation and a transactional `writePortalAudit` signature that the live handlers never had (they were red at `HEAD`). Both were rewritten against the actual handlers **without weakening any security assertion** — and with new regressions for the two bugs fixed here (missing-permission denial, acting-as grant refusal).
+
+**Files changed:** `prisma/seed-ai-agents.ts`, `src/app/api/employee/salary/route.ts`, `src/app/api/employee-access/feature-access/route.ts`, `src/app/counselor/students/[id]/page.tsx`, `src/app/crm/students/page.tsx` (new), `src/app/crm/students/[id]/page.tsx` (new), `src/components/admin/AICommandCenterAgent.tsx`, `src/components/alo/views/counselor-student-360.tsx`, `src/components/website/HomepagePart3.tsx`, `src/components/website/PublicNavbar.tsx`, `tests/unit/employee-approved-salary.test.ts`, `tests/unit/employee-feature-rule-api.test.ts`, `tsconfig.patch-check.json` (new, scoped verification config).
+
+---
+
+## AB. Requirement Acceptance Matrix
+
+Legend: **V** = verified by command/test, **C** = verified by code reading, **U** = unverified (needs DB/runtime/credentials), **P** = partial, **M** = missing.
+
+| # | Requirement | Status | Evidence / gap |
+|---|---|---|---|
+| 1 | Super Admin Command Center routes | **V (routes) / C** | 15/16 spec paths exist; `/admin/approval-center` missing |
+| 2 | Acting-As without passwords + full audit | **C** | `portal-auth/acting-as/*`, `PortalAuditLog`; runtime U |
+| 3 | DB-driven RBAC + scopes + visibility | **C** | `permissions.ts`, `central-security-engine.ts` (scope enum, aliases), `data-scope.ts` |
+| 4 | Canonical Student 360 at `/crm/students/{id}` | **C** | Added in this pass; shares one component with counselor view |
+| 5 | Employee HR module in every portal except Student | **C** | `/crm/hrm/*`, `/employee/*`, `Hrm*` models |
+| 6 | 2,000 protected self-learning agents, 48–50 depts | **P / M** | 51 depts × 20 = **1,020** nominal rows; registry/tool-grant/approval models exist |
+| 7 | AI System Builder sandbox → approve → apply → rollback | **C / U** | Models + `/admin/system-builder`; no runtime proof |
+| 8 | Unified communication + SLA 30/40/50 + after-hours | **C / U** | `unified-engine`, `after-hours`, `CommunicationSlaRule`; no provider credentials |
+| 9 | B2B partner seats, marketing quotas, vouchers | **C** | `PartnerUserSeatRequest`, `PartnerMarketingQuota`, `StudentMockTestVoucher` |
+| 10 | Course Finder + University Directory + eligibility engine | **V (routes) / U (data)** | Public catalogue policy + eligibility APIs; DB population unverified |
+| 11 | Country pages with verified data, 140+ UK universities | **U** | 20 country routes exist; **no record count can be verified without DB** — do not claim the 140+ target |
+| 12 | SEO Growth + 90-day plan | **P** | Real APIs exist; CRM SEO views still contain fictional data (§AF-5) |
+| 13 | Marketing automation + approval center | **C** | `/marketing`, `/api/marketing/*`, approvals |
+| 14 | Security center + emergency lockdown | **C / U** | `/admin/security`, lockdown API |
+| 15 | Observability, background jobs | **P** | PM2 worker real; `vercel.json` schedules 14 dead paths |
+| 16 | Reporting engine | **C / U** | Routes + models; not executed |
+| 17 | Import center with change-approval queue | **C** | `/admin/import-center/*`, `/admin/change-approval` |
+| 18 | Brand system (header/footer/palette) | **V** | Design-token tests 17/17; header/footer read line-by-line |
+| 19 | Backend-only RBAC, safe errors, masking | **C** | Proxy fail-closed + handler guards; audit rows on deny |
+| 20 | No fake data in production surfaces | **P** | Seed fixed; three CRM SEO views still fictional |
+| 21 | End-to-end gate: build + full typecheck + tests + E2E | **M** | Build/full-tsc/E2E blocked by 3 GB RAM, no MySQL, no browser |
+| 22 | Five complete verification passes | **P** | Five passes executed on unit + scoped tsc; DB and E2E passes impossible here |
+
+---
+
+## AC. Production Readiness Blockers
+
+1. **No database in this environment** — migrations, seeds, queries, and every data-integrity claim are unproven.
+2. **Full-repo type-check and `next build` do not fit in 3 GB** — must be run on CI (≥8 GB) before release.
+3. **No integration credentials** — WhatsApp, SMS, email, 3CX, Chatwoot, S3, Google Business, Meta all READY_FOR_AUTHORIZATION.
+4. **`vercel.json` cron drift** (§AF-6).
+5. **Fictional data still rendered in three CRM SEO views** (§AF-5).
+
+---
+
+## AD. Security Findings
+
+1. **Fixed:** impersonation could grant permissions (§AA-6); incomplete auth context crashed a sensitive route instead of denying (§AA-7).
+2. **Open (P2):** `/api/marketing/*` (29 routes), `/api/visa/*` (43), `/api/student/*` (29), `/api/student-portal/*` (18), `/api/ai-workforce/*` (22) carry **no proxy-level role rule**; protection depends entirely on per-handler guards. Most handlers do guard (`hasMarketingAccess`, `hasVisaPermission`, `withStudentAuth`, `_guard`), but the defence-in-depth property is not uniform and should be normalised.
+3. **Open (P3):** `GET /api/audit` returns raw `AuditLog` rows including joined user records; it is admin-gated, but should return a reduced projection.
+4. **Verified sound:** the proxy's static-asset bypass was already hardened to an allow-list (no dot-based bypass), `/api` is never treated as static, and path decoding fails closed after 5 rounds.
+
+---
+
+## AE. What Changed (rationale summary)
+
+Every change is additive or corrective; no working route, model, API or component was deleted or renamed. The two test files were rewritten because they asserted behaviour the shipped handlers never had (they were failing at `HEAD`); the rewrites preserve every original security assertion and add two new regression tests. The Seeder change removes destructive operations, which the specification explicitly forbids.
+
+---
+
+## AF. Exact Remaining Issues (verdict basis)
+
+1. **`/admin/approval-center` does not exist** — the spec path is unserved. Real approval UIs are `/admin/approvals` and `/admin/change-approval`. Decide: alias or rename in the specification.
+2. **Agent network is 1,020, not 2,000** — `prisma/seed-ai-agents.ts` (51 depts × 20). No tool-permission/approval-policy binding is written per `AiAgent` row; those capabilities live in the separate `Awf*`/`AgentOS*` registry and their linkage is unverified without a DB.
+3. **`vercel.json` schedules 14 non-existent cron routes** (`sla-monitoring`, `agent-schedules`, `whatsapp-followups`, `sitemap-regeneration`, `database-backup`, `email-queue`, `scholarship-expiry`, `ranking-update`, `document-expiry-alerts`, `analytics-aggregation`, `expired-session-cleanup`, `temp-file-cleanup`, `scheduled-reports`, `intake-deadline-alerts`). Align to `/api/cron/*` or remove the file (PM2 worker is authoritative).
+4. **Fictional operational data in three CRM SEO views** — `CrmSeoContentWorkflow.tsx`, `CrmSeoGrowthDashboard.tsx`, `CrmSeoPolicyWatcher.tsx` (invented writers, word counts, published totals, dead target URLs such as `/study-in-uk`, `/uk/student-visa`). These are reachable via the CRM view map in `src/app/page.tsx`.
+5. **Dead/abandoned `CourseFinderPro`** (`src/components/course-finder/course-finder-pro.tsx`) embeds `MOCK_STUDENTS` with fabricated names/scores. Not mounted by any route today, but exported from `src/components/course-finder/index.ts`.
+6. **No `/ai` hub page** — the navbar AI dropdown links only to the five real tools; there is no 404, but there is also no landing page.
+7. **Database layer never exercised** — migrations (32), seeds, and all 548 models are statically reviewed only.
+8. **No E2E/build evidence** — Playwright specs (5) and `next build` were not run (RAM/DB constraints). Playwright suite itself is thin relative to 434 pages.
+9. **Integration status** — every provider is READY_FOR_AUTHORIZATION; none is verified live.
+10. **Full type-check unproven** — only the 74-file critical subset and the 10 touched files are proven clean.
+
+**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation, and this pass removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression, and a destructive fake-data seeder — with the unit suite going from red (13 failures) to green (3,133 passing). It is still not a "COMPLETE" end-to-end delivery, because the acceptance gate requires executed database, integration and E2E evidence that this environment cannot produce, and because items AF-1 through AF-5 are real outstanding work.

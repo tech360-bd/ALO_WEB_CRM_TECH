@@ -69,8 +69,11 @@ export async function POST(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
-    if (!isSuperAdmin(auth)) {
-      return NextResponse.json({ success: false, error: 'Super Admin required.' }, { status: 403 });
+    // Permission grants are never issued from an impersonation session: the
+    // acting Super Admin would otherwise be able to widen the target
+    // employee's access while their own session is audited as the employee.
+    if (!isSuperAdmin(auth) || Boolean((auth as AuthContext & { actingAsSessionId?: string }).actingAsSessionId)) {
+      return NextResponse.json({ success: false, error: 'A non-acting Super Admin session is required.' }, { status: 403 });
     }
 
     const body = await req.json().catch(() => null);
