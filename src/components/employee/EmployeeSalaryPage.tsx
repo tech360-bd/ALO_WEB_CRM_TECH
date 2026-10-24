@@ -1,180 +1,122 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { toast } from 'sonner';
-import { Download, Wallet, TrendingUp, Building2, CreditCard, PiggyBank, ChevronDown, ChevronUp } from 'lucide-react';
+import { Wallet, TrendingUp, CreditCard, PiggyBank, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
 
-const mockSalaryBreakdown = [
-  { label: 'Basic Salary', amount: 40000, type: 'earning' },
-  { label: 'House Rent Allowance', amount: 12000, type: 'earning' },
-  { label: 'Medical Allowance', amount: 3000, type: 'earning' },
-  { label: 'Transport Allowance', amount: 2000, type: 'earning' },
-  { label: 'Performance Bonus', amount: 5000, type: 'earning' },
-  { label: 'Income Tax', amount: -6000, type: 'deduction' },
-  { label: 'Provident Fund', amount: -3600, type: 'deduction' },
-  { label: 'Professional Tax', amount: -200, type: 'deduction' },
-];
+type SalaryRecord = {
+  id: string; basicSalary: number; housingAllow: number; transportAllow: number; medicalAllow: number;
+  otherAllow: number; grossSalary: number; taxDeduction: number; pfDeduction: number;
+  netSalary: number; currency: string; effectiveFrom: string;
+};
+type SalaryData = {
+  salary: { current: SalaryRecord | null; history: SalaryRecord[] };
+  commissions: { summary: { totalPending: number; totalPaid: number; total: number; count: number } };
+  bonuses: Array<{ amount: number; currency: string; status: string }>;
+  increments: Array<{ id: string; previousAmount: number; newAmount: number; incrementType: string; effectiveFrom: string }>;
+};
 
-const mockPayslipHistory = [
-  { id: '1', month: 'January 2025', gross: 62000, deductions: 9800, net: 52200, status: 'paid', paidOn: '2025-01-31' },
-  { id: '2', month: 'December 2024', gross: 60000, deductions: 9600, net: 50400, status: 'paid', paidOn: '2024-12-31' },
-  { id: '3', month: 'November 2024', gross: 57000, deductions: 9200, net: 47800, status: 'paid', paidOn: '2024-11-30' },
-  { id: '4', month: 'October 2024', gross: 57000, deductions: 9200, net: 47800, status: 'paid', paidOn: '2024-10-31' },
-  { id: '5', month: 'September 2024', gross: 57000, deductions: 9200, net: 47800, status: 'paid', paidOn: '2024-09-30' },
-  { id: '6', month: 'August 2024', gross: 55000, deductions: 8800, net: 46200, status: 'paid', paidOn: '2024-08-31' },
-];
+const formatMoney = (amount: number, currency = 'BDT') => {
+  const value = Number.isFinite(amount) ? amount : 0;
+  try { return new Intl.NumberFormat('en-BD', { style: 'currency', currency, maximumFractionDigits: 0 }).format(value); }
+  catch { return `${currency} ${value.toLocaleString('en-BD')}`; }
+};
 
-const formatTaka = (n: number) => `৳${Math.abs(n).toLocaleString('en-BD')}`;
+function authHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const token = usePortalStore.getState().token;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
 
 export default function EmployeeSalaryPage() {
-  const { user } = usePortalStore();
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(true);
-  const [salaryBreakdown, setSalaryBreakdown] = useState(mockSalaryBreakdown);
-  const [payslipHistory, setPayslipHistory] = useState(mockPayslipHistory);
-  const [downloading, setDownloading] = useState<string | null>(null);
+  const [salary, setSalary] = useState<SalaryData | null>(null);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const token = usePortalStore.getState().token;
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-
-    fetch('/api/employee/salary', { headers })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data?.breakdown) setSalaryBreakdown(data.breakdown);
-        if (data?.payslips) setPayslipHistory(data.payslips);
-      })
-      .catch(() => {})
-      .finally(() => { setLoading(false); });
+  const loadSalary = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch('/api/employee/salary', { headers: authHeaders(), cache: 'no-store' });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || body?.success !== true || !body?.data?.salary) throw new Error(body?.error || 'Salary information is unavailable.');
+      setSalary(body.data as SalaryData);
+    } catch (loadError) {
+      setSalary(null);
+      setError(loadError instanceof Error ? loadError.message : 'Salary information is unavailable.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const handleDownloadPdf = (p: typeof payslipHistory[0]) => {
-    setDownloading(p.id);
-    toast.info(`Generating PDF for ${p.month}...`);
-    setTimeout(() => {
-      toast.info('PDF download will be available in production. Please contact HR for payslips.');
-      setDownloading(null);
-    }, 1500);
-  };
+  useEffect(() => { void loadSalary(); }, [loadSalary]);
 
-  const gross = salaryBreakdown.filter(s => s.type === 'earning').reduce((a, s) => a + s.amount, 0);
-  const deductions = salaryBreakdown.filter(s => s.type === 'deduction').reduce((a, s) => a + Math.abs(s.amount), 0);
-  const net = gross - deductions;
+  if (loading) return <div className="space-y-4"><Skeleton className="h-12 w-64" /><Skeleton className="h-48 w-full" /><Skeleton className="h-64 w-full" /></div>;
 
-  if (loading) return <div className="space-y-4"><Skeleton className="h-48 w-full" /><Skeleton className="h-64 w-full" /></div>;
+  const current = salary?.salary.current || null;
+  const history = salary?.salary.history || [];
+  const currency = current?.currency || history[0]?.currency || 'BDT';
+  const deductions = current ? current.taxDeduction + current.pfDeduction : 0;
+  const breakdown = current ? [
+    { label: 'Basic salary', amount: current.basicSalary, kind: 'earning' },
+    { label: 'Housing allowance', amount: current.housingAllow, kind: 'earning' },
+    { label: 'Transport allowance', amount: current.transportAllow, kind: 'earning' },
+    { label: 'Medical allowance', amount: current.medicalAllow, kind: 'earning' },
+    { label: 'Other allowance', amount: current.otherAllow, kind: 'earning' },
+    { label: 'Tax deduction', amount: current.taxDeduction, kind: 'deduction' },
+    { label: 'Provident fund deduction', amount: current.pfDeduction, kind: 'deduction' },
+  ].filter((item) => item.amount !== 0) : [];
 
   return (
-    <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
-      <div>
-        <h1 className="text-2xl font-bold text-alo-text">Salary &amp; Payslips</h1>
-        <p className="text-sm text-alo-text-muted">View your salary breakdown and download payslips</p>
+    <div className="min-h-screen space-y-6 bg-alo-page p-4 lg:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-alo-text">Salary &amp; Compensation</h1>
+          <p className="text-sm text-alo-text-muted">Private compensation information for your employee account.</p>
+        </div>
+        <Button variant="outline" onClick={() => void loadSalary()} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Wallet className="w-5 h-5 text-emerald-600" />
-              <Badge variant="success" className="text-[11px]">Net Pay</Badge>
-            </div>
-            <p className="text-2xl font-bold text-alo-text">{formatTaka(net)}</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">{payslipHistory[0]?.month || 'Current Month'}</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2"><TrendingUp className="w-5 h-5 text-[var(--alo-brand)]" /></div>
-            <p className="text-2xl font-bold text-alo-text">{formatTaka(gross)}</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Gross Pay</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2"><CreditCard className="w-5 h-5 text-red-600" /></div>
-            <p className="text-2xl font-bold text-alo-text">{formatTaka(deductions)}</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Total Deductions</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white rounded-xl border border-alo-border">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2"><PiggyBank className="w-5 h-5 text-alo-brand" /></div>
-            <p className="text-2xl font-bold text-alo-text">{formatTaka(3600)}</p>
-            <p className="text-xs text-alo-text-muted mt-0.5">Provident Fund (Monthly)</p>
-          </CardContent>
-        </Card>
-      </div>
+      {error && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadSalary()}>Retry</Button></CardContent></Card>}
 
-      <Card className="bg-white rounded-xl border border-alo-border">
-        <CardHeader className="pb-0 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-semibold text-alo-text">{payslipHistory[0]?.month || 'Current Month'} Salary Breakdown</CardTitle>
-            {expanded ? <ChevronUp className="w-5 h-5 text-alo-text-muted" /> : <ChevronDown className="w-5 h-5 text-alo-text-muted" />}
-          </div>
-        </CardHeader>
-        {expanded && <CardContent className="pt-4">
-          <div className="space-y-2">
-            {salaryBreakdown.map((item, i) => (
-              <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-page/50">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${item.type === 'earning' ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                  <span className="text-sm text-alo-text">{item.label}</span>
-                </div>
-                <span className={`text-sm font-semibold ${item.type === 'earning' ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {item.amount < 0 ? '-' : '+'}{formatTaka(item.amount)}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-3 pt-3 border-t-2 border-alo-border flex items-center justify-between px-3">
-            <span className="text-base font-bold text-alo-text">Net Pay</span>
-            <span className="text-xl font-bold text-alo-brand">{formatTaka(net)}</span>
-          </div>
-        </CardContent>}
-      </Card>
+      {!error && <>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <SummaryCard icon={<Wallet className="h-5 w-5 text-emerald-600" />} label="Current net salary" value={current ? formatMoney(current.netSalary, currency) : 'Not available'} caption={current?.effectiveFrom ? `Effective ${current.effectiveFrom}` : 'No current salary record'} />
+          <SummaryCard icon={<TrendingUp className="h-5 w-5 text-[var(--alo-brand)]" />} label="Gross salary" value={current ? formatMoney(current.grossSalary, currency) : 'Not available'} caption="Current compensation record" />
+          <SummaryCard icon={<CreditCard className="h-5 w-5 text-red-600" />} label="Recorded deductions" value={current ? formatMoney(deductions, currency) : 'Not available'} caption="Tax and provident fund" />
+          <SummaryCard icon={<PiggyBank className="h-5 w-5 text-alo-brand" />} label="Paid commissions" value={formatMoney(salary?.commissions.summary.totalPaid || 0, currency)} caption={`${salary?.commissions.summary.count || 0} commission records`} />
+        </div>
 
-      <Card className="bg-white rounded-xl border border-alo-border">
-        <CardHeader className="pb-0">
-          <CardTitle className="text-base font-semibold text-alo-text">Payslip History</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="border-b border-alo-border">
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Month</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Gross Pay</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Deductions</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Net Pay</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Status</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Paid On</th>
-                <th className="text-left py-2.5 px-3 text-xs font-medium text-alo-text-muted">Action</th>
-              </tr></thead>
-              <tbody>
-                {payslipHistory.map(p => (
-                  <tr key={p.id} className="border-b border-alo-border/50 hover:bg-alo-page/50">
-                    <td className="py-2.5 px-3 text-alo-text font-medium">{p.month}</td>
-                    <td className="py-2.5 px-3 text-alo-text-secondary">{formatTaka(p.gross)}</td>
-                    <td className="py-2.5 px-3 text-red-500">{formatTaka(p.deductions)}</td>
-                    <td className="py-2.5 px-3 text-alo-text font-semibold">{formatTaka(p.net)}</td>
-                    <td className="py-2.5 px-3"><Badge variant="success" className="text-[11px]">{p.status}</Badge></td>
-                    <td className="py-2.5 px-3 text-alo-text-muted text-xs">{p.paidOn}</td>
-                    <td className="py-2.5 px-3">
-                      <Button variant="ghost" size="sm" className="h-7 text-alo-brand" disabled={downloading === p.id} onClick={() => handleDownloadPdf(p)}>
-                        {downloading === p.id ? 'Generating...' : <><Download className="w-3 h-3 mr-1" /> PDF</>}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+        <Card className="rounded-xl border border-alo-border bg-white">
+          <CardHeader className="cursor-pointer pb-0" onClick={() => setExpanded((value) => !value)}>
+            <div className="flex items-center justify-between"><CardTitle className="text-base font-semibold text-alo-text">Current compensation breakdown</CardTitle>{expanded ? <ChevronUp className="h-5 w-5 text-alo-text-muted" /> : <ChevronDown className="h-5 w-5 text-alo-text-muted" />}</div>
+          </CardHeader>
+          {expanded && <CardContent className="pt-4">
+            {!current ? <p className="py-6 text-center text-sm text-alo-text-muted">No current salary record is available.</p> : <>
+              <div className="space-y-2">{breakdown.map((item) => <div key={item.label} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-alo-page/50"><div className="flex items-center gap-3"><div className={`h-2 w-2 rounded-full ${item.kind === 'earning' ? 'bg-emerald-500' : 'bg-red-500'}`} /><span className="text-sm text-alo-text">{item.label}</span></div><span className={`text-sm font-semibold ${item.kind === 'earning' ? 'text-emerald-600' : 'text-red-600'}`}>{item.kind === 'deduction' ? '−' : ''}{formatMoney(item.amount, currency)}</span></div>)}</div>
+              <div className="mt-3 flex items-center justify-between border-t-2 border-alo-border px-3 pt-3"><span className="text-base font-bold text-alo-text">Net salary</span><span className="text-xl font-bold text-alo-brand">{formatMoney(current.netSalary, currency)}</span></div>
+            </>}
+          </CardContent>}
+        </Card>
+
+        <Card className="rounded-xl border border-alo-border bg-white">
+          <CardHeader className="pb-0"><CardTitle className="text-base font-semibold text-alo-text">Salary history</CardTitle></CardHeader>
+          <CardContent className="pt-4">
+            {history.length === 0 ? <p className="py-8 text-center text-sm text-alo-text-muted">No salary history is available.</p> : <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-alo-border"><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Effective from</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Gross salary</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Deductions</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Net salary</th></tr></thead><tbody>{history.map((record) => <tr key={record.id} className="border-b border-alo-border/50"><td className="px-3 py-2.5 font-medium text-alo-text">{record.effectiveFrom || 'Not specified'}</td><td className="px-3 py-2.5 text-alo-text-secondary">{formatMoney(record.grossSalary, record.currency)}</td><td className="px-3 py-2.5 text-red-500">{formatMoney(record.taxDeduction + record.pfDeduction, record.currency)}</td><td className="px-3 py-2.5 font-semibold text-alo-text">{formatMoney(record.netSalary, record.currency)}</td></tr>)}</tbody></table></div>}
+            <p className="mt-3 text-xs text-alo-text-muted">Payslip downloads are not available because there is no verified payslip document endpoint.</p>
+          </CardContent>
+        </Card>
+      </>}
     </div>
   );
+}
+
+function SummaryCard({ icon, label, value, caption }: { icon: React.ReactNode; label: string; value: string; caption: string }) {
+  return <Card className="rounded-xl border border-alo-border bg-white"><CardContent className="p-4"><div className="mb-2 flex items-center justify-between">{icon}</div><p className="text-2xl font-bold text-alo-text">{value}</p><p className="mt-0.5 text-xs font-medium text-alo-text-secondary">{label}</p><p className="mt-1 text-xs text-alo-text-muted">{caption}</p></CardContent></Card>;
 }

@@ -86,7 +86,7 @@ if [ -f "./next-service-dist/server.js" ]; then
 
         echo "🗄️  当前使用打包数据库: $DEFAULT_PACKAGED_DB_PATH"
     else
-        echo "🗄️  当前使用外部指定数据库: $DATABASE_URL"
+        echo "🗄️  当前使用外部指定数据库（连接信息已隐藏）"
     fi
     
     # 后台启动 Next.js

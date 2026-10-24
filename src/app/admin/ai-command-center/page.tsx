@@ -12,6 +12,7 @@ import {
   Activity
 } from 'lucide-react';
 import { toast } from 'sonner';
+import AICommandCenterAgent from '@/components/admin/AICommandCenterAgent';
 
 export default function AICommandCenterDashboard() {
   const [health, setHealth] = useState<any | null>(null);
@@ -72,10 +73,10 @@ export default function AICommandCenterDashboard() {
         <div>
           <div className="flex items-center gap-2.5">
             <Cpu className="w-7 h-7 text-[var(--alo-cta)]" />
-            <h1 className="text-2xl font-bold tracking-tight">ALO Education AI Command Center</h1>
+            <h1 className="text-2xl font-bold tracking-tight">ALO AI Command Center</h1>
           </div>
           <p className="text-[13px] text-[var(--alo-text-secondary)] mt-1">
-            Legacy AgentOS registry snapshot — runtime and cross-registry health are not verified here.
+            ALO Admin Copilot availability is determined by authenticated server-side provider configuration; legacy registry metrics remain separate.
           </p>
         </div>
 
@@ -92,7 +93,9 @@ export default function AICommandCenterDashboard() {
         </div>
       </div>
 
-      {/* KPI Stats Bar */}
+      <AICommandCenterAgent />
+
+      {/* KPI Stats Bar — historical registry counts only; not live agent evidence. */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase">Legacy departments</span>

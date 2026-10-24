@@ -147,10 +147,10 @@ describe.skipIf(!HAS_TEST_DB)('advisory lock serialization on real MySQL', () =>
         SET lastValue = LAST_INSERT_ID(lastValue + 1), updatedAt = NOW(3)
         WHERE id = ${key}`;
       const rows = await tx.$queryRaw<Array<{ value: bigint }>>`SELECT LAST_INSERT_ID() AS value`;
-      return `AE-${year}${String(Number(rows[0].value)).padStart(5, '0')}`;
+      return `AE-${year}${String(Number(rows[0].value)).padStart(4, '0')}`;
     });
 
-    expect(studentId).toMatch(/^AE-2099\d{5}$/);
+    expect(studentId).toMatch(/^AE-2099\d{4}$/);
 
     const email = `${runId}-${randomUUID()}@example.invalid`;
     const created = await db.student.create({

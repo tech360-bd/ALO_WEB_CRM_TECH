@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
-import { canAccessFeature } from '@/lib/access-check-engine';
+import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
 import { canAccessFeatureEngine } from '@/lib/employee-access-engine';
+
+const ACTIONS = new Set([
+  'view', 'create', 'edit', 'submit', 'accept', 'reject', 'approve', 'verify', 'send',
+  'download', 'upload', 'export', 'assign', 'reassign', 'archive', 'configure', 'manage',
+  'escalate', 'generate', 'publish', 'delete', 'use',
+]);
+const FEATURE_KEY = /^[a-z][a-z0-9_.:-]{1,99}$/;
+
+function isSuperAdmin(auth: AuthContext): boolean {
+  return auth.roles.some((role) => role.toUpperCase() === 'SUPER_ADMIN');
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,28 +21,33 @@ export async function GET(req: NextRequest) {
     const auth = authResult as AuthContext;
 
     const { searchParams } = new URL(req.url);
-    const featureKey = searchParams.get('featureKey');
-    const action = searchParams.get('action') || 'view';
+    const featureKey = (searchParams.get('featureKey') || '').trim().toLowerCase();
+    const action = (searchParams.get('action') || 'view').trim().toLowerCase();
 
     if (featureKey) {
+      if (!FEATURE_KEY.test(featureKey) || !ACTIONS.has(action)) {
+        return NextResponse.json({ success: false, error: 'A valid featureKey and action are required.' }, { status: 400 });
+      }
       const allowed = await canAccessFeatureEngine(auth.userId, auth.roles, featureKey, action);
-      return NextResponse.json({ success: true, featureKey, action, allowed, userId: auth.userId, roles: auth.roles });
+      return NextResponse.json({ success: true, featureKey, action, allowed });
     }
 
-    // List all feature rules
-    const rules = await (db as any).featureAccessRule.findMany({ take: 100 }).catch(() => []);
-
-    // Check current user's accessible features
-    const checks = await Promise.all(
-      ['whatsapp','social','email','phone','ai','application','student','document','finance','visa','marketing','partner','b2b','quota'].map(async (key) => ({
-        featureKey: key,
-        allowed: await canAccessFeatureEngine(auth.userId, auth.roles, key, 'view').catch(() => false),
-      }))
+    // Permission configuration is administrative data. Ordinary employees may
+    // check their own access, but must not enumerate other employees' grants.
+    const rules = isSuperAdmin(auth)
+      ? await db.featureAccessRule.findMany({ take: 100, orderBy: { updatedAt: 'desc' } }).catch(() => [])
+      : [];
+    const accessibleFeatures = await Promise.all(
+      ['whatsapp', 'social', 'email', 'phone', 'ai', 'application', 'student', 'document', 'finance', 'visa', 'marketing', 'partner', 'b2b', 'quota']
+        .map(async (featureKey) => ({
+          featureKey,
+          allowed: await canAccessFeatureEngine(auth.userId, auth.roles, featureKey, 'view').catch(() => false),
+        })),
     );
 
-    return NextResponse.json({ success: true, rules, accessibleFeatures: checks });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, rules, canManageRules: isSuperAdmin(auth), accessibleFeatures });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Feature access could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -41,26 +56,69 @@ export async function POST(req: NextRequest) {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
+    if (!isSuperAdmin(auth)) {
+      return NextResponse.json({ success: false, error: 'Super Admin required.' }, { status: 403 });
+    }
 
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isSuper) return NextResponse.json({ success: false, error: 'Super Admin required' }, { status: 403 });
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ success: false, error: 'A JSON request body is required.' }, { status: 400 });
+    }
+    const employeeRef = typeof body.employeeId === 'string' ? body.employeeId.trim() : '';
+    const featureKey = typeof body.featureKey === 'string' ? body.featureKey.trim().toLowerCase() : '';
+    const action = typeof body.action === 'string' ? body.action.trim().toLowerCase() : 'view';
+    const isEnabled = typeof body.isEnabled === 'boolean' ? body.isEnabled : true;
+    const requiresApproval = typeof body.requiresApproval === 'boolean' ? body.requiresApproval : false;
+    const limitValue = body.limitValue === undefined ? 0 : body.limitValue;
 
-    const body = await req.json();
-    const { featureKey, displayName, description, allowedRoles, requiredPermissions } = body;
-    if (!featureKey) return NextResponse.json({ success: false, error: 'featureKey required' }, { status: 400 });
+    if (!employeeRef || employeeRef.length > 191) {
+      return NextResponse.json({ success: false, error: 'employeeId is required.' }, { status: 400 });
+    }
+    if (!FEATURE_KEY.test(featureKey) || !ACTIONS.has(action)) {
+      return NextResponse.json({ success: false, error: 'A valid featureKey and action are required.' }, { status: 400 });
+    }
+    if (!Number.isSafeInteger(limitValue) || limitValue < 0 || limitValue > 1_000_000) {
+      return NextResponse.json({ success: false, error: 'limitValue must be an integer from 0 to 1000000.' }, { status: 400 });
+    }
 
-    const rule = await (db as any).featureAccessRule.create({
-      data: {
-        featureKey,
-        displayName: displayName || featureKey,
-        description: description || '',
-        allowedRoles: JSON.stringify(allowedRoles || []),
-        requiredPermissions: JSON.stringify(requiredPermissions || []),
-      },
+    const employee = await db.employee.findFirst({
+      where: { OR: [{ id: employeeRef }, { userId: employeeRef }, { employeeId: employeeRef }] },
+      select: { id: true, userId: true, employeeId: true },
+    });
+    if (!employee) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+
+    // The central access engine stores view rules under the bare key and each
+    // non-view action under an exact key, e.g. employee.profile.private.edit.
+    const persistedFeatureKey = action === 'view' ? featureKey : `${featureKey}.${action}`;
+    const where = { ownerType: 'employee', ownerId: employee.id, featureKey: persistedFeatureKey };
+    const existing = await db.featureAccessRule.findFirst({ where, select: { id: true } });
+    const rule = existing
+      ? await db.featureAccessRule.update({
+          where: { id: existing.id },
+          data: { isEnabled, limitValue, requiresApproval, updatedBy: auth.userId },
+        })
+      : await db.featureAccessRule.create({
+          data: {
+            ...where,
+            isEnabled,
+            limitValue,
+            requiresApproval,
+            createdBy: auth.userId,
+            updatedBy: auth.userId,
+          },
+        });
+
+    await logAuditAction(auth, existing ? 'EMPLOYEE_FEATURE_ACCESS_UPDATED' : 'EMPLOYEE_FEATURE_ACCESS_CREATED', 'FeatureAccessRule', rule.id, {
+      employeeId: employee.id,
+      featureKey,
+      action,
+      isEnabled,
+      requiresApproval,
+      limitValue,
     });
 
-    return NextResponse.json({ success: true, data: rule });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, data: rule }, { status: existing ? 200 : 201 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Feature access could not be saved.' }, { status: 503 });
   }
 }

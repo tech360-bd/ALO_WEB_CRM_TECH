@@ -12,6 +12,7 @@ export default function WhatsAppNumbersAdminPage() {
   const [numbers, setNumbers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
+  const [initializing, setInitializing] = useState(false);
 
   const fetchNumbers = async () => {
     setLoading(true);
@@ -26,22 +27,46 @@ export default function WhatsAppNumbersAdminPage() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchNumbers(); }, []);
-
-  const handleSave = async (num: any) => {
+  const initializePool = async () => {
+    setInitializing(true);
     try {
       const res = await fetch('/api/whatsapp/numbers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phoneNumber: num.phoneNumber,
-          displayName: num.displayName,
-          ownerType: num.ownerType,
-          branch: num.branch,
-          metaPhoneNumberId: num.metaPhoneNumberId,
-          metaBusinessAccountId: num.metaBusinessAccountId,
-          reason: 'Admin update via dashboard',
-        }),
+        body: JSON.stringify({ action: 'seed_official_pool' }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        toast.error(data.error || 'Only Super Admin may initialize the pool.');
+        return;
+      }
+      toast.success(`${data.result.created} missing number rows added; no Meta connection was assumed.`);
+      await fetchNumbers();
+    } catch {
+      toast.error('Official number pool could not be initialized.');
+    } finally {
+      setInitializing(false);
+    }
+  };
+
+  useEffect(() => { fetchNumbers(); }, []);
+
+  const handleSave = async (num: any) => {
+    try {
+      const payload: Record<string, string> = {
+        phoneNumber: num.phoneNumber,
+        displayName: num.displayName,
+        ownerType: num.ownerType,
+        branch: num.branch,
+        reason: 'Number assignment updated from WhatsApp pool dashboard',
+      };
+      // Never round-trip masked identifiers. A new provider ID is sent only
+      // when explicitly typed into the blank Super Admin configuration field.
+      if (num.metaPhoneNumberIdDraft?.trim()) payload.metaPhoneNumberId = num.metaPhoneNumberIdDraft.trim();
+      const res = await fetch('/api/whatsapp/numbers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data.success) toast.success(`Number ${num.phoneNumber} updated`);
@@ -63,9 +88,16 @@ export default function WhatsAppNumbersAdminPage() {
             <p className="text-[var(--alo-text-muted)] text-sm">20 official numbers 01805020100-01805020119 • Main: 01805020100 • COO 24/7: 01805020101</p>
           </div>
         </div>
-        <Button onClick={fetchNumbers} variant="outline" className="border-white/10">
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Refresh
-        </Button>
+        <div className="flex gap-2">
+          {stats && stats.total < stats.expected && (
+            <Button onClick={initializePool} disabled={initializing} variant="outline" className="border-amber-500/30 text-amber-200">
+              {initializing ? 'Initializing…' : 'Initialize missing pool entries'}
+            </Button>
+          )}
+          <Button onClick={fetchNumbers} variant="outline" className="border-white/10">
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Refresh
+          </Button>
+        </div>
       </div>
 
       {stats && (
@@ -89,9 +121,11 @@ export default function WhatsAppNumbersAdminPage() {
               <div className="col-span-2"><Input value={num.displayName} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, displayName: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" /></div>
               <div className="col-span-2"><Input value={num.ownerType} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, ownerType: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="ALO_MAIN/COO/EMPLOYEE" /></div>
               <div className="col-span-1"><Input value={num.branch} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, branch: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="Branch" /></div>
-              <div className="col-span-2"><Input value={num.metaPhoneNumberId} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, metaPhoneNumberId: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="Meta phone_number_id" /></div>
+              <div className="col-span-2">
+                <Input value={num.metaPhoneNumberIdDraft || ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, metaPhoneNumberIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder={num.metaPhoneNumberIdMasked ? `Configured ${num.metaPhoneNumberIdMasked} · enter replacement` : 'Meta phone_number_id (Super Admin)'} />
+              </div>
               <div className="col-span-2 flex items-center gap-2">
-                <Badge className={num.connectionStatus==='connected' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}>{num.connectionStatus}</Badge>
+                <Badge className="bg-amber-500/20 text-amber-300">{num.connectionStatus === 'configured_unverified' ? 'CONFIGURED · UNVERIFIED' : String(num.connectionStatus || 'disconnected').toUpperCase()}</Badge>
                 {num.isDefaultSender && <Badge className="bg-blue-500/20 text-blue-300 text-[11px]">DEFAULT</Badge>}
                 {num.isSupport247 && <Badge className="bg-rose-500/20 text-rose-300 text-[11px]">24/7</Badge>}
               </div>
@@ -106,7 +140,7 @@ export default function WhatsAppNumbersAdminPage() {
           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
           <div className="text-xs text-[var(--alo-placeholder)]">
             <p className="font-bold text-amber-300">External Credential Blocker</p>
-            <p>Numbers are considered Cloud API connected ONLY when official Meta phone_number_id and credentials are configured. Never spoof numbers. Use official Meta WhatsApp Cloud API only.</p>
+            <p>A saved phone_number_id or access token is configuration only—not proof of a working Cloud API connection. Connection status stays unverified until an authorized provider check succeeds. Never spoof numbers; use official Meta WhatsApp Cloud API only.</p>
             <p className="mt-1">Fallback: 01805020100 | Urgent: 01805020101 | Follow-up: 01805020100 | Complaint: 01805020100</p>
           </div>
         </CardContent>

@@ -10,26 +10,33 @@ import { withAuth } from '@/lib/auth-middleware';
 
 export async function GET(request: Request) {
   return withAuth(async (_request, auth) => {
-    // RBAC: block student/partner from employee APIs
-    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
-    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
-      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
+    const actorRoles = [auth.userType, ...(auth.roles || [])].map((role: string) => role.trim().toUpperCase());
+    if (actorRoles.some((role: string) => ['STUDENT', 'PARTNER'].includes(role))) {
+      return NextResponse.json({ success: false, error: 'Employee access is required.' }, { status: 403 });
     }
+    const employee = await db.employee.findUnique({
+      where: { userId: auth.userId },
+      select: { id: true, userId: true, employeeId: true, status: true },
+    });
+    if (!employee || employee.status.toLowerCase() !== 'active') {
+      return NextResponse.json({ success: false, error: 'An active employee record is required.' }, { status: 403 });
+    }
+    if (!auth.permissions.includes('employee.dashboard.view') && !auth.permissions.includes('employee.dashboard.view_all')) {
+      return NextResponse.json({ success: false, error: 'Employee report permission is required.' }, { status: 403 });
+    }
+    const employeeIds = [...new Set([employee.id, employee.userId, employee.employeeId].filter(Boolean))];
     try {
-      // Get employee profile
-      const profile = await db.employeeProfile.findUnique({
-        where: { userId: auth.userId },
-      });
-      const employeeId = profile?.id || auth.userId;
+      const profile = await db.employeeProfile.findUnique({ where: { userId: employee.userId }, select: { employeeId: true } });
+      const employeeKeys = [...new Set([...employeeIds, profile?.employeeId].filter((value): value is string => Boolean(value)))];
 
       // ---- TASK COMPLETION STATS ----
       const [totalTasks, completedTasks, pendingTasks, overdueTasks] = await Promise.all([
-        db.counselorTask.count({ where: { employeeId } }),
-        db.counselorTask.count({ where: { employeeId, status: 'completed' } }),
-        db.counselorTask.count({ where: { employeeId, status: 'pending' } }),
+        db.counselorTask.count({ where: { employeeId: { in: employeeKeys } } }),
+        db.counselorTask.count({ where: { employeeId: { in: employeeKeys }, status: 'completed' } }),
+        db.counselorTask.count({ where: { employeeId: { in: employeeKeys }, status: 'pending' } }),
         db.counselorTask.count({
           where: {
-            employeeId,
+            employeeId: { in: employeeKeys },
             status: 'pending',
             dueDate: { lt: new Date().toISOString().split('T')[0], not: '' },
           },
@@ -37,37 +44,37 @@ export async function GET(request: Request) {
       ]);
 
       const inProgressTasks = await db.counselorTask.count({
-        where: { employeeId, status: 'in_progress' },
+        where: { employeeId: { in: employeeKeys }, status: 'in_progress' },
       });
 
       // Task type breakdown
       const tasksByType = await db.counselorTask.groupBy({
         by: ['type'],
-        where: { employeeId },
+        where: { employeeId: { in: employeeKeys } },
         _count: { id: true },
       });
 
       const tasksByPriority = await db.counselorTask.groupBy({
         by: ['priority'],
-        where: { employeeId },
+        where: { employeeId: { in: employeeKeys } },
         _count: { id: true },
       });
 
       // ---- STUDENT STATS ----
       const totalStudents = await db.portalStudentProfile.count({
-        where: { counselorId: auth.userId },
+        where: { counselorId: { in: employeeKeys } },
       });
 
       const studentsByStage = await db.portalStudentProfile.groupBy({
         by: ['journeyStage'],
-        where: { counselorId: auth.userId },
+        where: { counselorId: { in: employeeKeys } },
         _count: { id: true },
       });
 
       // ---- APPLICATION PIPELINE ----
       // Get counselor's student profile IDs
       const counselorStudents = await db.portalStudentProfile.findMany({
-        where: { counselorId: auth.userId },
+        where: { counselorId: { in: employeeKeys } },
         select: { id: true },
       });
       const studentIds = counselorStudents.map(s => s.id);
@@ -107,42 +114,37 @@ export async function GET(request: Request) {
 
       // ---- ATTENDANCE STATS (this month) ----
       const currentMonth = new Date().toISOString().substring(0, 7);
-      let attendanceStats = { present: 0, absent: 0, late: 0, leave: 0, avgHours: 0 };
-
-      try {
-        const attendanceRecords = await db.employeeAttendance.findMany({
-          where: {
-            employeeId: profile?.employeeId || auth.userId,
-            date: { startsWith: currentMonth },
-          },
-        });
-
-        attendanceStats = {
-          present: attendanceRecords.filter(r => r.status === 'present').length,
-          absent: attendanceRecords.filter(r => r.status === 'absent').length,
-          late: attendanceRecords.filter(r => r.status === 'late').length,
-          leave: attendanceRecords.filter(r => r.status === 'leave').length,
-          avgHours: attendanceRecords.length > 0
-            ? Math.round(
-                (attendanceRecords.reduce((sum, r) => sum + r.hoursWorked, 0) / attendanceRecords.length) * 100
-              ) / 100
-            : 0,
-        };
-      } catch {
-        // Attendance table may not exist
-      }
+      const attendanceRecords = await db.employeeAttendance.findMany({
+        where: {
+          employeeId: { in: employeeKeys },
+          date: { startsWith: currentMonth },
+        },
+      });
+      const attendanceStats = {
+        present: attendanceRecords.filter(r => r.status === 'present').length,
+        absent: attendanceRecords.filter(r => r.status === 'absent').length,
+        late: attendanceRecords.filter(r => r.status === 'late').length,
+        leave: attendanceRecords.filter(r => r.status === 'leave').length,
+        avgHours: attendanceRecords.length > 0
+          ? Math.round((attendanceRecords.reduce((sum, r) => sum + r.hoursWorked, 0) / attendanceRecords.length) * 100) / 100
+          : 0,
+      };
 
       // ---- PERFORMANCE STATS (latest) ----
-      type PerformanceRecord = Awaited<ReturnType<typeof db.employeePerformance.findFirst>>;
-      let performanceRecord: PerformanceRecord = null;
-      try {
-        performanceRecord = await db.employeePerformance.findFirst({
-          where: { employeeId: profile?.employeeId || auth.userId },
-          orderBy: { createdAt: 'desc' },
-        });
-      } catch {
-        // Performance table may not exist
-      }
+      const performanceRecord = await db.employeePerformance.findFirst({
+        where: { employeeId: { in: employeeKeys } },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      await db.portalAuditLog.create({
+        data: {
+          actorUserId: auth.actorUserId || auth.userId,
+          action: 'EMPLOYEE_REPORTS_VIEWED',
+          entityType: 'EmployeeReport',
+          entityId: employee.id,
+          metadata: JSON.stringify({ effectiveUserId: auth.userId, scope: 'OWN_AND_ASSIGNED', ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }),
+        },
+      });
 
       return NextResponse.json({
         success: true,
@@ -185,19 +187,6 @@ export async function GET(request: Request) {
       });
     } catch (error) {
       console.error('Employee reports GET error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({
-          success: true,
-          data: {
-            taskStats: { total: 0, completed: 0, pending: 0, inProgress: 0, overdue: 0, completionRate: 0, byType: [], byPriority: [] },
-            studentStats: { total: 0, byStage: [] },
-            applicationStats: { total: 0, byStage: [], byCountry: [] },
-            documentStats: { byStatus: [] },
-            attendanceStats: { present: 0, absent: 0, late: 0, leave: 0, avgHours: 0 },
-            performance: null,
-          },
-        });
-      }
       return NextResponse.json(
         { success: false, error: 'Failed to load reports' },
         { status: 500 }

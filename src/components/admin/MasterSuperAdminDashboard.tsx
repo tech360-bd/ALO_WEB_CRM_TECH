@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AgentRegistry from '@/components/crm/agentos/AgentRegistry';
-import AICommandingCenter from './AICommandingCenter';
+import AICommandCenterAgent from '@/components/admin/AICommandCenterAgent';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 // ============================================================
@@ -563,11 +563,11 @@ export default function MasterSuperAdminDashboard() {
                 }
               }}
             >
-              Toggle agent registry / chat console
+              Toggle agent registry / ALO Admin Copilot
             </Button>
           </div>
           <div id="ai-command-container">
-            <AICommandingCenter />
+            <AICommandCenterAgent />
           </div>
           <div id="agent-registry-container" className="hidden">
             <AgentRegistry />

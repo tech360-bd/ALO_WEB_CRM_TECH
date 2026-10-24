@@ -1,9 +1,9 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2519,
+  "filesScanned": 2532,
   "summary": {
-    "UNUSED": 110,
+    "UNUSED": 102,
     "REFERENCED_WITH_FALLBACK": 154,
     "REFERENCED_FAIL_CLOSED": 20,
     "REFERENCED": 118,
@@ -1614,126 +1614,6 @@
         "scripts/db-diagnose.mjs",
         "scripts/dev-sqlite/preload.cjs"
       ]
-    },
-    {
-      "name": "DB_CHARSET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_COLLATION",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_CONNECTION",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_DATABASE",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_HOST",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_PASSWORD",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_PORT",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_USERNAME",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
     },
     {
       "name": "DEEPINFRA_API_KEY",

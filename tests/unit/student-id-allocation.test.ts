@@ -66,22 +66,26 @@ function createFakeDatabase() {
 
 describe('identifier format', () => {
   it('formats the canonical student ID exactly as specified', () => {
-    expect(formatIdentifier('AE', 2026, 1)).toBe('AE-2026000001');
-    expect(formatIdentifier('AE', 2026, 2)).toBe('AE-2026000002');
+    expect(formatIdentifier('AE', 2026, 1)).toBe('AE-20260001');
+    expect(formatIdentifier('AE', 2026, 2)).toBe('AE-20260002');
     expect(formatIdentifier('AEP', 2026, 1)).toBe('AEP-202600001');
     expect(formatIdentifier('EMP', 2026, 99999)).toBe('EMP-202699999');
   });
 
   it('fails closed on sequence exhaustion, bad scope, or bad year', () => {
-    expect(() => formatIdentifier('AE', 2026, 100000)).toThrow(IdentifierAllocationError);
+    expect(() => formatIdentifier('AE', 2026, 10000)).toThrow(IdentifierAllocationError);
+    expect(formatIdentifier('AE', 2026, 9999)).toBe('AE-20269999');
+    expect(() => formatIdentifier('EMP', 2026, 100000)).toThrow(IdentifierAllocationError);
     expect(() => formatIdentifier('AE', 2026, 0)).toThrow(IdentifierAllocationError);
     expect(() => formatIdentifier('XX' as never, 2026, 1)).toThrow(/Unknown identifier scope/);
     expect(() => formatIdentifier('AE', 1999, 1)).toThrow(/Invalid year/);
   });
 
-  it('accepts both new six-digit and historical five-digit student codes', () => {
-    const regex = /\b(AE-\d{4}\d{5}|AE-\d{4}\d{6}|ALO-S-\d+|AE-\d{8}|STU-\w+)\b/i;
-    expect(regex.exec('my id is AE-202600042 thanks')?.[1]).toBe('AE-202600042');
+  it('recognizes new four-digit and historical five/six-digit student codes', () => {
+    const regex = /\b(AE-\d{4}\d{4}|AE-\d{4}\d{5}|AE-\d{4}\d{6}|ALO-S-\d+|STU-\w+)\b/i;
+    expect(regex.exec('my id is AE-20260001 thanks')?.[1]).toBe('AE-20260001');
+    expect(regex.exec('legacy code AE-202600042')?.[1]).toBe('AE-202600042');
+    expect(regex.exec('legacy code AE-2026000001')?.[1]).toBe('AE-2026000001');
   });
 });
 
@@ -101,8 +105,8 @@ describe('allocateIdentifier', () => {
       ids.push(await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026)));
     }
     expect(new Set(ids).size).toBe(200);
-    expect(ids[0]).toBe('AE-2026000001');
-    expect(ids[199]).toBe('AE-2026000200');
+    expect(ids[0]).toBe('AE-20260001');
+    expect(ids[199]).toBe('AE-20260200');
   });
 
   it('keeps each year and scope independent (restart per year, no cross-scope reuse)', async () => {
@@ -110,14 +114,15 @@ describe('allocateIdentifier', () => {
     const a = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
     const b = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2027));
     const c = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AEP', 2026));
-    expect([a, b, c]).toEqual(['AE-2026000001', 'AE-2027000001', 'AEP-202600001']);
+    expect([a, b, c]).toEqual(['AE-20260001', 'AE-20270001', 'AEP-202600001']);
   });
 
   it('skips a legacy six-digit student code that exists outside the new sequence', async () => {
     const fake = createFakeDatabase();
+    fake.reservedCodes.add('AE-20260001');
     fake.reservedCodes.add('AE-2026000001');
     const next = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
-    expect(next).toBe('AE-2026000002');
+    expect(next).toBe('AE-20260002');
   });
 
   it('never reuses a committed number, even after later failures', async () => {
@@ -130,10 +135,10 @@ describe('allocateIdentifier', () => {
       }),
     ).rejects.toThrow('welcome workflow failed');
     const next = await fake.transaction((tx) => allocateIdentifier(tx as never, 'AE', 2026));
-    expect(first).toBe('AE-2026000001');
+    expect(first).toBe('AE-20260001');
     // The rolled-back allocation released its number before anything was committed, so the next
-    // committed ID is 000002 and nothing visible was ever reused.
-    expect(next).toBe('AE-2026000002');
+    // committed ID is 0002 and nothing visible was ever reused.
+    expect(next).toBe('AE-20260002');
   });
 
   it('rejects unknown scopes before touching the database', async () => {

@@ -27,9 +27,8 @@ export function normalizeBdPhone(phone: string): string {
 }
 
 export async function seedOfficialNumberPool() {
-  const existing = await db.whatsAppOfficialNumber.count();
-  if (existing >= 20) return { seeded: false, count: existing };
-
+  // Explicit, additive initialization: create only missing canonical rows and
+  // never overwrite employee assignments, Meta IDs, status, or admin settings.
   const toCreate = OFFICIAL_NUMBERS.map((phone, idx) => {
     const normalized = normalizeBdPhone(phone);
     let ownerType = 'EMPLOYEE';
@@ -66,20 +65,9 @@ export async function seedOfficialNumberPool() {
     };
   });
 
-  // Idempotent upsert
-  for (const num of toCreate) {
-    await db.whatsAppOfficialNumber.upsert({
-      where: { phoneNumber: num.phoneNumber },
-      update: {
-        normalizedPhone: num.normalizedPhone,
-        displayName: num.displayName,
-        purpose: num.purpose,
-      },
-      create: num,
-    });
-  }
-
-  return { seeded: true, count: 20 };
+  const inserted = await db.whatsAppOfficialNumber.createMany({ data: toCreate, skipDuplicates: true });
+  const count = await db.whatsAppOfficialNumber.count();
+  return { seeded: inserted.count > 0, created: inserted.count, count };
 }
 
 export interface RoutingContext {

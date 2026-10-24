@@ -1,7 +1,7 @@
 /**
  * Canonical identifier allocation (student AE-, partner AEP-, employee EMP-).
  *
- * Format: `AE-<YEAR><6-digit sequence>` for students; partner/employee scopes retain the established 5-digit sequence.
+ * Format: new student IDs use `AE-<YEAR><4-digit sequence>`; partner/employee scopes retain the established 5-digit sequence. Legacy student IDs remain valid and are never rewritten.
  *
  * Guarantees (MySQL):
  * - The sequence row is advanced with one atomic UPDATE. `LAST_INSERT_ID(expr)` returns the new
@@ -10,8 +10,8 @@
  *   released before anything was committed, so it is never visible outside the transaction.
  * - Numbers are never reused once committed. Gaps can appear (e.g. a rolled-back business
  *   operation after commit of a separate allocation); gaps are acceptable, reuse is not.
- * - Years follow the business calendar (Asia/Dhaka). Each year restarts at 000001 for AE and 00001 for other scopes.
- * - Sequence overflow (> 99999 in one year) fails closed.
+ * - Years follow the business calendar (Asia/Dhaka). Each year restarts at 0001 for AE and 00001 for other scopes.
+ * - Sequence overflow (> 9999 for AE or > 99999 for partner/employee scopes in one year) fails closed.
  *
  * Note: concurrency behaviour depends on MySQL row locking. It is verified only by the
  * real-database integration test, which requires a disposable MySQL instance.
@@ -22,6 +22,7 @@ import { db } from '@/lib/db';
 export type IdScope = 'AE' | 'AEP' | 'EMP';
 const SCOPES: readonly IdScope[] = ['AE', 'AEP', 'EMP'];
 const MAX_SEQUENCE = 99999;
+const MAX_STUDENT_SEQUENCE = 9999;
 const BUSINESS_TIME_ZONE = 'Asia/Dhaka';
 
 export class IdentifierAllocationError extends Error {
@@ -42,10 +43,11 @@ export function businessYear(now: Date = new Date()): number {
 export function formatIdentifier(scope: IdScope, year: number, sequence: number): string {
   if (!SCOPES.includes(scope)) throw new IdentifierAllocationError(`Unknown identifier scope: ${scope}`);
   if (!Number.isInteger(year) || year < 2000 || year > 9999) throw new IdentifierAllocationError('Invalid year.');
-  if (!Number.isInteger(sequence) || sequence < 1 || sequence > MAX_SEQUENCE) {
+  const maxSequence = scope === 'AE' ? MAX_STUDENT_SEQUENCE : MAX_SEQUENCE;
+  if (!Number.isInteger(sequence) || sequence < 1 || sequence > maxSequence) {
     throw new IdentifierAllocationError('Identifier sequence exhausted for this year.');
   }
-  const width = scope === 'AE' ? 6 : 5;
+  const width = scope === 'AE' ? 4 : 5;
   return `${scope}-${year}${String(sequence).padStart(width, '0')}`;
 }
 
@@ -70,7 +72,8 @@ export async function allocateIdentifier(
   // already present in either live student table before returning it. All new
   // AE allocations use this locked sequence, so concurrent imports/registers
   // cannot collide with one another.
-  for (let attempt = 0; attempt < MAX_SEQUENCE; attempt++) {
+  const maxAttempts = scope === 'AE' ? MAX_STUDENT_SEQUENCE : MAX_SEQUENCE;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const updated = await tx.$executeRaw`UPDATE StudentIdSequence
       SET lastValue = LAST_INSERT_ID(lastValue + 1), updatedAt = NOW(3)
       WHERE id = ${key}`;

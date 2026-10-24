@@ -28,6 +28,7 @@ interface Batch {
 
 interface StagedStudent {
   id: string;
+  rowNumber: number;
   studentName: string;
   phone: string;
   whatsapp: string;
@@ -41,11 +42,27 @@ interface StagedStudent {
   status: string;
 }
 
+type MergeDecision = 'KEEP_EXISTING' | 'USE_IMPORTED' | 'SKIP';
+type MergeField = 'studentName' | 'email' | 'phone' | 'countryInterest';
+type ExistingStudentSummary = { id: string; studentId: string; name: string; email: string; phone: string; currentCountry: string };
+
+const MERGE_FIELDS: Array<{ key: MergeField; label: string; existingValue: (student: ExistingStudentSummary) => string }> = [
+  { key: 'studentName', label: 'Student name', existingValue: (student) => student.name },
+  { key: 'email', label: 'Email', existingValue: (student) => student.email },
+  { key: 'phone', label: 'Phone', existingValue: (student) => student.phone },
+  { key: 'countryInterest', label: 'Current country', existingValue: (student) => student.currentCountry },
+];
+
 export default function StudentMigrationCenter() {
   const token = usePortalStore(state => state.token);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [stagedStudents, setStagedStudents] = useState<StagedStudent[]>([]);
+  const [existingByStagedId, setExistingByStagedId] = useState<Record<string, ExistingStudentSummary | null>>({});
+  const [mergeTarget, setMergeTarget] = useState<StagedStudent | null>(null);
+  const [mergeDecisions, setMergeDecisions] = useState<Record<string, Partial<Record<MergeField, MergeDecision>>>>({});
+  const [batchPage, setBatchPage] = useState(1);
+  const [batchTotal, setBatchTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -85,50 +102,18 @@ export default function StudentMigrationCenter() {
     setMessage(null);
 
     try {
-      const text = await file.text();
-      const rows: any[] = [];
-      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
-      
-      if (lines.length > 1) {
-        const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
-        
-        for (let i = 1; i < lines.length; i++) {
-          const cells = lines[i].split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
-          const rowObj: Record<string, string> = {};
-          headers.forEach((h, idx) => {
-            rowObj[h] = cells[idx] || '';
-          });
-          rows.push({
-            studentName: rowObj['Student Name'] || rowObj['Name'] || rowObj['studentName'] || `Student ${i}`,
-            phone: rowObj['Phone'] || rowObj['Mobile'] || rowObj['phone'] || '',
-            whatsapp: rowObj['WhatsApp'] || rowObj['whatsapp'] || '',
-            email: rowObj['Email'] || rowObj['email'] || '',
-            passportNumber: rowObj['Passport'] || rowObj['passportNumber'] || '',
-            countryInterest: rowObj['Country'] || rowObj['countryInterest'] || 'UK',
-            courseInterest: rowObj['Course'] || rowObj['courseInterest'] || '',
-            universityInterest: rowObj['University'] || rowObj['universityInterest'] || '',
-            applicationStatus: rowObj['Status'] || 'new',
-            counselorName: rowObj['Counselor'] || '',
-          });
-        }
-      }
-
+      const formData = new FormData();
+      formData.append('sourceCrmName', sourceCrmName.trim());
+      formData.append('file', file);
       const res = await fetch('/api/admin/import/student-batch', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          sourceCrmName,
-          fileName: file.name,
-          students: rows,
-        }),
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       });
 
       const json = await res.json();
-      if (json.success) {
-        setMessage({ type: 'success', text: `Batch uploaded and staged! ${json.totalRows} rows analyzed.` });
+      if (res.ok && json.success) {
+        setMessage({ type: 'success', text: `Batch uploaded and staged for review. ${json.totalRows} rows analyzed.` });
         setFile(null);
         fetchBatches();
         setActiveTab('batches');
@@ -142,19 +127,68 @@ export default function StudentMigrationCenter() {
     }
   };
 
-  const handleSelectBatch = async (batch: Batch) => {
+  const handleSelectBatch = async (batch: Batch, page = 1) => {
     setSelectedBatch(batch);
+    setBatchPage(page);
+    setMergeTarget(null);
     setActiveTab('preview');
     try {
-      const res = await fetch(`/api/admin/import/batches/${batch.id}`, {
+      const res = await fetch(`/api/admin/import/batches/${batch.id}?page=${page}&limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setStagedStudents(data.batch?.students || []);
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setMessage({ type: 'error', text: data.error || 'Batch preview could not be loaded.' });
+        return;
       }
+      setStagedStudents(data.batch?.students || []);
+      setExistingByStagedId(data.existingByStagedId || {});
+      setBatchTotal(data.pagination?.totalStudents || 0);
     } catch (err) {
       console.error(err);
+      setMessage({ type: 'error', text: 'Batch preview or duplicate details could not be loaded.' });
+    }
+  };
+
+  const startMergeReview = (staged: StagedStudent) => {
+    setMergeTarget(staged);
+    setMergeDecisions((current) => ({
+      ...current,
+      [staged.id]: current[staged.id] || Object.fromEntries(MERGE_FIELDS.map(({ key }) => [key, 'KEEP_EXISTING'])) as Record<MergeField, MergeDecision>,
+    }));
+  };
+
+  const handleSaveMergeDecision = async () => {
+    if (!mergeTarget || !mergeTarget.matchedStudentId) return;
+    if (!selectedBatch || selectedBatch.status !== 'ready_for_review') {
+      setMessage({ type: 'error', text: 'Merge decisions can only be saved before batch approval.' });
+      return;
+    }
+    const decisions = mergeDecisions[mergeTarget.id];
+    if (!decisions || MERGE_FIELDS.some(({ key }) => !decisions[key])) {
+      setMessage({ type: 'error', text: 'Choose a merge decision for every supported field.' });
+      return;
+    }
+    setProcessing(true);
+    try {
+      const response = await fetch('/api/admin/import/merge', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stagedId: mergeTarget.id, matchedStudentId: mergeTarget.matchedStudentId, decisions }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        setMessage({ type: 'error', text: data.error || 'Merge decisions could not be saved.' });
+        return;
+      }
+      setMessage({ type: 'success', text: 'Field decisions saved. Existing student data changes only after Super Admin approval and batch execution.' });
+      setMergeTarget(null);
+      if (selectedBatch) await handleSelectBatch(selectedBatch, batchPage);
+      fetchBatches();
+    } catch {
+      setMessage({ type: 'error', text: 'Merge decisions could not be saved.' });
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -165,9 +199,13 @@ export default function StudentMigrationCenter() {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        setMessage({ type: 'success', text: 'Batch approved by Super Admin!' });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMessage({ type: 'success', text: 'Batch approved by Super Admin.' });
         fetchBatches();
+        if (selectedBatch?.id === batchId) setSelectedBatch({ ...selectedBatch, status: 'approved' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Batch approval failed.' });
       }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
@@ -184,8 +222,9 @@ export default function StudentMigrationCenter() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success) {
-        setMessage({ type: 'success', text: `Import complete! ${data.importedCount} live student records created/updated with AE-YYYY IDs.` });
+      if (res.ok && data.success) {
+        setMessage({ type: data.errorCount || data.skippedCount ? 'error' : 'success', text: `Import processed: ${data.importedCount} new, ${data.mergedCount} explicitly merged, ${data.skippedCount} skipped, ${data.errorCount} errors. Legacy document references require secure re-upload; no portal links were sent.` });
+        if (selectedBatch?.id === batchId) setSelectedBatch({ ...selectedBatch, status: data.status });
         fetchBatches();
       } else {
         setMessage({ type: 'error', text: data.error || 'Execution failed' });
@@ -198,7 +237,7 @@ export default function StudentMigrationCenter() {
   };
 
   const handleRollbackBatch = async (batchId: string) => {
-    if (!confirm('Are you sure you want to rollback this import batch?')) return;
+    if (!confirm('Request Super Admin rollback review? No imported records will be deleted.')) return;
     setProcessing(true);
     try {
       const res = await fetch(`/api/admin/import/batches/${batchId}/rollback`, {
@@ -206,11 +245,11 @@ export default function StudentMigrationCenter() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success) {
-        setMessage({ type: 'success', text: 'Batch successfully rolled back!' });
+      if (res.ok && data.success) {
+        setMessage({ type: 'success', text: 'Rollback review requested. Existing student/history records were preserved.' });
         fetchBatches();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Rollback failed' });
+        setMessage({ type: 'error', text: data.error || 'Rollback review request failed' });
       }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
@@ -323,7 +362,7 @@ export default function StudentMigrationCenter() {
               <CardContent className="p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Completed Imports</p>
                 <p className="text-2xl font-bold mt-1 text-emerald-400">
-                  {batches.filter(b => b.status === 'completed').length}
+                  {batches.filter(b => b.status === 'completed' || b.status === 'completed_with_errors').length}
                 </p>
               </CardContent>
             </Card>
@@ -409,16 +448,16 @@ export default function StudentMigrationCenter() {
                                   Execute Live
                                 </Button>
                               )}
-                              {b.status === 'completed' && (
+                              {(b.status === 'completed' || b.status === 'completed_with_errors') && (
                                 <Button
                                   size="sm"
-                                  variant="destructive"
+                                  variant="outline"
                                   onClick={() => handleRollbackBatch(b.id)}
                                   disabled={processing}
-                                  className="bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
+                                  className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                                 >
                                   <RotateCcw className="w-3.5 h-3.5 mr-1" />
-                                  Rollback
+                                  Request review
                                 </Button>
                               )}
                             </div>
@@ -540,14 +579,14 @@ export default function StudentMigrationCenter() {
                     <Play className="w-4 h-4 mr-1.5" /> Execute Live Import
                   </Button>
                 )}
-                {selectedBatch.status === 'completed' && (
+                {(selectedBatch.status === 'completed' || selectedBatch.status === 'completed_with_errors') && (
                   <Button
-                    variant="destructive"
+                    variant="outline"
                     onClick={() => handleRollbackBatch(selectedBatch.id)}
                     disabled={processing}
-                    className="bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
+                    className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                   >
-                    <RotateCcw className="w-4 h-4 mr-1.5" /> Rollback All Records
+                    <RotateCcw className="w-4 h-4 mr-1.5" /> Request rollback review
                   </Button>
                 )}
               </div>
@@ -565,12 +604,13 @@ export default function StudentMigrationCenter() {
                       <th className="p-3 font-medium">Course / University</th>
                       <th className="p-3 font-medium">Duplicate Risk</th>
                       <th className="p-3 font-medium">Status</th>
+                      <th className="p-3 font-medium">Duplicate review</th>
                     </tr>
                   </thead>
                   <tbody>
                     {stagedStudents.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="p-6 text-center text-[var(--alo-text-muted)]">
+                        <td colSpan={9} className="p-6 text-center text-[var(--alo-text-muted)]">
                           No records loaded for this batch.
                         </td>
                       </tr>
@@ -597,14 +637,102 @@ export default function StudentMigrationCenter() {
                               {s.status}
                             </Badge>
                           </td>
+                          <td className="p-3">
+                            {s.status === 'merged' ? (
+                              <span className="text-xs text-emerald-400">Decision saved</span>
+                            ) : s.status === 'possible_duplicate' && s.matchedStudentId && selectedBatch.status === 'ready_for_review' ? (
+                              <Button size="sm" variant="outline" onClick={() => startMergeReview(s)} disabled={processing}>
+                                <GitMerge className="mr-1 h-3.5 w-3.5" /> Review match
+                              </Button>
+                            ) : s.matchedStudentId ? (
+                              <span className="text-xs text-[var(--alo-text-muted)]">Matched record identified</span>
+                            ) : (
+                              <span className="text-xs text-[var(--alo-text-muted)]">—</span>
+                            )}
+                          </td>
                         </tr>
                       ))
                     )}
                   </tbody>
                 </table>
               </div>
+              <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-xs text-[var(--alo-text-muted)]">
+                <span>Rows {batchTotal ? (batchPage - 1) * 100 + 1 : 0}–{Math.min(batchPage * 100, batchTotal)} of {batchTotal}</span>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" disabled={batchPage <= 1 || processing} onClick={() => handleSelectBatch(selectedBatch, batchPage - 1)}>Previous</Button>
+                  <Button size="sm" variant="outline" disabled={batchPage * 100 >= batchTotal || processing} onClick={() => handleSelectBatch(selectedBatch, batchPage + 1)}>Next</Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
+
+          {mergeTarget && (
+            <Card className="bg-[var(--alo-text)] border-amber-500/30 text-white">
+              <CardHeader className="border-b border-white/10">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <GitMerge className="h-4 w-4 text-amber-400" /> Duplicate decision — row {mergeTarget.rowNumber}
+                </CardTitle>
+                <p className="text-xs text-[var(--alo-text-muted)]">
+                  Choose what happens to each supported field. No student data changes now; decisions are applied only after the batch is approved and executed.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4 p-4">
+                {existingByStagedId[mergeTarget.id] ? (
+                  <>
+                    <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm">
+                      Existing ALO record: <span className="font-mono text-blue-300">{existingByStagedId[mergeTarget.id]?.studentId}</span>
+                      <span className="ml-2">{existingByStagedId[mergeTarget.id]?.name}</span>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-white/10 text-left text-xs text-[var(--alo-text-muted)]">
+                            <th className="p-2">Field</th><th className="p-2">Existing ALO value</th><th className="p-2">Imported value</th><th className="p-2">Decision</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {MERGE_FIELDS.map(({ key, label, existingValue }) => (
+                            <tr key={key} className="border-b border-white/5">
+                              <td className="p-2 font-medium">{label}</td>
+                              <td className="max-w-64 break-words p-2 text-[var(--alo-placeholder)]">{existingValue(existingByStagedId[mergeTarget.id]!) || '—'}</td>
+                              <td className="max-w-64 break-words p-2">{(mergeTarget as unknown as Record<string, string>)[key] || '—'}</td>
+                              <td className="p-2">
+                                <select
+                                  aria-label={`Decision for ${label}`}
+                                  value={mergeDecisions[mergeTarget.id]?.[key] || 'KEEP_EXISTING'}
+                                  onChange={(event) => setMergeDecisions((current) => ({
+                                    ...current,
+                                    [mergeTarget.id]: { ...current[mergeTarget.id], [key]: event.target.value as MergeDecision },
+                                  }))}
+                                  className="rounded-md border border-white/15 bg-[var(--alo-text)] px-2 py-1.5 text-sm text-white"
+                                >
+                                  <option value="KEEP_EXISTING">Keep existing</option>
+                                  <option value="USE_IMPORTED">Use imported</option>
+                                  <option value="SKIP">Skip field</option>
+                                </select>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="flex flex-wrap justify-end gap-2">
+                      <Button variant="outline" onClick={() => setMergeTarget(null)} disabled={processing}>Cancel</Button>
+                      <Button onClick={handleSaveMergeDecision} disabled={processing} className="bg-amber-600 text-white hover:bg-amber-700">
+                        {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
+                        Save field decisions
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-between gap-3 text-sm text-amber-200">
+                    <span>The suggested existing record is no longer available. Refresh the batch and review the duplicate before approving.</span>
+                    <Button variant="outline" onClick={() => setMergeTarget(null)}>Close</Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
     </div>

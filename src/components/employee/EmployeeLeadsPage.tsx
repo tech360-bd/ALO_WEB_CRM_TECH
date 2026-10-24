@@ -1,281 +1,151 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
 import { toast } from 'sonner';
-import {
-  Search, Users, UserPlus, TrendingUp, Clock, Phone, Mail,
-  MapPin, GraduationCap, Filter, MessageSquare, Plus,
-  Globe, BookOpen, StickyNote, RefreshCw,
-} from 'lucide-react';
+import { Search, Users, UserPlus, TrendingUp, Phone, Mail, MapPin, BookOpen, Plus, Globe, RefreshCw } from 'lucide-react';
 
-type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Converted' | 'Lost';
-type LeadSource = 'Website' | 'Facebook' | 'WhatsApp' | 'Referral' | 'Walk-in' | 'Phone Call';
-type Destination = 'UK' | 'Australia' | 'USA' | 'Canada' | 'New Zealand' | 'Germany';
-type StudyLevel = 'Foundation' | 'Bachelor' | 'Master' | 'PhD' | 'Diploma';
-
+type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Converted' | 'Lost' | 'Other';
 interface Lead {
   id: string;
   name: string;
   email: string;
   phone: string;
-  destination: Destination;
-  studyLevel: StudyLevel;
-  source: LeadSource;
+  destination: string;
+  studyLevel: string;
+  source: string;
   status: LeadStatus;
   createdAt: string;
-  lastContacted: string;
-  notes: string;
 }
-
-const mockLeads: Lead[] = [
-  { id: '1', name: 'Ahsan Rahman', email: 'ahsan@email.com', phone: '+880 1612-111111', destination: 'UK', studyLevel: 'Master', source: 'Website', status: 'New', createdAt: '2025-01-18', lastContacted: '—', notes: '' },
-  { id: '2', name: 'Nadia Islam', email: 'nadia@email.com', phone: '+880 1812-222222', destination: 'Australia', studyLevel: 'Bachelor', source: 'Facebook', status: 'Contacted', createdAt: '2025-01-15', lastContacted: '2025-01-17', notes: 'Interested in nursing programs' },
-  { id: '3', name: 'Kamal Hossain', email: 'kamal@email.com', phone: '+880 1712-333333', destination: 'USA', studyLevel: 'PhD', source: 'Referral', status: 'Qualified', createdAt: '2025-01-10', lastContacted: '2025-01-16', notes: 'Strong academic profile, GRE 325' },
-  { id: '4', name: 'Tasnia Akter', email: 'tasnia@email.com', phone: '+880 1912-444444', destination: 'Canada', studyLevel: 'Diploma', source: 'WhatsApp', status: 'Converted', createdAt: '2025-01-05', lastContacted: '2025-01-14', notes: 'Enrolled at Seneca College' },
-  { id: '5', name: 'Sakib Hasan', email: 'sakib@email.com', phone: '+880 1512-555555', destination: 'UK', studyLevel: 'Master', source: 'Walk-in', status: 'Lost', createdAt: '2024-12-20', lastContacted: '2025-01-02', notes: 'Chose competitor agency' },
-  { id: '6', name: 'Mim Akhter', email: 'mim@email.com', phone: '+880 1612-666666', destination: 'Germany', studyLevel: 'Master', source: 'Website', status: 'New', createdAt: '2025-01-19', lastContacted: '—', notes: '' },
-  { id: '7', name: 'Rakib Uddin', email: 'rakib@email.com', phone: '+880 1812-777777', destination: 'New Zealand', studyLevel: 'Bachelor', source: 'Phone Call', status: 'Contacted', createdAt: '2025-01-14', lastContacted: '2025-01-16', notes: 'Asking about scholarships' },
-  { id: '8', name: 'Farzana Begum', email: 'farzana@email.com', phone: '+880 1712-888888', destination: 'Australia', studyLevel: 'Master', source: 'Facebook', status: 'Qualified', createdAt: '2025-01-08', lastContacted: '2025-01-17', notes: 'IELTS 7.5, wants Feb 2025 intake' },
-  { id: '9', name: 'Shuvo Ahmed', email: 'shuvo@email.com', phone: '+880 1912-999999', destination: 'UK', studyLevel: 'Foundation', source: 'Referral', status: 'New', createdAt: '2025-01-20', lastContacted: '—', notes: '' },
-  { id: '10', name: 'Lina Tabassum', email: 'lina@email.com', phone: '+880 1512-000001', destination: 'Canada', studyLevel: 'Bachelor', source: 'WhatsApp', status: 'Contacted', createdAt: '2025-01-12', lastContacted: '2025-01-18', notes: 'Interested in co-op programs' },
-];
-
-const statusColors: Record<LeadStatus, string> = {
+const STATUS_STYLE: Record<LeadStatus, string> = {
   New: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   Contacted: 'bg-amber-100 text-amber-700 border-amber-200',
   Qualified: 'bg-purple-100 text-purple-700 border-purple-200',
   Converted: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   Lost: 'bg-red-100 text-red-600 border-red-200',
+  Other: 'bg-slate-100 text-slate-700 border-slate-200',
 };
+const statusLabel = (value: unknown): LeadStatus => {
+  const normalized = typeof value === 'string' ? value.trim().toLowerCase().replace(/[_-]+/g, ' ') : '';
+  if (normalized === 'new') return 'New';
+  if (normalized === 'contacted') return 'Contacted';
+  if (normalized === 'qualified') return 'Qualified';
+  if (normalized === 'converted') return 'Converted';
+  if (normalized === 'lost') return 'Lost';
+  return 'Other';
+};
+const initialForm = { fullName: '', phone: '', email: '', destination: '', level: '', intake: '' };
+
+function authHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const token = usePortalStore.getState().token;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+function toLead(value: Record<string, unknown>): Lead {
+  return {
+    id: String(value.id || ''), name: String(value.fullName || value.name || ''), email: String(value.email || ''),
+    phone: String(value.phone || ''), destination: String(value.destination || ''), studyLevel: String(value.level || ''),
+    source: String(value.source || ''), status: statusLabel(value.status), createdAt: typeof value.createdAt === 'string' ? value.createdAt : '',
+  };
+}
 
 export default function EmployeeLeadsPage() {
-  const { setView } = usePortalStore();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
-  const [statusTab, setStatusTab] = useState<string>('All');
-  const [destFilter, setDestFilter] = useState<string>('All');
+  const [statusTab, setStatusTab] = useState('All');
+  const [destinationFilter, setDestinationFilter] = useState('All');
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [noteText, setNoteText] = useState('');
-  const [showNoteDialog, setShowNoteDialog] = useState(false);
-  const [showStatusDialog, setShowStatusDialog] = useState(false);
-  const [newStatus, setNewStatus] = useState<LeadStatus>('New');
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState(initialForm);
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setLeads(mockLeads);
+  const loadLeads = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch('/api/employee/leads?scope=created&limit=100', { headers: authHeaders(), cache: 'no-store' });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || body?.success !== true || !Array.isArray(body.leads)) throw new Error(body?.error || 'Employee leads are unavailable.');
+      setLeads(body.leads.map((lead: Record<string, unknown>) => toLead(lead)));
+    } catch (loadError) {
+      setLeads([]);
+      setError(loadError instanceof Error ? loadError.message : 'Employee leads are unavailable.');
+    } finally {
       setLoading(false);
-    }, 600);
-    return () => clearTimeout(t);
+    }
   }, []);
 
+  useEffect(() => { void loadLeads(); }, [loadLeads]);
+
   const filtered = useMemo(() => {
-    let list = leads;
-    if (search) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (l) => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q) || l.phone.includes(q)
-      );
+    const query = search.trim().toLowerCase();
+    return leads.filter((lead) => {
+      const matchesQuery = !query || [lead.name, lead.email, lead.phone, lead.destination, lead.studyLevel].some((value) => value.toLowerCase().includes(query));
+      const matchesStatus = statusTab === 'All' || lead.status === statusTab;
+      const matchesDestination = destinationFilter === 'All' || lead.destination === destinationFilter;
+      return matchesQuery && matchesStatus && matchesDestination;
+    });
+  }, [leads, search, statusTab, destinationFilter]);
+
+  const weekStart = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const newThisWeek = leads.filter((lead) => lead.createdAt && new Date(lead.createdAt).getTime() >= weekStart).length;
+  const convertedCount = leads.filter((lead) => lead.status === 'Converted').length;
+  const conversionRate = leads.length ? Math.round((convertedCount / leads.length) * 100) : 0;
+
+  const createLead = async () => {
+    if (!form.fullName.trim() || !form.phone.trim()) { toast.error('Name and phone are required.'); return; }
+    setSaving(true);
+    try {
+      const response = await fetch('/api/employee/leads', { method: 'POST', headers: authHeaders(), body: JSON.stringify(form) });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || body?.success !== true || !body.lead) throw new Error(body?.error || 'Lead could not be created.');
+      setLeads((current) => [toLead(body.lead), ...current]);
+      setForm(initialForm);
+      setShowCreate(false);
+      toast.success('Lead created.');
+    } catch (createError) {
+      toast.error(createError instanceof Error ? createError.message : 'Lead could not be created.');
+    } finally {
+      setSaving(false);
     }
-    if (statusTab !== 'All') list = list.filter((l) => l.status === statusTab);
-    if (destFilter !== 'All') list = list.filter((l) => l.destination === destFilter);
-    return list;
-  }, [leads, search, statusTab, destFilter]);
-
-  const kpis = useMemo(
-    () => ({
-      total: leads.length,
-      newWeek: leads.filter((l) => l.status === 'New' && new Date(l.createdAt) > new Date(Date.now() - 7 * 86400000)).length,
-      convRate: leads.length ? Math.round((leads.filter((l) => l.status === 'Converted').length / leads.length) * 100) : 0,
-      avgResp: '2.4h',
-    }),
-    [leads]
-  );
-
-  const handleAddNote = () => {
-    if (!selectedLead || !noteText.trim()) return;
-    setLeads((prev) => prev.map((l) => (l.id === selectedLead.id ? { ...l, notes: l.notes + (l.notes ? '\n' : '') + noteText } : l)));
-    setNoteText('');
-    setShowNoteDialog(false);
-    toast.success('Note added successfully');
   };
 
-  const handleUpdateStatus = () => {
-    if (!selectedLead) return;
-    setLeads((prev) => prev.map((l) => (l.id === selectedLead.id ? { ...l, status: newStatus } : l)));
-    setShowStatusDialog(false);
-    toast.success('Status updated to ' + newStatus);
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6 p-4 lg:p-6">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-xl" />
-          ))}
-        </div>
-        <Skeleton className="h-10 w-full" />
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 rounded-xl" />
-        ))}
-      </div>
-    );
-  }
+  if (loading) return <div className="space-y-6 p-4 lg:p-6"><Skeleton className="h-8 w-48" /><div className="grid grid-cols-2 gap-4 lg:grid-cols-3">{Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="h-24 rounded-xl" />)}</div><Skeleton className="h-10 w-full" />{Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-16 rounded-xl" />)}</div>;
 
   return (
     <div className="space-y-6 p-4 lg:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-alo-text">Leads Pipeline</h1>
-          <p className="text-sm text-alo-text-muted mt-1">Track and manage your student leads</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div><h1 className="text-2xl font-bold text-alo-text">My Created Leads</h1><p className="mt-1 text-sm text-alo-text-muted">Leads created by your authenticated account. Assignment/team access is not shown until its identity mapping is verified.</p></div>
+        <div className="flex gap-2"><Button variant="outline" onClick={() => void loadLeads()} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button><Button variant="brand" onClick={() => setShowCreate(true)}><Plus className="mr-1 h-4 w-4" />Add lead</Button></div>
+      </div>
+      {error && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadLeads()}>Retry</Button></CardContent></Card>}
+      {!error && <>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Kpi icon={<Users className="h-5 w-5 text-[var(--alo-brand)]" />} label="Created leads" value={leads.length} />
+          <Kpi icon={<UserPlus className="h-5 w-5 text-amber-600" />} label="Created in last 7 days" value={newThisWeek} />
+          <Kpi icon={<TrendingUp className="h-5 w-5 text-emerald-600" />} label="Converted share" value={`${conversionRate}%`} />
         </div>
-        <Button variant="brand" onClick={() => toast.info('Add Lead form coming soon')}>
-          <Plus className="w-4 h-4" /> Add Lead
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Leads', value: kpis.total, icon: Users, color: 'text-alo-brand bg-alo-brand-light' },
-          { label: 'New This Week', value: kpis.newWeek, icon: UserPlus, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
-          { label: 'Conversion Rate', value: kpis.convRate + '%', icon: TrendingUp, color: 'text-emerald-600 bg-emerald-100' },
-          { label: 'Avg Response', value: kpis.avgResp, icon: Clock, color: 'text-amber-600 bg-amber-100' },
-        ].map((kpi) => (
-          <Card key={kpi.label} className="rounded-xl border border-alo-border">
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', kpi.color)}>
-                <kpi.icon className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
-                <p className="text-xs text-alo-text-muted">{kpi.label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="rounded-xl border border-alo-border">
-        <CardContent className="p-4">
-          <Tabs value={statusTab} onValueChange={setStatusTab}>
-            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-              <TabsList className="bg-alo-page">
-                {['All', 'New', 'Contacted', 'Qualified', 'Converted', 'Lost'].map((s) => (
-                  <TabsTrigger key={s} value={s} className="text-xs data-[state=active]:bg-white data-[state=active]:text-alo-brand data-[state=active]:shadow-sm">
-                    {s}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <div className="flex gap-2 w-full sm:w-auto">
-                <div className="relative flex-1 sm:flex-initial">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-alo-text-muted" />
-                  <Input placeholder="Search leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 w-full sm:w-56 bg-alo-page border-alo-border text-sm" />
-                </div>
-                <select value={destFilter} onChange={(e) => setDestFilter(e.target.value)} className="h-9 px-3 text-sm rounded-lg border border-alo-border bg-alo-page text-alo-text focus:outline-none focus:ring-2 focus:ring-alo-brand/20">
-                  <option value="All">All Destinations</option>
-                  {['UK', 'Australia', 'USA', 'Canada', 'New Zealand', 'Germany'].map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-3">
-        {filtered.map((lead) => (
-          <Card key={lead.id} className="rounded-xl border border-alo-border hover:shadow-md transition-shadow cursor-pointer">
-            <CardContent className="p-4">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-3">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-alo-brand-light text-alo-brand flex items-center justify-center text-sm font-semibold shrink-0">
-                    {lead.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-sm text-alo-text">{lead.name}</span>
-                      <span className={cn('text-[11px] px-2 py-0.5 rounded-full border font-medium', statusColors[lead.status])}>
-                        {lead.status}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 mt-1 text-xs text-alo-text-secondary flex-wrap">
-                      <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{lead.email}</span>
-                      <span className="flex items-center gap-1 hidden sm:flex"><Phone className="w-3 h-3" />{lead.phone}</span>
-                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{lead.destination}</span>
-                      <span className="flex items-center gap-1 hidden md:flex"><BookOpen className="w-3 h-3" />{lead.studyLevel}</span>
-                      <span className="flex items-center gap-1 hidden lg:flex"><Globe className="w-3 h-3" />{lead.source}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 lg:gap-3 shrink-0">
-                  <span className="text-[11px] text-alo-text-muted hidden md:block">Added {new Date(lead.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                  <Button variant="outline" size="sm" className=" " onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setNoteText(''); setShowNoteDialog(true); }}>
-                    <StickyNote className="w-3.5 h-3.5" /> Note
-                  </Button>
-                  <Button variant="brand-outline" size="sm" className=" " onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setNewStatus(lead.status); setShowStatusDialog(true); }}>
-                    <RefreshCw className="w-3.5 h-3.5" /> Status
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-        {filtered.length === 0 && (
-          <div className="py-12 text-center">
-            <Users className="w-10 h-10 text-alo-text-muted/40 mx-auto mb-2" />
-            <p className="text-sm text-alo-text-secondary">No leads found</p>
-            <p className="text-xs text-alo-text-muted mt-1">Try adjusting your filters</p>
-          </div>
-        )}
-      </div>
-
-      <Dialog open={showNoteDialog} onOpenChange={setShowNoteDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add Note — {selectedLead?.name}</DialogTitle>
-          </DialogHeader>
-          <Textarea placeholder="Write your note here..." value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={4} className="bg-alo-page border-alo-border" />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNoteDialog(false)}>Cancel</Button>
-            <Button variant="brand" onClick={handleAddNote}>Save Note</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showStatusDialog} onOpenChange={setShowStatusDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Update Status — {selectedLead?.name}</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-2">
-            {(['New', 'Contacted', 'Qualified', 'Converted', 'Lost'] as LeadStatus[]).map((s) => (
-              <button key={s} onClick={() => setNewStatus(s)} className={cn('px-4 py-2.5 rounded-lg text-sm font-medium border-2 transition-all', newStatus === s ? 'border-alo-brand bg-alo-brand-light text-alo-brand' : 'border-alo-border hover:border-alo-brand/40 text-alo-text-secondary')}>
-                {s}
-              </button>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowStatusDialog(false)}>Cancel</Button>
-            <Button variant="brand" onClick={handleUpdateStatus}>Update Status</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <Card className="rounded-xl border border-alo-border"><CardContent className="p-4"><Tabs value={statusTab} onValueChange={setStatusTab}><div className="flex flex-col items-start justify-between gap-3 lg:flex-row lg:items-center"><TabsList className="max-w-full overflow-x-auto bg-alo-page">{['All', 'New', 'Contacted', 'Qualified', 'Converted', 'Lost'].map((status) => <TabsTrigger key={status} value={status} className="text-xs">{status}</TabsTrigger>)}</TabsList><div className="flex w-full gap-2 lg:w-auto"><div className="relative flex-1 lg:w-64"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-alo-text-muted" /><Input aria-label="Search created leads" placeholder="Search created leads" value={search} onChange={(event) => setSearch(event.target.value)} className="pl-9" /></div><select aria-label="Filter destination" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)} className="h-9 rounded-lg border border-alo-border bg-white px-3 text-sm"><option value="All">All destinations</option>{[...new Set(leads.map((lead) => lead.destination).filter(Boolean))].sort().map((destination) => <option key={destination} value={destination}>{destination}</option>)}</select></div></div></Tabs></CardContent></Card>
+        <div className="space-y-3">{filtered.map((lead) => <Card key={lead.id} className="rounded-xl border border-alo-border"><CardContent className="p-4"><div className="flex flex-col gap-3 lg:flex-row lg:items-center"><div className="flex min-w-0 flex-1 items-center gap-3"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-alo-brand-light text-sm font-semibold text-alo-brand">{lead.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2)}</div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold text-alo-text">{lead.name}</span><Badge variant="outline" className={cn('border text-[11px]', STATUS_STYLE[lead.status])}>{lead.status}</Badge></div><div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-alo-text-secondary">{lead.email && <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" />{lead.email}</span>}{lead.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{lead.phone}</span>}{lead.destination && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{lead.destination}</span>}{lead.studyLevel && <span className="inline-flex items-center gap-1"><BookOpen className="h-3 w-3" />{lead.studyLevel}</span>}{lead.source && <span className="inline-flex items-center gap-1"><Globe className="h-3 w-3" />{lead.source}</span>}</div></div></div><span className="text-xs text-alo-text-muted">{lead.createdAt ? `Created ${new Date(lead.createdAt).toLocaleDateString()}` : 'Creation date unavailable'}</span></div></CardContent></Card>)}
+          {filtered.length === 0 && <Card><CardContent className="py-12 text-center"><Users className="mx-auto mb-2 h-10 w-10 text-alo-text-muted/40" /><p className="text-sm text-alo-text-secondary">No created leads match the selected filters.</p></CardContent></Card>}
+        </div>
+      </>}
+      <Dialog open={showCreate} onOpenChange={setShowCreate}><DialogContent className="sm:max-w-lg"><DialogHeader><DialogTitle>Create a lead</DialogTitle></DialogHeader><div className="grid gap-3 sm:grid-cols-2"><Field label="Full name *" value={form.fullName} onChange={(fullName) => setForm((current) => ({ ...current, fullName }))} /><Field label="Phone *" value={form.phone} onChange={(phone) => setForm((current) => ({ ...current, phone }))} /><Field label="Email" value={form.email} onChange={(email) => setForm((current) => ({ ...current, email }))} /><Field label="Destination" value={form.destination} onChange={(destination) => setForm((current) => ({ ...current, destination }))} /><Field label="Study level" value={form.level} onChange={(level) => setForm((current) => ({ ...current, level }))} /><Field label="Intake" value={form.intake} onChange={(intake) => setForm((current) => ({ ...current, intake }))} /></div><DialogFooter><Button variant="outline" onClick={() => setShowCreate(false)} disabled={saving}>Cancel</Button><Button variant="brand" onClick={() => void createLead()} disabled={saving}>{saving ? 'Saving…' : 'Create lead'}</Button></DialogFooter></DialogContent></Dialog>
     </div>
   );
 }
+
+function Kpi({ icon, label, value }: { icon: ReactNode; label: string; value: string | number }) { return <Card className="rounded-xl border border-alo-border"><CardContent className="flex items-center gap-3 p-4"><div>{icon}</div><div><p className="text-2xl font-bold text-alo-text">{value}</p><p className="text-xs text-alo-text-muted">{label}</p></div></CardContent></Card>; }
+function Field({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) { return <div className="space-y-1"><Label>{label}</Label><Input value={value} onChange={(event) => onChange(event.target.value)} /></div>; }

@@ -8,9 +8,13 @@ import { mutationOriginAllowed } from '@/lib/request-origin';
 async function authorizeEmployee(request: NextRequest) {
   const auth = await authenticateRequest(request);
   if (auth instanceof NextResponse) return auth;
+  const roles = [auth.userType, ...auth.roles].map((role) => role.trim().toUpperCase());
+  if (auth.identityDomain !== 'user' || roles.some((role) => ['STUDENT', 'PARTNER'].includes(role))) return NextResponse.json({ success: false, error: 'Employee lead access is required.' }, { status: 403 });
+  const employee = await db.employee.findUnique({ where: { userId: auth.userId }, select: { id: true, userId: true, employeeId: true, status: true } }).catch(() => null);
+  if (!employee || employee.status.toLowerCase() !== 'active') return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
   const access = leadAccess(auth);
   if (!access) return NextResponse.json({ success: false, error: 'Verified User lead access is required.' }, { status: 403 });
-  return { auth, access };
+  return { auth, access, employee };
 }
 
 function parseLimit(value: string | null): number | null {
@@ -56,9 +60,15 @@ export async function GET(request: NextRequest) {
 
     const [total, leads] = await Promise.all([
       db.marketingLead.count({ where }),
-      db.marketingLead.findMany({ where, orderBy: { createdAt: 'desc' }, take: limit }),
+      db.marketingLead.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        select: { id: true, name: true, phone: true, email: true, destination: true, level: true, intake: true, source: true, status: true, createdAt: true },
+      }),
     ]);
-    return NextResponse.json({ success: true, scopeApplied: scope, total, leads: leads.map((lead) => ({ ...lead, fullName: lead.name })) });
+    await db.portalAuditLog.create({ data: { actorUserId: auth.actorUserId || auth.userId, action: 'EMPLOYEE_LEADS_VIEWED', entityType: 'MarketingLead', entityId: `scope:${scope}`, metadata: JSON.stringify({ effectiveUserId: auth.userId, scope, total }) } });
+    return NextResponse.json({ success: true, scopeApplied: scope, total, leads: leads.map((lead) => ({ ...lead, fullName: lead.name })) }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch {
     return NextResponse.json({ success: false, error: 'Employee leads are temporarily unavailable.' }, { status: 503 });
   }
@@ -123,6 +133,7 @@ export async function POST(request: NextRequest) {
           consent: false,
           status: 'new',
         },
+        select: { id: true, name: true, phone: true, email: true, destination: true, level: true, intake: true, source: true, status: true, createdAt: true },
       });
       await tx.portalAuditLog.create({
         data: {

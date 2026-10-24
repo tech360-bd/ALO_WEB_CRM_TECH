@@ -103,7 +103,17 @@ export default function SuperAdminAccessControlCenter() {
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [securityEvents, setSecurityEvents] = useState<any[]>([]);
   const [featureRules, setFeatureRules] = useState<any[]>([]);
+  const [featureEmployeeId, setFeatureEmployeeId] = useState('');
+  const [featureKey, setFeatureKey] = useState('');
+  const [featureAction, setFeatureAction] = useState('view');
+  const [featureEnabled, setFeatureEnabled] = useState(true);
+  const [featureRequiresApproval, setFeatureRequiresApproval] = useState(false);
+  const [featureLimit, setFeatureLimit] = useState('0');
+  const [savingFeatureRule, setSavingFeatureRule] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
+  const [revokingPermissionId, setRevokingPermissionId] = useState('');
+  const [revokeReason, setRevokeReason] = useState('');
+  const [savingRevocation, setSavingRevocation] = useState(false);
 
   // Modals
   const [showEmpModal, setShowEmpModal] = useState(false);
@@ -171,6 +181,70 @@ export default function SuperAdminAccessControlCenter() {
         setShowEmpModal(false); setNewEmpName(''); setNewEmpEmail(''); fetchControlData();
       } else toast.error(json.error || 'Failed');
     } finally { setCreatingEmp(false); }
+  };
+
+  const handleSaveFeatureRule = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!featureEmployeeId || !featureKey.trim()) {
+      toast.error('Choose an employee and enter a feature key.');
+      return;
+    }
+    setSavingFeatureRule(true);
+    try {
+      const response = await fetch('/api/employee-access/feature-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employeeId: featureEmployeeId,
+          featureKey: featureKey.trim(),
+          action: featureAction,
+          isEnabled: featureEnabled,
+          requiresApproval: featureRequiresApproval,
+          limitValue: Number(featureLimit),
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) {
+        toast.error(payload?.error || 'Feature permission could not be saved.');
+        return;
+      }
+      toast.success('Employee feature permission saved and audited.');
+      setFeatureKey('');
+      await fetchControlData();
+    } catch {
+      toast.error('Network error saving feature permission.');
+    } finally {
+      setSavingFeatureRule(false);
+    }
+  };
+
+  const handleRevokeTemporaryPermission = async (permissionId: string) => {
+    const reason = revokeReason.trim();
+    if (reason.length < 10 || reason.length > 500) {
+      toast.error('Enter a revocation reason between 10 and 500 characters.');
+      return;
+    }
+    setSavingRevocation(true);
+    try {
+      const response = await fetch('/api/employee-access/temporary-permissions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: permissionId, reason }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) {
+        toast.error(payload?.error || 'Temporary permission was not revoked.');
+        return;
+      }
+      toast.success('Temporary permission revoked immediately and audited.');
+      setRevokingPermissionId('');
+      setRevokeReason('');
+      await fetchControlData();
+    } catch {
+      toast.error('Network error revoking temporary permission.');
+    } finally {
+      setSavingRevocation(false);
+    }
   };
 
   const handleStatusChange = async (empId: string, newStatus: string) => {
@@ -398,8 +472,30 @@ export default function SuperAdminAccessControlCenter() {
 
       {activeTab==='temporary' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
-          <h2 className="text-sm font-bold flex items-center gap-2"><Clock className="w-4 h-4 text-[var(--alo-brand)]" /> Temporary Access — Auto-revoke after expiry, every action audited</h2>
-          <div className="grid md:grid-cols-2 gap-3">{tempPerms.map((t:any)=><div key={t.id} className="p-3 bg-purple-50 border border-purple-200 rounded-xl text-xs"><div className="font-bold">{t.featureKey} — {t.action}</div><div className="text-[11px] text-[var(--alo-body)]">Scope: {t.scopeType}/{t.scopeId} — GrantedBy: {t.grantedBy}</div><div className="text-[11px]">Expires: {new Date(t.endDate).toLocaleString()} — Auto-revoke enforced</div><Badge className={t.isActive?'bg-emerald-50 text-emerald-700 text-[11px]':'bg-red-50 text-red-700 text-[11px]'}>{t.isActive?'ACTIVE':'EXPIRED'}</Badge></div>)}{tempPerms.length===0&&<div className="text-[11px] text-[var(--alo-text-muted)] p-8 text-center border-dashed border rounded-xl col-span-2">No temporary permissions — auto-revoke after expiry, audit every action, POST /api/employee-access/temporary-permissions with employeeId, featureKey, endDate</div>}</div>
+          <h2 className="text-sm font-bold flex items-center gap-2"><Clock className="w-4 h-4 text-[var(--alo-brand)]" /> Temporary Access — expiry is checked on every authorization; revoke immediately</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {tempPerms.map((t: any) => (
+              <div key={t.id} className="p-3 bg-purple-50 border border-purple-200 rounded-xl text-xs space-y-2">
+                <div className="font-bold">{t.featureKey} — {t.action}</div>
+                <div className="text-[11px] text-[var(--alo-body)]">Employee: {t.employeeId} · Scope: {t.scopeType}/{t.scopeId || '—'} · Granted by: {t.grantedBy}</div>
+                <div className="text-[11px]">Expires: {new Date(t.endDate).toLocaleString()} · {t.effectiveStatus === 'EXPIRED' ? 'No longer effective' : 'Expiry checked during access'}</div>
+                <div className="flex items-center justify-between gap-2">
+                  <Badge className={t.isActive ? 'bg-emerald-50 text-emerald-700 text-[11px]' : 'bg-red-50 text-red-700 text-[11px]'}>{t.effectiveStatus || (t.isActive ? 'ACTIVE' : 'EXPIRED')}</Badge>
+                  {t.isActive && revokingPermissionId !== t.id && <Button variant="outline" onClick={() => { setRevokingPermissionId(t.id); setRevokeReason(''); }} className="text-red-700">Revoke access</Button>}
+                </div>
+                {revokingPermissionId === t.id && (
+                  <div className="space-y-2 border-t pt-2">
+                    <Input value={revokeReason} onChange={(event) => setRevokeReason(event.target.value)} maxLength={500} placeholder="Reason for immediate revocation (10–500 characters)" aria-label="Temporary access revocation reason" />
+                    <div className="flex gap-2">
+                      <Button disabled={savingRevocation} onClick={() => handleRevokeTemporaryPermission(t.id)} className="bg-red-700 text-white">{savingRevocation ? 'Revoking…' : 'Confirm revocation'}</Button>
+                      <Button disabled={savingRevocation} variant="outline" onClick={() => { setRevokingPermissionId(''); setRevokeReason(''); }}>Cancel</Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+            {tempPerms.length === 0 && <div className="text-[11px] text-[var(--alo-text-muted)] p-8 text-center border-dashed border rounded-xl col-span-2">No temporary permissions — approved grants expire within 30 days and can be revoked immediately.</div>}
+          </div>
         </Card>
       )}
 
@@ -476,7 +572,46 @@ export default function SuperAdminAccessControlCenter() {
       {activeTab==='feature' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Zap className="w-4 h-4 text-[var(--alo-brand)]" /> Feature Access Engine — Helpers mandatory backend checks — canAccessFeature/getQuota/checkQuotaBeforeAction/recordUsage/canViewEmployeePrivateProfile/canViewB2BDetails/canUseStudentBenefit/canApproveAction/canAccessApplication/Document/SendCommunication — social/WhatsApp/email/phone/AI/application/student/document/finance/visa/marketing/partner/B2B/quota permission-controlled — WhatsApp contact matching phone_normalized</h2>
-          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-[var(--alo-page)] rounded-xl border"><div className="font-bold">Feature Rules ({featureRules.length})</div><div className="space-y-1 mt-2 max-h-48 overflow-y-auto">{featureRules.map((r:any)=><div key={r.id} className="p-2 bg-white rounded border text-[11px] font-mono">{r.featureKey} — {r.displayName} — roles: {r.allowedRoles}</div>)}{featureRules.length===0&&<div className="text-[var(--alo-text-muted)]">No rules — POST /api/employee-access/feature-access with featureKey/displayName/allowedRoles/requiredPermissions — GET ?featureKey&action checks canAccessFeature</div>}</div></div><div className="p-3 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)]"><div className="font-bold">Engine Helpers</div><div className="text-[11px] mt-2 space-y-1"><div>• canAccessFeatureEngine(userId, roles, featureKey, action) — super_admin always, portal permission, temporary, package assignment, break-glass, designation matrix</div><div>• canViewEmployeePrivateProfileEngine — self, super_admin, chairman, HR explicit temporary</div><div>• checkQuotaBeforeActionEngine — counts quotaUsage, limit from package — CHECK→ALLOW/REJECT→RECORD</div><div>• validateAiAction — low-risk READ/ANALYZE/SUMMARIZE/CLASSIFY/DRAFT/RECOMMEND/PREPARE allowed, high-risk FINALIZE/APPROVE/SEND/PAY/DELETE/ESCALATE requires human</div><div>• WhatsApp contact matching phone_normalized — permission-controlled</div></div></div></div>
+          <div className="grid lg:grid-cols-2 gap-3 text-xs">
+            <div className="p-3 bg-[var(--alo-page)] rounded-xl border space-y-3">
+              <div className="font-bold">Employee Feature Rules ({featureRules.length})</div>
+              <form onSubmit={handleSaveFeatureRule} className="grid sm:grid-cols-2 gap-2 rounded-lg border bg-white p-3">
+                <label className="space-y-1">
+                  <span className="font-semibold">Employee</span>
+                  <select className="w-full h-9 rounded-md border px-2 text-xs" value={featureEmployeeId} onChange={(event) => setFeatureEmployeeId(event.target.value)} required>
+                    <option value="">Select employee</option>
+                    {employees.map((employee: any) => <option key={employee.id} value={employee.id}>{employee.name || employee.email || employee.id} · {employee.employeeProfile?.employeeId || employee.id}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="font-semibold">Feature key</span>
+                  <Input value={featureKey} onChange={(event) => setFeatureKey(event.target.value)} placeholder="employee.profile.private" required maxLength={100} />
+                </label>
+                <label className="space-y-1">
+                  <span className="font-semibold">Action</span>
+                  <select className="w-full h-9 rounded-md border px-2 text-xs" value={featureAction} onChange={(event) => setFeatureAction(event.target.value)}>
+                    {['view','create','edit','submit','approve','verify','download','upload','export','assign','manage','send','use'].map((action) => <option key={action} value={action}>{action}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-1">
+                  <span className="font-semibold">Quota cap (0 = no usage)</span>
+                  <Input type="number" min="0" max="1000000" step="1" value={featureLimit} onChange={(event) => setFeatureLimit(event.target.value)} />
+                </label>
+                <label className="flex items-center gap-2"><input type="checkbox" checked={featureEnabled} onChange={(event) => setFeatureEnabled(event.target.checked)} /> Enabled</label>
+                <label className="flex items-center gap-2"><input type="checkbox" checked={featureRequiresApproval} onChange={(event) => setFeatureRequiresApproval(event.target.checked)} /> Requires approval (deny until approved)</label>
+                <Button type="submit" disabled={savingFeatureRule || employees.length === 0} className="sm:col-span-2">
+                  {savingFeatureRule ? 'Saving…' : 'Save employee permission'}
+                </Button>
+              </form>
+              <div className="space-y-1 max-h-56 overflow-y-auto">
+                {featureRules.map((rule: any) => <div key={rule.id} className="p-2 bg-white rounded border text-[11px] font-mono break-all">
+                  {rule.ownerType}:{rule.ownerId} · {rule.featureKey} · {rule.isEnabled ? 'enabled' : 'disabled'} · {rule.requiresApproval ? 'approval required' : 'direct'} · limit {rule.limitValue}
+                </div>)}
+                {featureRules.length === 0 && <div className="text-[var(--alo-text-muted)]">No employee-specific feature rules have been saved.</div>}
+              </div>
+            </div>
+            <div className="p-3 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)]"><div className="font-bold">Engine Helpers</div><div className="text-[11px] mt-2 space-y-1"><div>• canAccessFeatureEngine(userId, roles, featureKey, action) — Super Admin, explicit permission, temporary grant and package assignment checks</div><div>• canViewEmployeePrivateProfileEngine — owner, Super Admin/Chairman, or HR permission checks</div><div>• checkQuotaBeforeActionEngine — validates usage/limit before recording</div><div>• validateAiAction — high-risk actions require a human approval path</div><div>• Feature grants are stored against an employee record and checked server-side.</div></div></div>
+          </div>
 
           {/* Persisted feature flags with rollout control and an audit trail
               (spec s117). Distinct from the RBAC feature-access rules above:
