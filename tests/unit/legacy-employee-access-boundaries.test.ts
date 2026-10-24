@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 const m = vi.hoisted(() => ({ auth: vi.fn(), private: vi.fn(), field: vi.fn(), access: vi.fn(), employee: vi.fn(), profile: vi.fn(), documents: vi.fn(), salary: vi.fn(), transaction: vi.fn(), audit: vi.fn() }));
-vi.mock('@/lib/auth-middleware', () => ({ authenticateRequest: m.auth, withAuth: (handler: Function) => async (req: Request, context: unknown) => handler(req, await m.auth(), context) }));
+vi.mock('@/lib/auth-middleware', () => ({ authenticateRequest: m.auth, withAuth: (handler: (req: Request, auth: unknown, context: unknown) => Promise<Response>) => async (req: Request, context: unknown) => handler(req, await m.auth(), context) }));
 vi.mock('@/lib/access-control', () => ({ canViewEmployeePrivateProfile: m.private, FEATURE_DEFINITIONS: [] }));
 vi.mock('@/lib/access-control/central-security-engine', () => ({ canViewField: m.field, validateRequestAccess: m.access }));
 vi.mock('@/lib/transactional-audit', () => ({ writePortalAudit: m.audit }));
@@ -12,7 +12,7 @@ const req = () => new NextRequest('https://alo.test/api/access-control', { metho
 beforeEach(() => {
   vi.resetAllMocks(); m.auth.mockResolvedValue({ userId: 'staff', actorUserId: 'staff', userType: 'HR_MANAGER', roles: ['HR_MANAGER'] });
   m.private.mockResolvedValue(false); m.field.mockResolvedValue(false); m.employee.mockResolvedValue({ id: 'emp', userId: 'other', name: 'Person', employeeId: 'ALO-1', branch: 'Dhaka', role: 'EMPLOYEE', privateInternalField: 'never exposed' });
-  m.profile.mockResolvedValue({ salary: 'secret salary', bankName: 'secret bank', bankAccount: 'secret account', bankRouting: 'secret routing', nidNumber: 'secret nid', department: 'Admission' }); m.documents.mockResolvedValue([]); m.salary.mockResolvedValue({ id: 'salary', salaryAmount: 999, bankAccount: 'secret account' });
+  m.profile.mockResolvedValue({ salary: 'secret salary', bankName: 'secret bank', bankAccount: 'secret account', bankRouting: 'secret routing', nidNumber: 'secret nid', department: 'Admission' }); m.documents.mockResolvedValue([]); m.salary.mockResolvedValue({ id: 'salary', employeeId: 'emp', basicSalary: 900, housingAllow: 50, transportAllow: 20, medicalAllow: 10, otherAllow: 20, grossSalary: 1000, taxDeduction: 50, pfDeduction: 50, netSalary: 900, currency: 'BDT', effectiveFrom: '2026-10-01', bankAccount: 'secret account' });
   m.transaction.mockImplementation(async callback => callback({}));
 });
 describe('legacy employee and permission route bypass prevention', () => {
@@ -27,6 +27,13 @@ describe('legacy employee and permission route bypass prevention', () => {
     m.private.mockResolvedValue(true);
     const response = await employee(req(), { params: Promise.resolve({ id: 'emp' }) }); expect(response.status).toBe(200);
     const body = await response.text(); expect(body).not.toContain('secret'); expect(body).not.toContain('privateInternalField'); expect(m.salary).not.toHaveBeenCalled(); expect(m.audit.mock.calls[0][2]).toBe('PROFILE_VIEWED');
+  });
+  it('returns actual salary-model fields only to an explicitly authorized reviewer', async () => {
+    m.private.mockResolvedValue(true); m.field.mockResolvedValue(true);
+    const response = await employee(req(), { params: Promise.resolve({ id: 'emp' }) });
+    const body = await response.json();
+    expect(body.employee.salary).toEqual({ id: 'salary', employeeId: 'emp', basicSalary: 900, housingAllow: 50, transportAllow: 20, medicalAllow: 10, otherAllow: 20, grossSalary: 1000, taxDeduction: 50, pfDeduction: 50, netSalary: 900, currency: 'BDT', effectiveFrom: '2026-10-01' });
+    expect(body.employee.salary).not.toHaveProperty('bankAccount');
   });
   it('own profile never returns draft salary calculations through the legacy endpoint', async () => {
     m.private.mockResolvedValue(true); m.field.mockResolvedValue(true); m.employee.mockResolvedValue({ id: 'emp', userId: 'staff' });

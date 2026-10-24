@@ -5,6 +5,7 @@ import { testDatabaseUrl } from '../helpers/test-database';
 const url = testDatabaseUrl();
 const prisma = new PrismaClient(url ? { datasourceUrl: url } : {});
 vi.mock('@/lib/db', () => ({ get db() { return prisma; } }));
+import { GET as employeeDetail } from '@/app/api/employees/[id]/route';
 import { GET as salary } from '@/app/api/employee/salary/route';
 import { GET as appointments } from '@/app/api/employee/appointments/route';
 import { GET as diagramList, POST as diagramSave } from '@/app/api/employee/diagram-drafts/route';
@@ -48,6 +49,7 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     await prisma.student.deleteMany({ where: { id: { in: [ownStudentId, otherStudentId] } } });
     if (employeeId) {
       await prisma.employeePayroll.deleteMany({ where: { employeeId } });
+      await prisma.employeeSalary.deleteMany({ where: { employeeId } });
       await prisma.featureAccessRule.deleteMany({ where: { ownerId: employeeId } });
     }
     await prisma.marketingTemplate.deleteMany({ where: { createdById: staff } });
@@ -67,6 +69,15 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     expect(response.status).toBe(200);
     const body = await response.json(); expect(body.payslips.map(p => p.id)).toEqual([approvedId]);
     expect(await prisma.portalAuditLog.count({ where: { actorUserId: staff, action: 'SALARY_VIEWED' } })).toBeGreaterThan(0);
+  });
+  it('projects the actual EmployeeSalary model for a database-authorized master reviewer', async () => {
+    await prisma.employeeSalary.create({ data: { employeeId, basicSalary: 1200, housingAllow: 200, grossSalary: 1400, taxDeduction: 100, netSalary: 1300, currency: 'BDT', effectiveFrom: '2026-10-01' } });
+    const response = await employeeDetail(req(`/api/employees/${employeeId}`, undefined, masterToken), { params: Promise.resolve({ id: employeeId }) });
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.employee.salary).toMatchObject({ employeeId, basicSalary: 1200, housingAllow: 200, grossSalary: 1400, netSalary: 1300, currency: 'BDT', effectiveFrom: '2026-10-01' });
+    expect(body.employee.salary).not.toHaveProperty('salaryAmount');
+    expect(await prisma.portalAuditLog.count({ where: { actorUserId: master, action: 'PROFILE_VIEWED', entityId: employeeId } })).toBeGreaterThan(0);
   });
   it('rejects an actual draft payroll download', async () => {
     expect((await salary(req(`/api/employee/salary?download=${draftId}`))).status).toBe(404);
