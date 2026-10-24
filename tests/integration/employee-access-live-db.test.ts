@@ -18,6 +18,7 @@ const staff = `employee-live-${suffix}`;
 const other = `employee-other-${suffix}`;
 const master = `employee-master-${suffix}`;
 const masterToken = `isolated-master-session-${suffix}`;
+let salaryRoleId = '';
 let packageId = ''; let assignmentId = '';
 const sessionToken = `isolated-employee-session-${suffix}`;
 let employeeId = '';
@@ -34,6 +35,10 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     await prisma.portalUser.create({ data: { id: master, email: `${master}@isolated.test`, name: master, userType: 'SUPER_ADMIN', status: 'active', emailVerified: true } });
     await prisma.portalSession.create({ data: { userId: master, token: masterToken, expiresAt: new Date(Date.now() + 3600000) } });
     const employee = await prisma.employee.create({ data: { userId: staff, employeeId: staff, status: 'active' } }); employeeId = employee.id;
+    await prisma.portalPermission.upsert({ where: { id: 'h6' }, update: {}, create: { id: 'h6', module: 'hr_self', feature: 'employee', action: 'self_salary_view' } });
+    const salaryRole = await prisma.portalRole.create({ data: { name: `isolated-salary-${suffix}`, label: 'Isolated salary reader' } }); salaryRoleId = salaryRole.id;
+    await prisma.portalRolePermission.create({ data: { roleId: salaryRoleId, permissionId: 'h6', granted: true } });
+    await prisma.portalUserRole.create({ data: { userId: staff, roleId: salaryRoleId } });
     await prisma.portalSession.create({ data: { userId: staff, token: sessionToken, expiresAt: new Date(Date.now() + 3600000) } });
     for (const [period, status] of [['2026-01', 'approved'], ['2026-02', 'draft']]) {
       const payroll = await prisma.employeePayroll.create({ data: { employeeId, period, monthYear: period, grossSalary: 1000, netSalary: 900, status } });
@@ -58,6 +63,8 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     await prisma.portalAuditLog.deleteMany({ where: { actorUserId: { in: [staff, master] } } });
     await prisma.portalSession.deleteMany({ where: { userId: { in: [staff, master] } } });
     await prisma.employee.deleteMany({ where: { userId: staff } });
+    await prisma.portalUserRole.deleteMany({ where: { userId: staff } });
+    if (salaryRoleId) await prisma.portalRole.delete({ where: { id: salaryRoleId } });
     await prisma.portalUser.deleteMany({ where: { id: { in: [staff, other, master] } } });
     await prisma.$disconnect();
   });

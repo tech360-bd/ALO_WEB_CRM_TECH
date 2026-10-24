@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mocks = vi.hoisted(() => ({ auth: vi.fn(), employeeFindUnique: vi.fn(), profileFindUnique: vi.fn(), salaryFindMany: vi.fn(), commissionFindMany: vi.fn(), bonusFindMany: vi.fn(), incrementFindMany: vi.fn(), auditCreate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ auth: vi.fn(), employeeFindUnique: vi.fn(), profileFindUnique: vi.fn(), salaryFindMany: vi.fn(), payrollFindMany: vi.fn(), commissionFindMany: vi.fn(), bonusFindMany: vi.fn(), incrementFindMany: vi.fn(), auditCreate: vi.fn() }));
 vi.mock('@/lib/auth-middleware', () => ({ withAuth: (handler: (request: Request, auth: Record<string, any>) => Promise<Response>) => (request: Request) => handler(request, mocks.auth()) }));
 vi.mock('@/lib/db', () => ({
   db: {
     employee: { findUnique: (...args: unknown[]) => mocks.employeeFindUnique(...args) },
     employeeProfile: { findUnique: (...args: unknown[]) => mocks.profileFindUnique(...args) },
+    employeePayroll: { findMany: (...args: unknown[]) => mocks.payrollFindMany(...args) },
     employeeSalary: { findMany: (...args: unknown[]) => mocks.salaryFindMany(...args) },
     employeeCommission: { findMany: (...args: unknown[]) => mocks.commissionFindMany(...args) },
     employeeBonus: { findMany: (...args: unknown[]) => mocks.bonusFindMany(...args) },
@@ -18,7 +19,7 @@ import { GET } from '@/app/api/employee/salary/route';
 
 const employee = { id: 'emp-db', userId: 'user-1', employeeId: 'ALO-EMP-1', status: 'active' };
 const auth = { userId: 'user-1', userType: 'EMPLOYEE', roles: ['COUNSELOR'], permissions: ['h6'], actorUserId: 'user-1' };
-const salary = { id: 'salary-1', netSalary: 50000, employeeId: 'emp-db' };
+const salary = { id: 'approved-payroll-1', period: '2026-10', basicSalary: 50000, allowances: 2000, grossSalary: 52000, netSalary: 50000, status: 'approved', paidAt: null };
 const request = () => new Request('https://alo.test/api/employee/salary');
 
 beforeEach(() => {
@@ -26,7 +27,8 @@ beforeEach(() => {
   mocks.auth.mockReturnValue(auth);
   mocks.employeeFindUnique.mockResolvedValue(employee);
   mocks.profileFindUnique.mockResolvedValue({ employeeId: 'ALO-EMP-PROFILE' });
-  mocks.salaryFindMany.mockResolvedValue([salary]);
+  mocks.salaryFindMany.mockResolvedValue([{ id: "unapproved-salary-secret" }]);
+  mocks.payrollFindMany.mockResolvedValue([salary]);
   mocks.commissionFindMany.mockResolvedValue([]);
   mocks.bonusFindMany.mockResolvedValue([]);
   mocks.incrementFindMany.mockResolvedValue([]);
@@ -44,14 +46,29 @@ describe('employee own salary endpoint privacy', () => {
     expect(mocks.salaryFindMany).not.toHaveBeenCalled();
   });
 
-  it('scopes own compensation records to authenticated employee aliases and audits access', async () => {
-    const response = await GET(request());
-    const body = await response.json();
+  it('returns only scoped approved payroll, never raw compensation or unapproved increments', async () => {
+    const response = await GET(request()); const body = await response.json();
     expect(response.status).toBe(200);
-    expect(mocks.salaryFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: { in: ['emp-db', 'user-1', 'ALO-EMP-1', 'ALO-EMP-PROFILE'] } } }));
-    expect(mocks.commissionFindMany).toHaveBeenCalledWith(expect.objectContaining({ select: expect.not.objectContaining({ studentId: true, applicationId: true, note: true }) }));
-    expect(mocks.auditCreate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: 'EMPLOYEE_OWN_SALARY_VIEWED' }) }));
-    expect(body.data.salary.current.id).toBe('salary-1');
+    expect(mocks.payrollFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: 'emp-db', status: { in: ['approved', 'paid'] } } }));
+    expect(mocks.salaryFindMany).not.toHaveBeenCalled(); expect(mocks.incrementFindMany).not.toHaveBeenCalled();
+    expect(body.data.salary.current.id).toBe('approved-payroll-1'); expect(body.payslips[0].id).toBe('approved-payroll-1');
+    expect(JSON.stringify(body)).not.toContain('unapproved-salary-secret');
+    expect(mocks.auditCreate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: 'SALARY_VIEWED' }) }));
+  });
+
+  it('rejects draft, unrelated or nonexistent payslip identifiers', async () => {
+    mocks.payrollFindMany.mockResolvedValue([]);
+    const response = await GET(new Request('https://alo.test/api/employee/salary?download=foreign-draft'));
+    expect(response.status).toBe(404);
+    expect(mocks.payrollFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: 'emp-db', status: { in: ['approved', 'paid'] }, id: 'foreign-draft' } }));
+  });
+
+  it('downloads an approved stored payslip and audits the download', async () => {
+    const response = await GET(new Request('https://alo.test/api/employee/salary?download=approved-payroll-1'));
+    expect(response.status).toBe(200); expect(response.headers.get('content-type')).toContain('text/html');
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
+    expect(await response.text()).toContain('50000');
+    expect(mocks.auditCreate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: 'SALARY_DOWNLOADED' }) }));
   });
 
   it('does not disclose salary when the private-view audit cannot be saved', async () => {

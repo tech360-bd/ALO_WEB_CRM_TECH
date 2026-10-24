@@ -91,7 +91,7 @@ export default function EmployeeLeavePage() {
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
 
-  if (loadError) return <div role="alert" className="p-6 text-red-700">{loadError}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+  if (error) return <div role="alert" className="p-6 text-red-700">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
 
   return (
     <div className="min-h-screen space-y-6 bg-alo-page p-4 lg:p-6">

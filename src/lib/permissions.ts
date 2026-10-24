@@ -4,6 +4,7 @@
 // ============================================================
 
 export type PermissionModule =
+  | "crm"
   | "student"
   | "documents"
   | "communication"
@@ -20,7 +21,11 @@ export type PermissionModule =
   | "admin";
 
 export type PermissionAction =
-  // Generic CRUD
+  // Generic CRUD and explicitly scoped employee actions
+  | "view_own"
+  | "create_own"
+  | "approve_all"
+  | "manage"
   | "view"
   | "create"
   | "update"

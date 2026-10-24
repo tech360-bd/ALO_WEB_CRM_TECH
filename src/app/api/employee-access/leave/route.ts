@@ -157,7 +157,7 @@ export async function PATCH(req: NextRequest) {
     const existing = await db.employeeLeave.findUnique({ where: { id }, select: { id: true, employeeId: true, status: true } });
     if (!existing) return NextResponse.json({ success: false, error: 'Leave request not found.' }, { status: 404 });
     let target = await db.employee.findFirst({ where: { OR: [{ id: existing.employeeId }, { userId: existing.employeeId }, { employeeId: existing.employeeId }], status: 'active' }, select: { id: true, userId: true, employeeId: true, status: true, branch: true } });
-    let targetProfile = target ? await db.employeeProfile.findUnique({ where: { userId: target.userId }, select: { id: true, employeeId: true } }) : null;
+    let targetProfile = target ? await db.employeeProfile.findUnique({ where: { userId: target.userId }, select: { id: true, userId: true, employeeId: true } }) : null;
     if (!target) {
       targetProfile = await db.employeeProfile.findUnique({ where: { id: existing.employeeId }, select: { id: true, userId: true, employeeId: true } });
       if (targetProfile) target = await db.employee.findUnique({ where: { userId: targetProfile.userId }, select: { id: true, userId: true, employeeId: true, status: true, branch: true } });

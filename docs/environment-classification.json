@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2532,
+  "filesScanned": 2575,
   "summary": {
     "UNUSED": 102,
-    "REFERENCED_WITH_FALLBACK": 154,
+    "REFERENCED_WITH_FALLBACK": 155,
     "REFERENCED_FAIL_CLOSED": 20,
-    "REFERENCED": 121,
+    "REFERENCED": 122,
     "PUBLIC": 12
   },
   "productionRequired": [
@@ -3279,6 +3279,21 @@
       "sampleReferences": []
     },
     {
+      "name": "INTERVIEW_PRACTICE_WINDOW_HOURS",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/interview/practice-window.ts"
+      ]
+    },
+    {
       "name": "JITSI_APP_ID",
       "classification": "REFERENCED",
       "referenced": true,
@@ -3523,7 +3538,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 6,
+      "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3534,8 +3549,8 @@
       ],
       "sampleReferences": [
         "src/app/api/admin/ai-chat/route.ts",
-        "src/app/api/workforce/metrics/route.ts",
-        "src/lib/ai-providers/owner-chat.ts"
+        "src/app/api/admin/ai-command-center/assistant/route.ts",
+        "src/app/api/workforce/metrics/route.ts"
       ]
     },
     {
@@ -3543,7 +3558,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 9,
+      "referenceCount": 10,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3555,7 +3570,7 @@
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
         "src/app/api/admin/ai-chat/route.ts",
-        "src/app/api/workforce/metrics/route.ts"
+        "src/app/api/admin/ai-command-center/assistant/route.ts"
       ]
     },
     {
@@ -4677,7 +4692,7 @@
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 7,
+      "referenceCount": 8,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -4687,9 +4702,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/admin/ai-command-center/assistant/route.ts",
         "src/app/api/ai-providers/route.ts",
-        "src/lib/ai-providers/resolve.ts",
-        "src/lib/ai-workforce/gateway.ts"
+        "src/lib/ai-providers/resolve.ts"
       ]
     },
     {

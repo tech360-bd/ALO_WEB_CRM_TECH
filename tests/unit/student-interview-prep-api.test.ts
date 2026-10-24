@@ -123,7 +123,7 @@ describe('GET /api/student/interview-prep', () => {
   });
 
   it('fails closed with a sanitized message', async () => {
-    m.applications.mockRejectedValue(new Error('mysql://root:pw@db refused'));
+    m.applications.mockRejectedValue(new Error('mysql://dummy-user:dummy-password@db.invalid refused'));
     const response = await GET(get());
     expect(response.status).toBe(503);
     const text = await response.text();
@@ -168,9 +168,9 @@ describe('POST /api/student/interview-prep', () => {
   });
 
   it('reports a sanitized failure when the write fails', async () => {
-    m.upsert.mockRejectedValue(new Error('duplicate key mysql://root:secret@db'));
+    m.upsert.mockRejectedValue(new Error('duplicate key mysql://dummy-user:dummy-password@db.invalid'));
     const response = await POST(post({ reasonCourse: 'ok' }));
     expect(response.status).toBe(503);
-    expect(await response.text()).not.toContain('secret');
+    expect(await response.text()).not.toContain('dummy-password');
   });
 });

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type ElementType } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Activity, Users, FileText, CalendarDays, RefreshCw, AlertTriangle } from 'lucide-react';

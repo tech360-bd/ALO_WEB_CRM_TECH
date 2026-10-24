@@ -8727,16 +8727,16 @@ model InterviewAssessment {
   verdict        String
   confidence     String    @default("LOW")
   overallScore   Int       @default(0)
-  dimensions     String    @default("[]") @db.LongText
-  strengths      String    @default("[]") @db.LongText
-  improvements   String    @default("[]") @db.LongText
-  evidence       String    @default("[]") @db.LongText
-  limitations    String    @default("[]") @db.LongText
+  dimensions     String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  strengths      String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  improvements   String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  evidence       String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  limitations    String    @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
   answerCount    Int       @default(0)
   averageWords   Int       @default(0)
   reviewStatus   String    @default("PENDING")
   finalVerdict   String?
-  studentMessage String    @default("") @db.Text
+  studentMessage String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   reviewedById   String?
   reviewedByName String    @default("")
   reviewedAt     DateTime?
@@ -8762,8 +8762,8 @@ model InterviewReviewDecision {
   overridden     Boolean  @default(false)
   direction      String   @default("AGREED")
   rationale      String   @db.Text
-  studentMessage String   @default("") @db.Text
-  internalNotes  String   @default("") @db.Text
+  studentMessage String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  internalNotes  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   reviewerId     String
   reviewerName   String   @default("")
   reviewerRole   String   @default("")
@@ -8789,7 +8789,7 @@ model InterviewPracticeWindow {
   extendedUntil   DateTime?
   extensionCount  Int       @default(0)
   extendedBy      String    @default("")
-  extensionReason String    @default("") @db.Text
+  extensionReason String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   packGeneratedAt DateTime?
   closedAt        DateTime?
   closedBy        String    @default("")
@@ -8807,10 +8807,10 @@ model InterviewPracticeWindow {
 model StudentInterviewFact {
   id               String   @id @default(cuid())
   studentId        String   @unique
-  reasonUniversity String   @default("") @db.Text
-  reasonCourse     String   @default("") @db.Text
-  fundingSource    String   @default("") @db.Text
-  futurePlan       String   @default("") @db.Text
+  reasonUniversity String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  reasonCourse     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  fundingSource    String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  futurePlan       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   updatedBy        String   @default("")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -8835,7 +8835,7 @@ model InterviewQuestion {
   theme           String?
   source          String?
   sourceType      String?
-  sourceUrl       String?
+  sourceUrl       String? @db.VarChar(500)
   lastVerifiedAt  DateTime?
   confidence      String?
   frequency       Int      @default(0)
