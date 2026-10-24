@@ -1,0 +1,33 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+const m = vi.hoisted(() => ({ gateway: vi.fn(), audit: vi.fn(), pause: vi.fn(), find: vi.fn(), unique: vi.fn(), count: vi.fn(), first: vi.fn(), create: vi.fn(), update: vi.fn(), transaction: vi.fn() }));
+vi.mock('@/lib/ai-gateway', () => ({ aiGateway: m.gateway }));
+vi.mock('@/lib/transactional-audit', () => ({ writePortalAudit: m.audit }));
+vi.mock('@/lib/db', () => ({ db: { globalAiPause: { findFirst: m.pause }, awfRun: { findMany: m.find }, $transaction: m.transaction } }));
+import { readOwnerChat, runOwnerChat, type OwnerChatInput } from '@/lib/ai-providers/owner-chat';
+import { encryptToken, decryptToken } from '@/lib/token-encryption';
+import type { AuthContext } from '@/lib/auth-middleware';
+const auth = { userId: 'owner', actorUserId: 'owner', userType: 'SUPER_ADMIN', roles: ['SUPER_ADMIN'] } as AuthContext;
+const input: OwnerChatInput = { requestId: 'b16ac584-054e-4404-ad53-a7a666464719', conversationId: '695b848e-ccbe-42ec-bedd-a1f68b3024fa', provider: 'local', model: 'local-test', message: 'Private local question', externalConsent: false };
+let created: Record<string, any>;
+beforeEach(() => {
+  vi.resetAllMocks(); vi.stubEnv('ENCRYPTION_KEY','19'.repeat(32)); vi.stubEnv('LOCAL_AI_URL','http://127.0.0.1:11434/v1'); vi.stubEnv('LOCAL_AI_MODEL','local-test'); vi.stubEnv('UNOROUTER_ENABLED','true'); vi.stubEnv('UNOROUTER_API_KEY','test-only-key'); vi.stubEnv('UNOROUTER_ALLOWED_MODELS','approved:free');
+  m.pause.mockResolvedValue(null); m.unique.mockResolvedValue(null); m.count.mockResolvedValue(0); m.first.mockResolvedValue(null); m.find.mockResolvedValue([]);
+  m.create.mockImplementation(async ({ data }) => { created = { ...data, id: 'run-1', startedAt: new Date() }; return created; });
+  m.transaction.mockImplementation(async callback => callback({ awfRun: { findUnique: m.unique, count: m.count, findFirst: m.first, create: m.create, update: m.update } }));
+  m.gateway.mockResolvedValue({ provider: 'local', model: 'local-test', text: 'Actual mocked inference output', usage: { totalTokens: 10 } });
+});
+afterEach(() => vi.unstubAllEnvs());
+describe('owner chat durable and privacy controls', () => {
+  it('requires an explicit production-strength history key even in development', async () => { vi.stubEnv('ENCRYPTION_KEY',''); await expect(runOwnerChat(auth,input)).rejects.toMatchObject({ code: 'ENCRYPTION_REQUIRED' }); expect(m.gateway).not.toHaveBeenCalled(); });
+  it('encrypts input and output and records requested/completed audit events', async () => { const result = await runOwnerChat(auth,input); expect(result.status).toBe('COMPLETED'); expect(created.input).not.toContain(input.message); expect(JSON.parse(decryptToken(created.input)).message).toBe(input.message); const saved = m.update.mock.calls[0][0].data; expect(saved.output).not.toContain('Actual mocked'); expect(JSON.parse(decryptToken(saved.output)).text).toBe('Actual mocked inference output'); expect(m.audit.mock.calls.map(call => call[2])).toEqual(['AI_CHAT_REQUESTED','AI_CHAT_COMPLETED']); expect(created.toolCallCount).toBe(0); expect(created.fallbackUsed).toBe(false); });
+  it('does not call inference if request audit fails', async () => { m.audit.mockRejectedValue(new Error('audit unavailable')); await expect(runOwnerChat(auth,input)).rejects.toThrow('audit unavailable'); expect(m.gateway).not.toHaveBeenCalled(); });
+  it('honors the global AI pause', async () => { m.pause.mockResolvedValue({ id: 'pause' }); await expect(runOwnerChat(auth,input)).rejects.toMatchObject({ code: 'AI_PAUSED' }); expect(m.create).not.toHaveBeenCalled(); });
+  it('does not send external messages without explicit consent', async () => { await expect(runOwnerChat(auth,{ ...input, provider: 'unorouter', model: 'approved:free' })).rejects.toMatchObject({ code: 'CONSENT_REQUIRED' }); expect(m.gateway).not.toHaveBeenCalled(); });
+  it('reserves free usage globally for the selected model', async () => { m.first.mockResolvedValue({ startedAt: new Date() }); await expect(runOwnerChat(auth,{ ...input, provider: 'unorouter', model: 'approved:free', externalConsent: true })).rejects.toMatchObject({ code: 'RATE_LIMITED', status: 429 }); expect(m.gateway).not.toHaveBeenCalled(); expect(m.transaction.mock.calls[0][1]).toEqual({ isolationLevel: 'Serializable' }); });
+  it('blocks excessive owner requests', async () => { m.count.mockResolvedValue(20); await expect(runOwnerChat(auth,input)).rejects.toMatchObject({ code: 'RATE_LIMITED' }); expect(m.gateway).not.toHaveBeenCalled(); });
+  it('never forwards local history when using an external provider', async () => { m.gateway.mockResolvedValue({ provider: 'unorouter', model: 'approved:free', text: 'Remote test reply' }); await runOwnerChat(auth,{ ...input, provider: 'unorouter', model: 'approved:free', message: 'Public general question', externalConsent: true }); expect(m.find).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ actorUserId: 'owner', entityId: input.conversationId, provider: 'unorouter', status: 'COMPLETED' }) })); expect(m.gateway.mock.calls[0][0]).toMatchObject({ providerHint: 'unorouter', privateData: false }); });
+  it('replays an identical completed request without another inference', async () => { await runOwnerChat(auth,input); m.unique.mockResolvedValue({ ...created, status: 'COMPLETED', output: encryptToken(JSON.stringify({ text: 'Stored result' })) }); const replay = await runOwnerChat(auth,input); expect(replay).toMatchObject({ replay: true, reply: 'Stored result' }); expect(m.gateway).toHaveBeenCalledTimes(1); });
+  it('rejects an idempotency key reused with a different message', async () => { await runOwnerChat(auth,input); m.unique.mockResolvedValue(created); await expect(runOwnerChat(auth,{ ...input, message: 'Changed message' })).rejects.toMatchObject({ code: 'REQUEST_CONFLICT' }); expect(m.gateway).toHaveBeenCalledTimes(1); });
+  it('stores a failed outcome without claiming successful changes', async () => { m.gateway.mockRejectedValue(new Error('provider secret')); await expect(runOwnerChat(auth,input)).rejects.toMatchObject({ code: 'INFERENCE_FAILED' }); expect(m.update.mock.calls[0][0].data.status).toBe('FAILED'); expect(JSON.stringify(m.audit.mock.calls)).not.toContain('provider secret'); });
+  it('scopes both conversation selection and contents to the current owner', async () => { await readOwnerChat(auth,input.conversationId); expect(m.find.mock.calls.every(([query]) => query.where.actorUserId === 'owner')).toBe(true); expect(m.audit.mock.calls[0][2]).toBe('AI_CHAT_HISTORY_VIEWED'); });
+});
