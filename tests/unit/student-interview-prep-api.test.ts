@@ -171,6 +171,6 @@ describe('POST /api/student/interview-prep', () => {
     m.upsert.mockRejectedValue(new Error('duplicate key mysql://dummy-user:dummy-password@db.invalid'));
     const response = await POST(post({ reasonCourse: 'ok' }));
     expect(response.status).toBe(503);
-    expect(await response.text()).not.toContain('secret');
+    expect(await response.text()).not.toContain('dummy-password');
   });
 });
