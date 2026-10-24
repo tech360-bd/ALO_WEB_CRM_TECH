@@ -20,7 +20,10 @@
     "src/app/api/crm/ai-command-center/route.ts",
     "src/app/crm/ai-command-center/page.tsx",
     "src/app/crm/interview-library/page.tsx",
-    "src/lib/portal-nav.ts"
+    "src/lib/portal-nav.ts",
+    "src/app/api/student/interview-prep/route.ts",
+    "src/components/student/StudentInterviewPrep.tsx",
+    "src/app/student/interview/page.tsx"
   ],
   "exclude": [
     "node_modules",

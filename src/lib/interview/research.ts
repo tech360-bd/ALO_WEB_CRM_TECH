@@ -376,7 +376,10 @@ export function assembleAnswerFramework(input: {
   const funding = cleaned.get(ANSWER_FACT_KEYS.FUNDING_SOURCE);
   const future = cleaned.get(ANSWER_FACT_KEYS.FUTURE_PLAN);
 
-  const shortParts = [reasonUniversity ?? reasonCourse].filter(Boolean) as string[];
+  // Lead with the fact that actually answers the question category, so a
+  // "why this course" answer does not open with the university reason.
+  const lead = category === 'COURSE' ? reasonCourse ?? reasonUniversity : reasonUniversity ?? reasonCourse;
+  const shortParts = [lead].filter(Boolean) as string[];
   const expandedParts = [reasonUniversity, reasonCourse, funding, future].filter(Boolean) as string[];
 
   return {

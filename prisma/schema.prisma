@@ -8713,6 +8713,23 @@ model InterviewAnswer {
   @@index([questionId])
 }
 
+/// Facts a student has explicitly supplied for interview preparation.
+/// Only these facts may seed an answer framework — the coach never invents
+/// income, sponsorship, results, travel or motivation (spec §33/§96).
+model StudentInterviewFact {
+  id               String   @id @default(cuid())
+  studentId        String   @unique
+  reasonUniversity String   @default("") @db.Text
+  reasonCourse     String   @default("") @db.Text
+  fundingSource    String   @default("") @db.Text
+  futurePlan       String   @default("") @db.Text
+  updatedBy        String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+
 model InterviewQuestion {
   id              String   @id @default(cuid())
   universitySlug  String?

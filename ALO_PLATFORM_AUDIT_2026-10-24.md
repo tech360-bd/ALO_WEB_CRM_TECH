@@ -361,12 +361,36 @@ visibility, priority ranking, 30-day deadline horizon, zero-state honesty, and s
 | Dead-link audit of new pages and nav | no dead hrefs |
 | Design-token guardrails | 17/17 green (no sub-11px type, no raw palette hex, no dark panels) |
 
-### AG-4. What this pass did **not** do
+### AG-4. Student interview workspace (spec §30, §33, §38, §71)
+
+`/student/interview` rendered `StudentSopCvStudio` — the SOP/CV studio, which is also served at `/student/sop`. The
+interview route had no interview content at all. Replaced with a real preparation workspace:
+
+| Artefact | Purpose |
+|---|---|
+| `StudentInterviewFact` model + migration `20261024190000_student_interview_facts` | One row per student holding the four facts only the student may state (reason for university, reason for course, funding source, future plan). Additive `CREATE TABLE`; nothing else altered. |
+| `/api/student/interview-prep` (GET/POST, `withStudentAuth`) | Reads are scoped to `auth.studentId` and ignore any client-supplied id. GET returns the student's applications, the provenance-checked pack for the selected university, the saved facts, and an answer framework per question. POST upserts only the caller's row. |
+| `src/components/student/StudentInterviewPrep.tsx` | Facts form → saved facts → frameworks. A question whose required fact is blank shows the gap and produces **no draft**; sourced questions show source, verification date and confidence; students never receive stale evidence. |
+
+Evidence: `tests/unit/student-interview-prep-api.test.ts` (11 tests) covering cross-student scoping, stale-evidence
+withholding, the ready/not-ready framework boundary, trim/oversize/unknown-field handling, and sanitized failures.
+Full suite after this change: **279 files passed, 3,180 tests**.
+
+### AG-5. What this pass did **not** do
 
 * No MySQL was available, so the new migration was **not applied** and no query was executed against real data.
-* The interview pack has no *student-facing* practice UI yet: `/student/interview` still renders the SOP/CV studio, and
-  the 72-hour practice window (§38), video recording (§39) and human final review (§41) remain unimplemented.
+* The interview pack now has a student-facing preparation surface (AG-4), but the 72-hour practice window (§38),
+  video recording (§39) and human final review queue (§41) remain unimplemented.
 * `StudentWorldState` (§51) still has no model; student memory exists only as `AiStudentMemory`.
 * The 2,000-agent target (§L of wave 1) is unchanged at 1,020 seeded rows.
 
-**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation, and this pass removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression, and a destructive fake-data seeder — with the unit suite going from red (13 failures) to green (3,133 passing). It is still not a "COMPLETE" end-to-end delivery, because the acceptance gate requires executed database, integration and E2E evidence that this environment cannot produce, and because items AF-1 through AF-5 are real outstanding work.
+**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation. This work removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression and a destructive fake-data seeder; it replaced a mis-wired student route with a real interview workspace; and it made the existing (previously unused) interview-honesty layer actually govern what is published. The unit suite went from red (13 failures at `main`) to green (3,180 passing).
+
+It is still not a "COMPLETE" end-to-end delivery, for two distinct reasons that should not be conflated:
+
+1. **Environment-blocked evidence** — no MySQL, no integration credentials and a 3 GB RAM ceiling mean migrations, seeds,
+   `next build`, Playwright and the 89 DB-backed tests cannot execute here. Those must run on CI before anything is called
+   production-ready.
+2. **Genuinely unfinished scope** — items AF-1…AF-5 (approval-center path, 1,020 vs 2,000 agents, 14 dead cron paths,
+   fictional CRM-SEO views, abandoned mock course-finder) plus the 72-hour practice window, video interview recording,
+   human review queue, `StudentWorldState`, RAG 2.0 retrieval and the AI evaluation harness are not implemented.
