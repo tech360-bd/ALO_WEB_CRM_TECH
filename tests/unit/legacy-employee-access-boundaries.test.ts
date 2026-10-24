@@ -12,7 +12,7 @@ const req = () => new NextRequest('https://alo.test/api/access-control', { metho
 beforeEach(() => {
   vi.resetAllMocks(); m.auth.mockResolvedValue({ userId: 'staff', actorUserId: 'staff', userType: 'HR_MANAGER', roles: ['HR_MANAGER'] });
   m.private.mockResolvedValue(false); m.field.mockResolvedValue(false); m.employee.mockResolvedValue({ id: 'emp', userId: 'other', name: 'Person', employeeId: 'ALO-1', branch: 'Dhaka', role: 'EMPLOYEE', privateInternalField: 'never exposed' });
-  m.profile.mockResolvedValue({ salary: 'secret salary', bankName: 'secret bank', bankAccount: 'secret account', bankRouting: 'secret routing', nidNumber: 'secret nid', department: 'Admission' }); m.documents.mockResolvedValue([]); m.salary.mockResolvedValue({ id: 'salary', salaryAmount: 999, bankAccount: 'secret account' });
+  m.profile.mockResolvedValue({ salary: 'secret salary', bankName: 'secret bank', bankAccount: 'secret account', bankRouting: 'secret routing', nidNumber: 'secret nid', department: 'Admission' }); m.documents.mockResolvedValue([]); m.salary.mockResolvedValue({ id: 'salary', employeeId: 'emp', basicSalary: 900, housingAllow: 50, transportAllow: 20, medicalAllow: 10, otherAllow: 20, grossSalary: 1000, taxDeduction: 50, pfDeduction: 50, netSalary: 900, currency: 'BDT', effectiveFrom: '2026-10-01', bankAccount: 'secret account' });
   m.transaction.mockImplementation(async callback => callback({}));
 });
 describe('legacy employee and permission route bypass prevention', () => {
@@ -27,6 +27,13 @@ describe('legacy employee and permission route bypass prevention', () => {
     m.private.mockResolvedValue(true);
     const response = await employee(req(), { params: Promise.resolve({ id: 'emp' }) }); expect(response.status).toBe(200);
     const body = await response.text(); expect(body).not.toContain('secret'); expect(body).not.toContain('privateInternalField'); expect(m.salary).not.toHaveBeenCalled(); expect(m.audit.mock.calls[0][2]).toBe('PROFILE_VIEWED');
+  });
+  it('returns actual salary-model fields only to an explicitly authorized reviewer', async () => {
+    m.private.mockResolvedValue(true); m.field.mockResolvedValue(true);
+    const response = await employee(req(), { params: Promise.resolve({ id: 'emp' }) });
+    const body = await response.json();
+    expect(body.employee.salary).toEqual({ id: 'salary', employeeId: 'emp', basicSalary: 900, housingAllow: 50, transportAllow: 20, medicalAllow: 10, otherAllow: 20, grossSalary: 1000, taxDeduction: 50, pfDeduction: 50, netSalary: 900, currency: 'BDT', effectiveFrom: '2026-10-01' });
+    expect(body.employee.salary).not.toHaveProperty('bankAccount');
   });
   it('own profile never returns draft salary calculations through the legacy endpoint', async () => {
     m.private.mockResolvedValue(true); m.field.mockResolvedValue(true); m.employee.mockResolvedValue({ id: 'emp', userId: 'staff' });

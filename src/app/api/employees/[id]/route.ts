@@ -25,7 +25,7 @@ async function getEmployee(req: Request, auth: AuthContext, context?: { params: 
   return NextResponse.json({
     employee: { id: employee.id, employeeId: employee.employeeId, userId: employee.userId, name: employee.name, designation: employee.designation, department: employee.department, branch: employee.branch, status: employee.status,
       profile: profile ? { ...profile, salary: salaryAccess ? profile.salary : null, bankAccount: bankAccess ? profile.bankAccount : null, bankName: bankAccess ? profile.bankName : null, bankRouting: bankAccess ? profile.bankRouting : null, nidNumber: nidAccess ? profile.nidNumber : null } : null,
-      documents, salary: salary ? { id: salary.id, employeeId: salary.employeeId, salaryAmount: salary.salaryAmount, allowance: salary.allowance, bonus: salary.bonus, effectiveDate: salary.effectiveDate } : null },
+      documents, salary: salary ? { id: salary.id, employeeId: salary.employeeId, basicSalary: salary.basicSalary, housingAllow: salary.housingAllow, transportAllow: salary.transportAllow, medicalAllow: salary.medicalAllow, otherAllow: salary.otherAllow, grossSalary: salary.grossSalary, taxDeduction: salary.taxDeduction, pfDeduction: salary.pfDeduction, netSalary: salary.netSalary, currency: salary.currency, effectiveFrom: salary.effectiveFrom } : null },
     canViewPrivate: true,
     privacyNote: own ? 'Private access is audit-logged. Final approved payslips are available through your salary page.' : 'Private access is audit-logged.',
   });
