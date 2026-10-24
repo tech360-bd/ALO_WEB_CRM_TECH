@@ -8725,10 +8725,20 @@ model InterviewQuestion {
   sortOrder       Int      @default(0)
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
+  // Provenance (spec §31/§53/§54): a question is only publishable as current
+  // evidence when it names a real source and carries a verification date.
+  theme           String?
+  source          String?
+  sourceType      String?
+  sourceUrl       String?
+  lastVerifiedAt  DateTime?
+  confidence      String?
+  frequency       Int      @default(0)
 
   @@index([universitySlug])
   @@index([countrySlug])
   @@index([category])
+  @@index([lastVerifiedAt])
 }
 
 model InterviewSession {

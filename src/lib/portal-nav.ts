@@ -378,20 +378,34 @@ const HR_ADMIN_EXTRA: NavItem[] = [
   { label:'HR Analytics', icon: BarChart3, href:'/crm/hrm/analytics' },
 ];
 
+// AI & interview intelligence — real routes, injected for staff portals only.
+// The student portal has its own interview preparation surface and must not
+// receive counselor-facing tooling.
+const AI_INTELLIGENCE_GROUP: NavGroup = {
+  title: 'AI & Interview Intelligence',
+  items: [
+    { label:'AI Command Center', icon: Bot, href:'/crm/ai-command-center', badge:'AI' },
+    { label:'Interview Library', icon: Video, href:'/crm/interview-library' },
+  ]
+};
+
 export function getNavForRole(role: string): NavGroup[] {
   const key = role.toLowerCase().replace(/-/g,'_');
   const base = portalNav[key] || portalNav['counselor'];
-  // Student dashboard must remain unchanged — never inject HR
+  // Student dashboard must remain unchanged — never inject HR or staff tooling
   if (key === 'student') return base;
+  const groups = base.some(g => g.title === 'AI & Interview Intelligence')
+    ? base
+    : [...base, AI_INTELLIGENCE_GROUP];
   // Inject HR Center if not already present
-  const hasHR = base.some(g=> g.title==='HR Center');
-  if (hasHR) return base;
+  const hasHR = groups.some(g=> g.title==='HR Center');
+  if (hasHR) return groups;
   const isHrAdmin = ['super_admin','admin','hr','hr_manager','finance','accounts'].includes(key);
   const hrGroup: NavGroup = {
     ...HR_NAV_GROUP,
     items: isHrAdmin ? [...HR_NAV_GROUP.items, ...HR_ADMIN_EXTRA] : HR_NAV_GROUP.items
   };
-  return [...base, hrGroup];
+  return [...groups, hrGroup];
 }
 
 // Frequently used for bottom nav (mobile)

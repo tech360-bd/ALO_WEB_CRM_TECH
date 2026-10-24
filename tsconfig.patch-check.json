@@ -14,7 +14,13 @@
     "src/app/api/employee/salary/route.ts",
     "src/app/api/employee-access/feature-access/route.ts",
     "src/app/crm/students/page.tsx",
-    "src/app/crm/students/[id]/page.tsx"
+    "src/app/crm/students/[id]/page.tsx",
+    "src/lib/interview/research.ts",
+    "src/app/api/interview-questions/route.ts",
+    "src/app/api/crm/ai-command-center/route.ts",
+    "src/app/crm/ai-command-center/page.tsx",
+    "src/app/crm/interview-library/page.tsx",
+    "src/lib/portal-nav.ts"
   ],
   "exclude": [
     "node_modules",

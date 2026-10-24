@@ -307,4 +307,66 @@ Every change is additive or corrective; no working route, model, API or componen
 9. **Integration status** — every provider is READY_FOR_AUTHORIZATION; none is verified live.
 10. **Full type-check unproven** — only the 74-file critical subset and the 10 touched files are proven clean.
 
+---
+
+## AG. Second Pass — AI-Native Student Journey OS (2026-10-24, wave 2)
+
+Scope this pass: the Student Journey Operating System specification (§1–§120). The repository already contained the
+journey scaffolding (Student → Application → Document → Offer → Payment → Interview → Visa → Success models and
+portals), so this pass targeted two gaps where the *existing* code was present but not usable, and one route the spec
+names explicitly but the repo lacked.
+
+### AG-1. Interview research provenance (spec §31, §53, §54, §77, §95, §96)
+
+`src/lib/interview/honesty.ts` already existed (44 lines: six-month window constant, mandatory disclaimers, forbidden
+claim list, `validateInterviewGuidance`) but **no route imported it** — `/api/interview-questions` returned bare rows
+with no source, no verification date and no disclaimer. The honesty layer was effectively dead code.
+
+Added:
+
+| Artefact | Purpose |
+|---|---|
+| `src/lib/interview/research.ts` | Pure engine: freshness classification (FRESH/STALE/EXPIRED/UNVERIFIED), source-type normalisation, question-pack assembly with per-question provenance, and a grounded answer framework that refuses to draft when a required student fact is missing. |
+| `src/app/api/interview-questions/route.ts` (rewritten) | GET returns a provenance-checked pack + `meta` (counts, withheld questions with reasons, disclaimers); `?includeStale=true` for staff. POST rejects guidance that claims guaranteed outcomes (422) and unknown source types (400). |
+| `InterviewQuestion` schema + migration `20261024180000_interview_question_provenance` | Seven nullable/defaulted columns (`theme`, `source`, `sourceType`, `sourceUrl`, `lastVerifiedAt`, `confidence`, `frequency`) + index. Additive only; existing rows survive and are treated as UNVERIFIED until sourced. |
+| `src/app/crm/interview-library/page.tsx` | Staff workspace: filter/search, provenance badges, withheld-evidence panel, disclaimers, and an "Record evidence" form that surfaces the server's honesty rejection. |
+
+Evidence: `tests/unit/interview-research.test.ts` (15) and `tests/unit/interview-question-api.test.ts` (9) — 24 tests
+covering window maths, unverified handling, forbidden-claim rejection, scope leakage, and the no-fabrication rule.
+
+### AG-2. CRM AI Command Center (spec §58, §59, §76)
+
+`/crm/ai-command-center` **did not exist**; the only command centers were admin-only (`/admin/ai-command-center`,
+`/admin/agent-center`). Added a counselor-scoped feed rather than copying the admin screen:
+
+* `src/app/api/crm/ai-command-center/route.ts` — read-only aggregation over `counselorStudentScope(...)`, reusing the
+  canonical `requireCanonicalCounselor` / `safeStudentSelect` / `canViewUccB2B` helpers. B2B-confidential students are
+  removed for callers without the explicit B2B permission; every list is filtered to the visible student ids.
+* `src/app/crm/ai-command-center/page.tsx` — real counts, four operational lists, explicit empty states, sanitized
+  error state, no hardcoded metrics.
+* `src/lib/portal-nav.ts` — new "AI & Interview Intelligence" group (AI Command Center, Interview Library) injected into
+  staff portals only; the student portal is untouched.
+
+Evidence: `tests/unit/crm-ai-command-center.test.ts` (8) — auth passthrough, scope filtering, B2B hiding, admin
+visibility, priority ranking, 30-day deadline horizon, zero-state honesty, and sanitized 503.
+`tests/unit/portal-nav-ai-group.test.ts` (4) — group present for staff, absent for students, no duplicates, unique hrefs.
+
+### AG-3. Verification after wave 2
+
+| Gate | Result |
+|---|---|
+| `npx vitest run` (full) | **278 files passed / 9 skipped; 3,169 tests passed / 89 skipped; 0 failed; exit 0** (was 274 / 3,133) |
+| `tsc -p tsconfig.patch-check.json` | exit 0 across 16 changed/added files |
+| `prisma generate` + `verify-prisma-client.mjs` | 548 models verified after the schema change |
+| Dead-link audit of new pages and nav | no dead hrefs |
+| Design-token guardrails | 17/17 green (no sub-11px type, no raw palette hex, no dark panels) |
+
+### AG-4. What this pass did **not** do
+
+* No MySQL was available, so the new migration was **not applied** and no query was executed against real data.
+* The interview pack has no *student-facing* practice UI yet: `/student/interview` still renders the SOP/CV studio, and
+  the 72-hour practice window (§38), video recording (§39) and human final review (§41) remain unimplemented.
+* `StudentWorldState` (§51) still has no model; student memory exists only as `AiStudentMemory`.
+* The 2,000-agent target (§L of wave 1) is unchanged at 1,020 seeded rows.
+
 **Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation, and this pass removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression, and a destructive fake-data seeder — with the unit suite going from red (13 failures) to green (3,133 passing). It is still not a "COMPLETE" end-to-end delivery, because the acceptance gate requires executed database, integration and E2E evidence that this environment cannot produce, and because items AF-1 through AF-5 are real outstanding work.
