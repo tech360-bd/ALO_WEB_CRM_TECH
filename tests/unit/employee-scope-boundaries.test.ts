@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-const mock = vi.hoisted(() => ({ user: vi.fn(), portal: vi.fn(), employee: vi.fn(), hr: vi.fn(), grants: vi.fn(), assignments: vi.fn(), packages: vi.fn(), rules: vi.fn(), audit: vi.fn() }));
+const mock = vi.hoisted(() => ({ user: vi.fn(), portal: vi.fn(), employee: vi.fn(), hr: vi.fn(), grants: vi.fn(), assignments: vi.fn(), packages: vi.fn(), rules: vi.fn(), audit: vi.fn(), target: vi.fn() }));
 vi.mock('@/lib/db', () => ({ db: {
-  user: { findUnique: mock.user }, portalUser: { findUnique: mock.portal }, employee: { findFirst: mock.employee }, employeeHR: { findUnique: mock.hr },
+  user: { findUnique: mock.user }, portalUser: { findUnique: mock.portal }, employee: { findFirst: mock.employee, findUnique: mock.target }, employeeHR: { findUnique: mock.hr },
   employeeTemporaryPermission: { findMany: mock.grants }, employeePermissionPackageAssignment: { findMany: mock.assignments }, permissionPackage: { findMany: mock.packages },
   featureAccessRule: { findMany: mock.rules }, integrationAuditLog: { create: mock.audit },
 } }));
-import { logSecurityAudit, validateRequestAccess } from '@/lib/access-control/central-security-engine';
+import { canViewField, logSecurityAudit, validateRequestAccess } from '@/lib/access-control/central-security-engine';
 
 describe('central record scope isolation', () => {
   beforeEach(() => {
@@ -48,6 +48,11 @@ describe('central record scope isolation', () => {
   it('a student portal account cannot inherit an attached master role', async () => {
     mock.user.mockResolvedValue(null); mock.portal.mockResolvedValue({ id: 'staff', userType: 'STUDENT', status: 'ACTIVE', emailVerified: true, roles: [{ role: { name: 'SUPER_ADMIN' } }] });
     expect((await check({ ownerId: 'staff' })).allowed).toBe(false);
+  });
+  it('own raw compensation is not exposed as an approved salary slip', async () => {
+    mock.target.mockResolvedValue({ id: 'emp', userId: 'staff', branch: 'Dhaka' });
+    expect(await canViewField('staff', ['SUPER_ADMIN'], 'salary', 'emp')).toBe(false);
+    expect(mock.audit).not.toHaveBeenCalled();
   });
   it('does not deliver sensitive data when its audit cannot persist', async () => {
     mock.audit.mockRejectedValue(new Error('storage unavailable'));

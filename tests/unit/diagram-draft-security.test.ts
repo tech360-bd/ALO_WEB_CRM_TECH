@@ -17,6 +17,9 @@ beforeEach(() => {
 describe('editable diagram storage boundaries', () => {
   it('denies manually invoked save without backend permission', async () => { m.access.mockResolvedValue({ allowed: false }); expect((await POST(req({ draft }))).status).toBe(403); expect(m.transaction).not.toHaveBeenCalled(); });
   it('only lists the current author’s drafts', async () => { expect((await GET(req({}))).status).toBe(200); expect(m.list).toHaveBeenCalledWith(expect.objectContaining({ where: { category: 'alo-diagram-draft-v1', createdById: 'staff' }, take: 20 })); });
+  it.each(['0', '-1', '1.5', '1001', 'NaN', 'Infinity', 'words'])('rejects invalid pagination %s before querying records', async page => {
+    const response = await GET(new NextRequest(`https://alo.test/api/employee/diagram-drafts?page=${page}`)); expect(response.status).toBe(400); expect(m.list).not.toHaveBeenCalled();
+  });
   it('does not accept script or raw HTML payload fields', async () => { expect((await POST(req({ draft: { ...draft, html: '<script>bad()</script>' } }))).status).toBe(400); });
   it('stores structured draft and audits the same transaction', async () => { expect((await POST(req({ draft }))).status).toBe(201); expect(m.create).toHaveBeenCalledWith({ data: expect.objectContaining({ createdById: 'staff', status: 'draft', content: JSON.stringify(draft) }) }); expect(m.audit.mock.calls[0][2]).toBe('DIAGRAM_DRAFT_CREATED'); });
   it('cannot overwrite another author even with a global permission', async () => { m.previous.mockResolvedValue({ id: 'other', category: 'alo-diagram-draft-v1', createdById: 'other' }); expect((await POST(req({ id: 'other', expectedUpdatedAt: '2026-10-24T00:00:00Z', draft }))).status).toBe(404); expect(m.update).not.toHaveBeenCalled(); });
