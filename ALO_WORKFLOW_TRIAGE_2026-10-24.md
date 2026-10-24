@@ -159,17 +159,30 @@ it green would remove the guard's signal.
 
 ---
 
-## 5. Not verified here
+## 5. Outcome — CI is green again
 
-1. **CI itself has not re-run.** Runs only trigger on `main` pushes and pull
-   requests; this branch has no PR yet. Opening one is the fastest way to prove
-   run #69 goes green.
+| Run | Trigger | Result |
+|---|---|---|
+| **#69** | PR #20 (this fix) | **success** — both jobs passed: `Lint · Typecheck · Tests · Prisma · Build` (15m 31s) and `MySQL 8 · Migrate · Integrate · Boot` (8m 28s) |
+| **#70** | push to `main` after merging PR #20 (`40da1ebb`) | **success** |
+
+Every step that had been skipped since run #65 — secret scan, deployment-ownership
+tests, env classification, Prisma validate/generate, lint, typecheck (with swap),
+tests and the production build — executed and passed. `main` is green for the
+first time since run #64.
+
+---
+
+## 6. Not verified here
+
+1. ~~CI itself has not re-run.~~ Done — runs #69 and #70 are green (§5).
 2. **`next build`** cannot run in this sandbox (>4 GB heap; 3 GB machine), so the
    production-build step is unproven locally — it was green at run #64.
 3. **Prisma-dependent typecheck/tests** need `prisma generate`, which downloads
    engines from `binaries.prisma.sh` (blocked here). CI has that egress.
 4. **`remotion render`** was not exercised, so the zod override is verified by
-   types and lockfile resolution only, not by rendering a video.
+   types, the CI build and lockfile resolution — not by rendering a video. If
+   Remotion's studio schemas ever misbehave, this override is the first suspect.
 5. **Production is still serving 404s** for `/universities`, `/student/login`,
    `/api/workforce/*` and others. Until `main` is deployed to Hostinger and the
    LiteSpeed cache purged, the Health & Dependency Monitor will keep failing —
