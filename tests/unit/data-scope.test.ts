@@ -9,8 +9,8 @@ describe('getScopeForAuth', () => {
     expect(getScopeForAuth({ roles: ['super_admin'] })).toBe('ALL');
   });
 
-  it('returns ALL for admin', () => {
-    expect(getScopeForAuth({ roles: ['admin'] })).toBe('ALL');
+  it('keeps admin assigned without explicit global permission', () => {
+    expect(getScopeForAuth({ roles: ['admin'] })).toBe('ASSIGNED');
   });
 
   it('returns BRANCH for branch_manager', () => {
