@@ -405,7 +405,7 @@ Full suite: **281 files passed, 3,208 tests**.
 * `StudentWorldState` (§51) still has no model; student memory exists only as `AiStudentMemory`.
 * The 2,000-agent target (§L of wave 1) is unchanged at 1,020 seeded rows.
 
-**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation. This work removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression and a destructive fake-data seeder; it replaced a mis-wired student route with a real interview workspace; and it made the existing (previously unused) interview-honesty layer actually govern what is published. The unit suite went from red (13 failures at `main`) to green (3,180 passing).
+**Verdict: NOT COMPLETE.** The repository is a genuinely advanced implementation. This work removed a 404 cluster, a wrong-student privacy risk, two authorization defects, a design-system regression and a destructive fake-data seeder; it replaced a mis-wired student route with a real interview workspace; and it made the existing (previously unused) interview-honesty layer actually govern what is published. The unit suite went from red (13 failures at `main`) to green (3,208 passing).
 
 It is still not a "COMPLETE" end-to-end delivery, for two distinct reasons that should not be conflated:
 
@@ -413,5 +413,7 @@ It is still not a "COMPLETE" end-to-end delivery, for two distinct reasons that 
    `next build`, Playwright and the 89 DB-backed tests cannot execute here. Those must run on CI before anything is called
    production-ready.
 2. **Genuinely unfinished scope** — items AF-1…AF-5 (approval-center path, 1,020 vs 2,000 agents, 14 dead cron paths,
-   fictional CRM-SEO views, abandoned mock course-finder) plus the 72-hour practice window, video interview recording,
-   human review queue, `StudentWorldState`, RAG 2.0 retrieval and the AI evaluation harness are not implemented.
+   fictional CRM-SEO views, abandoned mock course-finder) plus video interview recording, the human final-review queue,
+   `StudentWorldState`, RAG 2.0 retrieval and the AI evaluation harness are not implemented.
+
+The 72-hour practice window (§38) moved from *not implemented* to *implemented* in wave 3 — see AG-5.
