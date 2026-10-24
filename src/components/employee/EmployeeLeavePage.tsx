@@ -17,21 +17,8 @@ import {
   Plane, BriefcaseMedical, Coffee, FileText, Filter, Loader2,
 } from 'lucide-react';
 
-const mockLeaveBalances = [
-  { type: 'Annual Leave', total: 15, used: 5, icon: Plane, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
-  { type: 'Sick Leave', total: 10, used: 2, icon: BriefcaseMedical, color: 'text-red-600', bg: 'bg-red-50' },
-  { type: 'Casual Leave', total: 5, used: 1, icon: Coffee, color: 'text-amber-600', bg: 'bg-amber-50' },
-];
-
-const mockLeaveHistory = [
-  { id: '1', type: 'Annual Leave', from: '2025-01-20', to: '2025-01-22', days: 3, status: 'approved', reason: 'Family event' },
-  { id: '2', type: 'Sick Leave', from: '2025-01-10', to: '2025-01-11', days: 2, status: 'approved', reason: 'Medical checkup' },
-  { id: '3', type: 'Casual Leave', from: '2025-02-05', to: '2025-02-05', days: 1, status: 'pending', reason: 'Personal work' },
-  { id: '4', type: 'Annual Leave', from: '2025-02-15', to: '2025-02-20', days: 5, status: 'pending', reason: 'Travel plans' },
-  { id: '5', type: 'Sick Leave', from: '2024-12-28', to: '2024-12-28', days: 1, status: 'rejected', reason: 'Feeling unwell' },
-  { id: '6', type: 'Annual Leave', from: '2024-12-15', to: '2024-12-17', days: 3, status: 'approved', reason: 'Holiday trip' },
-  { id: '7', type: 'Casual Leave', from: '2024-11-20', to: '2024-11-20', days: 1, status: 'approved', reason: 'Home repair' },
-];
+type LeaveBalance = { type: string; total: number; used: number; icon: typeof Plane; color: string; bg: string };
+type LeaveRow = { id: string; type: string; from: string; to: string; days: number; status: string; reason: string };
 
 function statusBadge(status: string) {
   const map: Record<string, { variant: 'success' | 'warning' | 'danger' | 'muted'; label: string }> = {
@@ -46,14 +33,15 @@ function statusBadge(status: string) {
 
 export default function EmployeeLeavePage() {
   const { user } = usePortalStore();
+  const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ type: '', from: '', to: '', reason: '' });
-  const [leaveBalances, setLeaveBalances] = useState(mockLeaveBalances);
-  const [leaveHistory, setLeaveHistory] = useState(mockLeaveHistory);
+  const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>([]);
+  const [leaveHistory, setLeaveHistory] = useState<LeaveRow[]>([]);
 
   useEffect(() => {
     const token = usePortalStore.getState().token;
@@ -61,7 +49,7 @@ export default function EmployeeLeavePage() {
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
     fetch('/api/employee/leave', { headers })
-      .then(r => r.ok ? r.json() : null)
+      .then(async r => { const data = await r.json(); if (!r.ok || !data.success) throw new Error(data.error || 'Leave could not be loaded.'); return data; })
       .then(data => {
         if (data?.balances) {
           setLeaveBalances(data.balances.map((b: any) => ({
@@ -73,19 +61,19 @@ export default function EmployeeLeavePage() {
             bg: b.type.includes('Annual') ? 'bg-[var(--alo-brand-pale)]' : b.type.includes('Sick') ? 'bg-red-50' : 'bg-amber-50',
           })));
         }
-        if (data?.records?.length) {
-          setLeaveHistory(data.records.map((r: any) => ({
+        if (Array.isArray(data?.data)) {
+          setLeaveHistory(data.data.map((r: any) => ({
             id: r.id || r._id,
-            type: r.type || r.leaveType,
-            from: r.from || r.startDate,
-            to: r.to || r.endDate,
-            days: r.days || r.duration || 1,
+            type: r.leaveType || r.title?.match(/^\[([^\]]+)\]/)?.[1] || 'Leave',
+            from: r.from || r.startDate || r.dueDate || '',
+            to: r.to || r.endDate || '',
+            days: r.days || r.duration || 0,
             status: r.status || 'pending',
-            reason: r.reason || '',
+            reason: r.reason || r.description || r.title || '',
           })));
         }
       })
-      .catch(() => {})
+      .catch(error => setLoadError(error instanceof Error ? error.message : 'Leave could not be loaded.'))
       .finally(() => { setLoading(false); });
   }, []);
 
@@ -123,22 +111,24 @@ export default function EmployeeLeavePage() {
         }
         toast.success('Leave application submitted');
       } else {
-        toast.success('Leave application submitted');
+        throw new Error('Leave request was not saved.');
       }
       setDialogOpen(false);
       setForm({ type: '', from: '', to: '', reason: '' });
     } catch {
-      toast.success('Leave application submitted');
-      setDialogOpen(false);
-      setForm({ type: '', from: '', to: '', reason: '' });
+      toast.error('Leave request was not saved. Please retry.');
     }
     setSubmitting(false);
   };
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
 
+  if (loadError) return <div role="alert" className="p-6 text-red-700">{loadError}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+
   return (
     <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
+      {!leaveBalances.length && <p className="text-sm">No leave balances configured.</p>}
+      {!leaveHistory.length && <p className="text-sm">No leave requests yet.</p>}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-alo-text">Leave Management</h1>

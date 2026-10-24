@@ -8,27 +8,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle2, Users, Clock, Star, TrendingUp, Award, BarChart3, MessageSquare } from 'lucide-react';
 
-const mockKpis = [
-  { label: 'Tasks Completed', value: '47/50', change: '+5 this month', icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', pct: 94 },
-  { label: 'Student Conversions', value: '12', change: '+3 this month', icon: Users, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', pct: 80 },
-  { label: 'Avg Response Time', value: '2.4 hrs', change: '-0.3 hrs improved', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', pct: 85 },
-  { label: 'Client Satisfaction', value: '4.6/5', change: '+0.2 this quarter', icon: Star, color: 'text-purple-600', bg: 'bg-purple-50', pct: 92 },
-];
-
-const mockMonthlyTrend = [
-  { month: 'Aug', tasks: 38, conversions: 6, response: 3.2, satisfaction: 4.2 },
-  { month: 'Sep', tasks: 40, conversions: 7, response: 3.0, satisfaction: 4.3 },
-  { month: 'Oct', tasks: 42, conversions: 8, response: 2.8, satisfaction: 4.4 },
-  { month: 'Nov', tasks: 44, conversions: 9, response: 2.6, satisfaction: 4.5 },
-  { month: 'Dec', tasks: 45, conversions: 10, response: 2.5, satisfaction: 4.5 },
-  { month: 'Jan', tasks: 47, conversions: 12, response: 2.4, satisfaction: 4.6 },
-];
-
-const mockFeedback = [
-  { manager: 'Sarah Khan', rating: 4.5, comment: 'Excellent student engagement and follow-up consistency. Strong application quality.', date: '2025-01-15' },
-  { manager: 'Karim Uddin', rating: 4.0, comment: 'Good counseling skills. Needs improvement in visa documentation turnaround time.', date: '2024-12-20' },
-  { manager: 'Sarah Khan', rating: 4.2, comment: 'Professional conduct with students. Could take more initiative in lead follow-up.', date: '2024-11-10' },
-];
+type Kpi = { label: string; value: string; change: string; icon: typeof Star; color: string; bg: string; pct: number };
+type Trend = { month: string; tasks: string; conversions: number; response: string; satisfaction: number };
+type Feedback = { manager: string; rating: number; comment: string; date: string };
 
 function RatingStars({ rating }: { rating: number }) {
   return (
@@ -43,10 +25,11 @@ function RatingStars({ rating }: { rating: number }) {
 
 export default function EmployeePerformancePage() {
   const { user } = usePortalStore();
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [kpis, setKpis] = useState(mockKpis);
-  const [monthlyTrend, setMonthlyTrend] = useState(mockMonthlyTrend);
-  const [feedback, setFeedback] = useState(mockFeedback);
+  const [kpis, setKpis] = useState<Kpi[]>([]);
+  const [monthlyTrend, setMonthlyTrend] = useState<Trend[]>([]);
+  const [feedback, setFeedback] = useState<Feedback[]>([]);
 
   useEffect(() => {
     const token = usePortalStore.getState().token;
@@ -54,17 +37,22 @@ export default function EmployeePerformancePage() {
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
     fetch('/api/employee/performance', { headers })
-      .then(r => r.ok ? r.json() : null)
+      .then(async r => { const data = await r.json(); if (!r.ok || !data.success) throw new Error(data.error || 'Performance could not be loaded.'); return data; })
       .then(data => {
-        if (data?.kpis) setKpis(data.kpis);
-        if (data?.monthlyTrend) setMonthlyTrend(data.monthlyTrend);
-        if (data?.feedback) setFeedback(data.feedback);
+        const records = Array.isArray(data.data) ? data.data : [];
+        setKpis(data.summary?.totalReviews ? [{ label: 'Recorded reviews', value: String(data.summary.totalReviews), change: 'Recorded data', icon: Star, color: 'text-alo-brand', bg: 'bg-blue-50', pct: 0 }] : []);
+        setMonthlyTrend(records.map((r: any) => ({ month: r.period, tasks: '—', conversions: r.achievedConversion, response: '—', satisfaction: r.managerRating })));
+        setFeedback(records.filter((r: any) => r.feedback).map((r: any) => ({ manager: 'Recorded review', rating: r.managerRating, comment: r.feedback, date: r.period })));
+
       })
-      .catch(() => {})
+      .catch(error => setError(error instanceof Error ? error.message : 'Performance could not be loaded.'))
       .finally(() => { setLoading(false); });
   }, []);
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
+
+  if (error) return <div role="alert" className="p-6 text-red-700">{error}<button onClick={() => window.location.reload()}>Retry</button></div>;
+  if (!kpis.length && !monthlyTrend.length) return <div className="p-6">No performance records yet.</div>;
 
   return (
     <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6">
@@ -113,10 +101,10 @@ export default function EmployeePerformancePage() {
               <tbody>
                 {monthlyTrend.map(m => (
                   <tr key={m.month} className="border-b border-alo-border/50 hover:bg-alo-page/50">
-                    <td className="py-2.5 px-3 text-alo-text font-medium">{m.month} 2024/25</td>
+                    <td className="py-2.5 px-3 text-alo-text font-medium">{m.month}</td>
                     <td className="py-2.5 px-3 text-alo-text">{m.tasks}</td>
                     <td className="py-2.5 px-3 text-alo-text">{m.conversions}</td>
-                    <td className="py-2.5 px-3 text-alo-text">{m.response} hrs</td>
+                    <td className="py-2.5 px-3 text-alo-text">{m.response}</td>
                     <td className="py-2.5 px-3"><RatingStars rating={m.satisfaction} /></td>
                   </tr>
                 ))}

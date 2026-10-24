@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -61,6 +61,7 @@ const navItems: NavItem[] = [
 
 export default function EmployeePortalShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, currentView, setView, logout, hydrate, notifications, setNotifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
   const [showNotifications, setShowNotifications] = useState(false);
@@ -182,11 +183,12 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
         <nav className="px-3 space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentView === item.view;
+            const target = `/employee/${item.view.replace(/^employee-/, '')}`;
+            const isActive = pathname === target || (item.view === 'employee-dashboard' && pathname.endsWith('-dashboard'));
             return (
               <button
                 key={item.view}
-                onClick={() => setView(item.view)}
+                onClick={() => router.push(target)}
                 className={cn(
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
                   isActive
@@ -290,7 +292,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
                   <span className="font-semibold text-sm text-alo-text">Notifications</span>
                   <button
                     onClick={() => {
-                      setView('employee-notifications');
+                      router.push('/employee/notifications');
                       setShowNotifications(false);
                     }}
                     className="text-xs text-alo-brand hover:text-alo-brand font-medium"

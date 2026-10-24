@@ -94,11 +94,13 @@ export async function PATCH(req: NextRequest) {
     const { id, status } = body;
     if (!id || !status) return NextResponse.json({ success: false, error: 'id and status required' }, { status: 400 });
 
+    if (!['approved', 'rejected'].includes(status)) return NextResponse.json({ success: false, error: 'Invalid leave review decision.' }, { status: 400 });
+
     const existing = await (db as any).employeeLeave.findUnique({ where: { id } }).catch(() => null);
     if (!existing) return NextResponse.json({ success: false, error: 'Leave not found' }, { status: 404 });
 
     // Cannot approve own leave if separation of duties enforced
-    if (existing.employeeId === auth.userId && status === 'approved' && !auth.roles.includes('super_admin')) {
+    if ([auth.userId, auth.actorUserId].includes(existing.employeeId) && status === 'approved') {
       return NextResponse.json({ success: false, error: 'Cannot approve own leave — separation of duties' }, { status: 403 });
     }
 
