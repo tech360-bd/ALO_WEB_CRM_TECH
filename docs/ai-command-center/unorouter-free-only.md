@@ -8,6 +8,7 @@ Status: PARTIALLY_BUILT. Live UnoRouter inference and production deployment requ
 - `GET /api/admin/ai-chat`: current owner’s recent conversations, encrypted history, configured local model, current public free-model catalog and safe configuration status. No API key is returned.
 - `POST /api/admin/ai-chat`: exact current Super Admin authority through existing authentication and central database authorization. Student, partner, ordinary Admin, employee and Acting-As sessions are denied.
 - Existing `aiGateway`, `generateText`, `routeModel`, AES-256-GCM encryption, `AwfRun`, `PortalAuditLog` and `CrmAuditLog` are reused. No duplicate chat database or synthetic agent is created.
+- Legacy workforce lists exclude owner chat and the trace API refuses owner-chat records. Ordinary run ownership is checked before loading the trace, including agent-less runs.
 - New migration `20261024120000_owner_ai_chat_indexes` adds only two indexes to existing `AwfRun`. No history is deleted.
 
 ## Configure on the server
@@ -46,7 +47,9 @@ Unit tests cover paid/unapproved/unknown-price/offline rejection, fixed endpoint
 
 `tests/integration/owner-ai-chat-live-db.test.ts` requires the existing explicitly configured disposable test database. It tests real sessions, backend authorization, encrypted persistence, idempotency, owner isolation and audit with a mocked inference response. It skips without that database.
 
-Local verification: 3,040 tests passed, 89 database-dependent tests skipped; changed-file lint, Prisma validation/client generation, environment classification and diff whitespace checks passed. The first full-suite run found a design-token violation in the new panel; it was corrected and the suite rerun. One browser test passed against the actual Next development server without API interception: main-dashboard chat, unauthorized error state, disabled sending, empty model list and panel widths at 390/768/1440 pixels. This does not prove authenticated model replies, production rendering or all dashboard responsiveness. MySQL integration and production-build results are tracked by the PR CI runs.
+Local verification: 3,045 tests passed, 89 database-dependent tests skipped; changed-file lint, Prisma validation/client generation, environment classification and diff whitespace checks passed. The first full-suite run found a design-token violation in the new panel; it was corrected and the suite rerun. One browser test passed against the actual Next development server without API interception: main-dashboard chat, unauthorized error state, disabled sending, empty model list and panel widths at 390/768/1440 pixels. This does not prove authenticated model replies, production rendering or all dashboard responsiveness. MySQL integration and production-build results are tracked by the PR CI runs.
+
+The actual provider adapter also successfully fetched and filtered the live public catalog without credentials or inference. Its response was not treated as evidence of successful chat completion.
 
 No real UnoRouter API key has been supplied to this implementation session. No live completion, production account consent, delivery SLA, production migration or deployment is claimed. Free availability and provider privacy policies remain external dependencies. Whole employee/CRM acceptance is NOT COMPLETE; see `docs/employee-access/2026-10-24-follow-up.md`.
 
