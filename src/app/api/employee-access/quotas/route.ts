@@ -1,95 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
-
-// Quota engine: CHECK → ALLOW/REJECT → RECORD usage
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { validateRequestAccess } from '@/lib/access-control/central-security-engine';
+import { writePortalAudit } from '@/lib/transactional-audit';
+import { reserveEmployeeQuota } from '@/lib/employee-access-engine';
+const Input = z.object({ featureKey: z.string().min(1).max(191).regex(/^[a-zA-Z0-9_.-]+$/), requestedAmount: z.number().int().positive().optional(), reason: z.string().max(500).optional() }).strict();
 export async function GET(req: NextRequest) {
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-
-    const { searchParams } = new URL(req.url);
-    const employeeId = searchParams.get('employeeId') || auth.userId;
-    const partnerId = searchParams.get('partnerId');
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
-    if (employeeId !== auth.userId && !isSuper) {
-      return NextResponse.json({ success: false, error: 'Permission denied' }, { status: 403 });
-    }
-
-    // Employee quotas from Employee model quotaUsage?
-    const employee = await db.portalUser.findUnique({ where: { id: employeeId } }).catch(() => null);
-    const usage = await (db as any).quotaUsage.findMany({ where: { userId: employeeId }, orderBy: { createdAt: 'desc' }, take: 50 }).catch(() => []);
-
-    // Partner quotas
-    let partnerQuota = null;
+    const auth = await authenticateRequest(req); if (auth instanceof NextResponse) return auth;
+    const requestedEmployee = req.nextUrl.searchParams.get('employeeId') || auth.userId;
+    const employee = await db.employee.findFirst({ where: { OR: [{ id: requestedEmployee }, { userId: requestedEmployee }] } });
+    if (!employee) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+    const access = await validateRequestAccess({ userId: auth.userId }, 'employee.quotas', 'view', { ownerId: employee.userId, branchId: employee.branch, departmentId: employee.department });
+    if (!access.allowed) return NextResponse.json({ success: false, error: 'Employee quota permission required.' }, { status: 403 });
+    const partnerId = req.nextUrl.searchParams.get('partnerId');
     if (partnerId) {
-      partnerQuota = await (db as any).partnerQuota.findMany({ where: { partnerId } }).catch(() => []);
+      const partnerAccess = await validateRequestAccess({ userId: auth.userId }, 'partner.quotas', 'view', { ownerId: auth.userId, recordType: 'Partner', recordId: partnerId });
+      if (!partnerAccess.allowed) return NextResponse.json({ success: false, error: 'Partner quota permission required.' }, { status: 403 });
+      const actor = await db.employee.findUnique({ where: { userId: auth.userId } });
+      let assigned: unknown; try { assigned = JSON.parse(actor?.partnerGroups || '[]'); } catch { assigned = []; }
+      if (partnerAccess.scope !== 'GLOBAL' && (!Array.isArray(assigned) || !assigned.includes(partnerId))) return NextResponse.json({ success: false, error: 'Partner scope denied.' }, { status: 403 });
     }
-
-    return NextResponse.json({
-      success: true,
-      employeeQuotas: usage,
-      partnerQuotas: partnerQuota,
-      engine: 'CHECK_BEFORE_ACTION → ALLOW/REJECT → RECORD_USAGE with audit',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
+    const [usage, partnerQuota] = await Promise.all([
+      db.featureUsageLog.findMany({ where: { ownerType: 'EMPLOYEE', ownerId: employee.id }, orderBy: { createdAt: 'desc' }, take: 50 }),
+      partnerId ? db.partnerQuota.findUnique({ where: { partnerId } }) : Promise.resolve(null),
+    ]);
+    await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'QUOTA_HISTORY_VIEWED', 'Employee', employee.id, { partnerId }, req); });
+    return NextResponse.json({ success: true, employeeQuotas: usage, partnerQuotas: partnerQuota, engine: 'CENTRAL_PERMISSION_AND_SERIALIZABLE_USAGE' });
+  } catch { return NextResponse.json({ success: false, error: 'Quota history unavailable.' }, { status: 503 }); }
 }
-
 export async function POST(req: NextRequest) {
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-
-    const body = await req.json();
-    const { featureKey, requestedAmount, reason, partnerId } = body;
-    if (!featureKey) return NextResponse.json({ success: false, error: 'featureKey required' }, { status: 400 });
-
-    // Check quota before action
-    const currentUsage = await (db as any).quotaUsage.count({ where: { userId: auth.userId, featureKey } }).catch(() => 0);
-    const limit = 100; // default — should be from package
-
-    if (currentUsage >= limit) {
-      // Create extra quota request
-      const extraRequest = await (db as any).extraQuotaRequest.create({
-        data: {
-          partnerId: partnerId || auth.userId,
-          featureKey,
-          requestedAmount: requestedAmount || 10,
-          reason: reason || 'Quota exceeded',
-          status: 'pending',
-        },
-      }).catch(() => null);
-
-      await logAuditAction(auth, 'QUOTA_EXCEEDED', 'QuotaUsage', auth.userId, { featureKey, currentUsage, limit });
-
-      return NextResponse.json({
-        success: false,
-        error: 'Quota exceeded — extra quota request created',
-        currentUsage,
-        limit,
-        extraRequest,
-        allowed: false,
-      }, { status: 429 });
-    }
-
-    // Record usage
-    const usage = await (db as any).quotaUsage.create({
-      data: {
-        userId: auth.userId,
-        featureKey,
-        amount: 1,
-      },
-    }).catch(() => null);
-
-    await logAuditAction(auth, 'QUOTA_USED', 'QuotaUsage', auth.userId, { featureKey });
-
-    return NextResponse.json({ success: true, allowed: true, usage, currentUsage: currentUsage + 1, limit });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
+    const auth = await authenticateRequest(req); if (auth instanceof NextResponse) return auth;
+    const parsed = Input.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid feature usage request.' }, { status: 400 });
+    const result = await reserveEmployeeQuota(auth, parsed.data.featureKey);
+    if (!result.allowed) return NextResponse.json({ success: false, allowed: false, currentUsage: result.currentUsage, limit: result.limit, extraRequest: null, error: 'Permission or configured quota unavailable. Additional access requires its own approval request.' }, { status: 429 });
+    return NextResponse.json({ success: true, ...result });
+  } catch { return NextResponse.json({ success: false, allowed: false, error: 'Usage could not be reserved and audited.' }, { status: 503 }); }
 }

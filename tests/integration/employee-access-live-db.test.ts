@@ -5,6 +5,8 @@ import { testDatabaseUrl } from '../helpers/test-database';
 const url = testDatabaseUrl();
 const prisma = new PrismaClient(url ? { datasourceUrl: url } : {});
 vi.mock('@/lib/db', () => ({ get db() { return prisma; } }));
+import { POST as consumeQuota } from '@/app/api/employee-access/quotas/route';
+import { GET as partnerStats } from '@/app/api/employee/partner-stats/route';
 import { GET as employeeDetail } from '@/app/api/employees/[id]/route';
 import { GET as salary } from '@/app/api/employee/salary/route';
 import { GET as appointments } from '@/app/api/employee/appointments/route';
@@ -17,6 +19,7 @@ const suffix = Date.now().toString(36);
 const staff = `employee-live-${suffix}`;
 const other = `employee-other-${suffix}`;
 const master = `employee-master-${suffix}`;
+const partnerUsers = ['a', 'b', 'c'].map(value => `employee-partner-${suffix}-${value}`);
 const masterToken = `isolated-master-session-${suffix}`;
 let packageId = ''; let assignmentId = '';
 const sessionToken = `isolated-employee-session-${suffix}`;
@@ -50,15 +53,17 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     if (employeeId) {
       await prisma.employeePayroll.deleteMany({ where: { employeeId } });
       await prisma.employeeSalary.deleteMany({ where: { employeeId } });
+      await prisma.featureUsageLog.deleteMany({ where: { ownerType: 'EMPLOYEE', ownerId: employeeId } });
       await prisma.featureAccessRule.deleteMany({ where: { ownerId: employeeId } });
     }
+    await prisma.partnerProfile.deleteMany({ where: { userId: { in: partnerUsers } } });
     await prisma.marketingTemplate.deleteMany({ where: { createdById: staff } });
     await prisma.employeePermissionPackageAssignment.deleteMany({ where: { employeeId } });
     if (packageId) await prisma.permissionPackage.deleteMany({ where: { id: packageId } });
     await prisma.portalAuditLog.deleteMany({ where: { actorUserId: { in: [staff, master] } } });
     await prisma.portalSession.deleteMany({ where: { userId: { in: [staff, master] } } });
     await prisma.employee.deleteMany({ where: { userId: staff } });
-    await prisma.portalUser.deleteMany({ where: { id: { in: [staff, other, master] } } });
+    await prisma.portalUser.deleteMany({ where: { id: { in: [staff, other, master, ...partnerUsers] } } });
     await prisma.$disconnect();
   });
   it('resolves an actual database-backed employee cookie', async () => {
@@ -107,6 +112,28 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     expect((await packageAssign(req('/api/employee-access/permission-packages', { operation: 'revoke', assignmentId, reason: 'Isolated revocation verification' }, masterToken, 'PATCH'))).status).toBe(200);
     expect((await validateRequestAccess({ userId: staff }, 'isolated.records', 'view', { assigneeId: staff })).allowed).toBe(false);
     expect((await prisma.employeePermissionPackageAssignment.findUniqueOrThrow({ where: { id: assignmentId } })).status).toBe('revoked');
+  });
+  it('counts only assigned partner companies once across their real employee seats', async () => {
+    const ownPartner = `isolated-company-${suffix}`;
+    for (const [index, userId] of partnerUsers.entries()) {
+      await prisma.portalUser.create({ data: { id: userId, email: `${userId}@isolated.test`, name: 'Isolated partner fixture', userType: 'PARTNER', status: 'active', emailVerified: true } });
+      await prisma.partnerProfile.create({ data: { userId, partnerId: index < 2 ? ownPartner : `foreign-company-${suffix}`, partnerRole: index === 1 ? 'PARTNER_VIEWER' : 'PARTNER_SUPER_ADMIN', approvalStatus: 'approved' } });
+    }
+    await prisma.employee.update({ where: { id: employeeId }, data: { partnerGroups: JSON.stringify([ownPartner]) } });
+    await prisma.featureAccessRule.create({ data: { ownerType: 'EMPLOYEE', ownerId: employeeId, featureKey: 'employee.partner.stats.view', isEnabled: true } });
+    const response = await partnerStats(req('/api/employee/partner-stats?partnerId=foreign-company'));
+    expect(response.status).toBe(200);
+    expect((await response.json()).stats).toMatchObject({ totalPartners: 1, activePartners: 1, pendingPartners: 0 });
+    expect(await prisma.portalAuditLog.count({ where: { actorUserId: staff, action: 'PARTNER_REPORT_VIEWED' } })).toBeGreaterThan(0);
+  });
+  it('does not overspend the last employee quota unit under simultaneous real requests', async () => {
+    const featureKey = `isolated.quota.${suffix}`;
+    await prisma.featureAccessRule.create({ data: { ownerType: 'EMPLOYEE', ownerId: employeeId, featureKey: `${featureKey}.use`, isEnabled: true, limitValue: 1 } });
+    const responses = await Promise.all([1, 2].map(() => consumeQuota(req('/api/employee-access/quotas', { featureKey }))));
+    expect(responses.filter(response => response.status === 200)).toHaveLength(1);
+    expect(responses.every(response => [200, 429, 503].includes(response.status))).toBe(true);
+    expect(await prisma.featureUsageLog.count({ where: { ownerId: employeeId, featureKey } })).toBe(1);
+    expect(await prisma.portalAuditLog.count({ where: { actorUserId: staff, action: 'QUOTA_USED' } })).toBe(1);
   });
   it('revoking the actual employee record blocks an existing session immediately', async () => {
     await prisma.employee.update({ where: { id: employeeId }, data: { status: 'suspended' } });

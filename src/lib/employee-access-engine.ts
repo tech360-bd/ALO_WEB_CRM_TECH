@@ -5,6 +5,8 @@
 // ============================================================
 
 import { db } from '@/lib/db';
+import type { AuthContext } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { validateRequestAccess, canViewField } from '@/lib/access-control/central-security-engine';
 
 // ------------------------------------------------------------
@@ -98,12 +100,18 @@ export async function canUseStudentBenefitEngine(employeeId: string, roles: stri
   return (await validateRequestAccess({ userId: employeeId }, `student.benefits.${benefitType}`, 'use')).allowed;
 }
 
+function effectiveEmployeeQuota(rules: Array<{ featureKey: string; isEnabled: boolean; requiresApproval: boolean; limitValue: number }>, featureKey: string) {
+  if (!rules.length || rules.some(rule => !rule.isEnabled || rule.requiresApproval)) return 0;
+  const exact = rules.filter(rule => rule.featureKey === `${featureKey}.use`);
+  return Math.max(0, Math.min(...(exact.length ? exact : rules).map(rule => rule.limitValue)));
+}
+
 export async function checkQuotaBeforeActionEngine(userId: string, featureKey: string): Promise<{ allowed: boolean, current: number, limit: number }> {
-  if (!(await canAccessFeatureEngine(userId, [], featureKey, 'use'))) return { allowed: false, current: 0, limit: 0 };
+  if (!(await validateRequestAccess({ userId }, featureKey, 'use', { ownerId: userId })).allowed) return { allowed: false, current: 0, limit: 0 };
   const employee = await db.employee.findFirst({ where: { userId } });
   if (!employee) return { allowed: false, current: 0, limit: 0 };
-  const rule = await db.featureAccessRule.findFirst({ where: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, isEnabled: true } });
-  const limit = rule?.limitValue || 0;
+  const rules = await db.featureAccessRule.findMany({ where: { ownerType: { in: ['EMPLOYEE','employee','USER','user'] }, ownerId: { in: [employee.id, userId] }, featureKey: { in: [featureKey, `${featureKey}.use`] } } });
+  const limit = effectiveEmployeeQuota(rules, featureKey);
   const month = new Date(); month.setUTCDate(1); month.setUTCHours(0, 0, 0, 0);
   const usages = await db.featureUsageLog.findMany({ where: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, createdAt: { gte: month } } });
   let current = 0;
@@ -114,11 +122,36 @@ export async function checkQuotaBeforeActionEngine(userId: string, featureKey: s
   return { allowed: limit > 0 && current < limit, current, limit };
 }
 
+/** Reserve employee usage and its audit together; no caller can observe a
+ * successful reservation without both records. Serializable isolation prevents
+ * two concurrent requests from spending the final available unit. */
+export async function reserveEmployeeQuota(auth: AuthContext, featureKey: string, amount = 1) {
+  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error('Invalid usage amount');
+  const access = await validateRequestAccess({ userId: auth.userId }, featureKey, 'use', { ownerId: auth.userId });
+  if (!access.allowed) return { allowed: false, currentUsage: 0, limit: 0, usage: null };
+  return db.$transaction(async tx => {
+    const employee = await tx.employee.findUnique({ where: { userId: auth.userId } });
+    if (!employee || employee.status.toLowerCase() !== 'active') return { allowed: false, currentUsage: 0, limit: 0, usage: null };
+    const rules = await tx.featureAccessRule.findMany({ where: { ownerType: { in: ['EMPLOYEE','employee','USER','user'] }, ownerId: { in: [employee.id, auth.userId] }, featureKey: { in: [featureKey, `${featureKey}.use`] } } });
+    const limit = effectiveEmployeeQuota(rules, featureKey);
+    if (!limit) return { allowed: false, currentUsage: 0, limit: 0, usage: null };
+    const month = new Date(); month.setUTCDate(1); month.setUTCHours(0, 0, 0, 0);
+    const history = await tx.featureUsageLog.findMany({ where: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, createdAt: { gte: month } }, select: { metadata: true } });
+    const currentUsage = history.reduce((total, item) => { let used = 1; try { const value = JSON.parse(item.metadata || '{}').amount; if (Number.isSafeInteger(value) && value > 0) used = value; } catch {} return total + used; }, 0);
+    if (limit <= 0 || currentUsage + amount > limit) return { allowed: false, currentUsage, limit, usage: null };
+    const usage = await tx.featureUsageLog.create({ data: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, action: 'use', metadata: JSON.stringify({ amount }) } });
+    await writePortalAudit(tx, auth, 'QUOTA_USED', 'FeatureUsageLog', usage.id, { featureKey, employeeId: employee.id, amount, previousUsage: currentUsage, currentUsage: currentUsage + amount, limit });
+    return { allowed: true, currentUsage: currentUsage + amount, limit, usage };
+  }, { isolationLevel: 'Serializable' });
+}
+
 export async function recordUsageEngine(userId: string, featureKey: string, amount: number = 1) {
-  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error('Usage amount must be a positive integer');
-  const employee = await db.employee.findFirst({ where: { userId } });
-  if (!employee) throw new Error('Employee not found');
-  await db.featureUsageLog.create({ data: { ownerType: 'EMPLOYEE', ownerId: employee.id, featureKey, action: 'use', metadata: JSON.stringify({ amount }) } });
+  const user = await db.user.findUnique({ where: { id: userId } });
+  const portal = user ? null : await db.portalUser.findUnique({ where: { id: userId } });
+  const account = user || portal;
+  if (!account) throw new Error('Usage account not found');
+  const result = await reserveEmployeeQuota({ userId, actorUserId: userId, email: account.email, name: account.name || account.email, actorEmail: account.email, actorName: account.name || account.email, userType: user ? user.role : portal!.userType, roles: [], permissions: [], sessionId: 'internal-usage-reservation' }, featureKey, amount);
+  if (!result.allowed) throw new Error('Feature quota or permission unavailable');
 }
 
 export async function canApproveActionEngine(actorId: string, targetId: string, action: string): Promise<{ allowed: boolean, reason?: string }> {
