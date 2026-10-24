@@ -93,7 +93,7 @@ export async function canAccessFeatureEngine(userId: string, roles: string[], fe
 export async function canViewEmployeePrivateProfileEngine(actorId: string, actorRoles: string[], targetEmployeeId: string): Promise<boolean> {
   const employee = await db.employee.findFirst({ where: { OR: [{ id: targetEmployeeId }, { userId: targetEmployeeId }] } });
   if (!employee) return false;
-  return (await validateRequestAccess({ userId: actorId }, 'employee.profile.private', 'view', { ownerId: employee.userId })).allowed;
+  return (await validateRequestAccess({ userId: actorId }, 'employee.profile.private', 'view', { ownerId: employee.userId, branchId: employee.branch, departmentId: employee.department, recordType: 'Employee', recordId: employee.id })).allowed;
 }
 
 export async function canUseStudentBenefitEngine(employeeId: string, roles: string[], benefitType: string): Promise<boolean> {

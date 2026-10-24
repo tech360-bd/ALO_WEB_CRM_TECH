@@ -5,6 +5,7 @@ import { testDatabaseUrl } from '../helpers/test-database';
 const url = testDatabaseUrl();
 const prisma = new PrismaClient(url ? { datasourceUrl: url } : {});
 vi.mock('@/lib/db', () => ({ get db() { return prisma; } }));
+import { GET as privateProfile, PATCH as changeProfileStatus } from '@/app/api/employee-access/profile/route';
 import { POST as consumeQuota } from '@/app/api/employee-access/quotas/route';
 import { GET as partnerStats } from '@/app/api/employee/partner-stats/route';
 import { GET as employeeDetail } from '@/app/api/employees/[id]/route';
@@ -56,6 +57,8 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
       await prisma.featureUsageLog.deleteMany({ where: { ownerType: 'EMPLOYEE', ownerId: employeeId } });
       await prisma.featureAccessRule.deleteMany({ where: { ownerId: employeeId } });
     }
+    await prisma.employeeProfile.deleteMany({ where: { userId: staff } });
+    await prisma.employeeEducation.deleteMany({ where: { employeeId } });
     await prisma.partnerProfile.deleteMany({ where: { userId: { in: partnerUsers } } });
     await prisma.marketingTemplate.deleteMany({ where: { createdById: staff } });
     await prisma.employeePermissionPackageAssignment.deleteMany({ where: { employeeId } });
@@ -134,6 +137,18 @@ suite('real MySQL employee session, salary and appointment boundaries', () => {
     expect(responses.every(response => [200, 429, 503].includes(response.status))).toBe(true);
     expect(await prisma.featureUsageLog.count({ where: { ownerId: employeeId, featureKey } })).toBe(1);
     expect(await prisma.portalAuditLog.count({ where: { actorUserId: staff, action: 'QUOTA_USED' } })).toBe(1);
+  });
+  it('keeps raw salary out of the own private profile and resolves actual employee-related rows', async () => {
+    await prisma.employeeProfile.create({ data: { userId: staff, employeeId: staff, salary: 'Isolated unapproved compensation' } });
+    const education = await prisma.employeeEducation.create({ data: { employeeId, degree: 'Isolated qualification', institution: 'Isolated test institution', passingYear: '2020' } });
+    const response = await privateProfile(req(`/api/employee-access/profile?employeeId=${employeeId}`));
+    expect(response.status).toBe(200);
+    const body = await response.json(); expect(body.profile.salary).toBeNull(); expect(body.salary).toEqual([]); expect(body.education.map(item => item.id)).toContain(education.id);
+    expect(JSON.stringify(body)).not.toContain('Isolated unapproved compensation');
+    await prisma.featureAccessRule.create({ data: { ownerType: 'EMPLOYEE', ownerId: employeeId, featureKey: 'employee.lifecycle.approve', isEnabled: true } });
+    const denied = await changeProfileStatus(req('/api/employee-access/profile', { employeeId, status: 'INACTIVE', reason: 'Isolated self approval attempt' }, sessionToken, 'PATCH'));
+    expect(denied.status).toBe(403);
+    expect((await prisma.portalUser.findUniqueOrThrow({ where: { id: staff } })).status).toBe('active');
   });
   it('revoking the actual employee record blocks an existing session immediately', async () => {
     await prisma.employee.update({ where: { id: employeeId }, data: { status: 'suspended' } });
