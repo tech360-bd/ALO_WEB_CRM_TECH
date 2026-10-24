@@ -1,5 +1,10 @@
 import EmployeeProfilePage from '@/components/employee/EmployeeProfilePage';
+import EmployeePortalShell from '@/components/employee/EmployeePortalShell';
 
 export default function EmployeeProfileRoute() {
-  return <EmployeeProfilePage />;
+  return (
+    <EmployeePortalShell>
+      <EmployeeProfilePage />
+    </EmployeePortalShell>
+  );
 }

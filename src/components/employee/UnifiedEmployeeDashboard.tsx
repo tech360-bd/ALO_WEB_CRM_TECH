@@ -43,7 +43,6 @@ import {
 import { toast } from 'sonner';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import { HrRoleWidgets, HrmQuickActions } from '@/components/hrm/HrWidgets';
-import PartnerStatsPanel from '@/components/employee/PartnerStatsPanel';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
 function displayMetric(value: number | string | null | undefined): number | string {
@@ -677,10 +676,9 @@ export default function UnifiedEmployeeDashboard({
                 </>
               )}
 
-              {activeRole.includes('PARTNER') && <PartnerStatsPanel />}
-              {activeRole.includes('FRONT_DESK') && (
+              {(activeRole.includes('FRONT_DESK') || activeRole.includes('PARTNER')) && (
                 <div className="sm:col-span-2 lg:col-span-4 rounded-xl border border-[var(--alo-border)] bg-white p-4 text-sm text-[var(--alo-body)]" role="status">
-                  Walk-in metrics are unavailable because no verified walk-in data source is connected.
+                  {activeRole.includes('FRONT_DESK') ? 'Walk-in metrics are unavailable because no verified walk-in data source is connected.' : 'Partner totals are unavailable because no authorized partner metric source is connected.'}
                 </div>
               )}
             </div>

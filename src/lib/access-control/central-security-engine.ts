@@ -210,12 +210,9 @@ export async function canViewField(
   const target = await db.employee.findUnique({ where: { id: targetEmployeeId } });
   if (!target) return false;
   const access = await validateRequestAccess(
-    { userId: viewerId }, `employee.fields.${fieldName}`, 'view', { ownerId: target.userId, branchId: target.branch, departmentId: target.department, recordType: 'Employee', recordId: target.id },
+    { userId: viewerId }, `employee.fields.${fieldName}`, 'view', { ownerId: target.userId },
   );
   if (!access.allowed) return false;
-  // Own raw compensation is not an approved payslip. Final own payroll is
-  // exposed by the approved-payroll endpoint, never this private-field helper.
-  if (fieldName === 'salary' && target.userId === viewerId && access.scope !== 'GLOBAL') return false;
   await logSecurityAudit({ actorId: viewerId, actorRole: 'Database-authorized actor',
     action: `FIELD_VIEW_${fieldName.toUpperCase()}`, targetType: 'EmployeeProfileField', targetId: targetEmployeeId });
   return true;

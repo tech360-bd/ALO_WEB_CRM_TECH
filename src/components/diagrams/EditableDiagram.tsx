@@ -8,7 +8,7 @@ export default function EditableDiagram({ draft }: { draft: DiagramDraft }) {
   const width = Math.max(720, groups.length * 170 + 80);
   const height = Math.max(300, draft.rows.length * 56 + 130);
   const max = Math.max(1, ...draft.rows.map(row => draft.type === 'gantt' ? row.end : row.value));
-  const text = (label: string, x: number, y: number, anchor: 'start' | 'middle' = 'start', maxChars = 22) => <text key={`${x}:${y}:${label}`} x={x} y={y} textAnchor={anchor} fontSize={12} fill={t.ink}><title>{label}</title>{label.length > maxChars ? `${label.slice(0, maxChars - 1)}…` : label}</text>;
+  const text = (label: string, x: number, y: number, anchor: 'start' | 'middle' = 'start') => <text x={x} y={y} textAnchor={anchor} fontSize={12} fill={t.ink}><title>{label}</title>{label.length > 22 ? `${label.slice(0, 21)}…` : label}</text>;
   return <svg role="img" aria-labelledby={`${uid}-title`} viewBox={`0 0 ${width} ${height}`} xmlns="http://www.w3.org/2000/svg" className="h-auto min-w-[640px] w-full">
     <title id={`${uid}-title`}>{draft.title} — {draft.type}</title>
     <defs><marker id={`${uid}-arrow`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill={t.link}/></marker></defs>
@@ -27,12 +27,12 @@ export default function EditableDiagram({ draft }: { draft: DiagramDraft }) {
     })}
     {['bar','gantt'].includes(draft.type) && <>
       {draft.rows.map((row, i) => { const y = 75 + i * 56; const start = draft.type === 'gantt' ? row.value / max * (width - 300) : 0; const size = (draft.type === 'gantt' ? row.end - row.value : row.value) / max * (width - 300); return <g key={i}>{text(row.label, 24, y + 24)}<rect x={220 + start} y={y + 4} width={size} height={30} rx={4} fill={i === 0 ? t.accent : t.link}/>{text(draft.type === 'gantt' ? `${row.value}–${row.end}` : String(row.value), 228 + start + size, y + 24)}</g>; })}
-      {text(draft.type === 'gantt' ? 'Positions use the units entered by the author.' : 'Values entered by the author; not live CRM metrics.', 24, height - 24, 'start', 120)}
+      {text(draft.type === 'gantt' ? 'Positions use the units entered by the author.' : 'Values entered by the author; not live CRM metrics.', 24, height - 24)}
     </>}
     {draft.type === 'security-matrix' && <>
       {groups.map((group, i) => text(group, 275 + i * 170, 80, 'middle'))}
       {[...new Set(draft.rows.map(row => row.label))].map((label, i) => <g key={label}>{text(label, 24, 120 + i * 44)}{groups.map((group, j) => { const row = draft.rows.find(value => value.label === label && value.group === group); return <g key={group}><rect x={220 + j * 170} y={98 + i * 44} width={110} height={32} rx={4} fill={row?.value === 1 ? t.accentTint : t.paper2} stroke={t.ruleSolid}/>{text(!row ? 'Unspecified' : row.value === 1 ? 'Allowed' : 'Denied', 275 + j * 170, 120 + i * 44, 'middle')}</g>; })}</g>)}
-      {text('Design documentation only. This diagram does not grant application permissions.', 24, height - 24, 'start', 120)}
+      {text('Design documentation only. This diagram does not grant application permissions.', 24, height - 24)}
     </>}
   </svg>;
 }
