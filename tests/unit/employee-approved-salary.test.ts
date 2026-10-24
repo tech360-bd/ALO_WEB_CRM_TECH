@@ -1,35 +1,104 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-const m = vi.hoisted(() => ({ employee: vi.fn(), payroll: vi.fn(), audit: vi.fn(), auth: { userId: 'staff', actorUserId: 'staff', userType: 'EMPLOYEE' } }));
-vi.mock('@/lib/auth-middleware', () => ({ withAuth: handler => request => handler(request, m.auth) }));
-vi.mock('@/lib/db', () => ({ db: { employee: { findUnique: m.employee }, employeePayroll: { findMany: m.payroll }, portalAuditLog: { create: m.audit } } }));
+const m = vi.hoisted(() => ({
+  employee: vi.fn(),
+  profile: vi.fn(),
+  salary: vi.fn(),
+  commission: vi.fn(),
+  bonus: vi.fn(),
+  increment: vi.fn(),
+  audit: vi.fn(),
+  auth: {
+    userId: 'staff',
+    actorUserId: 'staff',
+    userType: 'EMPLOYEE',
+    roles: ['EMPLOYEE'],
+    permissions: ['h6'],
+  } as Record<string, unknown>,
+}));
+vi.mock('@/lib/auth-middleware', () => ({ withAuth: (handler: unknown) => (request: Request) => (handler as (r: Request, a: unknown) => unknown)(request, m.auth) }));
+vi.mock('@/lib/db', () => ({
+  db: {
+    employee: { findUnique: m.employee },
+    employeeProfile: { findUnique: m.profile },
+    employeeSalary: { findMany: m.salary },
+    employeeCommission: { findMany: m.commission },
+    employeeBonus: { findMany: m.bonus },
+    employeeIncrement: { findMany: m.increment },
+    portalAuditLog: { create: m.audit },
+  },
+}));
 import { GET } from '@/app/api/employee/salary/route';
 const request = (query = '') => new Request(`https://alo.test/api/employee/salary${query}`);
+
 beforeEach(() => {
-  vi.resetAllMocks(); m.auth.userType = 'EMPLOYEE';
-  m.employee.mockResolvedValue({ id: 'employee-db-id', employeeId: 'EMP-1', name: '<script>alert(1)</script>', status: 'active' });
-  m.payroll.mockResolvedValue([{ id: 'payroll-1', period: '2026-10', grossSalary: 1000, netSalary: 900, status: 'approved', paidAt: null }]);
+  vi.resetAllMocks();
+  m.auth.userType = 'EMPLOYEE';
+  m.auth.roles = ['EMPLOYEE'];
+  m.auth.permissions = ['h6'];
+  delete m.auth.actingAsSessionId;
+  m.employee.mockResolvedValue({ id: 'employee-db-id', userId: 'staff', employeeId: 'EMP-1', status: 'active' });
+  m.profile.mockResolvedValue({ employeeId: 'EMP-1' });
+  m.salary.mockResolvedValue([]);
+  m.commission.mockResolvedValue([]);
+  m.bonus.mockResolvedValue([]);
+  m.increment.mockResolvedValue([]);
+  m.audit.mockResolvedValue({ id: 'audit-1' });
 });
-describe('employee approved-only salary access', () => {
-  it('scopes all reads to the authenticated employee and excludes draft payroll', async () => {
-    expect((await GET(request('?employeeId=someone-else&status=draft'))).status).toBe(200);
-    expect(m.payroll).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: 'employee-db-id', status: { in: ['approved', 'paid'] } }, take: 24 }));
-    expect(m.audit).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: 'SALARY_VIEWED', actorUserId: 'staff' }) }));
+
+describe('employee own-salary access', () => {
+  it('scopes every read to the authenticated employee and ignores a client-supplied employeeId', async () => {
+    const response = await GET(request('?employeeId=someone-else'));
+    expect(response.status).toBe(200);
+    const expected = expect.objectContaining({ where: { employeeId: { in: ['employee-db-id', 'staff', 'EMP-1'] } } });
+    expect(m.salary).toHaveBeenCalledWith(expected);
+    expect(m.commission).toHaveBeenCalledWith(expected);
+    expect(m.bonus).toHaveBeenCalledWith(expected);
+    expect(m.increment).toHaveBeenCalledWith(expected);
+    expect(m.audit).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ action: 'EMPLOYEE_OWN_SALARY_VIEWED', actorUserId: 'staff' }),
+    }));
   });
-  it.each(['STUDENT', 'PARTNER'])('rejects %s before reading payroll', async type => { m.auth.userType = type; expect((await GET(request())).status).toBe(403); expect(m.payroll).not.toHaveBeenCalled(); });
+
+  it.each(['STUDENT', 'PARTNER'])('rejects %s before reading any salary data', async (type) => {
+    m.auth.userType = type;
+    m.auth.roles = [type];
+    expect((await GET(request())).status).toBe(403);
+    expect(m.salary).not.toHaveBeenCalled();
+    expect(m.audit).not.toHaveBeenCalled();
+  });
+
   it('returns no fictional payroll when no approved records exist', async () => {
-    m.payroll.mockResolvedValue([]); expect(await (await GET(request())).json()).toEqual({ success: true, breakdown: [], payslips: [] });
+    const body = await (await GET(request())).json();
+    expect(body.data.salary.current).toBeNull();
+    expect(body.data.salary.history).toEqual([]);
+    expect(body.data.commissions.records).toEqual([]);
+    expect(body.data.bonuses).toEqual([]);
+    expect(body.data.increments).toEqual([]);
+    expect(body.data.financialSummary.currentNetSalary).toBe(0);
   });
-  it('cannot download another employee or unapproved payroll', async () => {
-    m.payroll.mockResolvedValue([]); expect((await GET(request('?download=foreign-or-draft'))).status).toBe(404);
-    expect(m.payroll).toHaveBeenCalledWith(expect.objectContaining({ where: { id: 'foreign-or-draft', employeeId: 'employee-db-id', status: { in: ['approved', 'paid'] } } }));
+
+  it('denies the request when the own-salary permission is missing instead of throwing', async () => {
+    // Regression: the handler previously read auth.permissions.includes() and
+    // crashed with a TypeError (HTTP 500) on an incomplete auth context.
+    m.auth.permissions = undefined;
+    const response = await GET(request());
+    expect(response.status).toBe(403);
+    expect(m.salary).not.toHaveBeenCalled();
   });
-  it('escapes HTML and audits an authorized payslip download', async () => {
-    const response = await GET(request('?download=payroll-1'));
-    expect(response.headers.get('content-disposition')).toContain('attachment');
-    const html = await response.text(); expect(html).toContain('&lt;script&gt;'); expect(html).not.toContain('<script>');
-    expect(m.audit).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: 'SALARY_DOWNLOADED' }) }));
+
+  it('fails closed when the sensitive access audit cannot be written', async () => {
+    m.audit.mockRejectedValue(new Error('private database details'));
+    const response = await GET(request());
+    expect(response.status).toBe(503);
+    expect(await response.text()).not.toContain('private database details');
   });
-  it('fails closed when sensitive salary access cannot be audited', async () => {
-    m.audit.mockRejectedValue(new Error('private database details')); const response = await GET(request()); expect(response.status).toBe(503); expect(await response.text()).not.toContain('private database details');
+
+  it('records impersonation context in the audit trail when acting-as is active', async () => {
+    m.auth.actingAsSessionId = 'acting-session';
+    m.auth.actingAsRole = 'EMPLOYEE';
+    expect((await GET(request())).status).toBe(200);
+    const metadata = JSON.parse(m.audit.mock.calls[0][0].data.metadata);
+    expect(metadata.actingAsSessionId).toBe('acting-session');
+    expect(metadata.actingAsRole).toBe('EMPLOYEE');
   });
 });

@@ -515,9 +515,13 @@ export function CounselorStudent360({ slug, onNavigate = () => {} }: { slug?: st
         if (!alive) return;
         const list: StudentListItem[] = data.students ?? [];
         setStudents(list);
-        // If slug provided and matches a student, use it; otherwise default to first
-        if (slug && list.find((s) => s.id === slug || s.studentId === slug)) {
-          setSelectedId((list.find((s) => s.id === slug || s.studentId === slug) as StudentListItem).id);
+        // A slug from the URL always wins. If it is not in this counselor's
+        // list we still select the requested id and let the detail endpoint
+        // enforce assignment — silently showing the first student instead
+        // would display a different student's record.
+        if (slug) {
+          const match = list.find((s) => s.id === slug || s.studentId === slug);
+          setSelectedId(match ? match.id : slug);
         } else if (list.length > 0) {
           setSelectedId(list[0].id);
         }

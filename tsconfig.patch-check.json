@@ -1,0 +1,46 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": "/tmp/alo-patch-check.tsbuildinfo"
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/components/admin/AICommandCenterAgent.tsx",
+    "src/components/alo/views/counselor-student-360.tsx",
+    "src/components/website/HomepagePart3.tsx",
+    "src/components/website/PublicNavbar.tsx",
+    "src/app/counselor/students/[id]/page.tsx",
+    "src/app/api/employee/salary/route.ts",
+    "src/app/api/employee-access/feature-access/route.ts",
+    "src/app/crm/students/page.tsx",
+    "src/app/crm/students/[id]/page.tsx",
+    "src/lib/interview/research.ts",
+    "src/app/api/interview-questions/route.ts",
+    "src/app/api/crm/ai-command-center/route.ts",
+    "src/app/crm/ai-command-center/page.tsx",
+    "src/app/crm/interview-library/page.tsx",
+    "src/lib/portal-nav.ts",
+    "src/app/api/student/interview-prep/route.ts",
+    "src/components/student/StudentInterviewPrep.tsx",
+    "src/app/student/interview/page.tsx",
+    "src/lib/interview/practice-window.ts",
+    "src/app/api/student/interview-practice/window/route.ts",
+    "src/app/api/crm/interview-practice/route.ts",
+    "src/app/api/visa/ai-interview/start/route.ts",
+    "src/components/student/PracticeWindowPanel.tsx",
+    "src/app/crm/interview-practice/page.tsx",
+    "src/lib/interview/preliminary-assessment.ts",
+    "src/app/api/visa/ai-interview/[sessionId]/finish/route.ts",
+    "src/app/api/crm/interview-review/route.ts",
+    "src/app/api/student/interview-assessment/route.ts",
+    "src/components/student/InterviewAssessmentPanel.tsx",
+    "src/app/crm/interview-review/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "prisma",
+    "scripts",
+    ".next"
+  ]
+}
