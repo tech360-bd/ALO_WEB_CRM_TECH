@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateStudentRequest } from '@/lib/student-auth';
+import { canPractise, configuredWindowHours, describePracticeWindow } from '@/lib/interview/practice-window';
 
 const schema = z.object({
   interviewType: z.enum(['embassy_mock', 'credibility', 'pre_cas', 'university', 'sponsor', 'study_gap', 'refusal', 'english', 'final_readiness']).default('embassy_mock'),
@@ -21,6 +22,29 @@ export async function POST(req: Request) {
       const visaCase = await db.visaCase.findFirst({ where: { id: parsed.data.caseId, studentId: auth.studentId }, select: { id: true } });
       if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found for this student.' }, { status: 404 });
     }
+    // Practice window (spec §38). Enforcement only applies when a window has
+    // been opened for this student, so existing flows keep working; once it has
+    // lapsed, new sessions stop until a counselor extends it. Recorded practice
+    // is never deleted.
+    const practiceWindow = await db.interviewPracticeWindow.findUnique({
+      where: { studentId_applicationId: { studentId: auth.studentId, applicationId: '' } },
+      select: { startsAt: true, expiresAt: true, extendedUntil: true, closedAt: true },
+    });
+    if (practiceWindow) {
+      const windowState = describePracticeWindow(practiceWindow, new Date(), configuredWindowHours());
+      if (!canPractise(windowState)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Your interview practice window has ended. Ask your counselor for an extension — your practice history is kept.',
+            window: windowState,
+            canPractise: false,
+          },
+          { status: 403, headers: { 'Cache-Control': 'no-store' } },
+        );
+      }
+    }
+
     const recentSessions = await db.aiInterviewSession.count({
       where: { studentId: auth.studentId, createdAt: { gte: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) } },
     });

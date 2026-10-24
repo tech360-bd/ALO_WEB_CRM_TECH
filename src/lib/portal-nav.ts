@@ -386,6 +386,7 @@ const AI_INTELLIGENCE_GROUP: NavGroup = {
   items: [
     { label:'AI Command Center', icon: Bot, href:'/crm/ai-command-center', badge:'AI' },
     { label:'Interview Library', icon: Video, href:'/crm/interview-library' },
+    { label:'Practice Windows', icon: Clock, href:'/crm/interview-practice' },
   ]
 };
 

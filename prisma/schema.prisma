@@ -8713,6 +8713,32 @@ model InterviewAnswer {
   @@index([questionId])
 }
 
+/// 72-hour interview practice window (spec §38).
+///
+/// One window per student per application ('' = all applications). The window
+/// is opened explicitly when a preparation pack is generated or downloaded, and
+/// expiry stops *new* sessions only — recorded practice is never deleted.
+model InterviewPracticeWindow {
+  id              String    @id @default(cuid())
+  studentId       String
+  applicationId   String    @default("")
+  startsAt        DateTime  @default(now())
+  expiresAt       DateTime
+  extendedUntil   DateTime?
+  extensionCount  Int       @default(0)
+  extendedBy      String    @default("")
+  extensionReason String    @default("") @db.Text
+  packGeneratedAt DateTime?
+  closedAt        DateTime?
+  closedBy        String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([studentId, applicationId])
+  @@index([studentId])
+  @@index([expiresAt])
+}
+
 /// Facts a student has explicitly supplied for interview preparation.
 /// Only these facts may seed an answer framework — the coach never invents
 /// income, sponsorship, results, travel or motivation (spec §33/§96).

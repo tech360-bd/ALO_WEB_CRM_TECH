@@ -23,7 +23,13 @@
     "src/lib/portal-nav.ts",
     "src/app/api/student/interview-prep/route.ts",
     "src/components/student/StudentInterviewPrep.tsx",
-    "src/app/student/interview/page.tsx"
+    "src/app/student/interview/page.tsx",
+    "src/lib/interview/practice-window.ts",
+    "src/app/api/student/interview-practice/window/route.ts",
+    "src/app/api/crm/interview-practice/route.ts",
+    "src/app/api/visa/ai-interview/start/route.ts",
+    "src/components/student/PracticeWindowPanel.tsx",
+    "src/app/crm/interview-practice/page.tsx"
   ],
   "exclude": [
     "node_modules",

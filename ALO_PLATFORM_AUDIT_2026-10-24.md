@@ -376,11 +376,32 @@ Evidence: `tests/unit/student-interview-prep-api.test.ts` (11 tests) covering cr
 withholding, the ready/not-ready framework boundary, trim/oversize/unknown-field handling, and sanitized failures.
 Full suite after this change: **279 files passed, 3,180 tests**.
 
+### AG-5. 72-hour practice window with persisted sessions (spec §38, §76)
+
+The specification's practice window existed nowhere: `AiInterviewSession` stored sessions but nothing bounded practice
+access, so "after 72 hours practice access may expire or move to a counselor-controlled extension" was unenforced.
+
+| Artefact | Purpose |
+|---|---|
+| `src/lib/interview/practice-window.ts` | Pure window maths: configurable length (`INTERVIEW_PRACTICE_WINDOW_HOURS`, default 72, clamped to 30 days), derived status (`ACTIVE`/`EXPIRING`/`EXPIRED`/`EXTENDED`/`CLOSED`), remaining-time calculation, and `extendPracticeWindow` which extends from the later of *now* or the current end. |
+| `InterviewPracticeWindow` model + migration `20261024200000_interview_practice_window` | One window per student per application. Additive `CREATE TABLE`; expiry never deletes anything. |
+| `/api/student/interview-practice/window` | GET returns authoritative state + countdown. POST opens the window; it will **not** add time to an open window, and an expired window can only be restarted when no counselor extension was ever granted (403 otherwise). |
+| `/api/crm/interview-practice` | Counselor list scoped by `counselorStudentScope`, plus extend/close with a mandatory stored reason and a server-side re-check that the window's student is still in scope. |
+| `PracticeWindowPanel.tsx` | Live `HH:MM:SS` countdown that re-fetches once when it crosses zero, amber "ending soon" state, and an explicit "history is kept" message on expiry. |
+| `/crm/interview-practice` | Counselor screen to extend or close, with the reason field required by the API. |
+| `/api/visa/ai-interview/start` | New sessions are **refused with 403** once the student's window has lapsed, so the window governs real practice rather than being decorative. Enforcement applies only when a window exists, so existing flows are untouched. |
+
+Evidence: `tests/unit/interview-practice-window.test.ts` (15) — boundary maths at exactly `expiresAt`, extension from
+now vs from the existing end, extension shorter than the original (ignored), early close, clamping.
+`tests/unit/interview-practice-api.test.ts` (13) — student scoping, no time added when already open, extension
+lock-out, 409→restart path, foreign application rejection, counselor scope re-check, mandatory reason, close-without-delete.
+Full suite: **281 files passed, 3,208 tests**.
+
 ### AG-5. What this pass did **not** do
 
 * No MySQL was available, so the new migration was **not applied** and no query was executed against real data.
-* The interview pack now has a student-facing preparation surface (AG-4), but the 72-hour practice window (§38),
-  video recording (§39) and human final review queue (§41) remain unimplemented.
+* Practice access is now bounded by a real 72-hour window (AG-5). Still unimplemented: video recording (§39) and the
+  human final-review queue (§41) — an AI assessment has no reviewer decision surface yet.
 * `StudentWorldState` (§51) still has no model; student memory exists only as `AiStudentMemory`.
 * The 2,000-agent target (§L of wave 1) is unchanged at 1,020 seeded rows.
 
