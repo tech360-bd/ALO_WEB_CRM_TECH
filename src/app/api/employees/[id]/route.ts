@@ -1,23 +1,33 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { canViewEmployeePrivateProfile, logSensitiveAccess } from '@/lib/access-control';
-import { withAuth, type AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { canViewEmployeePrivateProfile } from '@/lib/access-control';
+import { canViewField, validateRequestAccess } from '@/lib/access-control/central-security-engine';
+import { writePortalAudit } from '@/lib/transactional-audit';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
 async function getEmployee(req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) {
   const { id } = await context!.params;
   const employee = await db.employee.findUnique({ where: { id } });
   if (!employee) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  const canViewPrivate = await canViewEmployeePrivateProfile(auth.userId, id);
+  if (!canViewPrivate) return NextResponse.json({ error: 'Private employee profile permission required.' }, { status: 403 });
+  const own = employee.userId === auth.userId;
+  const [bankAccess, nidAccess, salaryAccess] = await Promise.all([
+    canViewField(auth.userId, [], 'bankAccount', id), canViewField(auth.userId, [], 'nid', id),
+    own ? Promise.resolve(false) : canViewField(auth.userId, [], 'salary', id),
+  ]);
   const [profile, documents, salary] = await Promise.all([
     db.employeeProfile.findUnique({ where: { userId: employee.userId } }),
-    db.employeeDocument.findMany({ where: { employeeId: id } }),
-    db.employeeSalary.findFirst({ where: { employeeId: id } }),
+    db.employeeDocument.findMany({ where: { employeeId: id }, select: { id: true, documentType: true, status: true, createdAt: true, updatedAt: true } }),
+    salaryAccess ? db.employeeSalary.findFirst({ where: { employeeId: id } }) : Promise.resolve(null),
   ]);
-  const canViewPrivate = await canViewEmployeePrivateProfile(auth.userId, id);
-  if (canViewPrivate) await logSensitiveAccess(auth.userId, 'SALARY_ACCESS', 'Employee', id);
+  await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'PROFILE_VIEWED', 'Employee', id, { private: true, salaryIncluded: salaryAccess }, req); });
   return NextResponse.json({
-    employee: { ...employee, profile: canViewPrivate ? profile : profile ? { ...profile, salary: null, bankAccount: null, bankName: null, bankRouting: null, emergencyContact: null } : null, documents: canViewPrivate ? documents : documents.map((document) => ({ ...document, filePath: null })), salary: canViewPrivate ? salary : null },
-    canViewPrivate,
-    privacyNote: canViewPrivate ? 'Private access is audit-logged.' : 'Private profile data is hidden.',
+    employee: { id: employee.id, employeeId: employee.employeeId, userId: employee.userId, name: employee.name, designation: employee.designation, department: employee.department, branch: employee.branch, status: employee.status,
+      profile: profile ? { ...profile, salary: salaryAccess ? profile.salary : null, bankAccount: bankAccess ? profile.bankAccount : null, bankName: bankAccess ? profile.bankName : null, bankRouting: bankAccess ? profile.bankRouting : null, nidNumber: nidAccess ? profile.nidNumber : null } : null,
+      documents, salary: salary ? { id: salary.id, employeeId: salary.employeeId, salaryAmount: salary.salaryAmount, allowance: salary.allowance, bonus: salary.bonus, effectiveDate: salary.effectiveDate } : null },
+    canViewPrivate: true,
+    privacyNote: own ? 'Private access is audit-logged. Final approved payslips are available through your salary page.' : 'Private access is audit-logged.',
   });
 }
 
@@ -27,6 +37,12 @@ async function updateEmployee(req: Request, auth: AuthContext, context?: { param
   if (!body || typeof body !== 'object') return NextResponse.json({ success: false, error: 'Invalid request body.' }, { status: 400 });
   const employee = await db.employee.findUnique({ where: { id } });
   if (!employee) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+  const origin = req.headers.get('origin');
+  if (origin && origin !== new URL(process.env.NEXTAUTH_URL || req.url).origin) return NextResponse.json({ error: 'Cross-origin mutation denied.' }, { status: 403 });
+  const action = body.status ? 'suspend' : 'edit';
+  const access = await validateRequestAccess({ userId: auth.userId }, 'employee.management', action, { ownerId: employee.userId, branchId: employee.branch, departmentId: employee.department });
+  if (!access.allowed || (body.status && (auth.actingAsSessionId || employee.userId === auth.userId))) return NextResponse.json({ error: 'Employee management permission and separation of duties required.' }, { status: 403 });
+
 
   const updates: Record<string, string> = {};
   for (const field of ['designation', 'department', 'branch'] as const) {
@@ -67,15 +83,13 @@ async function updateEmployee(req: Request, auth: AuthContext, context?: { param
         await tx.employeeActivationToken.updateMany({ where: { employeeId: portalUser.id, status: 'active' }, data: { status: 'expired' } });
       }
     }
+    await writePortalAudit(tx, auth, requestedStatus ? 'employee_status_changed' : 'employee_profile_updated', 'Employee', id, {
+      previous: employee, current: row, fields: Object.keys(updates),
+    }, req);
     return row;
-  });
-  await logAuditAction(auth, requestedStatus ? 'employee_status_changed' : 'employee_profile_updated', 'Employee', id, {
-    previousStatus: employee.status,
-    nextStatus: status,
-    fields: Object.keys(updates),
   });
   return NextResponse.json({ employee: updated });
 }
 
-export const GET = withAuth(getEmployee, { requireRoles: ['super_admin', 'admin', 'hr_manager'] });
+export const GET = withAuth(getEmployee);
 export const PATCH = withAuth(updateEmployee, { requireRoles: ['super_admin', 'admin', 'hr_manager'] });
