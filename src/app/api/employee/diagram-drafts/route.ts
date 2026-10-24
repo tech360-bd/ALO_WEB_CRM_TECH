@@ -12,7 +12,9 @@ export async function GET(req: NextRequest) {
     const auth = await authenticateRequest(req); if (auth instanceof NextResponse) return auth;
     const access = await validateRequestAccess({ userId: auth.userId }, 'employee.diagrams', 'view', { ownerId: auth.userId });
     if (!access.allowed) return NextResponse.json({ success: false, error: 'Diagram view permission required.' }, { status: 403 });
-    const page = Math.min(1000, Math.max(1, Number(req.nextUrl.searchParams.get('page')) || 1));
+    const parsedPage = z.coerce.number().int().min(1).max(1000).safeParse(req.nextUrl.searchParams.get('page') ?? '1');
+    if (!parsedPage.success) return NextResponse.json({ success: false, error: 'Page must be an integer between 1 and 1000.' }, { status: 400 });
+    const page = parsedPage.data;
     const drafts = await db.marketingTemplate.findMany({ where: { category, createdById: auth.userId }, orderBy: { updatedAt: 'desc' }, take: 20, skip: (page - 1) * 20 });
     return NextResponse.json({ success: true, drafts, page });
   } catch { return NextResponse.json({ success: false, error: 'Saved diagrams unavailable.' }, { status: 503 }); }
