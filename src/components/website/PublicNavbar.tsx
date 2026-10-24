@@ -50,6 +50,7 @@ import {
 import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import LanguageToggle from '@/components/website/LanguageToggle';
 import { useI18n } from '@/i18n';
+import { mergePublicDestinations } from '@/lib/public-navigation-policy';
 import { ALO_CONTACT, ALO_TAGLINE } from '@/lib/alo-site-info';
 
 /* ------------------------------------------------------------------ */
@@ -351,7 +352,7 @@ export default function PublicNavbar() {
           }));
         if (cmsDests.length > 0) {
           curated = true;
-          setDestinations(cmsDests);
+          setDestinations(mergePublicDestinations(DEFAULT_DESTINATIONS, cmsDests));
         }
       })
       .catch(() => {
@@ -370,7 +371,7 @@ export default function PublicNavbar() {
               .slice(0, 7)
               .map((c: { name: string; slug: string }) => ({ label: c.name, href: `/destinations/${c.slug}` }));
             setDestinations(
-              active.length > 7 ? [...first7, { label: 'More Countries', href: '/destinations' }] : first7
+              mergePublicDestinations(DEFAULT_DESTINATIONS, first7)
             );
           }
         }

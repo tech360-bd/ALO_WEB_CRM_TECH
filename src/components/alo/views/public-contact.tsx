@@ -1,5 +1,6 @@
 "use client";
 
+import { ALO_CONTACT, ALO_SOCIALS } from '@/lib/alo-site-info';
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,7 @@ const CONTACT_INFO = [
   {
     icon: "MapPin",
     label: "Office Address",
-    value: "House 25, Road 11\nBanani, Dhaka 1213\nBangladesh",
+    value: ALO_CONTACT.address,
     accent: "blue" as const,
   },
   {
@@ -65,8 +66,8 @@ const CONTACT_INFO = [
   {
     icon: "Mail",
     label: "Email",
-    value: "hello@aloeducation.com",
-    href: "mailto:hello@aloeducation.com",
+    value: ALO_CONTACT.email,
+    href: ALO_CONTACT.emailHref,
     accent: "blue" as const,
   },
 ];
@@ -77,12 +78,7 @@ const HOURS = [
   { day: "Public Holidays", time: "By appointment only" },
 ];
 
-const SOCIAL_LINKS = [
-  { label: "Facebook", icon: "Facebook", href: "https://www.facebook.com/aloeducation" },
-  { label: "Instagram", icon: "Instagram", href: "https://www.instagram.com/aloeducation" },
-  { label: "LinkedIn", icon: "Linkedin", href: "https://www.linkedin.com/company/aloeducation" },
-  { label: "YouTube", icon: "Youtube", href: "https://www.youtube.com/@aloeducation" },
-];
+const SOCIAL_LINKS = ALO_SOCIALS.map((social) => ({ label: social.label, href: social.href, icon: ({facebook:'Facebook',instagram:'Instagram',linkedin:'Linkedin',youtube:'Youtube'} as const)[social.id] }));
 
 export function PublicContact({ onNavigate }: PublicContactProps) {
   const { toast } = useToast();

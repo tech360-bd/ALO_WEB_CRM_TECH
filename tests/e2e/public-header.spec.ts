@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
  * PublicLayoutWrapper (root layout), so these checks guard the single source:
  *   • logo (ALO Education) + italic orange tagline
  *   • menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
- *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
+ *     Resources ▾ · Portal ▾ · AI SUPPORT ▾
  *   • CTA "Book Free Counseling" (ALO Orange) → /book-consultation
  */
 
@@ -24,7 +24,7 @@ const MENU_ORDER = [
   'Language Prep',
   'Resources',
   'Portal',
-  'AI SUPPORT TOOLS',
+  'AI SUPPORT',
 ];
 
 /** Resolve a menu entry whichever role it has (links and dropdown triggers differ). */
@@ -96,8 +96,8 @@ test.describe('desktop header (before login)', () => {
     await header.getByRole('button', { name: 'Portal', exact: true }).click();
     await expect(header.getByRole('link', { name: 'Student Portal' })).toBeVisible();
 
-    // AI SUPPORT TOOLS ▾
-    await header.getByRole('button', { name: 'AI SUPPORT TOOLS', exact: true }).click();
+    // AI SUPPORT ▾
+    await header.getByRole('button', { name: 'AI SUPPORT', exact: true }).click();
     await expect(header.getByRole('link', { name: 'AI Course Match' })).toBeVisible();
 
     // Escape closes the open dropdown.
@@ -132,10 +132,10 @@ test.describe('mobile header (before login)', () => {
 test.describe('header scope', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('is hidden on authenticated shells and auth entry screens', async ({ page }) => {
+  test('is present on signed-out authentication entry screens', async ({ page }) => {
     for (const route of ['/student/login', '/partner/login', '/employee/login', '/login']) {
       await page.goto(route);
-      await expect(page.locator('#alo-public-header'), `public header leaked into ${route}`).toHaveCount(0);
+      await expect(page.locator('#alo-public-header'), `public header missing on ${route}`).toBeVisible();
     }
   });
 });

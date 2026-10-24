@@ -1,162 +1,96 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, logAuditAction } from '@/lib/auth-middleware';
-import { normalizeEventList, redactSubscription, rotateSubscriptionSecret } from '@/lib/webhooks';
-
-// ============================================================
-// GET    /api/webhooks/subscriptions/[id]
-// PATCH  /api/webhooks/subscriptions/[id]
-// DELETE /api/webhooks/subscriptions/[id]
-//
-// Every access re-checks tenant ownership from the STORED row, so a partner
-// cannot read, edit or delete another tenant's subscription by guessing an id
-// (spec s69, s99 direct-object-reference protection).
-// ============================================================
-
-const ADMIN_TYPES = ['SUPER_ADMIN', 'ADMIN'];
-
-type RouteContext = { params: Promise<{ id: string }> };
-
-async function loadOwnedSubscription(id: string, auth: { userType: string; partnerId?: string }) {
-  const subscription = await db.webhookSubscription.findUnique({ where: { id } });
-  if (!subscription) return { error: 'NOT_FOUND' as const };
-  const isAdmin = ADMIN_TYPES.includes(auth.userType);
-  if (!isAdmin) {
-    if (auth.userType !== 'PARTNER' || !auth.partnerId) return { error: 'FORBIDDEN' as const };
-    if (subscription.partnerId !== auth.partnerId) return { error: 'TENANT_MISMATCH' as const };
-  }
-  return { subscription };
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { writePortalAudit } from '@/lib/transactional-audit';
+import { requireWebhookManagement } from '@/lib/webhooks/access';
+import { privateWebhookHostAllowed } from '@/lib/webhooks/transport';
+import { normalizeEventList, redactSubscription, rotateSubscriptionSecret, validateWebhookUrl } from '@/lib/webhooks';
+const types = ['SUPER_ADMIN', 'ADMIN', 'PARTNER', 'EMPLOYEE'];
+type Context = {
+    params: Promise<{
+        id: string;
+    }>;
+};
+async function owned(id: string, auth: AuthContext) {
+    if (!id || id.length > 191)
+        return null;
+    const row = await db.webhookSubscription.findUnique({ where: { id } });
+    return row && (auth.userType !== 'PARTNER' || row.partnerId === auth.partnerId) ? row : null;
 }
-
-export const GET = withAuth(async (_request: Request, auth, context: RouteContext) => {
-  const { id } = await context.params;
-  const result = await loadOwnedSubscription(id, auth);
-  if ('error' in result) {
-    const status = result.error === 'NOT_FOUND' ? 404 : 403;
-    return NextResponse.json({ success: false, error: result.error }, { status });
-  }
-  const deliveries = await db.webhookDelivery.findMany({
-    where: { subscriptionId: result.subscription.id },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    select: {
-      id: true,
-      eventType: true,
-      status: true,
-      attempts: true,
-      responseStatus: true,
-      errorMessage: true,
-      durationMs: true,
-      createdAt: true,
-      lastAttemptAt: true,
-      nextAttemptAt: true,
-    },
-  });
-  return NextResponse.json({
-    success: true,
-    subscription: redactSubscription(result.subscription),
-    deliveries,
-  });
-}, { requireUserTypes: [...ADMIN_TYPES, 'PARTNER', 'EMPLOYEE'] });
-
-export const PATCH = withAuth(async (request: Request, auth, context: RouteContext) => {
-  const { id } = await context.params;
-  const result = await loadOwnedSubscription(id, auth);
-  if ('error' in result) {
-    const status = result.error === 'NOT_FOUND' ? 404 : 403;
-    return NextResponse.json({ success: false, error: result.error }, { status });
-  }
-
-  const body = await request.json().catch(() => null);
-  if (!body || typeof body !== 'object') {
-    return NextResponse.json({ success: false, error: 'A JSON body is required' }, { status: 400 });
-  }
-
-  const data: Record<string, unknown> = { updatedBy: auth.actorUserId };
-  const changes: string[] = [];
-
-  if (typeof body.name === 'string' && body.name.trim()) {
-    data.name = body.name.trim().slice(0, 190);
-    changes.push('name');
-  }
-  if (Array.isArray(body.events)) {
-    const events = normalizeEventList(body.events);
-    if (events.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'At least one supported event is required' },
-        { status: 400 },
-      );
+const missing = () => NextResponse.json({ success: false, error: 'Webhook subscription not found.' }, { status: 404 });
+export const GET = withAuth(async (request: Request, auth, context: Context) => {
+    const denied = await requireWebhookManagement(auth, request);
+    if (denied)
+        return denied;
+    const { id } = await context.params;
+    const row = await owned(id, auth);
+    if (!row)
+        return missing();
+    const deliveries = await db.webhookDelivery.findMany({ where: { subscriptionId: id }, orderBy: { createdAt: 'desc' }, take: 50, select: { id: true, eventType: true, status: true, attempts: true, responseStatus: true, errorMessage: true, durationMs: true, createdAt: true, lastAttemptAt: true, nextAttemptAt: true } });
+    await db.$transaction(async (tx) => { await writePortalAudit(tx, auth, 'WEBHOOK_SUBSCRIPTION_VIEWED', 'WebhookSubscription', id, { deliveries: deliveries.length }, request); });
+    return NextResponse.json({ success: true, subscription: redactSubscription(row), deliveries }, { headers: { 'Cache-Control': 'private, no-store' } });
+}, { requireUserTypes: types });
+const Patch = z.object({ name: z.string().trim().min(1).max(190).optional(), events: z.array(z.string().max(80)).min(1).max(50).optional(), active: z.boolean().optional(), maxRetries: z.number().int().min(0).max(10).optional(), timeoutMs: z.number().int().min(1000).max(60000).optional(), description: z.string().max(1900).optional(), targetUrl: z.string().url().max(191).optional(), allowPrivateHost: z.boolean().optional() }).strict();
+export const PATCH = withAuth(async (request: Request, auth, context: Context) => {
+    const denied = await requireWebhookManagement(auth, request, true);
+    if (denied)
+        return denied;
+    const { id } = await context.params;
+    const row = await owned(id, auth);
+    if (!row)
+        return missing();
+    const parsed = Patch.safeParse(await request.json().catch(() => null));
+    if (!parsed.success)
+        return NextResponse.json({ success: false, error: 'Invalid webhook update.' }, { status: 400 });
+    const { allowPrivateHost, ...input } = parsed.data;
+    const data: {
+        name?: string;
+        events?: string;
+        active?: boolean;
+        maxRetries?: number;
+        timeoutMs?: number;
+        description?: string;
+        targetUrl?: string;
+        updatedBy: string;
+    } = { ...input, events: undefined, updatedBy: auth.actorUserId };
+    if (input.events) {
+        const events = normalizeEventList(input.events);
+        if (!events.length)
+            return NextResponse.json({ success: false, error: 'At least one supported event is required.' }, { status: 400 });
+        data.events = JSON.stringify(events);
     }
-    data.events = JSON.stringify(events);
-    changes.push('events');
-  }
-  if (typeof body.active === 'boolean') {
-    data.active = body.active;
-    changes.push('active');
-  }
-  if (typeof body.maxRetries === 'number') {
-    data.maxRetries = Math.max(0, Math.min(10, Math.round(body.maxRetries)));
-    changes.push('maxRetries');
-  }
-  if (typeof body.timeoutMs === 'number') {
-    data.timeoutMs = Math.max(1000, Math.min(60000, Math.round(body.timeoutMs)));
-    changes.push('timeoutMs');
-  }
-  if (typeof body.description === 'string') {
-    data.description = body.description.slice(0, 1900);
-    changes.push('description');
-  }
-  // targetUrl changes go through the SSRF-validating creation path semantics.
-  if (typeof body.targetUrl === 'string' && body.targetUrl.trim()) {
-    const { validateWebhookUrl } = await import('@/lib/webhooks');
-    const isPartner = auth.userType === 'PARTNER';
-    const check = validateWebhookUrl(body.targetUrl, !isPartner && body.allowPrivateHost === true);
-    if (!check.valid) {
-      return NextResponse.json(
-        { success: false, error: `Webhook target rejected: ${check.reason}` },
-        { status: 400 },
-      );
+    if (input.targetUrl) {
+        const check = validateWebhookUrl(input.targetUrl, auth.userType !== 'PARTNER' && allowPrivateHost === true && privateWebhookHostAllowed(input.targetUrl));
+        if (!check.valid)
+            return NextResponse.json({ success: false, error: `Webhook target rejected: ${check.reason}` }, { status: 400 });
+        data.targetUrl = check.normalizedUrl;
     }
-    data.targetUrl = check.normalizedUrl;
-    changes.push('targetUrl');
-  }
-
-  if (changes.length === 0) {
-    return NextResponse.json({ success: true, changed: [], subscription: redactSubscription(result.subscription) });
-  }
-
-  const updated = await db.webhookSubscription.update({ where: { id }, data });
-  await logAuditAction(auth, 'WEBHOOK_SUBSCRIPTION_UPDATED', 'WebhookSubscription', id, { changes });
-  return NextResponse.json({ success: true, changed: changes, subscription: redactSubscription(updated) });
-}, { requireUserTypes: [...ADMIN_TYPES, 'PARTNER', 'EMPLOYEE'] });
-
-export const DELETE = withAuth(async (_request: Request, auth, context: RouteContext) => {
-  const { id } = await context.params;
-  const result = await loadOwnedSubscription(id, auth);
-  if ('error' in result) {
-    const status = result.error === 'NOT_FOUND' ? 404 : 403;
-    return NextResponse.json({ success: false, error: result.error }, { status });
-  }
-  await db.webhookSubscription.delete({ where: { id } });
-  await logAuditAction(auth, 'WEBHOOK_SUBSCRIPTION_DELETED', 'WebhookSubscription', id, {});
-  return NextResponse.json({ success: true, deleted: id });
-}, { requireUserTypes: [...ADMIN_TYPES, 'PARTNER'] });
-
-export const POST = withAuth(async (request: Request, auth, context: RouteContext) => {
-  const { id } = await context.params;
-  const result = await loadOwnedSubscription(id, auth);
-  if ('error' in result) {
-    const status = result.error === 'NOT_FOUND' ? 404 : 403;
-    return NextResponse.json({ success: false, error: result.error }, { status });
-  }
-  const body = await request.json().catch(() => ({}));
-  if (body?.action !== 'rotate-secret') {
-    return NextResponse.json(
-      { success: false, error: 'Unsupported action. Use { action: "rotate-secret" }.' },
-      { status: 400 },
-    );
-  }
-  const { secret } = await rotateSubscriptionSecret(id, auth.actorUserId);
-  await logAuditAction(auth, 'WEBHOOK_SECRET_ROTATED', 'WebhookSubscription', id, {});
-  return NextResponse.json({ success: true, secret });
-}, { requireUserTypes: [...ADMIN_TYPES, 'PARTNER', 'EMPLOYEE'] });
+    const updated = await db.$transaction(async (tx) => { const result = await tx.webhookSubscription.update({ where: { id }, data }); await writePortalAudit(tx, auth, 'WEBHOOK_SUBSCRIPTION_UPDATED', 'WebhookSubscription', id, { changed: Object.keys(parsed.data), previousActive: row.active, newActive: result.active }, request); return result; });
+    return NextResponse.json({ success: true, subscription: redactSubscription(updated), changed: Object.keys(parsed.data) });
+}, { requireUserTypes: types });
+// Archive instead of cascading deletion of delivery/audit history.
+export const DELETE = withAuth(async (request: Request, auth, context: Context) => {
+    const denied = await requireWebhookManagement(auth, request, true);
+    if (denied)
+        return denied;
+    const { id } = await context.params;
+    const row = await owned(id, auth);
+    if (!row)
+        return missing();
+    await db.$transaction(async (tx) => { await tx.webhookSubscription.update({ where: { id }, data: { active: false, updatedBy: auth.actorUserId } }); await writePortalAudit(tx, auth, 'WEBHOOK_SUBSCRIPTION_ARCHIVED', 'WebhookSubscription', id, { previousActive: row.active, active: false, historyPreserved: true }, request); });
+    return NextResponse.json({ success: true, archived: id, historyPreserved: true });
+}, { requireUserTypes: types });
+export const POST = withAuth(async (request: Request, auth, context: Context) => {
+    const denied = await requireWebhookManagement(auth, request, true);
+    if (denied)
+        return denied;
+    const { id } = await context.params;
+    if (!await owned(id, auth))
+        return missing();
+    const body = z.object({ action: z.literal('rotate-secret') }).strict().safeParse(await request.json().catch(() => null));
+    if (!body.success)
+        return NextResponse.json({ success: false, error: 'Unsupported webhook action.' }, { status: 400 });
+    const result = await db.$transaction(async (tx) => { const rotated = await rotateSubscriptionSecret(id, auth.actorUserId, tx); await writePortalAudit(tx, auth, 'WEBHOOK_SECRET_ROTATED', 'WebhookSubscription', id, {}, request); return rotated; });
+    return NextResponse.json({ success: true, ...result }, { headers: { 'Cache-Control': 'private, no-store' } });
+}, { requireUserTypes: types });

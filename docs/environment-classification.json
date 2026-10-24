@@ -1,10 +1,10 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2575,
+  "filesScanned": 2580,
   "summary": {
     "UNUSED": 102,
-    "REFERENCED_WITH_FALLBACK": 155,
+    "REFERENCED_WITH_FALLBACK": 156,
     "REFERENCED_FAIL_CLOSED": 20,
     "REFERENCED": 122,
     "PUBLIC": 12
@@ -4147,7 +4147,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 15,
+      "referenceCount": 16,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -4488,7 +4488,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 33,
+      "referenceCount": 34,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -6299,6 +6299,24 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
+      ]
+    },
+    {
+      "name": "WEBHOOK_PRIVATE_HOST_ALLOWLIST",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/webhooks/transport.ts"
       ]
     },
     {

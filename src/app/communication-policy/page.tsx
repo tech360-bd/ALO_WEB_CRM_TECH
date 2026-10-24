@@ -1,3 +1,4 @@
+import { ALO_CONTACT, ALO_SOCIALS } from '@/lib/alo-site-info';
 import { Shield, MessageCircle, Mail, Phone, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +20,7 @@ export default function CommunicationPolicyPage() {
         <Card className="p-6 sm:p-8 space-y-6">
           <section>
             <h2 className="font-bold text-[var(--alo-text)] flex items-center gap-2"><MessageCircle className="h-4 w-4 text-[var(--alo-brand)]" /> Channels</h2>
-            <p className="text-sm text-[var(--alo-body)] leading-relaxed mt-2">We contact you only on channels you consented to: <strong>WhatsApp (01805020100 / 8801805020100)</strong>, SMS, Email (noreply@aloeducation.com), Phone, Website chat, Portal messages. Social (Facebook/Instagram) only if you messaged our official page <a href="https://www.facebook.com/aloeducation" className="text-[var(--alo-brand)] underline">facebook.com/aloeducation</a>.</p>
+            <p className="text-sm text-[var(--alo-body)] leading-relaxed mt-2">We contact you only on channels you consented to: <strong>WhatsApp ({ALO_CONTACT.whatsappDisplay})</strong>, SMS, Email (noreply@aloeducation.com), Phone, Website chat, Portal messages. Social (Facebook/Instagram) only if you messaged our official page <a href={ALO_SOCIALS[0].href} className="text-[var(--alo-brand)] underline">ALO Education on Facebook</a>.</p>
           </section>
           <section>
             <h2 className="font-bold text-[var(--alo-text)] flex items-center gap-2"><Shield className="h-4 w-4 text-[var(--alo-brand)]" /> Consent & Opt-out</h2>

@@ -1,3 +1,4 @@
+import { ALO_CONTACT, ALO_SOCIALS } from '@/lib/alo-site-info';
 import { BookOpen, GraduationCap, Users, Building2, Phone, FileText } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +23,7 @@ export default function UserGuidePage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] mb-4">HELP</Badge>
         <h1 className="text-3xl font-bold text-[var(--alo-text)] mb-2">User Guide</h1>
-        <p className="text-sm text-[var(--alo-body)] mb-8 max-w-3xl">Choose your portal. Every feature is permission-controlled and audit-logged. Support 24/7 via AI Agent, WhatsApp AI <strong>01805020100</strong>, or <a href="https://www.facebook.com/aloeducation" className="text-[var(--alo-brand)] underline">Facebook</a> • Office: Barek Mansion-02, Panthapath • <a href="https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8" className="text-[var(--alo-brand)] underline">Maps</a></p>
+        <p className="text-sm text-[var(--alo-body)] mb-8 max-w-3xl">Choose your portal. Use the portal assigned to your account. Contact ALO support via WhatsApp <strong>{ALO_CONTACT.whatsappDisplay}</strong>, or <a href={ALO_SOCIALS[0].href} className="text-[var(--alo-brand)] underline">Facebook</a> • Office: {ALO_CONTACT.address} • <a href={ALO_CONTACT.mapsUrl} className="text-[var(--alo-brand)] underline">Maps</a></p>
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {guides.map(g => {

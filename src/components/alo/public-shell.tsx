@@ -1,5 +1,6 @@
 "use client";
 
+import { ALO_CONTACT, ALO_SOCIALS } from '@/lib/alo-site-info';
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -431,16 +432,16 @@ export function PublicShell({ view, onNavigate, children }: PublicShellProps) {
               <p className="mt-3 text-xs leading-relaxed text-[var(--alo-text-muted)]">From your ambition to admission, we're with you all the way.</p>
               {/* Social icons */}
               <div className="mt-4 flex gap-2">
-                <a href="https://www.facebook.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href={ALO_SOCIALS[0].href} target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Facebook" className="size-4" />
                 </a>
-                <a href="https://www.instagram.com/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href={ALO_SOCIALS[1].href} target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Instagram" className="size-4" />
                 </a>
-                <a href="https://www.linkedin.com/company/aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href={ALO_SOCIALS[2].href} target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Linkedin" className="size-4" />
                 </a>
-                <a href="https://www.youtube.com/@aloeducation" target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
+                <a href={ALO_SOCIALS[3].href} target="_blank" rel="noopener noreferrer" className="flex size-8 items-center justify-center rounded-lg border bg-white transition-colors hover:bg-[var(--alo-brand-pale)]" style={{ borderColor: BORDER, color: BLUE }}>
                   <Icon name="Youtube" className="size-4" />
                 </a>
               </div>

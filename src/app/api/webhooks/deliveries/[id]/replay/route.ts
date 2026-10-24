@@ -1,48 +1,33 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth, logAuditAction } from '@/lib/auth-middleware';
-import { replayDeadDelivery } from '@/lib/webhooks';
-
-// ============================================================
-// POST /api/webhooks/deliveries/[id]/replay
-// Re-queue a DEAD/FAILED delivery. Tenant-checked from the stored row.
-// ============================================================
-
-const ADMIN_TYPES = ['SUPER_ADMIN', 'ADMIN'];
-type RouteContext = { params: Promise<{ id: string }> };
-
-export const POST = withAuth(async (_request: Request, auth, context: RouteContext) => {
-  const { id } = await context.params;
-  const delivery = await db.webhookDelivery.findUnique({
-    where: { id },
-    include: { subscription: { select: { id: true, partnerId: true } } },
-  });
-  if (!delivery) {
-    return NextResponse.json({ success: false, error: 'Delivery not found' }, { status: 404 });
-  }
-
-  const isAdmin = ADMIN_TYPES.includes(auth.userType);
-  if (!isAdmin) {
-    if (auth.userType !== 'PARTNER' || !auth.partnerId) {
-      return NextResponse.json({ success: false, error: 'Insufficient access level.' }, { status: 403 });
-    }
-    if (delivery.subscription.partnerId !== auth.partnerId) {
-      return NextResponse.json({ success: false, error: 'TENANT_MISMATCH' }, { status: 403 });
-    }
-  }
-
-  if (delivery.status === 'DELIVERED') {
-    // Replaying an already-delivered event would double-send. Refuse instead of
-    // silently creating a duplicate (spec s90 idempotency).
-    return NextResponse.json(
-      { success: false, error: 'Delivery already succeeded; nothing to replay' },
-      { status: 409 },
-    );
-  }
-
-  const updated = await replayDeadDelivery(id);
-  await logAuditAction(auth, 'WEBHOOK_DELIVERY_REPLAYED', 'WebhookDelivery', id, {
-    previousStatus: delivery.status,
-  });
-  return NextResponse.json({ success: true, delivery: { id: updated.id, status: updated.status } });
-}, { requireUserTypes: [...ADMIN_TYPES, 'PARTNER'] });
+import { withAuth } from '@/lib/auth-middleware';
+import { requireWebhookManagement } from '@/lib/webhooks/access';
+import { writePortalAudit } from '@/lib/transactional-audit';
+type Context = {
+    params: Promise<{
+        id: string;
+    }>;
+};
+export const POST = withAuth(async (request: Request, auth, context: Context) => {
+    const denied = await requireWebhookManagement(auth, request, true);
+    if (denied)
+        return denied;
+    const { id } = await context.params;
+    if (!id || id.length > 191)
+        return NextResponse.json({ success: false, error: 'Invalid delivery ID.' }, { status: 400 });
+    const delivery = await db.webhookDelivery.findUnique({ where: { id }, include: { subscription: { select: { partnerId: true } } } });
+    if (!delivery || (auth.userType === 'PARTNER' && delivery.subscription.partnerId !== auth.partnerId))
+        return NextResponse.json({ success: false, error: 'Delivery not found.' }, { status: 404 });
+    if (!['FAILED', 'DEAD'].includes(delivery.status))
+        return NextResponse.json({ success: false, error: 'Only failed/dead deliveries can be replayed.' }, { status: 409 });
+    const queued = await db.$transaction(async (tx) => {
+        const changed = await tx.webhookDelivery.updateMany({ where: { id, status: { in: ['FAILED', 'DEAD'] } }, data: { status: 'PENDING', attempts: 0, nextAttemptAt: new Date(), errorMessage: null } });
+        if (changed.count !== 1)
+            return false;
+        await writePortalAudit(tx, auth, 'WEBHOOK_DELIVERY_REPLAYED', 'WebhookDelivery', id, { previousStatus: delivery.status, status: 'PENDING' }, request);
+        return true;
+    });
+    if (!queued)
+        return NextResponse.json({ success: false, error: 'Delivery changed before replay; reload its status.' }, { status: 409 });
+    return NextResponse.json({ success: true, delivery: { id, status: 'PENDING' } }, { headers: { 'Cache-Control': 'private, no-store' } });
+}, { requireUserTypes: ['SUPER_ADMIN', 'ADMIN', 'PARTNER', 'EMPLOYEE'] });

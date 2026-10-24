@@ -11,15 +11,18 @@
 //    recorded as delivered. If delivery fails the row says FAILED/DEAD with
 //    the real HTTP status and error. There is no optimistic success path.
 //  * IDEMPOTENCY (s90). (subscriptionId, eventId) is UNIQUE, so replaying the
-//    same business event can never double-deliver or double-insert.
+//    same business event cannot double-enqueue. Delivery is at-least-once;
+//    receivers must deduplicate by event ID across retries.
 //  * RETRY WITH BACKOFF. Exponential, capped by maxRetries, then DEAD
 //    (dead-letter) so operators can inspect and replay.
 //  * SSRF GUARD. Only http/https, and private/loopback/link-local hosts are
-//    rejected unless an operator explicitly opts in per subscription.
+//    rejected unless an operator configures the exact host in the server allowlist.
 //  * SIGNING. HMAC-SHA256 over `${timestamp}.${rawBody}` using the
 //    subscription secret; secrets are stored encrypted (AES-256-GCM).
 // ============================================================
 
+import type { Prisma } from '@prisma/client';
+import { privateWebhookHostAllowed, secureWebhookFetch } from '@/lib/webhooks/transport';
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { db } from '@/lib/db';
 import { decryptToken, encryptToken } from '@/lib/token-encryption';
@@ -94,6 +97,7 @@ export function validateWebhookUrl(rawUrl: string, allowPrivate = false): UrlVal
   if (parsed.protocol === 'http:' && process.env.NODE_ENV === 'production') {
     return { valid: false, reason: 'INSECURE_SCHEME_IN_PRODUCTION' };
   }
+  if (parsed.username || parsed.password) return { valid: false, reason: 'EMBEDDED_CREDENTIALS_NOT_ALLOWED' };
   if (!allowPrivate && PRIVATE_HOST_PATTERNS.some((pattern) => pattern.test(parsed.hostname))) {
     return { valid: false, reason: 'PRIVATE_HOST_NOT_ALLOWED' };
   }
@@ -217,7 +221,7 @@ export function redactSubscription<T extends { secret: string }>(subscription: T
   return { ...rest, secretConfigured: Boolean(_secret) };
 }
 
-export async function createSubscription(input: CreateSubscriptionInput) {
+export async function createSubscription(input: CreateSubscriptionInput, client: Pick<Prisma.TransactionClient, 'webhookSubscription'> = db) {
   const urlCheck = validateWebhookUrl(input.targetUrl, input.allowPrivateHost === true);
   if (!urlCheck.valid) {
     throw new Error(`Webhook target rejected: ${urlCheck.reason}`);
@@ -228,7 +232,7 @@ export async function createSubscription(input: CreateSubscriptionInput) {
   }
   const plaintextSecret = input.secret?.trim() || generateWebhookSecret();
 
-  const subscription = await db.webhookSubscription.create({
+  const subscription = await client.webhookSubscription.create({
     data: {
       name: String(input.name || '').trim().slice(0, 190),
       targetUrl: urlCheck.normalizedUrl as string,
@@ -264,9 +268,9 @@ export async function listSubscriptions(filter: { partnerId?: string | null; act
   return rows.map(redactSubscription);
 }
 
-export async function rotateSubscriptionSecret(id: string, actorId?: string | null) {
+export async function rotateSubscriptionSecret(id: string, actorId?: string | null, client: Pick<Prisma.TransactionClient, 'webhookSubscription'> = db) {
   const plaintextSecret = generateWebhookSecret();
-  await db.webhookSubscription.update({
+  await client.webhookSubscription.update({
     where: { id },
     data: { secret: encryptToken(plaintextSecret), updatedBy: actorId || '' },
   });
@@ -422,7 +426,7 @@ export async function deliverWebhook(
   options: DeliverOptions = {},
 ): Promise<DeliveryAttemptResult> {
   const now = options.now ?? new Date();
-  const doFetch = options.fetchImpl || (globalThis.fetch as unknown as FetchLike);
+  const doFetch = options.fetchImpl || secureWebhookFetch;
 
   const delivery = await db.webhookDelivery.findUnique({
     where: { id: deliveryId },
@@ -442,7 +446,7 @@ export async function deliverWebhook(
     return { id: deliveryId, status: 'DEAD', error: 'SUBSCRIPTION_INACTIVE' };
   }
 
-  const urlCheck = validateWebhookUrl(subscription.targetUrl, true);
+  const urlCheck = validateWebhookUrl(subscription.targetUrl, privateWebhookHostAllowed(subscription.targetUrl));
   if (!urlCheck.valid) {
     await db.webhookDelivery.update({
       where: { id: deliveryId },
@@ -459,12 +463,17 @@ export async function deliverWebhook(
   } catch {
     secret = '';
   }
-  const signature = secret ? signPayload(secret, timestamp, delivery.payload) : '';
+  if (!secret) {
+    await db.webhookDelivery.update({ where: { id: deliveryId }, data: { status: 'DEAD', errorMessage: 'SIGNING_SECRET_UNAVAILABLE', lastAttemptAt: now } });
+    return { id: deliveryId, status: 'DEAD', error: 'SIGNING_SECRET_UNAVAILABLE' };
+  }
+  const signature = signPayload(secret, timestamp, delivery.payload);
 
   const startedAt = Date.now();
   try {
     const response = await doFetch(subscription.targetUrl, {
       method: 'POST',
+      redirect: 'error',
       headers: {
         'content-type': 'application/json',
         'x-alo-event': delivery.eventType,

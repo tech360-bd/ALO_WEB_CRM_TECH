@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
+import { requireWebhookManagement } from '@/lib/webhooks/access';
 import { WEBHOOK_EVENTS } from '@/lib/webhooks';
 
 // ============================================================
 // GET /api/webhooks/events — the canonical outbound event catalogue (spec s77)
 // ============================================================
 
-export const GET = withAuth(async () => {
+export const GET = withAuth(async (request: Request, auth) => {
+  const denied = await requireWebhookManagement(auth, request); if (denied) return denied;
   return NextResponse.json({
     success: true,
     events: WEBHOOK_EVENTS,

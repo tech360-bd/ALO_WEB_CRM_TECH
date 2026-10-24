@@ -8,7 +8,7 @@
  * site showed three different offices at once. Change a value here once and
  * every surface follows.
  *
- * Values verified against the live site (aloeducation.com/contact, fetched
+ * Contact values were checked against the live site (aloeducation.com/contact, fetched
  * 2026-10-13): phone +88 01805020101-10, info@aloeducation.com, Barek
  * Mansion-02 (5th Floor), 58/9 Box Culvert Road, Panthapath, Dhaka-1205,
  * WhatsApp wa.me/8801805020101.
@@ -34,6 +34,9 @@ export const ALO_CONTACT = {
 } as const;
 
 /**
+ * Bangladesh ALO Education accounts corroborated by public profile identity,
+ * address/phone and tagline on 2026-10-24. Account-admin ownership is not tested.
+ * Instagram @aloeducation belongs to an unrelated training profile.
  * Official ALO Education accounts, in the order the brand requires:
  * Facebook → Instagram → LinkedIn → YouTube. Never render them in another
  * order and never add a platform that is not listed here.
@@ -43,13 +46,13 @@ export const ALO_SOCIALS = [
     id: 'facebook',
     label: 'Facebook',
     ariaLabel: 'ALO Education on Facebook',
-    href: 'https://www.facebook.com/aloeducation',
+    href: 'https://www.facebook.com/aloeducationbangladesh/',
   },
   {
     id: 'instagram',
     label: 'Instagram',
     ariaLabel: 'ALO Education on Instagram',
-    href: 'https://www.instagram.com/aloeducation',
+    href: 'https://www.instagram.com/aloeducation.bd/',
   },
   {
     id: 'linkedin',
@@ -61,7 +64,7 @@ export const ALO_SOCIALS = [
     id: 'youtube',
     label: 'YouTube',
     ariaLabel: 'ALO Education on YouTube',
-    href: 'https://www.youtube.com/@aloeducation',
+    href: 'https://www.youtube.com/@aloeducationbd',
   },
 ] as const;
 
