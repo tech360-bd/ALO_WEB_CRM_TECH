@@ -1,18 +1,18 @@
 -- Align new interview columns with their declared application defaults.
 -- Defaults affect future inserts only. Existing values and history are preserved.
 ALTER TABLE `InterviewAssessment`
-  ALTER COLUMN `dimensions` SET DEFAULT (_utf8mb4'[]'),
-  ALTER COLUMN `strengths` SET DEFAULT (_utf8mb4'[]'),
-  ALTER COLUMN `improvements` SET DEFAULT (_utf8mb4'[]'),
-  ALTER COLUMN `evidence` SET DEFAULT (_utf8mb4'[]'),
-  ALTER COLUMN `limitations` SET DEFAULT (_utf8mb4'[]'),
-  ALTER COLUMN `studentMessage` SET DEFAULT (_utf8mb4'');
-ALTER TABLE `InterviewPracticeWindow` ALTER COLUMN `extensionReason` SET DEFAULT (_utf8mb4'');
+  MODIFY COLUMN `dimensions` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]'),
+  MODIFY COLUMN `strengths` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]'),
+  MODIFY COLUMN `improvements` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]'),
+  MODIFY COLUMN `evidence` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]'),
+  MODIFY COLUMN `limitations` LONGTEXT NOT NULL DEFAULT (_utf8mb4'[]'),
+  MODIFY COLUMN `studentMessage` TEXT NOT NULL DEFAULT (_utf8mb4'');
+ALTER TABLE `InterviewPracticeWindow` MODIFY COLUMN `extensionReason` TEXT NOT NULL DEFAULT (_utf8mb4'');
 ALTER TABLE `InterviewReviewDecision`
-  ALTER COLUMN `studentMessage` SET DEFAULT (_utf8mb4''),
-  ALTER COLUMN `internalNotes` SET DEFAULT (_utf8mb4'');
+  MODIFY COLUMN `studentMessage` TEXT NOT NULL DEFAULT (_utf8mb4''),
+  MODIFY COLUMN `internalNotes` TEXT NOT NULL DEFAULT (_utf8mb4'');
 ALTER TABLE `StudentInterviewFact`
-  ALTER COLUMN `reasonUniversity` SET DEFAULT (_utf8mb4''),
-  ALTER COLUMN `reasonCourse` SET DEFAULT (_utf8mb4''),
-  ALTER COLUMN `fundingSource` SET DEFAULT (_utf8mb4''),
-  ALTER COLUMN `futurePlan` SET DEFAULT (_utf8mb4'');
+  MODIFY COLUMN `reasonUniversity` TEXT NOT NULL DEFAULT (_utf8mb4''),
+  MODIFY COLUMN `reasonCourse` TEXT NOT NULL DEFAULT (_utf8mb4''),
+  MODIFY COLUMN `fundingSource` TEXT NOT NULL DEFAULT (_utf8mb4''),
+  MODIFY COLUMN `futurePlan` TEXT NOT NULL DEFAULT (_utf8mb4'');

@@ -9,6 +9,8 @@ Base: `71279773a829e2587cee425835e50d23d5b4a8fd`, which includes the deliberate 
 - Run 40091152343, integration job 120868150312: own salary and draft-download assertions returned 403 because the disposable test employee had no explicit `h6` permission. The API had also changed from approved payroll to raw salary records, contrary to the approved-payslip contract.
 - Current salary page had duplicate `error` state and an undefined `payslipHistory` left across edits. Those defects were masked by earlier CI failures.
 
+The full typecheck additionally exposed pre-existing leave/reports merge errors, nullable employee lookup assignments, and missing permission-module/action union members. They are corrected without bypassing authorization or removing functionality.
+
 ## Changes
 
 - Preserve VARCHAR(500) URLs in Prisma. Add migration `20261024220000_interview_column_defaults` to set missing defaults without rewriting/deleting existing rows or editing already-applied migrations. Use the repository's explicit MySQL expression-default representation. No drift-check relaxation.
@@ -19,7 +21,7 @@ Base: `71279773a829e2587cee425835e50d23d5b4a8fd`, which includes the deliberate 
 
 ## Verification
 
-Local full suite: 3,207 passed, 86 database-dependent skipped. Changed-file ESLint and secret-finding guard tests passed. Prisma client generated. Full secret scan, TypeScript, fresh MySQL migration/drift/integration and production build results must be checked on this PR's final commit; no production deployment or all-platform completion is claimed here.
+Local full suite: 3,207 passed, 86 database-dependent skipped. Changed-file ESLint and secret-finding guard tests passed. Prisma client generated. A first CI attempt rejected ALTER COLUMN SET DEFAULT for a TEXT/LONGTEXT default (MySQL 1101); the unreleased migration now uses the repository’s already-tested MODIFY COLUMN expression-default form, preserving column types/nullability and data. Full secret scan, TypeScript, fresh MySQL migration/drift/integration and production build results must be checked on this PR's final commit; no production deployment or all-platform completion is claimed here.
 
 ## Deployment and rollback
 

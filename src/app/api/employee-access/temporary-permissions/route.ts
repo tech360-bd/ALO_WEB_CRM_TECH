@@ -55,8 +55,9 @@ export async function GET(req: NextRequest) {
     let target = own;
     if (requestedId && !aliases(own).includes(requestedId)) {
       if (!reviewer) return NextResponse.json({ success: false, error: 'Permission denied.' }, { status: 403 });
-      target = await db.employee.findFirst({ where: { OR: [{ id: requestedId }, { userId: requestedId }, { employeeId: requestedId }] }, select: { id: true, userId: true, employeeId: true, status: true } });
-      if (!target) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+      const requestedTarget = await db.employee.findFirst({ where: { OR: [{ id: requestedId }, { userId: requestedId }, { employeeId: requestedId }] }, select: { id: true, userId: true, employeeId: true, status: true } });
+      if (!requestedTarget) return NextResponse.json({ success: false, error: 'Employee not found.' }, { status: 404 });
+      target = requestedTarget;
     }
     const allEmployees = !requestedId && reviewer;
     const grants = await db.employeeTemporaryPermission.findMany({
