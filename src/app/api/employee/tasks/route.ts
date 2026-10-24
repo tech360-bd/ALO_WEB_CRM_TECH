@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
   const access = await getEmployee(request);
   if (access instanceof NextResponse) return access;
   const { auth, employee, identifiers } = access;
+  if (!auth.permissions.includes('employee.tasks.view')) return NextResponse.json({ success: false, error: 'Task-view permission is required.' }, { status: 403 });
   const params = request.nextUrl.searchParams;
   const pageValue = params.get('page') || '1';
   const limitValue = params.get('limit') || '20';
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
   };
   try {
     const [tasks, total] = await Promise.all([
-      db.counselorTask.findMany({ where, orderBy: { [sortBy]: sortOrder as 'asc' | 'desc' }, skip: (page - 1) * limit, take: limit }),
+      db.counselorTask.findMany({ where, orderBy: { [sortBy]: sortOrder as 'asc' | 'desc' }, skip: (page - 1) * limit, take: limit, select: { id: true, title: true, description: true, type: true, priority: true, status: true, dueDate: true, createdAt: true, updatedAt: true } }),
       db.counselorTask.count({ where }),
     ]);
     await db.portalAuditLog.create({ data: { actorUserId: auth.actorUserId, action: 'EMPLOYEE_TASKS_VIEWED', entityType: 'CounselorTask', entityId: employee.id, metadata: JSON.stringify({ effectiveUserId: auth.userId, total, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }) } });
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
   const access = await getEmployee(request);
   if (access instanceof NextResponse) return access;
   const { auth, employee, identifiers } = access;
+  if (!auth.permissions.includes('employee.tasks.create')) return NextResponse.json({ success: false, error: 'Task-create permission is required.' }, { status: 403 });
   if (!mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
   const body: unknown = await request.json().catch(() => null);
   if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'A valid task is required.' }, { status: 400 });
@@ -105,7 +107,7 @@ export async function POST(request: NextRequest) {
       linkedLeadId = lead.id;
     }
     const task = await db.$transaction(async (tx) => {
-      const created = await tx.counselorTask.create({ data: { employeeId: employee.id, title, description, type, priority, status: 'pending', dueDate, studentId: linkedStudentId, leadId: linkedLeadId } });
+      const created = await tx.counselorTask.create({ data: { employeeId: employee.id, title, description, type, priority, status: 'pending', dueDate, studentId: linkedStudentId, leadId: linkedLeadId }, select: { id: true, title: true, description: true, type: true, priority: true, status: true, dueDate: true, createdAt: true, updatedAt: true } });
       await writePortalAudit(tx, auth, 'EMPLOYEE_TASK_CREATED', 'CounselorTask', created.id, { ownerEmployeeId: employee.id, type, priority, dueDate, studentId: linkedStudentId || null, leadId: linkedLeadId || null }, request);
       return created;
     });
@@ -119,6 +121,7 @@ export async function PUT(request: NextRequest) {
   const access = await getEmployee(request);
   if (access instanceof NextResponse) return access;
   const { auth, employee, identifiers } = access;
+  if (!auth.permissions.includes('employee.tasks.update')) return NextResponse.json({ success: false, error: 'Task-update permission is required.' }, { status: 403 });
   if (!mutationOriginAllowed(request, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
   const body: unknown = await request.json().catch(() => null);
   if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ success: false, error: 'A valid task update is required.' }, { status: 400 });
@@ -165,7 +168,7 @@ export async function PUT(request: NextRequest) {
       const result = await tx.counselorTask.updateMany({ where: { id, employeeId: { in: identifiers }, status: existing.status }, data: updateData });
       if (result.count !== 1) throw new Error('changed');
       await writePortalAudit(tx, auth, 'EMPLOYEE_TASK_UPDATED', 'CounselorTask', id, { fields: Object.keys(updateData), fromStatus: existing.status, toStatus: nextStatus }, request);
-      return tx.counselorTask.findUnique({ where: { id } });
+      return tx.counselorTask.findUnique({ where: { id }, select: { id: true, title: true, description: true, type: true, priority: true, status: true, dueDate: true, createdAt: true, updatedAt: true } });
     });
     return NextResponse.json({ success: true, data: updated, task: updated, message: 'Task updated.' });
   } catch (error) {

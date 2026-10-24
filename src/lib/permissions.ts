@@ -285,6 +285,17 @@ export const PERMISSION_CATALOG: Permission[] = [
 
   // --- EMPLOYEE DASHBOARD ---
   { id: "employee.dashboard.view", module: "hr_self", feature: "employee.dashboard", action: "view", description: "View an authorized employee dashboard using server-enforced data scope" },
+  { id: "employee.tasks.view", module: "crm", feature: "employee.tasks", action: "view", description: "View tasks owned by the authenticated employee" },
+  { id: "employee.tasks.create", module: "crm", feature: "employee.tasks", action: "create", description: "Create a task owned by the authenticated employee" },
+  { id: "employee.tasks.update", module: "crm", feature: "employee.tasks", action: "update", description: "Update a task owned by the authenticated employee" },
+  { id: "employee.leave.view", module: "hr_self", feature: "employee.leave", action: "view_own", description: "View own leave requests and balance" },
+  { id: "employee.leave.create", module: "hr_self", feature: "employee.leave", action: "create_own", description: "Submit own leave request" },
+  { id: "employee.leave.view_all", module: "hr_private", feature: "employee.leave", action: "view_all", description: "View leave requests within explicitly authorized HR scope" },
+  { id: "employee.leave.approve", module: "hr_private", feature: "employee.leave", action: "approve", description: "Approve or reject leave requests in authorized branch scope" },
+  { id: "employee.leave.approve_all", module: "hr_private", feature: "employee.leave", action: "approve_all", description: "Approve or reject leave requests across the company" },
+  { id: "employee.performance.view", module: "hr_self", feature: "employee.performance", action: "view_own", description: "View own employee performance records" },
+  { id: "employee.performance.view_all", module: "hr_private", feature: "employee.performance", action: "view_all", description: "View performance records across the company when explicitly assigned" },
+  { id: "employee.performance.manage", module: "hr_private", feature: "employee.performance", action: "manage", description: "Create and update employee performance records" },
   { id: "employee.dashboard.view_all", module: "hr_private", feature: "employee.dashboard", action: "view_all", description: "View company-wide employee dashboard data when explicitly assigned" },
   { id: "employee.permission_requests.approve", module: "hr_private", feature: "employee.permissions", action: "approve", description: "Review and approve temporary employee access requests with separation of duties" },
 
@@ -305,6 +316,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   super_admin: PERMISSION_CATALOG.map((p) => p.id),
   branch_manager: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.leave.view_all", "employee.leave.approve",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9",
     "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d9",
     "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9",
@@ -317,6 +332,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   counselor: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "s1", "s3", "s4", "s6", "s8", "s9",
     "d1", "d2", "d3", "d7",
     "c1", "c2", "c3", "c4", "c5", "c7", "c8",
@@ -327,6 +345,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   application_officer: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "s1", "s2", "s4",
     "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d9",
     "c1", "c3", "c7", "c9",
@@ -335,6 +356,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   visa_officer: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "s1", "s2",
     "d1", "d3", "d4", "d5", "d6", "d7",
     "c1", "c7",
@@ -350,6 +374,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   visa_interview_officer: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "s1", "v1", "v4", "v5",
     "visa.dashboard.view", "visa.cases.view", "visa.cases.assigned.view",
     "visa.interviews.view", "visa.interviews.create", "visa.interviews.update", "visa.interviews.finish",
@@ -361,6 +388,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   visa_team: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "s1", "v1", "v2", "v3", "v4", "v5", "v6",
     "visa.dashboard.view", "visa.cases.view", "visa.cases.assigned.view", "visa.cases.update",
     "visa.interviews.view", "visa.interviews.create", "visa.interviews.update", "visa.interviews.finish",
@@ -386,6 +416,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   hr_manager: [
     "employee.dashboard.view",
+    "employee.leave.view_all", "employee.leave.approve", "employee.leave.approve_all",
+    "employee.performance.view", "employee.performance.view_all", "employee.performance.manage",
     "employee.permission_requests.approve",
     "s1", "s2",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
@@ -393,6 +425,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
   ],
   employee: [
     "employee.dashboard.view",
+    "employee.leave.view", "employee.leave.create",
+    "employee.performance.view",
+    "employee.tasks.view", "employee.tasks.create", "employee.tasks.update",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
   ],
 };

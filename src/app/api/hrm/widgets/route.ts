@@ -54,7 +54,9 @@ export async function GET(request: Request) {
       db.employeeAttendance.findFirst({ where: { employeeId: { in: employeeKeys }, date: today }, select: { status: true, clockIn: true, clockOut: true, hoursWorked: true } }),
       db.leaveRequest.count({ where: { employeeId: { in: employeeKeys }, status: { in: ['PENDING', 'pending'] } } }),
       db.employeeDocument.count({ where: { employeeId: { in: employeeKeys }, isDeleted: false } }),
-      db.employeePayroll.findFirst({ where: { employeeId: { in: employeeKeys }, period: month }, select: { status: true, netSalary: true } }),
+      canViewOwnSalary
+        ? db.employeePayroll.findFirst({ where: { employeeId: { in: employeeKeys }, period: month }, select: { status: true, netSalary: true } })
+        : Promise.resolve(null),
     ]) : [null, 0, 0, null];
 
     const own = {
@@ -143,6 +145,19 @@ export async function GET(request: Request) {
         metadata: JSON.stringify({ effectiveUserId: auth.userId, role, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }),
       },
     });
+    if (canViewOwnSalary && ownPayroll) {
+      // Salary values are returned only after a distinct, value-free access
+      // audit record succeeds; audit metadata never contains the salary amount.
+      await db.portalAuditLog.create({
+        data: {
+          actorUserId: auth.actorUserId,
+          action: 'EMPLOYEE_OWN_SALARY_SLIP_VIEWED',
+          entityType: 'EmployeeSalarySlip',
+          entityId: employee?.id || auth.userId,
+          metadata: JSON.stringify({ effectiveUserId: auth.userId, employeeId: employee?.employeeId || '', period: month, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }),
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, data }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch {

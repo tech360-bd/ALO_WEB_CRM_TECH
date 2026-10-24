@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
-export const GET = withAuth(async (request: Request) => {
+export const GET = withAuth(async (request: Request, auth: AuthContext) => {
+  if (!auth.roles.some((role) => role.toLowerCase() === 'super_admin')) {
+    return NextResponse.json({ success: false, error: 'Super Admin access required.' }, { status: 403 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const requestedPage = Number(searchParams.get('page') || 1);
+    const requestedLimit = Number(searchParams.get('limit') || 20);
+    const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+    const limit = Number.isSafeInteger(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 100) : 20;
 
     const where = status ? { status } : {};
 
@@ -22,7 +27,7 @@ export const GET = withAuth(async (request: Request) => {
     ]);
 
     return NextResponse.json({ success: true, batches, total });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Import batches could not be loaded.' }, { status: 503 });
   }
 });

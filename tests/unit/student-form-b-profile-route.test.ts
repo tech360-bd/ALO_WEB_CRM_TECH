@@ -9,7 +9,7 @@ import { GET, PUT } from '@/app/api/student-portal/profile/route';
 const request = (body: unknown) => new Request('https://alo.test/api/student-portal/profile', { method: 'PUT', body: JSON.stringify(body) });
 beforeEach(() => {
   vi.resetAllMocks();
-  m.auth.mockResolvedValue({ studentId: 'own-student', name: 'Synthetic Student', email: 'synthetic@example.test', phone: '+8801800000000' });
+  m.auth.mockResolvedValue({ studentId: 'own-student', studentCode: 'AE-2026000001', name: 'Synthetic Student', email: 'synthetic@example.test', phone: '+8801800000000' });
   m.find.mockResolvedValue([]);
   m.transaction.mockImplementation(async (fn) => fn({ studentProfileSection: { deleteMany: m.remove, create: m.create }, student: { update: m.update } }));
 });
@@ -17,7 +17,7 @@ describe('Form B profile persistence', () => {
   it('loads only the authenticated student and supplies no sample qualification', async () => {
     const response = await GET(new Request('https://alo.test/api/student-portal/profile?studentId=other'));
     expect(m.find).toHaveBeenCalledWith({ where: { studentId: 'own-student' } });
-    expect(await response.json()).toMatchObject({ success: true, data: { givenName: 'Synthetic', profileCompletion: 0 } });
+    expect(await response.json()).toMatchObject({ success: true, data: { studentId: 'AE-2026000001', givenName: 'Synthetic', profileCompletion: 0 } });
   });
   it('rejects unauthenticated writes before accessing the DB', async () => {
     m.auth.mockResolvedValue(NextResponse.json({ success: false }, { status: 401 }));

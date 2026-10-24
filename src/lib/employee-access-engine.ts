@@ -34,9 +34,11 @@ export const AI_HIGH_RISK = ['FINALIZE','APPROVE','SEND','PAY','DELETE','ESCALAT
 // Permission matrix per designation (least privilege)
 // ------------------------------------------------------------
 export const PERMISSION_MATRIX: Record<string, { modules: string[], actions: string[], scope: string, cannotSelfApprove?: string[] }> = {
-  Chairman: { modules: ['*'], actions: ['*'], scope: 'GLOBAL' },
-  CEO: { modules: ['*'], actions: ['*'], scope: 'GLOBAL' },
-  Director: { modules: ['*'], actions: ['*'], scope: 'GLOBAL', cannotSelfApprove: ['PAYROLL','FINANCE'] },
+  // Executive titles are not access grants. Administrative, financial, HR,
+  // publishing and approval rights must come from explicit backend permissions.
+  Chairman: { modules: [], actions: [], scope: 'OWN' },
+  CEO: { modules: [], actions: [], scope: 'OWN' },
+  Director: { modules: [], actions: [], scope: 'OWN' },
   'Office Manager': { modules: ['STUDENT','APPLICATION','DOCUMENT','VISA','ATTENDANCE','LEAVE','DEVICE','COMMUNICATION'], actions: ['VIEW','CREATE','EDIT','SUBMIT','VERIFY','SEND','ASSIGN','REASSIGN'], scope: 'OFFICE' },
   'Country Manager': { modules: ['STUDENT','APPLICATION','DOCUMENT','VISA','FINANCE','MARKETING','PARTNER','B2B','BRANCH'], actions: ['VIEW','CREATE','EDIT','SUBMIT','VERIFY','ASSIGN','REASSIGN','APPROVE'], scope: 'COUNTRY' },
   Counselor: { modules: ['STUDENT','APPLICATION','DOCUMENT','COMMUNICATION','WHATSAPP','EMAIL'], actions: ['VIEW','CREATE','EDIT','SUBMIT','SEND','UPLOAD'], scope: 'ASSIGNED' },

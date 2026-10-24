@@ -3,21 +3,9 @@ import { db } from '@/lib/db';
 import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
 import { mutationOriginAllowed } from '@/lib/request-origin';
 import { writePortalAudit } from '@/lib/transactional-audit';
+import { MAX_TEMPORARY_PERMISSION_DAYS, TEMPORARY_EMPLOYEE_VIEW_FEATURES } from '@/lib/employee-temporary-permissions';
 
-const REQUESTABLE_FEATURES = new Set([
-  'employee.documents',
-  'employee.profile.private',
-  'employee.fields.salary',
-  'employee.fields.bankAccount',
-  'employee.fields.nid',
-  'employee.fields.passport',
-  'employee.attendance',
-  'employee.leave',
-  'employee.payroll',
-  'employee.devices',
-  'employee.permissions',
-  'employee.audit',
-]);
+const REQUESTABLE_FEATURES = TEMPORARY_EMPLOYEE_VIEW_FEATURES;
 const STATUS_FILTERS = new Set(['requested', 'reviewing', 'active', 'approved', 'rejected', 'expired']);
 
 function roleSet(auth: AuthContext): Set<string> {
@@ -93,7 +81,7 @@ export async function POST(request: NextRequest) {
   const scopeId = typeof input.scopeId === 'string' ? input.scopeId.trim() : '';
   if (!REQUESTABLE_FEATURES.has(featureKey)) return NextResponse.json({ success: false, error: 'This feature is not eligible for temporary employee access.' }, { status: 400 });
   if (action !== 'view' || !['OWN', 'ASSIGNED'].includes(scopeType) || scopeId) return NextResponse.json({ success: false, error: 'Only view access within own or assigned records may be requested.' }, { status: 400 });
-  if (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > 30) return NextResponse.json({ success: false, error: 'Duration must be an integer from 1 to 30 days.' }, { status: 400 });
+  if (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > MAX_TEMPORARY_PERMISSION_DAYS) return NextResponse.json({ success: false, error: 'Duration must be an integer from 1 to 30 days.' }, { status: 400 });
   if (reason.length < 10 || reason.length > 500 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(reason)) return NextResponse.json({ success: false, error: 'A reason of 10 to 500 characters is required.' }, { status: 400 });
 
   try {
@@ -149,7 +137,7 @@ export async function PATCH(request: NextRequest) {
         if (existing.reviewedBy === reviewerId) throw new Error('reviewer cannot approve own review');
         if (!REQUESTABLE_FEATURES.has(existing.featureKey) || existing.action.toLowerCase() !== 'view' || !['own', 'assigned'].includes(existing.scopeType.toLowerCase()) || existing.scopeId) throw new Error('request is not eligible');
         const expiresAt = requestedStatus === 'approved' ? new Date(Date.now() + Number(existing.duration) * 24 * 60 * 60 * 1000) : null;
-        if (requestedStatus === 'approved' && (!Number.isFinite(expiresAt?.getTime()) || !expiresAt || Number(existing.duration) < 1 || Number(existing.duration) > 30)) throw new Error('invalid expiry');
+        if (requestedStatus === 'approved' && (!Number.isFinite(expiresAt?.getTime()) || !expiresAt || Number(existing.duration) < 1 || Number(existing.duration) > MAX_TEMPORARY_PERMISSION_DAYS)) throw new Error('invalid expiry');
         const nextStatus = requestedStatus === 'approved' ? 'active' : 'rejected';
         const result = await tx.employeePermissionRequest.updateMany({
           where: { id, status: 'reviewing', reviewedBy: existing.reviewedBy },

@@ -1,5 +1,9 @@
 # Student Identity Audit and Foundation (Phase 0 + Phase 1 identity slice)
 
+## Current format policy update — 2026-10-24
+
+The historical audit below records the prior five-digit target. The latest product instruction now requires **new** Student IDs in `AE-YYYYNNNN` format (example `AE-20260001`). The shared allocator and format tests have been updated accordingly; existing AE five/six-digit IDs and `ALO-S-*` identifiers remain valid and are never rewritten. The four-digit yearly student sequence has a hard limit of 9,999 IDs and must be considered before production rollout. No migration or production data change was made.
+
 Status legend: PASS, PARTIAL, FAIL, BLOCKED, NOT VERIFIED.
 
 ## Phase 0 findings (repository baseline at 76f3e1d)

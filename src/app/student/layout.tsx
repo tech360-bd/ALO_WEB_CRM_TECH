@@ -14,7 +14,7 @@ import {
 // ============================================================
 interface StudentUser {
   id: string;
-  studentId: string; // AE-YYYYXXXXXX
+  studentId: string; // New IDs: AE-YYYYNNNN; legacy IDs remain valid
   name: string;
   email: string;
   phone: string;

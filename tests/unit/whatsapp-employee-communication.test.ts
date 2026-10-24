@@ -8,6 +8,7 @@ vi.mock('@/lib/db', () => ({
       findFirst: vi.fn(),
       findMany: vi.fn(),
       upsert: vi.fn(),
+      createMany: vi.fn(),
       count: vi.fn(),
     },
     employee: { findFirst: vi.fn() },
@@ -26,7 +27,8 @@ vi.mock('@/lib/db', () => ({
   }
 }));
 
-import { normalizeBdPhone, OFFICIAL_NUMBERS, MAIN_NUMBER, COO_NUMBER, determineSenderNumber } from '@/lib/whatsapp-number-pool';
+import { db } from '@/lib/db';
+import { normalizeBdPhone, OFFICIAL_NUMBERS, MAIN_NUMBER, COO_NUMBER, determineSenderNumber, seedOfficialNumberPool } from '@/lib/whatsapp-number-pool';
 import { verifyWhatsAppSignature } from '@/lib/whatsapp-cloud-api';
 
 describe('WhatsApp Employee Communication — core safeguards', () => {
@@ -43,6 +45,23 @@ describe('WhatsApp Employee Communication — core safeguards', () => {
     expect(OFFICIAL_NUMBERS[19]).toBe('01805020119');
     expect(MAIN_NUMBER).toBe('01805020100');
     expect(COO_NUMBER).toBe('01805020101');
+  });
+
+  it('seedOfficialNumberPool remains additive and repairs a partial pool even when rows already exist', async () => {
+    vi.mocked(db.whatsAppOfficialNumber.createMany).mockResolvedValue({ count: 2 } as never);
+    vi.mocked(db.whatsAppOfficialNumber.count).mockResolvedValue(20);
+
+    const result = await seedOfficialNumberPool();
+
+    expect(db.whatsAppOfficialNumber.createMany).toHaveBeenCalledWith({
+      data: expect.arrayContaining([
+        expect.objectContaining({ phoneNumber: '01805020100', isDefaultSender: true, isComplaintSender: true, isFollowUpSender: true }),
+        expect.objectContaining({ phoneNumber: '01805020101', ownerType: 'COO', isSupport247: true }),
+        expect.objectContaining({ phoneNumber: '01805020119', ownerType: 'EMPLOYEE' }),
+      ]),
+      skipDuplicates: true,
+    });
+    expect(result).toEqual({ seeded: true, created: 2, count: 20 });
   });
 
   it('routing: explicit number takes precedence', async () => {

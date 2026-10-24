@@ -23,6 +23,7 @@ export async function GET(req: Request) {
       try { return isFormSectionComplete(key, JSON.parse(row.data)); } catch { return false; }
     })).length;
     return NextResponse.json({ success: true, data: {
+      studentId: auth.studentCode,
       givenName: auth.name.split(' ')[0] || '', familyName: auth.name.split(' ').slice(1).join(' '),
       leadEmail: auth.email, primaryEmail: auth.email, mobile: auth.phone, contactPhone: auth.phone,
       ...studentFormFromSections(rows), ...data, profileCompletion: Math.round(complete / REQUIRED_APPLICATION_SECTIONS.length * 100),

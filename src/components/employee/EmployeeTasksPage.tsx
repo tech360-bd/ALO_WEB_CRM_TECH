@@ -13,12 +13,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import {
-  Plus, Search, Filter, Clock, CheckCircle2, AlertTriangle,
-  XCircle, Circle, ChevronDown, Loader2, MoreHorizontal,
-  Calendar, User as UserIcon, Flag, Trash2, ArrowUpRight,
+  Plus, Search, Clock, CheckCircle2, XCircle, Circle, Loader2,
+  Calendar, User as UserIcon, Flag, RefreshCw,
 } from 'lucide-react';
 
-type TaskStatus = 'Pending' | 'In Progress' | 'Completed' | 'Overdue';
+type TaskStatus = 'Pending' | 'In Progress' | 'Completed' | 'Cancelled' | 'Overdue';
 type TaskPriority = 'high' | 'medium' | 'low';
 
 interface Task {
@@ -27,33 +26,21 @@ interface Task {
   dueDate: string; assignedTo: string; createdAt: string;
 }
 
-const mockTasks: Task[] = [
-  { id: 'T-001', title: 'Follow up with Rahim on IELTS score submission', description: 'Rahim needs to submit his IELTS score by Friday. Check if he has registered for the test.', status: 'In Progress', priority: 'high', dueDate: '2025-01-20', assignedTo: 'Sarah Khan', createdAt: '2025-01-15' },
-  { id: 'T-002', title: 'Prepare visa documents for Tanvir Ahmed', description: 'Collect all required documents for Tanvir\'s UK student visa application.', status: 'Pending', priority: 'high', dueDate: '2025-01-20', assignedTo: 'Sarah Khan', createdAt: '2025-01-14' },
-  { id: 'T-003', title: 'Review SOP draft for Nusrat Jahan', description: 'Nusrat submitted her SOP draft for University of Manchester. Review and provide feedback.', status: 'Overdue', priority: 'high', dueDate: '2025-01-17', assignedTo: 'Sarah Khan', createdAt: '2025-01-12' },
-  { id: 'T-004', title: 'Schedule counseling session for new lead #241', description: 'Contact the new lead from Facebook campaign and schedule an initial counseling.', status: 'Pending', priority: 'medium', dueDate: '2025-01-21', assignedTo: 'Sarah Khan', createdAt: '2025-01-16' },
-  { id: 'T-005', title: 'Update application tracker spreadsheet', description: 'Update the weekly application tracker with all pending and submitted applications.', status: 'In Progress', priority: 'medium', dueDate: '2025-01-21', assignedTo: 'Sarah Khan', createdAt: '2025-01-15' },
-  { id: 'T-006', title: 'Send document checklist to Fatima Akter', description: 'Fatima is preparing for her Australia application. Send the complete document checklist.', status: 'Completed', priority: 'low', dueDate: '2025-01-18', assignedTo: 'Sarah Khan', createdAt: '2025-01-13' },
-  { id: 'T-007', title: 'Verify academic transcripts for Imran Hossain', description: 'Imran\'s transcripts need verification before university submission.', status: 'Pending', priority: 'low', dueDate: '2025-01-22', assignedTo: 'Sarah Khan', createdAt: '2025-01-16' },
-  { id: 'T-008', title: 'Submit weekly performance report', description: 'Complete and submit the weekly counseling performance report to the branch manager.', status: 'Overdue', priority: 'medium', dueDate: '2025-01-17', assignedTo: 'Sarah Khan', createdAt: '2025-01-10' },
-  { id: 'T-009', title: 'Follow up on scholarship application for Sajib', description: 'Sajib applied for the University of Leeds scholarship. Follow up on the status.', status: 'Completed', priority: 'high', dueDate: '2025-01-16', assignedTo: 'Sarah Khan', createdAt: '2025-01-09' },
-  { id: 'T-010', title: 'Prepare orientation materials for new batch', description: 'Create orientation documents for the January 2025 student intake batch.', status: 'Pending', priority: 'medium', dueDate: '2025-01-25', assignedTo: 'Sarah Khan', createdAt: '2025-01-17' },
-];
-
 const statusTabs: { label: string; value: TaskStatus | 'All' }[] = [
   { label: 'All', value: 'All' },
   { label: 'Pending', value: 'Pending' },
   { label: 'In Progress', value: 'In Progress' },
   { label: 'Completed', value: 'Completed' },
+  { label: 'Cancelled', value: 'Cancelled' },
   { label: 'Overdue', value: 'Overdue' },
 ];
 
 function statusBadge(status: TaskStatus) {
   const m: Record<TaskStatus, 'warning' | 'brand' | 'success' | 'danger'> = {
-    Pending: 'warning', 'In Progress': 'brand', Completed: 'success', Overdue: 'danger',
+    Pending: 'warning', 'In Progress': 'brand', Completed: 'success', Cancelled: 'danger', Overdue: 'danger',
   };
   const icons: Record<TaskStatus, React.ElementType> = {
-    Pending: Circle, 'In Progress': Clock, Completed: CheckCircle2, Overdue: XCircle,
+    Pending: Circle, 'In Progress': Clock, Completed: CheckCircle2, Cancelled: XCircle, Overdue: XCircle,
   };
   const Icon = icons[status];
   return <Badge variant={m[status]} className="text-[11px]"><Icon className="w-3 h-3 mr-0.5" />{status}</Badge>;
@@ -84,38 +71,38 @@ function authHeaders(): Record<string, string> {
 export default function EmployeeTasksPage() {
   const { setView, user } = usePortalStore();
   const [loading, setLoading] = useState(true);
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loadError, setLoadError] = useState('');
   const [activeTab, setActiveTab] = useState<TaskStatus | 'All'>('All');
   const [search, setSearch] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
-  const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'medium' as TaskPriority, dueDate: '', assignedTo: '' });
+  const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'medium' as TaskPriority, dueDate: '' });
 
-  useEffect(() => {
-    const token = usePortalStore.getState().token;
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-
-    fetch('/api/employee/tasks', { headers })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data?.tasks?.length) {
-          setTasks(data.tasks.map((t: any) => ({
-            id: t.id || t._id,
-            title: t.title,
-            description: t.description || '',
-            status: t.status || 'Pending',
-            priority: t.priority || 'medium',
-            dueDate: t.dueDate || t.due_date || '',
-            assignedTo: t.assignedTo || t.assigned_to || user?.name || 'Sarah Khan',
-            createdAt: t.createdAt || t.created_at || new Date().toISOString().split('T')[0],
-          })));
-        }
-      })
-      .catch(() => {})
-      .finally(() => { setLoading(false); });
+  const loadTasks = useCallback(async () => {
+    setLoading(true);
+    setLoadError('');
+    try {
+      const res = await fetch('/api/employee/tasks?limit=100', { headers: authHeaders(), cache: 'no-store' });
+      const body = await res.json().catch(() => null);
+      if (!res.ok || body?.success !== true || !Array.isArray(body.tasks)) throw new Error(body?.error || 'Unable to load employee tasks.');
+      setTasks(body.tasks.map((task: any) => {
+        const rawStatus = String(task.status || '').toLowerCase();
+        const dueDate = typeof task.dueDate === 'string' ? task.dueDate : '';
+        const overdue = ['pending', 'in_progress'].includes(rawStatus) && dueDate && dueDate < new Date().toISOString().slice(0, 10);
+        const status: TaskStatus = overdue ? 'Overdue' : rawStatus === 'in_progress' ? 'In Progress' : rawStatus === 'completed' ? 'Completed' : rawStatus === 'cancelled' ? 'Cancelled' : 'Pending';
+        return { id: task.id, title: task.title, description: task.description || '', status, priority: task.priority || 'medium', dueDate, assignedTo: user?.name || 'Me', createdAt: typeof task.createdAt === 'string' ? task.createdAt.slice(0, 10) : '' };
+      }));
+    } catch (error) {
+      setTasks([]);
+      setLoadError(error instanceof Error ? error.message : 'Unable to load employee tasks.');
+    } finally {
+      setLoading(false);
+    }
   }, [user?.name]);
+
+  useEffect(() => { void loadTasks(); }, [loadTasks]);
 
   const filtered = useMemo(() => {
     let list = tasks;
@@ -134,56 +121,39 @@ export default function EmployeeTasksPage() {
         description: newTask.description,
         priority: newTask.priority,
         dueDate: newTask.dueDate,
-        assignedTo: newTask.assignedTo || user?.name || 'Sarah Khan',
       };
       const res = await fetch('/api/employee/tasks', {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify(payload),
       });
-      if (res.ok) {
-        const data = await res.json().catch(() => null);
-        if (data?.task) {
-          setTasks((p) => [{
-            id: data.task.id || data.task._id || `T-${String(tasks.length + 1).padStart(3, '0')}`,
-            ...payload,
-            status: 'Pending',
-            createdAt: new Date().toISOString().split('T')[0],
-          }, ...p]);
-        } else {
-          const task: Task = {
-            id: `T-${String(tasks.length + 1).padStart(3, '0')}`,
-            title: payload.title, description: payload.description,
-            status: 'Pending', priority: payload.priority,
-            dueDate: payload.dueDate, assignedTo: payload.assignedTo,
-            createdAt: new Date().toISOString().split('T')[0],
-          };
-          setTasks((p) => [task, ...p]);
-        }
-        toast.success('Task created successfully');
-      } else {
-        const task: Task = {
-          id: `T-${String(tasks.length + 1).padStart(3, '0')}`,
-          title: newTask.title, description: newTask.description,
-          status: 'Pending', priority: newTask.priority,
-          dueDate: newTask.dueDate, assignedTo: newTask.assignedTo || user?.name || 'Sarah Khan',
-          createdAt: new Date().toISOString().split('T')[0],
-        };
-        setTasks((p) => [task, ...p]);
-        toast.success('Task created successfully');
-      }
+      const data = await res.json().catch(() => null);
+      if (!res.ok || data?.success !== true || !data.task) throw new Error(data?.error || 'Task could not be created.');
+      const task = data.task;
+      const dueDate = typeof task.dueDate === 'string' ? task.dueDate : payload.dueDate;
+      const overdue = dueDate < new Date().toISOString().slice(0, 10);
+      setTasks((current) => [{
+        id: task.id,
+        title: task.title,
+        description: task.description || '',
+        status: overdue ? 'Overdue' : 'Pending',
+        priority: task.priority || payload.priority,
+        dueDate,
+        assignedTo: user?.name || 'Me',
+        createdAt: typeof task.createdAt === 'string' ? task.createdAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
+      }, ...current]);
+      toast.success('Task created successfully');
       setCreateOpen(false);
-      setNewTask({ title: '', description: '', priority: 'medium', dueDate: '', assignedTo: '' });
-    } catch {
-      toast.error('Failed to create task');
-    }
-    finally { setCreating(false); }
+      setNewTask({ title: '', description: '', priority: 'medium', dueDate: '' });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to create task');
+    } finally { setCreating(false); }
   };
 
   const toggleStatus = useCallback(async (id: string) => {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
-    const next: Record<TaskStatus, TaskStatus> = { Pending: 'In Progress', 'In Progress': 'Completed', Completed: 'Pending', Overdue: 'In Progress' };
+    const next: Record<TaskStatus, TaskStatus> = { Pending: 'In Progress', 'In Progress': 'Completed', Completed: 'Completed', Cancelled: 'Cancelled', Overdue: 'In Progress' };
     const newStatus = next[task.status];
     setUpdatingStatus(id);
 
@@ -193,28 +163,16 @@ export default function EmployeeTasksPage() {
         headers: authHeaders(),
         body: JSON.stringify({ id, status: newStatus }),
       });
-      if (res.ok || true) {
-        setTasks((prev) => prev.map((t) => t.id === id ? { ...t, status: newStatus } : t));
-        toast.success('Task status updated');
-      }
-    } catch {
+      const body = await res.json().catch(() => null);
+      if (!res.ok || body?.success !== true) throw new Error(body?.error || 'Task status could not be updated.');
       setTasks((prev) => prev.map((t) => t.id === id ? { ...t, status: newStatus } : t));
       toast.success('Task status updated');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Task status could not be updated.');
+    } finally {
+      setUpdatingStatus(null);
     }
-    setUpdatingStatus(null);
   }, [tasks]);
-
-  const deleteTask = useCallback(async (id: string) => {
-    try {
-      await fetch('/api/employee/tasks', {
-        method: 'PUT',
-        headers: authHeaders(),
-        body: JSON.stringify({ id, deleted: true }),
-      }).catch(() => {});
-    } catch {}
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-    toast.success('Task deleted');
-  }, []);
 
   if (loading) {
     return (
@@ -233,7 +191,7 @@ export default function EmployeeTasksPage() {
           <h1 className="text-2xl font-bold text-alo-text">Tasks</h1>
           <p className="text-sm text-alo-text-muted mt-1">Manage and track your daily tasks</p>
         </div>
-        <Button variant="brand" size="sm" onClick={() => setCreateOpen(true)}><Plus className="w-4 h-4" /> Create Task</Button>
+        <div className="flex gap-2"><Button variant="outline" size="sm" onClick={() => void loadTasks()} disabled={loading}><RefreshCw className="mr-1 h-4 w-4" />Refresh</Button><Button variant="brand" size="sm" onClick={() => setCreateOpen(true)}><Plus className="w-4 h-4" /> Create Task</Button></div>
       </div>
 
       <Card className="bg-white rounded-xl border border-alo-border">
@@ -261,8 +219,9 @@ export default function EmployeeTasksPage() {
         </CardContent>
       </Card>
 
+      {loadError && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{loadError}</span><Button variant="outline" size="sm" onClick={() => void loadTasks()}>Retry</Button></CardContent></Card>}
       <div className="space-y-3">
-        {filtered.length === 0 && (
+        {!loadError && filtered.length === 0 && (
           <Card className="bg-white rounded-xl border border-alo-border">
             <CardContent className="py-12 text-center">
               <CheckCircle2 className="w-12 h-12 text-alo-text-muted/40 mx-auto mb-3" />
@@ -275,7 +234,7 @@ export default function EmployeeTasksPage() {
           <Card key={task.id} className="bg-white rounded-xl border border-alo-border hover:shadow-sm transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <button onClick={() => toggleStatus(task.id)} className="mt-0.5 shrink-0" disabled={updatingStatus === task.id}>
+                <button aria-label={`Update task ${task.title} status`} onClick={() => toggleStatus(task.id)} className="mt-0.5 shrink-0" disabled={updatingStatus === task.id || task.status === 'Completed' || task.status === 'Cancelled'}>
                   {updatingStatus === task.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-alo-brand" />
                   ) : task.status === 'Completed' ? (
@@ -296,9 +255,6 @@ export default function EmployeeTasksPage() {
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       {priorityBadge(task.priority)}
-                      <Button variant="ghost" size="icon-sm" onClick={() => deleteTask(task.id)} className="text-alo-text-muted hover:text-red-500">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 mt-2.5">
@@ -347,10 +303,6 @@ export default function EmployeeTasksPage() {
                 <Label className="text-sm text-alo-text-secondary">Due Date *</Label>
                 <Input type="date" value={newTask.dueDate} onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })} className="bg-alo-page border-alo-border" />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm text-alo-text-secondary">Assigned To</Label>
-              <Input value={newTask.assignedTo} placeholder={user?.name || 'Sarah Khan'} onChange={(e) => setNewTask({ ...newTask, assignedTo: e.target.value })} className="bg-alo-page border-alo-border" />
             </div>
           </div>
           <DialogFooter>

@@ -1,4 +1,4 @@
-const allocateMock = vi.hoisted(() => vi.fn(async () => 'AE-2026000001'));
+const allocateMock = vi.hoisted(() => vi.fn(async () => 'AE-20260001'));
 vi.mock('@/lib/identity/student-id', () => ({ allocateIdentifierCommitted: allocateMock }));
 import { describe, it, expect, vi } from 'vitest';
 
@@ -81,11 +81,11 @@ describe('Consolidated WhatsApp Webhook Handler — lossless', () => {
     expect(detectPriority('GENERAL', 'hello')).toBe('normal');
   });
 
-  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNNNN', async () => {
+  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNN', async () => {
     allocateMock.mockClear();
     const id = await generateStudentId({});
     expect(allocateMock).toHaveBeenCalledWith('AE');
-    expect(id).toMatch(/^AE-\d{4}\d{6}$/);
+    expect(id).toMatch(/^AE-\d{4}\d{4}$/);
   });
 
   it('re-exports number-pool and AI helpers', async () => {

@@ -11806,7 +11806,7 @@ model EmailEvent {
   @@index([type, createdAt])
 }
 
-// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNNN, AEP-/EMP-YYYYNNNNN).
+// Concurrency-safe sequence for canonical identifiers (new AE-YYYYNNNN; AEP-/EMP-YYYYNNNNN). Legacy student IDs remain unchanged.
 // Rows are advanced inside the allocating transaction (see src/lib/identity/student-id.ts).
 // Numbers are never reused: a rolled-back transaction also rolls back its increment,
 // and a committed number is never handed out again.
