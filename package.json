@@ -131,7 +131,7 @@
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
     "z-ai-web-dev-sdk": "^0.0.18",
-    "zod": "^4.0.2",
+    "zod": "^4.6.7",
     "zustand": "^5.0.6"
   },
   "optionalDependencies": {
@@ -153,6 +153,7 @@
     "vitest": "4.1.11"
   },
   "overrides": {
+    "zod": "$zod",
     "postcss": "8.5.25",
     "sharp": "0.35.5",
     "source-map-js": "1.2.2",
