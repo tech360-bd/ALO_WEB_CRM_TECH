@@ -3,7 +3,7 @@ vi.mock('@/lib/auth', () => ({ authOptions: {} }));
 vi.mock('next-auth', () => ({ getServerSession: vi.fn() }));
 vi.mock('@/lib/agent-orchestrator', () => ({ runOrchestrated: vi.fn() }));
 vi.mock('@/lib/db', () => ({ db: {
-  user: { findUnique: vi.fn() }, agentApprovalQueue: { findUnique: vi.fn(), updateMany: vi.fn(), findMany: vi.fn(), count: vi.fn() },
+  employee: { findFirst: vi.fn() }, user: { findUnique: vi.fn() }, agentApprovalQueue: { findUnique: vi.fn(), updateMany: vi.fn(), findMany: vi.fn(), count: vi.fn() },
   agentAuditLog: { create: vi.fn() }, $transaction: vi.fn(),
 } }));
 import { getServerSession } from 'next-auth';

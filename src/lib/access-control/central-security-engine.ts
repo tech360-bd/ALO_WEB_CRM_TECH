@@ -61,8 +61,8 @@ export async function logSecurityAudit(params: SecurityAuditParams, tx?: Prisma.
       },
     });
   } catch (error) {
-    if (tx) throw error;
-    console.error('Failed to write security audit log:', error);
+    // Access to sensitive fields must fail when its required audit cannot persist.
+    throw error;
   }
 }
 
@@ -74,7 +74,7 @@ export async function validateRequestAccess(
   context: AccessCheckContext,
   featureKey: string,
   action: string,
-  targetObject?: { ownerId?: string; departmentId?: string; branchId?: string; assigneeId?: string }
+  targetObject?: { ownerId?: string; departmentId?: string; branchId?: string; assigneeId?: string; officeId?: string; country?: string; recordType?: string; recordId?: string }
 ): Promise<{ allowed: boolean; reason?: string; scope?: AccessScope }> {
   // Resolve authority from current database state, never caller-supplied roles,
   // email patterns, or synthetic identities.
@@ -88,22 +88,76 @@ export async function validateRequestAccess(
   if (account.status.toLowerCase() !== 'active' || !account.emailVerified) {
     return { allowed: false, reason: 'Account must be active and email verified.' };
   }
-  const employee = await db.employee.findFirst({ where: { userId: account.id } });
+  const employee = await db.employee.findFirst({ where: { userId: account.id }, include: { offices: { select: { id: true, status: true } } } });
   if (employee && employee.status.toLowerCase() !== 'active') {
     return { allowed: false, reason: 'Employee account is not active.' };
   }
   const roles = user ? [user.role] : [portal!.userType, ...portal!.roles.map(r => r.role.name)];
+  // An external account type never becomes an employee through an attached role.
+  if (roles.some(role => ['STUDENT', 'PARTNER'].includes(role.toUpperCase()))) {
+    return { allowed: false, reason: 'Employee permission required.' };
+  }
   if (roles.some(role => role.toUpperCase() === 'SUPER_ADMIN')) {
     return { allowed: true, scope: 'GLOBAL' };
   }
-  // This engine serves employee operations, never student/partner accounts.
-  if (roles.some(role => ['STUDENT', 'PARTNER'].includes(role.toUpperCase()))) {
-    return { allowed: false, reason: 'Employee permission required.' };
+  // Legacy feature rules have no scope/action columns. A bare feature permits
+  // viewing owned records only; other actions require their exact permission key.
+  const keys = [`${featureKey}.${action.toLowerCase()}`];
+  if (action.toLowerCase() === 'view') keys.push(featureKey);
+  const rules = await db.featureAccessRule.findMany({ where: {
+    ownerType: { in: ['employee', 'EMPLOYEE', 'user', 'USER'] },
+    ownerId: { in: [account.id, ...(employee ? [employee.id] : [])] },
+    featureKey: { in: keys },
+  } });
+  if (rules.some(rule => !rule.isEnabled || rule.requiresApproval)) {
+    return { allowed: false, reason: 'Permission disabled or approval required.' };
   }
   const own = !!targetObject && [targetObject.ownerId, targetObject.assigneeId]
     .some(id => !!id && (id === account.id || id === employee?.id));
   if (own && action.toLowerCase() === 'view' && ['employee.profile.private', 'employee.fields.salary', 'employee.fields.bankAccount', 'employee.fields.nid', 'employee.fields.passport'].includes(featureKey)) {
     return { allowed: true, scope: 'OWN' };
+  }
+  // Resource facts are supplied by server-side record loaders, never request bodies.
+  // Every scoped grant must also match the current persisted employee assignment.
+  const identities = [account.id, employee?.id, employee?.employeeId].filter(Boolean);
+  const owns = !!targetObject?.ownerId && identities.includes(targetObject.ownerId);
+  const assigned = !!targetObject?.assigneeId && identities.includes(targetObject.assigneeId);
+  let teamPromise: Promise<string | null> | undefined;
+  async function targetTeam(): Promise<string | null> {
+    if (!employee) return null;
+    const targetId = targetObject?.assigneeId || targetObject?.ownerId;
+    if (!targetId) return null;
+    const target = await db.employee.findFirst({ where: { OR: [{ id: targetId }, { userId: targetId }, { employeeId: targetId }] }, select: { id: true, userId: true, employeeId: true, status: true } });
+    if (!target || target.status.toLowerCase() !== 'active' || ![target.id, target.userId, target.employeeId].includes(targetId)) return null;
+    const profile = await db.employeeHR.findUnique({ where: { userId: target.userId }, select: { reportingManagerId: true, managerId: true } });
+    return profile?.reportingManagerId || profile?.managerId || null;
+  }
+  async function grantScope(scopeValue: unknown, scopeIdValue: unknown): Promise<AccessScope | null> {
+    const alias: Record<string, AccessScope> = { ALL: 'GLOBAL', OWN_ONLY: 'OWN', ASSIGNED_ONLY: 'ASSIGNED', BRANCH_ONLY: 'BRANCH', COUNTRY_ONLY: 'COUNTRY', DEPARTMENT_ONLY: 'DEPARTMENT' };
+    const value = String(scopeValue || 'OWN').toUpperCase();
+    const scope = alias[value] || value;
+    const scopeId = typeof scopeIdValue === 'string' ? scopeIdValue.trim() : '';
+    if (scope === 'GLOBAL') return 'GLOBAL';
+    if (scope === 'OWN' && owns) return 'OWN';
+    if (scope === 'ASSIGNED' && assigned) return 'ASSIGNED';
+    if (!employee || !scopeId) return null;
+    if (scope === 'BRANCH' && targetObject?.branchId && employee.branch === targetObject.branchId && scopeId === targetObject.branchId) return 'BRANCH';
+    if (scope === 'DEPARTMENT' && targetObject?.departmentId && employee.department === targetObject.departmentId && scopeId === targetObject.departmentId) return 'DEPARTMENT';
+    if (scope === 'OFFICE' && targetObject?.officeId === scopeId && employee.offices?.some(office => office.id === scopeId && office.status.toUpperCase() === 'ACTIVE')) return 'OFFICE';
+    if (scope === 'COUNTRY' && targetObject?.country) {
+      let countries: unknown; try { countries = JSON.parse(employee.destinationFocus); } catch { return null; }
+      const normalize = (country: string) => country.trim().toUpperCase();
+      if (Array.isArray(countries) && countries.some(country => typeof country === 'string' && normalize(country) === normalize(targetObject.country!)) && normalize(scopeId) === normalize(targetObject.country)) return 'COUNTRY';
+    }
+    if (scope === 'RECORD' && targetObject?.recordType && targetObject.recordId && scopeId === `${targetObject.recordType}:${targetObject.recordId}`) return 'RECORD';
+    if (scope === 'TEAM') {
+      teamPromise ||= targetTeam();
+      const manager = await teamPromise;
+      // Only the assigned manager's explicit team grant is valid. A title or
+      // caller-selected team identifier never expands the reporting chain.
+      if (manager && identities.includes(manager) && identities.includes(scopeId)) return 'TEAM';
+    }
+    return null;
   }
   const now = new Date();
   if (employee) {
@@ -114,17 +168,11 @@ export async function validateRequestAccess(
       startDate: { lte: now }, endDate: { gt: now }, expiresAt: { gt: now },
     } });
     for (const grant of grants) {
-      const scope = grant.scopeType.toUpperCase();
-      if (scope === 'GLOBAL') return { allowed: true, scope: 'GLOBAL' };
-      if (['OWN', 'ASSIGNED'].includes(scope) && own) return { allowed: true, scope: scope as AccessScope };
-      if (scope === 'BRANCH' && targetObject?.branchId && employee.branch === targetObject.branchId && grant.scopeId === targetObject.branchId) {
-        return { allowed: true, scope: 'BRANCH' };
-      }
-      if (scope === 'DEPARTMENT' && targetObject?.departmentId && employee.department === targetObject.departmentId && grant.scopeId === targetObject.departmentId) {
-        return { allowed: true, scope: 'DEPARTMENT' };
-      }
+      const scope = await grantScope(grant.scopeType, grant.scopeId);
+      if (scope) return { allowed: true, scope };
     }
   }
+
   if (employee) {
     const assignments = await db.employeePermissionPackageAssignment.findMany({ where: {
       employeeId: employee.id, status: 'active', isActive: true, startsAt: { lte: now },
@@ -139,25 +187,11 @@ export async function validateRequestAccess(
         // A designation is a display label. Only exact, explicitly configured
         // permission/action/scope entries convey authority.
         if (!permission || typeof permission !== 'object' || permission.featureKey !== featureKey || permission.action?.toLowerCase() !== action.toLowerCase()) continue;
-        const scope = String(permission.scopeType || 'OWN').toUpperCase();
-        if (scope === 'GLOBAL') return { allowed: true, scope: 'GLOBAL' };
-        if (['OWN', 'ASSIGNED'].includes(scope) && own) return { allowed: true, scope: scope as AccessScope };
-        if (scope === 'BRANCH' && targetObject?.branchId && employee.branch === targetObject.branchId && permission.scopeId === targetObject.branchId) return { allowed: true, scope: 'BRANCH' };
-        if (scope === 'DEPARTMENT' && targetObject?.departmentId && employee.department === targetObject.departmentId && permission.scopeId === targetObject.departmentId) return { allowed: true, scope: 'DEPARTMENT' };
+        if (permission.isEnabled === false || permission.requiresApproval === true) continue;
+        const scope = await grantScope(permission.scopeType, permission.scopeId);
+        if (scope) return { allowed: true, scope };
       }
     }
-  }
-  // Legacy feature rules have no scope/action columns. A bare feature permits
-  // viewing owned records only; other actions require their exact permission key.
-  const keys = [`${featureKey}.${action.toLowerCase()}`];
-  if (action.toLowerCase() === 'view') keys.push(featureKey);
-  const rules = await db.featureAccessRule.findMany({ where: {
-    ownerType: { in: ['employee', 'EMPLOYEE', 'user', 'USER'] },
-    ownerId: { in: [account.id, ...(employee ? [employee.id] : [])] },
-    featureKey: { in: keys },
-  } });
-  if (rules.some(rule => !rule.isEnabled || rule.requiresApproval)) {
-    return { allowed: false, reason: 'Permission disabled or approval required.' };
   }
   if (rules.some(rule => rule.isEnabled) && own) return { allowed: true, scope: 'OWN' };
   return { allowed: false, reason: 'No permission for this action and record scope.' };

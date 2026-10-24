@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
@@ -18,9 +19,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (!existing) return NextResponse.json({ success: false, error: 'Task not found' }, { status: 404 });
 
     // RBAC: own only unless manager/super_admin
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
-    const isManager = auth.roles.includes('branch_manager') || auth.roles.includes('application_manager') || auth.roles.includes('senior_counselor');
-    if (existing.employeeId !== auth.userId && !isSuper && !isManager) {
+    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
+    if (existing.employeeId !== auth.userId && !isSuper) {
       return NextResponse.json({ success: false, error: 'Not authorized to update this task' }, { status: 403 });
     }
 
@@ -85,10 +85,12 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ success: false, error: 'Not authorized' }, { status: 403 });
     }
 
-    await db.counselorTask.delete({ where: { id } });
-    await logAuditAction(auth, 'TASK_DELETED', 'CounselorTask', id, {});
+    await db.$transaction(async tx => {
+      await tx.counselorTask.update({ where: { id }, data: { status: 'cancelled' } });
+      await writePortalAudit(tx, auth, 'TASK_ARCHIVED', 'CounselorTask', id, { previousStatus: existing.status, status: 'cancelled' }, req);
+    });
 
-    return NextResponse.json({ success: true, message: 'Task deleted' });
+    return NextResponse.json({ success: true, message: 'Task archived; history retained' });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

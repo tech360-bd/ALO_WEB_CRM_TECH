@@ -91,6 +91,8 @@ export default function EmployeeLeavePage() {
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
 
+  if (loadError) return <div role="alert" className="p-6 text-red-700">{loadError}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+
   return (
     <div className="min-h-screen space-y-6 bg-alo-page p-4 lg:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h1 className="text-2xl font-bold text-alo-text">Leave Management</h1><p className="text-sm text-alo-text-muted">Your leave balance and submitted requests.</p></div><div className="flex gap-2"><Button variant="outline" onClick={() => void loadLeave()} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button><Button variant="brand" size="sm" onClick={() => setDialogOpen(true)}><Plus className="mr-1 h-4 w-4" />Apply for leave</Button></div></div>

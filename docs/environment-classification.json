@@ -6,7 +6,7 @@
     "UNUSED": 102,
     "REFERENCED_WITH_FALLBACK": 154,
     "REFERENCED_FAIL_CLOSED": 20,
-    "REFERENCED": 118,
+    "REFERENCED": 121,
     "PUBLIC": 12
   },
   "productionRequired": [
@@ -1958,7 +1958,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 2,
+      "referenceCount": 3,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1968,6 +1968,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/lib/ai-providers/owner-chat.ts",
         "src/lib/hrms/encryption.ts",
         "src/lib/token-encryption.ts"
       ]
@@ -3522,7 +3523,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 4,
+      "referenceCount": 6,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3532,9 +3533,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/admin/ai-chat/route.ts",
         "src/app/api/workforce/metrics/route.ts",
-        "src/lib/ai-workforce/runtimes.ts",
-        "src/lib/ai.ts"
+        "src/lib/ai-providers/owner-chat.ts"
       ]
     },
     {
@@ -3542,7 +3543,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 7,
+      "referenceCount": 9,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3553,8 +3554,8 @@
       ],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
-        "src/app/api/workforce/metrics/route.ts",
-        "src/components/alo/views/ai-command-center.tsx"
+        "src/app/api/admin/ai-chat/route.ts",
+        "src/app/api/workforce/metrics/route.ts"
       ]
     },
     {
@@ -4131,7 +4132,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 11,
+      "referenceCount": 15,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -4141,9 +4142,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/oauth/callback/route.ts",
-        "src/app/api/employee/acting-as/route.ts",
-        "src/app/api/portal-auth/acting-as/start/route.ts"
+        "src/app/api/access-control/route.ts",
+        "src/app/api/admin/ai-chat/route.ts",
+        "src/app/api/admin/ai-command-center/route.ts"
       ]
     },
     {
@@ -5989,6 +5990,74 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/umami-analytics.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_ALLOWED_MODELS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_API_KEY",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_ENABLED",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_MODEL",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
       ]
     },
     {

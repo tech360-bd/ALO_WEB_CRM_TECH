@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import PermissionPackagesPanel from '@/components/employee/PermissionPackagesPanel';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +55,7 @@ import {
   Search,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import FeatureAccessRulesPanel from '@/components/employee/FeatureAccessRulesPanel';
 import { FeatureFlagsPanel } from '@/components/alo/feature-flags-panel';
 
 const DESIGNATIONS = [
@@ -365,6 +367,7 @@ export default function SuperAdminAccessControlCenter() {
       {activeTab==='packages' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Layers className="w-4 h-4 text-[var(--alo-brand)]" /> Permission Packages — STARTER / GROWTH / PREMIUM, editable by ALO Super Admin</h2>
+          <PermissionPackagesPanel />
 
           {/* Honesty banner: an empty table is shown as empty, never filled with
               rows that do not exist in the database. */}

@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     const requestedEmployeeId = searchParams.get('employeeId');
     const period = searchParams.get('period');
     const status = searchParams.get('status');
-    const canViewAll = canApproveOrPay(auth);
+    const canViewAll = isSuperAdmin(auth) || auth.permissions?.includes('employee.fields.salary.view_all') === true;
 
     let employeeId = requestedEmployeeId || '';
     if (!canViewAll) {
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
       employeeId = ownEmployee.id;
     }
 
-    const where: Record<string, unknown> = { ...(employeeId ? { employeeId } : {}), ...(period ? { period } : {}), ...(status ? { status } : {}) };
+    const where: Record<string, unknown> = { ...(employeeId ? { employeeId } : {}), ...(period ? { period } : {}), ...(!canViewAll ? { status: { in: ['approved', 'paid'] } } : status ? { status } : {}) };
     const payrolls = await (db as any).employeePayroll.findMany({ where, orderBy: { period: 'desc' }, include: { items: true } });
     await db.portalAuditLog.create({
       data: {
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json({
       success: true,
-      payrolls,
+      payrolls: canViewAll ? payrolls : payrolls.map((payroll: any) => ({ id: payroll.id, period: payroll.period, employeeId: payroll.employeeId, netSalary: payroll.netSalary, status: payroll.status, paidAt: payroll.paidAt })),
       note: 'AI may analyze attendance and prepare a draft. Only a human HR/Finance user can approve or pay payroll.',
     });
   } catch (error) {

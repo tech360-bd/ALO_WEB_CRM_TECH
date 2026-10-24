@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
 import { canAccessFeatureEngine } from '@/lib/employee-access-engine';
+import { writePortalAudit } from '@/lib/transactional-audit';
+
+const RuleInput = z.object({
+  id: z.string().min(1).max(191).optional(),
+  ownerType: z.enum(['EMPLOYEE', 'USER']),
+  ownerId: z.string().min(1).max(191),
+  featureKey: z.string().min(1).max(191).regex(/^[a-zA-Z0-9_.-]+$/),
+  isEnabled: z.boolean(),
+  requiresApproval: z.boolean(),
+  limitValue: z.number().int().min(0).max(2147483647),
+  reason: z.string().trim().min(8).max(500),
+}).strict();
 
 const ACTIONS = new Set([
   'view', 'create', 'edit', 'submit', 'accept', 'reject', 'approve', 'verify', 'send',

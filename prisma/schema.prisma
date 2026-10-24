@@ -11435,6 +11435,8 @@ model AwfRun {
   @@index([mode])
   @@index([createdAt])
   @@index([automationMode])
+  @@index([actorUserId, trigger, startedAt], map: "AwfRun_owner_chat_history_idx")
+  @@index([trigger, provider, model, startedAt], map: "AwfRun_chat_rate_idx")
 }
 
 model AwfRunStep {

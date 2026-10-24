@@ -35,6 +35,7 @@ function authHeaders(): Record<string, string> {
 
 export default function EmployeeSalaryPage() {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(true);
   const [salary, setSalary] = useState<SalaryData | null>(null);
   const [error, setError] = useState('');
@@ -72,6 +73,9 @@ export default function EmployeeSalaryPage() {
     { label: 'Tax deduction', amount: current.taxDeduction, kind: 'deduction' },
     { label: 'Provident fund deduction', amount: current.pfDeduction, kind: 'deduction' },
   ].filter((item) => item.amount !== 0) : [];
+
+  if (error) return <div role="alert" className="p-6 text-red-700">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+  if (!payslipHistory.length) return <div className="p-6">No approved salary records yet.</div>;
 
   return (
     <div className="min-h-screen space-y-6 bg-alo-page p-4 lg:p-6">

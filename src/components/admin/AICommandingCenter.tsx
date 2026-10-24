@@ -14,6 +14,7 @@ import {
   ArrowRight, ShieldCheck, Cpu, HardDrive, HelpCircle, AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import OwnerAIChatPanel from './OwnerAIChatPanel';
 
 interface Message {
   id: string;
@@ -45,38 +46,23 @@ export default function AICommandingCenter() {
   const [explorerTab, setExplorerTab] = useState<'crm' | 'website' | 'system'>('crm');
   const [selectedFile, setSelectedFile] = useState('prisma/schema.prisma');
   
-  const [command, setCommand] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome',
-      sender: 'ai',
-      text: 'Welcome back, Super Admin. I am connected to the 2,000+ agent framework and ready to coordinate secure modifications, code checkouts, test cycles, and system deployments. What would you like to build today?',
-      timestamp: new Date().toLocaleTimeString(),
-      status: 'SUCCESS'
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [currentPlan, setCurrentPlan] = useState<ChangePlan | null>(null);
-  const [terminalLogs, setTerminalLogs] = useState<string>('ALO System Terminal Online.\nWaiting for commands...');
+  const [terminalLogs, setTerminalLogs] = useState<string>('No maintenance tool has run in this session.');
   
   const [, setTrustedMode] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   
-  const [healthStats, setHealthStats] = useState<any>({
-    agents: 2000,
-    skills: 2000,
-    departments: 100,
-    workflows: 40,
-    protectionMode: true,
-    paymentGuard: true
-  });
+  const [healthStats, setHealthStats] = useState<{ agents: number; skills: number; departments: number; workflows: number } | null>(null);
 
   const terminalEndRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Fetch AI Commanding Center health on mount
   useEffect(() => {
-    fetchHealth();
-  }, []);
+    void fetchHealth();
+  // Health is refreshed when the authenticated portal session changes.
+  }, [token]);
 
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -99,12 +85,10 @@ export default function AICommandingCenter() {
           skills: data.health.skills_count,
           departments: data.health.departments_count,
           workflows: data.health.workflows_count,
-          protectionMode: data.health.protection_mode_enabled,
-          paymentGuard: data.health.payment_guard_enabled
         });
       }
     } catch (err) {
-      console.error('Failed to fetch commanding center health:', err);
+      setHealthStats(null);
     }
   };
 
@@ -132,104 +116,6 @@ export default function AICommandingCenter() {
     } catch (err: any) {
       setTerminalLogs((prev) => `${prev}\nError: ${err.message}\n>> Network error.`);
       toast.error('Network failure executing tool.');
-    } finally {
-      setIsExecuting(false);
-    }
-  };
-
-  // Submit Natural Language Command
-  const handleSubmitCommand = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!command.trim()) return;
-
-    const userCmd = command;
-    setCommand('');
-    const newMsgId = `msg-${Date.now()}`;
-    
-    // Add user message
-    setMessages((prev) => [...prev, {
-      id: newMsgId,
-      sender: 'user',
-      text: userCmd,
-      timestamp: new Date().toLocaleTimeString()
-    }]);
-
-    setIsExecuting(true);
-    setTerminalLogs((prev) => `${prev}\n\n$ ai-command: "${userCmd}"`);
-
-    // Helper: detect terminal requests
-    const cmdLower = userCmd.toLowerCase();
-    if (cmdLower.includes('run all tests') || cmdLower.includes('run tests')) {
-      await runTerminalTool('run-tests');
-      setMessages((prev) => [...prev, {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: 'I have executed the entire test suite. See the bottom terminal panel for detailed coverage logs.',
-        timestamp: new Date().toLocaleTimeString(),
-        status: 'SUCCESS'
-      }]);
-      setIsExecuting(false);
-      return;
-    }
-    if (cmdLower.includes('run build') || cmdLower.includes('compile') || cmdLower.includes('typecheck')) {
-      await runTerminalTool('run-typecheck');
-      setMessages((prev) => [...prev, {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: 'Typecheck compiled successfully with 0 errors.',
-        timestamp: new Date().toLocaleTimeString(),
-        status: 'SUCCESS'
-      }]);
-      setIsExecuting(false);
-      return;
-    }
-
-    // Natural Language Change Plan Generator
-    try {
-      const res = await fetch('/api/admin/ai-command-center', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ action: 'generate-plan', command: userCmd })
-      });
-      const data = await res.json();
-      if (res.ok && data.success && data.plan) {
-        const plan: ChangePlan = data.plan;
-        setCurrentPlan(plan);
-        setMessages((prev) => [...prev, {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: `Generated change plan: **${plan.title}**. Affected files: \`${plan.affectedFiles.join(', ')}\`. This is a preview only; applying plans from here is disabled.`,
-          timestamp: new Date().toLocaleTimeString(),
-          status: 'WAITING_FOR_APPROVAL',
-          reasoning: [
-            'Parsed command intent: SCHEMA_MODIFICATION',
-            'Inspecting schema.prisma structures...',
-            'Validating column requirements against existing fields',
-            'Drafted change plan & diff preview'
-          ],
-          diff: plan.diff
-        }]);
-
-      } else {
-        setMessages((prev) => [...prev, {
-          id: `ai-${Date.now()}`,
-          sender: 'ai',
-          text: `I encountered an issue generating a plan for that directive: ${data.error || 'Unknown error'}`,
-          timestamp: new Date().toLocaleTimeString(),
-          status: 'FAILED'
-        }]);
-      }
-    } catch (err: any) {
-      setMessages((prev) => [...prev, {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `Network failure connecting to AI agent: ${err.message}`,
-        timestamp: new Date().toLocaleTimeString(),
-        status: 'FAILED'
-      }]);
     } finally {
       setIsExecuting(false);
     }
@@ -273,7 +159,7 @@ export default function AICommandingCenter() {
             <Badge className="bg-[var(--alo-cta)] text-white text-[11px] uppercase font-mono">Owner Protection Enabled</Badge>
           </div>
           <p className="text-xs text-[var(--alo-text-muted)] mt-1">
-            Department Co-processor • Local-First Execution • Payment Guard: Active ({healthStats.agents} Agents Online)
+            Draft-only owner chat • No paid fallback • Registered agents: {healthStats?.agents ?? 'Unavailable'}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -295,17 +181,17 @@ export default function AICommandingCenter() {
           <Card className="bg-white border-[var(--alo-border)] shadow-2xs">
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center gap-1.5">
-                <Bot className="w-4 h-4 text-[var(--alo-cta)]" /> Target AI Agent
+                <Bot className="w-4 h-4 text-[var(--alo-cta)]" /> Planning focus
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 pt-0">
               <div className="flex flex-col gap-1">
                 {[
-                  { id: 'master-router', name: 'Master Command Router', dept: 'Executive Brain' },
-                  { id: 'crm-agent', name: 'CRM Automation Agent', dept: 'Operations & Leads' },
-                  { id: 'website-agent', name: 'Website Builder Agent', dept: 'Marketing & UI' },
-                  { id: 'database-agent', name: 'Database Architect', dept: 'System & Schema' },
-                  { id: 'qa-agent', name: 'QA Compiler Agent', dept: 'Testing & Gates' }
+                  { id: 'master-router', name: 'General planning', dept: 'Executive Brain' },
+                  { id: 'crm-agent', name: 'CRM planning', dept: 'Operations & Leads' },
+                  { id: 'website-agent', name: 'Website planning', dept: 'Marketing & UI' },
+                  { id: 'database-agent', name: 'Database planning', dept: 'System & Schema' },
+                  { id: 'qa-agent', name: 'Quality review', dept: 'Testing & Gates' }
                 ].map((agent) => (
                   <button
                     key={agent.id}
@@ -323,7 +209,7 @@ export default function AICommandingCenter() {
           {/* Project Explorer */}
           <Card className="bg-white border-[var(--alo-border)] shadow-2xs flex-1 flex flex-col">
             <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider">Project Workspace</CardTitle>
+              <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider">Workspace reference</CardTitle>
               <div className="flex gap-1 mt-2 border-b border-[var(--alo-border)] pb-2">
                 {['crm', 'website', 'system'].map((tab) => (
                   <button
@@ -372,69 +258,7 @@ export default function AICommandingCenter() {
 
         {/* CENTER COLUMN: Command console, Chat history & Diffs (Span 6) */}
         <div className="lg:col-span-6 flex flex-col gap-4">
-          <Card className="bg-white border-[var(--alo-border)] shadow-2xs flex-1 flex flex-col h-[500px]">
-            <CardHeader className="p-4 pb-2 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Command Chat Console</CardTitle>
-                <CardDescription className="text-xs text-[var(--alo-text-muted)]">Coordinate and review changes to code or database models.</CardDescription>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)] font-semibold bg-[var(--alo-page)] px-2 py-1 rounded-lg">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" /> Auth Gate: Active
-              </div>
-            </CardHeader>
-            
-            {/* Messages Area */}
-            <CardContent className="p-4 flex-1 overflow-y-auto flex flex-col gap-3">
-              <ScrollArea className="flex-1 pr-2">
-                <div className="flex flex-col gap-3">
-                  {messages.map((msg) => (
-                    <div key={msg.id} className={`flex flex-col max-w-[85%] ${msg.sender === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'}`}>
-                      <div className={`p-3 rounded-2xl text-xs ${msg.sender === 'user' ? 'bg-[var(--alo-brand)] text-white rounded-tr-none' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-none'}`}>
-                        {msg.text}
-                      </div>
-                      
-                      {msg.reasoning && msg.reasoning.length > 0 && (
-                        <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-2.5 mt-1.5 w-full text-[11px] text-amber-800">
-                          <div className="font-bold flex items-center gap-1 mb-1">
-                            <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Reasoning steps:
-                          </div>
-                          <ul className="list-disc list-inside space-y-0.5">
-                            {msg.reasoning.map((step, idx) => <li key={idx}>{step}</li>)}
-                          </ul>
-                        </div>
-                      )}
-
-                      {msg.diff && (
-                        <div className="bg-[var(--alo-text)] text-[var(--alo-surface-muted)] font-mono text-[11px] p-2.5 rounded-xl mt-1.5 w-full border border-slate-800 overflow-x-auto whitespace-pre">
-                          <div className="font-bold text-[var(--alo-text-muted)] mb-1 border-b border-slate-800 pb-1">GIT DIFF PREVIEW</div>
-                          {msg.diff}
-                        </div>
-                      )}
-
-                      <div className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">{msg.timestamp}</div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-              </ScrollArea>
-            </CardContent>
-
-            {/* Chat Input */}
-            <div className="p-3 border-t border-[var(--alo-border)]">
-              <form onSubmit={handleSubmitCommand} className="flex gap-2">
-                <Input
-                  value={command}
-                  onChange={(e) => setCommand(e.target.value)}
-                  placeholder="e.g. Add a Source column to the CRM Lead table..."
-                  disabled={isExecuting}
-                  className="h-9 text-xs focus:ring-orange-500 focus:border-[var(--alo-cta)]"
-                />
-                <Button type="submit" disabled={isExecuting} size="sm" className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white">
-                  <Send className="w-4 h-4" />
-                </Button>
-              </form>
-            </div>
-          </Card>
+          <OwnerAIChatPanel focus={activeAgent} />
         </div>
 
         {/* RIGHT COLUMN: Change plan, controls, and stats (Span 3) */}
@@ -504,7 +328,7 @@ export default function AICommandingCenter() {
                 <div className="flex-1 flex flex-col items-center justify-center text-center text-[var(--alo-text-muted)] p-4">
                   <HelpCircle className="w-8 h-8 text-[var(--alo-placeholder)] mb-2" />
                   <div className="text-xs font-bold">No active plan</div>
-                  <div className="text-[11px] mt-1">Submit a change command in chat to draft a code plan.</div>
+                  <div className="text-[11px] mt-1">Chat replies are drafts. Reviewed code changes follow the existing pull request workflow.</div>
                 </div>
               )}
             </CardContent>
