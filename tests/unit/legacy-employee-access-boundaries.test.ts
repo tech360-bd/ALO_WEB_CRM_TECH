@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 const m = vi.hoisted(() => ({ auth: vi.fn(), private: vi.fn(), field: vi.fn(), access: vi.fn(), employee: vi.fn(), profile: vi.fn(), documents: vi.fn(), salary: vi.fn(), transaction: vi.fn(), audit: vi.fn() }));
-vi.mock('@/lib/auth-middleware', () => ({ authenticateRequest: m.auth, withAuth: (handler: Function) => async (req: Request, context: unknown) => handler(req, await m.auth(), context) }));
+vi.mock('@/lib/auth-middleware', () => ({ authenticateRequest: m.auth, withAuth: (handler: (req: Request, auth: unknown, context: unknown) => Promise<Response>) => async (req: Request, context: unknown) => handler(req, await m.auth(), context) }));
 vi.mock('@/lib/access-control', () => ({ canViewEmployeePrivateProfile: m.private, FEATURE_DEFINITIONS: [] }));
 vi.mock('@/lib/access-control/central-security-engine', () => ({ canViewField: m.field, validateRequestAccess: m.access }));
 vi.mock('@/lib/transactional-audit', () => ({ writePortalAudit: m.audit }));
