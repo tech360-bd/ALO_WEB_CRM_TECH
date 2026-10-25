@@ -23,20 +23,24 @@
 
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { ALO_BRAND_ALT, ALO_BRAND_ASSETS, OFFICIAL_SEAL, type SealDocumentKind } from '@/lib/brand/brand-assets';
+import { ALO_BRAND_ALT, ALO_BRAND_ASSETS, OFFICIAL_SEAL, hasSuperAdminAuthority, type SealDocumentKind } from '@/lib/brand/brand-assets';
 import { ALO_CONTACT, ALO_TAGLINE } from '@/lib/alo-site-info';
 
 export interface IssuingAuthority {
   userType?: string | null;
   roles?: string[] | null;
+  /** Acting-as (support/view-as) session id, when the actor is not acting as themselves. */
+  actingAsSessionId?: string | null;
+  actingAs?: boolean | null;
 }
 
 export function isSealAuthorized(authority: IssuingAuthority | null | undefined): boolean {
   if (!authority) return false;
-  if (!authority.userType && !(authority.roles && authority.roles.length)) return false;
-  const values = [authority.userType || '', ...(authority.roles || [])]
-    .map((value) => value.trim().toUpperCase());
-  return values.includes('SUPER_ADMIN');
+  // The seal attests the Super Admin personally issued the document. An
+  // acting-as / view-as session — where the actor is browsing as someone
+  // else — can therefore never apply it, even for a Super Admin actor.
+  if (authority.actingAs || (authority.actingAsSessionId && authority.actingAsSessionId.trim())) return false;
+  return hasSuperAdminAuthority([authority.userType, ...(authority.roles || [])]);
 }
 
 export interface OfficialDocumentInput {
@@ -83,6 +87,32 @@ export async function assetDataUri(publicUrl: string): Promise<string> {
   return uri;
 }
 
+/**
+ * The official seal is a server-only asset: it must never sit under
+ * `/public`, where anyone could download and reuse it without authorisation.
+ * Only this module (and the audited seal route, through `getOfficialSealPng`)
+ * may read it. Standalone route bundles trace the file via
+ * `outputFileTracingIncludes` in next.config.ts.
+ */
+export const OFFICIAL_SEAL_SERVER_ASSET = 'src/lib/documents/assets/alo-official-seal.png';
+
+let sealPngCache: Buffer | null = null;
+
+/** Read the seal PNG from its server-only location (cached per process). */
+export async function getOfficialSealPng(): Promise<Buffer> {
+  if (sealPngCache) return sealPngCache;
+  sealPngCache = await readFile(path.join(process.cwd(), OFFICIAL_SEAL_SERVER_ASSET));
+  return sealPngCache;
+}
+
+async function officialSealDataUri(): Promise<string> {
+  const cached = assetCache.get(OFFICIAL_SEAL_SERVER_ASSET);
+  if (cached) return cached;
+  const uri = `data:image/png;base64,${(await getOfficialSealPng()).toString('base64')}`;
+  assetCache.set(OFFICIAL_SEAL_SERVER_ASSET, uri);
+  return uri;
+}
+
 export function escapeHtml(value: unknown): string {
   return String(value ?? '').replace(/[&<>"']/g, (character) => ({
     '&': '&amp;',
@@ -104,12 +134,13 @@ function formatMoney(value: unknown): string {
  * The body is caller-supplied HTML and MUST already be escaped.
  */
 export async function buildOfficialDocumentHtml(input: OfficialDocumentInput): Promise<string> {
+  const sealAuthorized = isSealAuthorized(input.authority);
+  // Seal bytes are read only for an authorised Super Admin document; an
+  // unauthorised document never touches the seal asset at all.
   const [letterhead, seal] = await Promise.all([
     assetDataUri(ALO_BRAND_ASSETS.letterhead),
-    assetDataUri(ALO_BRAND_ASSETS.seal),
+    sealAuthorized ? officialSealDataUri() : Promise.resolve(''),
   ]);
-
-  const sealAuthorized = isSealAuthorized(input.authority);
   const issuedAt = input.issuedAt
     ? escapeHtml(input.issuedAt)
     : new Date().toLocaleString('en-GB', {

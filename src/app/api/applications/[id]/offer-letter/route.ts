@@ -77,7 +77,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     title: `Offer letter — ${offer.offerStatus.replace(/_/g, ' ').toLowerCase()}`,
     issuedTo: student?.name ? `${student.name}${student.studentId ? ` (${student.studentId})` : ''}` : app.studentId,
     reference: app.applicationCode,
-    authority: portal ? { userType: portal.userType, roles: portal.roles } : null,
+    authority: portal
+      ? { userType: portal.userType, roles: portal.roles, actingAsSessionId: portal.actingAsSessionId }
+      : null,
     meta: [
       { label: 'Application', value: app.applicationCode },
       { label: 'University', value: app.universityName || '—' },

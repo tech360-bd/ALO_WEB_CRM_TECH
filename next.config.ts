@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     '*': ['./imports/legacy-branch-references/**/*'],
   },
+  // The official seal is a server-only asset (never under /public, so it has
+  // no downloadable URL). Exactly the routes that may embed or serve it —
+  // each Super-Admin-gated and audited — trace the file into their bundle.
+  outputFileTracingIncludes: {
+    '/api/employee/salary': ['./src/lib/documents/assets/alo-official-seal.png'],
+    '/api/applications/[id]/offer-letter': ['./src/lib/documents/assets/alo-official-seal.png'],
+    '/api/official-documents/seal': ['./src/lib/documents/assets/alo-official-seal.png'],
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   // Dev-only origin allowlist. Next.js refuses HMR and dev-chunk requests from
@@ -132,6 +140,11 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     return [
+      // The duplicated `public/public/**` asset tree (byte-identical copies
+      // of `public/**`) was removed; legacy `/public/...` URLs that older
+      // pages, emails and image-optimizer patterns still reference resolve
+      // to the single canonical asset instead of 404ing.
+      { source: "/public/:path*", destination: "/:path*" },
       // Only legacy aliases that do not have a real App Router page remain
       // here. Real pages must not be rewritten to the homepage: doing so loses
       // their metadata, canonical URL, route-level loading/error states, and

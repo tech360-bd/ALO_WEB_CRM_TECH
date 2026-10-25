@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import PortalFooter from '@/components/portals/PortalFooter';
 
 // Import all Marketing Hub views — 21-command center
 import MarketingDashboardView from './MarketingDashboardView';
@@ -410,6 +411,7 @@ export default function MarketingHubShell({ children }: MarketingHubShellProps) 
               })()
             )}
           </div>
+          <PortalFooter scope="employee" />
         </main>
       </div>
     </div>

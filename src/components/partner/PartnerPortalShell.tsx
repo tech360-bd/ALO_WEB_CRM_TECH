@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import PortalFooter from '@/components/portals/PortalFooter';
+import type { PartnerBrandingView } from '@/lib/partner/branding';
 import { usePathname, useRouter } from 'next/navigation';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
@@ -137,6 +138,9 @@ export default function PartnerPortalShell({ children }: { children: React.React
   const pathname = usePathname();
   const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
+  // The partner's own logo + colour scheme (maintained in
+  // /partner-admin/branding, resolved server-side from the session tenant).
+  const [partnerBranding, setPartnerBranding] = useState<PartnerBrandingView | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   const isDirectPortalPath = pathname.startsWith('/partner/') || pathname.startsWith('/partner-admin/');
@@ -158,6 +162,17 @@ export default function PartnerPortalShell({ children }: { children: React.React
     logout();
     if (isDirectPortalPath) router.replace('/partner/login');
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/portal/footer-context', { credentials: 'include', cache: 'no-store', signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload?.success) setPartnerBranding((payload.partner as PartnerBrandingView | null) ?? null);
+      })
+      .catch(() => { /* branding is decorative here — shell must never break */ });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     hydrate();
@@ -199,12 +214,29 @@ export default function PartnerPortalShell({ children }: { children: React.React
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className="p-4 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-alo-brand text-white flex items-center justify-center">
-          <Handshake className="w-5 h-5" />
-        </div>
+        {partnerBranding?.logoUrl ? (
+          <img
+            src={partnerBranding.logoUrl}
+            alt={`${partnerBranding.displayName || 'Partner'} logo`}
+            className="w-9 h-9 rounded-xl object-contain bg-white"
+            width={36}
+            height={36}
+          />
+        ) : (
+          <div
+            className="w-9 h-9 rounded-xl bg-alo-brand text-white flex items-center justify-center"
+            style={partnerBranding?.primaryColor ? { backgroundColor: partnerBranding.primaryColor } : undefined}
+          >
+            <Handshake className="w-5 h-5" />
+          </div>
+        )}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-alo-text truncate">ALO Education</p>
-          <p className="text-xs text-alo-text-secondary">Partner Portal</p>
+          <p className="text-sm font-semibold text-alo-text truncate">
+            {partnerBranding?.displayName || 'ALO Education'}
+          </p>
+          <p className="text-xs text-alo-text-secondary">
+            {partnerBranding?.displayName ? 'Partner Portal · ALO Education' : 'Partner Portal'}
+          </p>
         </div>
       </div>
       <Separator />

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import PublicNavbar from './PublicNavbar';
 import PublicFooter from './PublicFooter';
+import PortalFooter from '@/components/portals/PortalFooter';
 import { isPublicChromeRoute } from './public-chrome-policy';
 
 // ─── CMS-managed announcements & banners (Virtual Editor) ─────
@@ -94,6 +95,48 @@ function CmsBanner() {
   );
 }
 
+/**
+ * Footer for a signed-in user who is browsing a public-chrome route without
+ * an enclosing portal shell (for example a logged-in student opening
+ * /course-finder or /scholarships directly). The public footer is
+ * (correctly) suppressed for authenticated sessions and portal shells own
+ * the portal footer on their own routes, so without this fallback those
+ * pages would have no footer at all.
+ *
+ * Duplication guard: this renders nothing until it has checked the DOM, and
+ * withdraws the moment any other footer owner (`#alo-portal-footer` from a
+ * portal shell/layout, or `#alo-public-footer`) is present. Exactly one
+ * footer is ever visible.
+ */
+function AuthenticatedPortalFooterFallback() {
+  const [otherFooterPresent, setOtherFooterPresent] = React.useState<boolean | null>(null);
+  const ownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const check = () => {
+      const footers = Array.from(
+        document.querySelectorAll('#alo-portal-footer, #alo-public-footer'),
+      );
+      // Exclude this fallback's own footer, otherwise it would withdraw
+      // itself in a render loop.
+      setOtherFooterPresent(
+        footers.some((footer) => !ownRef.current?.contains(footer)),
+      );
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
+  if (otherFooterPresent !== false) return null;
+  return (
+    <div ref={ownRef} className="contents">
+      <PortalFooter scope="student" />
+    </div>
+  );
+}
+
 export default function PublicLayoutWrapper({
   children,
 }: {
@@ -105,12 +148,17 @@ export default function PublicLayoutWrapper({
   // screens. Authenticated portal shells suppress public chrome by route
   // (see public-chrome-policy.ts) and by session.
   const showPublicChrome = !isAuthenticated && isPublicChromeRoute(pathname);
+  // After login the generic (portal) footer applies everywhere; on
+  // public-chrome routes the guarded fallback supplies it only when no
+  // shell/layout already did.
+  const showAuthenticatedFooterFallback = isAuthenticated && isPublicChromeRoute(pathname);
   return (
     <>
       {showPublicChrome && <CmsAnnouncements />}
       {showPublicChrome && <PublicNavbar />}
       {children}
       {showPublicChrome && <PublicFooter />}
+      {showAuthenticatedFooterFallback && <AuthenticatedPortalFooterFallback />}
       {showPublicChrome && <CmsBanner />}
     </>
   );

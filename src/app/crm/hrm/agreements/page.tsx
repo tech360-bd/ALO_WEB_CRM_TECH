@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import OfficialLetterhead from '@/components/official/OfficialLetterhead';
+import { usePortalStore } from '@/lib/stores/portal-store';
+import { hasSuperAdminAuthority } from '@/lib/brand/brand-assets';
 
 export default function HrmAgreementsPage() {
   const [data, setData] = useState<any>(null);
@@ -12,6 +15,15 @@ export default function HrmAgreementsPage() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('HR_POLICY');
   const [content, setContent] = useState('');
+  const [showLetterheadPreview, setShowLetterheadPreview] = useState(false);
+  const [applySeal, setApplySeal] = useState(false);
+  const portalUser = usePortalStore((state) => state.user);
+  const portalUserType = usePortalStore((state) => state.userType);
+  // UI hint only — the seal API re-checks `isSealAuthorized` server-side.
+  const canSealPreview = hasSuperAdminAuthority([
+    portalUserType,
+    ...(portalUser?.roles?.map((role) => role.name) || []),
+  ]);
 
   const load = () => {
     setLoading(true);
@@ -45,6 +57,55 @@ export default function HrmAgreementsPage() {
           </select>
           <Button onClick={create} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">Create</Button>
           <textarea placeholder="Content (versioned)" value={content} onChange={e=> setContent(e.target.value)} className="md:col-span-3 min-h-[80px] text-xs border border-[var(--alo-border)] rounded p-2 bg-white" />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-white border-[var(--alo-border)]">
+        <CardHeader className="p-4 border-b">
+          <CardTitle className="text-sm font-bold">Official letterhead preview</CardTitle>
+          <p className="text-xs text-[var(--alo-text-muted)]">
+            Appointment letters and agreements are previewed on the official ALO Education letterhead.
+            The official seal can be applied only by a Super Admin; the seal API re-checks and audits that access.
+          </p>
+        </CardHeader>
+        <CardContent className="p-4 space-y-4">
+          <div className="flex flex-wrap gap-4 text-xs text-[var(--alo-body)]">
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={showLetterheadPreview}
+                onChange={(event) => setShowLetterheadPreview(event.target.checked)}
+              />
+              Preview draft on letterhead
+            </label>
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={applySeal && canSealPreview}
+                disabled={!canSealPreview}
+                onChange={(event) => setApplySeal(event.target.checked)}
+              />
+              Apply official seal {canSealPreview ? '(Super Admin)' : '(Super Admin only)'}
+            </label>
+          </div>
+          {showLetterheadPreview && (
+            <div className="overflow-x-auto bg-[var(--alo-page)] p-3">
+              <OfficialLetterhead
+                sealed={applySeal && canSealPreview}
+                documentType={category === 'appointment_letter' ? 'offer-letter' : 'employment-contract'}
+                issuedByName={portalUser?.name || undefined}
+                note="Preview only. Save the agreement above to persist the draft content."
+              >
+                <h1 className="font-heading text-[20pt] font-extrabold text-alo-brand">
+                  {title || 'Untitled official document'}
+                </h1>
+                <p className="mt-2 text-sm text-neutral-500">Category: {category}</p>
+                <div className="mt-6 space-y-4 whitespace-pre-wrap">
+                  {content || 'Document content will appear here as you type.'}
+                </div>
+              </OfficialLetterhead>
+            </div>
+          )}
         </CardContent>
       </Card>
 
