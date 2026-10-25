@@ -366,6 +366,23 @@ export const JOB_REGISTRY: RegisteredCronJob[] = [
     handler: createLazyHandler('runWebhookDispatch'),
     handlerName: 'runWebhookDispatch',
   },
+  {
+    // PhD workspace upkeep. Report-only by design: reminders are the only write,
+    // stale evidence and documents past retention are counted, never changed or
+    // removed by a scheduled job.
+    key: 'phd-maintenance',
+    name: 'PhD Workspace Maintenance',
+    description:
+      'Raises in-app deadline reminders for applicants, and reports evidence due for re-verification and documents past their retention window without altering or deleting them.',
+    schedule: '0 * * * *',
+    timezone: 'Asia/Dhaka',
+    lockTtlSeconds: 540,
+    timeoutMs: 120_000,
+    aliases: ['phd-upkeep'],
+    disposition: 'job',
+    handler: createLazyHandler('runPhdMaintenance'),
+    handlerName: 'runPhdMaintenance',
+  },
 ];
 
 /** Job keys the platform must always expose. Asserted by the policy check. */

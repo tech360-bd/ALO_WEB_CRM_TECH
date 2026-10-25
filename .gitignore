@@ -74,6 +74,7 @@ node_modules/
 .env.*
 !.env.example
 !.env.production.example
+!.env.ai-gateway.example
 
 # Archives / exported packages
 *.zip
@@ -112,6 +113,7 @@ build/
 .env.*
 !.env.example
 !.env.production.example
+!.env.ai-gateway.example
 
 # Archives / exported packages
 *.zip
@@ -272,3 +274,11 @@ prisma/dev.db*
 # the bare `test` pattern silently dropped an API route. Negation must follow
 # the pattern it overrides, so it lives here at the end of the file.
 !docs/research/GITHUB_SOURCE_CATALOG.csv
+
+# Local verification artifacts (temporary databases, gateway logs, JSON reports).
+/.phd-tmp/
+/.ai-gateway-tmp/
+# Local audit evidence (test/lint/build reports)
+/.audit-tmp/
+# Runtime document store for the PhD module (private uploads, never committed)
+/storage/phd/

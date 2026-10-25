@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2580,
+  "filesScanned": 2627,
   "summary": {
     "UNUSED": 102,
-    "REFERENCED_WITH_FALLBACK": 156,
+    "REFERENCED_WITH_FALLBACK": 166,
     "REFERENCED_FAIL_CLOSED": 20,
-    "REFERENCED": 122,
+    "REFERENCED": 123,
     "PUBLIC": 12
   },
   "productionRequired": [
@@ -153,7 +153,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 5,
+      "referenceCount": 6,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -188,11 +188,41 @@
       ]
     },
     {
-      "name": "AI_SMART_MODEL",
+      "name": "AI_GATEWAY_BASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
       "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "AI_GATEWAY_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "AI_SMART_MODEL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -202,7 +232,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/enterprise-ai/route.ts"
+        "src/app/api/enterprise-ai/route.ts",
+        "src/lib/phd/ai/client.ts",
+        "src/lib/phd/ai/gateway.ts"
       ]
     },
     {
@@ -3574,6 +3606,21 @@
       ]
     },
     {
+      "name": "LOCAL_MODEL_NAME",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
       "name": "LONGCAT_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
@@ -4708,6 +4755,96 @@
       ]
     },
     {
+      "name": "PHD_AI_GATEWAY_ENABLED",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_MODEL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_TIMEOUT_MS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_STORAGE_ROOT",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/storage.ts"
+      ]
+    },
+    {
+      "name": "PHD_TEST_DB",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/phd/setup-verification-db.mjs"
+      ]
+    },
+    {
       "name": "PINTEREST_APP_ID",
       "classification": "UNUSED",
       "referenced": false,
@@ -4895,6 +5032,36 @@
       "sampleReferences": [
         "server.js",
         "src/app/api/automation/schedule/route.ts"
+      ]
+    },
+    {
+      "name": "PRISMA_QUERY_ENGINE_LIBRARY",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/phd/setup-verification-db.mjs"
+      ]
+    },
+    {
+      "name": "PRISMA_SCHEMA_ENGINE_BINARY",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/phd/setup-verification-db.mjs"
       ]
     },
     {

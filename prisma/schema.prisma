@@ -32,6 +32,12 @@ model User {
   partnerId                  String?
   auditLogs                  AuditLog[]
   marketingUserAccesses      MarketingUserAccess[]
+  // UK PhD Proposal Builder (additive module)
+  phdProfile       PhdProfile?          @relation("PhdProfileOwner")
+  phdProjects      PhdProject[]          @relation("PhdProjectOwner")
+  phdDocuments     PhdDocument[]         @relation("PhdDocumentUploader")
+  phdNotifications PhdNotification[]     @relation("PhdNotificationRecipient")
+
 }
 
 model DeploymentSequence {
@@ -12412,4 +12418,1103 @@ model PolicyChangeAlert {
   @@index([ruleKey])
   @@index([detectedAt])
   @@index([proposedRuleVersionId])
+}
+
+// ============================================================================
+// UK PhD PROPOSAL BUILDER — additive module schema
+// ----------------------------------------------------------------------------
+// Every table is prefixed `Phd` so the existing CRM schema, routes and data are
+// untouched. Enumerated values are stored as validated strings (String +
+// module-level constants in src/lib/phd/constants.ts) because that is the
+// existing project convention (User.role, Application.stage, ...), and it keeps
+// the offline SQLite verification mirror possible. Relations, indexes and
+// uniqueness are enforced by the database, not by JSON blobs.
+// ============================================================================
+
+model PhdProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation("PhdProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Academic profile
+  highestQualification String  @default("")
+  degreeSubject        String  @default("")
+  awardingInstitution  String  @default("")
+  gradeAwarded         String  @default("")
+  gpa                  String  @default("")
+  classification       String  @default("")
+  relevantModules      String  @db.Text
+  dissertationTitle    String  @default("")
+  methodsExperience    String  @db.Text
+  publications         String  @db.Text
+  researchExperience   String  @db.Text
+  employmentHistory    String  @db.Text
+  englishTestStatus    String  @default("UNKNOWN") // NOT_TAKEN | TAKEN | EXEMPT | UNKNOWN
+  englishTestType      String  @default("")
+  englishTestScore     String  @default("")
+  englishTestDate      DateTime?
+
+  // Research preferences
+  primaryDiscipline    String  @default("UNDECIDED") // BUSINESS | ENGINEERING | BOTH | UNDECIDED
+  existingResearchIdea String  @db.Text
+  preferredMethods     String  @default("") // comma-free canonical codes, JSON array string validated in app
+  researchSetting      String  @db.Text
+  studyMode            String  @default("UNDECIDED") // FULL_TIME | PART_TIME | UNDECIDED
+  desiredStart         String  @default("")
+  locationPreferences  String  @default("")
+  fundingRequirement   String  @default("UNDECIDED") // REQUIRED | PREFERRED | SELF_FUNDED | UNDECIDED
+  budgetRange          String  @default("")
+  equipmentNeeds       String  @db.Text
+
+  // Application preferences
+  currentStage         String  @default("TOPIC_DISCOVERY")
+  existingDocuments    String  @default("")
+  preferredContact     String  @default("EMAIL")
+  personalDeadlines    String  @db.Text
+
+  // Privacy / onboarding
+  privacyAcceptedAt DateTime?
+  onboardingStep    Int       @default(1)
+  completedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  interests PhdProfileInterest[]
+
+  @@index([primaryDiscipline])
+}
+
+model PhdProfileInterest {
+  id        String     @id @default(cuid())
+  profileId String
+  profile   PhdProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  kind      String // SUBJECT | LOCATION | TARGET_UNIVERSITY | METHOD | TOOL
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([profileId, kind, value])
+  @@index([profileId, kind])
+}
+
+model PhdProject {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation("PhdProjectOwner", fields: [userId], references: [id], onDelete: Cascade)
+  title   String
+  discipline String @default("UNDECIDED")
+  status  String @default("ACTIVE") // ACTIVE | ARCHIVED
+  stage   String @default("TOPIC_DISCOVERY")
+  researchQuestion String @db.Text
+  selectedTopicId String?
+  selectedTopic   PhdTopicCandidate? @relation("PhdSelectedTopic", fields: [selectedTopicId], references: [id], onDelete: SetNull)
+  adviserId String? // research adviser (User.id, soft reference)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  preferences      PhdResearchPreference[]
+  topics           PhdTopicCandidate[]
+  sources          PhdLiteratureSource[]
+  claims           PhdEvidenceClaim[]
+  notes            PhdResearchNote[]
+  proposals        PhdProposal[]
+  timelines        PhdTimeline[]
+  applications     PhdApplication[]
+  documents        PhdDocument[]
+  contacts         PhdSupervisorContact[]
+  supervisorMatches PhdSupervisorMatch[]
+  deadlines        PhdDeadline[]
+  notifications    PhdNotification[]
+  jobs             PhdResearchJob[]
+
+  @@index([userId, status])
+  @@index([selectedTopicId])
+}
+
+model PhdResearchPreference {
+  id        String   @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  category  String // SUBJECT | METHOD | SETTING | LOCATION | FUNDING | EQUIPMENT | CONSTRAINT
+  value     String   @db.Text
+  priority  Int      @default(2)
+  source    String   @default("USER")
+  createdAt DateTime @default(now())
+
+  @@index([projectId, category])
+}
+
+model PhdTopicArea {
+  code        String @id // e.g. BUS-AI-ADOPTION
+  discipline  String // BUSINESS | ENGINEERING
+  name        String
+  subfield    String
+  summary     String @db.Text
+  keywords    String @db.Text // comma separated, validated non-empty
+  problems    String @db.Text // newline separated
+  theories    String @db.Text // newline separated
+  methods     String @db.Text // newline separated method codes from constants
+  dataSources String @db.Text
+  risks       String @db.Text
+  ethics      String @db.Text
+  contributions String @db.Text
+  searchStrategy String @db.Text
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  topics PhdTopicCandidate[]
+}
+
+model PhdTopicCandidate {
+  id        String   @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  areaCode  String
+  area      PhdTopicArea @relation(fields: [areaCode], references: [code], onDelete: Restrict)
+  dedupeKey String   @unique
+  workingTitle String
+  plainLanguage String @db.Text
+  researchField String
+  researchSubfield String
+  problemStatement String @db.Text
+  initialEvidence  String @db.Text
+  provisionalGap   String @db.Text
+  mainQuestion     String @db.Text
+  aim              String @db.Text
+  theoryFramework  String @db.Text
+  methodology      String @db.Text
+  dataNeeds        String @db.Text
+  feasibilityRisks String @db.Text
+  ethics           String @db.Text
+  scholarlyContribution String @db.Text
+  practicalContribution String @db.Text
+  potentialMatches String @db.Text
+  preliminaryReading String @db.Text
+  confidence       String @default("LOW") // LOW | MEDIUM | HIGH
+  evidenceQuality  String @default("UNVERIFIED")
+  unresolvedQuestions String @db.Text
+  noveltyStatus    String @default("PROVISIONAL_UNVERIFIED")
+  provenance       String @default("GENERATED")
+  isSelected       Boolean @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  questions        PhdResearchQuestion[]
+  objectives       PhdResearchObjective[]
+  methodologies   PhdResearchMethodology[]
+  evaluations      PhdTopicEvaluation[]
+  supervisorMatches PhdSupervisorMatch[]
+  selectedByProjects PhdProject[] @relation("PhdSelectedTopic")
+  applications     PhdApplication[]
+
+  @@index([projectId, areaCode])
+  @@index([projectId, isSelected])
+}
+
+model PhdResearchQuestion {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  text      String @db.Text
+  kind      String @default("SUPPORTING") // MAIN | SUPPORTING
+  order     Int    @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([topicId, order])
+}
+
+model PhdResearchObjective {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  text      String @db.Text
+  measure   String @db.Text
+  order     Int    @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([topicId, order])
+}
+
+model PhdResearchMethodology {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  paradigm  String @default("")
+  design    String @db.Text
+  methods   String @db.Text
+  rationale String @db.Text
+  resources String @db.Text
+  risks     String @db.Text
+  isSelected Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([topicId])
+}
+
+model PhdTopicEvaluation {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  criterion String
+  score     Int // 0..5, validated server-side
+  weight    Int // 1..5, configurable
+  explanation String @db.Text
+  evidenceStatus String @default("UNVERIFIED")
+  evaluatedBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([topicId, criterion])
+  @@index([topicId])
+}
+
+model PhdLiteratureSource {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dedupeKey String @unique
+  title     String
+  authors   String @db.Text
+  year      Int?
+  venue     String @default("")
+  publisher String @default("")
+  doi       String?
+  url       String? @db.Text
+  sourceType String @default("JOURNAL_ARTICLE")
+  abstract  String @db.Text
+  notes     String @db.Text
+  researchQuestion String @db.Text
+  methods   String @db.Text
+  findings  String @db.Text
+  limitations String @db.Text
+  relevance String @db.Text
+  supportDirection String @default("SUPPORTS") // SUPPORTS | CONTRADICTS | MIXED | CONTEXT
+  accessedAt DateTime?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  provenance String @default("USER")
+  documentId String? @unique
+  document PhdDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  claims PhdEvidenceClaim[]
+  citations PhdProposalCitation[]
+
+  @@index([projectId, verificationStatus])
+  @@index([projectId, year])
+}
+
+model PhdEvidenceClaim {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceId  String?
+  source    PhdLiteratureSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  claim     String @db.Text
+  supportType String @default("VERIFIED_FACT") // VERIFIED_FACT | SOURCE_REPORTED | AI_SYNTHESIS | HYPOTHESIS | UNVERIFIED
+  location  String @default("")
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  confidence String @default("LOW")
+  notes     String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, supportType])
+  @@index([sourceId])
+}
+
+model PhdResearchNote {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  topicId   String?
+  title     String @default("")
+  content   String @db.Text
+  tags      String @default("")
+  provenance String @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model PhdUniversity {
+  id        String @id @default(cuid())
+  // Immutable register identifier. A record may be re-verified or marked
+  // unavailable, but this id is never reused, renamed or merged.
+  registerId String @unique
+  slug      String @unique
+  name      String @unique
+  officialDomain String @unique
+  officialHomepage String @db.Text
+  country   String @default("United Kingdom")
+  researchDegreesUrl String? @db.Text
+  researchDegreesPageTitle String @default("")
+  researchDegreesStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  sourceRetrievedAt DateTime?
+  targetListRank Int? @unique
+  registerProvenance String @default("SEEDED_TARGET_REGISTER")
+  notes     String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schools        PhdSchool[]
+  programmes     PhdProgramme[]
+  researchAreas  PhdResearchArea[]
+  supervisors    PhdSupervisor[]
+  fees           PhdTuitionFee[]
+  funding        PhdFundingOpportunity[]
+  applications   PhdApplication[]
+  deadlines      PhdDeadline[]
+  commissionAgreement PhdCommissionAgreement?
+  commissionRecords PhdCommissionRecord[]
+  evidence       PhdSourceEvidence[]
+  proposals      PhdProposal[]
+
+  @@index([name])
+}
+
+model PhdSchool {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  name      String
+  schoolType String @default("OTHER") // BUSINESS | ENGINEERING | OTHER
+  websiteUrl String? @db.Text
+  researchUrl String? @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  evidenceId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programmes PhdProgramme[]
+  supervisors PhdSupervisor[]
+
+  @@unique([universityId, name])
+  @@index([universityId, schoolType])
+}
+
+model PhdProgramme {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  schoolId String?
+  school   PhdSchool? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  name      String
+  award     String @default("PhD")
+  discipline String @default("OTHER") // BUSINESS | ENGINEERING | OTHER
+  officialUrl String? @db.Text
+  description String @db.Text
+  specialisms String @db.Text
+  fullTime  Boolean @default(true)
+  partTime  Boolean @default(false)
+  distanceLearning Boolean @default(false)
+  applicationRequirements String @db.Text
+  proposalFormat String @db.Text
+  proposalWordLimit Int?
+  requiredHeadings String @db.Text
+  referencingStyle String @default("")
+  abstractRequired Boolean?
+  submissionFormat String @default("")
+  requiredDocuments String @db.Text
+  englishRequirements String @db.Text
+  intakes   String @db.Text
+  applicationDeadline String @default("")
+  feesUrl   String? @db.Text
+  fundingUrl String? @db.Text
+  supervisorDirectoryUrl String? @db.Text
+  applicationInstructions String @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  evidenceId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  requirements PhdDocumentRequirement[]
+  applications PhdApplication[]
+  proposals PhdProposal[]
+  fees PhdTuitionFee[]
+  deadlines PhdDeadline[]
+
+  @@unique([universityId, name, award])
+  @@index([universityId, discipline])
+}
+
+model PhdResearchArea {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  name      String
+  description String @db.Text
+  url       String? @db.Text
+  discipline String @default("OTHER")
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([universityId, name])
+  @@index([universityId, discipline])
+}
+
+model PhdSupervisor {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  schoolId String?
+  school   PhdSchool? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  fullName  String
+  roleTitle String @default("")
+  department String @default("")
+  profileUrl String @db.VarChar(512)
+  researchInterests String @db.Text
+  methods   String @db.Text
+  facilities String @db.Text
+  contactEmail String?
+  contactSourceUrl String? @db.Text
+  availabilityStatus String @default("AVAILABILITY_UNCLEAR")
+  availabilityEvidence String @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  dedupeKey String @unique
+  notes     String @db.Text
+  createdById String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expertise    PhdSupervisorExpertise[]
+  publications PhdSupervisorPublication[]
+  matches      PhdSupervisorMatch[]
+  contacts     PhdSupervisorContact[]
+  applications PhdApplication[]
+
+  @@unique([universityId, profileUrl])
+  @@index([universityId, availabilityStatus])
+  @@index([fullName])
+}
+
+model PhdSupervisorExpertise {
+  id        String @id @default(cuid())
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  keyword String
+  source  String @default("OFFICIAL_PROFILE")
+  createdAt DateTime @default(now())
+
+  @@unique([supervisorId, keyword])
+  @@index([keyword])
+}
+
+model PhdSupervisorPublication {
+  id        String @id @default(cuid())
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  title     String
+  year      Int?
+  venue     String @default("")
+  doi       String?
+  url       String? @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  createdAt DateTime @default(now())
+
+  @@unique([supervisorId, title, year])
+  @@index([supervisorId])
+}
+
+model PhdSupervisorMatch {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  topicId   String?
+  topic     PhdTopicCandidate? @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  fitScore  Int @default(0)
+  fitLabel  String @default("LOW")
+  keywordAlignment Int @default(0)
+  methodAlignment  Int @default(0)
+  publicationAlignment Int @default(0)
+  disciplineAlignment Int @default(0)
+  rationale String @db.Text
+  mismatches String @db.Text
+  missingEvidence String @db.Text
+  availabilityAtMatch String @default("AVAILABILITY_UNCLEAR")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, supervisorId])
+  @@index([projectId, fitScore])
+}
+
+model PhdSupervisorContact {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  userId    String
+  subject   String
+  body      String @db.Text
+  attachments String @db.Text
+  status    String @default("DRAFTED") // DRAFTED | REVIEWED | SENT | REPLIED | FOLLOW_UP_DUE | INTERESTED | UNAVAILABLE | CLOSED
+  approvedAt DateTime?
+  sentAt    DateTime?
+  repliedAt DateTime?
+  nextFollowUpAt DateTime?
+  responseSummary String @db.Text
+  notes     String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, status])
+  @@index([supervisorId, status])
+}
+
+model PhdProposal {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  programmeId String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  topicId   String?
+  title     String
+  status    String @default("DRAFT")
+  isGeneralDraft Boolean @default(true)
+  wordLimit Int?
+  requiredHeadings String @db.Text
+  referencingStyle String @default("NOT_SPECIFIED")
+  abstractRequired Boolean @default(true)
+  ethicsRequired Boolean @default(true)
+  fileFormat String @default("")
+  requirementsVerificationStatus String @default("NOT_YET_VERIFIED")
+  requirementsSourceUrl String? @db.Text
+  requirementsCheckedAt DateTime?
+  currentVersion Int @default(1)
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sections  PhdProposalSection[]
+  versions  PhdProposalVersion[]
+  citations PhdProposalCitation[]
+  applications PhdApplication[]
+
+  @@index([projectId, universityId])
+  @@index([programmeId])
+}
+
+model PhdProposalSection {
+  id        String @id @default(cuid())
+  proposalId String
+  proposal  PhdProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  sectionKey String
+  title     String
+  content   String @db.Text
+  sortOrder Int @default(0)
+  required  Boolean @default(true)
+  guidance  String @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@unique([proposalId, sectionKey])
+  @@index([proposalId, sortOrder])
+}
+
+model PhdProposalVersion {
+  id        String @id @default(cuid())
+  proposalId String
+  proposal  PhdProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  version   Int
+  title     String
+  wordCount Int @default(0)
+  changeSummary String @db.Text
+  snapshot  String @db.LongText
+  createdById String
+  createdAt DateTime @default(now())
+
+  @@unique([proposalId, version])
+  @@index([proposalId, createdAt])
+}
+
+model PhdProposalCitation {
+  id        String @id @default(cuid())
+  proposalId String
+  proposal  PhdProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  sourceId  String?
+  source    PhdLiteratureSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  sectionKey String @default("")
+  rawText   String @db.Text
+  claimText String @db.Text
+  isValid   Boolean @default(false)
+  validationNote String @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  createdAt DateTime @default(now())
+
+  @@index([proposalId, sectionKey])
+}
+
+model PhdTimeline {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  mode      String @default("FULL_TIME")
+  startDate DateTime
+  totalMonths Int
+  discipline String @default("UNDECIDED")
+  notes     String @db.Text
+  generatedBy String @default("DETERMINISTIC_PLANNER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  milestones PhdTimelineMilestone[]
+
+  @@index([projectId])
+}
+
+model PhdTimelineMilestone {
+  id        String @id @default(cuid())
+  timelineId String
+  timeline  PhdTimeline @relation(fields: [timelineId], references: [id], onDelete: Cascade)
+  name      String
+  category  String @default("RESEARCH")
+  sortOrder Int @default(0)
+  startDate DateTime
+  endDate   DateTime
+  dependsOnId String?
+  status    String @default("PLANNED")
+  isOfficialDeadline Boolean @default(false)
+  sourceUrl String? @db.Text
+  notes     String @db.Text
+
+  @@index([timelineId, sortOrder])
+}
+
+model PhdFundingOpportunity {
+  id        String @id @default(cuid())
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  name      String
+  department String @default("")
+  officialUrl String @db.Text
+  fundingType String @default("UNKNOWN") // FULLY_FUNDED | PARTIALLY_FUNDED | STIPEND | TUITION_WAIVER | OTHER | UNKNOWN
+  eligibility String @db.Text
+  nationalityRestrictions String @db.Text
+  subjectRestrictions String @db.Text
+  tuitionCoverage String @default("UNKNOWN")
+  stipendAmountMinor Int? // integer minor units (pence); never floating point
+  currency String @default("")
+  duration  String @default("")
+  applicationRequirements String @db.Text
+  closingDate DateTime?
+  closingTimezone String @default("")
+  separateAdmissionRequired Boolean? 
+  supervisorContactRequired Boolean?
+  fundingStartDate DateTime?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  notes     String @db.Text
+  dedupeKey String @unique
+  createdById String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  eligibilityCriteria PhdFundingEligibility[]
+  deadlines PhdDeadline[]
+
+  @@index([universityId, closingDate])
+}
+
+model PhdFundingEligibility {
+  id        String @id @default(cuid())
+  opportunityId String
+  opportunity PhdFundingOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  criterion String
+  value     String @db.Text
+  applicantStatus String @default("UNKNOWN") // ELIGIBLE | NOT_ELIGIBLE | NEEDS_VERIFICATION | UNKNOWN
+  createdAt DateTime @default(now())
+
+  @@unique([opportunityId, criterion])
+}
+
+model PhdDeadline {
+  id        String @id @default(cuid())
+  projectId String?
+  project   PhdProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  programmeId String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  fundingOpportunityId String?
+  fundingOpportunity PhdFundingOpportunity? @relation(fields: [fundingOpportunityId], references: [id], onDelete: SetNull)
+  applicationId String?
+  application PhdApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  title     String
+  kind      String @default("APPLICATION") // APPLICATION | FUNDING | DOCUMENT | INTERVIEW | PERSONAL
+  dueDate   DateTime?
+  timezone  String @default("")
+  status    String @default("DATE_NOT_PUBLISHED")
+  sourceUrl String? @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  reminderDays Int @default(7)
+  notes     String @db.Text
+  lastVerifiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, dueDate])
+  @@index([status, dueDate])
+}
+
+model PhdTuitionFee {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  programmeId String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  academicYear String
+  studentStatus String // HOME | INTERNATIONAL | ISLANDS | OTHER
+  feeBasis String // FULL_TIME | PART_TIME | WRITING_UP | DISTANCE_LEARNING
+  amountMinor Int // integer minor units (pence)
+  currency String @default("GBP")
+  sourceUrl String @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  notes String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([universityId, programmeId, academicYear, studentStatus, feeBasis])
+  @@index([universityId, academicYear])
+}
+
+model PhdApplication {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  programmeId String
+  programme PhdProgramme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  topicId   String?
+  topic     PhdTopicCandidate? @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  proposalId String?
+  proposal  PhdProposal? @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+  supervisorId String?
+  supervisor PhdSupervisor? @relation(fields: [supervisorId], references: [id], onDelete: SetNull)
+  status    String @default("RESEARCHING")
+  fundingStatus String @default("NOT_STARTED") // NOT_STARTED | RESEARCHING | PREPARING | SUBMITTED | PENDING | AWARDED | REJECTED | WITHDRAWN
+  openedAt  DateTime?
+  closingDate DateTime?
+  submittedAt DateTime?
+  applicationReference String @default("")
+  interviewAt DateTime?
+  offerStatus String @default("NONE") // NONE | CONDITIONAL | UNCONDITIONAL | REJECTED | WITHDRAWN
+  offerConditions String @db.Text
+  fundingDecision String @default("")
+  nextAction String @default("")
+  nextActionDueAt DateTime?
+  notes     String @db.Text
+  sourceUrl String? @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks     PhdApplicationTask[]
+  documents PhdDocument[]
+  deadlines PhdDeadline[]
+
+  @@unique([projectId, universityId, programmeId])
+  @@index([projectId, status])
+  @@index([universityId, status])
+}
+
+model PhdApplicationTask {
+  id        String @id @default(cuid())
+  applicationId String
+  application PhdApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  title     String
+  category  String @default("OTHER")
+  dueAt     DateTime?
+  status    String @default("OPEN") // OPEN | DONE | BLOCKED | CANCELLED
+  notes     String @db.Text
+  documentRequirementId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId, status, dueAt])
+}
+
+model PhdDocument {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  documentType String
+  storageKey String @unique
+  mimeType  String
+  sizeBytes Int
+  checksum  String
+  version   Int @default(1)
+  uploadedById String
+  user      User @relation("PhdDocumentUploader", fields: [uploadedById], references: [id], onDelete: Cascade)
+  applicationId String?
+  application PhdApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  requirementId String?
+  requirement PhdDocumentRequirement? @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  status    String @default("UPLOADED") // UPLOADED | VERIFIED | REJECTED | SUPERSEDED
+  retentionUntil DateTime?
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+
+  literatureSource PhdLiteratureSource?
+
+  @@index([projectId, documentType])
+  @@index([applicationId])
+}
+
+model PhdDocumentRequirement {
+  id        String @id @default(cuid())
+  programmeId String
+  programme PhdProgramme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  documentType String
+  mandatory Boolean @default(false)
+  sourceUrl String? @db.Text
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  notes     String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents PhdDocument[]
+
+  @@unique([programmeId, documentType])
+  @@index([programmeId])
+}
+
+// ---------------------------------------------------------------------------
+// Commission structure — deliberately separate from academic data.
+// ---------------------------------------------------------------------------
+
+model PhdCommissionDocument {
+  id        String @id @default(cuid())
+  filename  String
+  title     String @default("")
+  versionLabel String @default("")
+  sha256    String @unique
+  storageKey String @unique
+  pageCount Int @default(0)
+  effectiveFrom DateTime?
+  effectiveTo DateTime?
+  sourceNote String @db.Text
+  extractionStatus String @default("PENDING") // PENDING | EXTRACTED | PARTIAL | FAILED | MANUAL_REQUIRED
+  uploadedById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pages   PhdCommissionPage[]
+  records PhdCommissionRecord[]
+  agreements PhdCommissionAgreement[]
+}
+
+model PhdCommissionPage {
+  id        String @id @default(cuid())
+  documentId String
+  document  PhdCommissionDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  pageNumber Int
+  text      String @db.LongText
+  extractStatus String @default("EXTRACTED")
+  createdAt DateTime @default(now())
+
+  @@unique([documentId, pageNumber])
+  @@index([documentId])
+}
+
+model PhdCommissionRecord {
+  id        String @id @default(cuid())
+  documentId String?
+  document  PhdCommissionDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  universityNameRaw String
+  pageNumber Int?
+  exactWording String @db.Text
+  commissionType String @default("UNKNOWN") // FIXED | PERCENTAGE | MIXED | UNKNOWN
+  amountMinor Int? // integer minor units (pence)
+  percentageBasisPoints Int? // 1/10000 of a percent; exact integer arithmetic
+  basisGrossNet String @default("UNKNOWN") // GROSS | NET | NOT_STATED | UNKNOWN
+  eligibleCategory String @db.Text
+  exclusions String @db.Text
+  paymentMilestone String @db.Text
+  effectivePeriod String @default("")
+  clawbackTerms String @db.Text
+  extractionStatus String @default("UNVERIFIED") // UNVERIFIED | EXTRACTED | VERIFIED | CONFLICT
+  verificationStatus String @default("CONFIRMED_UNVERIFIED")
+  lastReviewedAt DateTime?
+  reviewedById String?
+  notes     String @db.Text
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  conditions PhdCommissionCondition[]
+  agreements PhdCommissionAgreement[]
+
+  @@index([universityId])
+  @@index([documentId, pageNumber])
+}
+
+model PhdCommissionCondition {
+  id        String @id @default(cuid())
+  recordId  String
+  record    PhdCommissionRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  category  String @default("OTHER") // EXCLUSION | PAYMENT | CLAWBACK | VERIFICATION | DEADLINE | AMOUNT_BASIS | ELIGIBILITY | OTHER
+  condition String @db.Text
+  pageNumber Int?
+  createdAt DateTime @default(now())
+
+  @@index([recordId, category])
+}
+
+model PhdCommissionAgreement {
+  id        String @id @default(cuid())
+  universityId String? @unique
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  universityNameRaw String @unique
+  phdCommissionStatus String @default("UNCONFIRMED") // ELIGIBLE_CONFIRMED | NOT_ELIGIBLE_CONFIRMED | EXCLUDED_BY_SUPPLIED_STRUCTURE | UNCONFIRMED
+  recordId  String?
+  record    PhdCommissionRecord? @relation(fields: [recordId], references: [id], onDelete: SetNull)
+  documentId String?
+  document  PhdCommissionDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  sourcePage Int?
+  exactWording String @db.Text
+  reason    String @db.Text
+  reviewRequired Boolean @default(true)
+  reviewedById String?
+  reviewedAt DateTime?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([phdCommissionStatus])
+}
+
+// ---------------------------------------------------------------------------
+// Provenance, verification, notifications, audit, jobs
+// ---------------------------------------------------------------------------
+
+model PhdSourceEvidence {
+  id        String @id @default(cuid())
+  entityType String
+  entityId  String
+  fieldName String @default("")
+  claim     String @db.Text
+  sourceUrl String? @db.Text
+  sourceAuthority String @default("UNKNOWN") // OFFICIAL_PRIMARY | OFFICIAL_SECONDARY | PEER_REVIEWED | SCHOLARLY_INDEX | INDUSTRY | GOVERNMENT | SECONDARY | UNKNOWN
+  excerpt   String @db.Text
+  retrievedAt DateTime @default(now())
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  reviewerId String?
+  reviewedAt DateTime?
+  conflictNotes String @db.Text
+  nextVerificationAt DateTime?
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  createdById String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events PhdVerificationEvent[]
+
+  @@index([entityType, entityId])
+  @@index([verificationStatus, nextVerificationAt])
+}
+
+model PhdVerificationEvent {
+  id        String @id @default(cuid())
+  evidenceId String?
+  evidence  PhdSourceEvidence? @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  entityType String
+  entityId  String
+  action    String
+  fromStatus String @default("")
+  toStatus  String @default("")
+  actorId   String
+  notes     String @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+}
+
+model PhdNotification {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation("PhdNotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   PhdProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      String @default("REMINDER") // REMINDER | FOLLOW_UP | DEADLINE | VERIFICATION | SYSTEM
+  title     String
+  body      String @db.Text
+  dueAt     DateTime?
+  readAt    DateTime?
+  entityType String @default("")
+  entityId  String @default("")
+  deliveryStatus String @default("IN_APP") // IN_APP (only) — no email is sent automatically
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt, dueAt])
+}
+
+model PhdAuditLog {
+  id        String @id @default(cuid())
+  actorId   String
+  actorRole String @default("")
+  action    String
+  entityType String
+  entityId  String @default("")
+  projectId String @default("")
+  details   String @db.Text
+  ipHash    String @default("")
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@index([projectId, createdAt])
+}
+
+model PhdResearchJob {
+  id        String @id @default(cuid())
+  projectId String?
+  project   PhdProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  kind      String // TOPIC_DISCOVERY | LITERATURE_SYNTHESIS | UNIVERSITY_RESEARCH | SUPERVISOR_MATCH | PROPOSAL_GENERATION | FUNDING_DISCOVERY | DEADLINE_MONITOR | COMMISSION_EXTRACTION | CHECKLIST_GENERATION | SOURCE_VERIFICATION
+  status    String @default("QUEUED") // QUEUED | RUNNING | SUCCEEDED | FAILED | BLOCKED
+  progress  Int @default(0)
+  attempts  Int @default(0)
+  maxAttempts Int @default(3)
+  dedupeKey String? @unique
+  payload   String @db.Text
+  result    String @db.Text
+  error     String @db.Text
+  requestedById String
+  startedAt DateTime?
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, kind, status])
+  @@index([status, createdAt])
+}
+
+model PhdExportRecord {
+  id        String @id @default(cuid())
+  projectId String
+  kind      String
+  format    String
+  filename  String
+  bytes     Int
+  checksum  String @default("")
+  createdById String
+  createdAt DateTime @default(now())
+
+  @@index([projectId, createdAt])
 }

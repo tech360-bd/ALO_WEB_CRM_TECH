@@ -34,6 +34,12 @@ model User {
   partnerId                  String?
   auditLogs                  AuditLog[]
   marketingUserAccesses      MarketingUserAccess[]
+  // UK PhD Proposal Builder (additive module)
+  phdProfile       PhdProfile?          @relation("PhdProfileOwner")
+  phdProjects      PhdProject[]          @relation("PhdProjectOwner")
+  phdDocuments     PhdDocument[]         @relation("PhdDocumentUploader")
+  phdNotifications PhdNotification[]     @relation("PhdNotificationRecipient")
+
 }
 
 model DeploymentSequence {
@@ -647,7 +653,7 @@ model Application {
   b2bType              String?   @default("") // B2B_INBOUND, B2B_OUTBOUND
   b2bProviderId        String?   @default("")
   // Pipeline
-  stage                String    @default("APPLICATION_DRAFT") // APPLICATION_DRAFT, PROFILE_REVIEW, DOCUMENT_REVIEW, READY_TO_SUBMIT, SUBMITTED_TO_ALO_APPLICATION_TEAM, SUBMITTED_TO_B2B, SUBMITTED_TO_UNIVERSITY, ACKNOWLEDGEMENT_RECEIVED, DECISION_PENDING, MORE_DOCUMENTS_REQUESTED, INTERVIEW_REQUIRED, CONDITIONAL_OFFER, UNCONDITIONAL_OFFER, REJECTED, DEFERRED, WITHDRAWN, DEPOSIT_PENDING, DEPOSIT_PAID, CAS_PENDING, CAS_RECEIVED, I20_PENDING, I20_RECEIVED, COE_PENDING, COE_RECEIVED, VISA_HANDOVER_READY, VISA_FILE_CREATED, CLOSED
+  stage                String    @default("APPLICATION_DRAFT") // APPLICATION_DRAFT → PROFILE/DOCUMENT_REVIEW → READY_TO_SUBMIT → SUBMITTED → OFFER → CAS/I20/COE → VISA_* → PRE_DEPARTURE → ENROLLED/CLOSED; transitions are enforced in the application-manager service
   safeStatus           String    @default("DRAFT") // DRAFT, UNDER_REVIEW, DOCUMENTS_REQUIRED, SUBMITTED, DECISION_PENDING, OFFER_RECEIVED, REJECTED, DEFERRED, VISA_PREPARATION
   reviewStatus         String    @default("PENDING") // PENDING, APPROVED, REJECTED, NEEDS_MORE_INFO
   documentStatus       String    @default("PENDING") // PENDING, COMPLETE, INCOMPLETE, UNDER_REVIEW, VERIFIED
@@ -1079,6 +1085,7 @@ model ImportBatch {
 model ImportStagingStudent {
   id                 String   @id @default(cuid())
   batchId            String
+  rowNumber          Int      @default(0)
   oldCrmId           String   @default("")
   studentName        String
   phone              String   @default("")
@@ -1105,6 +1112,9 @@ model ImportStagingStudent {
   createdAt          DateTime @default(now())
 
   batch ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([oldCrmId, status])
 }
 
 model UniversityUpdateRequest {
@@ -1725,6 +1735,7 @@ model CrmCourse {
   durationMonths           Int      @default(0)
   tuitionFee               Float    @default(0) // Alias
   currency                 String   @default("GBP") // Alias
+  tuitionPeriod            String   @default("") // Per-course fee period; only source-confirmed periods may drive public display
   applicationFee           Float    @default(0) // Alias
   depositAmount            Float    @default(0) // Alias
   averageScholarship       Float    @default(0)
@@ -2876,6 +2887,8 @@ model PortalUser {
   studentProfile  PortalStudentProfile?
   employeeProfile EmployeeProfile?
   partnerProfile  PartnerProfile?
+
+  @@index([phone])
 }
 
 model PortalSession {
@@ -3066,6 +3079,10 @@ model PortalStudentProfile {
   englishTests    StudentEnglishTestRecord[]
   visaRefusals    StudentVisaRefusal[]
   referrals       StudentReferral[]
+
+  @@index([passportNumber])
+  @@index([altPhone])
+  @@index([fullName])
 }
 
 // ==========================================
@@ -3638,8 +3655,27 @@ model LeadForm {
   sourceSection       String   @default("")
   status              String   @default("new")
   assignedCounselorId String   @default("")
+  // ── Acquisition attribution (Google Free Stack) ──
+  // LeadForm is the public web capture record. It previously stored no
+  // attribution at all, so a consultation booked from a Google Ads click was
+  // indistinguishable from organic. VARCHAR(191) with a literal default is
+  // legal in MySQL (only TEXT/BLOB/JSON defaults are not), and these match the
+  // existing style of this model.
+  utmSource           String   @default("")
+  utmMedium           String   @default("")
+  utmCampaign         String   @default("")
+  utmContent          String   @default("")
+  utmTerm             String   @default("")
+  gclid               String   @default("")
+  fbclid              String   @default("")
+  landingPage         String   @default("")
+  referrer            String   @default("")
+  visitorId           String   @default("")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  @@index([utmSource, utmMedium, utmCampaign])
+  @@index([landingPage])
 }
 
 model SearchLog {
@@ -6149,6 +6185,7 @@ model UnifiedFaq {
 model OfficialSource {
   id                  String             @id @default(cuid())
   sourceUrl           String
+  sourceFingerprint   String?            @unique // SHA-256 of canonical URL + entity target + data section; null for legacy rows until reviewed
   sourceType          String             @default("official_university") // official_university, official_government, official_test_provider, official_scholarship, ALO_editorial, other
   sourceTitle         String             @default("")
   targetType          String             @default("") // university, course, scholarship, country, english_test, service, resource
@@ -6564,6 +6601,47 @@ model Lead {
   utmMedium            String?
   utmCampaign          String?
   rawSubmission        String?
+  // ── Acquisition attribution (Google Free Stack — docs/GOOGLE-FREE-STACK.md) ──
+  // Captured by src/lib/attribution/lead-attribution.ts on every public lead
+  // endpoint. All columns are nullable so existing rows are untouched and no
+  // backfill is implied: a lead created before this migration legitimately has
+  // no recorded attribution, and reporting must show that as unknown rather
+  // than as a guessed source.
+  //
+  // `source` above is the acquisition channel (WEBSITE, GOOGLE_MAPS, …). The
+  // fields below are the marketing attribution triplet and the paid-click
+  // identifiers, kept separate so neither meaning is overloaded.
+  medium                  String?
+  campaign                String?
+  content                 String?
+  term                    String?
+  utmContent              String?
+  utmTerm                 String?
+  /// Google Ads click identifier (autotagging). Presence alone marks the lead
+  /// as paid search even when utm_* is absent.
+  gclid                   String?
+  /// Meta click identifier.
+  fbclid                  String?
+  /// Path + query the visitor converted on.
+  landingPage             String?
+  /// Referring origin only — never a full referrer URL, which can carry
+  /// another site's query string and therefore a third party's PII.
+  referrer                String?
+  /// First-touch attribution, written once and never overwritten.
+  firstTouchSource        String?
+  firstTouchMedium        String?
+  firstTouchCampaign      String?
+  firstTouchLandingPage   String?
+  firstTouchAt            DateTime?
+  /// Last-touch attribution, refreshed on each new conversion by the same
+  /// visitor so a multi-session journey stays traceable.
+  lastTouchSource         String?
+  lastTouchMedium         String?
+  lastTouchAt             DateTime?
+  /// Opaque analytics visitor token (src/lib/analytics/visitor.ts). This is the
+  /// join between a GA4 session and the CRM lead; it is NOT a student id and
+  /// carries no personal data.
+  visitorId               String?
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
   leadOutreach         LeadOutreach[]
@@ -6571,6 +6649,10 @@ model Lead {
   @@index([source])
   @@index([status])
   @@index([counselorId])
+  @@index([utmSource, utmMedium, utmCampaign])
+  @@index([landingPage])
+  @@index([visitorId])
+  @@index([gclid])
 }
 
 model Task {
@@ -8073,8 +8155,9 @@ model CoursePage {
   university          UniversityPage @relation(fields: [universitySlug], references: [slug])
   countrySlug         String
   city                String
-  level               String // Foundation, Bachelor, Masters, MBA, PhD
-  subject             String // Computer Science, Business, etc.
+  level                  String // Foundation, Bachelor, Masters, MBA, PhD
+  internationalEligibility String @default("not_verified")
+  subject                String // Computer Science, Business, etc.
   duration            String
   intake              String
   tuition             String
@@ -8109,9 +8192,12 @@ model CourseView {
 
 model DataChange {
   id                 String         @id @default(cuid())
+  dedupeKey          String?        @unique // deterministic idempotency key for one source/content transition/field
   runId              String // VerificationRun id
   sourceId           String
   source             OfficialSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  snapshotId         String? // exact immutable source version supporting this candidate
+  snapshot           SourceSnapshot? @relation(fields: [snapshotId], references: [id], onDelete: SetNull)
   // What entity changed
   entityType         String // UNIVERSITY | COURSE | FACULTY | SCHOLARSHIP | GOVERNMENT_POLICY
   universitySlug     String?
@@ -8151,6 +8237,7 @@ model DataChange {
 
   @@index([runId])
   @@index([sourceId])
+  @@index([snapshotId])
   @@index([entityType])
   @@index([universitySlug])
   @@index([courseSlug])
@@ -8161,15 +8248,17 @@ model DataChange {
 }
 
 model DataChangeValue {
-  id           String     @id @default(cuid())
-  changeId     String
-  change       DataChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
-  fieldName    String // e.g. "tuition.international", "intake.september", "english.ielts"
-  oldValue     String?
-  newValue     String?
-  oldValueHash String? // for fast comparison
-  newValueHash String?
-  createdAt    DateTime   @default(now())
+  id            String     @id @default(cuid())
+  changeId      String
+  change        DataChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
+  fieldName     String // e.g. "tuition.international", "intake.september", "english.ielts"
+  oldValue      String?
+  newValue      String?
+  oldValueHash  String? // for fast comparison
+  newValueHash  String?
+  evidenceQuote String? // short extract from the fetched official page; still requires human review
+  sourceUrl     String?
+  createdAt     DateTime   @default(now())
 
   @@index([changeId])
   @@index([fieldName])
@@ -8632,6 +8721,111 @@ model InterviewAnswer {
   @@index([questionId])
 }
 
+/// Preliminary interview assessment produced by the deterministic rubric
+/// (spec §41). One row per practice session; the human decision that follows
+/// lives in InterviewReviewDecision, which is append-only so a decision can
+/// never be quietly rewritten.
+model InterviewAssessment {
+  id             String    @id @default(cuid())
+  sessionId      String    @unique
+  studentId      String
+  applicationId  String    @default("")
+  engine         String    @default("DETERMINISTIC_RUBRIC")
+  engineVersion  String    @default("1.0.0")
+  verdict        String
+  confidence     String    @default("LOW")
+  overallScore   Int       @default(0)
+  dimensions     String    @default("[]")
+  strengths      String    @default("[]")
+  improvements   String    @default("[]")
+  evidence       String    @default("[]")
+  limitations    String    @default("[]")
+  answerCount    Int       @default(0)
+  averageWords   Int       @default(0)
+  reviewStatus   String    @default("PENDING")
+  finalVerdict   String?
+  studentMessage String    @default("")
+  reviewedById   String?
+  reviewedByName String    @default("")
+  reviewedAt     DateTime?
+  generatedAt    DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([reviewStatus])
+  @@index([reviewedAt])
+}
+
+/// Append-only record of a human decision on a preliminary assessment
+/// (spec §41). A revision adds a row and points at the row it supersedes;
+/// nothing here is ever updated or deleted.
+model InterviewReviewDecision {
+  id             String   @id @default(cuid())
+  assessmentId   String
+  sessionId      String
+  studentId      String
+  aiVerdict      String
+  finalVerdict   String
+  overridden     Boolean  @default(false)
+  direction      String   @default("AGREED")
+  rationale      String
+  studentMessage String   @default("")
+  internalNotes  String   @default("")
+  reviewerId     String
+  reviewerName   String   @default("")
+  reviewerRole   String   @default("")
+  supersedesId   String   @default("")
+  decidedAt      DateTime @default(now())
+
+  @@index([assessmentId])
+  @@index([studentId])
+  @@index([decidedAt])
+}
+
+/// 72-hour interview practice window (spec §38).
+///
+/// One window per student per application ('' = all applications). The window
+/// is opened explicitly when a preparation pack is generated or downloaded, and
+/// expiry stops *new* sessions only — recorded practice is never deleted.
+model InterviewPracticeWindow {
+  id              String    @id @default(cuid())
+  studentId       String
+  applicationId   String    @default("")
+  startsAt        DateTime  @default(now())
+  expiresAt       DateTime
+  extendedUntil   DateTime?
+  extensionCount  Int       @default(0)
+  extendedBy      String    @default("")
+  extensionReason String    @default("")
+  packGeneratedAt DateTime?
+  closedAt        DateTime?
+  closedBy        String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([studentId, applicationId])
+  @@index([studentId])
+  @@index([expiresAt])
+}
+
+/// Facts a student has explicitly supplied for interview preparation.
+/// Only these facts may seed an answer framework — the coach never invents
+/// income, sponsorship, results, travel or motivation (spec §33/§96).
+model StudentInterviewFact {
+  id               String   @id @default(cuid())
+  studentId        String   @unique
+  reasonUniversity String   @default("")
+  reasonCourse     String   @default("")
+  fundingSource    String   @default("")
+  futurePlan       String   @default("")
+  updatedBy        String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+
 model InterviewQuestion {
   id              String   @id @default(cuid())
   universitySlug  String?
@@ -8644,10 +8838,20 @@ model InterviewQuestion {
   sortOrder       Int      @default(0)
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
+  // Provenance (spec §31/§53/§54): a question is only publishable as current
+  // evidence when it names a real source and carries a verification date.
+  theme           String?
+  source          String?
+  sourceType      String?
+  sourceUrl       String?
+  lastVerifiedAt  DateTime?
+  confidence      String?
+  frequency       Int      @default(0)
 
   @@index([universitySlug])
   @@index([countrySlug])
   @@index([category])
+  @@index([lastVerifiedAt])
 }
 
 model InterviewSession {
@@ -9431,13 +9635,15 @@ model SourceSnapshot {
   source            OfficialSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   capturedAt        DateTime       @default(now())
   httpStatus        Int
+  finalUrl          String? // resolved URL after individually validated HTTPS redirects
+  sourcePublishedAt DateTime? // parsed page publication date when explicitly present
   contentHash       String // SHA-256 of normalized content
   contentLength     Int            @default(0)
   title             String? // <title> or detected heading
   contentType       String? // text/html, application/pdf, etc.
   // We store a truncated normalized text extract (not raw HTML) to keep DB size sane.
   // Full raw HTML is optionally stored in object storage in production.
-  textExtract       String // normalized plain text (truncated to 50KB)
+  textExtract       String // normalized plain text, bounded by the monitoring engine
   // AI-generated structured summary of what the page currently says
   aiSummary         String? // short AI summary of key facts found on the page
   aiKeyFacts        String         @default("{}") // JSON of {field: value} extracted by AI
@@ -9445,6 +9651,8 @@ model SourceSnapshot {
   captureDurationMs Int            @default(0)
   fetchError        String?
   createdAt         DateTime       @default(now())
+
+  changes DataChange[]
 
   @@index([sourceId])
   @@index([capturedAt])
@@ -9611,6 +9819,7 @@ model VerificationRun {
   universitiesChecked Int           @default(0)
   coursesChecked      Int           @default(0)
   sourcesChecked      Int           @default(0)
+  sourcesDeferred     Int           @default(0) // due verified sources not reached in the bounded batch
   // Results
   changesDetected     Int           @default(0)
   newUniversities     Int           @default(0)
@@ -11349,6 +11558,8 @@ model AwfRun {
   @@index([mode])
   @@index([createdAt])
   @@index([automationMode])
+  @@index([actorUserId, trigger, startedAt], map: "AwfRun_owner_chat_history_idx")
+  @@index([trigger, provider, model, startedAt], map: "AwfRun_chat_rate_idx")
 }
 
 model AwfRunStep {
@@ -11718,7 +11929,7 @@ model EmailEvent {
   @@index([type, createdAt])
 }
 
-// Concurrency-safe sequence for canonical identifiers (AE-YYYYNNNNN, AEP-, EMP-).
+// Concurrency-safe sequence for canonical identifiers (new AE-YYYYNNNN; AEP-/EMP-YYYYNNNNN). Legacy student IDs remain unchanged.
 // Rows are advanced inside the allocating transaction (see src/lib/identity/student-id.ts).
 // Numbers are never reused: a rolled-back transaction also rolls back its increment,
 // and a committed number is never handed out again.
@@ -11730,4 +11941,1582 @@ model StudentIdSequence {
   updatedAt DateTime @updatedAt
 
   @@unique([scope, year])
+}
+
+// ==========================================================================
+// ALO OPERATING SYSTEM — PLATFORM CONTROL PLANE
+// Added 2026-10-18 to close verified gaps against the ALO Education Global
+// Education Consultancy Operating System specification:
+//   s13  Parent / Guardian management
+//   s39  University / Institution portal
+//   s77  Outbound webhook system
+//   s108 "What needs attention?" engine snapshots
+//   s110 ALO Opportunity Graph
+//   s111 Application risk score
+//   s112 Student success score
+//   s117 Feature flags
+// Money follows the existing schema convention (Float) for consistency with
+// Application/Payment/Commission models. Amounts that must be cents-exact are
+// handled by src/lib/accounting (Int cents) and are NOT stored here.
+// ==========================================================================
+
+// --------------------------------------------------------------------------
+// s117 — FEATURE FLAGS (real, database-backed, auditable gradual rollout)
+// Replaces the hard-coded FEATURE_FLAGS array that previously only rendered a
+// static list in the super admin dashboard (maturity LEVEL 1 → LEVEL 3).
+// --------------------------------------------------------------------------
+model FeatureFlag {
+  id             String             @id @default(cuid())
+  key            String             @unique
+  module         String             @default("")
+  description    String
+  enabled        Boolean            @default(false)
+  rolloutPercent Int                @default(0)
+  allowRoles     String             @default("[]")
+  allowUserIds   String             @default("[]")
+  denyUserIds    String             @default("[]")
+  environment    String             @default("all")
+  config         String             @default("{}")
+  status         String             @default("ACTIVE")
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  auditEntries   FeatureFlagAudit[]
+
+  @@index([module])
+  @@index([enabled])
+  @@index([status])
+}
+
+model FeatureFlagAudit {
+  id         String      @id @default(cuid())
+  flagId     String
+  flagKey    String
+  action     String
+  before     String      @default("{}")
+  after      String      @default("{}")
+  actorId    String      @default("")
+  actorEmail String      @default("")
+  reason     String      @default("")
+  createdAt  DateTime    @default(now())
+  flag       FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
+
+  @@index([flagId])
+  @@index([flagKey])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s77 — OUTBOUND WEBHOOK SYSTEM
+// The existing WebhookEvent model is INBOUND only (provider callbacks). These
+// two models add outbound fan-out: subscribe to canonical ALO events and
+// receive signed HTTP deliveries with retry, dead-letter and idempotency.
+// --------------------------------------------------------------------------
+model WebhookSubscription {
+  id          String            @id @default(cuid())
+  name        String
+  targetUrl   String
+  secret      String            @default("")
+  events      String            @default("[]")
+  active      Boolean           @default(true)
+  environment String            @default("production")
+  partnerId   String?
+  branchId    String?
+  maxRetries  Int               @default(5)
+  timeoutMs   Int               @default(10000)
+  description String            @default("")
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deliveries  WebhookDelivery[]
+
+  @@index([active])
+  @@index([partnerId])
+  @@index([environment])
+}
+
+model WebhookDelivery {
+  id             String              @id @default(cuid())
+  subscriptionId String
+  eventId        String
+  eventType      String
+  payload        String
+  status         String              @default("PENDING")
+  attempts       Int                 @default(0)
+  lastAttemptAt  DateTime?
+  nextAttemptAt  DateTime?
+  responseStatus Int?
+  responseBody   String?
+  errorMessage   String?
+  durationMs     Int?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  subscription   WebhookSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriptionId, eventId])
+  @@index([status])
+  @@index([nextAttemptAt])
+  @@index([eventType])
+}
+
+// --------------------------------------------------------------------------
+// s13 — PARENT / GUARDIAN MANAGEMENT
+// Previously only two flat strings (guardianName/guardianPhone) existed on
+// PortalStudentProfile. Study-abroad decisions are frequently parent-led, so
+// parents need a real profile, explicit consent records, controlled portal
+// access and financial-responsibility tracking.
+// --------------------------------------------------------------------------
+model ParentGuardian {
+  id                 String                                @id @default(cuid())
+  studentId          String
+  userId             String?                               @unique
+  fullName           String
+  relationship       String                                @default("OTHER")
+  email              String                                @default("")
+  phone              String                                @default("")
+  whatsapp           String                                @default("")
+  country            String                                @default("")
+  city               String                                @default("")
+  occupation         String                                @default("")
+  isPrimaryContact   Boolean                               @default(false)
+  isFinancialSponsor Boolean                               @default(false)
+  communicationPrefs String                                @default("[]")
+  notificationPrefs  String                                @default("[]")
+  accessLevel        String                                @default("LIMITED")
+  portalEnabled      Boolean                               @default(false)
+  status             String                                @default("ACTIVE")
+  notes              String                                @default("")
+  createdBy          String?
+  updatedBy          String?
+  createdAt          DateTime                              @default(now())
+  updatedAt          DateTime                              @updatedAt
+  consents           ParentGuardianConsent[]
+  responsibilities   ParentGuardianPaymentResponsibility[]
+
+  @@index([studentId])
+  @@index([status])
+  @@index([portalEnabled])
+}
+
+model ParentGuardianConsent {
+  id          String         @id @default(cuid())
+  parentId    String
+  studentId   String
+  consentType String
+  granted     Boolean        @default(false)
+  grantedAt   DateTime?
+  revokedAt   DateTime?
+  method      String         @default("")
+  evidenceRef String         @default("")
+  ipAddress   String         @default("")
+  version     String         @default("1.0")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  parent      ParentGuardian @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([parentId])
+  @@index([studentId])
+  @@index([consentType])
+}
+
+model ParentGuardianPaymentResponsibility {
+  id            String         @id @default(cuid())
+  parentId      String
+  studentId     String
+  applicationId String         @default("")
+  scope         String         @default("ALL")
+  amount        Float          @default(0)
+  currency      String         @default("USD")
+  paidAmount    Float          @default(0)
+  status        String         @default("PENDING")
+  dueDate       DateTime?
+  notes         String         @default("")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  parent        ParentGuardian @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([parentId])
+  @@index([studentId])
+  @@index([status])
+}
+
+// --------------------------------------------------------------------------
+// s39 — UNIVERSITY / INSTITUTION PORTAL
+// Institution-facing accounts with strict tenant isolation: a representative
+// only ever sees applications addressed to their own institution.
+// --------------------------------------------------------------------------
+model UniversityPortalAccount {
+  id           String                     @id @default(cuid())
+  universityId String
+  userId       String?                    @unique
+  fullName     String
+  email        String                     @unique
+  jobTitle     String                     @default("")
+  role         String                     @default("UNIVERSITY_REPRESENTATIVE")
+  status       String                     @default("INVITED")
+  permissions  String                     @default("[]")
+  lastLoginAt  DateTime?
+  invitedBy    String?
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+  activities   UniversityPortalActivity[]
+
+  @@index([universityId])
+  @@index([status])
+}
+
+model UniversityPortalActivity {
+  id           String                  @id @default(cuid())
+  accountId    String
+  universityId String
+  action       String
+  entityType   String                  @default("")
+  entityId     String                  @default("")
+  metadata     String                  @default("{}")
+  createdAt    DateTime                @default(now())
+  account      UniversityPortalAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([universityId])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s111 — APPLICATION RISK SCORE (GREEN / AMBER / RED)
+// Immutable assessment history so risk trends are auditable.
+// --------------------------------------------------------------------------
+model ApplicationRiskAssessment {
+  id            String   @id @default(cuid())
+  applicationId String
+  studentId     String   @default("")
+  riskLevel     String   @default("GREEN")
+  score         Int      @default(0)
+  factors       String   @default("[]")
+  missingItems  String   @default("[]")
+  evaluatedBy   String   @default("SYSTEM")
+  evaluatedById String?
+  metadata      String   @default("{}")
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+  @@index([studentId])
+  @@index([riskLevel])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s112 — STUDENT SUCCESS SCORE
+// Operational support score. Explicitly NOT an admission or visa prediction;
+// the disclaimer is persisted with every assessment so it can never be lost.
+// --------------------------------------------------------------------------
+model StudentSuccessAssessment {
+  id          String   @id @default(cuid())
+  studentId   String
+  score       Int      @default(0)
+  band        String   @default("NEEDS_SUPPORT")
+  components  String   @default("{}")
+  nextActions String   @default("[]")
+  disclaimer  String   @default("")
+  evaluatedBy String   @default("SYSTEM")
+  createdAt   DateTime @default(now())
+
+  @@index([studentId])
+  @@index([band])
+  @@index([createdAt])
+}
+
+// --------------------------------------------------------------------------
+// s108 — "WHAT NEEDS ATTENTION?" ENGINE snapshots
+// --------------------------------------------------------------------------
+model AttentionSnapshot {
+  id           String   @id @default(cuid())
+  scope        String   @default("GLOBAL")
+  scopeId      String   @default("")
+  generatedFor String   @default("")
+  buckets      String
+  totals       String   @default("{}")
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([scope, scopeId])
+  @@index([generatedFor])
+}
+
+// --------------------------------------------------------------------------
+// s110 — ALO OPPORTUNITY GRAPH
+// Materialised edges connecting Student ↔ Country ↔ University ↔ Course ↔
+// Scholarship ↔ Visa ↔ Partner ↔ Counselor ↔ Career outcome. Computed from
+// real CRM rows only; never from invented relationships.
+// --------------------------------------------------------------------------
+model OpportunityGraphEdge {
+  id         String   @id @default(cuid())
+  // Bounded to VARCHAR(64) rather than Prisma's VARCHAR(191) default.
+  //
+  // The @@unique below spans all five of these columns. Under utf8mb4 a
+  // VARCHAR(191) column needs 764 index bytes, so five of them need 3820 — above
+  // MySQL/InnoDB's absolute 3072-byte per-index ceiling, which made the migration
+  // fail with ERROR 1071 on a fresh MySQL 8 database. It is not a row-format
+  // setting that can be tuned away; the index simply cannot exist at that width.
+  //
+  // These columns hold type labels ('STUDENT', 'APPLICATION'), relation labels
+  // and cuids (~25 characters), so 64 is generous: the unique key becomes 1280
+  // bytes. This model has no relations, so no foreign key requires the widths to
+  // match another column.
+  sourceType String
+  sourceId   String
+  targetType String
+  targetId   String
+  relation   String
+  weight     Float    @default(0)
+  evidence   String   @default("{}")
+  computedBy String   @default("SYSTEM")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([sourceType, sourceId, targetType, targetId, relation])
+  @@index([sourceType, sourceId])
+  @@index([targetType, targetId])
+  @@index([relation])
+}
+
+// --------------------------------------------------------------------------
+// REGULATORY RULE VERSIONING (spec s106) + POLICY CHANGE MONITORING (s64)
+// --------------------------------------------------------------------------
+// Visa and country requirements change. Existing Country* rule tables
+// (CountryEntryRequirement, CountryEnglishTest, CountryVisaStep,
+// CountryWorkRight) carry only `lastVerifiedAt` + `status`, so editing one
+// silently overwrites the requirement a past application was assessed against.
+//
+// These two models make regulatory facts VERSIONED and PROVENANCED (s105):
+//   * RegulatoryRuleVersion — an immutable, dated version of one rule. New
+//     versions are APPENDED; the previous one becomes SUPERSEDED and is kept,
+//     so history is never overwritten (s106).
+//   * PolicyChangeAlert — a detected change from a monitored source, with the
+//     workflows/students/applications it affects and the review task it raised
+//     (s64). High-risk changes are never auto-applied: they become a PROPOSED
+//     rule version awaiting human approval (s116).
+//
+// No Prisma enums are used, matching the existing schema convention (546
+// models, 0 enums). Allowed values are documented inline and enforced in
+// src/lib/rules/rule-versioning.ts, which is unit tested.
+// --------------------------------------------------------------------------
+
+/// One immutable version of a regulatory rule (visa, entry, financial, English,
+/// work-right, deadline or policy). Keyed by `ruleKey` + `versionNumber`.
+model RegulatoryRuleVersion {
+  id            String  @id @default(cuid())
+  /// Stable canonical key, e.g. `country:GBR:entry_requirement:MASTERS`.
+  ruleKey       String
+  /// VISA_REQUIREMENT | ENTRY_REQUIREMENT | ENGLISH_REQUIREMENT |
+  /// FINANCIAL_REQUIREMENT | WORK_RIGHT | APPLICATION_DEADLINE | POLICY | OTHER
+  ruleType      String  @default("OTHER")
+  /// Monotonic per ruleKey. Never reused, never renumbered.
+  versionNumber Int     @default(1)
+  /// The rule content as JSON. Shape is per ruleType and validated in the lib.
+  payload       String  @default("{}")
+  /// Human-readable summary of what this version states.
+  summary       String  @default("")
+
+  // ---- effective window (s106) ----
+  effectiveFrom DateTime
+  /// Null = open-ended. Set when a newer version supersedes this one, or when
+  /// the rule is withdrawn.
+  effectiveUntil DateTime?
+
+  // ---- provenance (s105) ----
+  /// OFFICIAL_GOVERNMENT | OFFICIAL_UNIVERSITY | APPROVED_PARTNER |
+  /// VERIFIED_INTERNAL | UNVERIFIED
+  sourceType         String   @default("UNVERIFIED")
+  sourceUrl          String   @default("")
+  sourceName         String   @default("")
+  /// NEEDS_REVIEW | VERIFIED | DISPUTED | STALE
+  verificationStatus String   @default("NEEDS_REVIEW")
+  verifiedBy         String   @default("")
+  verifiedAt         DateTime?
+
+  // ---- lifecycle ----
+  /// DRAFT | PENDING_APPROVAL | ACTIVE | SUPERSEDED | REJECTED | EXPIRED
+  status         String    @default("DRAFT")
+  approvedBy     String    @default("")
+  approvedAt     DateTime?
+  rejectionReason String   @default("")
+  /// Free-text reason this version exists (what changed and why).
+  changeReason   String    @default("")
+  /// The version this one replaced, if any.
+  supersededById String?
+
+  // ---- optional scoping ----
+  countryId    String @default("")
+  universityId String @default("")
+  /// Free-form scope such as a study level or visa subclass.
+  scope        String @default("")
+
+  /// Set when the rule came from a monitored policy change rather than a manual
+  /// edit, linking s64 detection to s106 versioning.
+  policyChangeAlertId String @default("")
+
+  createdBy String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ruleKey, versionNumber])
+  @@index([ruleKey, status])
+  @@index([ruleKey, effectiveFrom, effectiveUntil])
+  @@index([status])
+  @@index([verificationStatus])
+  @@index([countryId])
+  @@index([policyChangeAlertId])
+}
+
+/// A change detected on a monitored regulatory source (s64). Never auto-applied
+/// for high-risk changes: triage produces a PROPOSED RegulatoryRuleVersion that
+/// still needs human approval (s116).
+model PolicyChangeAlert {
+  id          String   @id @default(cuid())
+  /// Canonical rule the change would affect, if known.
+  ruleKey     String   @default("")
+  ruleType    String   @default("OTHER")
+  /// Short title of the detected change.
+  title       String
+  /// What changed, in plain English, with the evidence quoted.
+  description String   @default("")
+  /// INFO | WARNING | URGENT | CRITICAL (s85 severity vocabulary)
+  severity    String   @default("INFO")
+  /// OFFICIAL_GOVERNMENT | OFFICIAL_UNIVERSITY | APPROVED_PARTNER | MONITORED_FEED
+  sourceType  String   @default("OFFICIAL_GOVERNMENT")
+  sourceUrl   String   @default("")
+  sourceName  String   @default("")
+
+  // ---- impact analysis (s64: identify affected workflows/students) ----
+  affectedWorkflows      String @default("[]")
+  affectedStudentIds     String @default("[]")
+  affectedApplicationIds String @default("[]")
+  affectedCountryIds     String @default("[]")
+  /// Number of records the change touches, denormalised for dashboards.
+  impactCount            Int    @default(0)
+
+  // ---- lifecycle ----
+  /// DETECTED | TRIAGED | PROPOSED | APPROVED | DISMISSED | EXPIRED
+  status              String    @default("DETECTED")
+  /// Version created from this alert once triaged (s106 link).
+  proposedRuleVersionId String  @default("")
+  /// Task raised for the responsible reviewer.
+  reviewTaskId        String    @default("")
+  /// Whether applying this change requires explicit human approval (s116).
+  requiresApproval    Boolean   @default(true)
+  triagedBy           String    @default("")
+  triagedAt           DateTime?
+  dismissedReason     String    @default("")
+  resolvedAt          DateTime?
+
+  detectedAt DateTime @default(now())
+  createdBy  String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([status, severity])
+  @@index([ruleKey])
+  @@index([detectedAt])
+  @@index([proposedRuleVersionId])
+}
+
+// ============================================================================
+// UK PhD PROPOSAL BUILDER — additive module schema
+// ----------------------------------------------------------------------------
+// Every table is prefixed `Phd` so the existing CRM schema, routes and data are
+// untouched. Enumerated values are stored as validated strings (String +
+// module-level constants in src/lib/phd/constants.ts) because that is the
+// existing project convention (User.role, Application.stage, ...), and it keeps
+// the offline SQLite verification mirror possible. Relations, indexes and
+// uniqueness are enforced by the database, not by JSON blobs.
+// ============================================================================
+
+model PhdProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation("PhdProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Academic profile
+  highestQualification String  @default("")
+  degreeSubject        String  @default("")
+  awardingInstitution  String  @default("")
+  gradeAwarded         String  @default("")
+  gpa                  String  @default("")
+  classification       String  @default("")
+  relevantModules      String
+  dissertationTitle    String  @default("")
+  methodsExperience    String
+  publications         String
+  researchExperience   String
+  employmentHistory    String
+  englishTestStatus    String  @default("UNKNOWN") // NOT_TAKEN | TAKEN | EXEMPT | UNKNOWN
+  englishTestType      String  @default("")
+  englishTestScore     String  @default("")
+  englishTestDate      DateTime?
+
+  // Research preferences
+  primaryDiscipline    String  @default("UNDECIDED") // BUSINESS | ENGINEERING | BOTH | UNDECIDED
+  existingResearchIdea String
+  preferredMethods     String  @default("") // comma-free canonical codes, JSON array string validated in app
+  researchSetting      String
+  studyMode            String  @default("UNDECIDED") // FULL_TIME | PART_TIME | UNDECIDED
+  desiredStart         String  @default("")
+  locationPreferences  String  @default("")
+  fundingRequirement   String  @default("UNDECIDED") // REQUIRED | PREFERRED | SELF_FUNDED | UNDECIDED
+  budgetRange          String  @default("")
+  equipmentNeeds       String
+
+  // Application preferences
+  currentStage         String  @default("TOPIC_DISCOVERY")
+  existingDocuments    String  @default("")
+  preferredContact     String  @default("EMAIL")
+  personalDeadlines    String
+
+  // Privacy / onboarding
+  privacyAcceptedAt DateTime?
+  onboardingStep    Int       @default(1)
+  completedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  interests PhdProfileInterest[]
+
+  @@index([primaryDiscipline])
+}
+
+model PhdProfileInterest {
+  id        String     @id @default(cuid())
+  profileId String
+  profile   PhdProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  kind      String // SUBJECT | LOCATION | TARGET_UNIVERSITY | METHOD | TOOL
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([profileId, kind, value])
+  @@index([profileId, kind])
+}
+
+model PhdProject {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation("PhdProjectOwner", fields: [userId], references: [id], onDelete: Cascade)
+  title   String
+  discipline String @default("UNDECIDED")
+  status  String @default("ACTIVE") // ACTIVE | ARCHIVED
+  stage   String @default("TOPIC_DISCOVERY")
+  researchQuestion String
+  selectedTopicId String?
+  selectedTopic   PhdTopicCandidate? @relation("PhdSelectedTopic", fields: [selectedTopicId], references: [id], onDelete: SetNull)
+  adviserId String? // research adviser (User.id, soft reference)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  preferences      PhdResearchPreference[]
+  topics           PhdTopicCandidate[]
+  sources          PhdLiteratureSource[]
+  claims           PhdEvidenceClaim[]
+  notes            PhdResearchNote[]
+  proposals        PhdProposal[]
+  timelines        PhdTimeline[]
+  applications     PhdApplication[]
+  documents        PhdDocument[]
+  contacts         PhdSupervisorContact[]
+  supervisorMatches PhdSupervisorMatch[]
+  deadlines        PhdDeadline[]
+  notifications    PhdNotification[]
+  jobs             PhdResearchJob[]
+
+  @@index([userId, status])
+  @@index([selectedTopicId])
+}
+
+model PhdResearchPreference {
+  id        String   @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  category  String // SUBJECT | METHOD | SETTING | LOCATION | FUNDING | EQUIPMENT | CONSTRAINT
+  value     String
+  priority  Int      @default(2)
+  source    String   @default("USER")
+  createdAt DateTime @default(now())
+
+  @@index([projectId, category])
+}
+
+model PhdTopicArea {
+  code        String @id // e.g. BUS-AI-ADOPTION
+  discipline  String // BUSINESS | ENGINEERING
+  name        String
+  subfield    String
+  summary     String
+  keywords    String // comma separated, validated non-empty
+  problems    String // newline separated
+  theories    String // newline separated
+  methods     String // newline separated method codes from constants
+  dataSources String
+  risks       String
+  ethics      String
+  contributions String
+  searchStrategy String
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  topics PhdTopicCandidate[]
+}
+
+model PhdTopicCandidate {
+  id        String   @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  areaCode  String
+  area      PhdTopicArea @relation(fields: [areaCode], references: [code], onDelete: Restrict)
+  dedupeKey String   @unique
+  workingTitle String
+  plainLanguage String
+  researchField String
+  researchSubfield String
+  problemStatement String
+  initialEvidence  String
+  provisionalGap   String
+  mainQuestion     String
+  aim              String
+  theoryFramework  String
+  methodology      String
+  dataNeeds        String
+  feasibilityRisks String
+  ethics           String
+  scholarlyContribution String
+  practicalContribution String
+  potentialMatches String
+  preliminaryReading String
+  confidence       String @default("LOW") // LOW | MEDIUM | HIGH
+  evidenceQuality  String @default("UNVERIFIED")
+  unresolvedQuestions String
+  noveltyStatus    String @default("PROVISIONAL_UNVERIFIED")
+  provenance       String @default("GENERATED")
+  isSelected       Boolean @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  questions        PhdResearchQuestion[]
+  objectives       PhdResearchObjective[]
+  methodologies   PhdResearchMethodology[]
+  evaluations      PhdTopicEvaluation[]
+  supervisorMatches PhdSupervisorMatch[]
+  selectedByProjects PhdProject[] @relation("PhdSelectedTopic")
+  applications     PhdApplication[]
+
+  @@index([projectId, areaCode])
+  @@index([projectId, isSelected])
+}
+
+model PhdResearchQuestion {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  text      String
+  kind      String @default("SUPPORTING") // MAIN | SUPPORTING
+  order     Int    @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([topicId, order])
+}
+
+model PhdResearchObjective {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  text      String
+  measure   String
+  order     Int    @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([topicId, order])
+}
+
+model PhdResearchMethodology {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  paradigm  String @default("")
+  design    String
+  methods   String
+  rationale String
+  resources String
+  risks     String
+  isSelected Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([topicId])
+}
+
+model PhdTopicEvaluation {
+  id        String @id @default(cuid())
+  topicId   String
+  topic     PhdTopicCandidate @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  criterion String
+  score     Int // 0..5, validated server-side
+  weight    Int // 1..5, configurable
+  explanation String
+  evidenceStatus String @default("UNVERIFIED")
+  evaluatedBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([topicId, criterion])
+  @@index([topicId])
+}
+
+model PhdLiteratureSource {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dedupeKey String @unique
+  title     String
+  authors   String
+  year      Int?
+  venue     String @default("")
+  publisher String @default("")
+  doi       String?
+  url       String?
+  sourceType String @default("JOURNAL_ARTICLE")
+  abstract  String
+  notes     String
+  researchQuestion String
+  methods   String
+  findings  String
+  limitations String
+  relevance String
+  supportDirection String @default("SUPPORTS") // SUPPORTS | CONTRADICTS | MIXED | CONTEXT
+  accessedAt DateTime?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  provenance String @default("USER")
+  documentId String? @unique
+  document PhdDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  claims PhdEvidenceClaim[]
+  citations PhdProposalCitation[]
+
+  @@index([projectId, verificationStatus])
+  @@index([projectId, year])
+}
+
+model PhdEvidenceClaim {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceId  String?
+  source    PhdLiteratureSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  claim     String
+  supportType String @default("VERIFIED_FACT") // VERIFIED_FACT | SOURCE_REPORTED | AI_SYNTHESIS | HYPOTHESIS | UNVERIFIED
+  location  String @default("")
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  confidence String @default("LOW")
+  notes     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, supportType])
+  @@index([sourceId])
+}
+
+model PhdResearchNote {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  topicId   String?
+  title     String @default("")
+  content   String
+  tags      String @default("")
+  provenance String @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model PhdUniversity {
+  id        String @id @default(cuid())
+  // Immutable register identifier. A record may be re-verified or marked
+  // unavailable, but this id is never reused, renamed or merged.
+  registerId String @unique
+  slug      String @unique
+  name      String @unique
+  officialDomain String @unique
+  officialHomepage String
+  country   String @default("United Kingdom")
+  researchDegreesUrl String?
+  researchDegreesPageTitle String @default("")
+  researchDegreesStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  sourceRetrievedAt DateTime?
+  targetListRank Int? @unique
+  registerProvenance String @default("SEEDED_TARGET_REGISTER")
+  notes     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schools        PhdSchool[]
+  programmes     PhdProgramme[]
+  researchAreas  PhdResearchArea[]
+  supervisors    PhdSupervisor[]
+  fees           PhdTuitionFee[]
+  funding        PhdFundingOpportunity[]
+  applications   PhdApplication[]
+  deadlines      PhdDeadline[]
+  commissionAgreement PhdCommissionAgreement?
+  commissionRecords PhdCommissionRecord[]
+  evidence       PhdSourceEvidence[]
+  proposals      PhdProposal[]
+
+  @@index([name])
+}
+
+model PhdSchool {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  name      String
+  schoolType String @default("OTHER") // BUSINESS | ENGINEERING | OTHER
+  websiteUrl String?
+  researchUrl String?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  evidenceId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programmes PhdProgramme[]
+  supervisors PhdSupervisor[]
+
+  @@unique([universityId, name])
+  @@index([universityId, schoolType])
+}
+
+model PhdProgramme {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  schoolId String?
+  school   PhdSchool? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  name      String
+  award     String @default("PhD")
+  discipline String @default("OTHER") // BUSINESS | ENGINEERING | OTHER
+  officialUrl String?
+  description String
+  specialisms String
+  fullTime  Boolean @default(true)
+  partTime  Boolean @default(false)
+  distanceLearning Boolean @default(false)
+  applicationRequirements String
+  proposalFormat String
+  proposalWordLimit Int?
+  requiredHeadings String
+  referencingStyle String @default("")
+  abstractRequired Boolean?
+  submissionFormat String @default("")
+  requiredDocuments String
+  englishRequirements String
+  intakes   String
+  applicationDeadline String @default("")
+  feesUrl   String?
+  fundingUrl String?
+  supervisorDirectoryUrl String?
+  applicationInstructions String
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  evidenceId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  requirements PhdDocumentRequirement[]
+  applications PhdApplication[]
+  proposals PhdProposal[]
+  fees PhdTuitionFee[]
+  deadlines PhdDeadline[]
+
+  @@unique([universityId, name, award])
+  @@index([universityId, discipline])
+}
+
+model PhdResearchArea {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  name      String
+  description String
+  url       String?
+  discipline String @default("OTHER")
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([universityId, name])
+  @@index([universityId, discipline])
+}
+
+model PhdSupervisor {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  schoolId String?
+  school   PhdSchool? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  fullName  String
+  roleTitle String @default("")
+  department String @default("")
+  profileUrl String
+  researchInterests String
+  methods   String
+  facilities String
+  contactEmail String?
+  contactSourceUrl String?
+  availabilityStatus String @default("AVAILABILITY_UNCLEAR")
+  availabilityEvidence String
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  dedupeKey String @unique
+  notes     String
+  createdById String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expertise    PhdSupervisorExpertise[]
+  publications PhdSupervisorPublication[]
+  matches      PhdSupervisorMatch[]
+  contacts     PhdSupervisorContact[]
+  applications PhdApplication[]
+
+  @@unique([universityId, profileUrl])
+  @@index([universityId, availabilityStatus])
+  @@index([fullName])
+}
+
+model PhdSupervisorExpertise {
+  id        String @id @default(cuid())
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  keyword String
+  source  String @default("OFFICIAL_PROFILE")
+  createdAt DateTime @default(now())
+
+  @@unique([supervisorId, keyword])
+  @@index([keyword])
+}
+
+model PhdSupervisorPublication {
+  id        String @id @default(cuid())
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  title     String
+  year      Int?
+  venue     String @default("")
+  doi       String?
+  url       String?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  createdAt DateTime @default(now())
+
+  @@unique([supervisorId, title, year])
+  @@index([supervisorId])
+}
+
+model PhdSupervisorMatch {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  topicId   String?
+  topic     PhdTopicCandidate? @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  fitScore  Int @default(0)
+  fitLabel  String @default("LOW")
+  keywordAlignment Int @default(0)
+  methodAlignment  Int @default(0)
+  publicationAlignment Int @default(0)
+  disciplineAlignment Int @default(0)
+  rationale String
+  mismatches String
+  missingEvidence String
+  availabilityAtMatch String @default("AVAILABILITY_UNCLEAR")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, supervisorId])
+  @@index([projectId, fitScore])
+}
+
+model PhdSupervisorContact {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  supervisorId String
+  supervisor PhdSupervisor @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  userId    String
+  subject   String
+  body      String
+  attachments String
+  status    String @default("DRAFTED") // DRAFTED | REVIEWED | SENT | REPLIED | FOLLOW_UP_DUE | INTERESTED | UNAVAILABLE | CLOSED
+  approvedAt DateTime?
+  sentAt    DateTime?
+  repliedAt DateTime?
+  nextFollowUpAt DateTime?
+  responseSummary String
+  notes     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, status])
+  @@index([supervisorId, status])
+}
+
+model PhdProposal {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  programmeId String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  topicId   String?
+  title     String
+  status    String @default("DRAFT")
+  isGeneralDraft Boolean @default(true)
+  wordLimit Int?
+  requiredHeadings String
+  referencingStyle String @default("NOT_SPECIFIED")
+  abstractRequired Boolean @default(true)
+  ethicsRequired Boolean @default(true)
+  fileFormat String @default("")
+  requirementsVerificationStatus String @default("NOT_YET_VERIFIED")
+  requirementsSourceUrl String?
+  requirementsCheckedAt DateTime?
+  currentVersion Int @default(1)
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sections  PhdProposalSection[]
+  versions  PhdProposalVersion[]
+  citations PhdProposalCitation[]
+  applications PhdApplication[]
+
+  @@index([projectId, universityId])
+  @@index([programmeId])
+}
+
+model PhdProposalSection {
+  id        String @id @default(cuid())
+  proposalId String
+  proposal  PhdProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  sectionKey String
+  title     String
+  content   String
+  sortOrder Int @default(0)
+  required  Boolean @default(true)
+  guidance  String
+  updatedAt DateTime @updatedAt
+
+  @@unique([proposalId, sectionKey])
+  @@index([proposalId, sortOrder])
+}
+
+model PhdProposalVersion {
+  id        String @id @default(cuid())
+  proposalId String
+  proposal  PhdProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  version   Int
+  title     String
+  wordCount Int @default(0)
+  changeSummary String
+  snapshot  String
+  createdById String
+  createdAt DateTime @default(now())
+
+  @@unique([proposalId, version])
+  @@index([proposalId, createdAt])
+}
+
+model PhdProposalCitation {
+  id        String @id @default(cuid())
+  proposalId String
+  proposal  PhdProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  sourceId  String?
+  source    PhdLiteratureSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  sectionKey String @default("")
+  rawText   String
+  claimText String
+  isValid   Boolean @default(false)
+  validationNote String
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  createdAt DateTime @default(now())
+
+  @@index([proposalId, sectionKey])
+}
+
+model PhdTimeline {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  mode      String @default("FULL_TIME")
+  startDate DateTime
+  totalMonths Int
+  discipline String @default("UNDECIDED")
+  notes     String
+  generatedBy String @default("DETERMINISTIC_PLANNER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  milestones PhdTimelineMilestone[]
+
+  @@index([projectId])
+}
+
+model PhdTimelineMilestone {
+  id        String @id @default(cuid())
+  timelineId String
+  timeline  PhdTimeline @relation(fields: [timelineId], references: [id], onDelete: Cascade)
+  name      String
+  category  String @default("RESEARCH")
+  sortOrder Int @default(0)
+  startDate DateTime
+  endDate   DateTime
+  dependsOnId String?
+  status    String @default("PLANNED")
+  isOfficialDeadline Boolean @default(false)
+  sourceUrl String?
+  notes     String
+
+  @@index([timelineId, sortOrder])
+}
+
+model PhdFundingOpportunity {
+  id        String @id @default(cuid())
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  name      String
+  department String @default("")
+  officialUrl String
+  fundingType String @default("UNKNOWN") // FULLY_FUNDED | PARTIALLY_FUNDED | STIPEND | TUITION_WAIVER | OTHER | UNKNOWN
+  eligibility String
+  nationalityRestrictions String
+  subjectRestrictions String
+  tuitionCoverage String @default("UNKNOWN")
+  stipendAmountMinor Int? // integer minor units (pence); never floating point
+  currency String @default("")
+  duration  String @default("")
+  applicationRequirements String
+  closingDate DateTime?
+  closingTimezone String @default("")
+  separateAdmissionRequired Boolean? 
+  supervisorContactRequired Boolean?
+  fundingStartDate DateTime?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  notes     String
+  dedupeKey String @unique
+  createdById String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  eligibilityCriteria PhdFundingEligibility[]
+  deadlines PhdDeadline[]
+
+  @@index([universityId, closingDate])
+}
+
+model PhdFundingEligibility {
+  id        String @id @default(cuid())
+  opportunityId String
+  opportunity PhdFundingOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  criterion String
+  value     String
+  applicantStatus String @default("UNKNOWN") // ELIGIBLE | NOT_ELIGIBLE | NEEDS_VERIFICATION | UNKNOWN
+  createdAt DateTime @default(now())
+
+  @@unique([opportunityId, criterion])
+}
+
+model PhdDeadline {
+  id        String @id @default(cuid())
+  projectId String?
+  project   PhdProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  programmeId String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  fundingOpportunityId String?
+  fundingOpportunity PhdFundingOpportunity? @relation(fields: [fundingOpportunityId], references: [id], onDelete: SetNull)
+  applicationId String?
+  application PhdApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  title     String
+  kind      String @default("APPLICATION") // APPLICATION | FUNDING | DOCUMENT | INTERVIEW | PERSONAL
+  dueDate   DateTime?
+  timezone  String @default("")
+  status    String @default("DATE_NOT_PUBLISHED")
+  sourceUrl String?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  reminderDays Int @default(7)
+  notes     String
+  lastVerifiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, dueDate])
+  @@index([status, dueDate])
+}
+
+model PhdTuitionFee {
+  id        String @id @default(cuid())
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  programmeId String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  academicYear String
+  studentStatus String // HOME | INTERNATIONAL | ISLANDS | OTHER
+  feeBasis String // FULL_TIME | PART_TIME | WRITING_UP | DISTANCE_LEARNING
+  amountMinor Int // integer minor units (pence)
+  currency String @default("GBP")
+  sourceUrl String
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  lastVerifiedAt DateTime?
+  notes String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([universityId, programmeId, academicYear, studentStatus, feeBasis])
+  @@index([universityId, academicYear])
+}
+
+model PhdApplication {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String
+  university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  programmeId String
+  programme PhdProgramme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  topicId   String?
+  topic     PhdTopicCandidate? @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  proposalId String?
+  proposal  PhdProposal? @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+  supervisorId String?
+  supervisor PhdSupervisor? @relation(fields: [supervisorId], references: [id], onDelete: SetNull)
+  status    String @default("RESEARCHING")
+  fundingStatus String @default("NOT_STARTED") // NOT_STARTED | RESEARCHING | PREPARING | SUBMITTED | PENDING | AWARDED | REJECTED | WITHDRAWN
+  openedAt  DateTime?
+  closingDate DateTime?
+  submittedAt DateTime?
+  applicationReference String @default("")
+  interviewAt DateTime?
+  offerStatus String @default("NONE") // NONE | CONDITIONAL | UNCONDITIONAL | REJECTED | WITHDRAWN
+  offerConditions String
+  fundingDecision String @default("")
+  nextAction String @default("")
+  nextActionDueAt DateTime?
+  notes     String
+  sourceUrl String?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks     PhdApplicationTask[]
+  documents PhdDocument[]
+  deadlines PhdDeadline[]
+
+  @@unique([projectId, universityId, programmeId])
+  @@index([projectId, status])
+  @@index([universityId, status])
+}
+
+model PhdApplicationTask {
+  id        String @id @default(cuid())
+  applicationId String
+  application PhdApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  title     String
+  category  String @default("OTHER")
+  dueAt     DateTime?
+  status    String @default("OPEN") // OPEN | DONE | BLOCKED | CANCELLED
+  notes     String
+  documentRequirementId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId, status, dueAt])
+}
+
+model PhdDocument {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  documentType String
+  storageKey String @unique
+  mimeType  String
+  sizeBytes Int
+  checksum  String
+  version   Int @default(1)
+  uploadedById String
+  user      User @relation("PhdDocumentUploader", fields: [uploadedById], references: [id], onDelete: Cascade)
+  applicationId String?
+  application PhdApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  requirementId String?
+  requirement PhdDocumentRequirement? @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  status    String @default("UPLOADED") // UPLOADED | VERIFIED | REJECTED | SUPERSEDED
+  retentionUntil DateTime?
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+
+  literatureSource PhdLiteratureSource?
+
+  @@index([projectId, documentType])
+  @@index([applicationId])
+}
+
+model PhdDocumentRequirement {
+  id        String @id @default(cuid())
+  programmeId String
+  programme PhdProgramme @relation(fields: [programmeId], references: [id], onDelete: Cascade)
+  documentType String
+  mandatory Boolean @default(false)
+  sourceUrl String?
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  notes     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents PhdDocument[]
+
+  @@unique([programmeId, documentType])
+  @@index([programmeId])
+}
+
+// ---------------------------------------------------------------------------
+// Commission structure — deliberately separate from academic data.
+// ---------------------------------------------------------------------------
+
+model PhdCommissionDocument {
+  id        String @id @default(cuid())
+  filename  String
+  title     String @default("")
+  versionLabel String @default("")
+  sha256    String @unique
+  storageKey String @unique
+  pageCount Int @default(0)
+  effectiveFrom DateTime?
+  effectiveTo DateTime?
+  sourceNote String
+  extractionStatus String @default("PENDING") // PENDING | EXTRACTED | PARTIAL | FAILED | MANUAL_REQUIRED
+  uploadedById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pages   PhdCommissionPage[]
+  records PhdCommissionRecord[]
+  agreements PhdCommissionAgreement[]
+}
+
+model PhdCommissionPage {
+  id        String @id @default(cuid())
+  documentId String
+  document  PhdCommissionDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  pageNumber Int
+  text      String
+  extractStatus String @default("EXTRACTED")
+  createdAt DateTime @default(now())
+
+  @@unique([documentId, pageNumber])
+  @@index([documentId])
+}
+
+model PhdCommissionRecord {
+  id        String @id @default(cuid())
+  documentId String?
+  document  PhdCommissionDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  universityNameRaw String
+  pageNumber Int?
+  exactWording String
+  commissionType String @default("UNKNOWN") // FIXED | PERCENTAGE | MIXED | UNKNOWN
+  amountMinor Int? // integer minor units (pence)
+  percentageBasisPoints Int? // 1/10000 of a percent; exact integer arithmetic
+  basisGrossNet String @default("UNKNOWN") // GROSS | NET | NOT_STATED | UNKNOWN
+  eligibleCategory String
+  exclusions String
+  paymentMilestone String
+  effectivePeriod String @default("")
+  clawbackTerms String
+  extractionStatus String @default("UNVERIFIED") // UNVERIFIED | EXTRACTED | VERIFIED | CONFLICT
+  verificationStatus String @default("CONFIRMED_UNVERIFIED")
+  lastReviewedAt DateTime?
+  reviewedById String?
+  notes     String
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  conditions PhdCommissionCondition[]
+  agreements PhdCommissionAgreement[]
+
+  @@index([universityId])
+  @@index([documentId, pageNumber])
+}
+
+model PhdCommissionCondition {
+  id        String @id @default(cuid())
+  recordId  String
+  record    PhdCommissionRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  category  String @default("OTHER") // EXCLUSION | PAYMENT | CLAWBACK | VERIFICATION | DEADLINE | AMOUNT_BASIS | ELIGIBILITY | OTHER
+  condition String
+  pageNumber Int?
+  createdAt DateTime @default(now())
+
+  @@index([recordId, category])
+}
+
+model PhdCommissionAgreement {
+  id        String @id @default(cuid())
+  universityId String? @unique
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  universityNameRaw String @unique
+  phdCommissionStatus String @default("UNCONFIRMED") // ELIGIBLE_CONFIRMED | NOT_ELIGIBLE_CONFIRMED | EXCLUDED_BY_SUPPLIED_STRUCTURE | UNCONFIRMED
+  recordId  String?
+  record    PhdCommissionRecord? @relation(fields: [recordId], references: [id], onDelete: SetNull)
+  documentId String?
+  document  PhdCommissionDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  sourcePage Int?
+  exactWording String
+  reason    String
+  reviewRequired Boolean @default(true)
+  reviewedById String?
+  reviewedAt DateTime?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([phdCommissionStatus])
+}
+
+// ---------------------------------------------------------------------------
+// Provenance, verification, notifications, audit, jobs
+// ---------------------------------------------------------------------------
+
+model PhdSourceEvidence {
+  id        String @id @default(cuid())
+  entityType String
+  entityId  String
+  fieldName String @default("")
+  claim     String
+  sourceUrl String?
+  sourceAuthority String @default("UNKNOWN") // OFFICIAL_PRIMARY | OFFICIAL_SECONDARY | PEER_REVIEWED | SCHOLARLY_INDEX | INDUSTRY | GOVERNMENT | SECONDARY | UNKNOWN
+  excerpt   String
+  retrievedAt DateTime @default(now())
+  verificationStatus String @default("NOT_YET_VERIFIED")
+  reviewerId String?
+  reviewedAt DateTime?
+  conflictNotes String
+  nextVerificationAt DateTime?
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  createdById String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events PhdVerificationEvent[]
+
+  @@index([entityType, entityId])
+  @@index([verificationStatus, nextVerificationAt])
+}
+
+model PhdVerificationEvent {
+  id        String @id @default(cuid())
+  evidenceId String?
+  evidence  PhdSourceEvidence? @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  entityType String
+  entityId  String
+  action    String
+  fromStatus String @default("")
+  toStatus  String @default("")
+  actorId   String
+  notes     String
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+}
+
+model PhdNotification {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation("PhdNotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   PhdProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      String @default("REMINDER") // REMINDER | FOLLOW_UP | DEADLINE | VERIFICATION | SYSTEM
+  title     String
+  body      String
+  dueAt     DateTime?
+  readAt    DateTime?
+  entityType String @default("")
+  entityId  String @default("")
+  deliveryStatus String @default("IN_APP") // IN_APP (only) — no email is sent automatically
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt, dueAt])
+}
+
+model PhdAuditLog {
+  id        String @id @default(cuid())
+  actorId   String
+  actorRole String @default("")
+  action    String
+  entityType String
+  entityId  String @default("")
+  projectId String @default("")
+  details   String
+  ipHash    String @default("")
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@index([projectId, createdAt])
+}
+
+model PhdResearchJob {
+  id        String @id @default(cuid())
+  projectId String?
+  project   PhdProject? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  kind      String // TOPIC_DISCOVERY | LITERATURE_SYNTHESIS | UNIVERSITY_RESEARCH | SUPERVISOR_MATCH | PROPOSAL_GENERATION | FUNDING_DISCOVERY | DEADLINE_MONITOR | COMMISSION_EXTRACTION | CHECKLIST_GENERATION | SOURCE_VERIFICATION
+  status    String @default("QUEUED") // QUEUED | RUNNING | SUCCEEDED | FAILED | BLOCKED
+  progress  Int @default(0)
+  attempts  Int @default(0)
+  maxAttempts Int @default(3)
+  dedupeKey String? @unique
+  payload   String
+  result    String
+  error     String
+  requestedById String
+  startedAt DateTime?
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, kind, status])
+  @@index([status, createdAt])
+}
+
+model PhdExportRecord {
+  id        String @id @default(cuid())
+  projectId String
+  kind      String
+  format    String
+  filename  String
+  bytes     Int
+  checksum  String @default("")
+  createdById String
+  createdAt DateTime @default(now())
+
+  @@index([projectId, createdAt])
 }

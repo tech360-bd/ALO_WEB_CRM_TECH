@@ -786,3 +786,111 @@ export async function runWebhookDispatch(ctx: JobHandlerContext): Promise<Record
     last24h: stats,
   };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 27. PhD workspace maintenance (declared job `phd-maintenance`)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * PhD workspace maintenance.
+ *
+ * Three duties, all of them non-destructive:
+ *   1. raise in-app deadline reminders for the applicant's own project;
+ *   2. report evidence that has passed its re-verification date (report only —
+ *      a stale claim is never silently downgraded or re-dated);
+ *   3. report documents whose retention window has elapsed (report only —
+ *      removal stays an explicit, audited administrator action, because a
+ *      scheduled job must never delete student evidence).
+ *
+ * Reminders are de-duplicated by entity + due date so running the job twice in
+ * one hour cannot spam the workspace.
+ */
+export async function runPhdMaintenance(ctx: JobHandlerContext): Promise<Record<string, unknown>> {
+  const limit = clampLimit(ctx.limit, 200, 1000);
+  const horizon = new Date(ctx.now.getTime() + 14 * 24 * 60 * 60 * 1000);
+
+  const dueDeadlines = await db.phdDeadline.findMany({
+    where: {
+      dueDate: { not: null, lte: horizon },
+      projectId: { not: null },
+      verificationStatus: { in: ['VERIFIED_OFFICIAL', 'VERIFIED_MAY_BE_OUTDATED'] },
+    },
+    select: {
+      id: true,
+      title: true,
+      dueDate: true,
+      kind: true,
+      reminderDays: true,
+      projectId: true,
+      project: { select: { userId: true } },
+    },
+    take: limit,
+  });
+
+  let remindersCreated = 0;
+  let remindersSkipped = 0;
+  for (const deadline of dueDeadlines) {
+    const recipientId = deadline.project?.userId;
+    if (!recipientId || !deadline.dueDate) {
+      remindersSkipped++;
+      continue;
+    }
+    const reminderDays = Math.max(1, deadline.reminderDays ?? 14);
+    const remindFrom = new Date(deadline.dueDate.getTime() - reminderDays * 24 * 60 * 60 * 1000);
+    if (ctx.now < remindFrom) {
+      remindersSkipped++;
+      continue;
+    }
+    const existing = await db.phdNotification.findFirst({
+      where: {
+        userId: recipientId,
+        entityType: 'PhdDeadline',
+        entityId: deadline.id,
+        dueAt: deadline.dueDate,
+      },
+      select: { id: true },
+    });
+    if (existing) {
+      remindersSkipped++;
+      continue;
+    }
+    await db.phdNotification.create({
+      data: {
+        userId: recipientId,
+        projectId: deadline.projectId,
+        type: 'DEADLINE',
+        title: `Deadline approaching: ${deadline.title}`,
+        body: `Recorded as a ${String(deadline.kind).toLowerCase()} deadline on ${deadline.dueDate.toISOString().slice(0, 10)}. Check the official page before relying on this date.`,
+        dueAt: deadline.dueDate,
+        entityType: 'PhdDeadline',
+        entityId: deadline.id,
+      },
+    });
+    remindersCreated++;
+  }
+
+  const staleEvidence = await db.phdSourceEvidence.findMany({
+    where: { nextVerificationAt: { not: null, lt: ctx.now } },
+    select: { id: true, entityType: true, entityId: true, verificationStatus: true, nextVerificationAt: true },
+    take: limit,
+  });
+
+  const expiredRetention = await db.phdDocument.findMany({
+    where: { deletedAt: null, retentionUntil: { not: null, lt: ctx.now } },
+    select: { id: true, projectId: true, documentType: true, retentionUntil: true },
+    take: limit,
+  });
+
+  return {
+    status: 'OK',
+    dueDeadlinesExamined: dueDeadlines.length,
+    remindersCreated,
+    remindersSkipped,
+    staleEvidence: staleEvidence.length,
+    staleEvidenceSample: staleEvidence.slice(0, 10),
+    documentsPastRetention: expiredRetention.length,
+    documentsPastRetentionSample: expiredRetention.slice(0, 10),
+    deleted: 0,
+    note: 'report only — evidence is never re-dated and documents are never removed by a scheduled job',
+  };
+}
