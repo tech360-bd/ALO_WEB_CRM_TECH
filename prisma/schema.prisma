@@ -12525,6 +12525,7 @@ model PhdProject {
   deadlines        PhdDeadline[]
   notifications    PhdNotification[]
   jobs             PhdResearchJob[]
+  statements       PhdStatementOfPurpose[]
 
   @@index([userId, status])
   @@index([selectedTopicId])
@@ -12771,6 +12772,7 @@ model PhdUniversity {
   commissionRecords PhdCommissionRecord[]
   evidence       PhdSourceEvidence[]
   proposals      PhdProposal[]
+  statements     PhdStatementOfPurpose[]
 
   @@index([name])
 }
@@ -12837,6 +12839,7 @@ model PhdProgramme {
   proposals PhdProposal[]
   fees PhdTuitionFee[]
   deadlines PhdDeadline[]
+  statements PhdStatementOfPurpose[]
 
   @@unique([universityId, name, award])
   @@index([universityId, discipline])
@@ -13517,4 +13520,95 @@ model PhdExportRecord {
   createdAt DateTime @default(now())
 
   @@index([projectId, createdAt])
+}
+
+/// SOP / personal-statement builder.
+///
+/// One statement exists per (project, university, programme). The document is
+/// built only from facts the student supplied or that were verified from an
+/// official source; nothing is invented, and no AI-detector score is stored or
+/// promised. Statuses are a one-way review trail:
+/// DRAFT → STUDENT_REVIEWED → FINAL_APPROVED → REQUIREMENTS_VERIFIED → EXPORT_VERIFIED.
+model PhdStatementOfPurpose {
+  id        String @id @default(cuid())
+  projectId String
+  project   PhdProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  universityId String?
+  university PhdUniversity? @relation(fields: [universityId], references: [id], onDelete: SetNull)
+  programmeId  String?
+  programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  title     String
+  /// DRAFT | STUDENT_REVIEWED | FINAL_APPROVED | REQUIREMENTS_VERIFIED | EXPORT_VERIFIED | CHANGES_REQUESTED
+  status    String @default("DRAFT")
+  targetWords Int @default(1000)
+  /// Only set when an official source publishes a limit; null means "not published".
+  wordLimit Int?
+  aiDisclosureRequired Boolean? // null = the requirement is unknown
+  aiDisclosureIncluded Boolean @default(false)
+  /// JSON of student-supplied facts (motivation, achievements, career plan, …).
+  /// Stored as text so the same value survives the SQLite verification mirror.
+  personalFacts String @db.LongText
+  version   Int @default(1)
+  studentReviewedAt DateTime?
+  approvedById String?
+  approvedAt DateTime?
+  requirementsVerifiedAt DateTime?
+  exportVerifiedAt DateTime?
+  notes     String @db.Text
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sections PhdSopSection[]
+  versions PhdSopVersion[]
+  reviews  PhdSopReview[]
+
+  @@unique([projectId, universityId, programmeId])
+  @@index([projectId, status])
+}
+
+model PhdSopSection {
+  id        String @id @default(cuid())
+  sopId     String
+  sop       PhdStatementOfPurpose @relation(fields: [sopId], references: [id], onDelete: Cascade)
+  sectionKey String
+  title     String
+  sortOrder Int
+  content   String @db.LongText
+  /// True when the current text was produced with AI assistance (audit only).
+  aiAssisted Boolean @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@unique([sopId, sectionKey])
+  @@index([sopId, sortOrder])
+}
+
+model PhdSopVersion {
+  id        String @id @default(cuid())
+  sopId     String
+  sop       PhdStatementOfPurpose @relation(fields: [sopId], references: [id], onDelete: Cascade)
+  version   Int
+  snapshot  String @db.LongText
+  changeSummary String @default("")
+  createdById String
+  createdAt DateTime @default(now())
+
+  @@unique([sopId, version])
+  @@index([sopId, createdAt])
+}
+
+/// Immutable review/approval trail. A status change without a row here is not
+/// possible from the API: the service writes both together.
+model PhdSopReview {
+  id        String @id @default(cuid())
+  sopId     String
+  sop       PhdStatementOfPurpose @relation(fields: [sopId], references: [id], onDelete: Cascade)
+  reviewerId String
+  reviewerRole String
+  /// STUDENT_REVIEWED | FINAL_APPROVED | CHANGES_REQUESTED | REQUIREMENTS_VERIFIED | EXPORT_VERIFIED
+  decision  String
+  comments  String @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([sopId, createdAt])
 }

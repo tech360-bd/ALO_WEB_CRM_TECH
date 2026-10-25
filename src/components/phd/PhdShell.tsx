@@ -8,6 +8,7 @@ import DashboardPanel from './panels/DashboardPanel';
 import ProfilePanel from './panels/ProfilePanel';
 import TopicsPanel from './panels/TopicsPanel';
 import ProposalPanel from './panels/ProposalPanel';
+import SopPanel from './panels/SopPanel';
 import SupervisorsPanel from './panels/SupervisorsPanel';
 import ApplicationsPanel from './panels/ApplicationsPanel';
 import FundingPanel from './panels/FundingPanel';
@@ -20,6 +21,7 @@ const SECTIONS = [
   { key: 'profile', label: 'Academic profile' },
   { key: 'topics', label: 'Topic discovery' },
   { key: 'proposals', label: 'Proposal builder' },
+  { key: 'sop', label: 'SOP builder' },
   { key: 'supervisors', label: 'Supervisors' },
   { key: 'applications', label: 'Applications' },
   { key: 'funding', label: 'Funding & deadlines' },
@@ -76,6 +78,7 @@ export default function PhdShell() {
         {section === 'profile' && <ProfilePanel />}
         {section === 'topics' && <TopicsPanel />}
         {section === 'proposals' && <ProposalPanel />}
+        {section === 'sop' && <SopPanel />}
         {section === 'supervisors' && <SupervisorsPanel />}
         {section === 'applications' && <ApplicationsPanel />}
         {section === 'funding' && <FundingPanel />}

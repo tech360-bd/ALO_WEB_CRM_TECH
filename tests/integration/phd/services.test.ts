@@ -29,6 +29,17 @@ import { buildTimelineForProject } from '@/lib/phd/services/timeline';
 import { createDeadline, listDeadlines } from '@/lib/phd/services/funding';
 import { getDashboard } from '@/lib/phd/services/dashboard';
 import { buildPdf } from '@/lib/phd/exports/pdf';
+import {
+  createSop,
+  exportSop,
+  generateForSop,
+  getSop,
+  listSops,
+  reviewSop,
+  transitionSop,
+  updateSections,
+  updateSop,
+} from '@/lib/phd/services/sop';
 
 const runId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
 
@@ -688,5 +699,186 @@ describeDb('Dashboard metrics are real counts only', () => {
     const details = logs.map((log) => log.details).join(' ');
     expect(details).not.toContain('Dear Dr');
     expect(details).not.toContain('@example.com');
+  });
+});
+
+describeDb('Statement of purpose builder', () => {
+  const state: { sopId?: string; adviser?: PhdActor } = {};
+
+  beforeAll(async () => {
+    // A reviewer must be attached to the project: statements are personal, so a
+    // data verifier is deliberately not allowed to read them.
+    const adviserRow = await db.user.create({
+      data: { email: `phd-adviser-${runId}@example.com`, name: 'Research Adviser', role: 'research_adviser' },
+    });
+    state.adviser = actorFor(adviserRow, 'RESEARCH_ADVISER');
+    await db.phdProject.update({ where: { id: projectId }, data: { adviserId: adviserRow.id } });
+  });
+
+  const sections = [
+    {
+      sectionKey: 'programme_fit',
+      content:
+        'I am applying for the PhD Business and Management programme at the integration test university because its analytics group studies exactly the decision processes I work with.',
+    },
+    {
+      sectionKey: 'research_interest',
+      content:
+        'My proposed area of research is how small retailers adopt AI decision tools, and the question I intend to pursue is which organisational routines change first.',
+    },
+    {
+      sectionKey: 'academic_background',
+      content:
+        'I hold an MSc in Business Analytics from Example University with a Merit, including modules in operations analytics and digital transformation.',
+    },
+    {
+      sectionKey: 'research_experience',
+      content:
+        'My dissertation examined how small retailers adopt AI decision tools, using regression analysis and interviews with twelve store managers.',
+    },
+    {
+      sectionKey: 'methods',
+      content: 'I can work with survey statistics and thematic interviews, and the proposed design would use a two-stage mixed-method study.',
+    },
+    {
+      sectionKey: 'motivation',
+      content:
+        'I have spent five years helping independent retailers choose stock systems, and I keep meeting the same gap between the software and the way decisions are actually made.',
+    },
+    {
+      sectionKey: 'field_engagement',
+      content:
+        'Sources I have recorded and read for this project include Smith and Ahmed (2021), “Maintenance strategy in small firms”, which I use for the adoption framework.',
+    },
+    {
+      sectionKey: 'contribution',
+      content:
+        'If the project proceeds as planned, it would contribute evidence on how routines change during adoption, addressing the question I set out above.',
+    },
+    {
+      sectionKey: 'career_plan',
+      content: 'I intend to return to retail operations as a research lead responsible for technology adoption.',
+    },
+    {
+      sectionKey: 'ai_disclosure',
+      content: 'I used a drafting assistant to structure this statement and rewrote every sentence myself.',
+      },
+  ];
+
+  it('creates one statement per programme and refuses a duplicate', async () => {
+    const sop = await createSop(applicant, { projectId, programmeId, universityId });
+    state.sopId = sop.id;
+    expect(sop.status).toBe('DRAFT');
+    await expect(createSop(applicant, { projectId, programmeId })).rejects.toMatchObject({ status: 409 });
+    const list = await listSops(applicant, projectId);
+    expect(list).toHaveLength(1);
+    expect(list[0].universityName).toContain('Test University');
+  });
+
+  it('keeps the statement private to its owner', async () => {
+    await expect(getSop(otherActor, state.sopId!)).rejects.toMatchObject({ status: 404 });
+    await expect(listSops(otherActor, projectId)).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('saves personal facts and refuses another student as editor', async () => {
+    await updateSop(applicant, state.sopId!, {
+      personalFacts: {
+        motivation: 'I have spent five years helping independent retailers choose stock systems.',
+        careerPlan: 'I intend to return to retail operations as a research lead.',
+        achievements: ['Ran a stock-system pilot across six stores'],
+      },
+    });
+    await expect(
+      updateSop(otherActor, state.sopId!, { personalFacts: { motivation: 'Not mine' } }),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('generates a draft and preserves text the student already wrote', async () => {
+    await updateSections(applicant, state.sopId!, [{ sectionKey: 'career_plan', content: 'Hand-written career plan.' }]);
+    const result = await generateForSop(applicant, state.sopId!, { overwrite: false });
+    expect(result.generated.sections).toHaveLength(10);
+    expect(result.sectionsPreserved).toBeGreaterThanOrEqual(1);
+    const detail = await getSop(applicant, state.sopId!);
+    const career = detail.sections.find((section) => section.sectionKey === 'career_plan');
+    expect(career?.content).toBe('Hand-written career plan.');
+  });
+
+  it('reports blocking issues while sections are empty', async () => {
+    const all = await getSop(applicant, state.sopId!);
+    await updateSections(
+      applicant,
+      state.sopId!,
+      all.sections.map((section) => ({ sectionKey: section.sectionKey, content: '' })),
+    );
+    const review = await reviewSop(applicant, state.sopId!);
+    expect(review.report.errorCount).toBeGreaterThan(0);
+    expect(review.report.readiness).toBe('NOT_READY');
+    expect(review.report.detectorStatement).toContain('No AI-detector score');
+    await expect(transitionSop(applicant, state.sopId!, 'STUDENT_REVIEWED')).rejects.toMatchObject({ status: 422 });
+  });
+
+  it('requires a human other than the author to approve the final version', async () => {
+    await updateSections(applicant, state.sopId!, sections, 'Complete draft for review');
+    const review = await reviewSop(applicant, state.sopId!);
+    expect(review.report.errorCount).toBe(0);
+
+    const reviewed = await transitionSop(applicant, state.sopId!, 'STUDENT_REVIEWED');
+    expect(reviewed?.status).toBe('STUDENT_REVIEWED');
+
+    await expect(transitionSop(applicant, state.sopId!, 'FINAL_APPROVED')).rejects.toMatchObject({ status: 403 });
+    await expect(transitionSop(verifier, state.sopId!, 'FINAL_APPROVED')).rejects.toMatchObject({ status: 404 });
+    await expect(exportSop(applicant, state.sopId!, 'docx')).rejects.toMatchObject({ status: 409 });
+
+    const approved = await transitionSop(state.adviser!, state.sopId!, 'FINAL_APPROVED', 'Reviewed at integration test');
+    expect(approved?.status).toBe('FINAL_APPROVED');
+    expect(approved?.approvedAt).not.toBeNull();
+  });
+
+  it('returns an edited statement to draft so an old approval cannot cover new text', async () => {
+    const result = await updateSections(applicant, state.sopId!, [
+      { sectionKey: 'career_plan', content: 'Updated career plan after approval.' },
+    ]);
+    expect(result.status).toBe('DRAFT');
+    const detail = await getSop(applicant, state.sopId!);
+    expect(detail.approvedAt).toBeNull();
+  });
+
+  it('exports the final documents and review report from saved content', async () => {
+    await transitionSop(applicant, state.sopId!, 'STUDENT_REVIEWED');
+    await transitionSop(state.adviser!, state.sopId!, 'FINAL_APPROVED');
+    await transitionSop(state.adviser!, state.sopId!, 'REQUIREMENTS_VERIFIED');
+
+    const docx = await exportSop(applicant, state.sopId!, 'docx');
+    expect(docx.filename).toBe('Student_SOP_Final.docx');
+    expect(docx.buffer.byteLength).toBeGreaterThan(1000);
+    expect(docx.buffer.subarray(0, 2).toString()).toBe('PK');
+
+    const pdf = await exportSop(applicant, state.sopId!, 'pdf');
+    expect(pdf.filename).toBe('Student_SOP_Final.pdf');
+    expect(pdf.buffer.subarray(0, 4).toString()).toBe('%PDF');
+
+    const report = await exportSop(applicant, state.sopId!, 'report');
+    expect(report.filename).toBe('Student_SOP_Review_Report.pdf');
+    expect(report.buffer.subarray(0, 4).toString()).toBe('%PDF');
+
+    const detail = await getSop(applicant, state.sopId!);
+    expect(detail.status).toBe('EXPORT_VERIFIED');
+    expect(detail.exportVerifiedAt).not.toBeNull();
+  });
+
+  it('keeps the review trail and audit log without private content', async () => {
+    const detail = await getSop(applicant, state.sopId!);
+    expect(detail.reviews.map((row) => row.decision)).toContain('FINAL_APPROVED');
+    expect(detail.reviews.map((row) => row.decision)).toContain('EXPORT_VERIFIED');
+    const logs = await db.phdAuditLog.findMany({ where: { entityId: state.sopId!, entityType: 'PhdStatementOfPurpose' } });
+    expect(logs.length).toBeGreaterThan(3);
+    const details = logs.map((log) => log.details).join(' ');
+    expect(details).not.toContain('retailers choose stock systems');
+  });
+
+  it('does not leak a statement into another applicant’s dashboard', async () => {
+    const otherDashboard = await getDashboard(otherActor);
+    expect(otherDashboard.metrics.topics).toBe(0);
+    expect(otherDashboard.metrics.proposals).toBe(0);
   });
 });

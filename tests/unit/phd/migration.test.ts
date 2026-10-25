@@ -7,6 +7,12 @@ const migration = readFileSync(
   path.join(root, 'prisma/migrations/20261025120000_phd_proposal_builder/migration.sql'),
   'utf8',
 );
+const sopMigration = readFileSync(
+  path.join(root, 'prisma/migrations/20261026120000_phd_sop_builder/migration.sql'),
+  'utf8',
+);
+/** Both Phd migrations, treated as one additive module for coverage purposes. */
+const moduleMigration = `${migration}\n${sopMigration}`;
 const schema = readFileSync(path.join(root, 'prisma/schema.prisma'), 'utf8');
 
 function modelNames(): string[] {
@@ -25,13 +31,26 @@ function tableBlock(table: string): string {
 
 describe('PhD migration is additive and complete', () => {
   const phdModels = modelNames().filter((name) => name.startsWith('Phd'));
-  const tables = tableNames(migration);
+  const tables = tableNames(moduleMigration);
+  const baseTables = tableNames(migration);
+  const sopTables = tableNames(sopMigration);
 
   it('creates one table per Phd model and nothing else', () => {
-    expect(phdModels).toHaveLength(47);
-    expect(tables).toHaveLength(47);
+    // 47 core module tables (2026-10-25) + 4 statement-of-purpose tables (2026-10-26).
+    expect(baseTables).toHaveLength(47);
+    expect(sopTables).toEqual(['PhdStatementOfPurpose', 'PhdSopSection', 'PhdSopVersion', 'PhdSopReview']);
+    expect(phdModels).toHaveLength(51);
+    expect(tables).toHaveLength(51);
     expect(new Set(tables)).toEqual(new Set(phdModels));
     expect(tables.every((table) => table.startsWith('Phd'))).toBe(true);
+  });
+
+  it('keeps the statement migration additive', () => {
+    expect(sopMigration).not.toMatch(/DROP TABLE/);
+    expect(sopMigration).not.toMatch(/TRUNCATE/);
+    expect(sopMigration).not.toMatch(/DELETE FROM/);
+    expect(sopMigration).not.toMatch(/ALTER TABLE `User`/);
+    expect(sopMigration).toContain('additive module migration');
   });
 
   it('never creates or destroys the existing User table', () => {
@@ -43,8 +62,8 @@ describe('PhD migration is additive and complete', () => {
   });
 
   it('gives every table a primary key', () => {
-    const blocks = migration.split('CREATE TABLE').slice(1);
-    expect(blocks).toHaveLength(47);
+    const blocks = moduleMigration.split('CREATE TABLE').slice(1);
+    expect(blocks).toHaveLength(51);
     for (const block of blocks) {
       expect(block).toContain('PRIMARY KEY (');
     }
@@ -72,14 +91,14 @@ describe('PhD migration is additive and complete', () => {
   });
 
   it('stores money as integer minor units, never floating point', () => {
-    const moneyColumns = [...migration.matchAll(/`(\w*[Aa]mount\w*|\w*Stipend\w*|\w*Minor)`\s+(DECIMAL|FLOAT|DOUBLE|REAL)/g)];
+    const moneyColumns = [...moduleMigration.matchAll(/`(\w*[Aa]mount\w*|\w*Stipend\w*|\w*Minor)`\s+(DECIMAL|FLOAT|DOUBLE|REAL)/g)];
     expect(moneyColumns).toEqual([]);
     expect(migration).not.toContain('DECIMAL(');
     expect(schema).not.toContain('Decimal');
   });
 
   it('uses only Phd foreign keys, plus the four User ownership columns', () => {
-    const foreignKeys = [...migration.matchAll(/ALTER TABLE `(\w+)` ADD CONSTRAINT `(\w+)` FOREIGN KEY \(`(\w+)`\) REFERENCES `(\w+)`/g)];
+    const foreignKeys = [...moduleMigration.matchAll(/ALTER TABLE `(\w+)` ADD CONSTRAINT `(\w+)` FOREIGN KEY \(`(\w+)`\) REFERENCES `(\w+)`/g)];
     expect(foreignKeys.length).toBeGreaterThan(60);
     const nonPhdTargets = foreignKeys.filter((entry) => !entry[4].startsWith('Phd'));
     expect(nonPhdTargets.map((entry) => entry[4])).toEqual(['User', 'User', 'User', 'User']);

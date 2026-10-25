@@ -345,6 +345,58 @@ export const jobRequestSchema = z.object({
   payload: z.record(z.string(), z.unknown()).optional(),
 });
 
+// ── Statement of purpose (SOP builder) ──────────────────────────────────────
+
+export const sopCreateSchema = z.object({
+  projectId: z.string().min(1).max(64),
+  universityId: z.string().min(1).max(64).optional().nullable(),
+  programmeId: z.string().min(1).max(64).optional().nullable(),
+  title: trimmed(200).optional(),
+  targetWords: z.number().int().min(300).max(5000).optional(),
+  wordLimit: z.number().int().min(100).max(10_000).optional().nullable(),
+  aiDisclosureRequired: z.boolean().optional().nullable(),
+});
+
+const personalFactsSchema = z.object({
+  motivation: optionalText(4000),
+  whyProgramme: optionalText(4000),
+  whyUniversity: optionalText(4000),
+  achievements: z.array(trimmed(300)).max(20).optional(),
+  careerPlan: optionalText(4000),
+  professionalContext: optionalText(4000),
+  aiUse: optionalText(2000),
+  reviewerNotes: optionalText(2000),
+});
+
+export const sopUpdateSchema = z.object({
+  title: trimmed(200).min(3).optional(),
+  targetWords: z.number().int().min(300).max(5000).optional(),
+  wordLimit: z.number().int().min(100).max(10_000).optional().nullable(),
+  aiDisclosureRequired: z.boolean().optional().nullable(),
+  personalFacts: personalFactsSchema.optional(),
+  notes: optionalText(4000),
+});
+
+export const sopSectionsSchema = z.object({
+  sections: z
+    .array(
+      z.object({
+        sectionKey: z.string().min(2).max(60),
+        content: z.string().max(20_000),
+      }),
+    )
+    .min(1)
+    .max(12),
+  changeSummary: optionalText(300),
+});
+
+export const sopStatusSchema = z.object({
+  status: z.enum(['DRAFT', 'STUDENT_REVIEWED', 'FINAL_APPROVED', 'REQUIREMENTS_VERIFIED']),
+  comments: optionalText(2000),
+});
+
+export const sopRestoreSchema = z.object({ versionId: z.string().min(1).max(64) });
+
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 export type TopicGenerateInput = z.infer<typeof topicGenerateSchema>;
 export type LiteratureSourceInput = z.infer<typeof literatureSourceSchema>;
