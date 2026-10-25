@@ -22,8 +22,18 @@ interface DashboardResponse {
       pendingCommission: number;
       openVerification: number;
       expiredDeadlines: number;
+      statements: number;
+      statementsAwaitingReview: number;
     };
     proposals: Array<{ id: string; title: string; status: string; updatedAt: string; currentVersion: number }>;
+    statements: Array<{
+      id: string;
+      title: string;
+      status: string;
+      version: number;
+      updatedAt: string;
+      university: { name: string } | null;
+    }>;
     applications: Array<{
       status: string;
       fundingStatus: string;
@@ -68,6 +78,8 @@ export default function DashboardPanel() {
     { label: 'Topic candidates', value: metrics.topics },
     { label: 'Verified sources', value: metrics.verifiedSources, hint: `${metrics.totalSources} recorded in total` },
     { label: 'Proposals', value: metrics.proposals },
+    { label: 'Statements of purpose', value: metrics.statements },
+    { label: 'Statements waiting for approval', value: metrics.statementsAwaitingReview },
     { label: 'Applications', value: metrics.applications },
     { label: 'Awaiting supervisor reply', value: metrics.pendingResponses },
     { label: 'Unread notifications', value: metrics.unreadNotifications },
@@ -154,6 +166,37 @@ export default function DashboardPanel() {
             ))}
           </ul>
         )}
+      </Card>
+
+      <Card
+        title="Statements of purpose"
+        description="One statement per programme. Drafts are built only from facts you supplied; approval is required before a final export."
+      >
+        {dashboard.statements.length === 0 ? (
+          <Empty
+            title="No statement yet"
+            hint="Open the SOP builder to create one for a verified programme."
+          />
+        ) : (
+          <ul className="space-y-2 text-xs">
+            {dashboard.statements.map((statement) => (
+              <li key={statement.id} className="border-b border-[var(--alo-border)]/60 pb-2">
+                <p className="font-semibold text-[var(--alo-text)]">
+                  {statement.university?.name ?? statement.title}
+                </p>
+                <p className="text-[var(--alo-text-muted)]">
+                  v{statement.version} · {statement.status.replace(/_/g, ' ').toLowerCase()} ·{' '}
+                  {formatDate(statement.updatedAt)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="mt-3 text-[11px]">
+          <Link href="/student/phd/sop" className="font-semibold text-[var(--alo-brand)] underline">
+            Open the SOP builder
+          </Link>
+        </p>
       </Card>
 
       <Card title="Recent proposals">

@@ -29,6 +29,7 @@ export async function getDashboard(actor: PhdActor) {
     verifiedResearchPages,
     pendingCommission,
     openVerification,
+    statements,
   ] = await Promise.all([
     db.phdTopicCandidate.count({ where: { projectId: project.id } }),
     db.phdLiteratureSource.count({ where: { projectId: project.id, verificationStatus: 'VERIFIED_OFFICIAL' } }),
@@ -49,6 +50,19 @@ export async function getDashboard(actor: PhdActor) {
     canVerify(actor)
       ? db.phdSourceEvidence.count({ where: { verificationStatus: { in: ['NOT_YET_VERIFIED', 'SOURCE_UNAVAILABLE'] } } })
       : Promise.resolve(0),
+    db.phdStatementOfPurpose.findMany({
+      where: { projectId: project.id },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        version: true,
+        updatedAt: true,
+        university: { select: { name: true } },
+      },
+      orderBy: { updatedAt: 'desc' },
+      take: 5,
+    }),
   ]);
 
   const assessedDeadlines = allDeadlines
@@ -92,10 +106,14 @@ export async function getDashboard(actor: PhdActor) {
       pendingCommission,
       openVerification,
       expiredDeadlines,
+      statements: statements.length,
+      statementsAwaitingReview: statements.filter((statement) => statement.status === 'STUDENT_REVIEWED').length,
     },
     proposals,
     applications,
+    statements,
     deadlines: assessedDeadlines,
-    isEmpty: topics === 0 && totalSources === 0 && proposals.length === 0 && applications.length === 0,
+    isEmpty:
+      topics === 0 && totalSources === 0 && proposals.length === 0 && applications.length === 0 && statements.length === 0,
   };
 }

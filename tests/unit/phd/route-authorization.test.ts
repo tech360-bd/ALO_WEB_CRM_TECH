@@ -28,12 +28,14 @@ const phdRoutes = walk(path.join(root, 'src/app/api/phd')).filter((file) => file
 // unrelated pre-existing endpoints that are audited elsewhere.
 const researchRoutes = walk(path.join(root, 'src/app/api/research/programmes')).filter((file) => file.endsWith('route.ts'));
 const studentPages = walk(path.join(root, 'src/app/student/phd')).filter((file) => file.endsWith('page.tsx'));
+const sopEntryPages = [path.join(root, 'src/app/student/sop/page.tsx')];
 
 describe('PhD API authorization surface', () => {
   it('has route files to check', () => {
     expect(phdRoutes.length).toBeGreaterThanOrEqual(45);
     expect(researchRoutes.length).toBeGreaterThanOrEqual(2);
     expect(studentPages.length).toBe(11);
+    for (const page of sopEntryPages) expect(readFileSync(page, 'utf8').length).toBeGreaterThan(200);
   });
 
   it('resolves the actor server-side in every PhD route', () => {
@@ -70,7 +72,7 @@ describe('PhD API authorization surface', () => {
   });
 
   it('marks every student workspace page as non-indexable', () => {
-    for (const file of studentPages) {
+    for (const file of [...studentPages, ...sopEntryPages]) {
       const source = readFileSync(file, 'utf8');
       expect(source, `${path.relative(root, file)} must be noindex`).toContain('robots: { index: false');
     }
