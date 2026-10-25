@@ -351,9 +351,27 @@ jobs:
             exit 1
           fi
 
+      - name: Provision swap (the production build needs >4GB effective memory)
+        run: |
+          set -euo pipefail
+          # Run 40239683401 evidence: this job's build aborted with
+          # "FATAL ERROR: Reached heap limit" at the 4096 MB default, while the
+          # same build passed in this job on the previous commit. The build is
+          # memory-marginal, so give it the same 8 GB swapfile the quality-gates
+          # job uses before raising the heap below.
+          if [ "$(swapon --show --noheadings | wc -l)" -eq 0 ]; then
+            sudo fallocate -l 8G /swapfile
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+          fi
+          free -h
+
       - name: Production build
         env:
           DATABASE_URL: mysql://root:root@127.0.0.1:3306/alo_app_ci
+          # Build heap override consumed by `npm run build` (default 4096).
+          ALO_BUILD_HEAP_MB: "6144"
           NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
