@@ -882,3 +882,47 @@ describeDb('Statement of purpose builder', () => {
     expect(otherDashboard.metrics.proposals).toBe(0);
   });
 });
+
+describeDb('PhD maintenance cron is non-destructive', () => {
+  it('creates one reminder per deadline and never repeats it', async () => {
+    const { runPhdMaintenance } = await import('@/lib/cron/job-handlers');
+    const now = new Date();
+    const due = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const deadline = await createDeadline(applicant, {
+      projectId,
+      title: 'Integration deadline reminder',
+      kind: 'APPLICATION',
+      dueDate: due.toISOString(),
+      verificationStatus: 'VERIFIED_OFFICIAL',
+      reminderDays: 14,
+      sourceUrl: 'https://example.ac.uk/apply/deadlines',
+      sourceLabel: 'Integration fixture',
+    });
+
+    const first = await runPhdMaintenance({ now, limit: 500 });
+    expect(first.remindersCreated).toBeGreaterThanOrEqual(1);
+    expect(first.deleted).toBe(0);
+
+    const notifications = await db.phdNotification.count({
+      where: { userId: applicant.userId, entityType: 'PhdDeadline', entityId: deadline.id },
+    });
+    expect(notifications).toBe(1);
+
+    const second = await runPhdMaintenance({ now, limit: 500 });
+    const after = await db.phdNotification.count({
+      where: { userId: applicant.userId, entityType: 'PhdDeadline', entityId: deadline.id },
+    });
+    expect(after).toBe(1);
+    expect(second.remindersCreated).toBe(0);
+  });
+
+  it('reports documents past retention without deleting them', async () => {
+    const { runPhdMaintenance } = await import('@/lib/cron/job-handlers');
+    const before = await db.phdDocument.count({ where: { projectId } });
+    const result = await runPhdMaintenance({ now: new Date(), limit: 500 });
+    const after = await db.phdDocument.count({ where: { projectId } });
+    expect(after).toBe(before);
+    expect(result.deleted).toBe(0);
+    expect(String(result.note)).toContain('report only');
+  });
+});
