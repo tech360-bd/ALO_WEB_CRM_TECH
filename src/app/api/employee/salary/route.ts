@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { buildOfficialDocumentHtml, moneyRow } from '@/lib/documents/official-documents';
 
 // Own-salary endpoint. HR/payroll administration uses separate, explicitly gated APIs.
 export async function GET(request: Request) {
@@ -52,9 +53,30 @@ export async function GET(request: Request) {
 
       if (download) {
         const payroll = payrolls[0];
-        const escape = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
-        const html = `<!doctype html><html lang="en"><meta charset="utf-8"><title>ALO Education Payslip</title><style>body{font:16px sans-serif;max-width:720px;margin:48px auto;padding:24px;color:#17365d}h1{color:#0066cc}td{padding:12px;border-bottom:1px solid #ddd}</style><h1>ALO Education</h1><h2>Approved salary slip</h2><p>Employee: ${escape(employee.employeeId)}</p><p>Period: ${escape(payroll.period)} · ${escape(payroll.status)}</p><table><tr><td>Gross salary</td><td>${escape(payroll.grossSalary)}</td></tr><tr><td>Total deductions</td><td>${escape(payroll.grossSalary - payroll.netSalary)}</td></tr><tr><td>Net salary</td><td>${escape(payroll.netSalary)}</td></tr></table><p>Confidential employee copy. Reference: ${escape(payroll.id)}. Confirm payroll currency with HR.</p></html>`;
-        return new NextResponse(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Content-Disposition': `attachment; filename="alo-payslip-${payroll.period.replace(/[^0-9-]/g, '')}.html"`, 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; sandbox" } });
+        // Official salary slip: always on the ALO letterhead. The seal is added
+        // only when the issuing authority is a Super Admin — an employee
+        // downloading their own copy gets the letterhead plus an explicit
+        // "seal withheld" note (src/lib/documents/official-documents.ts).
+        const html = await buildOfficialDocumentHtml({
+          kind: 'salary-slip',
+          title: 'Approved salary slip',
+          issuedTo: employee.employeeId,
+          reference: payroll.id,
+          authority: auth,
+          meta: [
+            { label: 'Employee ID', value: employee.employeeId },
+            { label: 'Payroll period', value: payroll.period },
+            { label: 'Status', value: payroll.status },
+            ...(payroll.paidAt ? [{ label: 'Paid on', value: payroll.paidAt.toISOString().slice(0, 10) }] : []),
+          ],
+          bodyHtml: `<table class="amounts"><tbody>${[
+            moneyRow('Gross salary', payroll.grossSalary),
+            moneyRow('Total deductions', payroll.grossSalary - payroll.netSalary),
+            moneyRow('Net salary', payroll.netSalary, { total: true }),
+          ].join('')}</tbody></table>
+          <p class="note">Confidential employee copy. Salary amounts are shown in the payroll currency recorded by HR — confirm the currency with HR before payment. This copy is not a payment instruction.</p>`,
+        });
+        return new NextResponse(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Content-Disposition': `attachment; filename="alo-payslip-${payroll.period.replace(/[^0-9-]/g, '')}.html"`, 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; img-src data:; style-src 'unsafe-inline'; sandbox" } });
       }
       return NextResponse.json({
         success: true,

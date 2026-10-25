@@ -156,7 +156,7 @@ export default function UniversityPageRecord({
 
         <section className="mt-5 grid gap-4 lg:grid-cols-2"><FactCard icon={<FileSearch className="h-4 w-4 text-[var(--alo-body)]" />} title="Application steps" value={university.applicationSteps} /><FactCard icon={<FileSearch className="h-4 w-4 text-[var(--alo-body)]" />} title="Required documents" value={university.documents} /><FactCard icon={<FileSearch className="h-4 w-4 text-[var(--alo-body)]" />} title="Published FAQs" value={university.faqs} /><div className="rounded-2xl border border-[var(--alo-border)] bg-white p-5 shadow-sm"><h2 className="text-sm font-bold text-[var(--alo-text)]">Media coverage</h2><p className="mt-2 text-xs leading-5 text-[var(--alo-body)]">No university-specific hero image or descriptive image-alt record is attached to this page model. Image coverage is marked for review rather than substituted with a generic campus photo.</p></div></section>
 
-        <footer className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--alo-border)] bg-white p-4 text-[11px] text-[var(--alo-text-muted)]"><span>Record updated {new Date(university.updatedAt).toLocaleDateString()}</span><Link href="/universities" className="font-bold text-[var(--alo-brand)] hover:underline">Browse university pages →</Link></footer>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--alo-border)] bg-white p-4 text-[11px] text-[var(--alo-text-muted)]"><span>Record updated {new Date(university.updatedAt).toLocaleDateString()}</span><Link href="/universities" className="font-bold text-[var(--alo-brand)] hover:underline">Browse university pages →</Link></div>
       </div>
     </main>
   );

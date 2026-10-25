@@ -52,6 +52,7 @@ import LanguageToggle from '@/components/website/LanguageToggle';
 import { useI18n } from '@/i18n';
 import { mergePublicDestinations } from '@/lib/public-navigation-policy';
 import { ALO_CONTACT, ALO_TAGLINE } from '@/lib/alo-site-info';
+import { ALO_BRAND_ALT, ALO_BRAND_ASSETS } from '@/lib/brand/brand-assets';
 
 /* ------------------------------------------------------------------ */
 /*  CONTENT (defaults — Destinations is overridden by live data)       */
@@ -295,8 +296,8 @@ function BrandLockUp({ compact = false, onClick }: { compact?: boolean; onClick?
       className="group flex shrink-0 items-center gap-2.5"
     >
       <img
-        src="/images/landing/Copy of logo.webp"
-        alt=""
+        src={ALO_BRAND_ASSETS.logo}
+        alt={ALO_BRAND_ALT.logo}
         className={compact ? 'h-8 w-auto' : 'h-10 w-auto'}
         width={compact ? 32 : 40}
         height={compact ? 32 : 40}

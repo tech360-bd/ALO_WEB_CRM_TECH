@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
+import PortalFooter from '@/components/portals/PortalFooter';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -412,9 +413,13 @@ export default function StudentPortalShell({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 lg:p-6 max-w-7xl mx-auto">{children}</div>
-        </main>
+        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+          <main className="flex-1 p-4 lg:p-6">
+            <div className="mx-auto w-full max-w-7xl">{children}</div>
+          </main>
+          {/* Site footer — a sibling of <main>, so it is the page's only footer landmark. */}
+          <PortalFooter scope="student" />
+        </div>
       </div>
     </div>
   );
