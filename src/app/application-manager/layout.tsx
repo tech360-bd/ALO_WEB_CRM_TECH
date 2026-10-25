@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import PortalFooter from '@/components/portals/PortalFooter';
 import {
   LayoutDashboard, FileText, Plus, Users, Handshake, Building2, Lock,
   Send, FileCheck, Award, Shield, Calendar, MessageSquare, CheckSquare,
@@ -179,7 +180,11 @@ export default function ApplicationManagerLayout({ children }: { children: React
           <span className="font-semibold text-sm">Application Manager</span>
           <div className="w-8" />
         </header>
-        <main className="flex-1 bg-[#FFFFFF]">{children}</main>
+        <div className="flex flex-1 flex-col overflow-y-auto bg-[#FFFFFF]">
+          <main className="flex-1">{children}</main>
+          {/* Site footer — a sibling of <main>. Staff see the general ALO footer only. */}
+          <PortalFooter scope="counselor" />
+        </div>
       </div>
     </div>
   );

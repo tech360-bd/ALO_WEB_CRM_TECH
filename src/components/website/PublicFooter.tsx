@@ -39,6 +39,7 @@ import {
   ALO_SOCIALS,
   ALO_TAGLINE,
 } from '@/lib/alo-site-info';
+import { ALO_BRAND_ALT, ALO_BRAND_ASSETS } from '@/lib/brand/brand-assets';
 
 /* ------------------------------------------------------------------ */
 /*  REQUIRED COLUMN CONTENT (CMS may append safe internal links after */
@@ -325,8 +326,8 @@ export default function PublicFooter() {
           <div className="flex flex-col gap-5 lg:col-span-5">
             <Link href="/" className="flex items-start gap-3" aria-label={`ALO Education — ${ALO_TAGLINE}`}>
               <img
-                src="/images/landing/Copy of logo.webp"
-                alt=""
+                src={ALO_BRAND_ASSETS.logo}
+                alt={ALO_BRAND_ALT.logo}
                 className="h-11 w-auto"
                 width={44}
                 height={44}

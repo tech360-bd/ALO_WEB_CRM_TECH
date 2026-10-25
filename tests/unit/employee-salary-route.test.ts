@@ -63,12 +63,28 @@ describe('employee own salary endpoint privacy', () => {
     expect(mocks.payrollFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: { employeeId: 'emp-db', status: { in: ['approved', 'paid'] }, id: 'foreign-draft' } }));
   });
 
-  it('downloads an approved stored payslip and audits the download', async () => {
+  it('downloads an approved stored payslip on the official letterhead and audits the download', async () => {
     const response = await GET(new Request('https://alo.test/api/employee/salary?download=approved-payroll-1'));
     expect(response.status).toBe(200); expect(response.headers.get('content-type')).toContain('text/html');
     expect(response.headers.get('cache-control')).toBe('private, no-store');
-    expect(await response.text()).toContain('50000');
+    const html = await response.text();
+    // Official documents are always produced on the ALO letterhead, and the
+    // letterhead is inlined so a downloaded copy still renders it.
+    expect(html).toContain('Official document');
+    expect(html).toContain('data:image/jpeg;base64,');
+    expect(html).toContain('50,000.00');
+    // An employee's own copy is issued without Super Admin authority, so the
+    // seal is explicitly withheld rather than silently omitted.
+    expect(html).toContain('Official seal withheld');
     expect(mocks.auditCreate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: 'SALARY_DOWNLOADED' }) }));
+  });
+
+  it('applies the official seal only when a Super Admin issues the payslip', async () => {
+    mocks.auth.mockReturnValue({ ...auth, userType: 'SUPER_ADMIN', roles: ['super_admin'] });
+    const response = await GET(new Request('https://alo.test/api/employee/salary?download=approved-payroll-1'));
+    const html = await response.text();
+    expect(html).toContain('data:image/png;base64,');
+    expect(html).not.toContain('Official seal withheld');
   });
 
   it('does not disclose salary when the private-view audit cannot be saved', async () => {

@@ -1230,7 +1230,7 @@ export function UniversityDetailEnhanced({
       </div>
 
       {/* ═══ Footer: Citations & Provenance ═══ */}
-      <footer className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="space-y-3 text-xs text-[var(--alo-text-muted)]">
           {rankings.length > 0 && rankings[0].value > 0 && (
             <p className="flex items-start gap-1.5">
@@ -1252,7 +1252,7 @@ export function UniversityDetailEnhanced({
             current information.
           </p>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

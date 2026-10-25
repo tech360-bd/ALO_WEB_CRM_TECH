@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, createContext, useContext } from 'react';
+import PortalFooter from '@/components/portals/PortalFooter';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -277,6 +278,8 @@ export default function StudentPortalLayout({
           <main className="flex-1 p-4 lg:p-6 overflow-auto">
             {children}
           </main>
+          {/* General ALO footer + partner block for B2B-linked students. */}
+          <PortalFooter scope="student" />
         </div>
       </div>
     </StudentAuthContext.Provider>

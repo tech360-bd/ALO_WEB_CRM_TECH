@@ -1372,7 +1372,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
       </div>
 
       {/* ═══ Source Provenance Footer ═══ */}
-      <footer className="max-w-5xl mx-auto px-4 sm:px-6 pb-10 pt-2">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-10 pt-2">
         <Separator className="mb-4" />
         <div className="flex flex-wrap gap-4 text-xs text-[var(--alo-text-muted)]">
           <span className="flex items-center gap-1">
@@ -1393,7 +1393,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
               : <span className="text-amber-500">{course.verificationStatus || 'Unverified'}</span>}
           </span>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

@@ -26,6 +26,7 @@ import {
   BarChart2,
   Settings,
   Lock,
+  Palette,
 } from 'lucide-react';
 import Link from 'next/link';
 import { PartnerMarketingStudio } from '@/components/alo/views/partner-marketing-studio';
@@ -141,6 +142,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
     { path: '/partner-admin/marketing-studio', label: 'Partner Marketing Studio', icon: Sparkles },
     { path: '/partner-admin/voucher-codes', label: 'Student Test Vouchers', icon: Ticket },
     { path: '/partner-admin/company-profile', label: 'Company Profile', icon: Building },
+    { path: '/partner-admin/branding', label: 'Footer Branding', icon: Palette },
     { path: '/partner-admin/settings', label: 'Partner Settings', icon: Settings },
   ];
   // Portal Navigation Bar — shared by the dashboard body and the Marketing Studio route.

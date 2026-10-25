@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   Tooltip, TooltipContent, TooltipTrigger,
 } from '@/components/ui/tooltip';
+import PortalFooter from '@/components/portals/PortalFooter';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -210,9 +211,13 @@ export default function CounselorPortalShell({ children }: { children: React.Rea
         <aside className="hidden lg:block w-64 bg-white border-r border-alo-border shrink-0">
           <SidebarContent />
         </aside>
-        <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 lg:p-6 max-w-7xl mx-auto">{children}</div>
-        </main>
+        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+          <main className="flex-1 p-4 lg:p-6">
+            <div className="mx-auto w-full max-w-7xl">{children}</div>
+          </main>
+          {/* Site footer — a sibling of <main>, so it is the page's only footer landmark. */}
+          <PortalFooter scope="counselor" />
+        </div>
       </div>
     </div>
   );

@@ -28,7 +28,15 @@ component covers every public page. It is suppressed (see
 `src/components/website/public-chrome-policy.ts`) on auth entry screens
 (`/login`, `/register`, `/forgot-password`, `/reset-password`) and inside every
 authenticated shell (`/student`, `/partner`, `/employee`, `/portal`, `/admin`,
-`/crm`, `/counselor`, `/dashboard`, `/super-admin`, `/application-manager`).
+`/crm`, `/counselor`, `/dashboard`, `/super-admin`, `/application-manager`,
+`/partner-admin`).
+
+Signed-in pages are not footer-less: every authenticated chrome owner mounts
+`src/components/portals/PortalFooter.tsx` exactly once. A signed-in ALO student
+or employee sees the general portal footer only; a student recruited through a
+B2B partner additionally sees that partner's branded block (logo + colour
+scheme). There is still only ONE `<footer>` element per page. See
+`docs/BRAND-CHROME-PARTNER-BRANDING-AND-LETTERHEAD.md`.
 
 ## 3. One source of truth for contact data
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Metadata } from 'next';
-import StudentPortalShell from '@/components/student/StudentPortalShell';
 import EnglishTestNotice from '@/components/student/EnglishTestNotice';
 
 export const metadata: Metadata = {
@@ -11,9 +10,8 @@ export const metadata: Metadata = {
 // Practice and real English tests are delivered by the English Test Platform.
 // This portal no longer shows simulated mock-test counts or sessions.
 export default function StudentMockTestsPage() {
-  return (
-    <StudentPortalShell>
-      <EnglishTestNotice />
-    </StudentPortalShell>
-  );
+  // src/app/student/layout.tsx already provides the portal chrome. Mounting
+  // StudentPortalShell here as well rendered two headers, two sidebars and two
+  // footers on /student/mock-tests.
+  return <EnglishTestNotice />;
 }
