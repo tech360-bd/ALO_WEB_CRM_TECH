@@ -1,5 +1,5 @@
 import { TARGET_INSTITUTIONS } from '../data/institutions';
-import { SOP_DETECTOR_STATEMENT, SOP_SECTIONS, type SopSectionKey } from './constants';
+import { OPTIONAL_SOP_SECTIONS, SOP_DETECTOR_STATEMENT, SOP_SECTIONS } from './constants';
 import { countWords } from '../proposals/sections';
 
 /**
@@ -160,7 +160,7 @@ export function checkSop(input: SopCheckInput): SopReviewReport {
   const disclosureOptional = input.aiDisclosureRequired !== true;
   for (const expected of SOP_SECTIONS) {
     if (!sectionKeys.has(expected.key)) {
-      if (expected.key === 'ai_disclosure' && disclosureOptional) continue;
+      if (OPTIONAL_SOP_SECTIONS.includes(expected.key) && disclosureOptional) continue;
       emptySections.push(expected.key);
       checks.push({
         code: 'SECTION_MISSING',
@@ -175,7 +175,7 @@ export function checkSop(input: SopCheckInput): SopReviewReport {
     const content = section.content.trim();
     const wordCount = countWords(content);
     if (!content) {
-      if (section.sectionKey === 'ai_disclosure' && disclosureOptional) {
+      if (OPTIONAL_SOP_SECTIONS.includes(section.sectionKey as (typeof OPTIONAL_SOP_SECTIONS)[number]) && disclosureOptional) {
         checks.push({
           code: 'AI_DISCLOSURE_NOT_REQUIRED',
           severity: 'INFO',
@@ -381,5 +381,3 @@ export function checkSop(input: SopCheckInput): SopReviewReport {
   };
 }
 
-/** Section keys allowed to be blank in a final statement (optional sections). */
-export const OPTIONAL_SOP_SECTIONS: SopSectionKey[] = ['ai_disclosure'];

@@ -108,12 +108,10 @@ export const SOP_REVIEW_DECISIONS = [
 ] as const;
 
 /**
- * The disclosure text is written by the student's own answers, not by this
- * constant. The constant is the *minimum* statement the builder will offer when
- * the institution requires a disclosure and the student has not written one.
+ * Sections that may be blank in a final statement. The disclosure is optional
+ * unless the institution requires it; everything else must be written.
  */
-export const SOP_AI_DISCLOSURE_MINIMUM =
-  'I used a drafting assistant to help structure this statement. The research idea, experience and plans described are my own, and I have checked every factual statement against the sources named here.';
+export const OPTIONAL_SOP_SECTIONS: SopSectionKey[] = ['ai_disclosure'];
 
 /**
  * Explicit statement carried by every generated review report. The platform does

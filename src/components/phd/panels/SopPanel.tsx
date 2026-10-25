@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Button, Card, Empty, ErrorBox, Field, Loading, Pill, apiSend, formatDate, inputClass, useApi, useProjectId } from '../ui';
+import { SOP_STATUS_LABELS, type SopStatus } from '@/lib/phd/sop/constants';
 
 interface SopListRow {
   id: string;
@@ -314,7 +315,9 @@ export default function SopPanel() {
             description="Everything written here is your own content or comes from a fact in your workspace. The review report checks content, never authorship scores."
             action={
               <div className="flex flex-wrap items-center gap-2">
-                <Pill tone={STATUS_TONE[sop.status] ?? 'default'}>{sop.status.replace(/_/g, ' ').toLowerCase()}</Pill>
+                <Pill tone={STATUS_TONE[sop.status] ?? 'default'}>
+                  {SOP_STATUS_LABELS[sop.status as SopStatus] ?? sop.status.replace(/_/g, ' ').toLowerCase()}
+                </Pill>
                 <Pill tone="info">v{sop.version}</Pill>
               </div>
             }
