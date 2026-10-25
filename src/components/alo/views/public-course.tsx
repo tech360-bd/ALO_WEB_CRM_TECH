@@ -14,6 +14,8 @@ import { Icon, SectionCard, EmptyState, LoadingGrid, InfoRow } from "@/component
 import { Breadcrumb, SourceVerification, Disclaimer } from "@/components/alo/public-shared";
 import { PublicLeadForm } from "@/components/alo/public-lead-form";
 import { fmtDate, type ViewKey } from "@/lib/alo-types";
+import { useRouter } from "next/navigation";
+import { COMPARE_MAX, toggleCompare } from "@/lib/course-finder/compare-list";
 
 interface PublicCourseProps {
   slug?: string;
@@ -109,6 +111,7 @@ const APPLY_FLOW = [
 export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
   const effectiveSlug = slug || "msc-computer-science-university-of-manchester";
   const { toast } = useToast();
+  const router = useRouter();
   const [loading, setLoading] = React.useState(true);
   const [course, setCourse] = React.useState<CourseDetail | null>(null);
   const [similar, setSimilar] = React.useState<SimilarCourse[]>([]);
@@ -288,14 +291,24 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             <Button
               variant="ghost"
               className="h-12 text-foreground hover:bg-[var(--alo-brand-light)]"
-              onClick={() => toast({ title: "Course saved", description: `${course.name} added to your shortlist. Sign in to your portal to view it.` })}
+              onClick={() => toast({ title: "Sign in to save", description: `${course.name} can be saved to your shortlist after you sign in to your student portal.` })}
             >
               <Icon name="Bookmark" className="size-4" /> Save
             </Button>
             <Button
               variant="ghost"
               className="h-12 text-foreground hover:bg-[var(--alo-brand-light)]"
-              onClick={() => toast({ title: "Compare opened", description: "Compare view is coming soon. For now, browse similar courses below." })}
+              onClick={() => {
+                const next = toggleCompare(course.slug);
+                if (!next) {
+                  toast({
+                    title: "Comparison list is full",
+                    description: `You can compare up to ${COMPARE_MAX} courses. Remove one on the compare page to add this course.`,
+                  });
+                  return;
+                }
+                router.push(`/compare?courses=${encodeURIComponent(next.join(","))}`);
+              }}
             >
               <Icon name="GitCompare" className="size-4" /> Compare
             </Button>

@@ -76,7 +76,10 @@ function blockedJob(input: DefinitionInput, blockedReason: string): CronJobDefin
 // 22 as of 2026-10-18: `webhook-dispatch` was added to drain the outbound
 // webhook queue (spec s77). It is a real, lease-protected handler that reports
 // NOT_CONFIGURED rather than success when no subscription exists.
-export const CRON_JOB_COUNT = 22;
+// 23 as of 2026-10-26: `phd-maintenance` raises PhD deadline reminders and
+// reports stale verification evidence and documents past retention. It performs
+// no deletion, so the "no scheduled removal of student data" invariant holds.
+export const CRON_JOB_COUNT = 23;
 
 /** Jobs the platform must expose and keep enabled. */
 export const REQUIRED_ENABLED_JOB_IDS = [
@@ -92,6 +95,15 @@ export const REQUIRED_ENABLED_JOB_IDS = [
 ] as const;
 
 export const CRON_JOBS: CronJobDefinition[] = [
+  enabledJob({
+    id: 'phd-maintenance',
+    name: 'PhD Workspace Maintenance',
+    description:
+      'Creates in-app deadline reminders for PhD applicants and reports evidence due for re-verification plus documents past retention; never deletes or re-dates anything.',
+    cronExpression: '0 * * * *',
+    handler: 'runPhdMaintenance',
+    lockTtlMinutes: 9,
+  }),
   enabledJob({
     id: 'sla-monitoring',
     name: 'SLA Monitoring & Escalation',

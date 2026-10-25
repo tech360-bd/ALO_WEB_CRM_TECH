@@ -47,6 +47,8 @@ const NAV_ITEMS = [
   { href: '/student/documents', label: 'Documents', icon: FileText },
   { href: '/student/offers', label: 'Offers', icon: Award },
   { href: '/student/saved', label: 'Saved Courses', icon: Bookmark },
+  { href: '/student/phd', label: 'PhD Builder', icon: GraduationCap },
+  { href: '/student/sop', label: 'Statement of Purpose', icon: FileText },
   { href: '/student/interview', label: 'Interview Prep', icon: BookOpen },
   { href: '/student/visa', label: 'Visa Readiness', icon: Shield },
   { href: '/student/finance', label: 'Finance', icon: CreditCard },
