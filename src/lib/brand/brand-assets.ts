@@ -12,12 +12,16 @@
  *   • The primary mark is `alo-education-logo.webp` (transparent, colour).
  *   • The official letterhead is `alo-edu-pad.jpg` — the A4 artwork supplied by
  *     ALO Education. Every official document is rendered on this letterhead.
- *   • The official seal is `alo-official-seal.png`. It is NEVER rendered for a
- *     public visitor: `OFFICIAL_SEAL.requiresSuperAdmin` is enforced by
- *     src/lib/documents/official-documents.ts, not by the caller.
+ *   • The official seal is deliberately NOT a public asset and has no entry
+ *     here: a `/public` URL would let anyone download the company seal
+ *     without any authorisation. The seal bytes live server-side only
+ *     (`src/lib/documents/assets/alo-official-seal.png`) and reach a document
+ *     exclusively through `src/lib/documents/official-documents.ts` (server
+ *     rendering) or the audited `GET /api/official-documents/seal` route —
+ *     both gated on `OFFICIAL_SEAL.requiredAuthority`.
  *
- * Assets live under /public/images/brand, which is inside the Next.js image
- * optimizer allowlist (`/images/**` in next.config.ts localPatterns).
+ * Public assets live under /public/images/brand, which is inside the Next.js
+ * image optimizer allowlist (`/images/**` in next.config.ts localPatterns).
  */
 
 export const ALO_BRAND_ASSETS = {
@@ -27,8 +31,7 @@ export const ALO_BRAND_ASSETS = {
   mark: '/icons/icon-192x192.png',
   /** A4 official letterhead artwork (header + footer already printed on it). */
   letterhead: '/images/brand/alo-edu-pad.jpg',
-  /** ALO Education official company seal. Super Admin authority only. */
-  seal: '/images/brand/alo-official-seal.png',
+  // No `seal` entry: the official seal must never have a public URL (above).
 } as const;
 
 export const ALO_BRAND_ALT = {
@@ -51,3 +54,15 @@ export const OFFICIAL_SEAL = {
 } as const;
 
 export type SealDocumentKind = (typeof OFFICIAL_SEAL.appliesTo)[number];
+
+/**
+ * Client-safe authority check shared by the server seal policy
+ * (`isSealAuthorized`) and UI hints that merely decide whether to *offer*
+ * the seal. UI use is never the security boundary — the server re-checks,
+ * denies acting-as sessions, and audits access.
+ */
+export function hasSuperAdminAuthority(values: Array<string | null | undefined>): boolean {
+  return values.some(
+    (value) => typeof value === 'string' && value.trim().toUpperCase() === OFFICIAL_SEAL.requiredAuthority,
+  );
+}

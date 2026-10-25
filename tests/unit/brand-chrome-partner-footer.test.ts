@@ -144,11 +144,16 @@ describe('partner branding validation', () => {
 });
 
 describe('official document letterhead and seal', () => {
-  it('ships the letterhead and seal assets the documents reference', () => {
-    for (const url of [ALO_BRAND_ASSETS.letterhead, ALO_BRAND_ASSETS.seal, ALO_BRAND_ASSETS.logo]) {
+  it('ships the letterhead assets the documents reference', () => {
+    for (const url of [ALO_BRAND_ASSETS.letterhead, ALO_BRAND_ASSETS.logo]) {
       expect(url.startsWith('/images/brand/')).toBe(true);
       expect(existsSync(`public${url}`), url).toBe(true);
     }
+    // The seal must never be a downloadable public asset: no registry entry,
+    // no file under public/, server-only location instead.
+    expect('seal' in ALO_BRAND_ASSETS).toBe(false);
+    expect(existsSync('public/images/brand/alo-official-seal.png')).toBe(false);
+    expect(existsSync('src/lib/documents/assets/alo-official-seal.png')).toBe(true);
   });
 
   it('authorises the seal for Super Admin only', () => {
@@ -156,8 +161,16 @@ describe('official document letterhead and seal', () => {
     expect(isSealAuthorized({ userType: 'EMPLOYEE', roles: ['super_admin'] })).toBe(true);
     expect(isSealAuthorized({ userType: 'EMPLOYEE', roles: ['hr_manager'] })).toBe(false);
     expect(isSealAuthorized({ userType: 'ADMIN', roles: ['admin'] })).toBe(false);
+    expect(isSealAuthorized({ userType: 'PARTNER_SUPER_ADMIN', roles: ['partner_super_admin'] })).toBe(false);
     expect(isSealAuthorized(null)).toBe(false);
     expect(isSealAuthorized({})).toBe(false);
+  });
+
+  it('never authorises the seal inside an acting-as (view-as) session', () => {
+    expect(isSealAuthorized({ userType: 'SUPER_ADMIN', actingAsSessionId: 'sess_123' })).toBe(false);
+    expect(isSealAuthorized({ userType: 'SUPER_ADMIN', actingAs: true })).toBe(false);
+    expect(isSealAuthorized({ userType: 'SUPER_ADMIN', actingAsSessionId: '' })).toBe(true);
+    expect(isSealAuthorized({ userType: 'SUPER_ADMIN', actingAsSessionId: null })).toBe(true);
   });
 
   it('renders every official document on the letterhead', async () => {
