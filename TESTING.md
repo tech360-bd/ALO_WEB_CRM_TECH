@@ -60,6 +60,10 @@ CI **never deploys** — Hostinger owns production deployment.
 - Typecheck memory: this repo's `tsc` requires a raised heap
   (`NODE_OPTIONS=--max-old-space-size=4096+`) and benefits from swap; CI
   provisions an 8 GB swapfile for this reason.
+- Build memory: `npm run build` defaults to a 4096 MB heap and honours
+  `ALO_BUILD_HEAP_MB` (`ALO_BUILD_HEAP_MB=6144 npm run build`). The CI
+  quality-gates job sets 6144 because the production build outgrew the
+  default once the PhD module landed.
 - E2E requires a built standalone output; Playwright starts it with test
   secrets and expects `/api/health/live` to respond.
 - Vitest prints a benign warning about ESM syntax in `vitest.config.ts`

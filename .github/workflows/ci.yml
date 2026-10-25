@@ -214,6 +214,16 @@ jobs:
 
       - name: Production build (no database connection at build time)
         env:
+          # Run 40238679396 evidence: this step aborted with
+          # "FATAL ERROR: Ineffective mark-compacts near heap limit" at the
+          # 4096 MB heap baked into `npm run build`, while the identical build
+          # in the MySQL job of the same commit completed and booted. The app
+          # is buildable; the default heap is simply too small now that the
+          # PhD module adds ~1200 schema lines and 11 server-rendered pages.
+          # The build script reads ALO_BUILD_HEAP_MB (default 4096), so raise
+          # it here to the same value that already passes for Typecheck, with
+          # the swap provisioned above acting as headroom.
+          ALO_BUILD_HEAP_MB: "6144"
           NEXTAUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           AUTH_SECRET: "dummy-build-secret-for-validation-only-32chars"
           JWT_SECRET: "dummy-build-secret-for-validation-only-32chars"
