@@ -1,3 +1,16 @@
+# ============================================================================
+# CODEQL ANALYSIS (security scanning)
+#
+# Additions to the GitHub-generated template for this repository:
+#   * every action is pinned to an immutable 40-character commit SHA, as
+#     required by tests/deployment-ownership.test.mjs (a moving tag such as
+#     @v4 can be repointed at any time and would fail the CI safety test);
+#   * the analysis is read-only for repository contents.
+#
+# This workflow only creates code-scanning alerts. It never deploys, never
+# touches a database and uses no repository secrets beyond the default token.
+# ============================================================================
+
 # For most projects, this workflow file will not need changing; you simply need
 # to commit it to your repository.
 #
@@ -59,7 +72,8 @@ jobs:
         # your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v7
+      # actions/checkout v7.0.1 — pinned to the same immutable SHA as ci.yml
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
@@ -69,7 +83,8 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v4
+      # github/codeql-action v4 — pinned to an immutable commit SHA
+      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
@@ -98,6 +113,7 @@ jobs:
         exit 1
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4
+      # github/codeql-action v4 — pinned to an immutable commit SHA
+      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
       with:
         category: "/language:${{matrix.language}}"

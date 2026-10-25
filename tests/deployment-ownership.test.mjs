@@ -56,7 +56,9 @@ test('6: every legacy shell boundary refuses all branches BEFORE old overrides/c
   } finally { rmSync(dir,{recursive:true,force:true}); }
 });
 test('7: Actions contain only approved CI/diagnostic commands, never active deployment transport', () => {
-  assert.deepEqual(readdirSync('.github/workflows').sort(),['ci.yml','deploy-production.yml','deploy-recovery.yml','health-monitor.yml']);
+  // codeql.yml was added to main on 2026-10-25 (GitHub's security scanner).
+  // It is audited by the pinned-SHA and no-deploy-transport assertions below.
+  assert.deepEqual(readdirSync('.github/workflows').sort(),['ci.yml','codeql.yml','deploy-production.yml','deploy-recovery.yml','health-monitor.yml']);
   // The ONLY sanctioned exception to the "no migration execution in Actions"
   // rule: lines explicitly marked as targeting the disposable, localhost-only
   // CI database (the mysql-integration job's throwaway MySQL 8.4 service).
@@ -77,7 +79,12 @@ test('7: Actions contain only approved CI/diagnostic commands, never active depl
     assert.doesNotMatch(active, /secrets\.|secrets: inherit|environment:|pull_request_target:|workflow_run:|contents: write|id-token: write|self-hosted/);
     assert.doesNotMatch(active, /(?:^|\s)(?:ssh|scp|sftp|lftp|rsync|pm2|systemctl)\s|api\.hostinger|appleboy\/|FTP-Deploy|prisma (?:migrate deploy|db push|db seed)|scripts\/(?:deploy|rollback|restart)\.sh/m);
     const actions=[...active.matchAll(/uses:\s*(\S+)/g)].map(m=>m[1]);
-    assert.ok(actions.every(a=>/^actions\/(checkout|setup-node)@[0-9a-f]{40}$/.test(a)));
+    // Every action must be pinned to an immutable 40-character commit SHA.
+    // The allowlist is intentionally explicit: adding a new action means
+    // extending this list on purpose, after checking what that action does.
+    // github/codeql-action is GitHub's own scanner (init/analyze); it only
+    // writes code-scanning alerts and has no deploy or secret access.
+    assert.ok(actions.every(a=>/^(?:actions\/(?:checkout|setup-node)|github\/codeql-action\/(?:init|analyze))@[0-9a-f]{40}$/.test(a)), `unpinned or unexpected action: ${actions.filter(a=>!/^(?:actions\/(?:checkout|setup-node)|github\/codeql-action\/(?:init|analyze))@[0-9a-f]{40}$/.test(a)).join(', ')}`);
   }
   const pkg=JSON.parse(text('package.json'));
   assert.ok(!['preinstall','install','postinstall','prebuild','postbuild','pretest','posttest','deploy'].some(k=>k in pkg.scripts));
