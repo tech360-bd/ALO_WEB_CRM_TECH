@@ -5,6 +5,9 @@
 -- or dropped; the four foreign keys that point at `User` only add new
 -- constraints on the Phd side, so existing CRM data is unaffected.
 --
+-- Note: PhdTuitionFee columns in its 5-column unique key are capped at 16/32
+-- characters so the index stays inside the InnoDB 3072-byte limit under utf8mb4.
+--
 -- Generated with:
 --   npx prisma migrate diff --from-empty \
 --     --to-schema-datamodel .phd-migration-schema.prisma --script
@@ -709,9 +712,9 @@ CREATE TABLE `PhdTuitionFee` (
     `id` VARCHAR(191) NOT NULL,
     `universityId` VARCHAR(191) NOT NULL,
     `programmeId` VARCHAR(191) NULL,
-    `academicYear` VARCHAR(191) NOT NULL,
-    `studentStatus` VARCHAR(191) NOT NULL,
-    `feeBasis` VARCHAR(191) NOT NULL,
+    `academicYear` VARCHAR(16) NOT NULL,
+    `studentStatus` VARCHAR(32) NOT NULL,
+    `feeBasis` VARCHAR(32) NOT NULL,
     `amountMinor` INTEGER NOT NULL,
     `currency` VARCHAR(191) NOT NULL DEFAULT 'GBP',
     `sourceUrl` TEXT NOT NULL,

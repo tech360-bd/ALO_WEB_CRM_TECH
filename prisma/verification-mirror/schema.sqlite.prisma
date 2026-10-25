@@ -13179,6 +13179,10 @@ model PhdTuitionFee {
   university PhdUniversity @relation(fields: [universityId], references: [id], onDelete: Cascade)
   programmeId String?
   programme PhdProgramme? @relation(fields: [programmeId], references: [id], onDelete: SetNull)
+  // Column lengths are capped deliberately: the unique key below spans five
+  // columns and MySQL/InnoDB rejects an index longer than 3072 bytes
+  // (utf8mb4 = 4 bytes per character). See the index-width test in
+  // tests/unit/phd/migration.test.ts.
   academicYear String
   studentStatus String // HOME | INTERNATIONAL | ISLANDS | OTHER
   feeBasis String // FULL_TIME | PART_TIME | WRITING_UP | DISTANCE_LEARNING
