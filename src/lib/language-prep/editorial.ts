@@ -88,3 +88,33 @@ export function reviewedModules(slug: string, testId: string, reviewedAt?: strin
   if (!rows) return null;
   return rows.map(([moduleName, durationDisplay, description], i) => ({ id: `reviewed-${slug}-${i}`, testId, moduleName, slug: `${slug}-${i}`, durationMinutes: 0, durationDisplay, description, skillsAssessed: description, questionFormat: 'Use current official provider sample tasks.', preparationTips: 'Review official sample tasks, practise under suitable timing and use feedback to plan your next study session.', commonChallenges: 'Accuracy, clarity and time management.', sortOrder: i + 1, status: 'active', sourceUrl: REVIEWED_TEST_FACTS[slug].sourceUrl }));
 }
+
+function newerReview(value: unknown): boolean {
+  if (!value) return false;
+  const date = value instanceof Date ? value.toISOString() : String(value);
+  return date.slice(0, 10) > REVIEWED_ON;
+}
+
+/** Correct dated public reference guidance without rewriting stored history. */
+export function reviewLanguageFaq<T extends { question: string; answer: string; testId?: string; lastVerifiedAt?: unknown }>(faq: T, slug?: string): T {
+  if (newerReview(faq.lastVerifiedAt)) return faq;
+  if (/\bSDS\b|Student Direct Stream/i.test(`${faq.question} ${faq.answer}`)) return { ...faq,
+    answer: 'Canada closed the Student Direct Stream on 8 November 2024. New applicants must follow the current regular study-permit process. Confirm university English requirements separately with the institution.',
+    sourceUrl: 'https://www.canada.ca/en/immigration-refugees-citizenship/news/notices/end-student-direct-stream-nigeria-student-express.html', lastVerifiedAt: REVIEWED_ON };
+  if (slug === 'toefl-ibt' || faq.testId === 'test-toefl') {
+    const question = faq.question.toLowerCase();
+    let answer = '';
+    if (/scored|what is toefl ibt/.test(question)) answer = 'TOEFL iBT assesses four academic English skills. From January 2026, scores use a 1–6 scale in half-band steps, with comparable overall 0–120 reporting during the transition. Use current ETS guidance and your university’s stated requirements.';
+    else if (/writing/.test(question)) answer = 'The 2026 Writing section includes Build a Sentence, Write an Email and Write for an Academic Discussion. Practise the current ETS tasks and scoring criteria rather than relying on an older Integrated Writing template.';
+    else if (/speaking/.test(question)) answer = 'The 2026 Speaking section uses Listen and Repeat and Take an Interview tasks. Practise intelligible responses and the current ETS sample tasks; older integrated-task timings do not describe the updated section.';
+    else if (/july 2023|compare to ielts|help with toefl/.test(question)) answer = 'Use the updated 2026 ETS format: adaptive Reading and Listening, revised Writing tasks and updated Speaking tasks. Preparation should match your booking version and the receiving university’s requirements.';
+    if (answer) return { ...faq, answer, sourceUrl: 'https://www.ets.org/toefl/test-takers/ibt/about/content.html', lastVerifiedAt: REVIEWED_ON };
+  }
+  return faq;
+}
+
+export function reviewLanguageAcceptance<T extends { summary: string; minimumNote?: string; lastVerifiedAt?: unknown }>(record: T): T {
+  if (newerReview(record.lastVerifiedAt)) return record;
+  if (/\ball\b|\bSDS\b|99%|3,400/i.test(record.summary)) return { ...record, summary: ACCEPTANCE_NOTICE, minimumNote: 'Check the current institution, course, delivery-mode and component-score requirements.' };
+  return record;
+}

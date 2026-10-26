@@ -50,12 +50,22 @@ TOEFL's 2026 reporting is distinguished from the old scale; ELLT is not describe
 - Lockfile installation: passed.
 - Prisma generation: passed; existing generated client contains 604 models.
 - Changed-file ESLint: passed, zero diagnostics.
-- Focused tests: 31 passed, one database test explicitly skipped without a test connection.
+- Focused tests: 38 passed, one database test explicitly skipped without a test connection.
 - `git diff --check`: passed.
-- Production webpack compilation: passed. Complete build/typecheck is still running at this checkpoint; this is not a full-build PASS claim.
+- Production webpack compilation: passed. Two complete builds (TypeScript, 974 pages and standalone preparation) passed before the final requirement-checker patch. A final-source rebuild remains pending at this checkpoint; earlier builds are not presented as verification of later edits.
 - Read-only production HTTP smoke: pending the final build. Reusable runner: `python3 scripts/verification/language-prep-http-smoke.py http://127.0.0.1:3211`.
 - Live database migration/persistence, counselling delivery, browser/mobile interaction and production deployment: not verified in this environment.
 
 An initial 4GB standalone typecheck exhausted its heap. Later checks use Node 22 and a larger heap; this is reported rather than labelled as a code/typecheck pass.
 
 This report covers Language Prep. It is not an assertion that every earlier CRM, HR, partner or external integration requirement has passed a repository-wide production acceptance audit.
+
+## Additional acceptance gaps fixed
+
+The dedicated-page requirement checker had unbound inputs. It now uses the existing `/api/language-prep/requirements` route with real search, loading, empty, error and retry states. The backend validates query lengths, applies the selected test, filters related course/university names correctly, respects country filters in the CRM fallback, caps results at twenty and returns 503 for database outages. Four negative/filtering unit tests cover these paths. Source dates and recorded values are shown without claiming every stored row is current or verified.
+
+Legacy TOEFL FAQs are aligned with the 2026 task types and score scale. Old SDS guidance is corrected using the official IRCC closure notice: https://www.canada.ca/en/immigration-refugees-citizenship/news/notices/end-student-direct-stream-nigeria-student-express.html . Broad dated acceptance claims are qualified; newer reviewed database content remains authoritative. No database history is overwritten.
+
+## CI evidence on the first implementation commit
+
+GitHub run https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/40268742325 : the MySQL 8 migrate/integrate/boot job passed, including the new catalogue integration test, full migration deployment, drift check and boot smoke. This verifies the insert-only SQL against a disposable MySQL database, not production. The quality job failed because generated `docs/environment-classification.json` was stale after adding existing build-flag usage; the file has been regenerated for the follow-up commit. Latest-source CI remains pending at this checkpoint.

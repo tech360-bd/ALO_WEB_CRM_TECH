@@ -629,11 +629,11 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                 </Card>
               ) : (
                 <Card className="p-6 bg-white border border-[var(--alo-border)] shadow-sm rounded-3xl">
-                  <h3 className="font-bold text-base text-[var(--alo-text)] mb-4">Requirement Found — Verified</h3>
+                  <h3 className="font-bold text-base text-[var(--alo-text)] mb-4">Recorded Requirement — Confirm Current Source</h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Test:</span><span className="font-bold text-[var(--alo-brand)]">{scoreResult.testName || scoreResult.minimumScore || 'IELTS'}</span></div>
                     <div className="flex justify-between p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Minimum Overall:</span><span className="font-bold">{scoreResult.minimumScore || 'Check course page'}</span></div>
-                    <div className="flex justify-between p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Component:</span><span className="font-medium text-xs">{scoreResult.componentRequirements || 'No band below 6.0 — Check course page'}</span></div>
+                    <div className="flex justify-between p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Component:</span><span className="font-medium text-xs">{scoreResult.componentRequirements || 'Component minimums not recorded — Check course page'}</span></div>
                     <div className="flex justify-between p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Waiver:</span><span className="font-medium">{scoreResult.waiverAvailable ? 'Available — Check conditions' : 'Not available — Check course page'}</span></div>
                     <div className="p-3 rounded-xl bg-white border border-[var(--alo-border)]"><p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)] mb-1">Remarks</p><p className="text-xs text-[var(--alo-body)]">{scoreResult.remarks || 'Check university course page for remarks'}</p></div>
                     <div className="grid grid-cols-2 gap-3 text-[11px]">

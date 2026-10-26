@@ -2,11 +2,25 @@ import { describe, expect, it } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { existsSync } from 'node:fs';
-import { ENGLISH_PREP_TESTS, getTestBySlug } from '@/lib/language-prep/data';
-import { REQUIRED_TEST_SLUGS, applyReviewedFacts, preparationSteps, reviewedModules } from '@/lib/language-prep/editorial';
+import { ENGLISH_PREP_TESTS, ENGLISH_PREP_FAQS, ENGLISH_PREP_ACCEPTANCE, getTestBySlug } from '@/lib/language-prep/data';
+import { REQUIRED_TEST_SLUGS, applyReviewedFacts, preparationSteps, reviewedModules, reviewLanguageFaq } from '@/lib/language-prep/editorial';
 import { LANGUAGE_PREP_PHOTOS, LanguageTestComparison } from '@/components/language-prep/LanguagePrepVisuals';
 
 describe('language preparation catalogue acceptance', () => {
+  it('does not publish the closed SDS stream as an active route', () => {
+    const faqs = ENGLISH_PREP_FAQS.filter(faq => /SDS/.test(faq.question));
+    expect(faqs.length).toBeGreaterThan(0);
+    expect(faqs.every(faq => faq.answer.includes('closed'))).toBe(true);
+    expect(ENGLISH_PREP_ACCEPTANCE.every(record => !/all Canadian DLIs|for SDS/.test(record.summary))).toBe(true);
+  });
+  it('keeps TOEFL FAQ scoring and writing aligned with the 2026 overview', () => {
+    expect(ENGLISH_PREP_FAQS.find(faq => faq.id === 'faq-toefl-3')?.answer).toContain('1–6');
+    expect(ENGLISH_PREP_FAQS.find(faq => faq.id === 'faq-toefl-ibt-12')?.answer).toContain('Write an Email');
+  });
+  it('preserves a newer reviewed database FAQ', () => {
+    const faq = { question: 'How is TOEFL iBT scored?', answer: 'Newer approved guidance', lastVerifiedAt: '2026-11-01' };
+    expect(reviewLanguageFaq(faq, 'toefl-ibt')).toEqual(faq);
+  });
   it.each(REQUIRED_TEST_SLUGS)('%s has a dedicated, source-backed preparation record', slug => {
     const test = getTestBySlug(slug)!;
     expect(test.slug).toBe(slug);
@@ -40,3 +54,4 @@ describe('language preparation catalogue acceptance', () => {
     for (const image of LANGUAGE_PREP_PHOTOS) expect(existsSync(`public${image.src}`)).toBe(true);
   });
 });
+

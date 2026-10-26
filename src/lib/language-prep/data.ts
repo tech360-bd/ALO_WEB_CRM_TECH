@@ -1,4 +1,4 @@
-import { applyReviewedFacts, CAMBRIDGE_TEST } from './editorial';
+import { applyReviewedFacts, CAMBRIDGE_TEST, reviewLanguageFaq, reviewLanguageAcceptance } from './editorial';
 import { EnglishTest, TestModule, TestFaq, TestAcceptance, TestResource } from './types';
 
 const BASE_ENGLISH_PREP_TESTS: EnglishTest[] = [
@@ -555,7 +555,7 @@ ENGLISH_PREP_MODULES['act'] = [
   { id: 'act-writing', testId: 'test-act', moduleName: 'Writing (Optional)', slug: 'writing', durationMinutes: 40, durationDisplay: '40 mins optional', description: 'Optional writing test: one essay evaluating and analysing complex issue with three perspectives.', skillsAssessed: 'Ideas and analysis, development and support, organisation, language use', questionFormat: '1 essay — evaluate 3 perspectives on issue', preparationTips: 'Analyse 3 perspectives, develop own position, use examples, clear organisation.', commonChallenges: 'Analysing 3 perspectives + own position under time', sortOrder: 5, status: 'active', sourceUrl: 'https://www.act.org' },
 ];
 
-export const ENGLISH_PREP_ACCEPTANCE: TestAcceptance[] = [
+const BASE_ENGLISH_PREP_ACCEPTANCE: TestAcceptance[] = [
   // IELTS
   { id: 'acc-ielts-uk', testId: 'test-ielts', countryId: 'uk', countryName: 'UK', countrySlug: 'uk', acceptanceType: 'university', summary: 'Accepted by all UK universities for degree-level study. For visa, check if university is Student Route sponsor. Foundation may require UKVI SELT.', minimumNote: 'Typically 6.0-7.5 depending on course', sourceUrl: 'https://ielts.org/take-a-test/why-ielts/ielts-for-study', sourceName: 'IELTS Official', verifiedBy: 'ALO Compliance', lastVerifiedAt: '2026-01-15', status: 'active' },
   { id: 'acc-ielts-aus', testId: 'test-ielts', countryId: 'australia', countryName: 'Australia', countrySlug: 'australia', acceptanceType: 'university', summary: 'Accepted by all Australian universities and DHA for Subclass 500 visa. Check G8 requirements.', minimumNote: 'Typically 6.5 (6.0 each) for G8', sourceUrl: 'https://ielts.org/take-a-test/why-ielts/ielts-for-study', sourceName: 'IELTS Official', verifiedBy: 'ALO Compliance', lastVerifiedAt: '2026-01-15', status: 'active' },
@@ -572,7 +572,9 @@ export const ENGLISH_PREP_ACCEPTANCE: TestAcceptance[] = [
   { id: 'acc-moi-general', testId: 'test-moi', countryId: 'general', countryName: 'General', countrySlug: 'general', acceptanceType: 'general', summary: 'MOI acceptance is strictly university and course specific. Only where university officially confirms MOI acceptance. Check university course page and obtain written confirmation. Visa requirements must be checked separately via official immigration guidance.', minimumNote: 'University-specific — written confirmation required', sourceUrl: 'https://aloeducation.com/language-prep/moi', sourceName: 'ALO Guidance', verifiedBy: 'ALO Compliance', lastVerifiedAt: '2026-01-10', status: 'active' },
 ];
 
-export const ENGLISH_PREP_FAQS: TestFaq[] = [
+export const ENGLISH_PREP_ACCEPTANCE = BASE_ENGLISH_PREP_ACCEPTANCE.map(reviewLanguageAcceptance);
+
+const BASE_ENGLISH_PREP_FAQS: TestFaq[] = [
   // IELTS FAQs — 20
   { id: 'faq-ielts-1', testId: 'test-ielts', question: 'What is IELTS?', answer: 'IELTS (International English Language Testing System) is a standardised English proficiency test assessing Listening, Reading, Writing and Speaking for academic purposes. It is jointly owned by IDP, British Council and Cambridge. Requirements vary by country, visa route, university and course.', category: 'overview', sortOrder: 1, status: 'active', sourceUrl: 'https://ielts.org' },
   { id: 'faq-ielts-2', testId: 'test-ielts', question: 'Which IELTS test do I need — Academic or General Training?', answer: 'For university admission, you need IELTS Academic. General Training is for migration and below-degree vocational purposes. Check your course page for exact requirement. Requirements vary by university and course.', category: 'test_type', sortOrder: 2, status: 'active', sourceUrl: 'https://ielts.org/take-a-test/test-types' },
@@ -839,6 +841,8 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
   { id: 'faq-moi-15', testId: 'test-moi', question: 'Is MOI the same as English proficiency test?', answer: 'No, MOI is not a test. It is a document certifying previous education was in English. Tests assess proficiency via exam. Do not misrepresent MOI as test.', category: 'overview', sortOrder: 15, status: 'active', sourceUrl: 'https://aloeducation.com/language-prep/moi' },
 
 ];
+
+export const ENGLISH_PREP_FAQS = BASE_ENGLISH_PREP_FAQS.map(faq => reviewLanguageFaq(faq));
 
 export const ENGLISH_PREP_RESOURCES: TestResource[] = [
   { id: 'res-ielts-official', testId: 'test-ielts', title: 'IELTS Official Website', description: 'Official IELTS test information, scoring, and preparation guidance', resourceType: 'official_link', resourceUrl: 'https://ielts.org', isExternal: true, sortOrder: 1, status: 'active' },

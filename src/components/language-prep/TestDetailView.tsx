@@ -17,6 +17,7 @@ import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
 import { LanguageSectionVisual, LanguageTestComparison } from './LanguagePrepVisuals';
 import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import { preparationSteps, ACCEPTANCE_NOTICE, LANGUAGE_TEST_FAQS } from '@/lib/language-prep/editorial';
+import LanguageRequirementChecker from './LanguageRequirementChecker';
 import type { EnglishTest } from '@/lib/language-prep/types';
 import { EnglishExamCard } from '@/components/website/EnglishExamCta';
 import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
@@ -380,12 +381,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <LanguageSectionVisual index={7} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} for University Admission — Requirement Checker</h2>
               <Card className="p-6 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-3xl">
-                <div className="grid sm:grid-cols-3 gap-3 mb-4">
-                  <Input placeholder="Country e.g. UK" className="h-11 rounded-xl border-[var(--alo-border)] bg-white" />
-                  <Input placeholder="University e.g. Manchester" className="h-11 rounded-xl border-[var(--alo-border)] bg-white" />
-                  <Input placeholder="Course e.g. MSc CS" className="h-11 rounded-xl border-[var(--alo-border)] bg-white" />
-                </div>
-                <p className="text-xs text-[var(--alo-body)]">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
+                <LanguageRequirementChecker testSlug={test.slug} />
                 <div className="mt-4 flex gap-2">
                   <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
                   <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] rounded-xl "><a href={`/language-prep/comparison?tests=${test.slug}`}>Compare Tests</a></Button>

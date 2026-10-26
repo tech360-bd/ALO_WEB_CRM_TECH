@@ -2,7 +2,7 @@
 import json
 import sys
 from urllib.error import HTTPError
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 from urllib.request import urlopen
 
 BASE = sys.argv[1].rstrip('/') if len(sys.argv) > 1 else 'http://127.0.0.1:3211'
@@ -20,12 +20,16 @@ def check(name, condition):
 landing = read('/language-prep')
 check('landing server renders the requested heading', 'English tests for university entry' in landing)
 check('all fourteen dedicated links are rendered', all(f'href="/language-prep/{slug}"' in landing for slug in SLUGS))
-check('landing contains photos and a complete comparison', '/images/landing/' in landing and 'University &amp; visa acceptance' in landing)
+check('landing contains photos and a complete comparison', '/images/landing/' in unquote(landing) and 'University &amp; visa acceptance' in landing)
 for slug in SLUGS:
     html = read('/language-prep/' + slug)
-    check('dedicated page server renders: ' + slug, '<h1' in html and 'Preparation' in html and '/images/landing/' in html)
+    check('dedicated page server renders: ' + slug, '<h1' in html and 'Preparation' in html and '/images/landing/' in unquote(html))
     payload = json.loads(read('/api/language-prep/tests/' + slug))
     check('dedicated API: ' + slug, payload.get('success') and payload.get('test', {}).get('slug') == slug)
+for filename in ['Copy of pexels-yankrukov-8199166.webp', 'Copy of brooke-cagle-g1Kr4Ozfoac-unsplash.webp', 'Copy of pexels-rdne-7683897.webp']:
+    with urlopen(BASE + quote('/images/landing/' + filename, safe='/'), timeout=30) as image:
+        data = image.read()
+        check('photo served: ' + filename, image.status == 200 and data[:4] == b'RIFF' and len(data) > 10000)
 comparison = json.loads(read('/api/language-prep/comparison'))
 check('comparison API covers fourteen test families with cost', set(SLUGS).issubset({row['slug'] for row in comparison['comparison']}) and all(row.get('cost') for row in comparison['comparison']))
 check('comparison route renders', '<h1' in read('/language-prep/comparison'))

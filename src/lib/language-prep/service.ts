@@ -1,4 +1,4 @@
-import { applyReviewedFacts, reviewedModules } from './editorial';
+import { applyReviewedFacts, reviewedModules, reviewLanguageFaq, reviewLanguageAcceptance } from './editorial';
 import { db } from '@/lib/db';
 import { ENGLISH_PREP_TESTS, ENGLISH_PREP_MODULES, ENGLISH_PREP_FAQS, ENGLISH_PREP_ACCEPTANCE, ENGLISH_PREP_RESOURCES, getTestBySlug as getHardcodedTest } from './data';
 import { EnglishTest } from './types';
@@ -130,7 +130,7 @@ export async function getFaqsByTestIdFromDB(testId: string, slug?: string) {
       where: { testId, status: 'active' },
       orderBy: { sortOrder: 'asc' },
     });
-    if (faqs && faqs.length > 0) return faqs;
+    if (faqs && faqs.length > 0) return faqs.map((faq: { question: string; answer: string }) => reviewLanguageFaq(faq, slug));
   } catch (e) {
     console.warn('DB faqs fetch failed', e);
   }
@@ -146,7 +146,7 @@ export async function getAcceptanceByTestIdFromDB(testId: string) {
     const acc = await (db as any).englishPrepAcceptance?.findMany?.({
       where: { testId, status: 'active' },
     });
-    if (acc && acc.length > 0) return acc;
+    if (acc && acc.length > 0) return acc.map(reviewLanguageAcceptance);
   } catch (e) {
     console.warn('DB acceptance fetch failed', e);
   }
