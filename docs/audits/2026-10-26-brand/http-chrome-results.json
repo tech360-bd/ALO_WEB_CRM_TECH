@@ -1,0 +1,359 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/about",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/contact",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/services",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/language-prep",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/course-finder",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/scholarships",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/global-offices",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/code-of-conduct",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/student-complaint-policy",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/aqf-compliance",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/book-consultation",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/student/login",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/partner/login",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/employee/login",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/uk",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/australia",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/canada",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/ireland",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/new-zealand",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/usa",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/destinations/dubai",
+    "status": 200,
+    "checks": {
+      "status200": true,
+      "oneHeader": true,
+      "oneFooter": true,
+      "tagline": true,
+      "cta": true,
+      "address": true,
+      "socialOrder": true,
+      "capStrip": true,
+      "requiredFooterLinks": true
+    },
+    "passed": true
+  },
+  {
+    "path": "/fonts/noto-sans-bengali-bengali-wght-normal.woff2",
+    "status": 200,
+    "passed": true
+  }
+]

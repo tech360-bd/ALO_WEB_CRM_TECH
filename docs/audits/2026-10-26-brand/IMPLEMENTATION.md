@@ -25,10 +25,11 @@ No API, authentication, RBAC, database schema, business workflow or Student Dash
 - npm ci: passed; Node22 used for app verification.
 - prisma generate: passed; generated client verified against 604 declared models.
 - Full typecheck: passed after correcting a missing BRAND import found in the first run.
-- Six focused brand/navigation/chrome suites: 75 tests passed. Full unit regression: 306 suites, 3438 tests passed (single worker).
+- Six focused brand/navigation/chrome suites: 75 tests passed.
 - ESLint on modified TS/TSX: passed.
 - git diff --check: passed.
-- Production build: pending final result. An earlier attempt hit the sandbox 8GB memory limit (worker SIGKILL); memory optimization configuration was added before retry.
+- Production build: PASS after build-memory remediation. Optimized compilation, full build-time TypeScript, 974 generated pages and standalone packaging/manifest verification succeeded. An earlier attempt hit the sandbox 8GB memory limit (worker SIGKILL); no checks were disabled to obtain the pass.
+- Production standalone HTTP smoke: 23/23 chrome/asset contracts passed (22 public/login URLs plus the Bengali font hash). This checks emitted shared chrome, contact/social order/caps and file delivery, not client interaction or database content. No production DB was inherited; destination rendering logged DATA_UNAVAILABLE in this DB-less smoke, so 200 responses do not certify destination data completeness.
 - Browser: the cloud browser cannot reach this workspace localhost (connection refused). New browser cases have not been executed here; no desktop/tablet/mobile screenshot acceptance is claimed.
 
 ## Release and rollback
