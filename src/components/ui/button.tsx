@@ -9,10 +9,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* PRIMARY ACTION — ALO Orange #E8501A (hover #C93D13, active #C93D13); black text for contrast. */
+        /* PRIMARY ACTION — ALO Orange #F37021 (hover #C93D13, active #C93D13); black text for contrast. */
         default:
-          "bg-alo-cta text-black shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-active",
-        /* Information / navigation / system actions — ALO Blue #0057B8 */
+          "bg-alo-cta text-black shadow-sm hover:bg-alo-cta-hover hover:text-white active:bg-alo-cta-active active:text-white",
+        /* Information / navigation / system actions — ALO Blue #0066CC */
         brand:
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
         /* Legacy alias of `brand` — kept so existing call sites stay valid. */
@@ -20,7 +20,7 @@ const buttonVariants = cva(
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
         /* Legacy alias of `default` (orange primary). */
         cta:
-          "bg-alo-cta text-black shadow-sm hover:bg-alo-cta-hover active:bg-alo-cta-active",
+          "bg-alo-cta text-black shadow-sm hover:bg-alo-cta-hover hover:text-white active:bg-alo-cta-active active:text-white",
         /* SECONDARY (Master §07) — white, blue text, blue-tint border, pale-blue hover */
         outline:
           "border border-alo-brand-border bg-white text-alo-brand shadow-sm hover:bg-alo-brand-light dark:bg-card dark:text-foreground dark:hover:bg-secondary",

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
-  fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
+  BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
   staggerContainer, staggerItem, staggerItemScale,
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
@@ -34,16 +34,7 @@ import {
 /* ═══════════════════════════════════════════════════════════════
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
-const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
-  text: '#0F172A',
-  textSoft: '#64748B',
-  bg: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  whatsapp: '#25D366',
-};
+const C = BRAND;
 
 /* ═══════════════════════════════════════════════════════════════
    TYPES
@@ -116,7 +107,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Strategic Planning & Partnerships',
     bio: 'Founded ALO Education to make global education pathways clearer for Bangladeshi students.',
     initials: 'TA',
-    gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
+    gradient: 'linear-gradient(135deg, #0066CC 0%, #0EA5E9 100%)',
   },
   {
     name: 'Al Aminn',
@@ -124,7 +115,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Operations & Process Optimization',
     bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #E8501A 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #F37021 0%, #FFB347 100%)',
   },
   {
     name: 'Nusrat Jahan',
@@ -471,7 +462,7 @@ function TeamSection({ dbMembers }: { dbMembers?: Array<{ id: string; name: stri
         bio: m.bio,
         photo: m.photo,
         initials: m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-        gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
+        gradient: 'linear-gradient(135deg, #0066CC 0%, #0EA5E9 100%)',
       }))
     : TEAM_MEMBERS;
   return (
@@ -743,8 +734,7 @@ function FinalCtaSection() {
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 mb-10">
               <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold text-white shadow-lg"
-                style={{ backgroundColor: C.orange }}
+                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold text-black hover:text-white shadow-lg"
                 asChild
               >
                 <Link href="/book-consultation">
@@ -1010,8 +1000,8 @@ function FinalCtaSection() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-12 rounded-xl text-sm font-semibold text-white shadow-lg mt-2"
-                    style={{ backgroundColor: C.orange }}
+                    className="w-full h-12 rounded-xl text-sm font-semibold text-black hover:text-white shadow-lg mt-2"
+
                   >
                     {isSubmitting ? (
                       <span className="flex items-center gap-2">
