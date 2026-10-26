@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAllEnglishPrepTestsFromDB } from '@/lib/language-prep/service';
+import { reviewLanguageAcceptance } from '@/lib/language-prep/editorial';
 import { ENGLISH_PREP_ACCEPTANCE } from '@/lib/language-prep/data';
 
 export async function GET(req: Request) {
@@ -14,7 +15,7 @@ export async function GET(req: Request) {
       const dbAcc = await (db as any).englishPrepAcceptance?.findMany?.({
         where: { countrySlug: countrySlug, status: 'active' },
       });
-      if (dbAcc && dbAcc.length > 0) acceptanceData = dbAcc;
+      if (dbAcc && dbAcc.length > 0) acceptanceData = dbAcc.map(reviewLanguageAcceptance);
       else acceptanceData = ENGLISH_PREP_ACCEPTANCE.filter(a => a.countrySlug === countrySlug || a.countrySlug === 'general');
     } catch {
       acceptanceData = ENGLISH_PREP_ACCEPTANCE.filter(a => a.countrySlug === countrySlug || a.countrySlug === 'general');

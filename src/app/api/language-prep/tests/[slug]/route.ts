@@ -14,7 +14,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     }
 
     // Get related data with DB fallback
-    const modules = await getModulesByTestIdFromDB(test.id, test.slug);
+    const modules = await getModulesByTestIdFromDB(test.id, test.slug, test.lastVerifiedAt);
     const faqs = await getFaqsByTestIdFromDB(test.id, test.slug);
     const acceptance = await getAcceptanceByTestIdFromDB(test.id);
     const successStories = await getSuccessStoriesFromDB(test.id);

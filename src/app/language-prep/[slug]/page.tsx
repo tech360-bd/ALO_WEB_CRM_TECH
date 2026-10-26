@@ -1,5 +1,8 @@
 import React from 'react';
+import { notFound } from 'next/navigation';
+import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import { Metadata } from 'next';
+import { getEnglishPrepTestBySlugFromDB } from '@/lib/language-prep/service';
 import TestDetailView from '@/components/language-prep/TestDetailView';
 import { getTestBySlug } from '@/lib/language-prep/data';
 
@@ -36,15 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LanguagePrepDetailPage({ params }: Props) {
   const { slug } = await params;
-  return <TestDetailView slug={slug} />;
+  const test = await getEnglishPrepTestBySlugFromDB(slug);
+  if (!test) notFound();
+  return <TestDetailView slug={test.slug} initialTest={test} />;
 }
 
-// Generate static params for 15 tests — dynamic routing by test slug
+// Build known catalogue pages; retain dynamic routing for database-managed tests.
 export async function generateStaticParams() {
-  const slugs = [
-    'ielts', 'ielts-ukvi', 'pte-academic', 'toefl-ibt', 'duolingo',
-    'oietc', 'oxford-ellt', 'languagecert', 'kaplan', 'oet',
-    'gre', 'gmat', 'sat', 'act', 'moi'
-  ];
-  return slugs.map(slug => ({ slug }));
+  return ENGLISH_PREP_TESTS.map(({ slug }) => ({ slug }));
 }

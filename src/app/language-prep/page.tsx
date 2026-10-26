@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { getAllEnglishPrepTestsFromDB, getPublishedLanguageStoryCards } from '@/lib/language-prep/service';
 import PremiumLanguagePrepLandingView from '@/components/language-prep/PremiumLandingView';
 
 export const metadata: Metadata = {
@@ -19,6 +20,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LanguagePrepPageRoute() {
-  return <PremiumLanguagePrepLandingView />;
+export const dynamic = 'force-dynamic';
+
+export default async function LanguagePrepPageRoute() {
+  const [tests, stories] = await Promise.all([getAllEnglishPrepTestsFromDB(), getPublishedLanguageStoryCards()]);
+  return <PremiumLanguagePrepLandingView initialTests={tests} stories={stories} />;
 }

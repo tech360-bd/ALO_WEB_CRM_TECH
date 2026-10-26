@@ -14,60 +14,65 @@ import {
 import { toast } from 'sonner';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
+import { LanguageSectionVisual, LanguageTestComparison } from './LanguagePrepVisuals';
+import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
+import { preparationSteps, ACCEPTANCE_NOTICE, LANGUAGE_TEST_FAQS, makePreparationPlan } from '@/lib/language-prep/editorial';
+import LanguageRequirementChecker from './LanguageRequirementChecker';
+import type { EnglishTest } from '@/lib/language-prep/types';
 import { EnglishExamCard } from '@/components/website/EnglishExamCta';
 import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
 
+function safeJsonLd(value: unknown) { return JSON.stringify(value).replace(/</g, '\\u003c'); }
+
 interface TestDetailProps {
   slug: string;
+  initialTest?: EnglishTest;
 }
 
-export default function TestDetailView({ slug }: TestDetailProps) {
-  const [test, setTest] = useState<any>(null);
+export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
+  const [test, setTest] = useState<any>(initialTest || null);
   const [modules, setModules] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
   const [acceptance, setAcceptance] = useState<any[]>([]);
   const [resources, setResources] = useState<any[]>([]);
   const [successStories, setSuccessStories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [loading, setLoading] = useState(!initialTest);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [scorePlanner, setScorePlanner] = useState({ current: '', target: '', examDate: '', hours: '10' });
   const [plannerResult, setPlannerResult] = useState<any>(null);
   const [leadForm, setLeadForm] = useState({ name: '', phone: '', email: '', targetCountry: 'UK', currentScore: '', targetScore: '' });
 
   useEffect(() => {
-    fetch(`/api/language-prep/tests/${slug}`)
-      .then(r => r.json())
+    const controller = new AbortController();
+    setTest(initialTest || null);
+    setLoading(!initialTest);
+    setLoadError(false);
+    fetch(`/api/language-prep/tests/${slug}`, { signal: controller.signal })
+      .then(r => { if (!r.ok) throw new Error('Test guide unavailable'); return r.json(); })
       .then(d => {
-        if (d.success) {
-          setTest(d.test);
-          setModules(d.modules || []);
-          setFaqs(d.faqs || []);
-          setAcceptance(d.acceptance || []);
-          setResources(d.resources || []);
-          setSuccessStories(d.successStories || []);
-        }
+        if (!d.success) throw new Error('Test guide unavailable');
+        if (controller.signal.aborted) return;
+        setTest(d.test);
+        setModules(d.modules || []);
+        setFaqs([...(d.faqs || []), ...LANGUAGE_TEST_FAQS.map((faq, i) => ({ id: `general-${i}`, question: faq.q, answer: faq.a }))]);
+        setAcceptance(d.acceptance || []);
+        setResources(d.resources || []);
+        setSuccessStories(d.successStories || []);
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [slug]);
+      .catch(() => { if (!controller.signal.aborted) setLoadError(true); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [slug, initialTest]);
 
   const handleScorePlanner = () => {
     if (!scorePlanner.current || !scorePlanner.target) {
       toast.error('Enter current and target scores');
       return;
     }
-    const currentNum = parseFloat(scorePlanner.current) || 0;
-    const targetNum = parseFloat(scorePlanner.target) || 0;
-    const gap = targetNum - currentNum;
-    const hours = parseInt(scorePlanner.hours) || 10;
-    const weeks = gap > 0 ? Math.ceil((gap * 20) / hours) : 0; // rough estimation, not guarantee
-    setPlannerResult({
-      gap: gap.toFixed(1),
-      weeks,
-      priority: gap > 1 ? 'Focus on weakest module + daily practice' : 'Refine test strategies + mock tests',
-      schedule: `Suggested: ${hours} hrs/week, ${weeks} weeks, 2-3 mocks, weekly writing feedback and speaking practice`,
-      note: 'Do not claim AI prediction guarantees — this is guidance only, not guaranteed outcome',
-    });
+    const plan = makePreparationPlan(scorePlanner.current, scorePlanner.target, scorePlanner.hours);
+    if (!plan) { toast.error('Enter valid non-negative scores and weekly study hours.'); return; }
+    setPlannerResult({ ...plan, examDate: scorePlanner.examDate });
   };
 
   const handleLead = async (e: React.FormEvent, section: string) => {
@@ -90,7 +95,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
       notes: `Test detail lead for ${test?.name} — Current: ${leadForm.currentScore}, Target: ${leadForm.targetScore}`,
     });
     if (result.ok) {
-      toast.success('Counselling booked! Our team will contact you.');
+      toast.success('Your enquiry has been received. Our team will contact you.');
       setLeadForm({ name: '', phone: '', email: '', targetCountry: 'UK', currentScore: '', targetScore: '' });
     } else {
       toast.error(result.message);
@@ -115,6 +120,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[var(--alo-text)]">Test not found</h2>
           <p className="text-sm text-[var(--alo-body)] mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
+          {loadError && <Button type="button" onClick={() => window.location.reload()}>Retry loading guide</Button>}
           <Button asChild className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl"><a href="/language-prep" className="mt-4 inline-block">View All Test Prep →</a></Button>
         </Card>
       </div>
@@ -125,15 +131,17 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
   return (
     <div className="min-h-screen bg-white text-[var(--alo-text)]">
-      {/* SEO — JSON-LD FAQ + Breadcrumb — verified, no fake */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com/' }, { '@type': 'ListItem', position: 2, name: 'Language Preparation', item: 'https://aloeducation.com/language-prep' }, { '@type': 'ListItem', position: 3, name: test.name, item: `https://aloeducation.com/language-prep/${test.slug}` }] }) }} />
-      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.slice(0, 20).map((f: any) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })) }) }} />}
+      {loadError && <div role="status" className="mx-auto max-w-7xl p-4 text-sm">Additional guide resources could not load. <button type="button" className="text-[var(--alo-brand)] underline" onClick={() => window.location.reload()}>Retry</button></div>}
+      {/* SEO — JSON-LD FAQ + Breadcrumb */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://aloeducation.com/' }, { '@type': 'ListItem', position: 2, name: 'Language Preparation', item: 'https://aloeducation.com/language-prep' }, { '@type': 'ListItem', position: 3, name: test.name, item: `https://aloeducation.com/language-prep/${test.slug}` }] }) }} />
+      {faqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.slice(0, 20).map((f: any) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })) }) }} />}
       {/* Breadcrumb + Hero — White-first, no dark overlay */}
       <section className="relative bg-white pt-8 pb-12 lg:pt-12 lg:pb-16 overflow-hidden border-b border-[var(--alo-border)]">
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--alo-page)] to-white pointer-events-none" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--alo-brand-pale)] rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={0} priority />
           <nav className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] mb-6 font-medium">
             <a href="/" className="hover:text-[var(--alo-brand)]">Home</a>
             <span>›</span>
@@ -163,9 +171,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
               {!isMoi && (
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Academic</span>
-                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Paper</span>
-                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Computer</span>
+                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">{test.testType === 'academic' ? 'Academic / Aptitude' : test.testType === 'professional' ? 'Professional English' : 'English Proficiency'}</span>
+                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">{test.format}</span>
                   {test.slug === 'ielts-ukvi' && <span className="px-3 py-1.5 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] text-xs font-bold text-[var(--alo-brand)]">UKVI SELT</span>}
                 </div>
               )}
@@ -175,7 +182,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                     Book Free {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold text-sm h-12 px-6 rounded-xl"><a href="#assessment">
-                    Start {test.shortName} Assessment
+                    Plan Your {test.shortName} Preparation
                   </a></Button>
               </div>
 
@@ -225,6 +232,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
           <div className="lg:col-span-8 space-y-12">
             {/* Test Overview */}
             <section>
+              <LanguageSectionVisual index={2} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} Test Overview</h2>
               <p className="text-sm text-[var(--alo-body)] mb-6 leading-relaxed">{test.longDescription}</p>
 
@@ -250,8 +258,18 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               </div>
             </section>
 
+            <section aria-labelledby="alo-preparation-process">
+              <LanguageSectionVisual index={3} />
+              <h2 id="alo-preparation-process" className="mb-5 text-2xl font-bold">{test.name} preparation with ALO — five steps</h2>
+              <ol className="space-y-4">{preparationSteps(test).map((step, index) => <li key={step} className="flex gap-3 rounded-xl border border-[var(--alo-brand)] bg-white p-4"><span className="font-bold text-[var(--alo-cta)]">{index + 1}.</span><p className="text-sm leading-relaxed text-[var(--alo-body)]">{step}</p></li>)}</ol>
+              <h3 className="mt-6 text-xl font-bold">Benefits of a structured preparation plan</h3>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--alo-body)]">Become familiar with the format, identify weaker skills through practice, plan feedback and work towards the score your course requires. Progress depends on your starting point, practice and circumstances.</p>
+              <div className="mt-5 flex flex-wrap gap-3"><Button asChild><a href="#book-counselling">Prepare for {test.shortName} with ALO</a></Button><Button asChild variant="outline"><a href="/book-consultation">Book Free {test.shortName} Counselling</a></Button></div>
+            </section>
+
             {/* Test Modules — 4-card layout */}
             <section>
+              <LanguageSectionVisual index={4} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-6">{test.name} Modules — {modules.length} modules</h2>
               <div className="grid sm:grid-cols-2 gap-5">
                 {modules.map((mod: any, i: number) => (
@@ -302,6 +320,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Score System */}
             <section>
+              <LanguageSectionVisual index={5} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} Score System</h2>
               <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-3xl">
                 <div className="flex items-center gap-3 mb-4">
@@ -324,6 +343,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Test Acceptance — Where accepted */}
             <section>
+              <LanguageSectionVisual index={6} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">Where Is This Test Accepted?</h2>
               <p className="text-xs text-amber-700 mb-4 p-2.5 rounded-xl bg-amber-50 border border-amber-100">Acceptance is university/course specific. Do not claim universal acceptance. Acceptance varies by university, course and visa route.</p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -348,14 +368,10 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* University Requirement Checker */}
             <section id="score-explorer">
+              <LanguageSectionVisual index={7} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} for University Admission — Requirement Checker</h2>
               <Card className="p-6 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-3xl">
-                <div className="grid sm:grid-cols-3 gap-3 mb-4">
-                  <Input placeholder="Country e.g. UK" className="h-11 rounded-xl border-[var(--alo-border)] bg-white" />
-                  <Input placeholder="University e.g. Manchester" className="h-11 rounded-xl border-[var(--alo-border)] bg-white" />
-                  <Input placeholder="Course e.g. MSc CS" className="h-11 rounded-xl border-[var(--alo-border)] bg-white" />
-                </div>
-                <p className="text-xs text-[var(--alo-body)]">Requirement not available in database. Check university course page. — System retrieves English test, Minimum overall, Minimum component scores, Waiver availability, Remarks, Source URL, Last verified — Only if actual course data exists.</p>
+                <LanguageRequirementChecker testSlug={test.slug} />
                 <div className="mt-4 flex gap-2">
                   <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href="/course-finder" className="flex-1">Find Matching Courses</a></Button>
                   <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] rounded-xl "><a href={`/language-prep/comparison?tests=${test.slug}`}>Compare Tests</a></Button>
@@ -365,22 +381,20 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Visa / Immigration — careful */}
             <section>
+              <LanguageSectionVisual index={8} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">English Tests and Visa Requirements</h2>
-              <p className="text-sm text-[var(--alo-body)] mb-4">Visa or immigration requirements vary by country and route. Never say IELTS is mandatory everywhere. Instead show verified country-specific information.</p>
+              <p className="text-sm text-[var(--alo-body)] mb-4">Visa evidence depends on your country, route, qualifications and any applicable exemptions. Confirm the current official requirements before booking.</p>
               <Card className="p-6 bg-amber-50 border border-amber-200 rounded-3xl">
                 <h4 className="font-bold text-sm text-amber-900 flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Important Disclaimer</h4>
-                <p className="text-xs text-amber-800 mt-2 leading-relaxed">
-                  For UK: For degree-level study at Student Route sponsor universities, standard {test.name} may be accepted for CAS if university confirms. For below-degree, foundation, pre-sessional below B2, you need UKVI SELT like IELTS for UKVI, PTE Academic UKVI, LanguageCert SELT. Check official guidance: https://www.gov.uk/guidance/prove-your-english-language-abilities-with-a-secure-english-language-test-selt
-                </p>
-                <p className="text-xs text-amber-800 mt-2">
-                  For Australia: Check DHA Subclass 500 requirements. For Canada: Check IRCC SDS and regular study permit guidance. For USA: University I-20 issuance determines requirement. If no verified data: Check current official immigration guidance.
-                </p>
+                <p className="text-sm text-[var(--alo-body)] mt-2 leading-relaxed">{ACCEPTANCE_NOTICE} Academic aptitude tests do not substitute for English-language evidence.</p>
+                <a href="https://www.gov.uk/student-visa/knowledge-of-english" target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm text-[var(--alo-brand)] underline">Read official UK Student visa English guidance</a>
                 <p className="text-[11px] text-amber-700 mt-3">Last verified: {test.lastVerifiedAt || 'Information requires verification'} • Source: {test.sourceName} • {test.sourceUrl}</p>
               </Card>
             </section>
 
             {/* Preparation Process — 8 steps */}
             <section>
+              <LanguageSectionVisual index={9} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-6">{test.name} Preparation Process — 8 Steps</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 {[
@@ -406,6 +420,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Test-specific prep plan dynamic */}
             <section>
+              <LanguageSectionVisual index={10} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} Preparation with ALO Education</h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {[
@@ -427,25 +442,26 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Test Score Planner — Interactive */}
             <section id="assessment" className="py-2">
+              <LanguageSectionVisual index={11} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} Score Planner — Interactive Tool</h2>
-              <p className="text-xs text-[var(--alo-text-muted)] mb-4">Do not claim AI prediction guarantees — guidance only</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mb-4">Compare your entered scores on the same test scale, then discuss your study plan with a counsellor.</p>
               <Card className="p-6 bg-white border border-[var(--alo-border)] shadow-sm rounded-3xl">
                 <div className="grid sm:grid-cols-4 gap-3">
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Current Score</label>
-                    <Input placeholder="e.g. 6.0" value={scorePlanner.current} onChange={e => setScorePlanner({ ...scorePlanner, current: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
+                    <Input type="number" min="0" step="any" aria-label="Current score on this test scale" placeholder="Current provider score" value={scorePlanner.current} onChange={e => setScorePlanner({ ...scorePlanner, current: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Target Score</label>
-                    <Input placeholder="e.g. 7.0" value={scorePlanner.target} onChange={e => setScorePlanner({ ...scorePlanner, target: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
+                    <Input type="number" min="0" step="any" aria-label="Target score on this test scale" placeholder="Target provider score" value={scorePlanner.target} onChange={e => setScorePlanner({ ...scorePlanner, target: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Exam Date</label>
-                    <Input type="date" value={scorePlanner.examDate} onChange={e => setScorePlanner({ ...scorePlanner, examDate: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
+                    <Input type="date" aria-label="Planned exam date" value={scorePlanner.examDate} onChange={e => setScorePlanner({ ...scorePlanner, examDate: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Hours/Week</label>
-                    <select value={scorePlanner.hours} onChange={e => setScorePlanner({ ...scorePlanner, hours: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
+                    <select aria-label="Weekly study hours" value={scorePlanner.hours} onChange={e => setScorePlanner({ ...scorePlanner, hours: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
                       <option value="5">5 hrs/week</option><option value="10">10 hrs/week</option><option value="15">15 hrs/week</option><option value="20">20 hrs/week</option>
                     </select>
                   </div>
@@ -455,7 +471,8 @@ export default function TestDetailView({ slug }: TestDetailProps) {
                 {plannerResult && (
                   <div className="mt-5 p-4 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)] space-y-2 text-xs">
                     <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Target Gap:</span><span className="font-bold">{plannerResult.gap}</span></div>
-                    <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Estimated Weeks:</span><span className="font-bold text-[var(--alo-brand)]">{plannerResult.weeks} weeks</span></div>
+                    <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Weekly Commitment:</span><span className="font-bold text-[var(--alo-brand)]">{plannerResult.hours} hours</span></div>
+                    <p>Planned exam date: {plannerResult.examDate || 'Not specified'}</p>
                     <div><span className="text-[var(--alo-text-muted)]">Priority:</span><p className="font-medium mt-1">{plannerResult.priority}</p></div>
                     <div><span className="text-[var(--alo-text-muted)]">Schedule:</span><p className="font-medium mt-1">{plannerResult.schedule}</p></div>
                     <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100 mt-2">{plannerResult.note}</p>
@@ -466,6 +483,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Test Comparison from detail page */}
             <section>
+              <LanguageSectionVisual index={12} />
               <h2 className="text-xl font-extrabold text-[var(--alo-text)] mb-3">Not sure this is the right test?</h2>
               <Card className="p-5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -483,6 +501,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Success Stories */}
             <section>
+              <LanguageSectionVisual index={13} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">Student Success Stories — {test.name}</h2>
               <p className="text-xs text-[var(--alo-text-muted)] mb-4">Student stories appear here once they are approved for publication.</p>
               {successStories.length === 0 ? (
@@ -505,10 +524,13 @@ export default function TestDetailView({ slug }: TestDetailProps) {
               )}
             </section>
 
+            <section id="compare-tests"><LanguageSectionVisual index={2} /><h2 className="mb-5 text-2xl font-bold">Compare all tests before choosing {test.shortName}</h2><LanguageTestComparison tests={ENGLISH_PREP_TESTS} /></section>
+
             {/* FAQ — 15-20 per test */}
             <section>
+              <LanguageSectionVisual index={14} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">FAQ — {test.name} — {faqs.length} questions</h2>
-              <p className="text-xs text-[var(--alo-text-muted)] mb-4">Test-specific FAQs — minimum 15-20 for each test</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mb-4">Test guidance, admission requirements and preparation questions</p>
               <div className="space-y-3">
                 {faqs.map((faq: any, idx: number) => (
                   <Card key={faq.id || idx} className="bg-white border border-[var(--alo-border)] rounded-2xl overflow-hidden">
@@ -529,6 +551,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
             {/* Final CTA */}
             <section id="book-counselling">
+              <LanguageSectionVisual index={15} />
               <Card className="p-8 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-xl rounded-3xl">
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center">Not Sure Which English Test You Need?</h2>
                 <p className="text-sm text-[var(--alo-brand-pale)] text-center max-w-2xl mx-auto mt-3 leading-relaxed">
@@ -620,6 +643,7 @@ export default function TestDetailView({ slug }: TestDetailProps) {
 
       {/* Footer note */}
       <section className="py-8 bg-[var(--alo-page)] border-t border-[var(--alo-border)]">
+              <LanguageSectionVisual index={16} />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-[11px] text-[var(--alo-text-muted)] leading-relaxed max-w-4xl mx-auto">
             Test information is taken from official provider sources where available. Acceptance varies by university, course and visa route. Check the official provider for the latest details.{isMoi ? ' MOI is a guidance resource, not an English proficiency test.' : ''}

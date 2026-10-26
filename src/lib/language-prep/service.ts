@@ -1,3 +1,4 @@
+import { applyReviewedFacts, reviewedModules, reviewLanguageFaq, reviewLanguageAcceptance } from './editorial';
 import { db } from '@/lib/db';
 import { ENGLISH_PREP_TESTS, ENGLISH_PREP_MODULES, ENGLISH_PREP_FAQS, ENGLISH_PREP_ACCEPTANCE, ENGLISH_PREP_RESOURCES, getTestBySlug as getHardcodedTest } from './data';
 import { EnglishTest } from './types';
@@ -6,6 +7,7 @@ import { EnglishTest } from './types';
 // Ensures no fake content — only verified data or "Check current provider information"
 
 export async function getAllEnglishPrepTestsFromDB(): Promise<EnglishTest[]> {
+  if (process.env.SKIP_CMS_DB === '1') return ENGLISH_PREP_TESTS;
   try {
     const tests = await (db as any).englishPrepTest?.findMany?.({
       where: { status: 'active' },
@@ -45,7 +47,7 @@ export async function getAllEnglishPrepTestsFromDB(): Promise<EnglishTest[]> {
         lastVerifiedAt: t.lastVerifiedAt ? new Date(t.lastVerifiedAt).toISOString().split('T')[0] : undefined,
         seoTitle: t.seoTitle || `${t.name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education`,
         seoDescription: t.seoDescription || `Prepare for ${t.name} with expert guidance from ALO Education.`,
-      }));
+      })).map(applyReviewedFacts);
     }
   } catch (e) {
     console.warn('DB fetch failed for EnglishPrepTest, using hardcoded fallback', e);
@@ -55,13 +57,14 @@ export async function getAllEnglishPrepTestsFromDB(): Promise<EnglishTest[]> {
 }
 
 export async function getEnglishPrepTestBySlugFromDB(slug: string): Promise<EnglishTest | null> {
+  if (process.env.SKIP_CMS_DB === '1') return getHardcodedTest(slug) || null;
   try {
     const clean = slug.toLowerCase().trim();
     const test = await (db as any).englishPrepTest?.findFirst?.({
       where: { slug: clean, status: 'active' },
     });
     if (test) {
-      return {
+      return applyReviewedFacts({
         id: test.id,
         name: test.name,
         slug: test.slug,
@@ -94,7 +97,7 @@ export async function getEnglishPrepTestBySlugFromDB(slug: string): Promise<Engl
         lastVerifiedAt: test.lastVerifiedAt ? new Date(test.lastVerifiedAt).toISOString().split('T')[0] : undefined,
         seoTitle: test.seoTitle || `${test.name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education`,
         seoDescription: test.seoDescription || `Prepare for ${test.name} with expert guidance from ALO Education.`,
-      };
+      });
     }
   } catch (e) {
     console.warn('DB fetch failed for single test', e);
@@ -102,7 +105,9 @@ export async function getEnglishPrepTestBySlugFromDB(slug: string): Promise<Engl
   return getHardcodedTest(slug) || null;
 }
 
-export async function getModulesByTestIdFromDB(testId: string, slug?: string) {
+export async function getModulesByTestIdFromDB(testId: string, slug?: string, lastReviewedAt?: string) {
+  const current = slug ? reviewedModules(slug, testId, lastReviewedAt) : null;
+  if (current) return current;
   try {
     const modules = await (db as any).englishPrepModule?.findMany?.({
       where: { testId, status: 'active' },
@@ -125,7 +130,7 @@ export async function getFaqsByTestIdFromDB(testId: string, slug?: string) {
       where: { testId, status: 'active' },
       orderBy: { sortOrder: 'asc' },
     });
-    if (faqs && faqs.length > 0) return faqs;
+    if (faqs && faqs.length > 0) return faqs.map((faq: { question: string; answer: string }) => reviewLanguageFaq(faq, slug));
   } catch (e) {
     console.warn('DB faqs fetch failed', e);
   }
@@ -141,7 +146,7 @@ export async function getAcceptanceByTestIdFromDB(testId: string) {
     const acc = await (db as any).englishPrepAcceptance?.findMany?.({
       where: { testId, status: 'active' },
     });
-    if (acc && acc.length > 0) return acc;
+    if (acc && acc.length > 0) return acc.map(reviewLanguageAcceptance);
   } catch (e) {
     console.warn('DB acceptance fetch failed', e);
   }
@@ -149,6 +154,7 @@ export async function getAcceptanceByTestIdFromDB(testId: string) {
 }
 
 export async function getSuccessStoriesFromDB(testId?: string) {
+  if (process.env.SKIP_CMS_DB === '1') return [];
   try {
     const where: any = { status: 'published', consentStatus: 'approved' };
     if (testId) where.testId = testId;
@@ -156,6 +162,7 @@ export async function getSuccessStoriesFromDB(testId?: string) {
       where,
       orderBy: { createdAt: 'desc' },
       take: 20,
+      select: { id: true, studentName: true, universityName: true, courseName: true, previousScore: true, finalScore: true, testimonial: true },
     });
     if (stories && stories.length > 0) return stories;
   } catch (e) {
@@ -189,4 +196,10 @@ export async function getCoursesByEnglishTest(testSlug: string, limit = 24) {
     console.warn('Course finder English filter failed', e);
     return [];
   }
+}
+
+export async function getPublishedLanguageStoryCards(): Promise<import('./types').PublishedLanguageStory[]> {
+  if (process.env.SKIP_CMS_DB === '1') return [];
+  const stories = await getSuccessStoriesFromDB();
+  return stories.map(({ id, studentName, universityName, courseName, previousScore, finalScore, testimonial }: import('./types').PublishedLanguageStory) => ({ id, studentName, universityName, courseName, previousScore, finalScore, testimonial }));
 }

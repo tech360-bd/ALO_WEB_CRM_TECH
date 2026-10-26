@@ -1,3 +1,5 @@
+import { ALO_CONTACT, ALO_SOCIALS } from '../alo-site-info';
+
 // SEO Schema helpers — Article / Breadcrumb / FAQPage / Organization
 // FAQPage kept for Bing/AI parsers; Google Search no longer shows FAQ rich results since 7 May 2026.
 // Use Schema.org Validator, not Rich Results Test, for FAQ validation.
@@ -71,21 +73,18 @@ export function organizationSchema(baseUrl?: string) {
     logo: `${base}/logo.png`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "68/69 Green Road, Concept Tower, Suite 347 (2nd Floor)",
+      streetAddress: ALO_CONTACT.address,
       addressLocality: "Panthapath, Dhaka",
       postalCode: "1205",
       addressCountry: "BD",
     },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+8801327189194",
+      telephone: ALO_CONTACT.mobileHref.replace('tel:', ''),
+      email: ALO_CONTACT.email,
       contactType: "customer service",
       availableLanguage: ["en", "bn"],
     },
-    sameAs: [
-      // fill when verified
-      // "https://www.facebook.com/aloeducation",
-      // "https://www.linkedin.com/company/alo-education",
-    ],
+    sameAs: ALO_SOCIALS.map(social => social.href),
   };
 }
