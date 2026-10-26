@@ -3169,6 +3169,37 @@ model PartnerProfile {
 }
 
 // ==========================================
+// B2B PARTNER BRANDING (footer logo + colours)
+// ==========================================
+//
+// One row per B2B tenant. The partner's own logo and colour scheme are shown
+// ONLY in the footer block that is added for students recruited through that
+// partner (src/components/portals/PortalFooter.tsx). ALO-owned students and
+// every ALO employee see the general ALO footer only, whatever exists here.
+//
+// `partnerId` is the tenant key, matching PartnerProfile.partnerId. Colours are
+// stored as validated 6-digit hex strings and `logoUrl` is either an https URL
+// or a small inline image data URI — never free-form HTML (see
+// src/lib/partner/branding.ts for the validation rules).
+model PartnerBranding {
+  id             String   @id @default(cuid())
+  partnerId      String   @unique
+  displayName    String   @default("")
+  tagline        String   @default("")
+  logoUrl        String
+  primaryColor   String   @default("#0066CC")
+  secondaryColor String   @default("#F37021")
+  accentColor    String   @default("#FFB347")
+  websiteUrl     String   @default("")
+  supportEmail   String   @default("")
+  supportPhone   String   @default("")
+  showInFooter   Boolean  @default(true)
+  updatedById    String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ==========================================
 // STUDENT APPLICATIONS
 // ==========================================
 
