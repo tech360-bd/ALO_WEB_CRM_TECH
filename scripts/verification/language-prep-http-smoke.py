@@ -1,6 +1,8 @@
 """Read-only HTTP checks against a running ALO build. Never submits a lead."""
 import json
 import sys
+import re
+from html import unescape
 from urllib.error import HTTPError
 from urllib.parse import quote, unquote
 from urllib.request import urlopen
@@ -18,7 +20,9 @@ def check(name, condition):
     results.append(name)
 
 landing = read('/language-prep')
-check('landing server renders the requested heading', 'English tests for university entry' in landing)
+heading = re.search(r'<h1[^>]*>(.*?)</h1>', landing, re.S)
+heading_text = ' '.join(unescape(re.sub(r'<[^>]+>', ' ', heading.group(1) if heading else '')).split())
+check('landing server renders the requested heading', heading_text == 'English tests for university entry')
 check('all fourteen dedicated links are rendered', all(f'href="/language-prep/{slug}"' in landing for slug in SLUGS))
 check('landing contains photos and a complete comparison', '/images/landing/' in unquote(landing) and 'University &amp; visa acceptance' in landing)
 for slug in SLUGS:

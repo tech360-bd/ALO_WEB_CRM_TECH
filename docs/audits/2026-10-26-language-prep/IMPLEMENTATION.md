@@ -69,3 +69,11 @@ Legacy TOEFL FAQs are aligned with the 2026 task types and score scale. Old SDS 
 ## CI evidence on the first implementation commit
 
 GitHub run https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/40268742325 : the MySQL 8 migrate/integrate/boot job passed, including the new catalogue integration test, full migration deployment, drift check and boot smoke. This verifies the insert-only SQL against a disposable MySQL database, not production. The quality job failed because generated `docs/environment-classification.json` was stale after adding existing build-flag usage; the file has been regenerated for the follow-up commit. Latest-source CI remains pending at this checkpoint.
+
+## Named-route integration and HTTP acceptance
+
+The first production HTTP check exposed fifteen pre-existing named routes (for example `src/app/language-prep/ielts/page.tsx`) that shadow the dynamic `[slug]` route. Those wrappers previously passed only a slug and therefore returned loading-only server HTML. All fifteen now reuse `LanguageTestPage`, which loads the existing database-first service and passes the initial record to the existing detail view. Route metadata and URLs are preserved. A packaging hypothesis was investigated and rejected; no deployment-script change is included.
+
+The HTTP smoke runner checks rendered heading text across inline markup, all fourteen guides and detail APIs, the comparison endpoint, three served photos, Cambridge aliases and unknown-slug 404. Final-source HTTP results remain pending at this checkpoint.
+
+A second disposable-MySQL integration test now creates an explicitly labelled test-only requirement, queries it through the real API backed by the real Prisma client, verifies another test cannot match it, and removes only that disposable fixture. It cannot run without the existing safety-validated test database opt-in. No production test record is created.

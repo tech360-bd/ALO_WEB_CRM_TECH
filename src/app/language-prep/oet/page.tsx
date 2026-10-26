@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import TestDetailView from '@/components/language-prep/TestDetailView';
+import LanguageTestPage from '@/components/language-prep/LanguageTestPage';
 import { getTestBySlug } from '@/lib/language-prep/data';
 
 const test = getTestBySlug('oet');
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <TestDetailView slug="oet" />;
+  return <LanguageTestPage slug="oet" />;
 }
