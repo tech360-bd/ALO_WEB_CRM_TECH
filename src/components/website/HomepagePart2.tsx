@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-  fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
+  BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
   staggerContainer, staggerItem, staggerItemScale,
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
@@ -25,14 +25,7 @@ import {
   BarChart3, Lightbulb, Shield, Handshake, ListChecks,
 } from 'lucide-react';
 
-const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
-  text: '#0F172A',
-  textSoft: '#64748B',
-  bg: '#F8FAFC',
-  border: '#E2E8F0',
-};
+const C = BRAND;
 
 interface HomeService {
   id: string;

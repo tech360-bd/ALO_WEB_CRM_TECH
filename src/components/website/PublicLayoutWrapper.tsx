@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { MotionConfig } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
@@ -153,13 +154,13 @@ export default function PublicLayoutWrapper({
   // shell/layout already did.
   const showAuthenticatedFooterFallback = isAuthenticated && isPublicChromeRoute(pathname);
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       {showPublicChrome && <CmsAnnouncements />}
       {showPublicChrome && <PublicNavbar />}
       {children}
       {showPublicChrome && <PublicFooter />}
       {showAuthenticatedFooterFallback && <AuthenticatedPortalFooterFallback />}
       {showPublicChrome && <CmsBanner />}
-    </>
+    </MotionConfig>
   );
 }

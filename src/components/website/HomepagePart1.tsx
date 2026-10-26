@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight, staggerContainer, staggerItem, staggerItemScale, sectionTitle, sectionSubtitle, viewportOnce, gradients } from './animations';
+import { BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight, staggerContainer, staggerItem, staggerItemScale, sectionTitle, sectionSubtitle, viewportOnce, gradients } from './animations';
 import {
   Globe, GraduationCap, Users, Award, BookOpen, Target, Eye, Heart,
   Search, ArrowRight, MapPin, Calendar, DollarSign, MessageCircle, Phone,
@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { EnglishExamBanner } from '@/components/website/EnglishExamCta';
 
-const C = { blue: '#0057B8', orange: '#E8501A', text: '#0F172A', textSoft: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' };
+const C = BRAND;
 
 /* ═══════════════════════════════════════════════════════════════ TYPES ═══ */
 interface HeroCountry { id: string; name: string; slug: string; flag: string; accentColor: string; heroImage: string; heroCity?: string; heroIntake?: string; heroSubtitle?: string; }
@@ -32,9 +32,9 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 // These entries are visual destination choices only. Live availability,
 // current intakes and inventory counts come from the database API below.
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0066CC', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
   { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#0284C7', heroImage: '/images/cards/usa.png', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F37021', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/cards/australia.png', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
   { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/cards/new-zealand.png', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
   { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/cards/ireland.png', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
@@ -492,7 +492,7 @@ function DestinationsSection() {
                     <Button asChild variant="outline" size="sm" className="flex-1 h-12 rounded-xl font-semibold" style={{ borderColor: d.accentColor, color: d.accentColor }}>
                       <a href={`/destinations/${d.slug}`}>View Guide</a>
                     </Button>
-                    <Button asChild size="sm" className="flex-1 h-12 rounded-xl font-semibold text-white" style={{ backgroundColor: C.orange }}>
+                    <Button asChild size="sm" className="flex-1 h-12 rounded-xl font-semibold">
                       <a href={`/course-finder?country=${d.slug}`}>{t('cta.findCourse')}</a>
                     </Button>
                   </div>

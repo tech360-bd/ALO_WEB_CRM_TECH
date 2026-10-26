@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-  fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
+  BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
   staggerContainer, staggerItem, staggerItemScale,
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
@@ -27,17 +27,7 @@ import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 /* ═══════════════════════════════════════════════════════════════
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
-const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
-  text: '#0F172A',
-  textSoft: '#64748B',
-  bg: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-  danger: '#EF4444',
-};
+const C = BRAND;
 
 /* ═══════════════════════════════════════════════════════════════
    TYPES
@@ -211,7 +201,6 @@ function ScholarshipsSection() {
                   {/* Button */}
                   <Button
                     className="w-full h-12 rounded-xl text-sm font-semibold"
-                    style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
                     asChild
                   >
                     <Link href="/eligibility-check">
@@ -380,8 +369,7 @@ function EnglishTestsSection() {
                           </Link>
                         </Button>
                         <Button
- className="flex-1 rounded-lg font-medium text-white"
- style={{ backgroundColor: C.orange }}
+ className="flex-1 rounded-lg font-medium text-black hover:text-white"
  asChild
  >
                           <Link href={`/language-prep/${test.slug || 'ielts'}`}>
@@ -638,7 +626,6 @@ function VisaSupportSection() {
           <motion.div variants={staggerItem}>
             <Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
-              style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
             >
               <Link href="/visa/readiness">
@@ -792,7 +779,6 @@ function StudentPortalPreview() {
           <motion.div variants={staggerItem}>
             <Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
-              style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
             >
               <Link href="/student/login">
@@ -913,7 +899,6 @@ function PartnerPortalPreview() {
           <motion.div variants={staggerItem}>
             <Button
               className="h-12 rounded-xl text-sm font-semibold px-8 shadow-md hover:shadow-lg transition-shadow"
-              style={{ backgroundColor: C.orange, color: '#FFFFFF' }}
               asChild
             >
               <Link href="/partner/login">
@@ -1023,8 +1008,7 @@ function AiSupportTools() {
 
                     {/* Try Now button */}
                     <Button
- className="w-full rounded-lg font-semibold text-white self-end"
- style={{ backgroundColor: C.orange }}
+ className="w-full rounded-lg font-semibold text-black hover:text-white self-end"
  asChild
  >
                       <Link href={tool.href}>

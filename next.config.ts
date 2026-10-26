@@ -45,9 +45,18 @@ const nextConfig: NextConfig = {
     ],
   },
   compress: true,
+  // Production compilation of the CRM's large route graph must not retain a
+  // second Webpack cache in constrained build hosts. Development keeps HMR's
+  // default cache. This changes build memory only, not HTTP/runtime caching.
+  webpack(config, { dev }) {
+    if (!dev) config.cache = false;
+    return config;
+  },
   experimental: {
     workerThreads: false,
     cpus: 1,
+    webpackBuildWorker: true,
+    webpackMemoryOptimizations: true,
   },
   async headers() {
     return [

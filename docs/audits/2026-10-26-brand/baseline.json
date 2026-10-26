@@ -1,0 +1,27 @@
+{
+  "base": "0b1d330434a0f46d108faa2ba411fffe18eae8b7",
+  "scope": "Existing brand chrome and shared visual primitives; no business/auth/database changes",
+  "existing": {
+    "src/components/website/PublicNavbar.tsx": {
+      "bytes": 25874
+    },
+    "src/components/website/PublicFooter.tsx": {
+      "bytes": 20020
+    },
+    "src/app/globals.css": {
+      "bytes": 41381
+    },
+    "src/components/website/public-chrome-policy.ts": {
+      "bytes": 1193
+    }
+  },
+  "gaps": [
+    "Pending hover-open callback can reopen dropdown after Escape/click",
+    "Legacy homepage and animation constants retain old brand colors",
+    "Shared sheets/dialogs use dark overlays",
+    "Shared orange hover state keeps black text on dark orange",
+    "Font16 mobile inputs and long dialog overflow need refinement"
+  ],
+  "brandDecision": "Explicit user colors #0066CC/#F37021/#FFB347 and Montserrat/Open Sans take precedence over older attached palette",
+  "productionChanged": false
+}
