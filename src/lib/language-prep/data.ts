@@ -1,6 +1,7 @@
+import { applyReviewedFacts, CAMBRIDGE_TEST } from './editorial';
 import { EnglishTest, TestModule, TestFaq, TestAcceptance, TestResource } from './types';
 
-export const ENGLISH_PREP_TESTS: EnglishTest[] = [
+const BASE_ENGLISH_PREP_TESTS: EnglishTest[] = [
   {
     id: 'test-ielts',
     name: 'IELTS',
@@ -163,7 +164,7 @@ export const ENGLISH_PREP_TESTS: EnglishTest[] = [
   },
   {
     id: 'test-oietc',
-    name: 'OIETC',
+    name: 'OIETC – ELLT',
     slug: 'oietc',
     shortName: 'OIETC',
     shortDescription: 'Oxford International English Test Centre — ELLT family',
@@ -482,6 +483,9 @@ export const ENGLISH_PREP_TESTS: EnglishTest[] = [
     seoDescription: 'MOI guidance resource — understand when universities accept Medium of Instruction and verification requirements.',
   },
 ];
+
+export const ENGLISH_PREP_TESTS: EnglishTest[] = [...BASE_ENGLISH_PREP_TESTS, CAMBRIDGE_TEST].map(applyReviewedFacts);
+
 
 export const ENGLISH_PREP_MODULES: Record<string, TestModule[]> = {
   ielts: [
@@ -870,6 +874,13 @@ export function getTestBySlug(slug: string): EnglishTest | undefined {
     'kaplan': 'kaplan',
     'kaplan-english-test': 'kaplan',
     'kite': 'kaplan',
+    'cambridge': 'cambridge-english',
+    'cae-cpe': 'cambridge-english',
+    'c1-advanced': 'cambridge-english',
+    'c2-proficiency': 'cambridge-english',
+    'cae': 'cambridge-english',
+    'cpe': 'cambridge-english',
+    'cambridge-english': 'cambridge-english',
     'oet': 'oet',
     'gre': 'gre',
     'gmat': 'gmat',

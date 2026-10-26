@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,24 +9,34 @@ import { ArrowRight, CheckCircle2, AlertCircle, Globe, Clock, FileText, Award, L
 
 export default function ComparisonView() {
   const [tests, setTests] = useState<any[]>([]);
-  const [selected, setSelected] = useState<string[]>(['ielts', 'pte-academic', 'toefl-ibt', 'duolingo', 'oxford-ellt']);
+  const [selected, setSelected] = useState<string[]>(ENGLISH_PREP_TESTS.filter(t => t.testType !== 'moi_guidance').map(t => t.slug));
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    fetch('/api/language-prep/comparison')
-      .then(r => r.json())
+    const controller = new AbortController();
+    setLoading(true);
+    setError(false);
+    fetch('/api/language-prep/comparison', { signal: controller.signal })
+      .then(r => { if (!r.ok) throw new Error('Comparison unavailable'); return r.json(); })
       .then(d => {
-        if (d.success) setTests(d.comparison);
+        if (d.success && Array.isArray(d.comparison)) {
+          setTests(d.comparison);
+          const requested = new URLSearchParams(window.location.search).get('tests')?.split(',').filter(slug => d.comparison.some((test: { slug: string }) => test.slug === slug));
+          if (requested?.length) setSelected(requested);
+        } else { throw new Error('Comparison unavailable'); }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+      .catch(() => { if (!controller.signal.aborted) setError(true); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [attempt]);
 
   const toggleTest = (slug: string) => {
     if (selected.includes(slug)) {
       if (selected.length > 1) setSelected(selected.filter(s => s !== slug));
     } else {
-      if (selected.length < 6) setSelected([...selected, slug]);
+      setSelected([...selected, slug]);
     }
   };
 
@@ -53,21 +64,9 @@ export default function ComparisonView() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Selector */}
         <Card className="p-5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl mb-8">
-          <h3 className="font-bold text-sm text-[var(--alo-text)] mb-3">Select tests to compare (max 6)</h3>
+          <h3 className="font-bold text-sm text-[var(--alo-text)] mb-3">Select tests to compare</h3>
           <div className="flex flex-wrap gap-2">
-            {[
-              { slug: 'ielts', name: 'IELTS' },
-              { slug: 'ielts-ukvi', name: 'IELTS UKVI' },
-              { slug: 'pte-academic', name: 'PTE Academic' },
-              { slug: 'toefl-ibt', name: 'TOEFL iBT' },
-              { slug: 'duolingo', name: 'Duolingo' },
-              { slug: 'oietc', name: 'OIETC' },
-              { slug: 'oxford-ellt', name: 'Oxford ELLT' },
-              { slug: 'languagecert', name: 'LanguageCert' },
-              { slug: 'oet', name: 'OET' },
-              { slug: 'gre', name: 'GRE' },
-              { slug: 'gmat', name: 'GMAT' },
-            ].map(t => (
+            {ENGLISH_PREP_TESTS.filter(t => t.testType !== 'moi_guidance').map(t => (
               <button
                 key={t.slug}
                 onClick={() => toggleTest(t.slug)}
@@ -81,10 +80,15 @@ export default function ComparisonView() {
           </div>
         </Card>
 
-        {loading ? (
+        {error ? (
+          <Card role="alert" className="p-8 text-center">
+            <p>Test comparison could not be loaded. Please try again.</p>
+            <Button className="mt-4" onClick={() => setAttempt(value => value + 1)}>Retry</Button>
+          </Card>
+        ) : loading ? (
           <div className="text-center py-20">
             <div className="w-8 h-8 border-2 border-[var(--alo-brand)] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm text-[var(--alo-text-muted)]">Loading comparison — database-driven...</p>
+            <p className="text-sm text-[var(--alo-text-muted)]">Loading test comparison…</p>
           </div>
         ) : (
           <>
@@ -95,6 +99,7 @@ export default function ComparisonView() {
                   <tr className="bg-[var(--alo-page)] text-[var(--alo-text)] border-b border-[var(--alo-border)]">
                     <th className="p-4 font-bold min-w-[140px]">Test</th>
                     <th className="p-4 font-bold">Duration</th>
+                    <th className="p-4 font-bold">Cost</th>
                     <th className="p-4 font-bold">Format</th>
                     <th className="p-4 font-bold">Scoring</th>
                     <th className="p-4 font-bold">Typical Result Timeline</th>
@@ -112,6 +117,7 @@ export default function ComparisonView() {
                         {t.isPopular && <Badge className="bg-[var(--alo-cta)] text-black text-[11px] mt-1">Popular</Badge>}
                       </td>
                       <td className="p-4 text-[var(--alo-body)]">{t.duration}</td>
+                      <td className="p-4 text-[var(--alo-body)]">{t.cost}</td>
                       <td className="p-4 text-[var(--alo-body)]">{t.format}</td>
                       <td className="p-4 text-[var(--alo-body)]">{t.scoring}</td>
                       <td className="p-4 font-medium text-emerald-700">{t.resultTimeline}</td>

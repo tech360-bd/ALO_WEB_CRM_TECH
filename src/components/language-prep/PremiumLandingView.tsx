@@ -13,6 +13,9 @@ import {
   Bookmark, ClipboardCheck, MessageCircle, Video, Library, GraduationCap as GradCap,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { LanguageSectionVisual, LanguageTestCard, LanguageTestComparison } from './LanguagePrepVisuals';
+import type { EnglishTest, PublishedLanguageStory } from '@/lib/language-prep/types';
+import { applyReviewedFacts, LANGUAGE_TEST_FAQS } from '@/lib/language-prep/editorial';
 import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
@@ -20,10 +23,9 @@ import { PrepVsExamSplit } from '@/components/website/EnglishExamCta';
 
 // Premium Language Prep Landing — White-first, no dark overlay, excellent typography
 
-export default function PremiumLanguagePrepLandingView() {
-  const [tests, setTests] = useState<any[]>(ENGLISH_PREP_TESTS);
+export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_PREP_TESTS, stories = [] }: { initialTests?: EnglishTest[]; stories?: PublishedLanguageStory[] }) {
+  const [tests, setTests] = useState<EnglishTest[]>(initialTests);
   const [selectedCountry, setSelectedCountry] = useState('uk');
-  const [comparisonTests, setComparisonTests] = useState<string[]>(['ielts', 'pte-academic', 'toefl-ibt', 'duolingo']);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [leadForm, setLeadForm] = useState({
     name: '', phone: '', email: '', test: 'IELTS', targetScore: '7.0', destination: 'UK', currentLevel: 'Intermediate',
@@ -41,7 +43,7 @@ export default function PremiumLanguagePrepLandingView() {
     fetch('/api/language-prep/tests')
       .then(r => r.json())
       .then(d => {
-        if (d.success && d.tests?.length > 0) setTests(d.tests);
+        if (d.success && d.tests?.length > 0) setTests(d.tests.map(applyReviewedFacts));
       })
       .catch(() => {});
   }, []);
@@ -51,16 +53,16 @@ export default function PremiumLanguagePrepLandingView() {
     let rec: any = null;
     if (discoveryForm.destination === 'UK') {
       if (discoveryForm.studyLevel === 'Foundation') {
-        rec = { primary: tests.find(t => t.slug === 'ielts-ukvi'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'languagecert')], reason: 'For UK Foundation and below-degree, UKVI SELT is required. IELTS for UKVI or PTE Academic UKVI is mandatory.', acceptance: 'UKVI SELT approved — Check university CAS requirements', path: 'Diagnostic → Target 5.5-6.0 → 4-6 weeks prep → Mock → Booking', score: '5.5-6.0 overall', next: 'Check university course page for exact SELT requirement' };
+        rec = { primary: tests.find(t => t.slug === 'ielts-ukvi'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'languagecert')], reason: 'Below-degree study may require a named SELT. Confirm your sponsor, exemptions and current UKVI evidence rules before selecting an exam.', acceptance: 'UKVI SELT approved — Check university CAS requirements', path: 'Diagnostic → Target 5.5-6.0 → 4-6 weeks prep → Mock → Booking', score: '5.5-6.0 overall', next: 'Check university course page for exact SELT requirement' };
       } else {
-        rec = { primary: tests.find(t => t.slug === 'ielts'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'oxford-ellt')], reason: 'IELTS Academic offers highest acceptance across UK Russell Group and is accepted for degree-level CAS at Student Route sponsors.', acceptance: '100% UK universities — Acceptance varies by university, course and visa route', path: 'Assessment → Target 6.5 → Study Plan → Module Practice → Mock → Feedback → Readiness', score: discoveryForm.targetScore || '6.5 (6.0 each)', next: 'Explore IELTS modules and book free counselling' };
+        rec = { primary: tests.find(t => t.slug === 'ielts'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'oxford-ellt')], reason: 'IELTS Academic is one option for degree-level admission. Confirm your course and sponsor requirements before booking.', acceptance: 'Check your university, course, test delivery mode and visa route', path: 'Assessment → Target 6.5 → Study Plan → Module Practice → Mock → Feedback → Readiness', score: discoveryForm.targetScore || '6.5 (6.0 each)', next: 'Explore IELTS modules and book free counselling' };
       }
     } else if (discoveryForm.destination === 'Australia') {
-      rec = { primary: tests.find(t => t.slug === 'pte-academic'), also: [tests.find(t => t.slug === 'ielts'), tests.find(t => t.slug === 'toefl-ibt')], reason: 'PTE Academic offers fastest 48-hour results and is fully accepted by Australian DHA for Subclass 500 visa and all universities.', acceptance: 'All Australian universities + DHA', path: 'Diagnostic → Target 58-65 → Computer practice → Mock → Booking', score: '58-65 (58 each)', next: 'Check G8 requirements and DHA guidance' };
+      rec = { primary: tests.find(t => t.slug === 'pte-academic'), also: [tests.find(t => t.slug === 'ielts'), tests.find(t => t.slug === 'toefl-ibt')], reason: 'PTE Academic can be an option for Australian study. Confirm course acceptance and current visa evidence rules; result delivery can take longer than two days.', acceptance: 'Check your institution and current Australian visa evidence rules', path: 'Diagnostic → Target 58-65 → Computer practice → Mock → Booking', score: '58-65 (58 each)', next: 'Check G8 requirements and DHA guidance' };
     } else if (discoveryForm.destination === 'USA') {
-      rec = { primary: tests.find(t => t.slug === 'toefl-ibt'), also: [tests.find(t => t.slug === 'duolingo'), tests.find(t => t.slug === 'ielts')], reason: 'TOEFL iBT most popular for USA I-20, Duolingo fast affordable at-home option widely accepted for USA admission.', acceptance: '12,000+ institutions — Acceptance varies', path: 'Assessment → Target 90-100 → Integrated practice → Mock', score: '80-100 iBT', next: 'Find matching courses accepting TOEFL' };
+      rec = { primary: tests.find(t => t.slug === 'toefl-ibt'), also: [tests.find(t => t.slug === 'duolingo'), tests.find(t => t.slug === 'ielts')], reason: 'TOEFL iBT most popular for USA I-20, Duolingo fast affordable at-home option widely accepted for USA admission.', acceptance: '12,000+ institutions — Acceptance varies', path: 'Assessment → Set a target using the current 1–6 TOEFL scale → Integrated practice → Mock', score: 'Confirm the required 1–6 score with your institution', next: 'Find matching courses accepting TOEFL' };
     } else {
-      rec = { primary: tests.find(t => t.slug === 'ielts'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'toefl-ibt')], reason: 'IELTS Academic and PTE Academic offer highest global acceptance across UK, Australia, Canada, USA, Europe.', acceptance: 'Global top 200 universities', path: 'Assessment → Target planning → Study plan → Module training → Mock → Feedback', score: discoveryForm.targetScore || '6.5', next: 'Explore test detail pages' };
+      rec = { primary: tests.find(t => t.slug === 'ielts'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'toefl-ibt')], reason: 'IELTS Academic and PTE Academic offer highest global acceptance across UK, Australia, Canada, USA, Europe.', acceptance: 'University-specific acceptance must be confirmed', path: 'Assessment → Target planning → Study plan → Module training → Mock → Feedback', score: discoveryForm.targetScore || '6.5', next: 'Explore test detail pages' };
     }
     setRecommended(rec);
     toast.success(`Recommended: ${rec?.primary?.name} — ${rec?.reason}`);
@@ -106,7 +108,7 @@ export default function PremiumLanguagePrepLandingView() {
     });
     setSubmitting(false);
     if (result.ok) {
-      toast.success('Consultation booked! Our counselor will contact you shortly.');
+      toast.success('Your enquiry has been received. A counselor will contact you.');
       setLeadForm({ name: '', phone: '', email: '', test: 'IELTS', targetScore: '7.0', destination: 'UK', currentLevel: 'Intermediate' });
     } else {
       toast.error(result.message);
@@ -114,7 +116,8 @@ export default function PremiumLanguagePrepLandingView() {
   };
 
   const faqs = [
-    { q: 'What English test do I need for study abroad?', a: 'The right test depends on your destination, university, course, visa route, timeline and strengths. UK degree-level typically IELTS Academic or PTE Academic; UK Foundation requires UKVI SELT like IELTS for UKVI. Australia accepts IELTS, PTE, TOEFL. USA favours TOEFL iBT and Duolingo. Canada accepts IELTS, PTE, TOEFL. Acceptance varies by university, course and visa route — Check university-specific acceptance.' },
+    ...LANGUAGE_TEST_FAQS,
+    { q: 'What English test do I need for study abroad?', a: 'The right test depends on your destination, university, course, visa route, timeline and strengths. UK degree-level typically IELTS Academic or PTE Academic; Below-degree UK study may require a named UKVI SELT, depending on the sponsor and applicable exemptions. Australia accepts IELTS, PTE, TOEFL. USA favours TOEFL iBT and Duolingo. Canada accepts IELTS, PTE, TOEFL. Acceptance varies by university, course and visa route — Check university-specific acceptance.' },
     { q: 'What score do I need for UK universities?', a: 'Typical: Foundation 5.5, Bachelor 6.0-6.5 (no band below 5.5-6.0), Master 6.5-7.0 (no band below 6.0), MBA 6.5-7.0. Competitive may require 7.0-7.5. Check your specific course page for verified requirement. Requirements vary.' },
     { q: 'Which test is suitable for my destination?', a: 'UK: IELTS Academic / IELTS UKVI / PTE Academic / PTE UKVI / Oxford ELLT / LanguageCert SELT. Australia: PTE Academic, IELTS Academic. USA: TOEFL iBT, Duolingo, IELTS. Canada: IELTS, PTE, TOEFL. Ireland: IELTS, Duolingo, PTE. New Zealand: IELTS, PTE. Dubai/UAE: IELTS, TOEFL, PTE. Europe: IELTS, TOEFL, PTE. Acceptance varies by university, course and visa route.' },
     { q: 'How long does preparation take?', a: 'Depends on current level and target: Band 5.0→6.0: 6-8 weeks (10-15 hrs/week), 6.0→6.5: 4-8 weeks, 6.5→7.0: 8-12 weeks, 7.0→7.5: 12+ weeks. PTE similar: 50→58: 4-6 weeks, 58→65: 6-8 weeks. ALO free assessment sets realistic timeline.' },
@@ -122,7 +125,7 @@ export default function PremiumLanguagePrepLandingView() {
     { q: 'Can I practice with mock tests?', a: 'The preparation guides on this site explain each test\u2019s format, timing and scoring. To sit a real English test, use the "Take the English Test" link on this page. It opens the English Test Platform.' },
     { q: 'Can I compare English tests?', a: 'Yes, use our Test Comparison table to compare duration, format, scoring, typical result timeline, acceptance, best for and preparation style. Desktop shows full table, mobile scrollable cards.' },
     { q: 'Can I speak with a counselor?', a: 'Yes, book free counselling via hero CTA, final CTA, or side widgets. Our team helps understand relevant English requirement and preparation route. WhatsApp +880 180 502 0101, Email info@aloeducation.com. Lead stored with source language_prep and source_section.' },
-    { q: 'What is IELTS for UKVI?', a: 'IELTS for UKVI is a Secure English Language Test (SELT) approved by UKVI. Content, format and scoring identical to standard IELTS but delivered under UKVI security with video recording and UKVI reference number. Required for certain UK visa routes like Foundation and below-degree. Check UKVI guidance.' },
+    { q: 'What is IELTS for UKVI?', a: 'IELTS for UKVI is a Secure English Language Test (SELT) approved by UKVI. Content, format and scoring identical to standard IELTS but delivered under UKVI security with video recording and UKVI reference number. A named SELT may be required for certain visa routes. Confirm the sponsor, course level, exemptions and current UKVI guidance before booking.' },
     { q: 'Is MOI accepted instead of English test?', a: 'MOI (Medium of Instruction) is guidance resource, not an English proficiency test. Acceptance is strictly university and course specific — only where university officially confirms MOI acceptance with written confirmation. For visa, check official immigration guidance separately. Many visa routes require SELT.' },
   ];
 
@@ -137,7 +140,7 @@ export default function PremiumLanguagePrepLandingView() {
     { slug: 'europe', name: 'Europe', flag: '🇪🇺' },
   ];
 
-  const testCards = tests.slice(0, 12); // Show 12 main
+  const testCards = tests; // Keep the complete catalogue, including existing guidance.
 
   return (
     <div className="min-h-screen bg-white text-[var(--alo-text)]">
@@ -160,11 +163,11 @@ export default function PremiumLanguagePrepLandingView() {
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-extrabold tracking-tight leading-[1.05] text-[var(--alo-text)]">
-                English Language <span className="text-[var(--alo-brand)]">Preparation</span>
+                English tests for <span className="text-[var(--alo-brand)]">university entry</span>
               </h1>
 
               <p className="text-lg sm:text-xl font-medium text-[var(--alo-body)] leading-relaxed max-w-2xl">
-                Master English proficiency tests with structured preparation, realistic practice, expert guidance, and destination-focused score planning.
+                Access study materials, practice tests, and expert guidance to achieve your required score.
               </p>
 
               <p className="text-sm text-[var(--alo-body)] leading-relaxed max-w-2xl">
@@ -202,90 +205,19 @@ export default function PremiumLanguagePrepLandingView() {
 
             {/* Right — Premium Education Visual — Dashboard */}
             <div className="lg:col-span-5 relative">
-              <Card className="p-6 bg-white border border-[var(--alo-border)] shadow-xl rounded-3xl relative overflow-hidden">
-                <div className="flex items-center justify-between mb-5">
-                  <h3 className="font-bold text-sm text-[var(--alo-text)] flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
-                    My Preparation Dashboard
-                  </h3>
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Live Progress</Badge>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="p-3.5 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)]">
-                    <p className="text-[11px] uppercase font-bold text-[var(--alo-text-muted)] tracking-wider">Target Score</p>
-                    <p className="text-lg font-extrabold text-[var(--alo-brand)] mt-1">7.0 Overall</p>
-                    <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">IELTS Academic</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)]">
-                    <p className="text-[11px] uppercase font-bold text-[var(--alo-text-muted)] tracking-wider">Current Score</p>
-                    <p className="text-lg font-extrabold text-[var(--alo-text)] mt-1">6.0 Estimated</p>
-                    <div className="w-full h-1.5 bg-slate-200 rounded-full mt-2 overflow-hidden">
-                      <div className="h-full bg-[var(--alo-brand)] rounded-full" style={{ width: '64%' }} />
-                    </div>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)]">
-                    <p className="text-[11px] uppercase font-bold text-[var(--alo-text-muted)] tracking-wider">Preparation Progress</p>
-                    <p className="text-lg font-extrabold text-emerald-600 mt-1">64%</p>
-                    <p className="text-[11px] text-[var(--alo-text-muted)]">Weakest: Writing</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25">
-                    <p className="text-[11px] uppercase font-bold text-[var(--alo-cta-active)] tracking-wider">Practice</p>
-                    <p className="text-lg font-extrabold text-[var(--alo-cta)] mt-1">Guides</p>
-                    <p className="text-[11px] text-[var(--alo-cta-active)]">Choose your test</p>
-                  </div>
-                </div>
-
-                <div className="space-y-2.5 mb-5">
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[var(--alo-border)] shadow-sm">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Headphones className="w-3.5 h-3.5" /></div>
-                      <span className="text-xs font-semibold text-[var(--alo-text)]">IELTS Listening</span>
-                    </div>
-                    <span className="text-[11px] font-bold text-emerald-600">7.5 ✓</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[var(--alo-border)] shadow-sm">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] flex items-center justify-center"><PenTool className="w-3.5 h-3.5" /></div>
-                      <span className="text-xs font-semibold text-[var(--alo-text)]">Writing Feedback</span>
-                    </div>
-                    <span className="text-[11px] font-bold text-amber-600">6.0 • Review</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[var(--alo-border)] shadow-sm">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><Mic className="w-3.5 h-3.5" /></div>
-                      <span className="text-xs font-semibold text-[var(--alo-text)]">Speaking Practice</span>
-                    </div>
-                    <span className="text-[11px] font-bold text-[var(--alo-brand)]">Booked</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-4 gap-2 text-[11px] font-semibold">
-                  <div className="text-center p-2 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)]">IELTS</div>
-                  <div className="text-center p-2 rounded-xl bg-white border border-[var(--alo-border)] text-[var(--alo-body)]">PTE</div>
-                  <div className="text-center p-2 rounded-xl bg-white border border-[var(--alo-border)] text-[var(--alo-body)]">TOEFL</div>
-                  <div className="text-center p-2 rounded-xl bg-white border border-[var(--alo-border)] text-[var(--alo-body)]">Duolingo</div>
-                </div>
-
-                {/* Floating mini cards */}
-                <div className="absolute -top-3 -right-3 hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[var(--alo-border)] shadow-lg text-[11px] font-bold text-[var(--alo-text)]">
-                  <Target className="w-3.5 h-3.5 text-[var(--alo-brand)]" /> Target: 7.0
-                </div>
-                <div className="absolute -bottom-3 -left-3 hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-emerald-200 shadow-lg text-[11px] font-bold text-emerald-700">
-                  <TrendingUp className="w-3.5 h-3.5" /> Progress 64%
-                </div>
-              </Card>
+              <LanguageSectionVisual index={0} priority />
+              <p className="text-sm leading-relaxed text-[var(--alo-body)]">Understand the test your university accepts, plan your target score and prepare with a clear next step.</p>
 
               {/* Lead form quick */}
               <Card id="book-counselling" className="mt-6 p-5 bg-white border border-[var(--alo-border)] shadow-lg rounded-2xl">
                 <h4 className="font-bold text-sm text-[var(--alo-text)] mb-3">Book Free Counselling</h4>
                 <form onSubmit={(e) => handleLeadSubmit(e, 'hero')} className="space-y-3">
                   <div className="grid grid-cols-2 gap-2.5">
-                    <Input placeholder="Full Name" value={leadForm.name} onChange={e => setLeadForm({ ...leadForm, name: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
-                    <Input placeholder="Phone" value={leadForm.phone} onChange={e => setLeadForm({ ...leadForm, phone: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
+                    <Input aria-label="Full Name" required maxLength={120} placeholder="Full Name" value={leadForm.name} onChange={e => setLeadForm({ ...leadForm, name: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
+                    <Input aria-label="Phone" type="tel" required maxLength={32} placeholder="Phone" value={leadForm.phone} onChange={e => setLeadForm({ ...leadForm, phone: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div className="grid grid-cols-2 gap-2.5">
-                    <Input placeholder="Email" value={leadForm.email} onChange={e => setLeadForm({ ...leadForm, email: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
+                    <Input aria-label="Email" type="email" placeholder="Email" value={leadForm.email} onChange={e => setLeadForm({ ...leadForm, email: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
                     <select value={leadForm.test} onChange={e => setLeadForm({ ...leadForm, test: e.target.value })} className="h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
                       <option>IELTS</option><option>PTE Academic</option><option>TOEFL iBT</option><option>Duolingo</option><option>OIETC</option><option>MOI Guidance</option>
                     </select>
@@ -293,7 +225,7 @@ export default function PremiumLanguagePrepLandingView() {
                   <Button disabled={submitting} type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl text-sm">
                     {submitting ? 'Booking...' : 'Book Free Counselling →'}
                   </Button>
-                  <p className="text-[11px] text-[var(--alo-text-muted)] text-center">We respect your privacy — No spam, only relevant guidance. Source: language_prep hero</p>
+                  <p className="text-[11px] text-[var(--alo-text-muted)] text-center">We respect your privacy — No spam, only relevant guidance. Your information is used to respond to your enquiry.</p>
                 </form>
               </Card>
             </div>
@@ -316,6 +248,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 2. TEST DISCOVERY ============ */}
       <section id="test-discovery" className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={2} />
           <div className="text-center max-w-3xl mx-auto mb-10">
             <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-brand)] font-bold text-[11px] px-3 py-1 mb-3">TEST DISCOVERY</Badge>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--alo-text)]">Which English Test Is Right for You?</h2>
@@ -429,10 +362,11 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 3. WHY ENGLISH PROFICIENCY MATTERS ============ */}
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={3} />
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-7">
               <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] font-bold text-[11px] px-3 py-1 mb-3">WHY IT MATTERS</Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--alo-text)] leading-tight">Why English Language Proficiency Matters</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--alo-text)] leading-tight">Introduction: English language proficiency for study abroad</h2>
               <p className="text-sm text-[var(--alo-body)] mt-4 leading-relaxed">
                 English proficiency is often an important part of international university admission and, depending on the destination and immigration pathway, may also be relevant to visa or immigration requirements.
               </p>
@@ -487,8 +421,9 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 4. WHY TAKE AN ENGLISH TEST — 4 cards ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={4} />
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Why Take an English Test?</h2>
+            <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Why take an English language proficiency test to study abroad?</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Four key reasons students take English proficiency tests for study abroad.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -520,6 +455,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 5. FIND THE CORRECT TEST — 4-step journey ============ */}
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={5} />
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Find the Correct Test — 4-Step Journey</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Logical steps to choose destination, check requirements, select suitable test and prepare for target score.</p>
@@ -548,12 +484,13 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 6. ENGLISH TEST CARDS — Dynamic ============ */}
       <section id="test-cards" className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={6} />
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">English Test Cards — Database Driven</h2>
-              <p className="text-sm text-[var(--alo-body)] mt-2">Explore 15 tests — IELTS, PTE, TOEFL, Duolingo, OET, OIETC, Oxford ELLT, LanguageCert, Kaplan, GRE, GMAT, SAT, ACT, MOI Guidance.</p>
+              <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">English language and academic tests</h2>
+              <p className="text-sm text-[var(--alo-body)] mt-2">Explore all 14 requested test families, plus the existing Oxford ELLT and MOI guidance. Academic tests such as GRE, GMAT, SAT and ACT do not replace English-language evidence.</p>
               <p className="text-[11px] text-amber-700 mt-2 p-2 rounded-lg bg-amber-50 border border-amber-100 inline-flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5" /> MOI Guidance is guidance resource, not incorrectly represented as English proficiency test. Do not hardcode price/result time unless verified — Check current provider information.
+                <AlertCircle className="w-3.5 h-3.5" /> MOI is a possible language waiver route, not an English test. University acceptance and visa evidence are assessed separately.
               </p>
             </div>
             <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold text-sm rounded-xl"><a href="/language-prep/comparison">Compare All Tests →</a></Button>
@@ -561,60 +498,7 @@ export default function PremiumLanguagePrepLandingView() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {testCards.map((t: any) => (
-              <Card key={t.id} className="p-5 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition-all rounded-3xl flex flex-col justify-between h-full group">
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <Badge className={`${t.isPopular ? 'bg-[var(--alo-cta)] text-black' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]'} font-bold text-[11px] px-2.5 py-1`}>
-                      {t.isPopular ? 'Popular' : t.testType === 'moi_guidance' ? 'Guidance' : t.testType === 'academic' ? 'Academic Test' : 'English Test'}
-                    </Badge>
-                    <span className="text-[11px] font-medium text-[var(--alo-text-muted)] bg-[var(--alo-page)] px-2 py-1 rounded-full border border-[var(--alo-border)]">{t.durationDisplay}</span>
-                  </div>
-
-                  <h3 className="text-lg font-extrabold text-[var(--alo-text)]">{t.name}</h3>
-                  <p className="text-[11px] text-[var(--alo-brand)] font-semibold mt-0.5">{t.provider}</p>
-                  <p className="text-xs text-[var(--alo-body)] mt-3 leading-relaxed line-clamp-3">{t.shortDescription}</p>
-
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-[var(--alo-text-muted)] font-medium">Format:</span>
-                      <span className="font-semibold text-[var(--alo-text)]">{t.format}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-[var(--alo-text-muted)] font-medium">Scoring:</span>
-                      <span className="font-semibold text-[var(--alo-text)]">{t.scoringSystem}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-[var(--alo-text-muted)] font-medium">Results:</span>
-                      <span className="font-semibold text-emerald-600">{t.resultTimeline}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-[var(--alo-text-muted)] font-medium">Cost:</span>
-                      <span className="font-semibold text-[var(--alo-body)]">{t.costSummary}</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)] mb-1.5">Accepted For</p>
-                    <div className="flex flex-wrap gap-1">
-                      {(t.acceptanceSummary?.split(',').slice(0,4) || ['UK','Australia','Canada','USA']).map((c: string, i: number) => (
-                        <span key={i} className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-body)] font-medium">{c.trim()}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)] mb-1">Best For</p>
-                    <p className="text-[11px] text-[var(--alo-body)] leading-relaxed line-clamp-2">{t.bestFor}</p>
-                  </div>
-                </div>
-
-                <div className="mt-5 pt-4 border-t border-[var(--alo-border)] flex gap-2">
-                  <Button asChild className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl "><a href={`/language-prep/${t.slug}`} className="flex-1">Learn More</a></Button>
-                  <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold rounded-xl px-3"><a href={`/language-prep/comparison?tests=${t.slug}`}>Compare</a></Button>
-                </div>
-
-                <p className="text-[11px] text-[var(--alo-text-muted)] mt-2 text-center">Source: {t.sourceName} • Verified: {t.lastVerifiedAt || 'Check official'} • Acceptance varies</p>
-              </Card>
+              <LanguageTestCard key={t.id} test={t} index={testCards.indexOf(t)} />
             ))}
           </div>
         </div>
@@ -623,57 +507,13 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 7. TEST COMPARISON ============ */}
       <section id="test-comparison" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={7} />
           <div className="text-center max-w-3xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Compare English Tests</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats.</p>
           </div>
 
-          {/* Desktop table */}
-          <div className="hidden lg:block overflow-x-auto rounded-2xl border border-[var(--alo-border)] shadow-sm">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-[var(--alo-page)] text-[var(--alo-text)] border-b border-[var(--alo-border)]">
-                  <th className="p-4 font-bold">Test</th>
-                  <th className="p-4 font-bold">Duration</th>
-                  <th className="p-4 font-bold">Format</th>
-                  <th className="p-4 font-bold">Scoring</th>
-                  <th className="p-4 font-bold">Typical Result Timeline</th>
-                  <th className="p-4 font-bold">Acceptance</th>
-                  <th className="p-4 font-bold">Best For</th>
-                  <th className="p-4 font-bold">Preparation Style</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--alo-border)]">
-                {tests.filter(t => comparisonTests.includes(t.slug)).map((t: any) => (
-                  <tr key={t.id} className="hover:bg-[var(--alo-page)]">
-                    <td className="p-4 font-bold text-[var(--alo-brand)]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></td>
-                    <td className="p-4 text-[var(--alo-body)]">{t.durationDisplay}</td>
-                    <td className="p-4 text-[var(--alo-body)]">{t.format}</td>
-                    <td className="p-4 text-[var(--alo-body)]">{t.scoringSystem}</td>
-                    <td className="p-4 font-medium text-emerald-600">{t.resultTimeline}</td>
-                    <td className="p-4 text-[var(--alo-body)]">{t.acceptanceSummary?.slice(0,60)}...</td>
-                    <td className="p-4 text-[var(--alo-body)]">{t.bestFor?.slice(0,50)}...</td>
-                    <td className="p-4 text-[var(--alo-body)]">Module practice + Mock + Feedback</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile cards */}
-          <div className="lg:hidden grid gap-4">
-            {tests.filter(t => comparisonTests.includes(t.slug)).map((t: any) => (
-              <Card key={t.id} className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
-                <h4 className="font-bold text-sm text-[var(--alo-brand)]">{t.name}</h4>
-                <div className="mt-3 grid grid-cols-2 gap-3 text-[11px]">
-                  <div><span className="text-[var(--alo-text-muted)]">Duration:</span><p className="font-semibold text-[var(--alo-text)]">{t.durationDisplay}</p></div>
-                  <div><span className="text-[var(--alo-text-muted)]">Format:</span><p className="font-semibold">{t.format}</p></div>
-                  <div><span className="text-[var(--alo-text-muted)]">Scoring:</span><p className="font-semibold">{t.scoringSystem}</p></div>
-                  <div><span className="text-[var(--alo-text-muted)]">Results:</span><p className="font-semibold text-emerald-600">{t.resultTimeline}</p></div>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <LanguageTestComparison tests={tests} />
 
           <div className="text-center mt-8">
             <Button asChild className="bg-white border border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold rounded-xl shadow-sm"><a href="/language-prep/comparison">View Full Comparison →</a></Button>
@@ -684,6 +524,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 8. DESTINATION ACCEPTANCE EXPLORER ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={8} />
           <div className="text-center max-w-3xl mx-auto mb-8">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Destination Acceptance Explorer</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Select a country to see relevant English tests. Acceptance varies by university, course and visa route.</p>
@@ -734,6 +575,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 9. SCORE REQUIREMENT EXPLORER ============ */}
       <section id="score-explorer" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={9} />
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-5">
               <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Score Requirement Explorer</h2>
@@ -811,8 +653,9 @@ export default function PremiumLanguagePrepLandingView() {
       </section>
 
       {/* ============ 10. PREPARATION ROADMAP — 8 steps timeline ============ */}
-      <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
+      <section id="prep-roadmap" className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={10} />
           <div className="text-center max-w-3xl mx-auto mb-12">
             <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-brand)] font-bold text-[11px] px-3 py-1 mb-3">PREPARATION ROADMAP</Badge>
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">8-Step Preparation Roadmap</h2>
@@ -852,6 +695,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 11. ALO PREPARATION SUPPORT — Premium cards ============ */}
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={11} />
           <div className="text-center max-w-3xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">ALO Education Language Preparation Support</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Comprehensive support from test selection to exam readiness.</p>
@@ -881,6 +725,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 12. PREPARATION RESOURCES — real destinations only ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={12} />
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Preparation Resources</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Study guides for each test, a side-by-side comparison, and counselling for a personal study plan.</p>
@@ -909,6 +754,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 14. FAQ — 10 general ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={13} />
           <div className="text-center mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Frequently Asked Questions</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Common questions about English language tests for international students — minimum 15-20 FAQs per test on detail pages.</p>
@@ -936,8 +782,17 @@ export default function PremiumLanguagePrepLandingView() {
       </section>
 
       {/* ============ 15. FINAL CTA ============ */}
+      <section id="language-success-stories" className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><LanguageSectionVisual index={2} />
+          <h2 className="text-3xl font-bold">Student language preparation stories</h2>
+          <p className="mt-3 text-sm leading-relaxed text-[var(--alo-body)]">Published with student consent. Individual experiences do not guarantee a score, university offer or visa outcome.</p>
+          {stories.length ? <div className="mt-6 grid gap-5 md:grid-cols-2">{stories.map(story => <article key={story.id} className="rounded-2xl border border-[var(--alo-brand)] bg-white p-6"><h3 className="text-lg font-bold text-[var(--alo-cta)]">{story.studentName}</h3><p className="mt-2 text-sm">{story.universityName} {story.courseName}</p>{story.finalScore && <p className="mt-3 text-sm font-semibold">{story.previousScore ? `${story.previousScore} → ` : ''}{story.finalScore}</p>}<blockquote className="mt-3 text-sm leading-relaxed text-[var(--alo-body)]">{story.testimonial}</blockquote></article>)}</div> : <p className="mt-6 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-5 text-sm">No consent-approved language preparation stories are published yet.</p>}
+        </div>
+      </section>
+
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <LanguageSectionVisual index={14} />
           <Card className="p-8 sm:p-12 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-xl rounded-3xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl pointer-events-none" />
             <div className="relative text-center space-y-6">
@@ -951,7 +806,7 @@ export default function PremiumLanguagePrepLandingView() {
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
                     <MessageSquare className="w-4 h-4" /> Chat with Counselor
                   </a></Button>
-              </div>
+              <Button asChild variant="outline"><a href="#test-cards">Learn More</a></Button><Button asChild><a href="#prep-roadmap">Prepare with ALO</a></Button></div>
               <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-[var(--alo-brand-pale)] border-t border-white/20">
                 <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: +880 180 502 0101</span>
                 <span className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Email: info@aloeducation.com</span>
@@ -964,6 +819,7 @@ export default function PremiumLanguagePrepLandingView() {
       {/* ============ 16. FOOTER NOTE — Source verification ============ */}
       <section className="py-8 bg-[var(--alo-page)] border-t border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <LanguageSectionVisual index={15} />
           <p className="text-[11px] text-[var(--alo-text-muted)] leading-relaxed max-w-4xl mx-auto">Test information is taken from official provider sources where available. Acceptance varies by university, course and visa route. Check the official provider for the latest details. MOI is a guidance resource, not an English proficiency test.</p>
         </div>
       </section>

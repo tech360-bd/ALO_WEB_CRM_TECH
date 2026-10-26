@@ -191,3 +191,14 @@ export const COUNTRIES = [
   { id: 'uae', name: 'Dubai/UAE', slug: 'uae', flag: '🇦🇪' },
   { id: 'europe', name: 'Europe', slug: 'europe', flag: '🇪🇺' },
 ];
+
+/** Only these consent-approved public fields may reach the landing page. */
+export interface PublishedLanguageStory {
+  id: string;
+  studentName: string;
+  universityName: string;
+  courseName: string;
+  previousScore: string;
+  finalScore: string;
+  testimonial: string;
+}
