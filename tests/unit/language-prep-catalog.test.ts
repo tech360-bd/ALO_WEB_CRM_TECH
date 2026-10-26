@@ -3,10 +3,18 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { existsSync } from 'node:fs';
 import { ENGLISH_PREP_TESTS, ENGLISH_PREP_FAQS, ENGLISH_PREP_ACCEPTANCE, getTestBySlug } from '@/lib/language-prep/data';
-import { REQUIRED_TEST_SLUGS, applyReviewedFacts, preparationSteps, reviewedModules, reviewLanguageFaq } from '@/lib/language-prep/editorial';
+import { REQUIRED_TEST_SLUGS, applyReviewedFacts, preparationSteps, reviewedModules, reviewLanguageFaq, makePreparationPlan } from '@/lib/language-prep/editorial';
 import { LANGUAGE_PREP_PHOTOS, LanguageTestComparison } from '@/components/language-prep/LanguagePrepVisuals';
 
 describe('language preparation catalogue acceptance', () => {
+  it('compares entered scores without inventing preparation weeks across different test scales', () => {
+    expect(makePreparationPlan('55', '65', '10')).toMatchObject({ gap: '10.0', hours: 10 });
+    expect(makePreparationPlan('6', '6.5', '5')).not.toHaveProperty('weeks');
+    expect(makePreparationPlan('6', '6.5', '5')?.note).toContain('same test');
+  });
+  it('rejects invalid score-planner inputs', () => {
+    for (const args of [['', '7', '10'], ['no', '7', '10'], ['6', 'Infinity', '10'], ['-1', '7', '10'], ['6', '7', '0']]) expect(makePreparationPlan(...args as [string, string, string])).toBeNull();
+  });
   it('does not publish the closed SDS stream as an active route', () => {
     const faqs = ENGLISH_PREP_FAQS.filter(faq => /SDS/.test(faq.question));
     expect(faqs.length).toBeGreaterThan(0);

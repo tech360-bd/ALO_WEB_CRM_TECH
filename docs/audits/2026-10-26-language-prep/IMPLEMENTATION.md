@@ -77,3 +77,11 @@ The first production HTTP check exposed fifteen pre-existing named routes (for e
 The HTTP smoke runner checks rendered heading text across inline markup, all fourteen guides and detail APIs, the comparison endpoint, three served photos, Cambridge aliases and unknown-slug 404. Final-source HTTP results remain pending at this checkpoint.
 
 A second disposable-MySQL integration test now creates an explicitly labelled test-only requirement, queries it through the real API backed by the real Prisma client, verifies another test cannot match it, and removes only that disposable fixture. It cannot run without the existing safety-validated test database opt-in. No production test record is created.
+
+## Final content consistency changes
+
+Format badges now use the actual test format rather than showing Paper and Computer on every exam. The score planner compares entered values on the same scale and records weekly study hours; it does not invent a number of weeks to achieve a score. Invalid numeric inputs are rejected. Two focused tests cover these behaviours, bringing the focused suite to forty passing tests.
+
+The shared organization structured-data helper contained an old office address and phone number. It now reads the existing `ALO_CONTACT` and ordered `ALO_SOCIALS` configuration, matching the public header/footer without introducing another branding source. The production HTTP runner also checks this structured data.
+
+Latest full-source build, full lint/test rerun, final HTTP results and final-head CI are pending at the time of this checkpoint. The pull request verification table is updated after these checks finish. Browser/device interaction, live counselling delivery and production deployment are not marked complete.

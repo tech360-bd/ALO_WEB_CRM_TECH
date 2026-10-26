@@ -23,6 +23,9 @@ landing = read('/language-prep')
 heading = re.search(r'<h1[^>]*>(.*?)</h1>', landing, re.S)
 heading_text = ' '.join(unescape(re.sub(r'<[^>]+>', ' ', heading.group(1) if heading else '')).split())
 check('landing server renders the requested heading', heading_text == 'English tests for university entry')
+schemas = [json.loads(match) for match in re.findall(r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>', landing, re.S)]
+organization = next(schema for schema in schemas if schema.get('@type') == 'EducationalOrganization')
+check('organization schema matches current ALO contact information', organization['address']['streetAddress'].startswith('Barek Mansion-02') and organization['contactPoint']['telephone'] == '+8801805020101' and len(organization['sameAs']) == 4)
 check('all fourteen dedicated links are rendered', all(f'href="/language-prep/{slug}"' in landing for slug in SLUGS))
 check('landing contains photos and a complete comparison', '/images/landing/' in unquote(landing) and 'University &amp; visa acceptance' in landing)
 for slug in SLUGS:

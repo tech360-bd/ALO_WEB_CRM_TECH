@@ -16,7 +16,7 @@ import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCar
 import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
 import { LanguageSectionVisual, LanguageTestComparison } from './LanguagePrepVisuals';
 import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
-import { preparationSteps, ACCEPTANCE_NOTICE, LANGUAGE_TEST_FAQS } from '@/lib/language-prep/editorial';
+import { preparationSteps, ACCEPTANCE_NOTICE, LANGUAGE_TEST_FAQS, makePreparationPlan } from '@/lib/language-prep/editorial';
 import LanguageRequirementChecker from './LanguageRequirementChecker';
 import type { EnglishTest } from '@/lib/language-prep/types';
 import { EnglishExamCard } from '@/components/website/EnglishExamCta';
@@ -70,18 +70,9 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
       toast.error('Enter current and target scores');
       return;
     }
-    const currentNum = parseFloat(scorePlanner.current) || 0;
-    const targetNum = parseFloat(scorePlanner.target) || 0;
-    const gap = targetNum - currentNum;
-    const hours = parseInt(scorePlanner.hours) || 10;
-    const weeks = gap > 0 ? Math.ceil((gap * 20) / hours) : 0; // rough estimation, not guarantee
-    setPlannerResult({
-      gap: gap.toFixed(1),
-      weeks,
-      priority: gap > 1 ? 'Focus on weakest module + daily practice' : 'Refine test strategies + mock tests',
-      schedule: `Suggested: ${hours} hrs/week, ${weeks} weeks, 2-3 mocks, weekly writing feedback and speaking practice`,
-      note: 'Do not claim AI prediction guarantees — this is guidance only, not guaranteed outcome',
-    });
+    const plan = makePreparationPlan(scorePlanner.current, scorePlanner.target, scorePlanner.hours);
+    if (!plan) { toast.error('Enter valid non-negative scores and weekly study hours.'); return; }
+    setPlannerResult({ ...plan, examDate: scorePlanner.examDate });
   };
 
   const handleLead = async (e: React.FormEvent, section: string) => {
@@ -180,9 +171,8 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
 
               {!isMoi && (
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Academic</span>
-                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Paper</span>
-                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">Computer</span>
+                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">{test.testType === 'academic' ? 'Academic / Aptitude' : test.testType === 'professional' ? 'Professional English' : 'English Proficiency'}</span>
+                  <span className="px-3 py-1.5 rounded-full bg-[var(--alo-page)] border border-[var(--alo-border)] text-xs font-semibold text-[var(--alo-text)]">{test.format}</span>
                   {test.slug === 'ielts-ukvi' && <span className="px-3 py-1.5 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] text-xs font-bold text-[var(--alo-brand)]">UKVI SELT</span>}
                 </div>
               )}
@@ -454,24 +444,24 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
             <section id="assessment" className="py-2">
               <LanguageSectionVisual index={11} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} Score Planner — Interactive Tool</h2>
-              <p className="text-xs text-[var(--alo-text-muted)] mb-4">Do not claim AI prediction guarantees — guidance only</p>
+              <p className="text-xs text-[var(--alo-text-muted)] mb-4">Compare your entered scores on the same test scale, then discuss your study plan with a counsellor.</p>
               <Card className="p-6 bg-white border border-[var(--alo-border)] shadow-sm rounded-3xl">
                 <div className="grid sm:grid-cols-4 gap-3">
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Current Score</label>
-                    <Input placeholder="e.g. 6.0" value={scorePlanner.current} onChange={e => setScorePlanner({ ...scorePlanner, current: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
+                    <Input type="number" min="0" step="any" aria-label="Current score on this test scale" placeholder="Current provider score" value={scorePlanner.current} onChange={e => setScorePlanner({ ...scorePlanner, current: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Target Score</label>
-                    <Input placeholder="e.g. 7.0" value={scorePlanner.target} onChange={e => setScorePlanner({ ...scorePlanner, target: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
+                    <Input type="number" min="0" step="any" aria-label="Target score on this test scale" placeholder="Target provider score" value={scorePlanner.target} onChange={e => setScorePlanner({ ...scorePlanner, target: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Exam Date</label>
-                    <Input type="date" value={scorePlanner.examDate} onChange={e => setScorePlanner({ ...scorePlanner, examDate: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
+                    <Input type="date" aria-label="Planned exam date" value={scorePlanner.examDate} onChange={e => setScorePlanner({ ...scorePlanner, examDate: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Hours/Week</label>
-                    <select value={scorePlanner.hours} onChange={e => setScorePlanner({ ...scorePlanner, hours: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
+                    <select aria-label="Weekly study hours" value={scorePlanner.hours} onChange={e => setScorePlanner({ ...scorePlanner, hours: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
                       <option value="5">5 hrs/week</option><option value="10">10 hrs/week</option><option value="15">15 hrs/week</option><option value="20">20 hrs/week</option>
                     </select>
                   </div>
@@ -481,7 +471,8 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                 {plannerResult && (
                   <div className="mt-5 p-4 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)] space-y-2 text-xs">
                     <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Target Gap:</span><span className="font-bold">{plannerResult.gap}</span></div>
-                    <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Estimated Weeks:</span><span className="font-bold text-[var(--alo-brand)]">{plannerResult.weeks} weeks</span></div>
+                    <div className="flex justify-between"><span className="text-[var(--alo-text-muted)]">Weekly Commitment:</span><span className="font-bold text-[var(--alo-brand)]">{plannerResult.hours} hours</span></div>
+                    <p>Planned exam date: {plannerResult.examDate || 'Not specified'}</p>
                     <div><span className="text-[var(--alo-text-muted)]">Priority:</span><p className="font-medium mt-1">{plannerResult.priority}</p></div>
                     <div><span className="text-[var(--alo-text-muted)]">Schedule:</span><p className="font-medium mt-1">{plannerResult.schedule}</p></div>
                     <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100 mt-2">{plannerResult.note}</p>

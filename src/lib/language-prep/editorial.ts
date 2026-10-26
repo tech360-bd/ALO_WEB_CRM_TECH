@@ -118,3 +118,16 @@ export function reviewLanguageAcceptance<T extends { summary: string; minimumNot
   if (/\ball\b|\bSDS\b|99%|3,400/i.test(record.summary)) return { ...record, summary: ACCEPTANCE_NOTICE, minimumNote: 'Check the current institution, course, delivery-mode and component-score requirements.' };
   return record;
 }
+
+/** A planning aid, not an AI assessment or a prediction of weeks to a score. */
+export function makePreparationPlan(current: string, target: string, weeklyHours: string) {
+  if (!current.trim() || !target.trim()) return null;
+  const from = Number(current), to = Number(target), hours = Number(weeklyHours);
+  if (![from, to, hours].every(Number.isFinite) || from < 0 || to < 0 || hours < 1 || hours > 80) return null;
+  return {
+    gap: Math.max(0, to - from).toFixed(1), hours,
+    priority: to > from ? 'Identify weaker sections using a current-format diagnostic and feedback.' : 'Confirm component minimums and maintain practice before booking.',
+    schedule: `${hours} hours per week: divide time between section practice, feedback, review and current-format mock tasks. Agree the preparation length after an assessment.`,
+    note: 'Compare scores from the same test and scoring scale. This tool does not predict a result, readiness date or visa outcome.',
+  };
+}
