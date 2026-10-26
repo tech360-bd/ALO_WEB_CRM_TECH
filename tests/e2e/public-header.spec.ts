@@ -74,6 +74,22 @@ test.describe('desktop header (before login)', () => {
     expect(ctaBox?.x ?? -1).toBeGreaterThan(xs[xs.length - 1]);
   });
 
+  test('pending hover intent cannot reopen a dismissed dropdown', async ({ page }) => {
+    await page.goto('/');
+    const trigger = page.locator('#alo-public-header').getByRole('button', { name: 'Portal', exact: true });
+    await page.clock.install();
+    await trigger.click();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await trigger.click();
+    await page.clock.runFor(200);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await page.mouse.move(0, 0);
+    await trigger.hover();
+    await page.keyboard.press('Escape');
+    await page.clock.runFor(200);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  });
+
   test('CTA opens the consultation page and the dropdowns expose their links', async ({ page }) => {
     await page.goto('/');
     const header = page.locator('#alo-public-header');
@@ -117,6 +133,7 @@ test.describe('mobile header (before login)', () => {
     await header.getByRole('button', { name: 'Open navigation menu' }).click();
     const mobileMenu = page.locator('[data-slot="sheet-content"]');
     await expect(mobileMenu).toBeVisible();
+    await expect(page.locator('[data-slot="sheet-overlay"]')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.7)');
     for (const label of MENU_ORDER) {
       await expect(menuEntryWithin(mobileMenu, label), `${label} missing on mobile`).toBeVisible();
     }

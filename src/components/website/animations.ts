@@ -7,19 +7,21 @@ import { Variants, Transition } from 'framer-motion';
 
 /* ── Brand Colors ──────────────────────────────────────────── */
 export const BRAND = {
-  blue: '#0057B8',      // Education Blue
-  orange: '#E8501A',     // ALO Orange (primary CTA)
+  blue: '#0066CC',      // Education Blue
+  orange: '#F37021',     // ALO Orange (primary CTA)
   sunshine: '#FFB347',   // Sunshine Accent
   text: '#0F172A',       // Neutral Dark
   textSoft: '#555555',  // Neutral Gray
   softBg: '#FFF8F0',    // Warm off-white
   lightBg: '#F0F7FF',   // Light blue tint
   border: '#E2E8F0',
+  bg: '#F8FAFC',
+  whatsapp: '#25D366',
   success: '#10B981',
   warning: '#F59E0B',
   danger: '#EF4444',
   white: '#FFFFFF',
-  tagline: '#E8501A',   // Italic orange for tagline
+  tagline: '#F37021',   // Italic orange for tagline
 };
 
 /* ── Shared Transitions ─────────────────────────────────────── */
@@ -47,7 +49,7 @@ export const easeOutQuart: Transition = {
 
 /* ── Fade Up (scroll reveal) ──────────────────────────────────── */
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
@@ -57,7 +59,7 @@ export const fadeUp: Variants = {
 
 /* ── Fade Down ───────────────────────────────────────────────── */
 export const fadeDown: Variants = {
-  hidden: { opacity: 0, y: -30 },
+  hidden: { opacity: 0, y: -16 },
   visible: {
     opacity: 1,
     y: 0,
@@ -76,7 +78,7 @@ export const fadeIn: Variants = {
 
 /* ── Scale Up ────────────────────────────────────────────────── */
 export const scaleUp: Variants = {
-  hidden: { opacity: 0, scale: 0.85 },
+  hidden: { opacity: 0, scale: 0.98 },
   visible: {
     opacity: 1,
     scale: 1,
@@ -86,7 +88,7 @@ export const scaleUp: Variants = {
 
 /* ── Slide From Left ────────────────────────────────────────── */
 export const slideFromLeft: Variants = {
-  hidden: { opacity: 0, x: -60 },
+  hidden: { opacity: 0, x: -16 },
   visible: {
     opacity: 1,
     x: 0,
@@ -96,7 +98,7 @@ export const slideFromLeft: Variants = {
 
 /* ── Slide From Right ────────────────────────────────────────── */
 export const slideFromRight: Variants = {
-  hidden: { opacity: 0, x: 60 },
+  hidden: { opacity: 0, x: 16 },
   visible: {
     opacity: 1,
     x: 0,
@@ -118,7 +120,7 @@ export const staggerContainer: Variants = {
 
 /* ── Stagger Item — each child inside staggerContainer ──────── */
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
@@ -128,7 +130,7 @@ export const staggerItem: Variants = {
 
 /* ── Stagger Item with Scale ─────────────────────────────────── */
 export const staggerItemScale: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  hidden: { opacity: 0, y: 12, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
@@ -139,7 +141,7 @@ export const staggerItemScale: Variants = {
 
 /* ── Section Header (title + subtitle combo) ─────────────────── */
 export const sectionHeader: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
@@ -152,7 +154,7 @@ export const sectionHeader: Variants = {
 };
 
 export const sectionTitle: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
@@ -193,13 +195,13 @@ export const viewportRepeat = {
 
 /* ── Gradient helpers ───────────────────────────────────────── */
 export const gradients = {
-  blue: 'linear-gradient(135deg, #0057B8 0%, #003F87 100%)',
-  orange: 'linear-gradient(135deg, #E8501A 0%, #C93D13 100%)',
+  blue: 'linear-gradient(135deg, #0066CC 0%, #003F87 100%)',
+  orange: 'linear-gradient(135deg, #F37021 0%, #C93D13 100%)',
   blueLight: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
   softBlue: 'linear-gradient(180deg, #FFFFFF 0%, #F0F7FF 100%)',
-  heroGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,87,184,0.08) 0%, transparent 70%)',
-  ctaGlow: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(232,80,26,0.1) 0%, transparent 70%)',
-  warmGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,80,26,0.06) 0%, transparent 70%)',
+  heroGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,102,204,0.08) 0%, transparent 70%)',
+  ctaGlow: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(243,112,33,0.1) 0%, transparent 70%)',
+  warmGlow: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(243,112,33,0.06) 0%, transparent 70%)',
 };
 
 /* ── Hero slide transition ─────────────────────────────────── */

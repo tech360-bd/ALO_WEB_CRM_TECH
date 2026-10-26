@@ -408,15 +408,20 @@ export default function PublicNavbar() {
   }, [clearHoverTimer]);
 
   const toggleDropdown = useCallback((key: string) => {
+    clearHoverTimer();
     setOpenDropdown((prev) => (prev === key ? null : key));
-  }, []);
+  }, [clearHoverTimer]);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(event.target as Node)) setOpenDropdown(null);
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        clearHoverTimer();
+        setOpenDropdown(null);
+      }
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        clearHoverTimer();
         setOpenDropdown(null);
         setMobileOpen(false);
       }
@@ -430,11 +435,12 @@ export default function PublicNavbar() {
     };
   }, [clearHoverTimer]);
 
-  // Close every menu on navigation.
+  // Close every menu and pending hover on navigation.
   useEffect(() => {
+    clearHoverTimer();
     setOpenDropdown(null);
     setMobileOpen(false);
-  }, [pathname]);
+  }, [pathname, clearHoverTimer]);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
