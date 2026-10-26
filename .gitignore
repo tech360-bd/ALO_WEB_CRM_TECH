@@ -253,6 +253,7 @@ _reference_repos/*
 
 # Offline dev-sqlite sandbox artifacts (see docs/DEV-SQLITE-SANDBOX.md)
 prisma/schema.dev.prisma
+prisma/schema.sqlite-runtime.prisma
 prisma/dev.db*
 # ALO AI Workforce offline verification scratch (fake engine, sqlite mirror db, generated DDL)
 .awf-tmp/
