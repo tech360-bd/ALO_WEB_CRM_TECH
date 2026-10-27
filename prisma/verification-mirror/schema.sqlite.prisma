@@ -13649,3 +13649,89 @@ model PhdSopReview {
 
   @@index([sopId, createdAt])
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SUPER ADMIN OPERATING DASHBOARD — additive models (2026-10-27)
+//
+// Audit first: the repository already had equivalent models for Branch (Office /
+// EmployeeBranch), Partner (PartnerProfile), Message (CommunicationMessage /
+// UccMessage), FollowUp (WhatsAppFollowUpSchedule), SecurityLog
+// (EmployeeSecurityEvent / LoginSecurity), Report (MarketingReport / VisaReport),
+// AiJob (AiTask / AgentOSTask), AiApproval (ApprovalQueueItem) and per-user
+// permission overrides (FeatureAccessRule). Those are reused — NOT duplicated.
+//
+// The three models below were genuinely absent and are required by the Super
+// Admin permission-group builder, the permission-group assignment workflow and
+// the System Settings panel.
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A named, reusable bundle of permissions (spec §9 — 24 permission groups).
+/// `permissions` is a JSON array of canonical permission keys
+/// ("module.feature.action") so a group can span several modules.
+model PermissionGroup {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String   @default("")
+  department  String   @default("")
+  /// standard | sensitive | critical — critical groups still require an
+  /// explicit SUPER_ADMIN confirmation on every assignment.
+  riskLevel   String   @default("standard")
+  permissions String   @default("[]")
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  grants PermissionGroupGrant[]
+
+  @@index([department])
+  @@index([isActive])
+  @@map("permission_groups")
+}
+
+/// Assignment of a PermissionGroup to a role or an individual user, optionally
+/// time-boxed (spec §8 "set temporary permission / set permission expiry").
+model PermissionGroupGrant {
+  id        String    @id @default(cuid())
+  groupId   String
+  /// ROLE | USER
+  ownerType String
+  ownerId   String
+  grantedBy String    @default("")
+  reason    String    @default("")
+  expiresAt DateTime?
+  isActive  Boolean   @default(true)
+  revokedAt DateTime?
+  revokedBy String    @default("")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  group PermissionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, ownerType, ownerId])
+  @@index([ownerType, ownerId])
+  @@index([expiresAt])
+  @@map("permission_group_grants")
+}
+
+/// Key/value system settings (spec §26). Sensitive values (integration secrets)
+/// are never returned by the API — only a redacted marker.
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String   @default("")
+  /// string | number | boolean | json
+  valueType   String   @default("string")
+  category    String   @default("general")
+  label       String   @default("")
+  description String   @default("")
+  isSensitive Boolean  @default(false)
+  updatedBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@map("system_settings")
+}
