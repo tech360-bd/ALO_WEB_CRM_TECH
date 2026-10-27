@@ -13649,3 +13649,186 @@ model PhdSopReview {
 
   @@index([sopId, createdAt])
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SUPER ADMIN OPERATING DASHBOARD — additive models (2026-10-27)
+//
+// Audit first: the repository already had equivalent models for Branch (Office /
+// EmployeeBranch), Partner (PartnerProfile), Message (CommunicationMessage /
+// UccMessage), FollowUp (WhatsAppFollowUpSchedule), SecurityLog
+// (EmployeeSecurityEvent / LoginSecurity), Report (MarketingReport / VisaReport),
+// AiJob (AiTask / AgentOSTask), AiApproval (ApprovalQueueItem) and per-user
+// permission overrides (FeatureAccessRule). Those are reused — NOT duplicated.
+//
+// The three models below were genuinely absent and are required by the Super
+// Admin permission-group builder, the permission-group assignment workflow and
+// the System Settings panel.
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// A named, reusable bundle of permissions (spec §9 — 24 permission groups).
+/// `permissions` is a JSON array of canonical permission keys
+/// ("module.feature.action") so a group can span several modules.
+model PermissionGroup {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String   @default("")
+  department  String   @default("")
+  /// standard | sensitive | critical — critical groups still require an
+  /// explicit SUPER_ADMIN confirmation on every assignment.
+  riskLevel   String   @default("standard")
+  permissions String   @default("[]")
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  grants PermissionGroupGrant[]
+
+  @@index([department])
+  @@index([isActive])
+  @@map("permission_groups")
+}
+
+/// Assignment of a PermissionGroup to a role or an individual user, optionally
+/// time-boxed (spec §8 "set temporary permission / set permission expiry").
+model PermissionGroupGrant {
+  id        String    @id @default(cuid())
+  groupId   String
+  /// ROLE | USER
+  ownerType String
+  ownerId   String
+  grantedBy String    @default("")
+  reason    String    @default("")
+  expiresAt DateTime?
+  isActive  Boolean   @default(true)
+  revokedAt DateTime?
+  revokedBy String    @default("")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  group PermissionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, ownerType, ownerId])
+  @@index([ownerType, ownerId])
+  @@index([expiresAt])
+  @@map("permission_group_grants")
+}
+
+/// Key/value system settings (spec §26). Sensitive values (integration secrets)
+/// are never returned by the API — only a redacted marker.
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String   @default("")
+  /// string | number | boolean | json
+  valueType   String   @default("string")
+  category    String   @default("general")
+  label       String   @default("")
+  description String   @default("")
+  isSensitive Boolean  @default(false)
+  updatedBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@map("system_settings")
+}
+
+/// Per-user permission override (spec §8 allow/deny, §28 `users/{id}/permissions`).
+///
+/// A role grants `module.feature.action` keys. This table adds per-user
+/// exceptions on top: ALLOW widens, DENY narrows, and DENY always wins. It is a
+/// separate table (not a JSON column on portal_users) so every override has its
+/// own creator, reason and timestamp, and so a rollback can restore it.
+model UserPermissionOverride {
+  id            String   @id @default(cuid())
+  userId        String
+  /// module.feature.action
+  permissionKey String
+  /// ALLOW | DENY
+  effect        String
+  reason        String   @default("")
+  createdBy     String   @default("")
+  updatedBy     String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, permissionKey])
+  @@index([userId, effect])
+  @@map("user_permission_overrides")
+}
+
+/// Generated report artifact registry (spec §12 / §27 `Report`).
+///
+/// The per-domain report tables (MarketingReport, VisaReport, WeeklyReport, …)
+/// hold *source* metrics. This table records a Super Admin's generated report
+/// run: which category, which filters, what format, how many rows, and the
+/// stored payload. Exports are permission-gated and every generation/export
+/// writes an audit row.
+model Report {
+  id           String    @id @default(cuid())
+  reportCode   String    @unique
+  category     String
+  title        String
+  /// Shape: { dateFrom, dateTo, branch, country, role, employeeId, … }
+  filters      String    @default("{}")
+  /// csv | json (xlsx/pdf are produced by the export pipeline when available)
+  format       String    @default("csv")
+  status       String    @default("READY")
+  rowCount     Int       @default(0)
+  /// CSV/JSON payload for small reports, kept server-side only.
+  payload      String    @default("")
+  generatedBy  String    @default("")
+  generatedAt  DateTime  @default(now())
+  expiresAt    DateTime?
+  downloadCount Int      @default(0)
+  lastDownloadedAt DateTime?
+
+  @@index([category])
+  @@index([generatedBy])
+  @@index([generatedAt])
+  @@map("reports")
+}
+
+/// AI System Builder request (spec §21 / §27 `ModuleBuildRequest`).
+///
+/// Captures the plan → files → patch → sandbox → approve → apply workflow.
+/// The AI cannot apply a patch to production without an explicit Super Admin
+/// approval recorded here, and every transition is audited.
+model ModuleBuildRequest {
+  id            String    @id @default(cuid())
+  requestCode   String    @unique
+  /// create_page | create_dashboard | create_form | create_report | create_api |
+  /// create_database_model | fix_bug | audit_route | audit_security | improve_ui |
+  /// generate_content | generate_workflow
+  taskType      String
+  targetModule  String
+  requirement   String
+  priority      String    @default("normal")
+  /// low | medium | high — drives whether approval is mandatory.
+  riskLevel     String    @default("medium")
+  approvalRequired Boolean @default(true)
+  sandboxFirst  Boolean   @default(true)
+  publishAfterApproval Boolean @default(false)
+  status        String    @default("PLAN_REQUESTED")
+  /// JSON: { steps: string[], filesToChange: string[], sandboxResult: {...} }
+  plan          String    @default("{}")
+  proposedFiles String    @default("[]")
+  patchProposal String    @default("")
+  sandboxResult String    @default("{}")
+  requestedBy   String    @default("")
+  reviewedBy    String    @default("")
+  reviewedAt    DateTime?
+  appliedBy     String    @default("")
+  appliedAt     DateTime?
+  decisionNote  String    @default("")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@index([taskType])
+  @@index([requestedBy])
+  @@map("module_build_requests")
+}

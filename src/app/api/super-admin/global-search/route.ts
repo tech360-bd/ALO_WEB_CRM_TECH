@@ -8,10 +8,13 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
-    // Must be super admin or admin
-    const isSuperAdmin =
-      (auth.roles && (auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN'))) ||
-      auth.email === 'alo.admin@aloeducation.com';
+    // SUPER_ADMIN role only. A hardcoded privileged email bypass
+    // (`auth.email === 'alo.admin@aloeducation.com'`) previously existed here;
+    // it was a second, undocumented authentication path that granted the full
+    // cross-entity search to that address regardless of role and could not be
+    // revoked from the RBAC UI. Removed — authority comes from the role only.
+    const isSuperAdmin = (auth.userType === 'SUPER_ADMIN')
+      || (auth.roles || []).some((role) => role.toLowerCase() === 'super_admin');
 
     if (!isSuperAdmin) {
       return NextResponse.json({ error: 'Unauthorized: Super Admin access required' }, { status: 403 });
@@ -105,7 +108,9 @@ export async function GET(req: NextRequest) {
         visaCases,
       },
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Global search failed', details: error.message }, { status: 500 });
+  } catch (error) {
+    // Never leak internal error detail to the client.
+    console.error('[super-admin/global-search] failed', error);
+    return NextResponse.json({ error: 'Global search is temporarily unavailable.' }, { status: 503 });
   }
 }

@@ -1,33 +1,36 @@
+// GET /api/super-admin/dashboard
+//
+// Single source of truth for the Super Admin operating dashboard.
+// Previously this route returned fabricated fallbacks (`studentCount || 1420`,
+// `newStudentsToday: 18`, `aiJobsRunning: 8`). Those are gone: every value now
+// comes from a real query and an unreadable source is reported as unavailable.
+
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { requireSuperAdminOrActing } from '@/lib/super-admin/access';
+import { getOperatingMetrics } from '@/lib/super-admin/metrics';
 
-export const GET = withAuth(
-  async (req: Request, auth: AuthContext) => {
-    try {
-      const studentCount = await db.portalStudentProfile.count();
-      const userCount = await db.portalUser.count();
-      const appCount = await db.portalStudentApplication.count();
-      const auditCount = await db.portalAuditLog.count();
+export const dynamic = 'force-dynamic';
 
-      return NextResponse.json({
-        success: true,
-        metrics: {
-          totalStudents: studentCount || 1420,
-          newStudentsToday: 18,
-          activeApps: appCount || 480,
-          totalUsers: userCount || 42,
-          auditLogsCount: auditCount || 1250,
-          aiJobsRunning: 8,
-          aiPendingApprovals: 5,
-        },
-      });
-    } catch (error: any) {
-      return NextResponse.json(
-        { success: false, error: error.message || 'Failed to fetch Super Admin dashboard metrics' },
-        { status: 500 }
-      );
-    }
-  },
-  { requireRoles: ['super_admin'] }
-);
+async function handleGet(_request: Request, auth: AuthContext) {
+  const guard = requireSuperAdminOrActing(auth);
+  if (!guard.ok) return guard.response;
+
+  try {
+    const metrics = await getOperatingMetrics(auth.name || auth.actorName || null);
+    // Reading the whole business overview is itself a sensitive event.
+    await logAuditAction(auth, 'SUPER_ADMIN_DASHBOARD_VIEWED', 'SuperAdminDashboard', 'overview', {
+      kpiCount: metrics.kpis.length,
+      unavailableKpis: metrics.kpis.filter((kpi) => !kpi.available).map((kpi) => kpi.key),
+    });
+    return NextResponse.json(metrics);
+  } catch (error) {
+    console.error('[super-admin/dashboard] metrics aggregation failed', error);
+    return NextResponse.json(
+      { success: false, error: 'Dashboard metrics are temporarily unavailable.' },
+      { status: 503 },
+    );
+  }
+}
+
+export const GET = withAuth(handleGet);
