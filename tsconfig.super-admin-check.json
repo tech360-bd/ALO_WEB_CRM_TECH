@@ -78,7 +78,18 @@
     "src/lib/super-admin/permission-groups.ts",
     "src/lib/super-admin/reports.ts",
     "src/lib/super-admin/security-tests.ts",
-    "src/lib/super-admin/types.ts"
+    "src/lib/super-admin/types.ts",
+    "src/app/api/student/test-check/route.ts",
+    "src/components/student/TestStudentView.tsx",
+    "src/components/auth/StudentRegisterView.tsx",
+    "src/app/student-login/page.tsx",
+    "src/app/student-register/page.tsx",
+    "src/app/english-test-login/page.tsx",
+    "src/app/english-test-register/page.tsx",
+    "src/app/test-student/page.tsx",
+    "src/app/student/compare/page.tsx",
+    "src/app/student/shortlist/page.tsx",
+    "src/app/student/register/page.tsx"
   ],
   "exclude": [
     "node_modules",
