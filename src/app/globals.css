@@ -1205,3 +1205,139 @@ summary:focus-visible {
     animation: none !important;
   }
 }
+
+/* ============================================================
+   ALO ENTERPRISE COMMAND CENTER — dark dashboard theme
+   ------------------------------------------------------------
+   Faithful port of the "ALO Enterprise Command Center — Super
+   Admin Dashboard" blueprint. Used by /super-admin/command-center
+   and /super-admin/ai-eos-blueprint. Every colour is a token so
+   the two blueprint views and the flagship AI-EOS dashboard stay
+   visually consistent.
+   ============================================================ */
+.cc {
+  --cc-bg: #0a0e17;
+  --cc-bg-2: #111827;
+  --cc-card: #1a2036;
+  --cc-card-hover: #1e2844;
+  --cc-border: #2a3454;
+  --cc-text: #e2e8f0;
+  --cc-text-2: #94a3b8;
+  --cc-text-3: #64748b;
+  --cc-blue: #3b82f6;
+  --cc-cyan: #06b6d4;
+  --cc-green: #10b981;
+  --cc-orange: #f59e0b;
+  --cc-red: #ef4444;
+  --cc-purple: #8b5cf6;
+  --cc-gold: #fbbf24;
+  --cc-silver: #cbd5e1;
+  --cc-bronze: #d97706;
+  color: var(--cc-text);
+  background-color: var(--cc-bg);
+  -webkit-font-smoothing: antialiased;
+}
+.cc * { box-sizing: border-box; }
+.cc-card {
+  background: var(--cc-card);
+  border: 1px solid var(--cc-border);
+  border-radius: 12px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.cc-card:hover { background: var(--cc-card-hover); border-color: var(--cc-blue); }
+.cc-code {
+  background: var(--cc-bg-2);
+  border: 1px solid var(--cc-border);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.cc::-webkit-scrollbar { width: 8px; height: 8px; }
+.cc::-webkit-scrollbar-track { background: var(--cc-bg-2); }
+.cc::-webkit-scrollbar-thumb { background: var(--cc-border); border-radius: 4px; }
+.cc::-webkit-scrollbar-thumb:hover { background: var(--cc-blue); }
+
+.cc-gradient-text {
+  background: linear-gradient(135deg, var(--cc-blue), var(--cc-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.cc-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cc-green);
+  display: inline-block;
+  animation: cc-pulse 1.6s ease-in-out infinite;
+}
+@keyframes cc-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+/* certification conic rings */
+.cc-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex: 0 0 auto;
+  position: relative;
+}
+.cc-ring::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--cc-card);
+  z-index: 0;
+}
+.cc-ring span { position: relative; z-index: 1; }
+.cc-ring-platinum { background: conic-gradient(var(--cc-gold) 0 100%, var(--cc-bg-2) 0 100%); }
+.cc-ring-gold     { background: conic-gradient(#fcd34d 0 85%, var(--cc-bg-2) 85% 100%); }
+.cc-ring-silver   { background: conic-gradient(var(--cc-silver) 0 70%, var(--cc-bg-2) 70% 100%); }
+.cc-ring-bronze   { background: conic-gradient(var(--cc-bronze) 0 55%, var(--cc-bg-2) 55% 100%); }
+.cc-ring-pending  { background: conic-gradient(var(--cc-red) 0 30%, var(--cc-bg-2) 30% 100%); }
+
+.cc-progress {
+  height: 6px;
+  background: var(--cc-bg-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cc-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.cc-badge {
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.cc-badge-platinum { background: rgba(251,191,36,0.15); color: var(--cc-gold); border-color: rgba(251,191,36,0.35); }
+.cc-badge-gold     { background: rgba(252,211,77,0.12); color: #fcd34d; border-color: rgba(252,211,77,0.3); }
+.cc-badge-silver   { background: rgba(203,213,225,0.12); color: var(--cc-silver); border-color: rgba(203,213,225,0.3); }
+.cc-badge-bronze   { background: rgba(217,119,6,0.14); color: var(--cc-bronze); border-color: rgba(217,119,6,0.3); }
+.cc-badge-pending  { background: rgba(239,68,68,0.12); color: var(--cc-red); border-color: rgba(239,68,68,0.3); }
+.cc-badge-operational { background: rgba(16,185,129,0.15); color: var(--cc-green); border-color: rgba(16,185,129,0.35); }
+.cc-badge-degraded   { background: rgba(245,158,11,0.15); color: var(--cc-orange); border-color: rgba(245,158,11,0.35); }
+.cc-badge-offline    { background: rgba(239,68,68,0.15); color: var(--cc-red); border-color: rgba(239,68,68,0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-live-dot,
+  .cc-progress-fill { animation: none !important; transition: none !important; }
+}

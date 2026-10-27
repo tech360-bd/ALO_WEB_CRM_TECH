@@ -513,8 +513,11 @@ function CrmAdminView({ view }: { view: PortalView }) {
 // ============================================================
 
 export default function HomePageWrapper() {
+  // The searchParams-gated content needs a Suspense boundary, but the
+  // fallback MUST be the real public site (not a blank white screen) so
+  // the first paint shows the homepage and it is server-rendered for SEO.
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+    <Suspense fallback={<PublicView view="website" />}>
       <HomePageContent />
     </Suspense>
   );

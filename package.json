@@ -8,7 +8,7 @@
   },
   "packageManager": "npm@10.9.2",
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev --webpack -p 3000",
     "build": "node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS=\"--max-old-space-size=${ALO_BUILD_HEAP_MB:-4096}\" prisma generate && npm run db:verify-client && SKIP_CMS_DB=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS=\"--max-old-space-size=${ALO_BUILD_HEAP_MB:-4096}\" next build --webpack && node scripts/prepare-standalone.mjs",
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint .",
