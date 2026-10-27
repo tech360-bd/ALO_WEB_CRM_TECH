@@ -141,6 +141,13 @@ const PUBLIC_ROUTES = [
   "/student/login",
   "/student/register",
   "/verify-email",
+  // Spec-named student journey entry points (spec §23): the /student-* aliases
+  // and the English-test candidate entry pages. They render the same shared
+  // LoginPage/RegisterPage components as /student/login and /student/register,
+  // so an anonymous visitor must reach them instead of bouncing to /login.
+  "/student-register",
+  "/english-test-login",
+  "/english-test-register",
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -635,7 +642,11 @@ export default async function proxy(request: NextRequest) {
 
   // Protect portal page routes
   if (!token) {
-    const loginUrl = new URL("/login", request.url);
+    // Student journey pages send anonymous visitors to the student login, not
+    // the staff login: the staff form cannot authenticate a student account, so
+    // the old target was a dead end for every student deep link.
+    const isStudentArea = matchesPath(pathname, "/student") || pathname === "/test-student";
+    const loginUrl = new URL(isStudentArea ? "/student-login" : "/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }

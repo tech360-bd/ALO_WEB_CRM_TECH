@@ -1,11 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/auth-middleware';
-import { SUPER_ADMIN_SECURITY_TESTS } from '@/lib/super-admin/security-tests';
+// GET /api/super-admin/security-tests
+//
+// Returns the result of the security negative-test suite, COMPUTED from the
+// repository source at request time. The previous implementation returned a
+// hardcoded array of `result: 'PASS'` strings, including for routes that did
+// not exist, which could never fail and therefore proved nothing.
 
-export async function GET(request: NextRequest) {
-  return withAuth(async (req, auth) => {
-    const isAuthorized = auth.roles.some((r) => ['SUPER_ADMIN', 'super_admin'].includes(r));
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'SUPER_ADMIN required' }, { status: 403 });
-    return NextResponse.json({ success: true, tests: SUPER_ADMIN_SECURITY_TESTS, total: SUPER_ADMIN_SECURITY_TESTS.length, message: 'Security negative tests per spec 37 — 30 tests — backend-enforced not merely UI controls — actually executed tests for scenarios non-super admin cannot access super admin dashboard/APIs, unauthorized admin cannot access employee control, counselor cannot access super admin reports, marketing cannot modify RBAC without permission, visa officer cannot access HR salary without permission, acting-as start requires authorization and reason, acting-as creates audit event, banner identifies both real and effective identities, can be exited and revoked, cannot escalate permissions, temporary permission expires, permission mutation creates audit event, sensitive document download authorized and audited, AI cannot publish without approval, AI cannot modify RBAC without approval, bulk export requires authorization and confirmation, suspended users cannot authenticate, super admin can revoke employee session, sensitive data access creates audit event, global search does not leak unauthorized records, high-risk system builder requests cannot apply without approval, emergency lockdown blocks protected operations, lockdown recovery works, partner users cannot access another partner records, branch-scoped users cannot access another branch without permission, country-scoped users cannot access another country without permission, client cannot forge real actor or acting-as identity, failed privileged operation safely reported and audited, rate limiting and input validation work on sensitive endpoints — all with test name/environment/result/evidence — do not report PASS if test not executed' });
-  })(request);
+import { NextResponse } from 'next/server';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { requireSuperAdminOrActing } from '@/lib/super-admin/access';
+import { runSuperAdminSecurityChecks } from '@/lib/super-admin/security-tests';
+
+export const dynamic = 'force-dynamic';
+
+async function handleGet(_request: Request, auth: AuthContext) {
+  const guard = requireSuperAdminOrActing(auth);
+  if (!guard.ok) return guard.response;
+
+  const tests = runSuperAdminSecurityChecks();
+  const count = (result: string) => tests.filter((test) => test.result === result).length;
+
+  return NextResponse.json({
+    success: true,
+    methodology:
+      'Each test is verified by reading the named source file and asserting that the required guard is present. '
+      + 'A test whose file is missing is reported FAIL. This is source-level verification; execute the suite '
+      + 'against a running server for request-level proof.',
+    totals: {
+      tests: tests.length,
+      pass: count('PASS'),
+      fail: count('FAIL'),
+      notVerified: count('NOT_VERIFIED'),
+    },
+    tests,
+  });
 }
+
+export const GET = withAuth(handleGet);
