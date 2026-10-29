@@ -34,6 +34,8 @@
     "remotion:studio": "npx remotion studio src/lib/video-engine/remotion/entry.tsx",
     "remotion:render": "npx remotion render src/lib/video-engine/remotion/entry.tsx",
     "db:verify-client": "node scripts/verify-prisma-client.mjs",
+    "data:course-month:check": "tsx scripts/stage-course-month-coverage.ts",
+    "data:course-month:stage": "tsx scripts/stage-course-month-coverage.ts --stage",
     "db:diagnose": "node scripts/db-diagnose.mjs",
     "audit:env": "node scripts/audit-env-vars.mjs",
     "typecheck:references": "npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit",
