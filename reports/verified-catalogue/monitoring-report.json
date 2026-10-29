@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-29T02:41:11.842Z",
+  "generatedAt": "2026-10-29T03:23:26.567Z",
   "window": [
     "2027-01",
     "2027-02",
@@ -16,16 +16,16 @@
     "2028-01"
   ],
   "totals": {
-    "VERIFIED_AVAILABLE": 9,
-    "VERIFIED_NOT_OFFERED": 18,
-    "NOT_PUBLISHED": 25,
+    "VERIFIED_AVAILABLE": 15,
+    "VERIFIED_NOT_OFFERED": 52,
+    "NOT_PUBLISHED": 37,
     "VERIFICATION_PENDING": 0,
     "SOURCE_UNAVAILABLE": 0,
     "CONFLICT_REQUIRES_REVIEW": 0,
     "MISSING": 0
   },
-  "courses": 4,
-  "publishedRows": 52,
+  "courses": 8,
+  "publishedRows": 104,
   "pendingApprovals": 0,
   "rejectedRows": 0,
   "staleCourseMonths": [],
@@ -33,27 +33,30 @@
   "conflictsAwaitingReview": 1,
   "failedOfficialSources": 0,
   "researchQueue": {
-    "total": 13,
+    "total": 17,
     "byStatus": {
-      "QUEUED": 7,
-      "IN_PROGRESS": 6
+      "IN_PROGRESS": 8,
+      "VERIFIED": 4,
+      "DEFERRED": 1,
+      "BLOCKED": 2,
+      "QUEUED": 2
     },
     "byCountry": {
-      "usa": 1,
-      "germany": 1,
-      "uae": 1,
-      "malaysia": 1,
-      "new-zealand": 1,
-      "denmark": 1,
-      "south-korea": 1,
       "uk": 2,
       "ireland": 1,
       "japan": 1,
       "australia": 1,
-      "canada": 1
+      "canada": 1,
+      "germany": 1,
+      "new-zealand": 1,
+      "denmark": 2,
+      "south-korea": 2,
+      "usa": 1,
+      "uae": 2,
+      "malaysia": 2
     }
   },
-  "evidenceRecords": 18,
+  "evidenceRecords": 30,
   "uninspectedEvidence": 0,
   "courseMatrix": [
     {
@@ -86,6 +89,36 @@
     {
       "courseSlug": "monash-master-of-business",
       "availableMonths": [],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "availableMonths": [
+        "2027-04",
+        "2027-10"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "availableMonths": [
+        "2027-03",
+        "2027-07"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "availableMonths": [
+        "2027-09"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "availableMonths": [
+        "2027-03"
+      ],
       "missingMonths": []
     }
   ],

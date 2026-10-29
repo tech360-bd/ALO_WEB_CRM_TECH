@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-29T02:31:38.317Z",
+  "generatedAt": "2026-10-29T03:24:51.377Z",
   "source": "database",
-  "publishedRowCount": 52,
+  "publishedRowCount": 104,
   "window": [
     "2027-01",
     "2027-02",
@@ -18,9 +18,9 @@
     "2028-01"
   ],
   "totals": {
-    "VERIFIED_AVAILABLE": 9,
-    "VERIFIED_NOT_OFFERED": 18,
-    "NOT_PUBLISHED": 25,
+    "VERIFIED_AVAILABLE": 15,
+    "VERIFIED_NOT_OFFERED": 52,
+    "NOT_PUBLISHED": 37,
     "VERIFICATION_PENDING": 0,
     "SOURCE_UNAVAILABLE": 0,
     "CONFLICT_REQUIRES_REVIEW": 0,
@@ -70,14 +70,56 @@
       "country": "Australia",
       "availableMonths": [],
       "missingMonths": []
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "title": "MSc Informatics",
+      "university": "Technical University of Munich",
+      "country": "Germany",
+      "availableMonths": [
+        "2027-04",
+        "2027-10"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "title": "Master of Data Science (MDataSci)",
+      "university": "The University of Auckland",
+      "country": "New Zealand",
+      "availableMonths": [
+        "2027-03",
+        "2027-07"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "title": "MSc Computer Science",
+      "university": "University of Copenhagen",
+      "country": "Denmark",
+      "availableMonths": [
+        "2027-09"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "title": "BSc Computer Science & Engineering",
+      "university": "Yonsei University",
+      "country": "South Korea",
+      "availableMonths": [
+        "2027-03"
+      ],
+      "missingMonths": []
     }
   ],
   "summary": {
-    "totalCourseMonths": 52,
+    "totalCourseMonths": 104,
     "byStatus": {
-      "VERIFIED_AVAILABLE": 9,
-      "VERIFIED_NOT_OFFERED": 18,
-      "NOT_PUBLISHED": 25,
+      "VERIFIED_AVAILABLE": 15,
+      "VERIFIED_NOT_OFFERED": 52,
+      "NOT_PUBLISHED": 37,
       "VERIFICATION_PENDING": 0,
       "SOURCE_UNAVAILABLE": 0,
       "CONFLICT_REQUIRES_REVIEW": 0,
@@ -85,8 +127,12 @@
     },
     "availableMonths": [
       "2027-01",
+      "2027-03",
+      "2027-04",
       "2027-05",
+      "2027-07",
       "2027-09",
+      "2027-10",
       "2028-01"
     ],
     "coursesWithNoVerifiedMonth": [
@@ -96,7 +142,11 @@
       "manchester-msc-accounting",
       "centennial-biotechnology-fast-track",
       "centennial-construction-project-management",
-      "monash-master-of-business"
+      "monash-master-of-business",
+      "tum-master-informatics",
+      "auckland-master-of-data-science",
+      "copenhagen-master-computer-science",
+      "yonsei-bsc-computer-science"
     ]
   }
 }

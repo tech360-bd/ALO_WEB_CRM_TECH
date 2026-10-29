@@ -122,9 +122,15 @@ MySQL client is the one on disk.
 
 ## 7. Known limitations of this cycle
 
-* Course-level verification was completed for four programmes at three
-  institutions (UK, Canada, Australia); institution-level 2027 evidence was
-  captured for Ireland, Japan and a second UK institution.
+* Course-level verification was completed for **eight programmes at ten
+  institutions in nine countries** (UK, Canada, Australia, Ireland, Japan,
+  Germany, New Zealand, Denmark, South Korea).
+* Three of the twelve supported countries still have **no course-level record**:
+  the USA, the UAE and Malaysia. Their verified progress and exact blockers are
+  recorded in `researchQueue` (e.g. ASU does not publish a 2027/28 international
+  tuition figure or term start on the pages read; AUS publishes Fall 2027
+  application periods but no semester start date; the UM admission host failed
+  to load, and aggregator figures are not acceptable as evidence).
 * Remaining countries and universities are listed in
   `data/verified-2027/dataset.json → researchQueue` and in the CRM table
   `CrmResearchQueueItem`; they are reported as outstanding coverage, never as

@@ -1,14 +1,14 @@
 {
   "schemaVersion": "1.0.0",
   "datasetId": "alo-verified-2027-2028-cycle-2026-10-29",
-  "generatedAt": "2026-10-29T09:30:00Z",
+  "generatedAt": "2026-10-29T12:00:00Z",
   "window": {
     "startYear": 2027,
     "startMonth": 1,
     "endYear": 2028,
     "endMonth": 1
   },
-  "notes": "Official-source verification captured on 2026-10-29. Evidence excerpts are whitespace-normalised but otherwise verbatim and kept in source order; table cell separators are collapsed to single spaces. Each excerpt's SHA-256 is computed at ingest time and stored on CrmOfficialEvidence. Only four courses reached course-level verification in this cycle; the rest of the supported countries are held in researchQueue and are reported as outstanding coverage, not as verified data.",
+  "notes": "Official-source verification captured on 2026-10-29. Evidence excerpts are whitespace-normalised but otherwise verbatim and kept in source order; table cell separators are collapsed to single spaces. Each excerpt's SHA-256 is computed at ingest time and stored on CrmOfficialEvidence. Only four courses reached course-level verification in this cycle; the rest of the supported countries are held in researchQueue and are reported as outstanding coverage, not as verified data. Research wave 2 (2026-10-29) adds Germany, New Zealand, Denmark and South Korea with 4 universities, 4 programmes, 12 evidence records and 52 new course-month rows; USA, UAE and Malaysia remain partially researched and are tracked in researchQueue with their precise blockers.",
   "evidence": [
     {
       "id": "man-masters-catalogue-2027",
@@ -346,6 +346,261 @@
       "entityType": "UNIVERSITY",
       "universitySlug": "ulster-university",
       "confidence": 0.9
+    },
+    {
+      "id": "tum-informatics-programme-2027",
+      "sourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "finalUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Technical University of Munich",
+      "pageTitle": "Informatics - Master of Science (M.Sc.) - TUM",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "The tuition fees for international students from third countries for this degree program are 6,000 euros per semester. This amount is charged for full-time study. … Application Period Winter semester: 01.02. – 31.05. Summer semester: 01.10. – 30.11. … Main Locations Garching … Start of Degree Program Possible for both winter and summer semester … Standard Duration of Studies 4 semesters (fulltime) … Credits 120 ECTS",
+      "fieldScope": [
+        "fee",
+        "applicationWindow",
+        "startMonths",
+        "campus",
+        "duration",
+        "credits"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "technical-university-of-munich",
+      "courseSlug": "tum-master-informatics",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "tum-semester-dates-2027",
+      "sourceUrl": "https://www.tum.de/en/studies/application/application-info-portal/dates-periods-and-deadlines",
+      "finalUrl": "https://www.tum.de/en/studies/application/application-info-portal/dates-periods-and-deadlines",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Technical University of Munich",
+      "pageTitle": "Dates, Periods and Deadlines - TUM",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Summer semester 2027: 01.04.2027 – 30.09.2027 · Lecture period: 12.04.2027 – 16.07.2027 … Winter semester 2027/28: 01.10.2027 – 31.03.2028 · Lecture period: 18.10.2027 – 11.02.2028 … Enrollment for summer semester 2027: until 14.05.2027",
+      "fieldScope": [
+        "semesterDates",
+        "startDate",
+        "lecturePeriod",
+        "enrolmentDeadline"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "technical-university-of-munich",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "tum-tuition-increase-2027-28",
+      "sourceUrl": "https://www.tum.de/en/studies/fees/tuition",
+      "finalUrl": "https://www.tum.de/en/studies/fees/tuition",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Technical University of Munich",
+      "pageTitle": "Tuition Fees for Students from Non-EU Countries - TUM",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Tuition fees for international students from non-EU/EEA countries at TUM will increase for the winter semester 2027/28. The tuition fees will then be … for Master’s programs: 4,600 or 6,800 euros … For master’s degree programs, they are usually 4,000 or 6,000 euros per semester.",
+      "fieldScope": [
+        "fee",
+        "academicYear",
+        "feeRange"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "technical-university-of-munich",
+      "language": "en",
+      "confidence": 0.9
+    },
+    {
+      "id": "auckland-mdats-intakes-2027",
+      "sourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "finalUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Auckland",
+      "pageTitle": "Master of Data Science – University of Auckland",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Next start date 2027 Semester One – 1 March 2027 Semester Two – 19 July · Available locations City · Points 180 or 240 · Programme type Postgraduate Taught options available … We also offer the Master of Data Science (MDataSci) as a 240-point taught masters as a March intake only.",
+      "fieldScope": [
+        "startDate",
+        "intakeName",
+        "campus",
+        "points",
+        "duration"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-auckland",
+      "courseSlug": "auckland-master-of-data-science",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "auckland-mdats-fees-2027",
+      "sourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "finalUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Auckland",
+      "pageTitle": "Master of Data Science – University of Auckland (Fees and scholarships)",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "2027 fees International students: NZ$55,214 – $55,484. Fees are inclusive of 15% GST, but do not include the Student Services Fee, course books, travel and health insurance, or living costs. In addition to the tuition fees, there is a Student Services Fee of $9.44 per point, estimated at $1,132.80 for full-time study (120 points).",
+      "fieldScope": [
+        "fee",
+        "feeCurrency",
+        "feePeriod",
+        "studentCategory"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-auckland",
+      "courseSlug": "auckland-master-of-data-science",
+      "language": "en",
+      "confidence": 0.85
+    },
+    {
+      "id": "auckland-mdats-closing-dates-2027",
+      "sourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "finalUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Auckland",
+      "pageTitle": "Master of Data Science – University of Auckland (Key dates)",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Application closing dates Semester One 2027: 8 December 2026 Semester Two 2027: 4 July 2027",
+      "fieldScope": [
+        "internationalDeadline",
+        "applicationCloses"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-auckland",
+      "courseSlug": "auckland-master-of-data-science",
+      "language": "en",
+      "confidence": 0.9
+    },
+    {
+      "id": "auckland-semester-one-2027-dates",
+      "sourceUrl": "https://www.auckland.ac.nz/en/about-us/about-the-university/the-university/official-publications/university-calendar/current-calendar/key-university-dates/academic-dates/semester-teaching-days-charts-2027.html",
+      "finalUrl": "https://www.auckland.ac.nz/en/about-us/about-the-university/the-university/official-publications/university-calendar/current-calendar/key-university-dates/academic-dates/semester-teaching-days-charts-2027.html",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Auckland",
+      "pageTitle": "Semester teaching days charts 2027",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Semester One 2027 teaching days … Semester 1 begins: Mon 1 Mar … Semester 1 lectures end: Fri 4 Jun … Semester 1 ends: Mon 28 Jun",
+      "fieldScope": [
+        "startDate",
+        "semesterDates"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "university-of-auckland",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "copenhagen-msc-cs-deadlines",
+      "sourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "finalUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "University of Copenhagen",
+      "pageTitle": "Master of Science (MSc) in Computer Science - Study Programmes on University of Copenhagen",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Applicants from outside the EU, EEA and Switzerland … Study start in September 15 January at 23:59 (CET) The application portal opens on 15 November. You will receive a reply by 13 March. … Study start in February (legal right of admission only) 15 October at 23:59 (CEST)",
+      "fieldScope": [
+        "applicationOpens",
+        "applicationCloses",
+        "internationalDeadline",
+        "startMonths"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-copenhagen",
+      "courseSlug": "copenhagen-master-computer-science",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "copenhagen-all-programmes-start-september",
+      "sourceUrl": "https://www.ku.dk/studies/admission/masters",
+      "finalUrl": "https://www.ku.dk/studies/admission/masters",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "University of Copenhagen",
+      "pageTitle": "Application and admission to master's degree programmes - University of Copenhagen",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "All programmes start in September. Certain master’s programmes also start in February for applicants who have legal right of admission.",
+      "fieldScope": [
+        "startMonths",
+        "intakeName"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "university-of-copenhagen",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "copenhagen-msc-cs-requirements",
+      "sourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "finalUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "University of Copenhagen",
+      "pageTitle": "Master of Science (MSc) in Computer Science (admission requirements)",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Courses in computer science corresponding to at least 45 ECTS, subject to the following distribution constraints: A minimum of 7.5 ECTS within the field of programming … A minimum of 10 ECTS within the field of computer systems architecture … A minimum of 10 ECTS within the field of theoretical computer science … Courses in mathematics corresponding to a total of at least 7.5 ECTS … You must also meet the language requirement English B. … Transcript of records · Course descriptions for passed courses · Self-assessment form · Proof of language proficiency · Copy of passport/national ID card",
+      "fieldScope": [
+        "academicRequirement",
+        "englishRequirements",
+        "documentRequirements"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-copenhagen",
+      "courseSlug": "copenhagen-master-computer-science",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "yonsei-2027-march-intl-schedule",
+      "sourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "finalUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Yonsei University",
+      "pageTitle": "2027학년도 3월 신입학 외국인전형 모집요강 (2027 March intake international admission guide)",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Online Application 2026. 9. 1.(Tue) 10:00 ~ 9. 17.(Thu) 17:00 … Announcement of Application Results 2026. 12. 4.(Fri) 17:00 … Tuition fee Payment In January, 2027 … Int’l Student Track All Majors & departments … 200,000 KRW … Computer Science & Engineering … From 2027 Academic Year",
+      "fieldScope": [
+        "applicationOpens",
+        "applicationCloses",
+        "applicationFee",
+        "startMonths",
+        "programmeName"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "yonsei-university",
+      "courseSlug": "yonsei-bsc-computer-science",
+      "language": "en",
+      "confidence": 0.95
+    },
+    {
+      "id": "yonsei-2027-intl-eligibility",
+      "sourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "finalUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Yonsei University",
+      "pageTitle": "2027 March intake international admission guide - eligibility",
+      "retrievedAt": "2026-10-29T12:00:00Z",
+      "httpStatus": 200,
+      "excerpt": "Applicants and both of their parents must hold a non-Korean nationality. Applicants must either hold or be expected to hold a high school diploma. Applicants must submit documents to verify Korean or English proficiency … Official documentation proving completion of high school courses conducted in Korean or English … Standardized test result indicating proficiency in Korean or English",
+      "fieldScope": [
+        "internationalEligibility",
+        "academicRequirement",
+        "englishRequirements"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "yonsei-university",
+      "courseSlug": "yonsei-bsc-computer-science",
+      "language": "en",
+      "confidence": 0.9
     }
   ],
   "universities": [
@@ -420,6 +675,54 @@
       "verificationStatus": "PARTIALLY_VERIFIED",
       "lastVerifiedAt": "2026-10-29T09:30:00Z",
       "notes": "Postgraduate 2027/28 course-finder filter returned 0 results at collection time; undergraduate 2027/28 listing queued."
+    },
+    {
+      "slug": "technical-university-of-munich",
+      "name": "Technical University of Munich",
+      "country": "Germany",
+      "countrySlug": "germany",
+      "city": "Munich / Garching",
+      "officialWebsite": "https://www.tum.de/",
+      "catalogueUrl": "https://www.tum.de/en/studies/degree-programs",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "Semester dates for summer semester 2027 and winter semester 2027/28 verified on the official TUM dates page. The non-EU tuition increase for winter semester 2027/28 is published as a two-tier range; the programme-specific tier for 2027/28 is not yet published on the programme page."
+    },
+    {
+      "slug": "university-of-auckland",
+      "name": "The University of Auckland",
+      "country": "New Zealand",
+      "countrySlug": "new-zealand",
+      "city": "Auckland",
+      "officialWebsite": "https://www.auckland.ac.nz/",
+      "catalogueUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option.html",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "2027 programme start dates, 2027 international fees and 2027 application closing dates verified for the Master of Data Science. The wider 2027 programme catalogue was not traversed in this cycle."
+    },
+    {
+      "slug": "university-of-copenhagen",
+      "name": "University of Copenhagen",
+      "country": "Denmark",
+      "countrySlug": "denmark",
+      "city": "Copenhagen",
+      "officialWebsite": "https://www.ku.dk/",
+      "catalogueUrl": "https://www.ku.dk/studies/masters",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "Non-EU/EEA application window (portal 15 November – 15 January) and September start verified. Programme tuition for non-EU applicants is published separately and was not captured in this cycle, so no fee is asserted."
+    },
+    {
+      "slug": "yonsei-university",
+      "name": "Yonsei University",
+      "country": "South Korea",
+      "countrySlug": "south-korea",
+      "city": "Seoul",
+      "officialWebsite": "https://www2.yonsei.ac.kr/",
+      "catalogueUrl": "https://www2.yonsei.ac.kr/entrance/",
+      "verificationStatus": "PARTIALLY_VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "International admissions are published on the www2.yonsei.ac.kr admissions subdomain. Only the March 2027 (2027학년도 3월) international intake guide was traversed; the September 2027 cycle guide was not published at collection time."
     }
   ],
   "courses": [
@@ -490,6 +793,74 @@
       "verificationStatus": "VERIFIED",
       "lastVerifiedAt": "2026-10-29T09:30:00Z",
       "notes": "2027 handbook: 96 credit points, Caulfield campus, on campus. Intake months and international fee are not published in the handbook."
+    },
+    {
+      "slug": "tum-master-informatics",
+      "universitySlug": "technical-university-of-munich",
+      "title": "MSc Informatics",
+      "qualification": "MSc",
+      "studyLevel": "Postgraduate",
+      "subjectArea": "Computer Science",
+      "durationMonths": 24,
+      "studyMode": "Full-time or part-time",
+      "campus": "Garching",
+      "officialCourseUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "applicationUrl": "https://www.tum.de/en/studies/application",
+      "academicYear": "2027/28",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "Two intakes per year: summer semester (lecture period from 12 April 2027) and winter semester 2027/28 (lecture period from 18 October 2027). Admission is via the aptitude assessment procedure."
+    },
+    {
+      "slug": "auckland-master-of-data-science",
+      "universitySlug": "university-of-auckland",
+      "title": "Master of Data Science (MDataSci)",
+      "qualification": "MDataSci",
+      "studyLevel": "Postgraduate",
+      "subjectArea": "Data Science",
+      "durationMonths": 18,
+      "studyMode": "Full-time or part-time",
+      "campus": "City",
+      "officialCourseUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "applicationUrl": "https://www.auckland.ac.nz/en/study/applications-and-admissions/apply-now.html",
+      "academicYear": "2027",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "Offered as 180-point or 240-point taught masters; the 240-point variant has a March intake only. 2027 international fee is published as a band (NZ$55,214 – $55,484) plus a Student Services Fee."
+    },
+    {
+      "slug": "copenhagen-master-computer-science",
+      "universitySlug": "university-of-copenhagen",
+      "title": "MSc Computer Science",
+      "qualification": "MSc",
+      "studyLevel": "Postgraduate",
+      "subjectArea": "Computer Science",
+      "durationMonths": 24,
+      "studyMode": "Full-time",
+      "campus": "North Campus, Copenhagen",
+      "officialCourseUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "applicationUrl": "https://www.ku.dk/studies/admission/masters",
+      "academicYear": "2027/28",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "September start only for applicants from outside the EU/EEA/Switzerland; the February start is restricted to applicants with a Danish legal right of admission."
+    },
+    {
+      "slug": "yonsei-bsc-computer-science",
+      "universitySlug": "yonsei-university",
+      "title": "BSc Computer Science & Engineering",
+      "qualification": "BSc",
+      "studyLevel": "Undergraduate",
+      "subjectArea": "Computer Science",
+      "durationMonths": 48,
+      "studyMode": "Full-time",
+      "campus": "Sinchon Campus, Seoul",
+      "officialCourseUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "applicationUrl": "https://www2.yonsei.ac.kr/entrance/",
+      "academicYear": "2027",
+      "verificationStatus": "PARTIALLY_VERIFIED",
+      "lastVerifiedAt": "2026-10-29T12:00:00Z",
+      "notes": "Computer Science & Engineering becomes a separately admitted department from the 2027 academic year (previously School of Computing). Only the March 2027 intake is verified."
     }
   ],
   "coverage": [
@@ -1223,6 +1594,786 @@
       ],
       "confidence": 0.9,
       "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 1,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). January is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 2,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). February is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 3,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). March is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 5,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). May is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 6,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). June is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 7,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). July is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 8,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). August is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 9,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). September is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 11,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). November is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 12,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM publishes exactly two intakes for this programme: winter semester (lecture period from October) and summer semester (lecture period from April). December is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2028,
+      "month": 1,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "conflictNote": "TUM's intake enumeration publishes exactly two starts — winter semester (lecture period from October) and summer semester (lecture period from April). January 2028 falls inside winter semester 2027/28, which began in October 2027, so January is not an intake month in that enumeration."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 4,
+      "status": "VERIFIED_AVAILABLE",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027"
+      ],
+      "confidence": 0.95,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "intakeName": "Summer semester 2027",
+      "startDate": "2027-04-12",
+      "applicationOpens": "2026-10-01",
+      "applicationCloses": "2026-11-30",
+      "feeAmount": 6000,
+      "feeCurrency": "EUR",
+      "academicYear": "2026/27",
+      "feePeriod": "per semester",
+      "studentCategory": "International (non-EU/EEA)",
+      "feeSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "intakeSourceUrl": "https://www.tum.de/en/studies/application/application-info-portal/dates-periods-and-deadlines",
+      "requirementSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "campus": "Garching",
+      "studyMode": "Full-time or part-time",
+      "qualification": "MSc",
+      "englishRequirements": {
+        "other": "English-taught programme; proof of English proficiency must be submitted by the application deadline."
+      },
+      "documentRequirements": [
+        "Bachelor's degree",
+        "Aptitude assessment for master's admission"
+      ],
+      "internationalEligibility": "Open to international applicants; non-EU/EEA students pay tuition fees.",
+      "notes": "Application period 01.10. – 30.11. for the summer semester. €6,000 per semester is the amount stated on the programme page for the current fee period, which covers summer semester 2027; TUM's increase takes effect only from winter semester 2027/28."
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "year": 2027,
+      "month": 10,
+      "status": "VERIFIED_AVAILABLE",
+      "evidenceIds": [
+        "tum-informatics-programme-2027",
+        "tum-semester-dates-2027",
+        "tum-tuition-increase-2027-28"
+      ],
+      "confidence": 0.7,
+      "courseSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "intakeName": "Winter semester 2027/28",
+      "startDate": "2027-10-18",
+      "applicationOpens": "2027-02-01",
+      "applicationCloses": "2027-05-31",
+      "feeAmount": 4600,
+      "feeCurrency": "EUR",
+      "academicYear": "2027/28",
+      "feePeriod": "per semester",
+      "studentCategory": "International (non-EU/EEA)",
+      "feeSourceUrl": "https://www.tum.de/en/studies/fees/tuition",
+      "intakeSourceUrl": "https://www.tum.de/en/studies/application/application-info-portal/dates-periods-and-deadlines",
+      "requirementSourceUrl": "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc",
+      "campus": "Garching",
+      "studyMode": "Full-time or part-time",
+      "qualification": "MSc",
+      "englishRequirements": {
+        "other": "English-taught programme; proof of English proficiency must be submitted by the application deadline."
+      },
+      "documentRequirements": [
+        "Bachelor's degree",
+        "Aptitude assessment for master's admission"
+      ],
+      "internationalEligibility": "Open to international applicants; non-EU/EEA students newly enrolling from winter semester 2027/28 pay the increased tuition.",
+      "notes": "€4,600 is the LOWER bound of TUM's published two-tier master's tuition for winter semester 2027/28 (€4,600 or €6,800 per semester). The programme page still states €6,000 for 2026/27 and does not yet publish which tier applies to Informatics in 2027/28, so the exact amount must be confirmed before it is quoted to a student; €6,000 must NOT be carried forward."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 1,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. January is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 2,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. February is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 4,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. April is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 5,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. May is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 6,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. June is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 8,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. August is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 9,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. September is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 10,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. October is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 11,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. November is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 12,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The official programme page lists exactly two 2027 start dates — Semester One 1 March 2027 and Semester Two 19 July 2027 — plus a March-only 240-point variant. December is not a start month in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2028,
+      "month": 1,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "conflictNote": "The programme's official start-date list enumerates exactly two 2027 intakes — Semester One 1 March and Semester Two 19 July — plus a March-only 240-point variant. January 2028 is not in that enumeration."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 3,
+      "status": "VERIFIED_AVAILABLE",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027",
+        "auckland-mdats-fees-2027",
+        "auckland-mdats-closing-dates-2027",
+        "auckland-semester-one-2027-dates"
+      ],
+      "confidence": 0.95,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "intakeName": "2027 Semester One",
+      "startDate": "2027-03-01",
+      "internationalDeadline": "2026-12-08",
+      "feeAmount": 55214,
+      "feeCurrency": "NZD",
+      "academicYear": "2027",
+      "feePeriod": "per year (120 points)",
+      "studentCategory": "International",
+      "feeSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "intakeSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "requirementSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "campus": "City",
+      "studyMode": "Full-time or part-time",
+      "qualification": "MDataSci",
+      "englishRequirements": {
+        "other": "English-language proficiency evidence required as part of the application."
+      },
+      "notes": "International fee published as a band (NZ$55,214 – $55,484); the lower bound is recorded. A Student Services Fee of $9.44 per point (≈$1,132.80 for 120 points) is charged on top. Application closes 8 December 2026 for Semester One 2027."
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "year": 2027,
+      "month": 7,
+      "status": "VERIFIED_AVAILABLE",
+      "evidenceIds": [
+        "auckland-mdats-intakes-2027",
+        "auckland-mdats-fees-2027",
+        "auckland-mdats-closing-dates-2027"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "intakeName": "2027 Semester Two",
+      "startDate": "2027-07-19",
+      "internationalDeadline": "2027-07-04",
+      "feeAmount": 55214,
+      "feeCurrency": "NZD",
+      "academicYear": "2027",
+      "feePeriod": "per year (120 points)",
+      "studentCategory": "International",
+      "feeSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "intakeSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "requirementSourceUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option/master-of-data-science-mdats.html",
+      "campus": "City",
+      "studyMode": "Full-time or part-time",
+      "qualification": "MDataSci",
+      "englishRequirements": {
+        "other": "English-language proficiency evidence required as part of the application."
+      },
+      "notes": "Semester Two 2027 start; application closes 4 July 2027. The 240-point taught variant is NOT open for this intake (March intake only)."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 1,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). January is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 2,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). February is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 3,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). March is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 4,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). April is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 5,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). May is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 6,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). June is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 7,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). July is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 8,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). August is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 10,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). October is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 11,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). November is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 12,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-deadlines"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September; the February start is restricted to applicants with a legal right of admission (holders of the specified Danish bachelor's degrees). December is absent from that enumeration and is not an international intake."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2028,
+      "month": 1,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "copenhagen-all-programmes-start-september"
+      ],
+      "confidence": 0.85,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "conflictNote": "KU's intake enumeration states that all master's programmes start in September, with a February start restricted to applicants holding a legal right of admission. January 2028 is absent from that enumeration."
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "year": 2027,
+      "month": 9,
+      "status": "VERIFIED_AVAILABLE",
+      "evidenceIds": [
+        "copenhagen-msc-cs-deadlines",
+        "copenhagen-all-programmes-start-september",
+        "copenhagen-msc-cs-requirements"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "intakeName": "September 2027 start",
+      "applicationOpens": "2026-11-15",
+      "applicationCloses": "2027-01-15",
+      "internationalDeadline": "2027-01-15",
+      "intakeSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "requirementSourceUrl": "https://www.ku.dk/studies/masters/computer-science",
+      "campus": "North Campus, Copenhagen",
+      "studyMode": "Full-time",
+      "qualification": "MSc",
+      "academicRequirement": "Bachelor's degree with at least 45 ECTS in computer science (min. 7.5 ECTS programming across two paradigms, 10 ECTS systems architecture, 10 ECTS theoretical computer science) plus 7.5 ECTS mathematics, and English B.",
+      "englishRequirements": {
+        "other": "English B (Danish upper-secondary level) or equivalent."
+      },
+      "documentRequirements": [
+        "Transcript of records",
+        "Course descriptions",
+        "Self-assessment form",
+        "Proof of language proficiency",
+        "Copy of passport/national ID card"
+      ],
+      "internationalEligibility": "Applicants from outside the EU/EEA/Switzerland must pay an application deposit and tuition fees; reply to applications by 13 March.",
+      "notes": "KU publishes tuition per programme on its fee pages; the amount for this programme was NOT captured in this cycle, so no fee is asserted. First-semester tuition is payable by 15 April."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 1,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 2,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 4,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 5,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 6,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 7,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 8,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 9,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 10,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 11,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 12,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "Only the March 2027 international intake guide had been published when this record was collected. No claim is made about this month: the September 2027 cycle guide was not available, so absence of published information is not treated as proof."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2028,
+      "month": 1,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule"
+      ],
+      "confidence": 0.8,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "notes": "No published intake information for January 2028 in the cycle that was traversed."
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "year": 2027,
+      "month": 3,
+      "status": "VERIFIED_AVAILABLE",
+      "evidenceIds": [
+        "yonsei-2027-march-intl-schedule",
+        "yonsei-2027-intl-eligibility"
+      ],
+      "confidence": 0.9,
+      "courseSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "intakeName": "March 2027 international intake (2027학년도 3월 신입학)",
+      "applicationOpens": "2026-09-01",
+      "applicationCloses": "2026-09-17",
+      "applicationFee": 200000,
+      "applicationFeeCurrency": "KRW",
+      "intakeSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "requirementSourceUrl": "https://www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf",
+      "campus": "Sinchon Campus, Seoul",
+      "studyMode": "Full-time",
+      "qualification": "BSc",
+      "academicRequirement": "High school diploma (or expected by February 2027) and non-Korean nationality for the applicant and both parents.",
+      "englishRequirements": {
+        "other": "Korean or English proficiency evidence: high-school instruction language, Korean language institution certificate, or a standardised test result."
+      },
+      "documentRequirements": [
+        "High school diploma / expected graduation certificate",
+        "Transcript of records",
+        "Passport of applicant and parents",
+        "Proof of language proficiency",
+        "Apostille/consular authentication"
+      ],
+      "internationalEligibility": "International student track: applicant and both parents must hold non-Korean nationality; documents submitted by post by 30 September 2026.",
+      "notes": "Admission results 4 December 2026; tuition paid in January 2027. Tuition amount is set per college and is not published in the admission guide, so no tuition figure is asserted — only the KRW 200,000 application fee, which the guide states for the 2027 academic year."
     }
   ],
   "traversals": [
@@ -1315,65 +2466,69 @@
       "completeness": "PARTIAL",
       "lastTraversedAt": "2026-10-29T09:30:00Z",
       "notes": "Postgraduate 2027/28 filter returned 0 results on collection date; undergraduate 2027/28 browsing queued."
+    },
+    {
+      "universitySlug": "technical-university-of-munich",
+      "countrySlug": "germany",
+      "catalogueUrl": "https://www.tum.de/en/studies/degree-programs",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Degree programs - TUM",
+      "programmeLinksObserved": 1,
+      "coursesDiscovered": 1,
+      "coursesVerified": 1,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "notes": "MSc Informatics detail page plus the university dates and tuition pages were traversed. TUM's full degree-programme catalogue and its pagination were not traversed in this cycle.",
+      "lastTraversedAt": "2026-10-29T12:00:00Z"
+    },
+    {
+      "universitySlug": "university-of-auckland",
+      "countrySlug": "new-zealand",
+      "catalogueUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option.html",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Find a study option - The University of Auckland",
+      "programmeLinksObserved": 1,
+      "coursesDiscovered": 1,
+      "coursesVerified": 1,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "notes": "Master of Data Science programme page plus the official 2027 semester teaching-days chart traversed; the full 2027 programme catalogue was not traversed.",
+      "lastTraversedAt": "2026-10-29T12:00:00Z"
+    },
+    {
+      "universitySlug": "university-of-copenhagen",
+      "countrySlug": "denmark",
+      "catalogueUrl": "https://www.ku.dk/studies/masters",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Master's programmes - University of Copenhagen",
+      "programmeLinksObserved": 1,
+      "coursesDiscovered": 1,
+      "coursesVerified": 1,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "notes": "MSc Computer Science programme page and the master's admission/deadline page traversed. The full catalogue of ~120 master's programmes was not traversed.",
+      "lastTraversedAt": "2026-10-29T12:00:00Z"
+    },
+    {
+      "universitySlug": "yonsei-university",
+      "countrySlug": "south-korea",
+      "catalogueUrl": "https://www2.yonsei.ac.kr/entrance/",
+      "catalogueType": "PDF_PROSPECTUS",
+      "httpStatus": 200,
+      "pageTitle": "2027학년도 3월 신입학 외국인전형 모집요강",
+      "programmeLinksObserved": 1,
+      "coursesDiscovered": 1,
+      "coursesVerified": 1,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "notes": "The official 2027 March international admission guide (PDF, 8 chunks parsed) was traversed for the College of Computing departments. The September 2027 guide and the full department list were not traversed.",
+      "lastTraversedAt": "2026-10-29T12:00:00Z"
     }
   ],
   "researchQueue": [
-    {
-      "countrySlug": "usa",
-      "universityName": "Arizona State University",
-      "priority": 8,
-      "status": "QUEUED",
-      "reason": "No official-source verification completed in this cycle; spring 2027 (January) intake and programme fees still unpublished in ALO.",
-      "nextAction": "Verify official degree page + spring 2027 intake calendar, then extract 2027 tuition and English requirements."
-    },
-    {
-      "countrySlug": "germany",
-      "universityName": "Technical University of Munich",
-      "priority": 8,
-      "status": "QUEUED",
-      "reason": "Winter semester 2027/28 application window not yet verified against official TUM pages.",
-      "nextAction": "Verify TUM application periods page, then programme-level requirements and semester fee."
-    },
-    {
-      "countrySlug": "uae",
-      "universityName": "University of Dubai",
-      "priority": 7,
-      "status": "QUEUED",
-      "reason": "Official admissions calendar and fees for 2027 not yet collected.",
-      "nextAction": "Verify official site, spring/fall 2027 intakes, tuition and KHDA accreditation evidence."
-    },
-    {
-      "countrySlug": "malaysia",
-      "universityName": "Taylor's University",
-      "priority": 7,
-      "status": "QUEUED",
-      "reason": "Intake calendar for 2027 not yet verified from the official site.",
-      "nextAction": "Verify official intake calendar and programme fees; capture MQA accreditation references."
-    },
-    {
-      "countrySlug": "new-zealand",
-      "universityName": "The University of Auckland",
-      "priority": 7,
-      "status": "QUEUED",
-      "reason": "Semester One 2027 programme pages and international fees not yet verified (the key-dates URL used in this cycle returned 404).",
-      "nextAction": "Locate the current official key-dates URL, then verify programme pages and 2027 international fees."
-    },
-    {
-      "countrySlug": "denmark",
-      "universityName": "Technical University of Denmark (DTU)",
-      "priority": 6,
-      "status": "QUEUED",
-      "reason": "Autumn 2027 MSc application window and tuition not yet verified.",
-      "nextAction": "Verify DTU admission pages (non-EU deadline) and programme tuition."
-    },
-    {
-      "countrySlug": "south-korea",
-      "universityName": "Seoul National University",
-      "priority": 6,
-      "status": "QUEUED",
-      "reason": "Spring/Fall 2027 international admission schedules not yet verified.",
-      "nextAction": "Verify SNU official admission schedule and programme requirements."
-    },
     {
       "countrySlug": "uk",
       "universityName": "University of Manchester",
@@ -1433,6 +2588,126 @@
       "status": "IN_PROGRESS",
       "reason": "Two programmes verified; 2027-start tuition is not published on the programme pages.",
       "nextAction": "Verify the official tuition-and-fees page for 2027-28 rates and the English language requirements page."
+    },
+    {
+      "countrySlug": "germany",
+      "universityName": "Technical University of Munich",
+      "universitySlug": "technical-university-of-munich",
+      "officialWebsite": "https://www.tum.de/",
+      "catalogueUrl": "https://www.tum.de/en/studies/degree-programs",
+      "priority": 1,
+      "status": "VERIFIED",
+      "reason": "MSc Informatics verified for summer semester 2027 and winter semester 2027/28, with 2027/28 non-EU tuition published as a two-tier range.",
+      "discoveredVia": "Official TUM dates page + programme detail page",
+      "nextAction": "Traverse the remaining TUM master's programmes and resolve the programme-specific 2027/28 tuition tier once the programme page is updated."
+    },
+    {
+      "countrySlug": "new-zealand",
+      "universityName": "The University of Auckland",
+      "universitySlug": "university-of-auckland",
+      "officialWebsite": "https://www.auckland.ac.nz/",
+      "catalogueUrl": "https://www.auckland.ac.nz/en/study/study-options/find-a-study-option.html",
+      "priority": 1,
+      "status": "VERIFIED",
+      "reason": "Master of Data Science 2027 start dates, 2027 international fees and 2027 closing dates verified.",
+      "discoveredVia": "Official programme page + 2027 semester teaching-days chart",
+      "nextAction": "Traverse other 2027 postgraduate programmes and capture English entry requirements per programme."
+    },
+    {
+      "countrySlug": "denmark",
+      "universityName": "University of Copenhagen",
+      "universitySlug": "university-of-copenhagen",
+      "officialWebsite": "https://www.ku.dk/",
+      "catalogueUrl": "https://www.ku.dk/studies/masters",
+      "priority": 2,
+      "status": "VERIFIED",
+      "reason": "Non-EU/EEA application window (15 November – 15 January) and September-only start verified; programme tuition not yet captured.",
+      "discoveredVia": "Official master's admission page + programme page",
+      "nextAction": "Capture the programme tuition amount for non-EU applicants from KU's fee pages."
+    },
+    {
+      "countrySlug": "denmark",
+      "universityName": "Technical University of Denmark (DTU)",
+      "officialWebsite": "https://www.dtu.dk/",
+      "priority": 3,
+      "status": "DEFERRED",
+      "reason": "The DTU MSc tuition-fee page returned HTTP 404 during this cycle; the official fee figure could not be verified, so no DTU records were created.",
+      "discoveredVia": "Official DTU education section",
+      "nextAction": "Locate the current DTU tuition page from the education index and re-attempt verification."
+    },
+    {
+      "countrySlug": "south-korea",
+      "universityName": "Yonsei University",
+      "universitySlug": "yonsei-university",
+      "officialWebsite": "https://www2.yonsei.ac.kr/",
+      "catalogueUrl": "https://www2.yonsei.ac.kr/entrance/",
+      "priority": 1,
+      "status": "VERIFIED",
+      "reason": "March 2027 international intake verified from the official admission guide (application 1–17 September 2026, results 4 December 2026, KRW 200,000 application fee).",
+      "discoveredVia": "Official 2027 March intake admission guide (PDF)",
+      "nextAction": "Traverse the September 2027 intake guide when published and capture college-level tuition."
+    },
+    {
+      "countrySlug": "south-korea",
+      "universityName": "Seoul National University",
+      "officialWebsite": "https://www.snu.ac.kr/",
+      "priority": 2,
+      "status": "BLOCKED",
+      "reason": "The SNU international admissions URL returned HTTP 404 and the admissions host did not expose the 2027 graduate schedule, so no SNU records were created.",
+      "discoveredVia": "Official SNU admissions host",
+      "nextAction": "Re-resolve the current SNU international admissions path before the next cycle."
+    },
+    {
+      "countrySlug": "usa",
+      "universityName": "Arizona State University",
+      "officialWebsite": "https://www.asu.edu/",
+      "catalogueUrl": "https://tuition.asu.edu/",
+      "priority": 2,
+      "status": "IN_PROGRESS",
+      "reason": "ASU's tuition site confirms a Spring 2027 term (Session A tuition refund deadline 17 January 2027, Session C 24 January 2027) but does not publish the term start date or 2027/28 international tuition on the retrieved pages.",
+      "discoveredVia": "Official ASU tuition site",
+      "nextAction": "Traverse registrar.asu.edu academic calendars for the exact Spring 2027 / Fall 2027 start dates and the 2027/28 international tuition schedule."
+    },
+    {
+      "countrySlug": "uae",
+      "universityName": "American University of Sharjah",
+      "officialWebsite": "https://www.aus.edu/",
+      "catalogueUrl": "https://www.aus.edu/admissions/bachelors-degrees",
+      "priority": 2,
+      "status": "IN_PROGRESS",
+      "reason": "Fall 2027 application periods verified (Period One 26 Oct 2026 – 7 Jan 2027, Period Two 8 Jan – 18 Mar 2027, Period Three 19 Mar – 20 May 2027, late 21 May – 24 Jun 2027) and a Spring 2028 intake is referenced, but the semester start month and 2027 tuition are not published on the admissions pages.",
+      "discoveredVia": "Official AUS admissions timeline page",
+      "nextAction": "Traverse the AUS academic calendar and tuition schedule to pin the Fall 2027 start month and fees."
+    },
+    {
+      "countrySlug": "uae",
+      "universityName": "University of Dubai",
+      "officialWebsite": "https://www.ud.ac.ae/",
+      "priority": 3,
+      "status": "QUEUED",
+      "reason": "Official admissions calendar and fees for 2027 not yet collected.",
+      "discoveredVia": "Country coverage requirement",
+      "nextAction": "Verify the 2027 intake calendar and tuition from the official site."
+    },
+    {
+      "countrySlug": "malaysia",
+      "universityName": "Universiti Malaya",
+      "officialWebsite": "https://www.um.edu.my/",
+      "priority": 1,
+      "status": "BLOCKED",
+      "reason": "The UM international admission path (isc.um.edu.my) failed to load during this cycle; only third-party aggregator figures were available, which are not acceptable verification evidence, so no UM records were created.",
+      "discoveredVia": "Official UM domain",
+      "nextAction": "Retry the official UM admission site and, if still unavailable, use MAYA/UM's published fee schedule before the next cycle."
+    },
+    {
+      "countrySlug": "malaysia",
+      "universityName": "Taylor's University",
+      "officialWebsite": "https://university.taylors.edu.my/",
+      "priority": 3,
+      "status": "QUEUED",
+      "reason": "Intake calendar for 2027 not yet verified from the official site.",
+      "discoveredVia": "Country coverage requirement",
+      "nextAction": "Verify the 2027 intake calendar and tuition from the official site."
     }
   ]
 }

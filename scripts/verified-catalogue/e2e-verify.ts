@@ -168,6 +168,28 @@ async function main(): Promise<void> {
     check('verified-available-fees', verifiedFees.length === availableMonths.length,
       `${verifiedFees.length} intake rows marked VERIFIED (matches ${availableMonths.length} verified available months)`);
 
+    // Availability and price are separate facts. Some verified intakes publish no fee
+    // at all (Centennial's 2027 fees are based on Fall 2026; TUM's 2027/28 programme
+    // tier, KU's programme tuition and Yonsei's college tuition are not published yet).
+    // The invariants are therefore: every fee that IS published is persisted verbatim,
+    // and no fee is invented for an intake whose source publishes none.
+    const feeKey = (r: { courseId: string; intakeYear: number; intakeMonth: string }) =>
+      `${r.courseId}:${r.intakeYear}-${r.intakeMonth}`;
+    const feeByKey = new Map(feeRows.map((row) => [feeKey(row), row]));
+    const keyForMonth = (m: (typeof dataset.coverage)[number]) =>
+      `ALO-C-${m.courseSlug}:${m.year}-${String(m.month).padStart(2, '0')}`;
+    const availableWithFee = availableMonths.filter((row) => (row.feeAmount ?? 0) > 0);
+    const availableNoFee = availableMonths.filter((row) => !((row.feeAmount ?? 0) > 0));
+    const mismatched = availableWithFee.filter((m) => {
+      const stored = feeByKey.get(keyForMonth(m));
+      return !stored || Math.abs((stored.yearlyTuition ?? 0) - (m.feeAmount ?? 0)) > 0.001;
+    });
+    check('published-fee-amounts', mismatched.length === 0,
+      `${availableWithFee.length} published fees persisted verbatim, ${mismatched.length} mismatched`);
+    const invented = availableNoFee.filter((m) => (feeByKey.get(keyForMonth(m))?.yearlyTuition ?? 0) > 0);
+    check('no-invented-fees', invented.length === 0,
+      `${availableNoFee.length} verified intake(s) publish no fee; ${invented.length} were given a fee no official source states`);
+
     const publishedCourses = await prisma.crmCourse.findMany({ where: { publicationStatus: 'published' } });
     const coursesWithVerifiedMonth = new Set(
       dataset.coverage.filter((row) => row.status === 'VERIFIED_AVAILABLE').map((row) => row.courseSlug),

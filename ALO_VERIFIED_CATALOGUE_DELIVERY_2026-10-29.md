@@ -11,16 +11,16 @@
 
 | Item | Result |
 | --- | --- |
-| Official-source research executed | 18 verbatim evidence records from official university pages in 5 countries, collected 2026-10-29 |
-| Institutions with verified official sources | 6 (The University of Manchester, Ulster University, Centennial College, Monash University, Dublin Business School, Kyoto University) |
-| Programmes verified at course level | 4 (MSc Accounting; Biotechnology Fast-Track; Construction Project Management; Master of Business B6005) |
-| Course-month coverage rows created and published | 52 (4 courses × 13 months), of which **9 VERIFIED_AVAILABLE**, **18 VERIFIED_NOT_OFFERED**, **25 NOT_PUBLISHED**, 0 missing |
-| Real database population | Proven end-to-end on a real SQLite database (20/20 checks): ingest → hash-verified evidence → approval queue → RBAC gate → Super Admin approval → `CrmCourseIntakeFee` / `CrmCourseRequirement` → coverage matrix read back from the DB |
+| Official-source research executed | 30 verbatim evidence records from official university pages in 9 countries, collected 2026-10-29 |
+| Institutions with verified official sources | 10 (Manchester, Ulster, Centennial, Monash, Dublin Business School, Kyoto, TUM, Auckland, Copenhagen, Yonsei) |
+| Programmes verified at course level | 8 (MSc Accounting; Biotechnology Fast-Track; Construction Project Management; Master of Business B6005; MSc Informatics; MDataSci; MSc Computer Science; BSc Computer Science & Engineering) |
+| Course-month coverage rows created and published | 104 (8 courses × 13 months), of which **15 VERIFIED_AVAILABLE**, **52 VERIFIED_NOT_OFFERED**, **37 NOT_PUBLISHED**, 0 missing |
+| Real database population | Proven end-to-end on a real SQLite database (22/22 checks): ingest → hash-verified evidence → approval queue → RBAC gate → Super Admin approval → `CrmCourseIntakeFee` / `CrmCourseRequirement` → coverage matrix read back from the DB |
 | Approval workflow | Pending → approved / rejected, with `ApprovalQueueItem`, append-only `CrmCoverageRevision`, audit log |
-| Duplicate detection | Deterministic evidence/coverage keys; a second identical ingest created 0 rows and left 52 unchanged |
+| Duplicate detection | Deterministic evidence/coverage keys; a second identical ingest created 0 rows and left 104 unchanged |
 | Conflict protection | A changed fee against an APPROVED row created a CONFLICT queue item and did **not** overwrite the approved value |
 | 7-day monitoring | Coverage SLA pass integrated into the existing durable runner (`MonitoringJob.nextRunAt` + CAS lock + restart recovery); stale months become idempotent research-queue items |
-| Tests | 27 new unit tests, 7 MySQL-migration-compatibility tests, 20 end-to-end database checks — all passing, five consecutive rounds |
+| Tests | 27 new unit tests, 7 MySQL-migration-compatibility tests, 22 end-to-end database checks — all passing, five consecutive rounds |
 | Migration | Additive-only MySQL migration for 5 new tables; verified by the repo's own migration guard tests |
 
 **Not done — stated plainly**
@@ -88,7 +88,7 @@ Legend: ✅ VERIFIED_AVAILABLE · — VERIFIED_NOT_OFFERED · ? NOT_PUBLISHED ·
 | Construction Project Management | Centennial College | Canada | ✅ | — | — | — | ✅ | — | — | — | ✅ | — | — | — | ✅ |
 | Master of Business | Monash University | Australia | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
 
-**Totals:** 52 course-months · 9 VERIFIED_AVAILABLE · 18 VERIFIED_NOT_OFFERED · 25 NOT_PUBLISHED · 0 MISSING.
+**Totals:** 104 course-months · 15 VERIFIED_AVAILABLE · 52 VERIFIED_NOT_OFFERED · 37 NOT_PUBLISHED · 0 MISSING.
 Machine-readable copies: `reports/verified-catalogue/coverage-matrix.csv`, `coverage-summary.json`, `coverage-matrix.md`.
 
 > `?` is not “no intake”. It means the official page that was read does not
@@ -175,11 +175,11 @@ database. Logs: `reports/verified-catalogue/rounds/round-{1..5}.log`.
 
 | Round | Dataset validation | Unit tests (catalogue) | MySQL migration guard | E2E database checks | Coverage report |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 0 errors / 0 warnings | 27 passed | 7 passed | 20/20 passed | 52 published rows read back |
-| 2 | 0 errors / 0 warnings | 27 passed | 7 passed | 20/20 passed | 52 published rows read back |
-| 3 | 0 errors / 0 warnings | 27 passed | 7 passed | 20/20 passed | 52 published rows read back |
-| 4 | 0 errors / 0 warnings | 27 passed | 7 passed | 20/20 passed | 52 published rows read back |
-| 5 | 0 errors / 0 warnings | 27 passed | 7 passed | 20/20 passed | 52 published rows read back |
+| 1 | 0 errors / 0 warnings | 27 passed | 7 passed | 22/22 passed | 104 published rows read back |
+| 2 | 0 errors / 0 warnings | 27 passed | 7 passed | 22/22 passed | 104 published rows read back |
+| 3 | 0 errors / 0 warnings | 27 passed | 7 passed | 22/22 passed | 104 published rows read back |
+| 4 | 0 errors / 0 warnings | 27 passed | 7 passed | 22/22 passed | 104 published rows read back |
+| 5 | 0 errors / 0 warnings | 27 passed | 7 passed | 22/22 passed | 104 published rows read back |
 
 All five rounds were run **after** the last code fix (the MySQL TEXT-default defect
 found by the repository guard test), so no round records a pre-fix state.
@@ -215,7 +215,7 @@ Additional gates:
    enforces HTTPS, robots/rate-limit policy and source allow-listing).
 4. **Sandbox memory (≈3.9 GB) constrains the Next.js production build** — see the
    build status above.
-5. **Research backlog**: 7 countries, 6 partially traversed institutions, 13
+5. **Research backlog**: 3 countries (USA, UAE, Malaysia), 10 partially traversed institutions, 17
    queue items. This is coverage work, not code work.
 
 ---
@@ -224,24 +224,24 @@ Additional gates:
 
 | Metric | Value |
 | --- | --- |
-| Universities researched and verified (official source read) | 6 |
-| Countries represented in verified data | 5 (UK, Canada, Australia, Ireland, Japan) |
-| Faculties/departments traversed | 6 catalogue checkpoints (`CrmCatalogueTraversal`), all `PARTIAL` |
-| Courses discovered (observed links) | 41 (34 Manchester listing + 4 verified + 3 Monash/DBS/Kyoto entry points) |
-| Courses verified at course level | 4 |
-| Verified course-month records | 52 (9 available · 18 not offered · 25 not published · 0 missing) |
-| Fee records with 2027 coverage evidence | 1 (Manchester £39,700, academic year 2027/28) |
-| Deadline records with official dates | 0 (no 2027 deadline was published on the pages read — recorded as NOT_PUBLISHED) |
-| Eligibility/requirement records | 4 course–requirement records (3 published CMS requirements + 1 draft) |
+| Universities researched and verified (official source read) | 10 |
+| Countries represented in verified data | 9 (UK, Canada, Australia, Ireland, Japan, Germany, New Zealand, Denmark, South Korea) |
+| Faculties/departments traversed | 10 catalogue checkpoints (`CrmCatalogueTraversal`), all `PARTIAL` |
+| Courses discovered (observed links) | 45 (34 Manchester listing + 8 verified + 3 Monash/DBS/Kyoto entry points) |
+| Courses verified at course level | 8 |
+| Verified course-month records | 104 (15 available · 52 not offered · 37 not published · 0 missing) |
+| Fee records with 2027 coverage evidence | 5 (Manchester £39,700; Auckland NZ$55,214 ×2; TUM €6,000 summer 2027 and €4,600 lower-bound winter 2027/28) |
+| Deadline records with official dates | 6 (Auckland 8 Dec 2026 / 4 Jul 2027; Copenhagen 15 Jan 2027; TUM 30 Nov 2026 / 31 May 2027; Yonsei 17 Sep 2026) |
+| Eligibility/requirement records | 8 course–requirement records (7 published CMS requirements + 1 draft) |
 | Scholarships captured | 0 (not published on the pages read) |
-| Official source URLs in evidence | 18 |
-| Pending approval records (at first ingest) | 52 |
+| Official source URLs in evidence | 30 records over 20 distinct official URLs |
+| Pending approval records (at first ingest) | 104 |
 | Rejected records during verification | 1 (RBAC/rejection path exercise) |
 | Conflicts raised and held for review | 1 |
 | Source failures | 2 (Coventry January-start URL, Monash `B6001`) — both 404s, not counted as data |
-| Missing monthly coverage | 0 missing rows; 25 months are `NOT_PUBLISHED` by source silence |
+| Missing monthly coverage | 0 missing rows; 37 months are `NOT_PUBLISHED` by source silence |
 | Monitoring runs executed (coverage pass) | Multiple (dry-run + applied), recorded in audit log |
-| Approval results | 52 approved → 52 published after Super Admin approval; 1 conflict pending |
+| Approval results | 104 approved → 104 published after Super Admin approval; 1 conflict pending |
 
 ---
 
@@ -251,7 +251,7 @@ Additional gates:
 npm ci
 npm run verified:validate                 # dataset only, no DB
 # SQLite sandbox pipeline (see docs/VERIFIED-CATALOGUE-2027.md §5 for engine envs)
-npm run verified:e2e                      # 20 database checks
+npm run verified:e2e                      # 22 database checks
 npm run verified:report                   # 13-month matrix from published rows
 npm run verified:coverage-monitor -- --apply
 npm test -- tests/unit/verified-catalogue.test.ts tests/unit/verified-catalogue-monitoring.test.ts
@@ -263,3 +263,31 @@ npm test -- tests/unit/verified-catalogue.test.ts tests/unit/verified-catalogue-
 `delivery/verified-catalogue-2026-10-29/`, `MANIFEST.json`, `SHA256SUMS`,
 `verified-catalogue-2026-10-29.zip` and `verified-catalogue-2026-10-29.zip.sha256`
 with an automatic `sha256sum -c` integrity check.
+
+## 15. Research wave 2 — four new institutions (2026-10-29, same day)
+
+Collected after wave 1, from official pages only, and ingested through the same
+validator/approval/publish path. Each row below was read on 2026-10-29 and is
+stored with a verbatim excerpt and SHA-256 in `CrmOfficialEvidence`.
+
+| Institution | Country | Official source read | Verified facts | What was deliberately **not** asserted |
+| --- | --- | --- | --- | --- |
+| Technical University of Munich | Germany | `tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc`, `…/dates-periods-and-deadlines`, `…/fees/tuition` | MSc Informatics: 4 semesters/120 ECTS, Garching, English, aptitude assessment; two intakes — summer 2027 (lecture period from 12 Apr 2027, application 1 Oct–30 Nov 2026, €6,000/semester) and winter 2027/28 (lecture period from 18 Oct 2027, application 1 Feb–31 May 2027). TUM publishes that non-EU master's tuition rises **from winter semester 2027/28** to **€4,600 or €6,800 per semester** | The programme-specific 2027/28 tier is not yet published. €4,600 is recorded as the **lower bound of a published range** with confidence 0.7, and the page's current €6,000 is explicitly **not** carried into 2027/28 |
+| The University of Auckland | New Zealand | `auckland.ac.nz/…/master-of-data-science-mdats.html`, `…/semester-teaching-days-charts-2027.html` | MDataSci: City campus, 180/240 points, 240-point variant **March intake only**; 2027 starts **1 March** and **19 July**; international fee **NZ$55,214–55,484** (+ $9.44/point Student Services Fee); closing dates **8 Dec 2026** and **4 Jul 2027** | The fee band's upper figure is not recorded as a headline number; the lower bound is stored and the band is stated in `notes` |
+| University of Copenhagen | Denmark | `ku.dk/studies/masters/computer-science`, `ku.dk/studies/admission/masters` | MSc Computer Science: 2 years, North Campus, English; **all programmes start in September**; non-EU/EEA window **15 Nov–15 Jan**, reply by 13 March, first-semester tuition due 15 April; 45 ECTS CS + 7.5 ECTS maths + English B | Programme tuition for non-EU applicants was not captured, so **no fee is asserted** (row carries `feeSourceUrl` = null) |
+| Yonsei University | South Korea | `www2.yonsei.ac.kr/entrance/2027/intl/2027_3_docu/2027_3_intl_plan_eng.pdf` (official admission guide) | March 2027 international intake: application **1–17 Sep 2026**, documents by 30 Sep 2026, results **4 Dec 2026**, tuition paid Jan 2027, application fee **KRW 200,000**; Computer Science & Engineering becomes a separately admitted department from 2027; applicant and both parents must be non-Korean | College-level tuition is not published in the guide, so **no tuition figure is recorded**; only the March intake is verified — the other twelve months are `NOT_PUBLISHED`, not `NOT_OFFERED` |
+
+### Countries still without course-level verified data (3 of 12)
+
+These are recorded as outstanding coverage in `CrmResearchQueueItem` — never as
+verified data, and never with inventing figures:
+
+| Country | Institution attempted | Verified so far | Exact blocker |
+| --- | --- | --- | --- |
+| USA | Arizona State University | Spring 2027 term exists (Session A tuition-refund deadline 17 Jan 2027, Session C 24 Jan 2027) per `tuition.asu.edu` | The term **start date** and the **2027/28 international tuition** are not on the pages read; the ASU academic-calendar URL returned 404 |
+| UAE | American University of Sharjah | Fall 2027 application periods (Period One 26 Oct 2026–7 Jan 2027; Period Two 8 Jan–18 Mar 2027; Period Three 19 Mar–20 May 2027; late 21 May–24 Jun 2027) and a referenced Spring 2028 intake | No semester start month and no 2027 tuition on the admissions pages |
+| Malaysia | Universiti Malaya | Nothing usable | `isc.um.edu.my` failed to load; the only retrieved 2027 fee figures were from **third-party aggregators**, which are not acceptable evidence, so no UM record was created |
+
+`Technical University of Denmark (DTU)` (404 tuition page) and
+`Seoul National University` (404 admissions path) are likewise recorded as
+DEFERRED/BLOCKED queue items rather than being filled with unsourced data.

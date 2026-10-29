@@ -1,8 +1,8 @@
 # ALO Verified Course Coverage Matrix — January 2027 to January 2028
 
-Generated: 2026-10-29T02:31:38.317Z
+Generated: 2026-10-29T03:24:51.376Z
 Source: CRM database (published rows only)
-Courses: 4 · Course-months: 52 · Published rows: 52
+Courses: 8 · Course-months: 104 · Published rows: 104
 
 | Course | University | Country | Jan 27 | Feb 27 | Mar 27 | Apr 27 | May 27 | Jun 27 | Jul 27 | Aug 27 | Sep 27 | Oct 27 | Nov 27 | Dec 27 | Jan 28 |
 | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -10,14 +10,18 @@ Courses: 4 · Course-months: 52 · Published rows: 52
 | Biotechnology (Fast-Track) | Centennial College | Canada | ✅ | — | — | — | ✅ | — | — | — | ✅ | — | — | — | ✅ |
 | Construction Project Management | Centennial College | Canada | ✅ | — | — | — | ✅ | — | — | — | ✅ | — | — | — | ✅ |
 | Master of Business | Monash University | Australia | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| MSc Informatics | Technical University of Munich | Germany | — | — | — | ✅ | — | — | — | — | — | ✅ | — | — | — |
+| Master of Data Science (MDataSci) | The University of Auckland | New Zealand | — | — | ✅ | — | — | — | ✅ | — | — | — | — | — | — |
+| MSc Computer Science | University of Copenhagen | Denmark | — | — | — | — | — | — | — | — | ✅ | — | — | — | — |
+| BSc Computer Science & Engineering | Yonsei University | South Korea | ? | ? | ✅ | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |
 
 Legend: ✅ VERIFIED_AVAILABLE · — VERIFIED_NOT_OFFERED · ? NOT_PUBLISHED · … VERIFICATION_PENDING · ! SOURCE_UNAVAILABLE · ⚠ CONFLICT_REQUIRES_REVIEW · · MISSING
 
 ## Totals
 
-- VERIFIED_AVAILABLE: 9
-- VERIFIED_NOT_OFFERED: 18
-- NOT_PUBLISHED: 25
+- VERIFIED_AVAILABLE: 15
+- VERIFIED_NOT_OFFERED: 52
+- NOT_PUBLISHED: 37
 - VERIFICATION_PENDING: 0
 - SOURCE_UNAVAILABLE: 0
 - CONFLICT_REQUIRES_REVIEW: 0
