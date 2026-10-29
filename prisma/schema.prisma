@@ -1773,6 +1773,7 @@ model CrmCourse {
   university          CrmUniversity          @relation(fields: [universityId], references: [universityId])
   intakeFees          CrmCourseIntakeFee[]
   courseIntakes       CourseIntake[]
+  monthCoverage       CourseMonthCoverage[]
   entryRequirements   EntryRequirement[]
   englishRequirements EnglishRequirement[]
   requirements        CrmCourseRequirement[]
@@ -6495,6 +6496,85 @@ model CourseIntake {
   @@index([intakeYear, intakeMonth])
   @@index([status])
   @@map("course_intakes")
+}
+
+// Canonical month-by-month, source-backed course coverage. Rows are staged
+// independently from the legacy CourseIntake table so unpublished months are
+// represented explicitly without manufacturing an intake or overwriting live
+// CRM fields. Only APPROVED rows are eligible for public/API consumption.
+model CourseMonthCoverage {
+  id                         String   @id @default(cuid())
+  courseId                   String
+  calendarMonth              String   @db.Char(7) // YYYY-MM, bounded to 2027-01 through 2028-01 for this rollout
+  campus                     String   @default("") @db.VarChar(80)
+  studyMode                  String   @default("") @db.VarChar(32)
+  qualification              String   @default("")
+  availabilityStatus         String   @default("VERIFICATION_PENDING") // VERIFIED_AVAILABLE | VERIFIED_NOT_OFFERED | NOT_PUBLISHED | VERIFICATION_PENDING | SOURCE_UNAVAILABLE | CONFLICT_REQUIRES_REVIEW
+  startDate                  DateTime?
+  applicationOpenDate        DateTime?
+  applicationCloseDate       DateTime?
+  internationalDeadline     DateTime?
+  tuitionAmount              Float?
+  tuitionCurrency            String   @default("")
+  feeAcademicYear            String   @default("")
+  feePeriod                  String   @default("")
+  feeStudentCategory         String   @default("")
+  applicationFeeAmount       Float?
+  applicationFeeCurrency     String   @default("")
+  depositAmount              Float?
+  depositCurrency            String   @default("")
+  scholarshipDetails         String?  @db.LongText
+  academicRequirements       String?  @db.LongText
+  bangladeshRequirements     String?  @db.LongText
+  englishRequirements        String?  @db.LongText
+  additionalRequirements     String?  @db.LongText // work experience, portfolio, interview, documents
+  internationalEligibility   String   @default("NOT_PUBLISHED")
+  feeStatus                  String   @default("NOT_PUBLISHED")
+  deadlineStatus             String   @default("NOT_PUBLISHED")
+  scholarshipStatus          String   @default("NOT_PUBLISHED")
+  sourceUrls                 String   @default(dbgenerated("(_utf8mb4'[]')")) @db.LongText
+  fieldEvidence              String   @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText // JSON: per-field source URL and supporting quote
+  sourcePublishedAt          DateTime?
+  collectedAt                DateTime @default(now())
+  lastVerifiedAt             DateTime?
+  confidence                 Float    @default(0)
+  contentHash                String   @default("")
+  evidenceText               String?  @db.LongText
+  approvalStatus             String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  approvedBy                 String?
+  approvedAt                 DateTime?
+  rejectedBy                 String?
+  rejectedAt                 DateTime?
+  reviewNotes                String?  @db.Text
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  course   CrmCourse                  @relation(fields: [courseId], references: [courseId], onDelete: Restrict)
+  versions CourseMonthCoverageVersion[]
+
+  @@unique([courseId, calendarMonth, campus, studyMode], map: "course_month_coverage_identity")
+  @@index([calendarMonth, availabilityStatus])
+  @@index([approvalStatus, calendarMonth])
+  @@index([courseId, approvalStatus])
+  @@map("course_month_coverage")
+}
+
+// Append-only snapshots preserve what was reviewed, rejected or approved.
+model CourseMonthCoverageVersion {
+  id             String   @id @default(cuid())
+  coverageId     String
+  coverage       CourseMonthCoverage @relation(fields: [coverageId], references: [id], onDelete: Restrict)
+  version        Int
+  action         String // STAGED | APPROVED | REJECTED | RESTAGED
+  snapshot       String   @db.LongText
+  sourceHash     String   @default("")
+  actorId        String   @default("")
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  @@unique([coverageId, version])
+  @@index([createdAt])
+  @@map("course_month_coverage_versions")
 }
 
 model EntryRequirement {
