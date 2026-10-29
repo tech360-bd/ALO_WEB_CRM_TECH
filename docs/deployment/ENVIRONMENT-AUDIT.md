@@ -204,13 +204,11 @@
 - `PINTEREST_APP_ID`
 - `PINTEREST_APP_SECRET`
 - `PM2_NAME`
-- `ALO_MAIN_WHATSAPP_NUMBER`
-- `ALO_COMPLAINT_WHATSAPP_NUMBER`
-- `ALO_FOLLOWUP_WHATSAPP_NUMBER`
-- `ALO_COO_WHATSAPP_NUMBER`
-- `ALO_24_7_SUPPORT_NUMBER`
-- `ALO_EMPLOYEE_WHATSAPP_START`
-- `ALO_EMPLOYEE_WHATSAPP_END`
+- `ALO_MAIN_WHATSAPP_NUMBER` (optional, owner-confirmed configuration)
+- `ALO_COO_WHATSAPP_NUMBER` (optional, owner-confirmed configuration)
+- `ALO_EMPLOYEE_WHATSAPP_NUMBERS` (optional comma-separated list)
+
+These values do not establish number ownership or Meta connectivity. Keep them blank until confirmed; registry rows remain disconnected until an authorized provider check succeeds.
 - `OPENROUTER_MODEL`
 - `OPENROUTER_SITE_URL`
 - `OPENROUTER_APP_NAME`

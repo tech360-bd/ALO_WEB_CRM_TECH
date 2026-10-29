@@ -1,14 +1,11 @@
-import { Metadata } from 'next';
 import LanguageTestPage from '@/components/language-prep/LanguageTestPage';
-import { getTestBySlug } from '@/lib/language-prep/data';
+import { getLanguagePrepMetadata } from '@/lib/language-prep/metadata';
 
-const test = getTestBySlug('oxford-ellt');
+export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: test?.seoTitle || 'oxford-ellt Preparation | Requirements, Format & Study Abroad Guidance | ALO Education',
-  description: test?.seoDescription || 'Prepare for oxford-ellt with expert guidance from ALO Education.',
-  alternates: { canonical: 'https://aloeducation.com/language-prep/oxford-ellt' },
-};
+export async function generateMetadata() {
+  return getLanguagePrepMetadata('oxford-ellt');
+}
 
 export default function Page() {
   return <LanguageTestPage slug="oxford-ellt" />;

@@ -132,13 +132,13 @@ export default function PublicConsultationPage() {
             className="text-center mb-10"
           >
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] mb-4">
-              FREE CONSULTATION
+              CONSULTATION REQUEST
             </span>
             <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4">
-              Book Your Free Consultation
+              Request a Consultation
             </h1>
             <p className="text-lg text-[var(--alo-body)] max-w-2xl mx-auto">
-              Get personalized guidance from our expert counselors. Schedule a free consultation
+              Get personalized guidance from our expert counselors. Schedule a consultation
               today and take the first step toward your international education journey.
             </p>
           </motion.div>
@@ -353,7 +353,7 @@ export default function PublicConsultationPage() {
                     {submitting ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
                     ) : (
-                      'Book Free Consultation'
+                      'Request Consultation'
                     )}
                   </Button>
                 </form>
@@ -368,10 +368,12 @@ export default function PublicConsultationPage() {
                 <div className="bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-6 text-white">
                   <h3 className="text-lg font-bold mb-4">Contact Directly</h3>
                   <div className="space-y-3 text-sm">
-                    <div>
-                      <p className="text-[var(--alo-brand-pale)] text-xs">Phone</p>
-                      <a href={ALO_CONTACT.mobileHref} className="font-semibold">{ALO_CONTACT.mobileDisplay}</a>
-                    </div>
+                    {ALO_CONTACT.hasContactPhone && (
+                      <div>
+                        <p className="text-[var(--alo-brand-pale)] text-xs">Phone</p>
+                        <a href={ALO_CONTACT.mobileHref} className="font-semibold">{ALO_CONTACT.mobileDisplay}</a>
+                      </div>
+                    )}
                     <div>
                       <p className="text-[var(--alo-brand-pale)] text-xs">Email</p>
                       <a href={ALO_CONTACT.emailHref} className="font-semibold">{ALO_CONTACT.email}</a>
@@ -395,19 +397,17 @@ export default function PublicConsultationPage() {
                   </div>
                 </div>
 
-                <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
-                  <h3 className="text-base font-bold text-green-900 mb-2">WhatsApp Us</h3>
-                  <p className="text-sm text-green-800 mb-3">Quick response on WhatsApp</p>
-                  <Button asChild className="w-full bg-[var(--alo-whatsapp)] text-white hover:brightness-110">
-                    <a
-                      href={`${ALO_CONTACT.whatsappHref}?text=I%20want%20to%20book%20a%20consultation`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Chat on WhatsApp
-                    </a>
-                  </Button>
-                </div>
+                {ALO_CONTACT.hasWhatsApp && (
+                  <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+                    <h3 className="text-base font-bold text-green-900 mb-2">WhatsApp Us</h3>
+                    <p className="text-sm text-green-800 mb-3">Quick response on WhatsApp</p>
+                    <Button asChild className="w-full bg-[var(--alo-whatsapp)] text-white hover:brightness-110">
+                      <a href={`${ALO_CONTACT.whatsappHref}?text=I%20want%20to%20book%20a%20consultation`} target="_blank" rel="noopener noreferrer">
+                        Chat on WhatsApp
+                      </a>
+                    </Button>
+                  </div>
+                )}
 
                 <div className="bg-[var(--alo-cta-soft)] border border-[var(--alo-cta)]/25 rounded-2xl p-6">
                   <h3 className="text-base font-bold text-[var(--alo-cta)] mb-2">Why Choose Us?</h3>
@@ -426,7 +426,7 @@ export default function PublicConsultationPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-[var(--alo-cta)] mt-0.5 shrink-0" />
-                      Free service for students
+                      Service terms confirmed before booking
                     </li>
                   </ul>
                 </div>

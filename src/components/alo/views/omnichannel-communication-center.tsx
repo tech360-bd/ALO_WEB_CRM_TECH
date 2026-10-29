@@ -1800,8 +1800,13 @@ function UpdateConsentDialog({
   const { toast } = useToast();
   const [studentId, setStudentId] = React.useState("");
   const [channel, setChannel] = React.useState("WHATSAPP");
+  const [purpose, setPurpose] = React.useState("PROMOTIONAL_MARKETING");
   const [consentStatus, setConsentStatus] = React.useState("OPTED_IN");
   const [evidenceReference, setEvidenceReference] = React.useState("");
+  const [consentText, setConsentText] = React.useState("");
+  const [evidenceSource, setEvidenceSource] = React.useState("MANUAL_ADMIN_ASSERTION");
+  const [evidenceMethod, setEvidenceMethod] = React.useState("DOCUMENTED_VERBAL_OR_WRITTEN_CONSENT");
+  const [withdrawalReason, setWithdrawalReason] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
 
   const submit = async () => {
@@ -1809,8 +1814,16 @@ function UpdateConsentDialog({
       toast({ title: "Student or lead ID required", variant: "destructive" });
       return;
     }
-    if (["OPTED_IN", "OPTED_OUT"].includes(consentStatus) && evidenceReference.trim().length < 4) {
-      toast({ title: "Evidence reference required", description: "Add a record reference or evidence note for an opt-in/opt-out entry.", variant: "destructive" });
+    if (evidenceReference.trim().length < 4) {
+      toast({ title: "Evidence reference required", description: "Add a source record reference for the append-only consent event.", variant: "destructive" });
+      return;
+    }
+    if (consentStatus === 'OPTED_IN' && !consentText.trim()) {
+      toast({ title: "Consent wording required", description: "Store the exact affirmative consent wording or command evidence.", variant: "destructive" });
+      return;
+    }
+    if (consentStatus === 'OPTED_OUT' && !withdrawalReason.trim()) {
+      toast({ title: "Withdrawal reason required", variant: "destructive" });
       return;
     }
     setSubmitting(true);
@@ -1821,8 +1834,14 @@ function UpdateConsentDialog({
         body: JSON.stringify({
           studentId: studentId.trim(),
           channel,
+          purpose,
           consentStatus,
           evidenceReference: evidenceReference.trim(),
+          consentText: consentText.trim(),
+          source: evidenceSource.trim(),
+          method: evidenceMethod.trim(),
+          reason: withdrawalReason.trim(),
+          policyVersion: 'alo-consent-v1',
         }),
       });
       const result = await res.json().catch(() => null);
@@ -1834,6 +1853,8 @@ function UpdateConsentDialog({
       onOpenChange(false);
       setStudentId("");
       setEvidenceReference("");
+      setConsentText("");
+      setWithdrawalReason("");
       onUpdated();
     } catch (err) {
       toast({
@@ -1855,7 +1876,7 @@ function UpdateConsentDialog({
             Update Consent
           </DialogTitle>
           <DialogDescription>
-            Manual administrator entry only. STOP/UNSUBSCRIBE provider ingestion is not configured; recorded evidence is not independently verified.
+            Manual administrator entries append evidence; canonical inbound WhatsApp STOP/START commands are also recorded by the webhook. Manual evidence is not independently verified.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -1872,9 +1893,21 @@ function UpdateConsentDialog({
                   <SelectItem value="WHATSAPP">WhatsApp</SelectItem>
                   <SelectItem value="SMS">SMS</SelectItem>
                   <SelectItem value="EMAIL">Email</SelectItem>
-                  <SelectItem value="PHONE">Phone</SelectItem>
+                  <SelectItem value="CALL">Phone / Call</SelectItem>
                   <SelectItem value="FACEBOOK">Facebook</SelectItem>
                   <SelectItem value="INSTAGRAM">Instagram</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[var(--alo-text)]">Purpose</Label>
+              <Select value={purpose} onValueChange={setPurpose}>
+                <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PROMOTIONAL_MARKETING">Promotional marketing</SelectItem>
+                  <SelectItem value="TRANSACTIONAL">Transactional</SelectItem>
+                  <SelectItem value="SERVICE_UPDATES">Service updates</SelectItem>
+                  <SelectItem value="UNKNOWN">Unknown / review</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1892,9 +1925,17 @@ function UpdateConsentDialog({
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[var(--alo-text)]">Evidence note or record reference</Label>
-            <Input className="h-11" maxLength={250} placeholder="Required for opt-in or opt-out" value={evidenceReference} onChange={(e) => setEvidenceReference(e.target.value)} />
-            <p className="text-xs text-[var(--alo-text-muted)]">Stored in the audit trail as a manual assertion; it does not prove provider-side consent.</p>
+            <Label className="text-[var(--alo-text)]">Evidence reference *</Label>
+            <Input className="h-11" maxLength={250} placeholder="CRM note, signed form, or provider message ID" value={evidenceReference} onChange={(e) => setEvidenceReference(e.target.value)} />
+            <Label className="text-[var(--alo-text)]">Exact consent wording / command evidence</Label>
+            <Input className="h-11" maxLength={512} placeholder="Required for an affirmative opt-in" value={consentText} onChange={(e) => setConsentText(e.target.value)} />
+            <Label className="text-[var(--alo-text)]">Withdrawal reason</Label>
+            <Input className="h-11" maxLength={191} placeholder="Required for opt-out" value={withdrawalReason} onChange={(e) => setWithdrawalReason(e.target.value)} />
+            <Label className="text-[var(--alo-text)]">Evidence source</Label>
+            <Input className="h-11" maxLength={191} value={evidenceSource} onChange={(e) => setEvidenceSource(e.target.value)} />
+            <Label className="text-[var(--alo-text)]">Evidence method</Label>
+            <Input className="h-11" maxLength={191} value={evidenceMethod} onChange={(e) => setEvidenceMethod(e.target.value)} />
+            <p className="text-xs text-[var(--alo-text-muted)]">Stored as an append-only authenticated admin assertion. Provider verification is not implied.</p>
           </div>
         </div>
         <DialogFooter>

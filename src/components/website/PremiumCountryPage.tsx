@@ -16,7 +16,7 @@ import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCar
 import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePortalStore } from '@/lib/stores/portal-store';
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA } from '@/lib/alo-site-info';
 
 interface Props {
   countryData: CountryDestinationData;
@@ -40,27 +40,32 @@ const COUNTRY_IMAGE_MAP: Record<string, string> = {
 
 
 export default function PremiumCountryPage({ countryData, linkedCourses = [], linkedUniversities = [], linkedScholarships = [] }: Props) {
-  const isAuthenticated = usePortalStore((s: any) => s.isAuthenticated) || false;
-  const [calcLevel, setCalcLevel] = useState('Masters');
-  const [calcTuition, setCalcTuition] = useState(15000);
-  const [calcScholarship, setCalcScholarship] = useState(2500);
-  const [calcLivingMonths, setCalcLivingMonths] = useState(9);
-  const [calcExchangeRate, setCalcExchangeRate] = useState(155);
-  const [calcDeposit, setCalcDeposit] = useState(3000);
+  const [calcLevel, setCalcLevel] = useState('');
+  const [calcTuition, setCalcTuition] = useState<number | ''>('');
+  const [calcScholarship, setCalcScholarship] = useState<number | ''>('');
+  const [calcMonthlyLiving, setCalcMonthlyLiving] = useState<number | ''>('');
+  const [calcLivingMonths, setCalcLivingMonths] = useState<number | ''>('');
+  const [calcExchangeRate, setCalcExchangeRate] = useState<number | ''>('');
 
   const [leadForm, setLeadForm] = useState({
-    name: '', phone: '', email: '', level: 'Masters', subject: 'Computer Science & IT', intake: countryData.popularIntakes[0] || 'September 2026', budget: '৳ 20-30 Lakhs', englishTest: 'IELTS', englishScore: '6.5', message: '',
+    name: '', phone: '', email: '', level: '', subject: '', intake: '', budget: '', englishTest: '', englishScore: '', message: '',
   });
   const [leadSuccess, setLeadSuccess] = useState(false);
+  const [leadSuccessMessage, setLeadSuccessMessage] = useState('Your enquiry was received for staff review.');
+  const [leadError, setLeadError] = useState('');
   const [submittingLead, setSubmittingLead] = useState(false);
 
-  const [eligibilityResult, setEligibilityResult] = useState<any | null>(null);
-
-  const netTuition = Math.max(0, calcTuition - calcScholarship);
-  const monthlyLiving = countryData.slug === 'uk' ? 1023 : countryData.slug === 'canada' ? 1500 : countryData.slug === 'australia' ? 1800 : 1350;
-  const estimatedLiving = monthlyLiving * calcLivingMonths;
-  const totalCostForeign = netTuition + estimatedLiving;
-  const totalCostBdt = Math.round(totalCostForeign * calcExchangeRate);
+  const budgetInputsComplete = [calcTuition, calcScholarship, calcMonthlyLiving, calcLivingMonths, calcExchangeRate]
+    .every((value) => typeof value === 'number' && Number.isFinite(value))
+    && Number(calcTuition) >= 0
+    && Number(calcScholarship) >= 0
+    && Number(calcMonthlyLiving) > 0
+    && Number(calcLivingMonths) > 0
+    && Number(calcExchangeRate) > 0;
+  const netTuition = budgetInputsComplete ? Math.max(0, Number(calcTuition) - Number(calcScholarship)) : null;
+  const estimatedLiving = budgetInputsComplete ? Number(calcMonthlyLiving) * Number(calcLivingMonths) : null;
+  const totalCostForeign = netTuition !== null && estimatedLiving !== null ? netTuition + estimatedLiving : null;
+  const totalCostBdt = totalCostForeign !== null ? Math.round(totalCostForeign * Number(calcExchangeRate)) : null;
 
   const heroImage = destinationCardImage(countryData.slug, COUNTRY_IMAGE_MAP[countryData.slug]);
   const heroFallback = heroImage;
@@ -68,6 +73,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmittingLead(true);
+    setLeadError('');
     try {
       const res = await fetch('/api/crm/leads/public', {
         method: 'POST',
@@ -80,33 +86,23 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           studyLevel: leadForm.level,
           preferredSubject: leadForm.subject,
           preferredIntake: leadForm.intake,
-          notes: `English: ${leadForm.englishTest} (${leadForm.englishScore}) | Budget: ${leadForm.budget} | Msg: ${leadForm.message}`,
+          notes: [leadForm.englishTest && `English test: ${leadForm.englishTest}${leadForm.englishScore ? ` (${leadForm.englishScore})` : ''}`, leadForm.budget && `Budget: ${leadForm.budget}`, leadForm.message].filter(Boolean).join(' | '),
           source: `Website Destination: ${countryData.name}`,
-          source_country_page: countryData.slug,
+          sourceSection: `country_page:${countryData.slug}`,
         }),
       });
-      const data = await res.json();
-      if (data.success) setLeadSuccess(true);
-      else setLeadSuccess(true);
-    } catch { setLeadSuccess(true); } finally { setSubmittingLead(false); }
-  };
-
-  const handleEligibilityCheck = async () => {
-    const result = {
-      status: 'Eligible',
-      label: `High Admission Eligibility for ${countryData.name}`,
-      badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-300',
-      recommendations: [
-        `Direct admission available for ${calcLevel} in ${countryData.name} — check specific university requirements.`,
-        `Eligible for verified partial scholarships — check scholarship directory for ${countryData.name}.`,
-        `Required documents: Academic Transcripts, Passport, SOP, References — country-specific checklist.`,
-        `Final eligibility depends on university, course, academic profile, English score, study gap and other admission requirements.`,
-      ],
-    };
-    setEligibilityResult(result);
-    // This public calculator intentionally does not write to a student timeline.
-    // The previous fire-and-forget POST targeted a nonexistent API and could not
-    // authenticate or associate an anonymous result with a student safely.
+      const data = await res.json().catch(() => null);
+      if (!res.ok || data?.success !== true) {
+        setLeadError(typeof data?.error === 'string' ? data.error : 'Your enquiry could not be recorded. Please try again or use the Contact page.');
+        return;
+      }
+      setLeadSuccessMessage(typeof data.message === 'string' ? data.message : 'Your enquiry was received for staff review.');
+      setLeadSuccess(true);
+    } catch {
+      setLeadError('Connection issue. Your enquiry was not confirmed as saved. Please try again or use the Contact page.');
+    } finally {
+      setSubmittingLead(false);
+    }
   };
 
   return (
@@ -125,7 +121,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] h-12 px-8 font-semibold rounded-xl">Check Eligibility</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-semibold rounded-xl">Request Consultation</Button></Link>
               </div>
               <p className="text-[11px] text-[var(--alo-text-muted)]">Last Verified: {countryData.lastVerifiedAt}</p>
             </div>
@@ -348,22 +344,25 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
                 <h4 className="font-bold text-sm mb-4 flex items-center gap-2"><Calculator className="w-5 h-5 text-[var(--alo-brand)]" />Interactive budget estimator</h4>
                 <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                  <div><label className="text-[var(--alo-body)]">Study Level</label><select value={calcLevel} onChange={e=>setCalcLevel(e.target.value)} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl"><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>MBA</option><option>PhD</option></select></div>
-                  <div><label className="text-[var(--alo-body)]">City</label><input placeholder="London, Toronto..." className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
-                  <div><label className="text-[var(--alo-body)]">Tuition</label><input type="number" value={calcTuition} onChange={e=>setCalcTuition(parseFloat(e.target.value)||0)} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
-                  <div><label className="text-[var(--alo-body)]">Scholarship</label><input type="number" value={calcScholarship} onChange={e=>setCalcScholarship(parseFloat(e.target.value)||0)} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
-                  <div><label className="text-[var(--alo-body)]">Living Months</label><input type="number" value={calcLivingMonths} onChange={e=>setCalcLivingMonths(parseFloat(e.target.value)||0)} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
-                  <div><label className="text-[var(--alo-body)]">Exchange Rate</label><input type="number" value={calcExchangeRate} onChange={e=>setCalcExchangeRate(parseFloat(e.target.value)||0)} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
+                  <div><label className="text-[var(--alo-body)]">Study Level</label><select value={calcLevel} onChange={e=>setCalcLevel(e.target.value)} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl"><option value="">Choose a study level</option><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>MBA</option><option>PhD</option></select></div>
+                  <div><label className="text-[var(--alo-body)]">City (optional)</label><input placeholder="Enter a city" className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
+                  <div><label className="text-[var(--alo-body)]">Tuition amount ({countryData.currency})</label><input type="number" min="0" value={calcTuition} onChange={e=>setCalcTuition(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
+                  <div><label className="text-[var(--alo-body)]">Scholarship amount (enter 0 if none)</label><input type="number" min="0" value={calcScholarship} onChange={e=>setCalcScholarship(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
+                  <div><label className="text-[var(--alo-body)]">Monthly living estimate ({countryData.currency})</label><input type="number" min="0" value={calcMonthlyLiving} onChange={e=>setCalcMonthlyLiving(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
+                  <div><label className="text-[var(--alo-body)]">Living months</label><input type="number" min="1" value={calcLivingMonths} onChange={e=>setCalcLivingMonths(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
+                  <div className="sm:col-span-2"><label className="text-[var(--alo-body)]">BDT exchange rate per 1 {countryData.currency}</label><input type="number" min="0" step="any" value={calcExchangeRate} onChange={e=>setCalcExchangeRate(e.target.value === '' ? '' : Number(e.target.value))} className="w-full mt-1 p-2.5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl" /></div>
                 </div>
                 <div className="mt-6 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl p-4 space-y-2 text-xs">
-                  <p className="font-semibold text-[var(--alo-text)]">Estimates only — confirm final figures with your counselor or the university</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div><span className="text-[var(--alo-text-muted)]">Net Tuition:</span><p className="font-bold text-[var(--alo-text)]">{calcTuition - calcScholarship} foreign currency</p></div>
-                    <div><span className="text-[var(--alo-text-muted)]">Living Cost:</span><p className="font-bold">{estimatedLiving} foreign currency ({calcLivingMonths} months × {monthlyLiving})</p></div>
-                    <div><span className="text-[var(--alo-text-muted)]">First-Year Cost:</span><p className="font-black text-[var(--alo-brand)] text-sm">{totalCostForeign} foreign • ৳ {totalCostBdt.toLocaleString()} BDT</p></div>
-                    <div><span className="text-[var(--alo-text-muted)]">Initial Budget:</span><p className="font-bold">Tuition - Deposit + Living = Estimate</p></div>
-                  </div>
-                  <p className="text-[11px] text-[var(--alo-text-muted)]">Figures show their source and last verified date. Where a figure is unavailable, check with a counsellor.</p>
+                  <p className="font-semibold text-[var(--alo-text)]">This estimator uses only values you enter. It does not fetch or verify tuition, living costs, scholarship amounts, or exchange rates.</p>
+                  {budgetInputsComplete && totalCostForeign !== null && totalCostBdt !== null ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div><span className="text-[var(--alo-text-muted)]">Net Tuition:</span><p className="font-bold text-[var(--alo-text)]">{netTuition} {countryData.currency}</p></div>
+                      <div><span className="text-[var(--alo-text-muted)]">Living Estimate:</span><p className="font-bold">{estimatedLiving} {countryData.currency} ({calcLivingMonths} months × {calcMonthlyLiving})</p></div>
+                      <div><span className="text-[var(--alo-text-muted)]">Combined Estimate:</span><p className="font-black text-[var(--alo-brand)] text-sm">{totalCostForeign} {countryData.currency} · ৳ {totalCostBdt.toLocaleString()} BDT</p></div>
+                      <div><span className="text-[var(--alo-text-muted)]">Not included:</span><p className="font-bold">Visa, travel, deposits, insurance, and other fees</p></div>
+                    </div>
+                  ) : <p className="text-[var(--alo-text-muted)]">Enter tuition, scholarship (0 if none), monthly living amount, months, and exchange rate to calculate. No example values are prefilled.</p>}
+                  <p className="text-[11px] text-[var(--alo-text-muted)]">Confirm every input against current official sources. This estimate is not a quote or financial advice.</p>
                 </div>
               </Card>
             </div>
@@ -498,33 +497,19 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         </div>
       </section>
 
-      {/* 15. AI VISA READINESS — Country-aware checker */}
+      {/* 15. VISA READINESS — no unsupported public prediction */}
       <section className="py-16 bg-card border-b border-[var(--alo-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">AI Visa Readiness Checker — {countryData.name} — Country-Aware</h2>
-              <p className="text-sm text-[var(--alo-body)]">Inputs: Academic profile, English score, Study gap, Financial readiness, Sponsor, Previous refusal, Visa history, Course choice, Future plan, {countryData.name}-specific document status. Output: Ready/Needs improvement/Human review required/High-risk preparation area. Always display: AI provides preparation guidance only. Final review must be completed by ALO staff. AI cannot guarantee visa approval. If logged in save assessment to student timeline.</p>
-              <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl">
-                <div className="grid sm:grid-cols-2 gap-4 text-xs">
-                  <input placeholder="Academic profile — GPA/CGPA" className="p-2.5 bg-white border border-[var(--alo-border)] rounded-xl" />
-                  <input placeholder="English score — IELTS/PTE" className="p-2.5 bg-white border border-[var(--alo-border)] rounded-xl" />
-                  <input placeholder="Study gap — months" className="p-2.5 bg-white border border-[var(--alo-border)] rounded-xl" />
-                  <input placeholder="Financial readiness — bank statement" className="p-2.5 bg-white border border-[var(--alo-border)] rounded-xl" />
-                  <input placeholder="Sponsor — relation/income" className="p-2.5 bg-white border border-[var(--alo-border)] rounded-xl" />
-                  <input placeholder="Previous refusal — country/type" className="p-2.5 bg-white border border-[var(--alo-border)] rounded-xl" />
-                </div>
-                <Button onClick={handleEligibilityCheck} className="w-full mt-4 bg-[var(--alo-brand)] text-white h-12 font-bold rounded-xl">Check Visa Readiness — AI Guidance Only</Button>
-                {eligibilityResult && <div className={`mt-4 p-4 rounded-xl border text-xs ${eligibilityResult.badgeColor}`}><p className="font-bold flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" />{eligibilityResult.label}</p><ul className="list-disc pl-4 mt-2 space-y-1">{eligibilityResult.recommendations.map((r:string,i:number)=><li key={i}>{r}</li>)}</ul><p className="text-[11px] text-[var(--alo-text-muted)] mt-3">AI provides preparation guidance only. Final review must be completed by ALO staff. AI cannot guarantee visa approval. {isAuthenticated ? '✓ Saved to your student timeline (RBAC protected).' : 'Login to save this assessment to your student timeline.'}</p></div>}
-              </Card>
+          <Card className="p-6 md:p-8 bg-amber-50 border-amber-200 rounded-2xl">
+            <h2 className="text-2xl font-bold text-amber-900">Visa guidance for {countryData.name}</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-amber-800">
+              This page does not calculate visa eligibility or predict an immigration decision. Requirements change and only the relevant government authority can decide an application. Check current official guidance and request a staff review if you need help; no visa outcome is guaranteed.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link href="/book-consultation"><Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">Request Consultation</Button></Link>
+              <Link href="/contact"><Button variant="outline">Contact ALO Education</Button></Link>
             </div>
-            <div className="lg:col-span-5">
-              <Card className="p-6 bg-amber-50 border-amber-200 rounded-2xl">
-                <h4 className="font-bold text-amber-800 flex items-center gap-2"><ShieldCheck className="w-5 h-5" />Visa Readiness Disclaimer</h4>
-                <p className="text-xs text-amber-700 mt-2 leading-relaxed">AI provides preparation guidance only. Final review must be completed by ALO staff. AI cannot guarantee visa approval. Visa requirements can change — always verify final conditions with official government sources and ALO staff before making decisions. Save assessment to student timeline if logged in.</p>
-              </Card>
-            </div>
-          </div>
+          </Card>
         </div>
       </section>
 
@@ -617,7 +602,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">ALO Support — Service Journey for {countryData.name}</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { title: 'Free Counseling', desc: 'Profile review, destination guidance', href: '/book-consultation' },
+              { title: 'Counseling', desc: 'Profile review, destination guidance', href: '/book-consultation' },
               { title: 'Course Matching', desc: 'Profile assessment, academic/English/budget matching', href: '/services/course-matching' },
               { title: 'University Shortlisting', desc: 'Top universities matching your profile', href: '/services/university-selection' },
               { title: 'Application Support', desc: 'SOP/CV support, document checking', href: '/services/application-assistance' },
@@ -672,37 +657,38 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center space-y-3">
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--alo-text)] tracking-tight">Ready to start your {countryData.name} study journey?</h2>
-            <p className="text-sm text-[var(--alo-body)]">Check eligibility, find courses, book free consultation, WhatsApp 01805020101 — lead form creates CRM lead, sets source_country_page, saves country interest, assigns counselor if routing rules exist, creates timeline event, triggers configured communication workflow, never expose internal CRM information.</p>
+            <p className="text-sm text-[var(--alo-body)]">Browse available course records or submit an enquiry about studying in {countryData.name}. Enquiries are sent for staff review; response timing and any applicable service fees are confirmed separately.</p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <Link href="/eligibility-check"><Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
               <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
-              <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] h-12 px-8 font-semibold rounded-xl">Book Free Consultation</Button></Link>
-              <Button asChild variant="outline" className="bg-[var(--alo-whatsapp)]/10 border-[var(--alo-whatsapp)]/20 text-[var(--alo-whatsapp)] hover:bg-[var(--alo-whatsapp)] hover:text-white h-12 px-8 font-bold rounded-xl"><a href="https://wa.me/8801805020101" target="_blank">WhatsApp 01805020101</a></Button>
+              <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] h-12 px-8 font-semibold rounded-xl">Request Consultation</Button></Link>
+              <Button asChild variant="outline" className="bg-[var(--alo-whatsapp)]/10 border-[var(--alo-whatsapp)]/20 text-[var(--alo-whatsapp)] hover:bg-[var(--alo-whatsapp)] hover:text-white h-12 px-8 font-bold rounded-xl"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
             </div>
           </div>
 
           {leadSuccess ? (
             <Card className="p-8 bg-emerald-50 border-emerald-300 rounded-2xl text-center space-y-3">
               <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-              <h3 className="text-xl font-bold text-emerald-900">Inquiry Registered Successfully!</h3>
-              <p className="text-xs text-[var(--alo-body)]">Our Senior {countryData.name} Admissions Counselor will contact you on WhatsApp shortly — CRM lead created, source_country_page = {countryData.slug}, country interest saved, counselor assigned if routing rules exist, timeline event created, communication workflow triggered.</p>
+              <h3 className="text-xl font-bold text-emerald-900">Enquiry received</h3>
+              <p className="text-xs text-[var(--alo-body)]">{leadSuccessMessage}</p>
             </Card>
           ) : (
             <form onSubmit={handleLeadSubmit} className="bg-white text-[var(--alo-text)] p-6 md:p-8 rounded-2xl space-y-4 text-xs border border-[var(--alo-border)] shadow-md">
               <div className="grid sm:grid-cols-2 gap-4">
-                <div><label className="font-semibold">Full Name *</label><input required value={leadForm.name} onChange={e=>setLeadForm({...leadForm, name:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="e.g. Md. Tanvir Ahmed" /></div>
-                <div><label className="font-semibold">Mobile Number (WhatsApp) *</label><input required value={leadForm.phone} onChange={e=>setLeadForm({...leadForm, phone:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="e.g. 01712345678" /></div>
-                <div><label className="font-semibold">Email Address *</label><input required type="email" value={leadForm.email} onChange={e=>setLeadForm({...leadForm, email:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="e.g. tanvir@gmail.com" /></div>
-                <div><label className="font-semibold">Preferred Level</label><select value={leadForm.level} onChange={e=>setLeadForm({...leadForm, level:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11"><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>MBA</option><option>PhD</option></select></div>
-                <div><label className="font-semibold">Subject</label><input value={leadForm.subject} onChange={e=>setLeadForm({...leadForm, subject:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="Computer Science" /></div>
-                <div><label className="font-semibold">Intake</label><select value={leadForm.intake} onChange={e=>setLeadForm({...leadForm, intake:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11">{countryData.popularIntakes.map((intake)=><option key={intake} value={intake}>{intake}</option>)}</select></div>
-                <div><label className="font-semibold">Budget</label><input value={leadForm.budget} onChange={e=>setLeadForm({...leadForm, budget:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="৳ 20-30 Lakhs" /></div>
-                <div><label className="font-semibold">English Test</label><select value={leadForm.englishTest} onChange={e=>setLeadForm({...leadForm, englishTest:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11"><option>IELTS</option><option>PTE</option><option>TOEFL</option><option>Duolingo</option><option>MOI</option></select></div>
-                <div className="sm:col-span-2"><label className="font-semibold">English Score</label><input value={leadForm.englishScore} onChange={e=>setLeadForm({...leadForm, englishScore:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="6.5" /></div>
-                <div className="sm:col-span-2"><label className="font-semibold">Message</label><textarea value={leadForm.message} onChange={e=>setLeadForm({...leadForm, message:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm min-h-[80px]" placeholder="Tell us about your study plans for Study in COUNTRY..." /></div>
+                <div><label className="font-semibold">Full Name *</label><input required value={leadForm.name} onChange={e=>setLeadForm({...leadForm, name:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="Your full name" /></div>
+                <div><label className="font-semibold">Mobile Number *</label><input required value={leadForm.phone} onChange={e=>setLeadForm({...leadForm, phone:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="01XXXXXXXXX" /></div>
+                <div><label className="font-semibold">Email Address (optional)</label><input type="email" value={leadForm.email} onChange={e=>setLeadForm({...leadForm, email:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="you@example.com" /></div>
+                <div><label className="font-semibold">Preferred Level</label><select value={leadForm.level} onChange={e=>setLeadForm({...leadForm, level:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11"><option value="">Choose a level</option><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>MBA</option><option>PhD</option></select></div>
+                <div><label className="font-semibold">Subject</label><input value={leadForm.subject} onChange={e=>setLeadForm({...leadForm, subject:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="Your intended subject" /></div>
+                <div><label className="font-semibold">Intake</label><select value={leadForm.intake} onChange={e=>setLeadForm({...leadForm, intake:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11"><option value="">Choose an intake</option>{countryData.popularIntakes.map((intake)=><option key={intake} value={intake}>{intake}</option>)}</select></div>
+                <div><label className="font-semibold">Budget</label><input value={leadForm.budget} onChange={e=>setLeadForm({...leadForm, budget:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="Optional" /></div>
+                <div><label className="font-semibold">English Test</label><select value={leadForm.englishTest} onChange={e=>setLeadForm({...leadForm, englishTest:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11"><option value="">Choose a test (optional)</option><option>IELTS</option><option>PTE</option><option>TOEFL</option><option>Duolingo</option><option>MOI</option></select></div>
+                <div className="sm:col-span-2"><label className="font-semibold">English Score</label><input value={leadForm.englishScore} onChange={e=>setLeadForm({...leadForm, englishScore:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="Optional" /></div>
+                <div className="sm:col-span-2"><label className="font-semibold">Message</label><textarea value={leadForm.message} onChange={e=>setLeadForm({...leadForm, message:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm min-h-[80px]" placeholder="Add any questions or context you want the team to review." /></div>
               </div>
-              <Button type="submit" disabled={submittingLead} className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting — Creating CRM Lead...' : 'Submit — Create CRM Lead + Timeline + Workflow'}</Button>
-              <p className="text-[11px] text-[var(--alo-text-muted)] text-center">On submit: Create CRM lead, Set source_country_page = {countryData.slug}, Save country interest = {countryData.name}, Assign counselor if routing rules exist, Create timeline event, Trigger configured communication workflow, Never expose internal CRM information.</p>
+              <Button type="submit" disabled={submittingLead} className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting enquiry…' : 'Submit Enquiry'}</Button>
+              {leadError && <p role="alert" className="text-center text-xs font-medium text-red-700">{leadError}</p>}
+              <p className="text-[11px] text-[var(--alo-text-muted)] text-center">Submitting creates a public enquiry for staff review. No promotional contact consent is recorded by this form.</p>
             </form>
           )}
         </div>

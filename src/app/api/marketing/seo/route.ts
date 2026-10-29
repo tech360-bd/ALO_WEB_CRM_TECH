@@ -189,7 +189,7 @@ Return ONLY the JSON object, no other text.`;
       language,
       platform: 'website',
       tone: 'professional',
-      cta: 'Contact ALO Education for free counseling and application support',
+      cta: 'Contact ALO Education for counseling and application support',
       approvalRequired: true,
       targetCountry: country,
       targetCourse: course,

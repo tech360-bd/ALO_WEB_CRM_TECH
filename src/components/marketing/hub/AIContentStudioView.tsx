@@ -35,7 +35,7 @@ export default function AIContentStudioView() {
         setResults(arr.map((x:any,i:number)=>({ id: 'gen-'+i, title: x.title || topic+' #'+(i+1), body: x.body || x.description || x.content || JSON.stringify(x).slice(0,800), status: 'draft', platform, language })));
       } else {
         // fallback via content-generate
-        const r2 = await fetch('/api/marketing/content-generate', { method: 'POST', headers: { 'Content-Type':'application/json'}, body: JSON.stringify({ contentType, topic, platform, tone, targetAudience:'Bangladeshi students', keyMessage: topic, cta:'Book free consultation' })});
+        const r2 = await fetch('/api/marketing/content-generate', { method: 'POST', headers: { 'Content-Type':'application/json'}, body: JSON.stringify({ contentType, topic, platform, tone, targetAudience:'Bangladeshi students', keyMessage: topic, cta:'Request consultation' })});
         const j2 = await r2.json();
         setResults([{ id:'gen-0', title: topic, body: j2.content || 'Generated content', status:'draft', platform, language }]);
       }

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import { Icon } from "./shared";
 import { COUNTRIES, LEAD_SOURCES } from "@/lib/alo-types";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 import { collectAttributionPayload, rememberEntryAttribution } from "@/lib/analytics/attribution-payload";
+import { ALO_PUBLIC_CONTACT_CTA } from "@/lib/alo-site-info";
 
 interface PublicLeadFormProps {
   sourceTag?: string; // e.g. "UK country page", "University of Manchester page"
@@ -25,7 +27,8 @@ interface PublicLeadFormProps {
 const STUDY_LEVELS = ["Foundation", "Bachelor", "Top-up", "Pre-Masters", "Masters", "MBA", "PhD"];
 const INTAKES = ["January", "February", "April", "May", "July", "September", "October", "November"];
 
-export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, compact = false, title = "Start your journey in 60 seconds", subtitle = "Submit your details and an ALO counselor will reach out within 24 hours." }: PublicLeadFormProps) {
+export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, compact = false, title = "Request study-abroad guidance", subtitle = "Submit your enquiry for staff review. Response timing depends on current service availability." }: PublicLeadFormProps) {
+  const router = useRouter();
   const [form, setForm] = React.useState({
     fullName: "",
     email: "",
@@ -130,7 +133,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
         }, { source: 'public-lead-form' });
       }
     } catch {
-      setResult({ ok: false, message: "Connection issue. Please try again or WhatsApp us at 01805020101." });
+      setResult({ ok: false, message: `Connection issue. Please try again or contact us via ${ALO_PUBLIC_CONTACT_CTA.label}: ${ALO_PUBLIC_CONTACT_CTA.href}.` });
       trackAnalyticsEvent('lead_form_submit', {
         form_id: 'public-lead-form',
         success: false,
@@ -147,7 +150,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
         <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500 text-white">
           <Icon name="Check" className="size-7" />
         </div>
-        <p className="mt-4 text-lg font-bold text-emerald-900">Welcome aboard!</p>
+        <p className="mt-4 text-lg font-bold text-emerald-900">Enquiry received</p>
         <p className="mt-1 text-sm text-emerald-800">{result.message}</p>
         {result.leadId && (
           <p className="mt-3 text-xs text-emerald-700">
@@ -155,8 +158,8 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           </p>
         )}
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
-          <Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => { window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view: "student-dashboard" } })); }}>
-            Open Student Portal
+          <Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => router.push("/application-process")}>
+            View Application Process
           </Button>
           <Button variant="outline" className="border-emerald-400 text-emerald-700 hover:bg-emerald-100" onClick={() => setResult(null)}>
             Submit another lead
@@ -186,7 +189,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           </div>
           <div>
             <Label className="text-xs font-semibold">Mobile <span className="text-[var(--alo-cta)]">*</span></Label>
-            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="+8801805020100" />
+            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="01XXXXXXXXX" />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -239,15 +242,14 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
         <label className="flex cursor-pointer items-start gap-2.5 text-xs text-muted-foreground">
           <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]" />
           <span>
-            I agree to be contacted by ALO Education via phone, WhatsApp, and email. My data is
-            private, RBAC-protected, and audit-logged. <span className="text-[var(--alo-cta)]">*</span>
+            Optional: I agree to receive promotional updates from ALO Education by email or WhatsApp. I can withdraw this permission at any time. This choice is separate from the response to my enquiry.
           </span>
         </label>
-        <Button type="submit" disabled={loading || !form.fullName || !form.phone || !form.consent} className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
           {loading ? (
             <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting...</>
           ) : (
-            <><Icon name="Send" className="size-4" /> Submit & Start Journey</>
+            <><Icon name="Send" className="size-4" /> Submit Enquiry</>
           )}
         </Button>
         {result && !result.ok && (

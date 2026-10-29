@@ -13,6 +13,7 @@
  */
 
 import { db } from '@/lib/db';
+import { normalizePhone } from '@/lib/phone-normalization';
 
 export interface JobHandlerContext {
   now: Date;
@@ -113,39 +114,128 @@ export async function runFailedMessageRetry(ctx: JobHandlerContext): Promise<Rec
 
   let sent = 0;
   let failed = 0;
+  let skipped = 0;
   const errors: string[] = [];
 
   for (const item of due) {
     const attemptsAfter = item.attemptCount + 1;
+    // Compare-and-swap claim makes concurrent cron workers idempotent.
+    const claim = await db.whatsAppRetryQueue.updateMany({
+      where: {
+        id: item.id,
+        status: { in: ['pending', 'retrying'] },
+        attemptCount: item.attemptCount,
+        nextRetryAt: { lte: ctx.now },
+      },
+      data: {
+        status: 'retrying',
+        attemptCount: attemptsAfter,
+        nextRetryAt: new Date(ctx.now.getTime() + 10 * 60_000),
+      },
+    });
+    if (claim.count !== 1) { skipped++; continue; }
+
+    const purpose = String(item.purpose || 'unknown').toUpperCase();
+    if (!['SERVICE', 'TRANSACTIONAL', 'PROMOTIONAL_MARKETING'].includes(purpose)) {
+      failed++;
+      const error = 'REVIEW_REQUIRED_UNKNOWN_PURPOSE';
+      await db.whatsAppRetryQueue.update({
+        where: { id: item.id },
+        data: { status: 'failed', lastError: error, nextRetryAt: null },
+      });
+      if (errors.length < 5) errors.push(error);
+      continue;
+    }
+
+    if (purpose === 'SERVICE') {
+      const cutoff = new Date(ctx.now.getTime() - 24 * 60 * 60 * 1000);
+      let recentInbound = false;
+      try {
+        const ucc = item.conversationId
+          ? await db.uccConversation.findUnique({
+              where: { id: item.conversationId },
+              select: { id: true, channel: true, participantPhone: true, assignedToUserId: true },
+            })
+          : null;
+        if (ucc) {
+          const contextStillOwned = ucc.channel.toLowerCase() === 'whatsapp'
+            && normalizePhone(ucc.participantPhone || '') === normalizePhone(item.recipientPhone)
+            && ucc.assignedToUserId === item.actorId;
+          recentInbound = contextStillOwned && Boolean(await db.uccMessage.findFirst({
+            where: { conversationId: ucc.id, direction: 'inbound', createdAt: { gte: cutoff } },
+            select: { id: true },
+          }));
+        } else if (item.conversationId) {
+          const legacyThread = await db.communicationThread.findUnique({ where: { id: item.conversationId }, select: { id: true, channel: true, studentId: true, leadId: true, assignedToId: true } }).catch(() => null);
+          if (legacyThread) {
+            const linkedStudent = legacyThread.studentId
+              ? await db.student.findUnique({ where: { id: legacyThread.studentId }, select: { phone: true } }).catch(() => null)
+              : null;
+            const linkedLead = legacyThread.leadId
+              ? await db.lead.findUnique({ where: { id: legacyThread.leadId }, select: { phone: true } }).catch(() => null)
+              : null;
+            const conversationPhone = linkedStudent?.phone || linkedLead?.phone || '';
+            const contextStillOwned = legacyThread.channel.toLowerCase() === 'whatsapp'
+              && normalizePhone(conversationPhone) === normalizePhone(item.recipientPhone)
+              && legacyThread.assignedToId === item.actorId;
+            recentInbound = contextStillOwned && Boolean(await db.communicationMessage.findFirst({
+              where: { threadId: legacyThread.id, direction: 'inbound', createdAt: { gte: cutoff } },
+              select: { id: true },
+            }));
+          }
+        }
+      } catch {
+        recentInbound = false;
+      }
+      if (!recentInbound) {
+        failed++;
+        const error = 'WHATSAPP_SERVICE_WINDOW_CLOSED_OR_CONVERSATION_MISSING';
+        await db.whatsAppRetryQueue.update({ where: { id: item.id }, data: { status: 'failed', lastError: error, nextRetryAt: null } });
+        if (errors.length < 5) errors.push(error);
+        continue;
+      }
+    }
+
+    if (purpose === 'TRANSACTIONAL' && !item.conversationId) {
+      failed++;
+      const error = 'TRANSACTIONAL_RETRY_REQUIRES_VERIFIABLE_CONTEXT';
+      await db.whatsAppRetryQueue.update({ where: { id: item.id }, data: { status: 'failed', lastError: error, nextRetryAt: null } });
+      if (errors.length < 5) errors.push(error);
+      continue;
+    }
+
     try {
       const sendResult = await sendWhatsAppMessage({
         to: item.recipientPhone,
         text: item.messageBody,
+        purpose: purpose as 'SERVICE' | 'TRANSACTIONAL' | 'PROMOTIONAL_MARKETING',
+        conversationId: item.conversationId || undefined,
+        campaignId: item.campaignId || undefined,
+        approvalId: item.approvalId || undefined,
+        actorId: item.actorId || 'system',
+        senderNumber: item.senderNumber || undefined,
       });
 
       if (sendResult.success) {
         sent++;
         await db.whatsAppRetryQueue.update({
           where: { id: item.id },
-          data: {
-            attemptCount: attemptsAfter,
-            status: 'sent',
-            lastError: '',
-            nextRetryAt: null,
-          },
+          data: { status: 'sent', lastError: '', nextRetryAt: null },
         });
       } else {
         failed++;
-        if (errors.length < 5) errors.push(short(sendResult.error ?? 'provider rejected the message'));
-        // maxAttempts is the row's own bound; it can only shrink the retry
-        // count, never extend it.
-        const exhausted = attemptsAfter >= Math.max(1, Math.min(item.maxAttempts || 3, 3));
+        const errorCode = sendResult.error ?? 'provider rejected the message';
+        if (errors.length < 5) errors.push(short(errorCode));
+        // Retry only a definitive provider rate-limit rejection. Network/time-out
+        // and other responses can be ambiguous after provider acceptance, so a
+        // resend could duplicate a message and is deliberately terminal.
+        const retryable = errorCode.includes('HTTP_429');
+        const exhausted = !retryable || attemptsAfter >= Math.max(1, Math.min(item.maxAttempts || 3, 3));
         await db.whatsAppRetryQueue.update({
           where: { id: item.id },
           data: {
-            attemptCount: attemptsAfter,
             status: exhausted ? 'failed' : 'retrying',
-            lastError: short(sendResult.error ?? ''),
+            lastError: short(errorCode),
             nextRetryAt: exhausted ? null : new Date(ctx.now.getTime() + attemptsAfter * 3_600_000),
           },
         });
@@ -154,20 +244,18 @@ export async function runFailedMessageRetry(ctx: JobHandlerContext): Promise<Rec
       failed++;
       const message = error instanceof Error ? error.message : String(error);
       if (errors.length < 5) errors.push(short(message));
-      const exhausted = attemptsAfter >= 3;
       await db.whatsAppRetryQueue.update({
         where: { id: item.id },
         data: {
-          attemptCount: attemptsAfter,
-          status: exhausted ? 'failed' : 'retrying',
+          status: 'failed',
           lastError: short(message),
-          nextRetryAt: exhausted ? null : new Date(ctx.now.getTime() + attemptsAfter * 3_600_000),
+          nextRetryAt: null,
         },
       }).catch(() => {});
     }
   }
 
-  return { attempted: due.length, sent, failed, errors };
+  return { attempted: due.length - skipped, sent, failed, skipped, errors };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

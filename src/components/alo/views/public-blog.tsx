@@ -425,7 +425,7 @@ function BlogPostDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: Vi
             </div>
             <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               <Icon name="CalendarCheck" className="size-4" />
-              Book Free Consultation
+              Request Consultation
             </Button>
           </div>
         </div>

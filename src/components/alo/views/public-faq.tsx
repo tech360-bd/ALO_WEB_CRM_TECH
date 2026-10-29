@@ -70,7 +70,7 @@ const FALLBACK_FAQS: FallbackFaq[] = [
   { category: "English Tests", question: "Which English test should I take?", answer: "IELTS is the most widely accepted. PTE Academic is popular if you're nervous speaking to a human examiner. Duolingo is cheapest ($59) and fastest but less widely accepted. Always check your target university's accepted tests first." },
   { category: "English Tests", question: "What IELTS score do I need for UK universities?", answer: "Most Bachelor's courses require IELTS 6.0 overall (no band below 5.5). Most Masters courses require IELTS 6.5 overall (no band below 6.0). Law, medicine, and education often require 7.0+. Check your specific course requirements." },
   { category: "English Tests", question: "Does ALO provide free IELTS mock tests?", answer: "Yes! ALO registered students get 3 free full AI-scored mock tests. Guests get 1 free mock. Each mock includes Listening, Reading, Writing, and Speaking with a detailed PDF report. Visit our Exams page to start." },
-  { category: "English Tests", question: "Can I take IELTS UKVI instead of regular IELTS?", answer: "Yes — IELTS UKVI is accepted by UKVI for visa applications and by UK universities. It's slightly more expensive. We recommend IELTS UKVI if you're planning to study in the UK, as it covers both university admission and visa requirements." },
+  { category: "English Tests", question: "Can I take IELTS UKVI instead of regular IELTS?", answer: "IELTS for UKVI is a Secure English Language Test for specified UK immigration routes when the relevant rules require it. Check the current UKVI list, test provider, sponsor, and course requirements before booking; an exam result does not itself establish visa eligibility." },
   { category: "English Tests", question: "What is Duolingo English Test and is it accepted?", answer: "Duolingo English Test (DET) is a 1-hour online English test costing $59. Results are available in 48 hours. Over 4,000 universities accept it, but visa officers may still require IELTS. Check your university's accepted tests before booking." },
 
   // Payments
@@ -94,7 +94,7 @@ const FALLBACK_FAQS: FallbackFaq[] = [
   // Scholarships
   { category: "Scholarships", question: "Can Bangladeshi students get fully-funded scholarships?", answer: "Yes — Chevening (UK), Commonwealth (UK), Australia Awards (Australia), DAAD (Germany), Fulbright (USA), and New Zealand Scholarships all fully-fund Bangladeshi students. Competition is fierce — apply 12 months in advance. ALO provides free scholarship guidance and SOP support." },
   { category: "Scholarships", question: "Do universities offer scholarships for international students?", answer: "Yes — most universities offer merit scholarships of £2,000-£10,000/year for international students. Some have country-specific scholarships for Bangladesh. Check each university's scholarship page and deadlines (often earlier than admission deadlines)." },
-  { category: "Scholarships", question: "What makes a strong scholarship application?", answer: "Strong scholarship applications show: (1) academic excellence (top 10% of your class), (2) leadership experience (volunteering, projects, initiatives), (3) clear career plan linked to the scholarship's mission, (4) why you specifically deserve this scholarship. ALO provides free SOP coaching for scholarship applicants." },
+  { category: "Scholarships", question: "What should I prepare for a scholarship application?", answer: "Read the current programme criteria and prepare the requested academic, experience, and career-plan evidence. Requirements differ by provider. Contact ALO to ask whether application support is available and confirm any applicable fee." },
 
   // Pre-Departure
   { category: "Pre-Departure", question: "What should I pack for studying abroad?", answer: "Essentials: passport, visa, CAS, offer letter, academic transcripts (originals), bank cards, prescribed medicines (with prescription), adapter (UK uses Type G), £200-£300 cash for arrival. Don't overpack — most things are available abroad. Cultural items (food, prayer mat) can be brought if important to you." },
@@ -266,10 +266,10 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
               Contact Us
             </Button>
           </SectionCard>
-          <SectionCard title="Want a free consultation?" description="1-on-1 expert guidance" icon="CalendarCheck">
+          <SectionCard title="Want a consultation?" description="1-on-1 expert guidance" icon="CalendarCheck">
             <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               <Icon name="CalendarCheck" className="size-4" />
-              Book Free Session
+              Request Consultation
             </Button>
           </SectionCard>
         </div>

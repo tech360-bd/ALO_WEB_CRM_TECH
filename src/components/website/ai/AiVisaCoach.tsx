@@ -309,7 +309,7 @@ export default function AiVisaCoach({ countrySlugs }: { countrySlugs: string[] }
         </div>
         <div className="flex flex-wrap gap-3">
           <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
-            <Link href="/book-consultation">Book Free Consultation</Link>
+            <Link href="/book-consultation">Request Consultation</Link>
           </Button>
           <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
             <Link href="/visa">Visa Support Hub</Link>

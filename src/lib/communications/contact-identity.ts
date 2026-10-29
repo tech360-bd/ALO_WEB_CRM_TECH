@@ -196,7 +196,7 @@ export function resolveContactIdentity(input: IdentityInput, candidates: Contact
       ? ['open_existing', 'merge_request', CREATE_NEW]
       : ['open_existing', CREATE_NEW],
     // §126: creating a new record over a possible duplicate is restricted.
-    requiresAuthorizedRole: !isExact,
+    requiresAuthorizedRole: alternativeCount > 0 || !isExact,
   };
 }
 

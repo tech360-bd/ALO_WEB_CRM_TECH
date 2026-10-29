@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { ArrowRight, CheckCircle2, AlertCircle, Globe, Clock, FileText, Award, L
 
 export default function ComparisonView() {
   const [tests, setTests] = useState<any[]>([]);
-  const [selected, setSelected] = useState<string[]>(ENGLISH_PREP_TESTS.filter(t => t.testType !== 'moi_guidance').map(t => t.slug));
+  const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -23,8 +22,8 @@ export default function ComparisonView() {
       .then(d => {
         if (d.success && Array.isArray(d.comparison)) {
           setTests(d.comparison);
-          const requested = new URLSearchParams(window.location.search).get('tests')?.split(',').filter(slug => d.comparison.some((test: { slug: string }) => test.slug === slug));
-          if (requested?.length) setSelected(requested);
+          const requested = new URLSearchParams(window.location.search).get('tests')?.split(',').map((slug) => slug.trim()).filter((slug) => d.comparison.some((test: { slug: string }) => test.slug === slug));
+          setSelected(requested?.length ? requested : d.comparison.map((test: { slug: string }) => test.slug));
         } else { throw new Error('Comparison unavailable'); }
       })
       .catch(() => { if (!controller.signal.aborted) setError(true); })
@@ -65,8 +64,11 @@ export default function ComparisonView() {
         {/* Selector */}
         <Card className="p-5 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl mb-8">
           <h3 className="font-bold text-sm text-[var(--alo-text)] mb-3">Select tests to compare</h3>
-          <div className="flex flex-wrap gap-2">
-            {ENGLISH_PREP_TESTS.filter(t => t.testType !== 'moi_guidance').map(t => (
+          {tests.length === 0 ? (
+            <p className="text-sm text-[var(--alo-text-muted)]">No test entries currently meet the site's source-review publication gate. Confirm requirements with official providers and institutions.</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+            {tests.filter((test) => test.testType !== 'moi_guidance').map((t) => (
               <button
                 key={t.slug}
                 onClick={() => toggleTest(t.slug)}
@@ -77,7 +79,8 @@ export default function ComparisonView() {
                 {t.name} {selected.includes(t.slug) && '✓'}
               </button>
             ))}
-          </div>
+            </div>
+          )}
         </Card>
 
         {error ? (

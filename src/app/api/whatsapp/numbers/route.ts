@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 import { mutationOriginAllowed } from '@/lib/request-origin';
-import { normalizeBdPhone, OFFICIAL_NUMBERS, MAIN_NUMBER, COO_NUMBER, seedOfficialNumberPool } from '@/lib/whatsapp-number-pool';
+import { normalizeBdPhone, toBdDisplayPhone, OFFICIAL_NUMBERS, EMPLOYEE_POOL, MAIN_NUMBER, COO_NUMBER, seedOfficialNumberPool, getWhatsAppNumberConfigStatus } from '@/lib/whatsapp-number-pool';
+import { getWhatsAppAccessToken, getWhatsAppGraphUrl } from '@/lib/whatsapp-config';
 
 function roles(auth: AuthContext): Set<string> {
   return new Set(auth.roles.map((role) => role.toLowerCase()));
@@ -21,11 +22,21 @@ function maskIdentifier(value: string | null | undefined): string {
   const clean = value.trim();
   return clean.length <= 4 ? '••••' : `${'•'.repeat(Math.min(12, clean.length - 4))}${clean.slice(-4)}`;
 }
+const VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
+function isRecentlyVerified(number: Record<string, any>, now = Date.now()): boolean {
+  return number.activeStatus === 'active'
+    && number.connectionStatus === 'connected'
+    && Boolean(number.metaPhoneNumberId)
+    && !number.lastConnectionCheckError
+    && Boolean(number.lastConnectionCheckAt)
+    && now - new Date(number.lastConnectionCheckAt).getTime() >= 0
+    && now - new Date(number.lastConnectionCheckAt).getTime() <= VERIFICATION_TTL_MS;
+}
 function safeNumber(number: Record<string, any>) {
   const { metaPhoneNumberId, metaBusinessAccountId, ...safe } = number;
   return {
     ...safe,
-    connectionStatus: number.connectionStatus === 'connected' ? 'configured_unverified' : number.connectionStatus,
+    connectionStatus: number.connectionStatus === 'connected' && !isRecentlyVerified(number) ? 'configured_unverified' : number.connectionStatus,
     metaConfigured: Boolean(metaPhoneNumberId),
     metaPhoneNumberIdMasked: maskIdentifier(metaPhoneNumberId),
     metaBusinessAccountIdMasked: maskIdentifier(metaBusinessAccountId),
@@ -42,16 +53,16 @@ export const GET = withAuth(async (_req: Request, auth: AuthContext) => {
       numbers: numbers.map(safeNumber),
       stats: {
         total: numbers.length,
-        expected: 20,
-        connected: 0,
+        expected: OFFICIAL_NUMBERS.length,
+        connected: numbers.filter((number) => isRecentlyVerified(number)).length,
         configured: numbers.filter((number) => Boolean(number.metaPhoneNumberId)).length,
-        disconnected: numbers.filter((number) => !number.metaPhoneNumberId).length,
+        disconnected: numbers.filter((number) => !isRecentlyVerified(number)).length,
         main: numbers.find((number) => number.phoneNumber === MAIN_NUMBER) ? safeNumber(numbers.find((number) => number.phoneNumber === MAIN_NUMBER)!) : null,
         coo: numbers.find((number) => number.phoneNumber === COO_NUMBER) ? safeNumber(numbers.find((number) => number.phoneNumber === COO_NUMBER)!) : null,
-        employeePool: numbers.filter((number) => OFFICIAL_NUMBERS.slice(2).includes(number.phoneNumber)).length,
+        employeePool: numbers.filter((number) => EMPLOYEE_POOL.includes(number.phoneNumber)).length,
       },
-      officialRange: { start: '01805020100', end: '01805020119', total: 20 },
-      integrationState: 'CONFIGURATION_REQUIRES_PROVIDER_VERIFICATION',
+      configuredNumbers: getWhatsAppNumberConfigStatus(),
+      integrationState: numbers.some((number) => isRecentlyVerified(number)) ? 'PROVIDER_VERIFIED_RECENTLY' : 'CONFIGURATION_REQUIRES_PROVIDER_VERIFICATION',
     });
   } catch {
     return NextResponse.json({ success: false, error: 'WhatsApp number configuration could not be loaded.' }, { status: 503 });
@@ -70,7 +81,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
   }
 
   if (body.action === 'seed_official_pool') {
-    if (!isSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Super Admin access required to initialize the official number pool.' }, { status: 403 });
+    if (!isSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Super Admin access required to initialize configured sender records.' }, { status: 403 });
     try {
       const result = await seedOfficialNumberPool();
       await db.crmAuditLog.create({
@@ -81,16 +92,79 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
           afterData: JSON.stringify({ created: result.created, total: result.count }),
         },
       });
-      return NextResponse.json({ success: true, result, message: 'Pool entries are database records only; no Meta connection is implied.' });
+      return NextResponse.json({ success: true, result, message: 'Configured numbers are stored as disconnected records; neither ownership nor Meta connectivity is implied.' });
     } catch {
       return NextResponse.json({ success: false, error: 'Official number pool could not be initialized.' }, { status: 503 });
     }
   }
 
+  if (body.action === 'verify_connection') {
+    if (!isSuperAdmin(auth) && !auth.permissions.includes('whatsapp.numbers.api_config')) {
+      return NextResponse.json({ success: false, error: 'Super Admin or WhatsApp API configuration permission required.' }, { status: 403 });
+    }
+    const phone = typeof body.phoneNumber === 'string' ? toBdDisplayPhone(body.phoneNumber) : '';
+    if (!phone || !OFFICIAL_NUMBERS.includes(phone)) return NextResponse.json({ success: false, error: 'Phone must be in the operator-configured sender list.' }, { status: 400 });
+    const number = await db.whatsAppOfficialNumber.findUnique({ where: { phoneNumber: phone } });
+    if (!number) return NextResponse.json({ success: false, error: 'Initialize configured sender records and review this number first.' }, { status: 404 });
+    const now = new Date();
+    const token = getWhatsAppAccessToken();
+    const url = number.metaPhoneNumberId && /^\d+$/.test(number.metaPhoneNumberId.trim())
+      ? getWhatsAppGraphUrl(number.metaPhoneNumberId.trim())
+      : null;
+    if (!token || !url) {
+      const errorCode = !token ? 'CLOUD_API_TOKEN_NOT_CONFIGURED' : 'META_PHONE_NUMBER_ID_MISSING_OR_INVALID';
+      const updated = await db.whatsAppOfficialNumber.update({ where: { id: number.id }, data: { connectionStatus: 'error', lastConnectionCheckAt: now, lastConnectionCheckError: errorCode } });
+      await db.auditLog.create({ data: { userId: auth.userId, action: 'WHATSAPP_NUMBER_CONNECTION_CHECK_FAILED', resource: 'WhatsAppOfficialNumber', resourceId: number.id, actorRole: auth.roles.join(','), details: JSON.stringify({ phoneNumber: phone, errorCode }) } }).catch(() => {});
+      return NextResponse.json({ success: false, error: errorCode, data: safeNumber(updated) }, { status: 503 });
+    }
+
+    try {
+      const providerUrl = new URL(url);
+      providerUrl.searchParams.set('fields', 'id,display_phone_number,verified_name,quality_rating,whatsapp_business_account');
+      const response = await fetch(providerUrl, { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(12000), redirect: 'error' });
+      const data: any = await response.json().catch(() => ({}));
+      const providerCode = Number(data?.error?.code);
+      const providerWabaId = typeof data?.whatsapp_business_account?.id === 'string' ? data.whatsapp_business_account.id : '';
+      const expectedPhoneMatches = typeof data?.display_phone_number === 'string' && normalizeBdPhone(data.display_phone_number) === number.normalizedPhone;
+      const idMatches = String(data?.id || '') === number.metaPhoneNumberId;
+      const wabaMatches = !number.metaBusinessAccountId || !providerWabaId || number.metaBusinessAccountId === providerWabaId;
+      const verified = response.ok && idMatches && expectedPhoneMatches && wabaMatches;
+      const errorCode = verified ? '' : !response.ok
+        ? `META_GRAPH_HTTP_${response.status}${Number.isFinite(providerCode) ? `_CODE_${providerCode}` : ''}`
+        : !idMatches ? 'META_PHONE_NUMBER_ID_MISMATCH'
+        : !expectedPhoneMatches ? 'META_DISPLAY_PHONE_MISMATCH'
+        : 'META_BUSINESS_ACCOUNT_MISMATCH';
+      const updated = await db.whatsAppOfficialNumber.update({
+        where: { id: number.id },
+        data: {
+          connectionStatus: verified ? 'connected' : 'error',
+          lastConnectionCheckAt: now,
+          lastConnectionCheckError: errorCode,
+          ...(verified && providerWabaId && !number.metaBusinessAccountId ? { metaBusinessAccountId: providerWabaId } : {}),
+        },
+      });
+      await db.auditLog.create({
+        data: {
+          userId: auth.userId,
+          action: verified ? 'WHATSAPP_NUMBER_CONNECTION_VERIFIED' : 'WHATSAPP_NUMBER_CONNECTION_CHECK_FAILED',
+          resource: 'WhatsAppOfficialNumber',
+          resourceId: number.id,
+          actorRole: auth.roles.join(','),
+          details: JSON.stringify({ phoneNumber: phone, verified, errorCode: errorCode || undefined, qualityRating: verified ? data?.quality_rating : undefined }),
+        },
+      }).catch(() => {});
+      return NextResponse.json({ success: verified, verified, error: errorCode || undefined, data: safeNumber(updated) }, { status: verified ? 200 : 502 });
+    } catch {
+      const updated = await db.whatsAppOfficialNumber.update({ where: { id: number.id }, data: { connectionStatus: 'error', lastConnectionCheckAt: now, lastConnectionCheckError: 'META_GRAPH_REQUEST_FAILED' } }).catch(() => null);
+      await db.auditLog.create({ data: { userId: auth.userId, action: 'WHATSAPP_NUMBER_CONNECTION_CHECK_FAILED', resource: 'WhatsAppOfficialNumber', resourceId: number.id, actorRole: auth.roles.join(','), details: JSON.stringify({ phoneNumber: phone, errorCode: 'META_GRAPH_REQUEST_FAILED' }) } }).catch(() => {});
+      return NextResponse.json({ success: false, verified: false, error: 'META_GRAPH_REQUEST_FAILED', data: updated ? safeNumber(updated) : undefined }, { status: 502 });
+    }
+  }
+
   if (!canAssign(auth)) return NextResponse.json({ success: false, error: 'WhatsApp number assignment permission required.' }, { status: 403 });
-  const inputPhone = typeof body.phoneNumber === 'string' ? body.phoneNumber.trim() : '';
-  if (!OFFICIAL_NUMBERS.includes(inputPhone)) {
-    return NextResponse.json({ success: false, error: 'Phone must be in the official ALO range 01805020100–01805020119.' }, { status: 400 });
+  const inputPhone = typeof body.phoneNumber === 'string' ? toBdDisplayPhone(body.phoneNumber) : '';
+  if (!inputPhone || !OFFICIAL_NUMBERS.includes(inputPhone)) {
+    return NextResponse.json({ success: false, error: 'Phone must be a valid Bangladesh mobile number listed in the deployment configuration.' }, { status: 400 });
   }
   const sensitiveFields = ['metaPhoneNumberId', 'metaBusinessAccountId'];
   const attemptsSensitiveUpdate = sensitiveFields.some((field) => Object.prototype.hasOwnProperty.call(body, field));
@@ -126,12 +200,13 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
   if (ownerType && !['ALO_MAIN', 'COO', 'EMPLOYEE', 'BRANCH', 'DEPARTMENT'].includes(ownerType)) {
     return NextResponse.json({ success: false, error: 'Unsupported owner type.' }, { status: 400 });
   }
-  const poolIndex = OFFICIAL_NUMBERS.indexOf(inputPhone);
-  if ((poolIndex === 0 && ownerType && ownerType !== 'ALO_MAIN') || (poolIndex === 1 && ownerType && ownerType !== 'COO')) {
-    return NextResponse.json({ success: false, error: 'The main and COO number ownership is fixed by ALO policy.' }, { status: 400 });
+  const isMainNumber = inputPhone === MAIN_NUMBER;
+  const isCooNumber = inputPhone === COO_NUMBER && !isMainNumber;
+  if ((isMainNumber && ownerType && ownerType !== 'ALO_MAIN') || (isCooNumber && ownerType && ownerType !== 'COO')) {
+    return NextResponse.json({ success: false, error: 'Configured main and urgent-support number roles cannot be reassigned.' }, { status: 400 });
   }
-  if (employeeOwnerId && poolIndex < 2) {
-    return NextResponse.json({ success: false, error: 'The main and COO numbers cannot be assigned as employee numbers.' }, { status: 400 });
+  if (employeeOwnerId && (isMainNumber || isCooNumber)) {
+    return NextResponse.json({ success: false, error: 'Configured shared numbers cannot be assigned to an individual employee.' }, { status: 400 });
   }
   if (employeeOwnerId) {
     const employee = await db.employee.findFirst({ where: { OR: [{ id: employeeOwnerId }, { userId: employeeOwnerId }, { employeeId: employeeOwnerId }] }, select: { id: true, status: true } }).catch(() => null);
@@ -140,14 +215,14 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
 
   try {
     const existing = await db.whatsAppOfficialNumber.findUnique({ where: { phoneNumber: inputPhone } });
-    const index = OFFICIAL_NUMBERS.indexOf(inputPhone);
+    const employeeIndex = EMPLOYEE_POOL.indexOf(inputPhone);
     const defaults = {
-      ownerType: index === 0 ? 'ALO_MAIN' : index === 1 ? 'COO' : 'EMPLOYEE',
-      isDefaultSender: index === 0,
-      isComplaintSender: index === 0,
-      isFollowUpSender: index === 0,
-      isSupport247: index === 1,
-      displayName: index === 0 ? 'ALO Education Main' : index === 1 ? 'ALO COO 24/7' : `ALO Employee ${index - 1}`,
+      ownerType: isMainNumber ? 'ALO_MAIN' : isCooNumber ? 'COO' : 'EMPLOYEE',
+      isDefaultSender: isMainNumber,
+      isComplaintSender: isMainNumber,
+      isFollowUpSender: isMainNumber,
+      isSupport247: isCooNumber,
+      displayName: isMainNumber ? 'Configured ALO main sender' : isCooNumber ? 'Configured urgent-support sender' : `Configured employee sender ${employeeIndex + 1}`,
     };
     const data: Record<string, unknown> = {};
     if (displayName !== undefined) data.displayName = displayName;
@@ -160,7 +235,11 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
     if (attemptsSensitiveUpdate && (
       metaPhoneNumberId !== undefined && metaPhoneNumberId !== (existing?.metaPhoneNumberId || '')
       || metaBusinessAccountId !== undefined && metaBusinessAccountId !== (existing?.metaBusinessAccountId || '')
-    )) data.connectionStatus = 'disconnected';
+    )) {
+      data.connectionStatus = 'disconnected';
+      data.lastConnectionCheckAt = null;
+      data.lastConnectionCheckError = '';
+    }
 
     const updated = await db.$transaction(async (tx) => {
       const record = existing
@@ -170,7 +249,7 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
               ...defaults,
               phoneNumber: inputPhone,
               normalizedPhone: normalizeBdPhone(inputPhone),
-              purpose: index === 0 ? 'Main WhatsApp - Complaint - Follow-up - Default automation sender' : index === 1 ? 'COO - 24/7 urgent support - Escalation' : 'Employee WhatsApp',
+              purpose: isMainNumber ? 'Configured main sender; provider ownership must be verified before use' : isCooNumber ? 'Configured urgent-support sender; provider ownership must be verified before use' : 'Configured employee sender; provider ownership must be verified before use',
               connectionStatus: 'disconnected',
               activeStatus: 'active',
               ...data,

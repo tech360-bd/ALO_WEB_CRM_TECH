@@ -71,15 +71,15 @@ export default function ApplicationProcessPage() {
   const faqs = [
     {
       question: "How long does the entire application process take?",
-      answer: "The complete process from profile evaluation to visa approval typically takes 3 to 6 months, depending on the intake and country."
+      answer: "Timing varies by country, institution, intake, document readiness, and decision-making authorities. Confirm current deadlines with each official provider."
     },
     {
       question: "Do I need to pay an application fee for universities?",
-      answer: "Some universities charge application fees, while others offer waivers. We prioritize universities offering fee waivers for our students whenever possible."
+      answer: "Some universities charge application fees and some may offer waivers. Check the official course page for current terms; any ALO service fee is confirmed in writing before booking."
     },
     {
-      question: "Is the ALO Education counseling service free?",
-      answer: "Yes, our initial counseling and university shortlisting services are completely free of charge."
+      question: "What does ALO Education counseling cost?",
+      answer: "Consultation availability and any applicable fees are confirmed before booking. Ask our team for current terms."
     },
     {
       question: "Can I apply without an IELTS score?",
@@ -114,7 +114,7 @@ export default function ApplicationProcessPage() {
           <ApplicationProcessDiagram />
           <IntakeTimelineDiagram />
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <AloCtaLink href="/book-consultation">Book a Free Session</AloCtaLink>
+            <AloCtaLink href="/book-consultation">Request a Consultation</AloCtaLink>
             <AloCtaLink href="/eligibility-check" variant="brand">Check Your Eligibility</AloCtaLink>
           </div>
         </div>
@@ -197,11 +197,11 @@ export default function ApplicationProcessPage() {
         <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Start Your Application?</h2>
           <p className="text-xl text-[var(--alo-brand-pale)] mb-10 max-w-2xl mx-auto">
-            Join thousands of successful students who have realized their study abroad dreams with ALO Education.
+            Request guidance from ALO Education and ask about current service availability, timing, and any applicable fees.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link href="/book-consultation" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
-              Book a Free Session
+              Request a Consultation
             </Link>
             <Link href="/contact" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-8 rounded-xl text-lg transition-colors">
               Contact Us

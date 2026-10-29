@@ -303,10 +303,10 @@ export default function UniversityHub({ slug }: Props) {
 
             <Card className="p-8 bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-3xl text-white text-center">
               <h3 className="text-2xl font-bold mb-2">Apply to {name} Through ALO</h3>
-              <p className="text-sm text-[var(--alo-brand-pale)] mb-6 max-w-2xl mx-auto">Book free consultation, check eligibility, save course, compare, ask counselor — move from information → eligibility → course selection → consultation → application</p>
+              <p className="text-sm text-[var(--alo-brand-pale)] mb-6 max-w-2xl mx-auto">Request consultation, check eligibility, save course, compare, ask counselor — move from information → eligibility → course selection → consultation → application</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check Eligibility</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-bold">Request Consultation</Button></Link>
                 <Link href={`/course-finder?university=${uni.universityId}`}><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-8">View All Courses</Button></Link>
               </div>
             </Card>

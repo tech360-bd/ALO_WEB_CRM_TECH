@@ -42,7 +42,7 @@ export default function AIMarketingDirectorView() {
         const alt = await fetch('/api/marketing/content-generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contentType: 'campaign_plan', topic: instruction, platform: 'multi-channel', tone: language === 'bangla' ? 'warm Bangla' : 'professional', targetAudience: 'Bangladeshi students', keyMessage: instruction, cta: 'Book free consultation' }),
+          body: JSON.stringify({ contentType: 'campaign_plan', topic: instruction, platform: 'multi-channel', tone: language === 'bangla' ? 'warm Bangla' : 'professional', targetAudience: 'Bangladeshi students', keyMessage: instruction, cta: 'Request consultation' }),
         });
         if (alt.ok) {
           const j = await alt.json();

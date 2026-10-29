@@ -3,8 +3,10 @@ import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
 import { generateSecureToken, MAIN_NUMBER } from '@/lib/whatsapp-number-pool';
 import { sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 
 export const POST = withAuth(async (req, auth) => {
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
   try {
     const body = await req.json();
     const requestedStudentId = typeof body?.studentId === 'string' ? body.studentId.trim() : '';
@@ -63,9 +65,9 @@ export const POST = withAuth(async (req, auth) => {
     // Send welcome message from MAIN_NUMBER
     const lang = language || 'mixed';
     const welcomeMessages: Record<string, string> = {
-      english: `Welcome to ALO Education! Your Student ID: ${studentId}. Activate your portal: ${portalLink}. Your counselor will contact you soon. For support: ${MAIN_NUMBER}`,
-      bangla: `ALO Education এ স্বাগতম! আপনার Student ID: ${studentId}. পোর্টাল একটিভ করুন: ${portalLink}. কাউন্সেলর শীঘ্রই যোগাযোগ করবে। সাপোর্ট: ${MAIN_NUMBER}`,
-      mixed: `Welcome to ALO Education! Student ID: ${studentId}. Portal activate korun: ${portalLink}. Counselor contact korbe. Support: ${MAIN_NUMBER}`,
+      english: `Welcome to ALO Education. Activate your student portal: ${portalLink}. For account help, contact your assigned counselor through the portal.`,
+      bangla: `ALO Education এ স্বাগতম। আপনার student portal চালু করুন: ${portalLink}. অ্যাকাউন্ট সহায়তার জন্য পোর্টালের মাধ্যমে আপনার নির্ধারিত কাউন্সেলরের সঙ্গে যোগাযোগ করুন।`,
+      mixed: `Welcome to ALO Education. Portal activate korun: ${portalLink}. Account help er jonno portal diye assigned counselor er shathe contact korun.`,
     };
 
     const welcomeText = welcomeMessages[lang] || welcomeMessages['mixed'];
@@ -76,6 +78,11 @@ export const POST = withAuth(async (req, auth) => {
       sendResult = await sendWhatsAppMessage({
         to: phone,
         text: welcomeText,
+        purpose: 'TRANSACTIONAL',
+        actorId: auth.userId,
+        employeeSenderId: auth.userId,
+        studentId,
+        senderNumber: MAIN_NUMBER,
       });
 
       if (sendResult?.success && sendResult.messageId) {

@@ -134,7 +134,7 @@ export default function EnquiryForm({
         </p>
         <p className="mt-3 text-xs text-emerald-800">
           Want to move faster?{' '}
-          <Link href="/book-consultation" className="font-semibold underline underline-offset-2">Book a free counseling session</Link>{' '}
+          <Link href="/book-consultation" className="font-semibold underline underline-offset-2">Book a counseling session</Link>{' '}
           or{' '}
           <Link href="/register" className="font-semibold underline underline-offset-2">create your student account</Link>{' '}
           to start an application.

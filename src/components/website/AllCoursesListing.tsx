@@ -243,7 +243,7 @@ export default function AllCoursesListing() {
  href="/book-consultation"
  className="mt-5 inline-flex items-center rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-sm font-bold text-black transition-colors hover:bg-[var(--alo-cta-hover)]"
  >
-            Book Free Counseling
+            Request Counseling
           </Link>
         </div>
       )}

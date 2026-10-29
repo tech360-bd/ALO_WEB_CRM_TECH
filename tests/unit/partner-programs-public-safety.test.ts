@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere } from '@/lib/public-catalog';
 
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(),
@@ -40,9 +40,14 @@ describe('partner program discovery', () => {
       include: expect.objectContaining({
         intakeFees: expect.objectContaining({ where: publicIntakeWhere() }),
         requirements: expect.objectContaining({ where: publicRequirementWhere() }),
-        scholarshipRecords: expect.objectContaining({ where: publicScholarshipWhere() }),
       }),
     }));
+    expect(mocks.courseFindMany.mock.calls[0][0].include.scholarshipRecords.where).toMatchObject({
+      status: 'active',
+      verificationStatus: { in: ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] },
+      lastCheckedAt: { gte: expect.any(String), lte: expect.any(String) },
+      officialScholarshipUrl: { startsWith: 'https://' },
+    });
   });
 
   it('keeps the internal administrator view available for review workflows', async () => {

@@ -148,6 +148,11 @@ async function handleApprove(body: ApproveInput, auth: AuthContext) {
         where: { id: approval.itemId },
         data: { status: 'approved', approvedById: reviewedById, approvedAt: now },
       });
+    } else if (approval.itemType === 'WhatsAppFollowUpTemplate') {
+      await db.whatsAppFollowUpTemplate.update({
+        where: { id: approval.itemId },
+        data: { approvalStatus: 'approved', activeStatus: 'inactive' },
+      });
     }
   } catch {
     console.warn(`Could not update related item ${approval.itemType}:${approval.itemId}`);
@@ -221,6 +226,11 @@ async function handleReject(body: RejectInput, auth: AuthContext) {
           rejectedAt: new Date(),
           rejectionReason: rejectionNote,
         },
+      });
+    } else if (approval.itemType === 'WhatsAppFollowUpTemplate') {
+      await db.whatsAppFollowUpTemplate.update({
+        where: { id: approval.itemId },
+        data: { approvalStatus: 'rejected', activeStatus: 'inactive' },
       });
     }
   } catch {

@@ -24,7 +24,7 @@ function LegacyUnverifiedSEOBlogManagerView() {
       const res = await fetch('/api/marketing/seo', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'research', keyword })});
       if(res.ok){ setResult(await res.json()); }
       else {
-        const alt = await fetch('/api/marketing/content-generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contentType:'blog_post', topic: keyword+' SEO blog for ALO Education', platform:'blog', tone:'professional', targetAudience:'Bangladeshi students', keyMessage: keyword, cta:'Book free consultation' })});
+        const alt = await fetch('/api/marketing/content-generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contentType:'blog_post', topic: keyword+' SEO blog for ALO Education', platform:'blog', tone:'professional', targetAudience:'Bangladeshi students', keyMessage: keyword, cta:'Request consultation' })});
         const j2 = await alt.json();
         setResult({ brief: j2.content?.slice(0,800) || 'SEO brief generated', keyword, intent: 'informational — Bangladeshi students researching UK study', competitorNote: 'Check SERP for study abroad keywords (BD, UK, USA, Australia...). Require source verification for tuition/visa claims.' });
       }

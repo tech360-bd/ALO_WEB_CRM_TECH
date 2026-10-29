@@ -148,7 +148,7 @@ export default function MasterLanguagePrepLandingView() {
               {/* QUICK HERO BUTTONS */}
               <div className="flex flex-wrap gap-4 pt-2">
                 <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
-                    Book Free Counselling <ArrowRight className="h-4 w-4" />
+                    Request Counselling <ArrowRight className="h-4 w-4" />
                   </a></Button>
                 <Button asChild variant="outline" className="border-[var(--alo-border)] bg-card font-bold text-sm h-12 px-6 rounded-xl text-[var(--alo-text)] hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)]"><a href="#test-discovery">
                     Find Your English Test
@@ -185,7 +185,7 @@ export default function MasterLanguagePrepLandingView() {
               <Card className="rounded-[20px] border border-[var(--alo-border)] bg-card p-6 text-[var(--alo-text)] shadow-[var(--alo-shadow-md)] md:p-8">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="h-5 w-5 text-[var(--alo-cta)]" />
-                  <h3 className="text-xl font-bold text-[var(--alo-text)]">Book Free Test Consultation</h3>
+                  <h3 className="text-xl font-bold text-[var(--alo-text)]">Book Test Consultation</h3>
                 </div>
                 <p className="text-xs text-[var(--alo-body)] mb-6">
                   Get a personalized test recommendation and score plan from ALO certified advisors.
@@ -265,7 +265,7 @@ export default function MasterLanguagePrepLandingView() {
                       disabled={submittingLead}
                       className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
                     >
-                      {submittingLead ? 'Scheduling Session...' : 'Get Free Test Score Plan →'}
+                      {submittingLead ? 'Scheduling Session...' : 'Get Test Score Plan →'}
                     </Button>
                   </form>
                 )}
@@ -621,7 +621,7 @@ export default function MasterLanguagePrepLandingView() {
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
             <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
-                Book Free Test Counselling →
+                Request Test Counselling →
               </a></Button>
             <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
                 <MessageSquare className="h-4 w-4" /> WhatsApp Advisor (+880 180 502 0101)

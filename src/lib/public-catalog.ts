@@ -16,9 +16,11 @@
 
 import { NON_PUBLIC_INTERNATIONAL_VALUES } from './course-finder/eligibility-rules';
 import { parseIntakePeriodToken } from '@/lib/course-finder/intake-window';
+import { VERIFICATION_STALE_DAYS } from '@/lib/scholarships/status-engine';
 
 export const PUBLISHED_STATUSES = ['published', 'PUBLISHED'] as const;
-export const SOURCE_VERIFIED_STATUSES = ['VERIFIED', 'verified'] as const;
+export const PUBLIC_SCHOLARSHIP_STATUSES: string[] = ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'];
+export const SOURCE_VERIFIED_STATUSES = ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] as const;
 
 export class PublicQueryError extends Error {
   readonly status = 400;
@@ -26,7 +28,7 @@ export class PublicQueryError extends Error {
 
 /** A record is publicly visible only with a source link (official URL or source URL). */
 function hasSourceLink() {
-  return { OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] };
+  return { OR: [{ sourceUrl: { startsWith: 'https://' } }, { officialUrl: { startsWith: 'https://' } }] };
 }
 
 export function publicUniversityWhere() {
@@ -64,7 +66,7 @@ export function publicIntakeWhere() {
   return {
     status: 'active',
     verificationStatus: 'VERIFIED',
-    AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
+    AND: [{ OR: [{ intakeSourceUrl: { startsWith: 'https://' } }, { feeSourceUrl: { startsWith: 'https://' } }] }],
   };
 }
 
@@ -74,11 +76,44 @@ export function publicVerifiedIntakeWhere() {
 }
 
 export function publicRequirementWhere() {
-  return { verificationStatus: 'VERIFIED' };
+  return { verificationStatus: 'VERIFIED', officialRequirementUrl: { startsWith: 'https://' } };
 }
 
-export function publicScholarshipWhere() {
-  return { status: 'active', verificationStatus: { in: [...SOURCE_VERIFIED_STATUSES] } };
+function verifiedDateRange(now: Date) {
+  if (Number.isNaN(now.getTime())) throw new RangeError('A valid current time is required.');
+  return {
+    gte: new Date(now.getTime() - VERIFICATION_STALE_DAYS * 24 * 60 * 60 * 1000),
+    lte: now,
+  };
+}
+
+function crmLastCheckedRange(now: Date) {
+  if (Number.isNaN(now.getTime())) throw new RangeError('A valid current time is required.');
+  // CrmScholarship stores this timestamp as legacy text (often date-only).
+  // Start at the next UTC date after the rolling cutoff so a date-only value
+  // cannot be misclassified as current when its time-of-day is unknown.
+  const conservativeStart = new Date(now.getTime() - VERIFICATION_STALE_DAYS * 24 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000);
+  return { gte: conservativeStart.toISOString().slice(0, 10), lte: now.toISOString() };
+}
+
+/** Fresh source-backed predicate for the canonical Scholarship table. */
+export function publicScholarshipWhere(now: Date = new Date()) {
+  return {
+    status: { in: [...PUBLIC_SCHOLARSHIP_STATUSES] },
+    verificationStatus: { in: [...SOURCE_VERIFIED_STATUSES] },
+    lastVerifiedAt: verifiedDateRange(now),
+    officialSourceUrl: { startsWith: 'https://' },
+  };
+}
+
+/** Fresh source-backed predicate for CrmScholarship (legacy `lastCheckedAt` is String). */
+export function publicCrmScholarshipWhere(now: Date = new Date()) {
+  return {
+    status: 'active',
+    verificationStatus: { in: [...SOURCE_VERIFIED_STATUSES] },
+    lastCheckedAt: crmLastCheckedRange(now),
+    officialScholarshipUrl: { startsWith: 'https://' },
+  };
 }
 
 /**
@@ -111,10 +146,10 @@ export function publicUniversitiesInCountryWhere(countryName: string, countryCod
   };
 }
 
-export function publicScholarshipsInCountryWhere(countryName: string, countryCode: string) {
+export function publicScholarshipsInCountryWhere(countryName: string, countryCode: string, now: Date = new Date()) {
   return {
     AND: [
-      publicScholarshipWhere(),
+      publicCrmScholarshipWhere(now),
       { university: { is: publicUniversitiesInCountryWhere(countryName, countryCode) } },
     ],
   };
@@ -183,11 +218,22 @@ const MONTH_ALIASES: Record<string, number> = {
 };
 
 /** Every spelling a stored intake month might use, for an exact `IN (...)` match. */
-export function intakeMonthVariants(month: number): string[] {
+export function intakeMonthVariants(month: number, year?: number): string[] {
   const name = MONTH_NAMES[month - 1];
+  if (!name) return [];
   const abbr = name.slice(0, 3);
-  const variants = new Set<string>([name, abbr, String(month), String(month).padStart(2, '0')]);
+  const paddedMonth = String(month).padStart(2, '0');
+  const variants = new Set<string>([name, abbr, String(month), paddedMonth]);
   if (month === 9) variants.add('Sept');
+  if (year !== undefined) {
+    // Legacy import/export surfaces have stored both month names and
+    // year-qualified tokens while also recording intakeYear separately.
+    for (const label of [name, abbr, ...(month === 9 ? ['Sept'] : [])]) variants.add(`${label} ${year}`);
+    variants.add(`${year}-${String(month)}`);
+    variants.add(`${year}-${paddedMonth}`);
+    variants.add(`${year}/${String(month)}`);
+    variants.add(`${year}/${paddedMonth}`);
+  }
   return [...variants];
 }
 
@@ -326,6 +372,67 @@ function parseIntake(raw: string): { month?: number; year?: number } {
   throw new PublicQueryError('"intake" must be a month name or YYYY-MM.');
 }
 
+function parseBareIntakeMonth(token: string): number | null {
+  if (/^\d{1,2}$/.test(token)) {
+    const month = Number(token);
+    return month >= 1 && month <= 12 ? month : null;
+  }
+  return MONTH_ALIASES[token.toLowerCase()] ?? null;
+}
+
+function parseIntakeMonthSelection(
+  sp: URLSearchParams,
+  fallbackYear?: number,
+): { months?: number[]; periods?: IntakePeriodFilter[] } {
+  const tokens = [...sp.getAll('intakeMonth'), ...sp.getAll('intakeMonths')]
+    .flatMap((value) => value.split(','))
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (tokens.length === 0) return {};
+  if (tokens.length > 24 || tokens.some((token) => token.length > 40 || /[\u0000-\u001f\u007f]/.test(token))) {
+    throw new PublicQueryError('"intakeMonth" contains too many or invalid values.');
+  }
+
+  const periods: IntakePeriodFilter[] = [];
+  const months = new Set<number>();
+  let hasExplicitYear = false;
+  let hasUnqualifiedMonth = false;
+
+  for (const token of tokens) {
+    const explicitYear = /^(?:\d{4}-\d{1,2}|[A-Za-z]{3,9}\.?\s*\d{4})$/.test(token);
+    const parsed = parseIntakePeriodToken(token, fallbackYear);
+    if (parsed) {
+      if (parsed.year < 2000 || parsed.year > 2100) {
+        throw new PublicQueryError('Intake years must be between 2000 and 2100.');
+      }
+      if (explicitYear) hasExplicitYear = true;
+      else hasUnqualifiedMonth = true;
+      if (!periods.some((entry) => entry.year === parsed.year && entry.month === parsed.month)) {
+        periods.push({ year: parsed.year, month: parsed.month });
+      }
+      continue;
+    }
+
+    const month = parseBareIntakeMonth(token);
+    if (month === null) {
+      throw new PublicQueryError('"intakeMonth" must be a month name, a number 1-12, "YYYY-MM" or "<Mon> YYYY".');
+    }
+    if (fallbackYear !== undefined) {
+      periods.push({ year: fallbackYear, month });
+      hasUnqualifiedMonth = true;
+    } else {
+      months.add(month);
+      hasUnqualifiedMonth = true;
+    }
+  }
+
+  if (hasExplicitYear && hasUnqualifiedMonth && fallbackYear === undefined) {
+    throw new PublicQueryError('Use year-qualified intake months together, or add "year" for bare months.');
+  }
+  if (periods.length > 0) return { periods };
+  return { months: [...months].sort((a, b) => a - b) };
+}
+
 /**
  * Parse and validate the public Course Finder query string.
  * Throws PublicQueryError (HTTP 400) for malformed input rather than
@@ -355,18 +462,11 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
   const page = readInteger(sp, 'page', 1, 1_000_000) ?? 1;
   const limit = readInteger(sp, 'limit', 1, COURSE_FINDER_MAX_LIMIT) ?? COURSE_FINDER_DEFAULT_LIMIT;
 
-  // Year-qualified intake months ("2027-01", "Jan 2028" or repeated
-  // intakeMonth=… params). The ALO window spans Jan 2027 → Jan 2028, so the
-  // year travels with the month instead of relying on a separate `year`.
-  const rawIntakeMonths = sp.getAll('intakeMonth').flatMap((value) => value.split(',')).map((v) => v.trim()).filter(Boolean);
-  const intakePeriods: IntakePeriodFilter[] = [];
-  for (const token of rawIntakeMonths) {
-    const parsed = parseIntakePeriodToken(token, yearParam ?? undefined);
-    if (!parsed) throw new PublicQueryError('"intakeMonth" must be a month name, a number 1-12, "YYYY-MM" or "<Mon> YYYY".');
-    if (!intakePeriods.some((entry) => entry.year === parsed.year && entry.month === parsed.month)) {
-      intakePeriods.push({ year: parsed.year, month: parsed.month });
-    }
-  }
+  // Multi-month selections accept repeated or comma-separated `intakeMonth`
+  // / `intakeMonths` values. Explicit YYYY-MM tokens retain their own year;
+  // bare month names/numbers use `year` when supplied, otherwise match any year.
+  const intakeSelection = parseIntakeMonthSelection(sp, yearParam);
+  const hasIntakeSelection = Boolean(intakeSelection.periods?.length || intakeSelection.months?.length);
 
   return {
     search: readText(sp, 'search'),
@@ -377,9 +477,10 @@ export function parseCourseFinderParams(sp: URLSearchParams): CourseFinderFilter
     subjectArea: readText(sp, 'subjectArea') || readText(sp, 'subject'),
     discipline: readText(sp, 'discipline'),
     university: readText(sp, 'university'),
-    intakeMonth: intake.month,
+    intakeMonth: hasIntakeSelection ? undefined : intake.month,
     intakeYear: yearParam ?? intake.year,
-    intakePeriods: intakePeriods.length > 0 ? intakePeriods : undefined,
+    intakeMonths: intakeSelection.months,
+    intakePeriods: intakeSelection.periods,
     tuitionMin,
     tuitionMax,
     scholarship: ['yes', 'true', '1'].includes(scholarshipRaw),
@@ -496,7 +597,7 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
   if (f.durationMonths) and.push({ durationMonths: f.durationMonths });
   if (f.scholarship) {
     and.push({
-      scholarshipRecords: { some: publicScholarshipWhere() },
+      scholarshipRecords: { some: publicCrmScholarshipWhere() },
     });
   }
   if (f.applicationFeeWaived) and.push({ applicationFeeWaiver: true });
@@ -512,18 +613,20 @@ export function buildCourseFinderWhere(f: CourseFinderFilters): Record<string, u
           some: {
             ...publicIntakeWhere(),
             intakeYear: entry.year,
-            intakeMonth: { in: intakeMonthVariants(entry.month) },
+            intakeMonth: { in: intakeMonthVariants(entry.month, entry.year) },
           },
         },
       })),
     });
   } else if (f.intakeMonths?.length) {
-    intakeFee.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
+    intakeFee.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month, f.intakeYear)) };
   } else if (f.intakeMonth) {
-    intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+    intakeFee.intakeMonth = { in: intakeMonthVariants(f.intakeMonth, f.intakeYear) };
   }
-  if (f.intakeYear) intakeFee.intakeYear = f.intakeYear;
-  if (f.intakeMonths?.length || f.intakeMonth || f.intakeYear) and.push({ intakeFees: { some: intakeFee } });
+  if (f.intakeYear && !f.intakePeriods?.length) intakeFee.intakeYear = f.intakeYear;
+  if (!f.intakePeriods?.length && (f.intakeMonths?.length || f.intakeMonth || f.intakeYear)) {
+    and.push({ intakeFees: { some: intakeFee } });
+  }
 
   if (f.tuitionMin !== undefined || f.tuitionMax !== undefined) {
     const range: Record<string, number> = { gt: 0 };
@@ -557,12 +660,12 @@ export function buildPublicIntakeInclude(f: CourseFinderFilters) {
     // Year-qualified selection: keep each (year, month) pair intact.
     where.OR = f.intakePeriods.map((entry) => ({
       intakeYear: entry.year,
-      intakeMonth: { in: intakeMonthVariants(entry.month) },
+      intakeMonth: { in: intakeMonthVariants(entry.month, entry.year) },
     }));
   } else if (f.intakeMonths?.length) {
-    where.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month)) };
+    where.intakeMonth = { in: f.intakeMonths.flatMap((month) => intakeMonthVariants(month, f.intakeYear)) };
   } else if (f.intakeMonth) {
-    where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth) };
+    where.intakeMonth = { in: intakeMonthVariants(f.intakeMonth, f.intakeYear) };
   }
   if (f.intakeYear && !f.intakePeriods?.length) where.intakeYear = f.intakeYear;
   return {
@@ -575,7 +678,6 @@ export function buildPublicIntakeInclude(f: CourseFinderFilters) {
   };
 }
 
-export const PUBLIC_SCHOLARSHIP_COUNT_FILTER = { status: 'active', verificationStatus: { in: [...SOURCE_VERIFIED_STATUSES] } };
 
 type CourseLike = {
   id: string;

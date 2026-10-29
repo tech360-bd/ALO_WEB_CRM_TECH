@@ -1,15 +1,16 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { publicCourseWhere, publicCrmScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
 
 export async function GET() {
   try {
     const [totalUniversities, totalCourses, totalScholarships, countryGroups] = await Promise.all([
-      db.crmUniversity.count({ where: { status: 'active' } }),
-      db.crmCourse.count(),
-      db.crmScholarship.count({ where: { status: 'active' } }),
+      db.crmUniversity.count({ where: publicUniversityWhere() }),
+      db.crmCourse.count({ where: publicCourseWhere() }),
+      db.crmScholarship.count({ where: publicCrmScholarshipWhere() }),
       db.crmUniversity.groupBy({
         by: ['country'],
-        where: { status: 'active' },
+        where: publicUniversityWhere(),
         _count: { universityId: true },
       }),
     ]);

@@ -1,46 +1,45 @@
 /**
- * ALO Education — single source of truth for public contact details, official
- * social accounts and policy links.
- *
- * The public header (PublicNavbar), the site-wide footer (PublicFooter), the
- * contact page and the policy pages all read from this module. Before this
- * file each surface hard-coded its own phone number, address or handle, so the
- * site showed three different offices at once. Change a value here once and
- * every surface follows.
- *
- * Contact values were checked against the live site (aloeducation.com/contact, fetched
- * 2026-10-13): phone +88 01805020101-10, info@aloeducation.com, Barek
- * Mansion-02 (5th Floor), 58/9 Box Culvert Road, Panthapath, Dhaka-1205,
- * WhatsApp wa.me/8801805020101.
+ * ALO Education — shared public contact details, social accounts and policy links.
+ * Public phone/WhatsApp links are deployment configuration. Blank values are
+ * intentionally omitted. Configuration does not prove phone ownership or Meta
+ * connectivity; the separate sender registry/provider check controls sending.
  */
+function readPublicPhone(value: string | undefined, requireInternational = false): { display: string; digits: string } | null {
+  const raw = (value || '').trim();
+  if (!raw || !/^[+()\d\s.-]+$/.test(raw)) return null;
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length < 8 || digits.length > 15 || (requireInternational && digits.startsWith('0'))) return null;
+  return { display: raw, digits };
+}
+
+const configuredContactPhone = readPublicPhone(process.env.NEXT_PUBLIC_ALO_CONTACT_PHONE);
+const configuredWhatsAppPhone = readPublicPhone(process.env.NEXT_PUBLIC_ALO_WHATSAPP_NUMBER, true);
 
 export const ALO_CONTACT = {
-  /** Full postal address, exactly as published on the live site. */
+  /** Confirm address with the owner before production publication. */
   address: 'Barek Mansion-02 (5th Floor), 58/9 Box Culvert Road, Panthapath, Dhaka-1205, Bangladesh.',
-  /** Compact form for the header utility strip. */
   addressShort: 'Barek Mansion-02 (5th Floor), Panthapath, Dhaka-1205',
-  /** Google location share link supplied by ALO Education. */
   mapsUrl: 'https://share.google/aarau5V2GfBrICZTj',
-  /** Human-readable mobile range, exactly as specified: +8801805020101-10. */
-  mobileDisplay: '+8801805020101-10',
-  /** Dialable primary number. */
-  mobileHref: 'tel:+8801805020101',
-  /** WhatsApp deep link on the primary number. */
-  whatsappHref: 'https://wa.me/8801805020101',
-  whatsappDisplay: '+8801805020101',
+  mobileDisplay: configuredContactPhone?.display || '',
+  mobileHref: configuredContactPhone
+    ? `tel:${configuredContactPhone.display.trim().startsWith('+') ? '+' : ''}${configuredContactPhone.digits}`
+    : '',
+  hasContactPhone: Boolean(configuredContactPhone),
+  whatsappHref: configuredWhatsAppPhone ? `https://wa.me/${configuredWhatsAppPhone.digits}` : '',
+  whatsappDisplay: configuredWhatsAppPhone ? `+${configuredWhatsAppPhone.digits}` : '',
+  hasWhatsApp: Boolean(configuredWhatsAppPhone),
   email: 'info@aloeducation.com',
   emailHref: 'mailto:info@aloeducation.com',
   officeHours: 'Sat–Thu: 9:00 AM – 6:00 PM (Asia/Dhaka)',
-} as const;
+};
 
-/**
- * Bangladesh ALO Education accounts corroborated by public profile identity,
- * address/phone and tagline on 2026-10-24. Account-admin ownership is not tested.
- * Instagram @aloeducation belongs to an unrelated training profile.
- * Official ALO Education accounts, in the order the brand requires:
- * Facebook → Instagram → LinkedIn → YouTube. Never render them in another
- * order and never add a platform that is not listed here.
- */
+/** Safe public CTA fallback when no operator-confirmed WhatsApp destination is configured. */
+export const ALO_PUBLIC_CONTACT_CTA = {
+  href: ALO_CONTACT.hasWhatsApp ? ALO_CONTACT.whatsappHref : '/contact',
+  label: ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : 'Contact ALO Education',
+};
+
+/** Public social profile links are configuration/content, not proof of account ownership. */
 export const ALO_SOCIALS = [
   {
     id: 'facebook',

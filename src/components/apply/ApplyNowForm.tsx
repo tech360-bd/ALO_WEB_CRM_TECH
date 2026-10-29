@@ -585,7 +585,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
       )}
 
       <p className="text-center text-xs text-alo-text-muted">
-        Prefer to talk it through? <Link href="/book-consultation" className="font-semibold text-alo-brand underline underline-offset-2">Book a free counseling session</Link>{' '}
+        Prefer to talk it through? <Link href="/book-consultation" className="font-semibold text-alo-brand underline underline-offset-2">Book a counseling session</Link>{' '}
         or <Link href={`/course/${encodeURIComponent(course.courseSlug)}`} className="font-semibold text-alo-brand underline underline-offset-2">read the full course details</Link>.
       </p>
     </div>

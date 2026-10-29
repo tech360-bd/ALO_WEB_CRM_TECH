@@ -1,156 +1,122 @@
-import { applyReviewedFacts, reviewedModules, reviewLanguageFaq, reviewLanguageAcceptance } from './editorial';
 import { db } from '@/lib/db';
-import { ENGLISH_PREP_TESTS, ENGLISH_PREP_MODULES, ENGLISH_PREP_FAQS, ENGLISH_PREP_ACCEPTANCE, ENGLISH_PREP_RESOURCES, getTestBySlug as getHardcodedTest } from './data';
 import { EnglishTest } from './types';
+import { hasCurrentLanguagePrepSourceReview, hasCurrentLanguagePrepVerification } from './verification';
 
-// Service to fetch English prep tests from DB with fallback to hardcoded data
-// Ensures no fake content — only verified data or "Check current provider information"
+function isoDate(value: unknown): string | undefined {
+  if (!value) return undefined;
+  const date = value instanceof Date ? value : new Date(String(value));
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString().slice(0, 10);
+}
 
+function mapVerifiedTest(test: any): EnglishTest {
+  return {
+    id: test.id,
+    name: test.name,
+    slug: test.slug,
+    shortName: test.shortName || test.name,
+    shortDescription: test.shortDescription || '',
+    longDescription: test.longDescription || '',
+    testType: test.testType || 'english_proficiency',
+    provider: test.provider || '',
+    logo: test.logo || '',
+    icon: test.icon || '',
+    officialUrl: test.officialUrl || '',
+    format: test.format || 'Check current provider information',
+    durationMinutes: test.durationMinutes || 0,
+    durationDisplay: test.durationDisplay || 'Check current provider information',
+    scoringSystem: test.scoringSystem || 'Check official provider information',
+    resultTimeline: test.resultTimeline || 'Check current provider information',
+    costSummary: test.costSummary || 'Check current provider information',
+    validitySummary: test.validitySummary || 'Check official provider',
+    bestFor: test.bestFor || '',
+    acceptanceSummary: test.acceptanceSummary || 'Acceptance varies by university, course and visa route',
+    difficultyLevel: test.difficultyLevel || '',
+    status: test.status || 'active',
+    isPopular: Boolean(test.isPopular),
+    isFeatured: Boolean(test.isFeatured),
+    sortOrder: test.sortOrder || 0,
+    sourceUrl: test.sourceUrl || '',
+    sourceName: test.sourceName || '',
+    verifiedBy: test.verifiedBy || '',
+    verificationStatus: String(test.verificationStatus || 'pending').toLowerCase() as EnglishTest['verificationStatus'],
+    lastVerifiedAt: isoDate(test.lastVerifiedAt),
+    seoTitle: test.seoTitle || `${test.name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education`,
+    seoDescription: test.seoDescription || `Explore current ${test.name} information and confirm requirements with official providers and institutions.`,
+  };
+}
+
+/** Only current DB records with an explicit verified marker and HTTPS source are public. */
 export async function getAllEnglishPrepTestsFromDB(): Promise<EnglishTest[]> {
-  if (process.env.SKIP_CMS_DB === '1') return ENGLISH_PREP_TESTS;
+  if (process.env.SKIP_CMS_DB === '1') return [];
   try {
-    const tests = await (db as any).englishPrepTest?.findMany?.({
+    const records = await (db as any).englishPrepTest?.findMany?.({
       where: { status: 'active' },
       orderBy: { sortOrder: 'asc' },
     });
-    if (tests && tests.length > 0) {
-      return tests.map((t: any) => ({
-        id: t.id,
-        name: t.name,
-        slug: t.slug,
-        shortName: t.shortName || t.name,
-        shortDescription: t.shortDescription || '',
-        longDescription: t.longDescription || '',
-        testType: t.testType || 'english_proficiency',
-        provider: t.provider || '',
-        logo: t.logo || '',
-        icon: t.icon || '',
-        officialUrl: t.officialUrl || '',
-        format: t.format || 'Check current provider information',
-        durationMinutes: t.durationMinutes || 0,
-        durationDisplay: t.durationDisplay || 'Check current provider information',
-        scoringSystem: t.scoringSystem || 'Check official provider information',
-        resultTimeline: t.resultTimeline || 'Check current provider information',
-        costSummary: t.costSummary || 'Check current provider information',
-        validitySummary: t.validitySummary || 'Check official provider',
-        bestFor: t.bestFor || '',
-        acceptanceSummary: t.acceptanceSummary || 'Acceptance varies by university, course and visa route',
-        difficultyLevel: t.difficultyLevel || '',
-        status: t.status || 'active',
-        isPopular: t.isPopular || false,
-        isFeatured: t.isFeatured || false,
-        sortOrder: t.sortOrder || 0,
-        sourceUrl: t.sourceUrl || '',
-        sourceName: t.sourceName || '',
-        verifiedBy: t.verifiedBy || 'ALO Compliance Team',
-        verificationStatus: t.verificationStatus || 'pending',
-        lastVerifiedAt: t.lastVerifiedAt ? new Date(t.lastVerifiedAt).toISOString().split('T')[0] : undefined,
-        seoTitle: t.seoTitle || `${t.name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education`,
-        seoDescription: t.seoDescription || `Prepare for ${t.name} with expert guidance from ALO Education.`,
-      })).map(applyReviewedFacts);
-    }
-  } catch (e) {
-    console.warn('DB fetch failed for EnglishPrepTest, using hardcoded fallback', e);
+    if (!Array.isArray(records)) return [];
+    return records.filter((record: any) => hasCurrentLanguagePrepVerification(record)).map(mapVerifiedTest);
+  } catch (error) {
+    console.warn('DB fetch failed for EnglishPrepTest; unpublished catalogue returned.', error);
+    return [];
   }
-  // Fallback to hardcoded verified data
-  return ENGLISH_PREP_TESTS;
 }
 
 export async function getEnglishPrepTestBySlugFromDB(slug: string): Promise<EnglishTest | null> {
-  if (process.env.SKIP_CMS_DB === '1') return getHardcodedTest(slug) || null;
+  if (process.env.SKIP_CMS_DB === '1') return null;
   try {
     const clean = slug.toLowerCase().trim();
     const test = await (db as any).englishPrepTest?.findFirst?.({
       where: { slug: clean, status: 'active' },
     });
-    if (test) {
-      return applyReviewedFacts({
-        id: test.id,
-        name: test.name,
-        slug: test.slug,
-        shortName: test.shortName || test.name,
-        shortDescription: test.shortDescription || '',
-        longDescription: test.longDescription || '',
-        testType: test.testType || 'english_proficiency',
-        provider: test.provider || '',
-        logo: test.logo || '',
-        icon: test.icon || '',
-        officialUrl: test.officialUrl || '',
-        format: test.format || 'Check current provider information',
-        durationMinutes: test.durationMinutes || 0,
-        durationDisplay: test.durationDisplay || 'Check current provider information',
-        scoringSystem: test.scoringSystem || 'Check official provider information',
-        resultTimeline: test.resultTimeline || 'Check current provider information',
-        costSummary: test.costSummary || 'Check current provider information',
-        validitySummary: test.validitySummary || 'Check official provider',
-        bestFor: test.bestFor || '',
-        acceptanceSummary: test.acceptanceSummary || 'Acceptance varies by university, course and visa route',
-        difficultyLevel: test.difficultyLevel || '',
-        status: test.status || 'active',
-        isPopular: test.isPopular || false,
-        isFeatured: test.isFeatured || false,
-        sortOrder: test.sortOrder || 0,
-        sourceUrl: test.sourceUrl || '',
-        sourceName: test.sourceName || '',
-        verifiedBy: test.verifiedBy || 'ALO Compliance Team',
-        verificationStatus: test.verificationStatus || 'pending',
-        lastVerifiedAt: test.lastVerifiedAt ? new Date(test.lastVerifiedAt).toISOString().split('T')[0] : undefined,
-        seoTitle: test.seoTitle || `${test.name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education`,
-        seoDescription: test.seoDescription || `Prepare for ${test.name} with expert guidance from ALO Education.`,
-      });
-    }
-  } catch (e) {
-    console.warn('DB fetch failed for single test', e);
+    if (!test || !hasCurrentLanguagePrepVerification(test)) return null;
+    return mapVerifiedTest(test);
+  } catch (error) {
+    console.warn('DB fetch failed for single EnglishPrepTest; item remains unpublished.', error);
+    return null;
   }
-  return getHardcodedTest(slug) || null;
 }
 
-export async function getModulesByTestIdFromDB(testId: string, slug?: string, lastReviewedAt?: string) {
-  const current = slug ? reviewedModules(slug, testId, lastReviewedAt) : null;
-  if (current) return current;
+export async function getModulesByTestIdFromDB(testId: string) {
+  if (process.env.SKIP_CMS_DB === '1') return [];
   try {
     const modules = await (db as any).englishPrepModule?.findMany?.({
       where: { testId, status: 'active' },
       orderBy: { sortOrder: 'asc' },
     });
-    if (modules && modules.length > 0) return modules;
-  } catch (e) {
-    console.warn('DB modules fetch failed', e);
+    return Array.isArray(modules) ? modules.filter((record: any) => hasCurrentLanguagePrepSourceReview(record)) : [];
+  } catch (error) {
+    console.warn('DB modules fetch failed; unreviewed modules remain unpublished.', error);
+    return [];
   }
-  // Fallback to hardcoded
-  if (slug) {
-    return ENGLISH_PREP_MODULES[slug] || [];
-  }
-  return [];
 }
 
-export async function getFaqsByTestIdFromDB(testId: string, slug?: string) {
+export async function getFaqsByTestIdFromDB(testId: string) {
+  if (process.env.SKIP_CMS_DB === '1') return [];
   try {
     const faqs = await (db as any).englishPrepFaq?.findMany?.({
       where: { testId, status: 'active' },
       orderBy: { sortOrder: 'asc' },
     });
-    if (faqs && faqs.length > 0) return faqs.map((faq: { question: string; answer: string }) => reviewLanguageFaq(faq, slug));
-  } catch (e) {
-    console.warn('DB faqs fetch failed', e);
+    return Array.isArray(faqs) ? faqs.filter((record: any) => hasCurrentLanguagePrepSourceReview(record)) : [];
+  } catch (error) {
+    console.warn('DB FAQ fetch failed; unreviewed FAQs remain unpublished.', error);
+    return [];
   }
-  if (slug) {
-    const hardcoded = ENGLISH_PREP_FAQS.filter(f => f.testId === testId);
-    if (hardcoded.length > 0) return hardcoded;
-  }
-  return [];
 }
 
 export async function getAcceptanceByTestIdFromDB(testId: string) {
+  if (process.env.SKIP_CMS_DB === '1') return [];
   try {
-    const acc = await (db as any).englishPrepAcceptance?.findMany?.({
+    const acceptance = await (db as any).englishPrepAcceptance?.findMany?.({
       where: { testId, status: 'active' },
     });
-    if (acc && acc.length > 0) return acc.map(reviewLanguageAcceptance);
-  } catch (e) {
-    console.warn('DB acceptance fetch failed', e);
+    return Array.isArray(acceptance)
+      ? acceptance.filter((record: any) => hasCurrentLanguagePrepSourceReview(record))
+      : [];
+  } catch (error) {
+    console.warn('DB acceptance fetch failed; unreviewed acceptance records remain unpublished.', error);
+    return [];
   }
-  return ENGLISH_PREP_ACCEPTANCE.filter(a => a.testId === testId);
 }
 
 export async function getSuccessStoriesFromDB(testId?: string) {
@@ -164,36 +130,40 @@ export async function getSuccessStoriesFromDB(testId?: string) {
       take: 20,
       select: { id: true, studentName: true, universityName: true, courseName: true, previousScore: true, finalScore: true, testimonial: true },
     });
-    if (stories && stories.length > 0) return stories;
-  } catch (e) {
-    console.warn('DB success stories fetch failed', e);
+    return Array.isArray(stories) ? stories : [];
+  } catch (error) {
+    console.warn('DB success stories fetch failed; no story cards returned.', error);
+    return [];
   }
-  // No fake stories — return empty, UI will show "Student success stories will appear here after approved publication."
-  return [];
 }
 
-// Course Finder connection — filter courses by English requirement
+// Course Finder connection — return only recently source-reviewed requirements.
 export async function getCoursesByEnglishTest(testSlug: string, limit = 24) {
   try {
-    const test = getHardcodedTest(testSlug);
+    const test = await getEnglishPrepTestBySlugFromDB(testSlug);
     if (!test) return [];
-    // Search in CrmCourseRequirement for englishTest containing test name
-    const reqs = await db.crmCourseRequirement.findMany({
+    const requirements = await db.crmCourseRequirement.findMany({
       where: {
         englishTest: { contains: test.shortName },
+        verificationStatus: { in: ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] },
       },
       take: limit,
-      select: { courseId: true },
+      select: { courseId: true, officialRequirementUrl: true, lastCheckedAt: true, verificationStatus: true },
     });
-    const courseIds = reqs.map(r => r.courseId);
+    const courseIds = requirements
+      .filter((record) => hasCurrentLanguagePrepVerification({
+        verificationStatus: record.verificationStatus,
+        officialUrl: record.officialRequirementUrl,
+        lastVerifiedAt: record.lastCheckedAt,
+      }))
+      .map((record) => record.courseId);
     if (courseIds.length === 0) return [];
-    const courses = await db.crmCourse.findMany({
+    return db.crmCourse.findMany({
       where: { courseId: { in: courseIds }, status: 'active' },
       take: limit,
     });
-    return courses;
-  } catch (e) {
-    console.warn('Course finder English filter failed', e);
+  } catch (error) {
+    console.warn('Course finder English filter failed', error);
     return [];
   }
 }

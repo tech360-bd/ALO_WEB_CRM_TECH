@@ -15,26 +15,26 @@ import {
 import { toast } from 'sonner';
 import { LanguageSectionVisual, LanguageTestCard, LanguageTestComparison } from './LanguagePrepVisuals';
 import type { EnglishTest, PublishedLanguageStory } from '@/lib/language-prep/types';
-import { applyReviewedFacts, LANGUAGE_TEST_FAQS } from '@/lib/language-prep/editorial';
-import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
+import { LANGUAGE_TEST_FAQS } from '@/lib/language-prep/editorial';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
 import { PrepVsExamSplit } from '@/components/website/EnglishExamCta';
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA } from '@/lib/alo-site-info';
 
 // Premium Language Prep Landing — White-first, no dark overlay, excellent typography
 
-export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_PREP_TESTS, stories = [] }: { initialTests?: EnglishTest[]; stories?: PublishedLanguageStory[] }) {
+export default function PremiumLanguagePrepLandingView({ initialTests = [], stories = [] }: { initialTests?: EnglishTest[]; stories?: PublishedLanguageStory[] }) {
   const [tests, setTests] = useState<EnglishTest[]>(initialTests);
   const [selectedCountry, setSelectedCountry] = useState('uk');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [leadForm, setLeadForm] = useState({
-    name: '', phone: '', email: '', test: 'IELTS', targetScore: '7.0', destination: 'UK', currentLevel: 'Intermediate',
+    name: '', phone: '', email: '', test: '', targetScore: '', destination: '', currentLevel: '',
   });
   const [discoveryForm, setDiscoveryForm] = useState({
-    destination: 'UK', studyLevel: 'Masters', university: '', course: '', intake: 'Sep 2026', currentLevel: 'Intermediate', targetScore: '6.5', format: 'Computer', prepTime: '2-3 months',
+    destination: '', studyLevel: '', university: '', course: '', intake: '', currentLevel: '', targetScore: '', format: '', prepTime: '',
   });
   const [recommended, setRecommended] = useState<any>(null);
-  const [scoreExplorer, setScoreExplorer] = useState({ country: 'UK', university: '', course: '', level: 'Masters' });
+  const [scoreExplorer, setScoreExplorer] = useState({ country: '', university: '', course: '', level: '' });
   const [scoreResult, setScoreResult] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -43,34 +43,47 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
     fetch('/api/language-prep/tests')
       .then(r => r.json())
       .then(d => {
-        if (d.success && d.tests?.length > 0) setTests(d.tests.map(applyReviewedFacts));
+        if (d.success && Array.isArray(d.tests)) setTests(d.tests);
       })
       .catch(() => {});
   }, []);
 
   const handleDiscovery = () => {
-    // Simple recommendation logic based on destination
-    let rec: any = null;
-    if (discoveryForm.destination === 'UK') {
-      if (discoveryForm.studyLevel === 'Foundation') {
-        rec = { primary: tests.find(t => t.slug === 'ielts-ukvi'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'languagecert')], reason: 'Below-degree study may require a named SELT. Confirm your sponsor, exemptions and current UKVI evidence rules before selecting an exam.', acceptance: 'UKVI SELT approved — Check university CAS requirements', path: 'Diagnostic → Target 5.5-6.0 → 4-6 weeks prep → Mock → Booking', score: '5.5-6.0 overall', next: 'Check university course page for exact SELT requirement' };
-      } else {
-        rec = { primary: tests.find(t => t.slug === 'ielts'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'oxford-ellt')], reason: 'IELTS Academic is one option for degree-level admission. Confirm your course and sponsor requirements before booking.', acceptance: 'Check your university, course, test delivery mode and visa route', path: 'Assessment → Target 6.5 → Study Plan → Module Practice → Mock → Feedback → Readiness', score: discoveryForm.targetScore || '6.5 (6.0 each)', next: 'Explore IELTS modules and book free counselling' };
-      }
-    } else if (discoveryForm.destination === 'Australia') {
-      rec = { primary: tests.find(t => t.slug === 'pte-academic'), also: [tests.find(t => t.slug === 'ielts'), tests.find(t => t.slug === 'toefl-ibt')], reason: 'PTE Academic can be an option for Australian study. Confirm course acceptance and current visa evidence rules; result delivery can take longer than two days.', acceptance: 'Check your institution and current Australian visa evidence rules', path: 'Diagnostic → Target 58-65 → Computer practice → Mock → Booking', score: '58-65 (58 each)', next: 'Check G8 requirements and DHA guidance' };
-    } else if (discoveryForm.destination === 'USA') {
-      rec = { primary: tests.find(t => t.slug === 'toefl-ibt'), also: [tests.find(t => t.slug === 'duolingo'), tests.find(t => t.slug === 'ielts')], reason: 'TOEFL iBT most popular for USA I-20, Duolingo fast affordable at-home option widely accepted for USA admission.', acceptance: 'Confirm the exact test, delivery mode and score with your institution', path: 'Assessment → Set a target using the current 1–6 TOEFL scale → Integrated practice → Mock', score: 'Confirm the required 1–6 score with your institution', next: 'Find matching courses accepting TOEFL' };
-    } else {
-      rec = { primary: tests.find(t => t.slug === 'ielts'), also: [tests.find(t => t.slug === 'pte-academic'), tests.find(t => t.slug === 'toefl-ibt')], reason: 'IELTS Academic and PTE Academic offer highest global acceptance across UK, Australia, Canada, USA, Europe.', acceptance: 'University-specific acceptance must be confirmed', path: 'Assessment → Target planning → Study plan → Module training → Mock → Feedback', score: discoveryForm.targetScore || '6.5', next: 'Explore test detail pages' };
+    const candidateSlugsByDestination: Record<string, string[]> = {
+      UK: discoveryForm.studyLevel === 'Foundation'
+        ? ['ielts-ukvi', 'ielts', 'pte-academic', 'languagecert']
+        : ['ielts', 'pte-academic', 'toefl-ibt', 'oxford-ellt'],
+      Australia: ['ielts', 'pte-academic', 'toefl-ibt'],
+      USA: ['toefl-ibt', 'ielts', 'duolingo'],
+      Canada: ['ielts', 'toefl-ibt', 'pte-academic'],
+      Ireland: ['ielts', 'toefl-ibt', 'pte-academic'],
+      'New Zealand': ['ielts', 'pte-academic', 'toefl-ibt'],
+    };
+    const candidateSlugs = candidateSlugsByDestination[discoveryForm.destination] || ['ielts', 'pte-academic', 'toefl-ibt'];
+    const candidates = candidateSlugs.map((slug) => tests.find((test) => test.slug === slug)).filter(Boolean) as EnglishTest[];
+    if (!candidates.length) {
+      setRecommended(null);
+      toast.error('No currently source-reviewed test records are available. Check with your institution and official providers.');
+      return;
     }
+
+    const primary = candidates[0];
+    const rec = {
+      primary,
+      also: candidates.slice(1, 3),
+      reason: 'These are options to research, not confirmation that a test is accepted for your course or visa route.',
+      acceptance: primary.acceptanceSummary || 'Confirm acceptance directly with your institution and relevant authority.',
+      path: 'Check current requirements → choose the exact test and delivery mode → plan preparation → confirm booking details with the provider.',
+      score: primary.scoringSystem || 'Check the official provider guidance.',
+      next: 'Check the official course page and current immigration guidance before booking.',
+    };
     setRecommended(rec);
-    toast.success(`Recommended: ${rec?.primary?.name} — ${rec?.reason}`);
+    toast.info('Suggestions are starting points only; confirm current requirements with official sources.');
   };
 
   const handleScoreExplorer = async () => {
-    if (!scoreExplorer.university && !scoreExplorer.course) {
-      setScoreResult({ message: 'Requirement not available in database. Check university course page.', isEmpty: true });
+    if (!scoreExplorer.country || !scoreExplorer.level || (!scoreExplorer.university && !scoreExplorer.course)) {
+      setScoreResult({ message: 'Choose a country and study level, then enter a university or course to query source-reviewed requirements.', isEmpty: true });
       return;
     }
     try {
@@ -108,8 +121,8 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
     });
     setSubmitting(false);
     if (result.ok) {
-      toast.success('Your enquiry has been received. A counselor will contact you.');
-      setLeadForm({ name: '', phone: '', email: '', test: 'IELTS', targetScore: '7.0', destination: 'UK', currentLevel: 'Intermediate' });
+      toast.success(result.message);
+      setLeadForm({ name: '', phone: '', email: '', test: '', targetScore: '', destination: '', currentLevel: '' });
     } else {
       toast.error(result.message);
     }
@@ -117,16 +130,12 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
 
   const faqs = [
     ...LANGUAGE_TEST_FAQS,
-    { q: 'What English test do I need for study abroad?', a: 'The right test depends on your destination, university, course, visa route, timeline and strengths. UK degree-level typically IELTS Academic or PTE Academic; Below-degree UK study may require a named UKVI SELT, depending on the sponsor and applicable exemptions. Australia accepts IELTS, PTE, TOEFL. USA favours TOEFL iBT and Duolingo. Canada accepts IELTS, PTE, TOEFL. Acceptance varies by university, course and visa route — Check university-specific acceptance.' },
-    { q: 'What score do I need for UK universities?', a: 'Typical: Foundation 5.5, Bachelor 6.0-6.5 (no band below 5.5-6.0), Master 6.5-7.0 (no band below 6.0), MBA 6.5-7.0. Competitive may require 7.0-7.5. Check your specific course page for verified requirement. Requirements vary.' },
-    { q: 'Which test is suitable for my destination?', a: 'UK: IELTS Academic / IELTS UKVI / PTE Academic / PTE UKVI / Oxford ELLT / LanguageCert SELT. Australia: PTE Academic, IELTS Academic. USA: TOEFL iBT, Duolingo, IELTS. Canada: IELTS, PTE, TOEFL. Ireland: IELTS, Duolingo, PTE. New Zealand: IELTS, PTE. Dubai/UAE: IELTS, TOEFL, PTE. Europe: IELTS, TOEFL, PTE. Acceptance varies by university, course and visa route.' },
-    { q: 'How long does preparation take?', a: 'Depends on current level and target: Band 5.0→6.0: 6-8 weeks (10-15 hrs/week), 6.0→6.5: 4-8 weeks, 6.5→7.0: 8-12 weeks, 7.0→7.5: 12+ weeks. PTE similar: 50→58: 4-6 weeks, 58→65: 6-8 weeks. ALO free assessment sets realistic timeline.' },
-    { q: 'How does ALO help me prepare?', a: 'ALO provides free initial assessment, target score planning based on course requirement, structured study materials, timed mock tests under exam conditions, writing feedback, speaking practice with certified coaches, score strategy focusing on weakest modules, and university-specific requirement guidance. Book free counselling.' },
-    { q: 'Can I practice with mock tests?', a: 'The preparation guides on this site explain each test\u2019s format, timing and scoring. To sit a real English test, use the "Take the English Test" link on this page. It opens the English Test Platform.' },
-    { q: 'Can I compare English tests?', a: 'Yes, use our Test Comparison table to compare duration, format, scoring, typical result timeline, acceptance, best for and preparation style. Desktop shows full table, mobile scrollable cards.' },
-    { q: 'Can I speak with a counselor?', a: 'Yes, book free counselling via hero CTA, final CTA, or side widgets. Our team helps understand relevant English requirement and preparation route. WhatsApp +880 180 502 0101, Email info@aloeducation.com. Lead stored with source language_prep and source_section.' },
-    { q: 'What is IELTS for UKVI?', a: 'IELTS for UKVI is a Secure English Language Test (SELT) approved by UKVI. Content, format and scoring identical to standard IELTS but delivered under UKVI security with video recording and UKVI reference number. A named SELT may be required for certain visa routes. Confirm the sponsor, course level, exemptions and current UKVI guidance before booking.' },
-    { q: 'Is MOI accepted instead of English test?', a: 'MOI (Medium of Instruction) is guidance resource, not an English proficiency test. Acceptance is strictly university and course specific — only where university officially confirms MOI acceptance with written confirmation. For visa, check official immigration guidance separately. Many visa routes require SELT.' },
+    { q: 'How long does preparation take?', a: 'Preparation time depends on your starting point, target, schedule, test version and feedback needs. An assessment can help make a plan, but no timeline or score is guaranteed.' },
+    { q: 'How does ALO help with preparation?', a: 'Ask ALO about current assessment, coaching, mock-test and feedback availability. Confirm any applicable fees and service terms in writing before enrolment.' },
+    { q: 'Can I compare English tests?', a: 'Compare only the currently source-reviewed catalogue records shown on this page. Availability of a listing does not confirm that a test is accepted by a particular institution or visa route.' },
+    { q: 'Can I speak with a counselor?', a: 'Submit the consultation form or use the contact options currently configured on the Contact page. Confirm availability and any applicable fee before booking.' },
+    { q: 'What is IELTS for UKVI?', a: 'A specific Secure English Language Test may be relevant where current immigration rules require it. Confirm the named test, authorised provider, sponsor and course requirements with official sources before booking.' },
+    { q: 'Is a Medium of Instruction letter accepted instead of a test?', a: 'A Medium of Instruction letter is not itself a test. Any waiver depends on the receiving institution, course and applicable immigration rules; obtain written confirmation from the institution and check official guidance.' },
   ];
 
   const countries = [
@@ -176,13 +185,13 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
-                    Book Free Counselling <ArrowRight className="w-4 h-4 ml-1" />
+                    Request Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
                     Find Your English Test
                   </a></Button>
                 <Button asChild variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
-                    Take Free Assessment
+                    Take Assessment
                   </a></Button>
               </div>
 
@@ -210,7 +219,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
 
               {/* Lead form quick */}
               <Card id="book-counselling" className="mt-6 p-5 bg-white border border-[var(--alo-border)] shadow-lg rounded-2xl">
-                <h4 className="font-bold text-sm text-[var(--alo-text)] mb-3">Book Free Counselling</h4>
+                <h4 className="font-bold text-sm text-[var(--alo-text)] mb-3">Request Counselling</h4>
                 <form onSubmit={(e) => handleLeadSubmit(e, 'hero')} className="space-y-3">
                   <div className="grid grid-cols-2 gap-2.5">
                     <Input aria-label="Full Name" required maxLength={120} placeholder="Full Name" value={leadForm.name} onChange={e => setLeadForm({ ...leadForm, name: e.target.value })} className="h-11 text-sm rounded-xl border-[var(--alo-border)]" />
@@ -223,7 +232,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                     </select>
                   </div>
                   <Button disabled={submitting} type="submit" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white font-bold rounded-xl text-sm">
-                    {submitting ? 'Booking...' : 'Book Free Counselling →'}
+                    {submitting ? 'Booking...' : 'Request Counselling →'}
                   </Button>
                   <p className="text-[11px] text-[var(--alo-text-muted)] text-center">We respect your privacy — No spam, only relevant guidance. Your information is used to respond to your enquiry.</p>
                 </form>
@@ -262,13 +271,13 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Destination</label>
                   <select value={discoveryForm.destination} onChange={e => setDiscoveryForm({ ...discoveryForm, destination: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                    <option value="UK">UK</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="USA">USA</option><option value="Ireland">Ireland</option><option value="New Zealand">New Zealand</option><option value="UAE">Dubai/UAE</option><option value="Europe">Europe</option>
+                    <option value="">Choose a destination</option><option value="UK">UK</option><option value="Canada">Canada</option><option value="Australia">Australia</option><option value="USA">USA</option><option value="Ireland">Ireland</option><option value="New Zealand">New Zealand</option><option value="UAE">Dubai/UAE</option><option value="Europe">Europe</option>
                   </select>
                 </div>
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Study Level</label>
                   <select value={discoveryForm.studyLevel} onChange={e => setDiscoveryForm({ ...discoveryForm, studyLevel: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                    <option>Foundation</option><option>Bachelor</option><option>Masters</option><option>PhD</option><option>MBA</option><option>Diploma</option>
+                    <option value="">Choose a study level</option><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>PhD</option><option>MBA</option><option>Diploma</option>
                   </select>
                 </div>
                 <div>
@@ -280,15 +289,13 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                   <Input placeholder="e.g. MSc Computer Science" value={discoveryForm.course} onChange={e => setDiscoveryForm({ ...discoveryForm, course: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Preferred Intake</label>
-                  <select value={discoveryForm.intake} onChange={e => setDiscoveryForm({ ...discoveryForm, intake: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                    <option>Sep 2026</option><option>Jan 2027</option><option>May 2026</option><option>Sep 2027</option>
-                  </select>
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Preferred Intake (optional)</label>
+                  <Input placeholder="Use the intake label published by your institution" value={discoveryForm.intake} onChange={e => setDiscoveryForm({ ...discoveryForm, intake: e.target.value })} className="h-11 rounded-xl border-[var(--alo-border)]" />
                 </div>
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Current English Level</label>
                   <select value={discoveryForm.currentLevel} onChange={e => setDiscoveryForm({ ...discoveryForm, currentLevel: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                    <option>Beginner</option><option>Intermediate</option><option>Upper-Intermediate</option><option>Advanced</option>
+                    <option value="">Choose a level</option><option>Beginner</option><option>Intermediate</option><option>Upper-Intermediate</option><option>Advanced</option>
                   </select>
                 </div>
                 <div>
@@ -298,13 +305,13 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Preferred Format</label>
                   <select value={discoveryForm.format} onChange={e => setDiscoveryForm({ ...discoveryForm, format: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                    <option>Computer</option><option>Paper</option><option>Online at home</option><option>Any</option>
+                    <option value="">Choose a format</option><option>Computer</option><option>Paper</option><option>Online at home</option><option>Any</option>
                   </select>
                 </div>
                 <div className="sm:col-span-2">
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Preparation Time Available</label>
                   <select value={discoveryForm.prepTime} onChange={e => setDiscoveryForm({ ...discoveryForm, prepTime: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                    <option>Less than 1 month</option><option>1-2 months</option><option>2-3 months</option><option>3-6 months</option><option>6+ months</option>
+                    <option value="">Choose a time range</option><option>Less than 1 month</option><option>1-2 months</option><option>2-3 months</option><option>3-6 months</option><option>6+ months</option>
                   </select>
                 </div>
               </div>
@@ -467,7 +474,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
               { step: '01', title: 'Choose Destination', desc: 'Select UK, Canada, Australia, USA, Ireland, New Zealand, Dubai/UAE or Europe. Each has different accepted tests and visa rules.', icon: MapPin },
               { step: '02', title: 'Check University Requirements', desc: 'Check course page for minimum overall and component scores, waiver availability, remarks and source URL.', icon: Building2 },
               { step: '03', title: 'Select Suitable Test', desc: 'Based on acceptance, format preference (Paper/Computer/Online), timeline and strengths, choose IELTS, PTE, TOEFL, Duolingo, OET etc.', icon: Target },
-              { step: '04', title: 'Prepare for Target Score', desc: 'Free assessment, target planning, study plan, module practice, mock tests, expert feedback and final readiness check.', icon: TrendingUp },
+              { step: '04', title: 'Prepare for Target Score', desc: 'Assessment availability and any applicable fee are confirmed before booking. Preparation options are discussed after your needs are reviewed.', icon: TrendingUp },
             ].map((s, i) => (
               <div key={i} className="relative">
                 <Card className="p-6 bg-white border border-[var(--alo-border)] shadow-sm rounded-3xl relative z-10 h-full">
@@ -586,13 +593,13 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Country</label>
                     <select value={scoreExplorer.country} onChange={e => setScoreExplorer({ ...scoreExplorer, country: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                      <option>UK</option><option>Canada</option><option>Australia</option><option>USA</option><option>Ireland</option><option>New Zealand</option>
+                      <option value="">Choose a country</option><option>UK</option><option>Canada</option><option>Australia</option><option>USA</option><option>Ireland</option><option>New Zealand</option>
                     </select>
                   </div>
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-body)] mb-1.5 block">Study Level</label>
                     <select value={scoreExplorer.level} onChange={e => setScoreExplorer({ ...scoreExplorer, level: e.target.value })} className="w-full h-11 px-3 rounded-xl border border-[var(--alo-border)] text-sm bg-white">
-                      <option>Foundation</option><option>Bachelor</option><option>Masters</option><option>PhD</option><option>MBA</option>
+                      <option value="">Choose a study level</option><option>Foundation</option><option>Bachelor</option><option>Masters</option><option>PhD</option><option>MBA</option>
                     </select>
                   </div>
                 </div>
@@ -659,14 +666,14 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
           <div className="text-center max-w-3xl mx-auto mb-12">
             <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-brand)] font-bold text-[11px] px-3 py-1 mb-3">PREPARATION ROADMAP</Badge>
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">8-Step Preparation Roadmap</h2>
-            <p className="text-sm text-[var(--alo-body)] mt-2">From free assessment to final test-day readiness with ALO Education.</p>
+            <p className="text-sm text-[var(--alo-body)] mt-2">From an initial discussion of your preparation needs to exam-day planning with ALO Education.</p>
           </div>
 
           <div className="relative">
             <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-200 via-orange-200 to-emerald-200 -translate-x-1/2" />
             <div className="grid lg:grid-cols-2 gap-6 lg:gap-10">
               {[
-                { step: '01', title: 'Free Assessment', desc: 'Evaluate current level across Listening, Reading, Writing, Speaking with diagnostic test. Identify baseline score and gap to target.', icon: ClipboardCheck },
+                { step: '01', title: 'Initial Assessment', desc: 'Assessment format, availability, and any applicable fee are confirmed before booking.', icon: ClipboardCheck },
                 { step: '02', title: 'Target Score', desc: 'Set realistic target based on course requirement, university, destination and visa route. Understand component minimums.', icon: Target },
                 { step: '03', title: 'Diagnostic Test', desc: 'Detailed diagnostic review identifying specific weaknesses in writing task response, reading True/False/Not Given, speaking fluency etc.', icon: Search },
                 { step: '04', title: 'Study Plan', desc: 'Custom study plan with daily milestones, materials, module priority and suggested mock schedule. Based on available hours/week.', icon: Calendar },
@@ -703,7 +710,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { title: 'Test Selection', desc: 'Understand which test fits your destination and university. Acceptance varies — we help check official requirements.', icon: Compass },
-              { title: 'Free Assessment', desc: 'Evaluate your current level with diagnostic test to identify baseline and gap to target score.', icon: ClipboardCheck },
+              { title: 'Initial Assessment', desc: 'Assessment format, availability, and any applicable fee are confirmed before booking.', icon: ClipboardCheck },
               { title: 'Target Score Planning', desc: 'Set realistic target based on course requirement, component minimums and timeline. No guaranteed score claims.', icon: Target },
               { title: 'Study Materials', desc: 'Structured learning resources covering question types, strategies and academic vocabulary.', icon: Library },
               { title: 'Practice Tests', desc: 'Practise the format and timing before the real exam.', icon: Timer },
@@ -746,7 +753,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
             ))}
           </div>
           <div className="mt-8 text-center">
-            <a href="#book-counselling" className="inline-flex min- items-center rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--alo-cta-hover)]">Book free counselling</a>
+            <a href="#book-counselling" className="inline-flex min-h-[44px] items-center rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--alo-cta-hover)]">Book counselling</a>
           </div>
         </div>
       </section>
@@ -801,15 +808,15 @@ export default function PremiumLanguagePrepLandingView({ initialTests = ENGLISH_
                 Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Book Free Counselling →</a></Button>
+                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Request Counselling →</a></Button>
                 <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">Find My Test</a></Button>
-                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">
-                    <MessageSquare className="w-4 h-4" /> Chat with Counselor
+                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                    <MessageSquare className="w-4 h-4" /> {ALO_PUBLIC_CONTACT_CTA.label}
                   </a></Button>
               <Button asChild variant="outline"><a href="#test-cards">Learn More</a></Button><Button asChild><a href="#prep-roadmap">Prepare with ALO</a></Button></div>
               <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-[var(--alo-brand-pale)] border-t border-white/20">
-                <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: +880 180 502 0101</span>
-                <span className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Email: info@aloeducation.com</span>
+                {ALO_CONTACT.hasWhatsApp && <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: {ALO_CONTACT.whatsappDisplay}</span>}
+                <span className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Email: {ALO_CONTACT.email}</span>
               </div>
             </div>
           </Card>

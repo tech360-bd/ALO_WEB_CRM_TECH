@@ -180,7 +180,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
                 <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Matching Courses</Button></Link>
-                <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6 font-bold">Book Free Consultation</Button></Link>
+                <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6 font-bold">Request Consultation</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
               </div>
             </Card>

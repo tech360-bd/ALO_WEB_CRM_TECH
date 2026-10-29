@@ -201,7 +201,7 @@ export function PublicTeam({ onNavigate }: PublicTeamProps) {
               </p>
               <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
                 <Icon name="CalendarCheck" className="size-4" />
-                Book Free Consultation
+                Request Consultation
               </Button>
             </div>
           </SectionCard>

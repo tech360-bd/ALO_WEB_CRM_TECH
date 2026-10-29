@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
-import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicCrmScholarshipWhere } from '@/lib/public-catalog';
 
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
               take: 1,
             },
             scholarshipRecords: {
-              ...(!isInternalAdmin ? { where: publicScholarshipWhere() } : { where: { status: 'active' } }),
+              ...(!isInternalAdmin ? { where: publicCrmScholarshipWhere() } : { where: { status: 'active' } }),
               take: 2,
             },
             commissions: {

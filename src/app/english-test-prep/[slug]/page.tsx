@@ -1,54 +1,19 @@
-import React from 'react';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getTestPrepBySlug, MASTER_TEST_PREP_DATA } from '@/lib/test-prep-data';
-import MasterTestPrepView from '@/components/website/MasterTestPrepView';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
-export async function generateStaticParams() {
-  return Object.keys(MASTER_TEST_PREP_DATA).map((slug) => ({ slug }));
-}
+type Props = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const test = getTestPrepBySlug(slug);
-
-  if (!test) {
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'English Test Preparation | ALO Education Bangladesh',
-    description: 'Master IELTS, PTE, TOEFL, Duolingo, LanguageCert, Kaplan, OET, Cambridge (CAE/CPE) with ALO Education test prep coaches. Clear image and video quality for every section.',
-  };
-  }
-
-  return {
-    title: `${test.name} Preparation & University Score Planning | ALO Education`,
-    description: test.heroSubtitle,
-    alternates: {
-      canonical: `https://aloeducation.com/english-test-prep/${test.slug}`,
-    },
-    openGraph: {
-      title: test.name,
-      description: test.heroSubtitle,
-      url: `https://aloeducation.com/english-test-prep/${test.slug}`,
-      type: 'website',
-    },
+    title: 'English Test Preparation | ALO Education',
+    description: 'Language-test requirements vary by provider, course and immigration route. Check current information with official sources.',
+    alternates: { canonical: 'https://aloeducation.com/language-prep' },
   };
 }
 
-export default async function TestPrepPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+/** Preserve the legacy path while sending users to the current reviewed catalogue. */
+export default async function LegacyTestPrepDetailPage({ params }: Props): Promise<never> {
   const { slug } = await params;
-  const test = getTestPrepBySlug(slug);
-
-  if (!test) {
-    notFound();
-  }
-
-  return <MasterTestPrepView test={test} />;
+  const safeSlug = slug.toLowerCase().replace(/[^a-z0-9-]/g, '');
+  redirect(safeSlug ? `/language-prep/${safeSlug}` : '/language-prep');
 }

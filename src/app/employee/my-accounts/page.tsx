@@ -79,7 +79,7 @@ export default async function EmployeeMyAccountsPage() {
 
       <div className="mt-6 border rounded p-4 bg-[var(--alo-page)] text-xs">
         <div className="font-semibold">Official WhatsApp (shared inbox)</div>
-        <div className="mt-1">Pool: 20 numbers 01805020100–119 (see <code>.env.example</code>). Your assignment: {commProfile?.whatsappNumberId || "none"} • Access: {commProfile?.whatsappAccess ? "yes" : "no"} • Assigned pages: {commProfile?.assignedPages ? JSON.stringify(JSON.parse(commProfile.assignedPages).slice(0,3)) : "—"}</div>
+        <div className="mt-1">WhatsApp access is limited to operator-configured sender records and requires current provider verification. Your assignment: {commProfile?.whatsappNumberId || "none"} • Access: {commProfile?.whatsappAccess ? "yes" : "no"} • Assigned pages: {commProfile?.assignedPages ? JSON.stringify(JSON.parse(commProfile.assignedPages).slice(0,3)) : "—"}</div>
         <div className="mt-1">Official inbox: <code>/api/whatsapp/webhook</code> verifies <code>WHATSAPP_VERIFY_TOKEN</code> + <code>WHATSAPP_APP_SECRET</code> HMAC, routes via <code>UccRoutingRule</code>, ownership via <code>UccConversation.assignedToUserId</code>.</div>
       </div>
 

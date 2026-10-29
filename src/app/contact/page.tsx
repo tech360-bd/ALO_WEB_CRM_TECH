@@ -1,12 +1,12 @@
 import { PublicContactPage } from '@/components/website/public-pages/PublicPages';
 
 export const metadata = {
-  title: 'Contact ALO Education | Free Study Abroad Consultation Bangladesh',
-  description: 'Contact ALO Education for free study abroad counseling. Visit our Dhaka office, WhatsApp us at 01805020101, or fill out our online consultation form.',
+  title: 'Contact ALO Education | Study Abroad Guidance in Bangladesh',
+  description: 'Contact ALO Education to ask about study-abroad guidance, consultation availability, and applicable fees. Submit the online contact form.',
   alternates: { canonical: 'https://aloeducation.com/contact' },
   openGraph: {
-    title: 'Contact ALO Education | Free Consultation',
-    description: 'Get in touch with our expert education advisors for a free study abroad consultation.',
+    title: 'Contact ALO Education',
+    description: 'Ask ALO Education about study-abroad guidance, consultation availability, and applicable fees.',
     url: 'https://aloeducation.com/contact',
     type: 'website',
   },

@@ -117,7 +117,7 @@ function firstInboundAt(conv: Conversation): string | null {
 const QUICK_TEMPLATES = [
   { value: "thank_you", label: "Thank you — will get back shortly", body: "Thank you for your message. I'll get back to you shortly." },
   { value: "student_id", label: "Request Student ID", body: "Please share your Student ID so I can pull up your profile." },
-  { value: "book_consult", label: "Book a free consultation", body: "Book a free consultation: https://aloeducation.com/book — pick any slot that suits you." },
+  { value: "book_consult", label: "Request a consultation", body: "Request a consultation: https://aloeducation.com/book — pick any slot that suits you." },
   { value: "doc_review", label: "Documents under review", body: "Your documents are under review. Our application team will update you within 24 hours in your student portal." },
 ];
 

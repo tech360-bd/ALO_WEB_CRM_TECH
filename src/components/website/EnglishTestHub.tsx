@@ -158,7 +158,7 @@ export default function EnglishTestHub() {
               </Link>
             </Button>
             <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
-              <Link href="/book-consultation">Book Free Consultation</Link>
+              <Link href="/book-consultation">Request Consultation</Link>
             </Button>
           </div>
         </PublicFrame>

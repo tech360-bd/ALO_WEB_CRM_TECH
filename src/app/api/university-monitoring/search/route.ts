@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireMonitoringViewer } from '@/lib/university-monitoring-auth';
-import { publicCourseWhere, publicUniversityWhere, publicIntakeWhere, publicScholarshipWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicUniversityWhere, publicIntakeWhere, publicCrmScholarshipWhere } from '@/lib/public-catalog';
 import { parseIntakePeriodToken } from '@/lib/course-finder/intake-window';
 
 /** Knowledge Center reads the same approved public catalogue as Course Finder. */
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       db.crmUniversity.findMany({ where: { AND: [publicUniversityWhere(), ...(country ? [{ country }] : []), ...((period || programme) ? [{ courses: { some: courseWhere } }] : []), ...(terms && !period && !programme ? [{ OR: [{ name: { contains: terms } }, { overview: { contains: terms } }, { country: { contains: terms } }] }] : [])] }, take: limit,
         select: { universityId: true, slug: true, name: true, country: true, city: true, overview: true, sourceUrl: true, officialUrl: true, lastVerifiedAt: true } }),
       db.crmCourse.findMany({ where: courseWhere, take: limit, select: { courseId: true, slug: true, courseTitle: true, studyLevel: true, qualification: true, subjectArea: true, country: true, durationMonths: true, tuitionFee: true, currency: true, deadline: true, sourceUrl: true, officialUrl: true, lastVerifiedAt: true, university: { select: { name: true, slug: true } }, intakeFees: { where: publicIntakeWhere(), select: { intakeMonth: true, intakeYear: true, applicationDeadline: true, yearlyTuition: true, tuitionCurrency: true } } } }),
-      db.crmScholarship.findMany({ where: { AND: [publicScholarshipWhere(), { officialScholarshipUrl: { not: '' } }, { university: { is: publicUniversityWhere() } }, ...(terms ? [{ scholarshipName: { contains: terms } }] : [])] }, take: limit,
+      db.crmScholarship.findMany({ where: { AND: [publicCrmScholarshipWhere(), { university: { is: publicUniversityWhere() } }, ...(terms ? [{ scholarshipName: { contains: terms } }] : [])] }, take: limit,
         select: { id: true, scholarshipName: true, scholarshipAmount: true, scholarshipCurrency: true, deadline: true, officialScholarshipUrl: true, lastCheckedAt: true, university: { select: { name: true, slug: true } } } }),
     ]);
     return NextResponse.json({ query: q, results: { universities: universities.length, courses: courses.length, scholarships: scholarships.length, countries: 0, exams: 0, total: universities.length + courses.length + scholarships.length }, universities, courses, scholarships, countries: [], exams: [],

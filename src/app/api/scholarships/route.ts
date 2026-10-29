@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { PUBLIC_SCHOLARSHIP_STATUSES } from '@/lib/website/public-content';
+import { hasCurrentScholarshipSourceVerification } from '@/lib/scholarships/status-engine';
+import { publicCrmScholarshipWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 
 // GET /api/scholarships — unified scholarship system DB-driven per spec section 10
@@ -23,7 +25,7 @@ export async function GET(req: Request) {
     const applicationOpen = searchParams.get('applicationOpen') === 'true';
 
     // Build where for new Scholarship model
-    const where: any = { status: { in: PUBLIC_SCHOLARSHIP_STATUSES } };
+    const where: any = { ...publicScholarshipWhere() };
     if (country) where.country = { contains: country };
     if (universityId) where.universityId = universityId;
     if (fundingType) where.fundingType = fundingType;
@@ -82,7 +84,14 @@ export async function GET(req: Request) {
         },
       }).catch(() => []),
       db.crmScholarship.findMany({
-        where: { status: 'active', ...(country ? { university: { country: { contains: country } } } : {}), ...(universityId ? { universityId } : {}) },
+        where: {
+          AND: [
+            publicCrmScholarshipWhere(),
+            { university: { is: publicUniversityWhere() } },
+            ...(country ? [{ university: { is: { country: { contains: country } } } }] : []),
+            ...(universityId ? [{ universityId }] : []),
+          ],
+        },
         include: {
           university: { select: { universityId: true, name: true, country: true, city: true } },
         },
@@ -107,17 +116,25 @@ export async function GET(req: Request) {
       verificationStatus: s.verificationStatus || 'NEEDS_REVIEW',
       lastVerifiedAt: s.lastCheckedAt || null,
       officialSourceUrl: s.officialScholarshipUrl || '',
+      status: s.status,
       source: 'crm',
       universityData: s.university,
     }));
 
-    const allScholarships = [...scholarships, ...crmMapped];
+    const allScholarships = [...scholarships, ...crmMapped].filter((scholarship: any) =>
+      PUBLIC_SCHOLARSHIP_STATUSES.includes(scholarship.status)
+      && hasCurrentScholarshipSourceVerification({
+        verificationStatus: scholarship.verificationStatus,
+        lastVerifiedAt: scholarship.lastVerifiedAt,
+        officialSourceUrl: scholarship.officialSourceUrl,
+      }),
+    );
 
     return NextResponse.json({
       success: true,
       scholarships: allScholarships,
       total: allScholarships.length,
-      verified: allScholarships.filter((s: any) => s.verificationStatus === 'verified' || s.verificationStatus === 'VERIFIED').length,
+      verified: allScholarships.filter((s: any) => String(s.verificationStatus || '').toLowerCase() === 'verified' || String(s.verificationStatus || '').toLowerCase() === 'verified_recent').length,
       message: allScholarships.length === 0 ? 'No verified scholarships yet. Only publish verified scholarship information per spec.' : `${allScholarships.length} scholarships found — DB-driven, verified only`,
     });
   } catch (error: any) {

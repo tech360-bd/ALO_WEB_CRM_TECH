@@ -119,10 +119,10 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
 
                 <div className="flex flex-wrap gap-4 pt-2">
                   <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm px-7 py-3.5 shadow-lg rounded-xl"><a href="#crm-lead-form">
-                      Book Free Counseling
+                      Request Counseling
                     </a></Button>
                   <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm px-6 py-3.5 rounded-xl"><a href="#crm-lead-form">
-                      Take Free Assessment
+                      Take Assessment
                     </a></Button>
                 </div>
 
@@ -523,7 +523,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
               <div className="lg:col-span-7 space-y-6">
                 <Badge className="bg-[var(--alo-cta)] text-black font-bold text-xs px-3 py-1">ALO CRM SCORE PLANNER</Badge>
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                  Get Free Test Preparation & Score Planning Support
+                  Get Test Preparation & Score Planning Guidance
                 </h2>
                 <p className="text-sm text-[var(--alo-brand-pale)] leading-relaxed">
                   Our certified test prep counselors analyze your current English baseline, create a custom study plan, and match your target score with top university scholarship thresholds.
@@ -532,7 +532,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                 <div className="grid sm:grid-cols-2 gap-4 text-xs">
                   <div className="flex items-center gap-2.5 bg-white/10 p-3 rounded-xl border border-white/15">
                     <CheckCircle2 className="h-5 w-5 text-[var(--alo-cta-accent)]" />
-                    <span>Free Baseline Diagnostic Test</span>
+                    <span>Baseline diagnostic test</span>
                   </div>
                   <div className="flex items-center gap-2.5 bg-white/10 p-3 rounded-xl border border-white/15">
                     <CheckCircle2 className="h-5 w-5 text-[var(--alo-cta-accent)]" />
@@ -551,7 +551,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
 
               <div className="lg:col-span-5">
                 <Card className="p-7 bg-white text-[var(--alo-text)] shadow-2xl rounded-3xl border-0">
-                  <h3 className="text-xl font-bold text-[var(--alo-text)] mb-1">Book Free Assessment</h3>
+                  <h3 className="text-xl font-bold text-[var(--alo-text)] mb-1">Request Assessment</h3>
                   <p className="text-xs text-[var(--alo-text-muted)] mb-6">Instantly connected to ALO Education CRM system</p>
 
                   {submitted ? (

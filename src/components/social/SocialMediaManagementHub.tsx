@@ -130,7 +130,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
             platform: pid,
             content: `🎓 ${topic} - Tailored for ${p?.name}! ALO Education helps Bangladeshi students achieve their study abroad dreams. ${p?.bestFor} optimized content with own AI agent. #StudyAbroad #ALOEducation`,
             hashtags: ['#StudyAbroad', '#ALOEducation', '#Bangladesh', '#Scholarship', '#UKStudy'],
-            cta: 'DM us or visit aloeducation.com for free consultation!',
+            cta: 'DM us or visit aloeducation.com for consultation!',
             imagePrompt: `Professional study abroad image for ${p?.name}, students, university campus, Bangladeshi students`,
             bestPostingTime: 'Tue-Thu 10AM-2PM BD Time',
             generatedAt: new Date().toISOString()

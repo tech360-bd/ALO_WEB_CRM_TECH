@@ -7,7 +7,7 @@
  *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
  *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
  *     Resources ▾ · Portal ▾ · AI SUPPORT ▾
- *   • CTA: "Book Free Counseling" (ALO Orange #F37021 button)
+ *   • CTA: "Request Counseling" (ALO Orange #F37021 button)
  *   • Education Blue #0066CC for navigation/links, #FFB347 accent, #000/#555
  *     neutral text — all values come from the design tokens in globals.css.
  *
@@ -474,14 +474,15 @@ export default function PublicNavbar() {
             >
               Maps
             </a>
-            <span className="opacity-40" aria-hidden="true">|</span>
-            <a
-              href={ALO_CONTACT.mobileHref}
-              className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent"
-            >
-              <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-              Call: {ALO_CONTACT.mobileDisplay}
-            </a>
+            {ALO_CONTACT.hasContactPhone && (
+              <>
+                <span className="opacity-40" aria-hidden="true">|</span>
+                <a href={ALO_CONTACT.mobileHref} className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent">
+                  <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+                  Call: {ALO_CONTACT.mobileDisplay}
+                </a>
+              </>
+            )}
           </div>
           <LanguageToggle compact onDark />
         </div>
@@ -646,15 +647,14 @@ export default function PublicNavbar() {
                         >
                           Maps
                         </a>{' '}
-                        •{' '}
-                        <a
-                          href={ALO_CONTACT.whatsappHref}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-alo-brand underline"
-                        >
-                          WhatsApp: {ALO_CONTACT.whatsappDisplay}
-                        </a>
+                        {ALO_CONTACT.hasWhatsApp && (
+                          <>
+                            •{' '}
+                            <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="text-alo-brand underline">
+                              WhatsApp: {ALO_CONTACT.whatsappDisplay}
+                            </a>
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>

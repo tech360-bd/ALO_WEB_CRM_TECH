@@ -20,7 +20,7 @@ export const CRO_CHECKLIST: CroItem[] = [
     id: 'cro-home-hero-cta',
     page: 'Homepage',
     principle: 'One primary action above the fold',
-    action: 'Hero CTA reads "Book a Free Consultation" (outcome, not "Learn More"). Secondary CTA demoted to text link.',
+    action: 'Hero CTA reads "Request a Consultation" (outcome, not "Learn More"). Secondary CTA demoted to text link.',
     experiment: 'A/B: outcome CTA vs generic CTA — measure consultation bookings per 1,000 sessions.',
   },
   {

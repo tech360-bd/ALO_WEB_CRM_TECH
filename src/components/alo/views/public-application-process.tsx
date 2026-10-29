@@ -28,7 +28,7 @@ interface Step {
 }
 
 const STEPS: Step[] = [
-  { num: 1, title: "Free Counseling", icon: "Headset", description: "Book a free 30-minute session with an ALO counselor. We discuss your goals, review your profile, and recommend destinations, courses, and universities.", duration: "1 day", serviceSlug: "free-counseling", serviceLabel: "View Counseling Service" },
+  { num: 1, title: "Counseling", icon: "Headset", description: "Request a counseling session with an ALO advisor to discuss your goals, profile, and possible destinations, courses, and universities. Confirm availability and any applicable fee before booking.", duration: "1 day", serviceSlug: "personalized-study-abroad-counseling", serviceLabel: "View Counseling Service" },
   { num: 2, title: "Profile Review", icon: "UserCheck", description: "We assess your academics, English level, work experience, and finances. Get a clear chance-of-admission estimate for your target universities.", duration: "2-3 days", serviceSlug: "profile-assessment", serviceLabel: "View Profile Assessment" },
   { num: 3, title: "Course Match", icon: "Sparkles", description: "Our AI engine matches your profile against 794 verified courses. A counselor refines the shortlist based on your priorities.", duration: "1-2 days", serviceSlug: "course-matching", serviceLabel: "View Course Matching" },
   { num: 4, title: "University Shortlist", icon: "Building2", description: "We build a balanced 6-10 university list across reach/match/safety tiers — maximising your chance of admission.", duration: "2-3 days", serviceSlug: "university-shortlisting", serviceLabel: "View Shortlisting Service" },
@@ -183,7 +183,7 @@ export function PublicApplicationProcess({ onNavigate }: PublicApplicationProces
           <PublicLeadForm
             sourceTag="Application Process page — bottom CTA"
             title="Ready to start your journey?"
-            subtitle="Book your free counseling session today. Step 1 takes 30 minutes — and the rest is on us."
+            subtitle="Request a counseling session. An advisor can explain the next steps, timing, and any applicable fees."
           />
         </div>
       </div>

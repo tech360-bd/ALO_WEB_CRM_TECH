@@ -29,7 +29,7 @@ export default function AIVideoStudioView() {
         const j = await res.json();
         setResult(j);
       } else {
-        const alt = await fetch('/api/marketing/content-generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contentType:'short_video_script', topic: title+' '+topic, platform, tone:'energetic', targetAudience:'Bangladeshi students', keyMessage: topic, cta:'Book free consultation' })});
+        const alt = await fetch('/api/marketing/content-generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contentType:'short_video_script', topic: title+' '+topic, platform, tone:'energetic', targetAudience:'Bangladeshi students', keyMessage: topic, cta:'Request consultation' })});
         const j2 = await alt.json();
         setResult({ script: j2.content, subtitle: 'Generated subtitles', thumbnailConcept: 'Bold ALO Orange #E8501A + campus image + “Jan 2027 UK” text', aspectRatio: aspect });
       }

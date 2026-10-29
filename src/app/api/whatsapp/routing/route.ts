@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
-import { determineSenderNumber, MAIN_NUMBER, COO_NUMBER, OFFICIAL_NUMBERS } from '@/lib/whatsapp-number-pool';
+import { determineSenderNumber, MAIN_NUMBER, COO_NUMBER, OFFICIAL_NUMBERS, EMPLOYEE_POOL, toBdDisplayPhone, getWhatsAppNumberConfigStatus } from '@/lib/whatsapp-number-pool';
 import { db } from '@/lib/db';
 import { mutationOriginAllowed } from '@/lib/request-origin';
 
@@ -54,8 +54,12 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
         return NextResponse.json({ success: false, error: `Invalid ${field}.` }, { status: 400 });
       }
     }
-    if (body.explicitNumber !== undefined && !OFFICIAL_NUMBERS.includes(body.explicitNumber)) {
-      return NextResponse.json({ success: false, error: 'Routing preview number must be in the official ALO pool.' }, { status: 400 });
+    if (body.explicitNumber !== undefined) {
+      const explicitNumber = typeof body.explicitNumber === 'string' ? toBdDisplayPhone(body.explicitNumber) : '';
+      if (!explicitNumber || !OFFICIAL_NUMBERS.includes(explicitNumber)) {
+        return NextResponse.json({ success: false, error: 'Routing preview number must be in the operator-configured sender list.' }, { status: 400 });
+      }
+      body.explicitNumber = explicitNumber;
     }
 
     const routing = await determineSenderNumber({
@@ -97,14 +101,13 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
     return NextResponse.json({
       success: true,
       routing: { ...routing, providerStatus: 'not_checked', isPreview: true },
-      officialNumbers: {
-        main: MAIN_NUMBER,
-        coo: COO_NUMBER,
+      configuredNumbers: {
+        main: MAIN_NUMBER || null,
+        urgentSupport: COO_NUMBER || null,
+        employeePool: EMPLOYEE_POOL,
         pool: OFFICIAL_NUMBERS,
-        fallback: MAIN_NUMBER,
-        urgent: COO_NUMBER,
-        followUp: MAIN_NUMBER,
-        complaint: MAIN_NUMBER,
+        status: getWhatsAppNumberConfigStatus(),
+        ownershipAndProviderConnectionVerified: false,
       },
       priority: [
         'explicit_assignment',
@@ -147,12 +150,13 @@ export const GET = withAuth(async (_req: Request, auth: AuthContext) => {
     return NextResponse.json({
       success: true,
       logs,
-      officialNumbers: {
-        main: MAIN_NUMBER,
-        coo: COO_NUMBER,
+      configuredNumbers: {
+        main: MAIN_NUMBER || null,
+        urgentSupport: COO_NUMBER || null,
+        employeePool: EMPLOYEE_POOL,
         pool: OFFICIAL_NUMBERS,
-        total: 20,
-        range: '01805020100-01805020119',
+        status: getWhatsAppNumberConfigStatus(),
+        ownershipAndProviderConnectionVerified: false,
       },
       integrationState: 'ROUTING_PREVIEW_ONLY_PROVIDER_CONNECTION_UNVERIFIED',
     });

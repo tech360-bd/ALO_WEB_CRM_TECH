@@ -61,6 +61,7 @@ export async function startSlaForThread(threadId: string, params: {
         channel: params.channel || 'whatsapp',
         slaMinutes,
         receivedAt: now,
+        assignedAt: params.counselorId ? now : null,
         slaDueAt: dueAt,
         slaStatus: 'normal',
       },

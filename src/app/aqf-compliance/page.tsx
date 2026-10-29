@@ -31,7 +31,7 @@ const AGENT_FRAMEWORK_POINTS = [
   {
     title: 'Clear fees and services',
     body:
-      'Our free counseling and application support, and any paid services, are explained and quoted in writing before you commit. We tell you when a university pays us for a successful recruitment.',
+      'Our counseling and application support, and any paid services, are explained and quoted in writing before you commit. We tell you when a university pays us for a successful recruitment.',
   },
   {
     title: 'Student choice and informed decisions',

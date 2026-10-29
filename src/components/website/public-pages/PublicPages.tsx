@@ -197,8 +197,9 @@ export function PublicCourseFinderPage() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[var(--alo-text-muted)]">Not sure what fits?</p>
               <p className="mt-1.5 text-[13px] leading-5 text-[var(--alo-body)]">A counselor can shortlist courses against your grades, budget and intake.</p>
               <Button asChild variant="brand-outline" className="mt-3 w-full">
-                <a href="/book-consultation">Book a free consultation</a>
+                <a href="/book-consultation">Request a consultation</a>
               </Button>
+              <p className="mt-2 text-xs text-[var(--alo-text-muted)]">Confirm availability and any applicable fee before booking.</p>
             </div>
           </div>
         </Card>
@@ -467,7 +468,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
           Fees and visa rules change. A counselor confirms the current requirements for your case.
         </p>
         <Button asChild className="bg-[var(--alo-cta)] text-black hover:brightness-110">
-          <a href="/book-consultation">Book Free Consultation</a>
+          <a href="/book-consultation">Request Consultation</a>
         </Button>
       </div>
     </PublicShell>
@@ -585,7 +586,6 @@ export function PublicUniversitiesPage() {
 // SCHOLARSHIPS PAGE — list from DB
 // ============================================================
 export function PublicScholarshipsPage() {
-  const { MASTER_SCHOLARSHIPS_DATA } = require('@/lib/scholarships-data');
   const [scholarships, setScholarships] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -594,23 +594,27 @@ export function PublicScholarshipsPage() {
       .then((r) => r.json())
       .then((d) => {
         const fetched = d.scholarships || d.data || [];
-        setScholarships(fetched.length > 0 ? fetched : MASTER_SCHOLARSHIPS_DATA);
+        setScholarships(Array.isArray(fetched) ? fetched : []);
       })
-      .catch(() => setScholarships(MASTER_SCHOLARSHIPS_DATA))
+      .catch(() => setScholarships([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const displayData = scholarships.length > 0 ? scholarships : MASTER_SCHOLARSHIPS_DATA;
+  const displayData = scholarships;
 
   return (
     <PublicShell
       title="Scholarships & Funding Directory"
-      badge="100% VERIFIED FUNDING SCHEMES"
-      subtitle="Explore fully funded government scholarships, university merit grants, and tuition fee waivers across the UK, USA, Australia, Canada, Germany, Ireland, and New Zealand."
+      badge="PUBLISHED PROGRAMME LISTINGS"
+      subtitle="Browse scholarship and funding listings that have passed the site's publication review. Eligibility, award coverage and deadlines are set by each provider and can change; no award is guaranteed."
       heroColor="#E8501A"
     >
       {loading ? (
         <LoadingGrid count={6} />
+      ) : displayData.length === 0 ? (
+        <Card className="p-8 text-center text-[var(--alo-body)]">
+          No scholarship listings are currently published after source review. Check the provider's official website for current opportunities and terms.
+        </Card>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayData.map((s: any, i: number) => {
@@ -657,9 +661,9 @@ export function PublicScholarshipsPage() {
 // ============================================================
 const SERVICES = [
   { icon: GraduationCap, title: 'Personalized Counseling', desc: 'Our experienced counselors provide one-to-one guidance to help you select the course and university that best match your academic background, career goals, and personal strengths.' },
-  { icon: Building2, title: 'University Selection', desc: 'We assist students in choosing from top-ranked universities across the UK, USA, Australia, Canada, New Zealand, Ireland and Europe with accurate and up-to-date information.' },
-  { icon: FileText, title: 'Application Assistance', desc: 'Full support from completing forms and writing compelling personal statements to organizing necessary documents—ensuring every application stands out.' },
-  { icon: Shield, title: 'Visa Guidance', desc: 'Our visa experts guide students through requirements, documentation, and interview preparation to help ensure a smooth and successful visa approval process.' },
+  { icon: Building2, title: 'University Selection', desc: 'We help students compare courses and institutions. Confirm current entry, fee and language requirements directly with the receiving institution before applying.' },
+  { icon: FileText, title: 'Application Assistance', desc: 'Guidance with application forms, personal statements and document organization. Applicants remain responsible for the accuracy and authorship of their submissions.' },
+  { icon: Shield, title: 'Visa Guidance', desc: 'Preparation support for requirements, documentation and interview practice. Immigration decisions are made by the relevant authorities and cannot be guaranteed.' },
   { icon: BookOpen, title: 'Test Preparation', desc: 'Support for IELTS, TOEFL, GRE, and GMAT preparation with coaching classes, practice materials, and expert guidance to achieve competitive scores.' },
   { icon: Award, title: 'Financial Planning', desc: 'Our advisors help explore scholarships, grants, and funding options to make international education more affordable and manageable for every student.' },
   { icon: Globe, title: 'Pre-Departure Orientation', desc: 'Orientation sessions covering cultural adaptation, travel arrangements, accommodation, and health insurance, ensuring students are confident and ready.' },
@@ -711,9 +715,9 @@ export function PublicServicesPage() {
 
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
-        <p className="text-[var(--alo-brand-pale)] mb-5 text-sm">Schedule a free 1-on-1 consultation with our senior education advisors</p>
+        <p className="text-[var(--alo-brand-pale)] mb-5 text-sm">Request an initial consultation. Confirm availability and any applicable fee with ALO Education before booking.</p>
         <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
-            Book Free Consultation
+            Request Consultation
           </a></Button>
       </div>
     </PublicShell>
@@ -970,7 +974,7 @@ export function PublicTeamPage() {
 // FAQS PAGE
 // ============================================================
 const FALLBACK_FAQS = [
-  { q: 'How do I start my study abroad journey with ALO Education?', a: 'Simply book a free consultation through our website or visit our Dhaka office. Our counselors will assess your academic background, career goals, and preferences to create a personalized plan.' },
+  { q: 'How do I start my study abroad journey with ALO Education?', a: 'Request a consultation through our website or visit the Dhaka office. Confirm current availability and any applicable fee before booking. A counselor can discuss your academic background, goals, and preferences.' },
   { q: 'Is your service free for students?', a: 'Yes, our core consulting services are free for students. We are commissioned by partner universities, so students don\'t pay for university selection, application guidance, or visa counseling.' },
   { q: 'What English tests do you help with?', a: 'We provide support for IELTS, IELTS UKVI, PTE Academic, TOEFL iBT, Duolingo English Test, OIETC/ELLT, Oxford ELLT, LanguageCert, Kaplan English Test, OET, GRE, GMAT, SAT, and ACT preparation.' },
   { q: 'Which countries do you help students apply to?', a: 'We assist students applying to universities in the United Kingdom, United States, Canada, Australia, Ireland, New Zealand, Dubai/UAE, and Germany.' },
@@ -1033,14 +1037,14 @@ export function PublicContactPage() {
       subtitle="We're here to help. Reach out to us through any of these channels."
     >
       <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <Card className="p-8">
-          <Phone className="h-8 w-8 text-[var(--alo-brand)] mb-4" />
-          <h3 className="font-bold text-[var(--alo-text)] mb-2">Phone</h3>
-          <a href={ALO_CONTACT.mobileHref} className="mb-1 block text-2xl font-bold text-[var(--alo-brand)]">
-            {ALO_CONTACT.mobileDisplay}
-          </a>
-          <p className="text-sm text-[var(--alo-body)]">{ALO_CONTACT.officeHours}</p>
-        </Card>
+        {ALO_CONTACT.hasContactPhone && (
+          <Card className="p-8">
+            <Phone className="h-8 w-8 text-[var(--alo-brand)] mb-4" />
+            <h3 className="font-bold text-[var(--alo-text)] mb-2">Phone</h3>
+            <a href={ALO_CONTACT.mobileHref} className="mb-1 block text-2xl font-bold text-[var(--alo-brand)]">{ALO_CONTACT.mobileDisplay}</a>
+            <p className="text-sm text-[var(--alo-body)]">{ALO_CONTACT.officeHours}</p>
+          </Card>
+        )}
         <Card className="p-8">
           <Mail className="h-8 w-8 text-[var(--alo-cta)] mb-4" />
           <h3 className="font-bold text-[var(--alo-text)] mb-2">Email</h3>
@@ -1070,20 +1074,20 @@ export function PublicContactPage() {
         </div>
       </Card>
 
-      <Card className="p-8 bg-green-50 border-green-200">
-        <div className="flex items-start gap-4">
-          <Phone className="h-8 w-8 text-[var(--alo-whatsapp)] shrink-0" />
-          <div className="flex-1">
-            <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
-            <p className="text-sm text-green-800 mb-4">
-              Quick response on WhatsApp: {ALO_CONTACT.whatsappDisplay}
-            </p>
-            <Button asChild className="bg-[var(--alo-whatsapp)] text-white hover:brightness-110"><a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer">
-                Chat Now
-              </a></Button>
+      {ALO_CONTACT.hasWhatsApp && (
+        <Card className="p-8 bg-green-50 border-green-200">
+          <div className="flex items-start gap-4">
+            <Phone className="h-8 w-8 text-[var(--alo-whatsapp)] shrink-0" />
+            <div className="flex-1">
+              <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
+              <p className="text-sm text-green-800 mb-4">Configured public WhatsApp contact: {ALO_CONTACT.whatsappDisplay}</p>
+              <Button asChild className="bg-[var(--alo-whatsapp)] text-white hover:brightness-110">
+                <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer">Chat Now</a>
+              </Button>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      )}
     </PublicShell>
   );
 }
@@ -1197,66 +1201,22 @@ export function PublicLegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies
 // LANGUAGE PREP / ENGLISH TEST PAGE
 // ============================================================
 export function PublicLanguagePrepPage({ slug }: { slug: string | null }) {
-  const { getTestPrepBySlug, MASTER_TEST_PREP_DATA } = require('@/lib/test-prep-data');
-  const MasterTestPrepView = require('@/components/website/MasterTestPrepView').default;
-
-  if (slug) {
-    const testData = getTestPrepBySlug(slug);
-    if (testData) {
-      return <MasterTestPrepView test={testData} />;
-    }
-  }
-
-  const tests = Object.values(MASTER_TEST_PREP_DATA);
-
   return (
     <PublicShell
-      title="Language & Admission Test Preparation"
-      badge="ALO STUDY ABROAD LANGUAGE PREPARATION CENTRE"
-      subtitle="Prepare for English proficiency and admission tests with ALO Education's certified test coaches, score planners, and direct CRM integration."
+      title={slug ? "Language-test preparation" : "Language & Admission Test Preparation"}
+      badge="CURRENT CATALOGUE"
+      subtitle="Exam formats, fees, score requirements, institutional acceptance and immigration evidence can change. Confirm current rules with the test provider, receiving institution and relevant authority."
       heroColor="#0057B8"
     >
-      <div className="flex justify-between items-center mb-8 bg-[var(--alo-brand-pale)] p-4 rounded-2xl border border-[var(--alo-border)]">
-        <div>
-          <h3 className="font-bold text-[var(--alo-brand)] text-base">Comprehensive Test Preparation Directory</h3>
-          <p className="text-xs text-[var(--alo-body)]">Select an exam below to explore all 28 modules, score benchmarks, fee structures, and study timelines.</p>
-        </div>
-        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold px-5 py-2.5 rounded-xl shadow-sm"><a href="/english-test-prep">
-            View All Test Prep →
-          </a></Button>
-      </div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tests.map((t: any) => (
-          <Card key={t.id} className="p-6 bg-white hover:shadow-lg transition-all border-[var(--alo-border)] hover:border-[var(--alo-brand)] flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] font-semibold text-[11px]">
-                  {t.logoBadge}
-                </Badge>
-                <span className="text-xs font-semibold text-[var(--alo-text-muted)]">{t.quickInfo.duration}</span>
-              </div>
-              <h3 className="font-bold text-[var(--alo-text)] text-lg mb-1">{t.name}</h3>
-              <p className="text-xs text-[var(--alo-brand)] font-semibold mb-3">{t.officialOwner}</p>
-              <p className="text-xs text-[var(--alo-body)] mb-4 line-clamp-3 leading-relaxed">{t.overview.whatIsIt}</p>
-            </div>
-
-            <div className="pt-4 border-t border-[var(--alo-border)] space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--alo-text-muted)] font-medium">Exam Fee in BD:</span>
-                <span className="font-bold text-[var(--alo-text)]">{t.quickInfo.cost}</span>
-              </div>
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-[var(--alo-text-muted)] font-medium">Target Score:</span>
-                <span className="font-bold text-[var(--alo-brand)]">{t.expectedScore}</span>
-              </div>
-              <Button asChild className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold py-2.5 rounded-xl"><a href={`/english-test-prep/${t.slug}`} className="block w-full">
-                  Explore Full Test Prep & Modules →
-                </a></Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+      <Card className="mx-auto max-w-3xl p-8 text-center">
+        <h2 className="text-xl font-bold text-[var(--alo-text)] mb-3">Use the current language-preparation catalogue</h2>
+        <p className="text-sm text-[var(--alo-body)] leading-relaxed mb-6">
+          A legacy static catalogue contained details that have not completed the current source-review process, so those details are not shown here. The current catalogue marks source and verification status; no test score, admission, scholarship or visa outcome is guaranteed.
+        </p>
+        <Button asChild className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]">
+          <a href="/language-prep">Open language-preparation catalogue</a>
+        </Button>
+      </Card>
     </PublicShell>
   );
 }

@@ -29,7 +29,7 @@ Details:
 - Tone: ${tone || "professional yet warm"}
 - Target audience: ${targetAudience || "Bangladeshi students planning to study abroad"}
 - Key message: ${keyMessage || topic}
-- Call to action: ${cta || "Book a free consultation"}
+- Call to action: ${cta || "Request a consultation"}
 
 Generate the ${contentType} now. Output only the content.`;
 

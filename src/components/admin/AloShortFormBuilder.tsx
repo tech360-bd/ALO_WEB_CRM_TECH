@@ -81,7 +81,7 @@ const inputFields: Array<{ key: keyof AloBuilderInput; label: string; placeholde
   { key: 'language', label: 'Language', placeholder: 'English', options: ['English', 'বাংলা', 'English + বাংলা'] },
   { key: 'tone', label: 'Tone', placeholder: 'Professional and encouraging', options: ['Professional and encouraging', 'Warm and conversational', 'Concise and factual', 'Premium editorial'] },
   { key: 'seoTarget', label: 'SEO target', placeholder: 'Primary search intent / phrase' },
-  { key: 'cta', label: 'Primary CTA', placeholder: 'Book a free counselling session' },
+  { key: 'cta', label: 'Primary CTA', placeholder: 'Book a counselling session' },
 ];
 
 function getErrorMessage(payload: any, fallback: string) {

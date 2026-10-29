@@ -70,8 +70,8 @@ export function PublicHigherStudy({ onNavigate }: Props) {
       {/* CTA */}
       <div className="rounded-2xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-info)] p-8 text-center text-white">
         <h2 className="text-2xl font-bold">Not Sure Which Degree Is Right for You?</h2>
-        <p className="mt-2 text-white/90">Book a free consultation with our expert counselors to find your perfect study path.</p>
-        <Button onClick={() => onNavigate("public-contact")} className="mt-4 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">Book Free Consultation</Button>
+        <p className="mt-2 text-white/90">Request a consultation with our expert counselors to find your perfect study path.</p>
+        <Button onClick={() => onNavigate("public-contact")} className="mt-4 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">Request Consultation</Button>
       </div>
     </div>
   );

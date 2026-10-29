@@ -303,8 +303,10 @@ model MarketingComment {
 }
 
 model MarketingLead {
-  id            String    @id @default(cuid())
-  name          String    @default("")
+  id                 String    @id @default(cuid())
+  canonicalLeadId    String    @default("")
+  canonicalStudentId String    @default("")
+  name               String    @default("")
   phone         String    @default("")
   email         String    @default("")
   destination   String    @default("")
@@ -331,6 +333,9 @@ model MarketingLead {
   updatedAt     DateTime  @updatedAt
 
   createdByIdUser User? @relation("LeadCreator", fields: [createdById], references: [id])
+
+  @@index([canonicalLeadId])
+  @@index([canonicalStudentId])
 }
 
 model MarketingLeadScore {
@@ -2585,6 +2590,7 @@ model BroadcastRecipient {
   status           String    @default("queued")
   sentAt           DateTime?
   failedReason     String    @default("")
+  idempotencyKey   String?   @unique
   createdAt        DateTime  @default(now())
 }
 
@@ -3669,6 +3675,8 @@ model HomepageFaq {
 
 model LeadForm {
   id                  String   @id @default(cuid())
+  canonicalLeadId     String   @default("")
+  canonicalStudentId  String   @default("")
   name                String   @default("")
   phone               String   @default("")
   email               String   @default("")
@@ -3705,6 +3713,8 @@ model LeadForm {
 
   @@index([utmSource, utmMedium, utmCampaign])
   @@index([landingPage])
+  @@index([canonicalLeadId])
+  @@index([canonicalStudentId])
 }
 
 model SearchLog {
@@ -4425,26 +4435,28 @@ model ContentApproval {
 // ==========================================
 
 model WhatsAppOfficialNumber {
-  id                    String   @id @default(cuid())
-  phoneNumber           String   @unique // 01805020100 through 01805020119
-  normalizedPhone       String   @unique // 8801805020100
-  displayName           String   @default("")
-  ownerType             String   @default("ALO_MAIN") // ALO_MAIN, COO, EMPLOYEE, BRANCH, DEPARTMENT
-  employeeOwnerId       String   @default("")
-  employeeOwnerName     String   @default("")
-  branch                String   @default("")
-  department            String   @default("")
-  metaPhoneNumberId     String   @default("") // official Meta phone_number_id
-  metaBusinessAccountId String   @default("")
-  connectionStatus      String   @default("disconnected") // disconnected, connected, expired, error
-  activeStatus          String   @default("active") // active, inactive, suspended
-  isDefaultSender       Boolean  @default(false)
-  isComplaintSender     Boolean  @default(false)
-  isFollowUpSender      Boolean  @default(false)
-  isSupport247          Boolean  @default(false)
-  purpose               String   @default("") // Main, COO 24/7, Employee pool
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                       String    @id @default(cuid())
+  phoneNumber              String    @unique // 01805020100 through 01805020119
+  normalizedPhone          String    @unique // 8801805020100
+  displayName              String    @default("")
+  ownerType                String    @default("ALO_MAIN") // ALO_MAIN, COO, EMPLOYEE, BRANCH, DEPARTMENT
+  employeeOwnerId          String    @default("")
+  employeeOwnerName        String    @default("")
+  branch                   String    @default("")
+  department               String    @default("")
+  metaPhoneNumberId        String    @default("") // official Meta phone_number_id
+  metaBusinessAccountId    String    @default("")
+  connectionStatus         String    @default("disconnected") // disconnected, connected, expired, error
+  lastConnectionCheckAt    DateTime?
+  lastConnectionCheckError String    @default("") // safe error code only; never provider secrets
+  activeStatus             String    @default("active") // active, inactive, suspended
+  isDefaultSender          Boolean   @default(false)
+  isComplaintSender        Boolean   @default(false)
+  isFollowUpSender         Boolean   @default(false)
+  isSupport247             Boolean   @default(false)
+  purpose                  String    @default("") // Main, COO 24/7, Employee pool
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
   audits WhatsAppNumberAssignmentAudit[]
 
@@ -4452,6 +4464,7 @@ model WhatsAppOfficialNumber {
   @@index([branch])
   @@index([connectionStatus])
   @@index([activeStatus])
+  @@index([lastConnectionCheckAt])
 }
 
 model WhatsAppNumberAssignmentAudit {
@@ -4482,31 +4495,38 @@ model WhatsAppNumberAssignmentAudit {
 }
 
 model WhatsAppContact {
-  id              String    @id @default(cuid())  
-  phone           String    @unique
-  normalizedPhone String    @unique
-  countryCode     String    @default("") // spec: country_code e.g. '880'
-  externalContactId String   @default("") // spec: external_contact_id (WhatsApp wa_id)
-  displayName     String    @default("")
-  profileName     String    @default("")
-  studentId       String    @default("")
-  leadId          String    @default("")
-  partnerId       String    @default("")
-  firstContactAt  DateTime  @default(now())
-  lastContactAt   DateTime  @default(now())
-  source          String    @default("WHATSAPP")
-  isBlocked       Boolean   @default(false)
-  isOptedOut      Boolean   @default(false)
-  optedOutAt      DateTime?
-  optOutReason    String    @default("")
-  tags            String    @default("[]")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id                   String    @id @default(cuid())
+  phone                String    @unique
+  normalizedPhone      String    @unique
+  email                String    @default("")
+  normalizedEmail      String    @default("")
+  countryCode          String    @default("") // spec: country_code e.g. '880'
+  externalContactId    String    @default("") // spec: external_contact_id (WhatsApp wa_id)
+  displayName          String    @default("")
+  profileName          String    @default("")
+  studentId            String    @default("")
+  leadId               String    @default("")
+  partnerId            String    @default("")
+  assignedCounselorId  String    @default("")
+  branch               String    @default("")
+  firstContactAt       DateTime  @default(now())
+  lastContactAt        DateTime  @default(now())
+  source               String    @default("WHATSAPP")
+  isBlocked            Boolean   @default(false)
+  isOptedOut           Boolean   @default(false)
+  optedOutAt           DateTime?
+  optOutReason         String    @default("")
+  tags                 String    @default("[]")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   @@index([studentId])
   @@index([leadId])
   @@index([normalizedPhone])
+  @@index([normalizedEmail])
   @@index([countryCode])
+  @@index([assignedCounselorId])
+  @@index([branch])
 }
 
 model WhatsAppMessageArchive {
@@ -4523,6 +4543,7 @@ model WhatsAppMessageArchive {
   messageBody       String   @default("")
   mediaId           String   @default("")
   mediaUrl          String   @default("")
+  campaignId        String   @default("")
   timestamp         DateTime @default(now())
   direction         String   @default("inbound") // inbound, outbound
   deliveryStatus    String   @default("sent") // sent, delivered, read, failed
@@ -4543,6 +4564,7 @@ model WhatsAppMessageArchive {
   @@index([receiverPhone])
   @@index([timestamp])
   @@index([direction])
+  @@index([campaignId, receiverPhone, timestamp])
 }
 
 model WhatsAppFollowUpTemplate {
@@ -4553,10 +4575,14 @@ model WhatsAppFollowUpTemplate {
   purpose          String   @default("follow_up")
   messageBody      String   @default("")
   variables        String   @default("[\"{{name}}\",\"{{student_code}}\",\"{{portal_link}}\",\"{{counselor_name}}\",\"{{branch_name}}\",\"{{country}}\",\"{{intake}}\"]")
-  metaTemplateName String   @default("")
-  approvalStatus   String   @default("pending") // pending, approved, rejected
-  activeStatus     String   @default("active")
-  createdBy        String   @default("")
+  metaTemplateName        String    @default("")
+  metaLanguage             String    @default("en_US")
+  approvalStatus           String    @default("pending") // ALO internal review
+  metaTemplateStatus        String    @default("unknown") // Meta Cloud API status, verified separately
+  metaTemplateCheckedAt     DateTime?
+  metaTemplateCheckError    String    @default("") // safe code only
+  activeStatus             String    @default("inactive")
+  createdBy                 String    @default("")
   approvedBy       String   @default("")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -4567,24 +4593,29 @@ model WhatsAppFollowUpTemplate {
 }
 
 model WhatsAppFollowUpSchedule {
-  id           String    @id @default(cuid())
-  studentId    String
-  leadId       String    @default("")
-  contactPhone String
-  templateId   String    @default("")
-  scheduledDay Int       @default(3)
-  scheduledAt  DateTime
-  sentAt       DateTime?
-  status       String    @default("scheduled") // scheduled, sent, failed, cancelled, paused
-  attemptCount Int       @default(0)
-  maxAttempts  Int       @default(3)
-  lastError    String    @default("")
-  isOptedOut   Boolean   @default(false)
-  isPaused     Boolean   @default(false)
-  pauseReason  String    @default("")
-  messageId    String    @default("")
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id                  String    @id @default(cuid())
+  studentId           String
+  leadId              String    @default("")
+  contactId           String    @default("")
+  conversationId      String    @default("")
+  contactPhone        String
+  senderNumberId      String    @default("")
+  templateId          String    @default("")
+  scheduledDay        Int       @default(3)
+  scheduledAt         DateTime
+  sentAt              DateTime?
+  status              String    @default("scheduled") // scheduled, sent, failed, cancelled, paused
+  attemptCount        Int       @default(0)
+  maxAttempts         Int       @default(3)
+  lastError           String    @default("")
+  isOptedOut          Boolean   @default(false)
+  isPaused            Boolean   @default(false)
+  pauseReason         String    @default("")
+  messageId           String    @default("")
+  idempotencyKey      String?   @unique
+  lastConsentCheckAt  DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   @@index([studentId])
   @@index([leadId])
@@ -4743,11 +4774,17 @@ model WhatsAppRetryQueue {
   messageId      String    @default("")
   recipientPhone String
   messageBody    String    @default("")
+  purpose        String    @default("unknown") @db.VarChar(64) // unknown legacy rows fail closed; service, transactional, promotional_marketing
+  campaignId     String    @default("")
+  approvalId     String    @default("")
+  conversationId String    @default("")
+  actorId        String    @default("")
+  senderNumber   String    @default("") @db.VarChar(32)
   attemptCount   Int       @default(0)
   maxAttempts    Int       @default(3)
   lastError      String    @default("")
   nextRetryAt    DateTime?
-  status         String    @default("pending") // pending, retrying, sent, failed
+  status         String    @default("pending") // pending, retrying, sent, failed, cancelled
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
@@ -6740,21 +6777,24 @@ model FacebookLeadRaw {
 }
 
 model WebhookEvent {
-  id           String    @id @default(cuid())
-  provider     String
-  eventId      String?
-  eventType    String
-  payload      String
-  signature    String?
-  verified     Boolean   @default(false)
-  processed    Boolean   @default(false)
-  processedAt  DateTime?
-  errorMessage String?
-  createdAt    DateTime  @default(now())
+  id              String    @id @default(cuid())
+  provider        String
+  eventId         String?
+  eventType       String
+  payload         String
+  signature       String?
+  verified        Boolean   @default(false)
+  processed       Boolean   @default(false)
+  processedAt     DateTime?
+  processingAt    DateTime?
+  processingToken String?
+  errorMessage    String?
+  createdAt       DateTime  @default(now())
 
   @@unique([provider, eventId])
   @@index([provider])
   @@index([processed])
+  @@index([processed, processingAt])
 }
 
 model WhatsAppMessageStatus {
@@ -6861,6 +6901,7 @@ model ContactMatchReview {
   normalizedPhone  String
   incomingName     String?
   incomingEmail    String?
+  conversationId  String    @default("")
   matchedStudentId String?
   matchedLeadId    String?
   matchedPartnerId String?
@@ -6874,6 +6915,7 @@ model ContactMatchReview {
 
   @@index([incomingPhone])
   @@index([status])
+  @@index([conversationId])
 }
 
 model KeywordTrigger {
@@ -8118,19 +8160,32 @@ model ConsentRecord {
   studentId         String?
   leadId            String?
   partnerId         String?
+  contactId         String? // WhatsAppContact id or another authorized CRM contact reference
+  normalizedPhone   String?   @db.VarChar(32)
+  email             String?   @db.VarChar(320)
   channel           String // WHATSAPP, SMS, EMAIL, CALL
-  consentStatus     String    @default("UNKNOWN")
+  purpose           String    @default("UNKNOWN") @db.VarChar(64) // TRANSACTIONAL, SERVICE_UPDATES, PROMOTIONAL_MARKETING, UNKNOWN
+  consentStatus     String    @default("UNKNOWN") // append-only event state: OPTED_IN, OPTED_OUT, PENDING, UNKNOWN
   preferredLanguage String?
   preferredChannel  String?
   consentDate       DateTime?
   optOutDate        DateTime?
   consentSource     String?
+  consentMethod     String    @default("")
+  consentText       String    @default("") @db.VarChar(512)
+  policyVersion     String    @default("")
+  evidenceReference String    @default("")
+  recordedById      String    @default("system")
+  withdrawalReason  String    @default("")
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
   @@index([studentId])
   @@index([leadId])
   @@index([consentStatus])
+  @@index([normalizedPhone, channel, purpose, createdAt])
+  @@index([email, channel, purpose, createdAt])
+  @@index([contactId, channel, purpose, createdAt])
 }
 
 model ConstitutionalRule {
@@ -9062,6 +9117,7 @@ model LeadOutreach {
   sourceName      String // Google Maps, Facebook, Instagram, Referral, etc.
   sourceType      String // ORGANIC, PAID, OUTREACH, REFERRAL
   channel         String // WHATSAPP, EMAIL, SMS, PHONE
+  purpose         String    @default("UNKNOWN") @db.VarChar(64) // legacy rows remain unknown; new drafts set promotional explicitly
   consentStatus   String    @default("UNKNOWN") // OPTED_IN, OPTED_OUT, UNKNOWN
   outreachHistory String? // JSON array of {date, channel, message, result}
   optOutDate      DateTime?

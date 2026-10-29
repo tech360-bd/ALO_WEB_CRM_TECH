@@ -1,15 +1,13 @@
 /**
- * CLI runner for the intake window backfill (Jan 2027 … Jan 2028 on every course).
+ * CLI runner for the read-only Jan 2027 … Jan 2028 intake coverage report.
  *
  * Run with tsx, matching the repo's other TypeScript scripts:
  *   npx tsx scripts/backfill-intake-window.ts                 # all active courses
- *   npx tsx scripts/backfill-intake-window.ts --dry-run       # report only
  *   npx tsx scripts/backfill-intake-window.ts --limit 500
  *   npx tsx scripts/backfill-intake-window.ts --course <courseId>
  *
- * The logic lives in src/lib/course-finder/intake-window-backfill.ts so the admin
- * API and this CLI can never drift. Verified rows are never overwritten; generated
- * rows carry no fees or deadlines and are marked SCHEDULED, not VERIFIED.
+ * `--dry-run` remains accepted for backward compatibility, but this command is
+ * always read-only. Missing months are never generated or treated as availability.
  */
 import { PrismaClient } from '@prisma/client';
 import { backfillIntakeWindow } from '../src/lib/course-finder/intake-window-backfill';
@@ -20,21 +18,29 @@ async function main() {
   const dryRun = args.includes('--dry-run');
   const limitIndex = args.indexOf('--limit');
   const courseIndex = args.indexOf('--course');
-  const limit = limitIndex >= 0 ? Number(args[limitIndex + 1]) || 0 : 0;
-  const courseId = courseIndex >= 0 ? args[courseIndex + 1] || '' : '';
+  const rawLimit = limitIndex >= 0 ? args[limitIndex + 1] : undefined;
+  if (limitIndex >= 0 && (!rawLimit || !/^\d+$/.test(rawLimit))) {
+    throw new Error('--limit must be followed by an integer from 0 to 10000.');
+  }
+  const limit = rawLimit === undefined ? 0 : Number(rawLimit);
+  if (!Number.isSafeInteger(limit) || limit < 0 || limit > 10_000) {
+    throw new Error('--limit must be an integer from 0 to 10000.');
+  }
+  const rawCourseId = courseIndex >= 0 ? args[courseIndex + 1] : undefined;
+  if (courseIndex >= 0 && (!rawCourseId || rawCourseId.startsWith('--') || !rawCourseId.trim() || rawCourseId.trim().length > 191)) {
+    throw new Error('--course must be followed by a non-empty courseId of at most 191 characters.');
+  }
+  const courseId = rawCourseId || '';
 
   const prisma = new PrismaClient();
-  console.log(`Intake window backfill ${dryRun ? '(dry run) ' : ''}— ${INTAKE_WINDOW_LABEL} (${INTAKE_WINDOW_MONTHS.length} months)`);
+  console.log(`Read-only intake coverage report ${dryRun ? '(--dry-run requested) ' : ''}— ${INTAKE_WINDOW_LABEL} (${INTAKE_WINDOW_MONTHS.length} months)`);
 
   try {
-    const report = await backfillIntakeWindow(prisma, { dryRun, limit, courseId, log: console.log });
+    const report = await backfillIntakeWindow(prisma, { dryRun, limit, ...(courseId ? { courseId } : {}), log: console.log });
     console.log('\nResult:');
     for (const [key, value] of Object.entries(report)) console.log(`  ${key}: ${value}`);
-    if (report.failed > 0) {
-      console.log('\nSome rows failed — see the log above. Re-running is safe: verified rows are never touched.');
-    }
     if (report.skippedNoUniversity > 0) {
-      console.log(`\n${report.skippedNoUniversity} course(s) have no university link. Fix those records first — the spec forbids orphan courses.`);
+      console.log(`\n${report.skippedNoUniversity} active course(s) lack a university link. This read-only report leaves those records unchanged.`);
     }
   } finally {
     await prisma.$disconnect();

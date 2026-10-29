@@ -409,11 +409,11 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-bold text-[var(--alo-text)]">Want to write your own success story?</p>
-              <p className="text-sm text-[var(--alo-text-muted)]">Start your free consultation today.</p>
+              <p className="text-sm text-[var(--alo-text-muted)]">Start your consultation today.</p>
             </div>
             <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               <Icon name="CalendarCheck" className="size-4" />
-              Book Free Consultation
+              Request Consultation
             </Button>
           </div>
         </div>

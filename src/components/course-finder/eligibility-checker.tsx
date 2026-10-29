@@ -652,7 +652,7 @@ export function EligibilityChecker() {
                     style={{ background: ALO_ORANGE }}
                     onClick={() => router.push('/book-consultation')}
                   >
-                    Book Free Consultation
+                    Request Consultation
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
