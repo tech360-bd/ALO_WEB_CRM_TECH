@@ -1,13 +1,13 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2729,
+  "filesScanned": 2822,
   "summary": {
-    "UNUSED": 102,
-    "REFERENCED_WITH_FALLBACK": 166,
+    "UNUSED": 97,
+    "REFERENCED_WITH_FALLBACK": 168,
     "REFERENCED_FAIL_CLOSED": 20,
-    "REFERENCED": 123,
-    "PUBLIC": 12
+    "REFERENCED": 122,
+    "PUBLIC": 14
   },
   "productionRequired": [
     "DATABASE_URL",
@@ -253,22 +253,6 @@
       ]
     },
     {
-      "name": "ALO_24_7_SUPPORT_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
-    },
-    {
       "name": "ALO_AI_ALLOW_UNOFFICIAL_PROVIDERS",
       "classification": "REFERENCED",
       "referenced": true,
@@ -456,36 +440,22 @@
       ]
     },
     {
-      "name": "ALO_COMPLAINT_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
-    },
-    {
       "name": "ALO_COO_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-number-pool.ts"
+      ]
     },
     {
       "name": "ALO_CRON_SECRET",
@@ -555,55 +525,25 @@
       ]
     },
     {
-      "name": "ALO_EMPLOYEE_WHATSAPP_END",
-      "classification": "UNUSED",
-      "referenced": false,
+      "name": "ALO_EMPLOYEE_WHATSAPP_NUMBERS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
-    },
-    {
-      "name": "ALO_EMPLOYEE_WHATSAPP_START",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-number-pool.ts"
+      ]
     },
     {
       "name": "ALO_ENABLE_OPTIONAL_CLOUD_AI",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "ALO_FOLLOWUP_WHATSAPP_NUMBER",
       "classification": "UNUSED",
       "referenced": false,
       "referencedIndirectly": false,
@@ -757,19 +697,21 @@
     },
     {
       "name": "ALO_MAIN_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-number-pool.ts"
+      ]
     },
     {
       "name": "ALO_NOTIFICATION_RETENTION_DAYS",
@@ -4194,7 +4136,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 16,
+      "referenceCount": 17,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -4324,11 +4266,47 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_ALO_CONTACT_PHONE",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/alo-site-info.ts"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_ALO_WHATSAPP_NUMBER",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/alo-site-info.ts"
+      ]
+    },
+    {
       "name": "NEXT_PUBLIC_APP_URL",
       "classification": "PUBLIC",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 6,
+      "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -6507,8 +6485,8 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 6,
-      "failsClosedWhenMissing": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -6517,9 +6495,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
@@ -6544,13 +6520,13 @@
       "referenced": true,
       "referencedIndirectly": false,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
@@ -6558,7 +6534,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 5,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -6568,9 +6544,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/webhooks/whatsapp/route.ts",
         "src/app/api/whatsapp/status/route.ts",
-        "src/app/api/whatsapp/webhook/route.ts"
+        "src/app/api/whatsapp/webhook/route.ts",
+        "src/lib/whatsapp-cloud-api.ts"
       ]
     },
     {
@@ -6591,10 +6567,10 @@
     },
     {
       "name": "WHATSAPP_BUSINESS_PHONE",
-      "classification": "REFERENCED",
-      "referenced": true,
+      "classification": "UNUSED",
+      "referenced": false,
       "referencedIndirectly": false,
-      "referenceCount": 1,
+      "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -6603,9 +6579,7 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": [
-        "src/lib/whatsapp-cloud-api.ts"
-      ]
+      "sampleReferences": []
     },
     {
       "name": "WHATSAPP_GRAPH_API_VERSION",
@@ -6613,13 +6587,13 @@
       "referenced": true,
       "referencedIndirectly": false,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
@@ -6628,7 +6602,7 @@
       "referenced": true,
       "referencedIndirectly": false,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -6637,15 +6611,31 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/whatsapp-media-ingestion.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_PHONE_NUMBER_ID",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "WHATSAPP_TOKEN",
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 4,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -6655,29 +6645,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts",
         "src/lib/whatsapp-media.ts"
-      ]
-    },
-    {
-      "name": "WHATSAPP_TOKEN",
-      "classification": "REFERENCED_WITH_FALLBACK",
-      "referenced": true,
-      "referencedIndirectly": false,
-      "referenceCount": 6,
-      "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": [
-        "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-inbound-media.ts"
       ]
     },
     {
@@ -6685,7 +6653,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 4,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -6695,9 +6663,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/webhooks/whatsapp/route.ts",
         "src/app/api/whatsapp/status/route.ts",
-        "src/app/api/whatsapp/webhook/route.ts"
+        "src/app/api/whatsapp/webhook/route.ts",
+        "src/lib/whatsapp-webhook-handler.ts"
       ]
     },
     {

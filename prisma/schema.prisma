@@ -4774,12 +4774,12 @@ model WhatsAppRetryQueue {
   messageId      String    @default("")
   recipientPhone String
   messageBody    String    @default("")
-  purpose        String    @default("unknown") // unknown legacy rows fail closed; service, transactional, promotional_marketing
+  purpose        String    @default("unknown") @db.VarChar(64) // unknown legacy rows fail closed; service, transactional, promotional_marketing
   campaignId     String    @default("")
   approvalId     String    @default("")
   conversationId String    @default("")
   actorId        String    @default("")
-  senderNumber   String    @default("")
+  senderNumber   String    @default("") @db.VarChar(32)
   attemptCount   Int       @default(0)
   maxAttempts    Int       @default(3)
   lastError      String    @default("")
@@ -8164,7 +8164,7 @@ model ConsentRecord {
   normalizedPhone   String?   @db.VarChar(32)
   email             String?   @db.VarChar(320)
   channel           String // WHATSAPP, SMS, EMAIL, CALL
-  purpose           String    @default("UNKNOWN") // TRANSACTIONAL, SERVICE_UPDATES, PROMOTIONAL_MARKETING, UNKNOWN
+  purpose           String    @default("UNKNOWN") @db.VarChar(64) // TRANSACTIONAL, SERVICE_UPDATES, PROMOTIONAL_MARKETING, UNKNOWN
   consentStatus     String    @default("UNKNOWN") // append-only event state: OPTED_IN, OPTED_OUT, PENDING, UNKNOWN
   preferredLanguage String?
   preferredChannel  String?
@@ -9117,7 +9117,7 @@ model LeadOutreach {
   sourceName      String // Google Maps, Facebook, Instagram, Referral, etc.
   sourceType      String // ORGANIC, PAID, OUTREACH, REFERRAL
   channel         String // WHATSAPP, EMAIL, SMS, PHONE
-  purpose         String    @default("UNKNOWN") // legacy rows remain unknown; new drafts set promotional explicitly
+  purpose         String    @default("UNKNOWN") @db.VarChar(64) // legacy rows remain unknown; new drafts set promotional explicitly
   consentStatus   String    @default("UNKNOWN") // OPTED_IN, OPTED_OUT, UNKNOWN
   outreachHistory String? // JSON array of {date, channel, message, result}
   optOutDate      DateTime?
