@@ -14089,3 +14089,40 @@ model CrmCoverageRevision {
   @@index([courseId, year, month])
   @@index([changeType])
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Inbound channel identity bindings (omnichannel identity engine)
+//
+// One row links a provider-scoped identity (WhatsApp wa_id, Messenger PSID,
+// Instagram IGSID, SMS number, web-chat/email identity) to exactly one ALO
+// student. Rows are never deleted: unlinking flips `active` to false and
+// records who/why, so the merge/unlink history required by the identity
+// policy is preserved and a re-link attempt can be detected instead of
+// silently recreating a student.
+// ═══════════════════════════════════════════════════════════════════════════
+model StudentChannelIdentity {
+  id               String    @id @default(cuid())
+  /// WHATSAPP | FACEBOOK | INSTAGRAM | SMS | WEB_CHAT | EMAIL
+  channel          String
+  /// Provider account that received the message (Meta phone_number_id, Page ID, SMS shortcode...)
+  channelAccountId String    @default("")
+  /// Provider-scoped sender id (wa_id, PSID, IGSID, E.164 number, verified email)
+  externalUserId   String
+  /// ALO student identifier (AE-YYYYNNNN). Not a foreign key: the two student
+  /// tables (Student, PortalStudentProfile) are not yet unified, so the binding
+  /// stores the identifier value that both tables already use.
+  studentId        String
+  /// false once an authorised reviewer unlinks it; the row is kept for history.
+  active           Boolean   @default(true)
+  linkedBy         String    @default("")
+  linkedAt         DateTime  @default(now())
+  unlinkedBy       String    @default("")
+  unlinkedAt       DateTime?
+  unlinkReason     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([channel, channelAccountId, externalUserId])
+  @@index([studentId])
+  @@index([active])
+}
