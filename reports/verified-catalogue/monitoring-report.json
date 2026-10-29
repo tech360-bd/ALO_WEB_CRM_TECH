@@ -1,0 +1,96 @@
+{
+  "generatedAt": "2026-10-29T02:41:11.842Z",
+  "window": [
+    "2027-01",
+    "2027-02",
+    "2027-03",
+    "2027-04",
+    "2027-05",
+    "2027-06",
+    "2027-07",
+    "2027-08",
+    "2027-09",
+    "2027-10",
+    "2027-11",
+    "2027-12",
+    "2028-01"
+  ],
+  "totals": {
+    "VERIFIED_AVAILABLE": 9,
+    "VERIFIED_NOT_OFFERED": 18,
+    "NOT_PUBLISHED": 25,
+    "VERIFICATION_PENDING": 0,
+    "SOURCE_UNAVAILABLE": 0,
+    "CONFLICT_REQUIRES_REVIEW": 0,
+    "MISSING": 0
+  },
+  "courses": 4,
+  "publishedRows": 52,
+  "pendingApprovals": 0,
+  "rejectedRows": 0,
+  "staleCourseMonths": [],
+  "missingCourseMonths": [],
+  "conflictsAwaitingReview": 1,
+  "failedOfficialSources": 0,
+  "researchQueue": {
+    "total": 13,
+    "byStatus": {
+      "QUEUED": 7,
+      "IN_PROGRESS": 6
+    },
+    "byCountry": {
+      "usa": 1,
+      "germany": 1,
+      "uae": 1,
+      "malaysia": 1,
+      "new-zealand": 1,
+      "denmark": 1,
+      "south-korea": 1,
+      "uk": 2,
+      "ireland": 1,
+      "japan": 1,
+      "australia": 1,
+      "canada": 1
+    }
+  },
+  "evidenceRecords": 18,
+  "uninspectedEvidence": 0,
+  "courseMatrix": [
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "availableMonths": [
+        "2027-09"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "availableMonths": [
+        "2027-01",
+        "2027-05",
+        "2027-09",
+        "2028-01"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "availableMonths": [
+        "2027-01",
+        "2027-05",
+        "2027-09",
+        "2028-01"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "availableMonths": [],
+      "missingMonths": []
+    }
+  ],
+  "actionsTaken": {
+    "recheckItemsCreated": 0,
+    "recheckItemsExisting": 0
+  }
+}

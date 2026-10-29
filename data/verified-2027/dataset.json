@@ -1,0 +1,1438 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetId": "alo-verified-2027-2028-cycle-2026-10-29",
+  "generatedAt": "2026-10-29T09:30:00Z",
+  "window": {
+    "startYear": 2027,
+    "startMonth": 1,
+    "endYear": 2028,
+    "endMonth": 1
+  },
+  "notes": "Official-source verification captured on 2026-10-29. Evidence excerpts are whitespace-normalised but otherwise verbatim and kept in source order; table cell separators are collapsed to single spaces. Each excerpt's SHA-256 is computed at ingest time and stored on CrmOfficialEvidence. Only four courses reached course-level verification in this cycle; the rest of the supported countries are held in researchQueue and are reported as outstanding coverage, not as verified data.",
+  "evidence": [
+    {
+      "id": "man-masters-catalogue-2027",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "Master's courses for entry in 2027 | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Master's courses for entry in 2027 Enter keywords Filter by subject area ... Title Degree Duration",
+      "fieldScope": [
+        "catalogueTitle",
+        "entryYear",
+        "courseListing"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "university-of-manchester",
+      "confidence": 0.98
+    },
+    {
+      "id": "man-msc-accounting-overview",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "MSc Accounting (2027 entry) | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Year of entry: 2027 Duration: 1 year | MSc | Full-time: In person",
+      "fieldScope": [
+        "yearOfEntry",
+        "duration",
+        "studyMode",
+        "qualification"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-manchester",
+      "courseSlug": "manchester-msc-accounting",
+      "confidence": 0.98
+    },
+    {
+      "id": "man-msc-accounting-fees-2027",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "MSc Accounting (2027 entry) | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "For entry in the academic year beginning September 2027, the tuition fees are as follows: MSc (full-time) UK students (per annum): £23,700 International, including EU, students (per annum): £39,700 The fees quoted above are fully inclusive of tuition, administration and computational costs.",
+      "fieldScope": [
+        "feeAmount",
+        "feeCurrency",
+        "academicYear",
+        "feePeriod",
+        "studentCategory"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-manchester",
+      "courseSlug": "manchester-msc-accounting",
+      "confidence": 0.98
+    },
+    {
+      "id": "man-msc-accounting-application-fee",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "MSc Accounting (2027 entry) | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "NOTE: There is a non-refundable application fee of £60. You should be prompted to pay this within the application portal before you can submit your application. We cannot consider applications until you have paid the application fee.",
+      "fieldScope": [
+        "applicationFee"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-manchester",
+      "courseSlug": "manchester-msc-accounting",
+      "confidence": 0.98
+    },
+    {
+      "id": "man-msc-accounting-deposit",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "MSc Accounting (2027 entry) | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "International students are required to pay a tuition fee deposit. If you are successful in receiving an offer, you will be required to pay £2,500 by the deadline stated in your offer letter to confirm your place.",
+      "fieldScope": [
+        "depositAmount",
+        "depositCurrency"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-manchester",
+      "courseSlug": "manchester-msc-accounting",
+      "confidence": 0.98
+    },
+    {
+      "id": "man-msc-accounting-entry-requirement",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "MSc Accounting (2027 entry) | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "We require a First or Upper Second class honours degree (2:1, with 60% average) from a UK university or the overseas equivalent. You need a degree in accounting or overseas equivalent.",
+      "fieldScope": [
+        "academicRequirement"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-manchester",
+      "courseSlug": "manchester-msc-accounting",
+      "confidence": 0.97
+    },
+    {
+      "id": "man-msc-accounting-documents",
+      "sourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "The University of Manchester",
+      "pageTitle": "MSc Accounting (2027 entry) | The University of Manchester",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "We can only process applications with the following documents: valid English language qualification first and second year transcript (scanned copies are accepted at the time of application) list of final year modules statement of purpose",
+      "fieldScope": [
+        "documentRequirements",
+        "englishRequirementReference"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "university-of-manchester",
+      "courseSlug": "manchester-msc-accounting",
+      "confidence": 0.95
+    },
+    {
+      "id": "cent-biotech-program-details",
+      "sourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Centennial College",
+      "pageTitle": "Centennial College - Biotechnology (Fast-Track)",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Program Code 3621 Credential Type Ontario College Diploma School School of Applied Sciences Program Type Fast-track program Program Length 1 year/ 2 semesters Delivery Mode Hybrid Location Morningside Campus PGWP Aligned Yes CIP Code 41.0101",
+      "fieldScope": [
+        "programCode",
+        "qualification",
+        "faculty",
+        "duration",
+        "studyMode",
+        "campus",
+        "pgwpAligned"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "centennial-college",
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "confidence": 0.98
+    },
+    {
+      "id": "cent-biotech-availability",
+      "sourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Centennial College",
+      "pageTitle": "Centennial College - Biotechnology (Fast-Track)",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Date Domestic Availability International Availability January 2027 Available Available May 2027 Available Available September 2027 Available Available January 2028 Available Available May 2028 Available Available",
+      "fieldScope": [
+        "intakeAvailability",
+        "internationalAvailability"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "centennial-college",
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "confidence": 0.95
+    },
+    {
+      "id": "cent-biotech-fees",
+      "sourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Centennial College",
+      "pageTitle": "Centennial College - Biotechnology (Fast-Track)",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Fees noted below are estimates only. Tuition is based on two semesters, beginning Fall 2026. International $19,167.00 $2,205.81 $21,372.81",
+      "fieldScope": [
+        "publishedFeeBasis",
+        "feeAcademicYear"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "centennial-college",
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "confidence": 0.95
+    },
+    {
+      "id": "cent-biotech-admission",
+      "sourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Centennial College",
+      "pageTitle": "Centennial College - Biotechnology (Fast-Track)",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Academic Requirements Diploma or degree in chemistry/biology, or engineering, or related discipline Additional Requirements Transcript review Centennial English Admission Test English language proficiency",
+      "fieldScope": [
+        "academicRequirement",
+        "englishRequirement",
+        "documentRequirements"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "centennial-college",
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "confidence": 0.95
+    },
+    {
+      "id": "cent-cpm-program-details",
+      "sourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Centennial College",
+      "pageTitle": "Centennial College - Construction Project Management",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Program Code 3130 Credential Type Ontario College Graduate Certificate School School of Applied Sciences Program Type Graduate Certificate program Program Length 1 year/ 3 semesters Delivery Mode Hybrid Location Progress Campus PGWP Aligned Yes CIP Code 52.2002",
+      "fieldScope": [
+        "programCode",
+        "qualification",
+        "faculty",
+        "duration",
+        "studyMode",
+        "campus",
+        "pgwpAligned"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "centennial-college",
+      "courseSlug": "centennial-construction-project-management",
+      "confidence": 0.98
+    },
+    {
+      "id": "cent-cpm-availability",
+      "sourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Centennial College",
+      "pageTitle": "Centennial College - Construction Project Management",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Date Domestic Availability International Availability January 2027 Available Available May 2027 Available Available September 2027 Available Available January 2028 Available Available May 2028 Available Available",
+      "fieldScope": [
+        "intakeAvailability",
+        "internationalAvailability"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "centennial-college",
+      "courseSlug": "centennial-construction-project-management",
+      "confidence": 0.95
+    },
+    {
+      "id": "mon-b6005-handbook-2027",
+      "sourceUrl": "https://handbook.monash.edu/2027/courses/B6005",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Monash University",
+      "pageTitle": "B6005 - Master of Business - Monash University",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "B6005 - Master of Business You are viewing the 2027 version Mode and location On campus Caulfield",
+      "fieldScope": [
+        "courseCode",
+        "handbookYear",
+        "studyMode",
+        "campus"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "monash-university",
+      "courseSlug": "monash-master-of-business",
+      "confidence": 0.97
+    },
+    {
+      "id": "mon-b6005-requirements",
+      "sourceUrl": "https://handbook.monash.edu/2027/courses/B6005",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Monash University",
+      "pageTitle": "B6005 - Master of Business - Monash University",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Requirements 96 credit points You may complete more than one specialisation as part of your course.",
+      "fieldScope": [
+        "creditPoints",
+        "structure"
+      ],
+      "entityType": "COURSE",
+      "universitySlug": "monash-university",
+      "courseSlug": "monash-master-of-business",
+      "confidence": 0.97
+    },
+    {
+      "id": "dbs-international-intakes-2027",
+      "sourceUrl": "https://www.dbs.ie/international-students/international-non-eu-students/international-programmes",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Dublin Business School",
+      "pageTitle": "International | Degree Programmes | Masters Programmes | DBS",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "DBS is currently accepting applications for courses commencing in January, April and September 2027.",
+      "fieldScope": [
+        "institutionIntakeMonths",
+        "applicationStatus"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "dublin-business-school",
+      "confidence": 0.95
+    },
+    {
+      "id": "kyoto-academic-calendar-2027",
+      "sourceUrl": "https://www.kyoto-u.ac.jp/ja/education-campus/curriculum/calendar",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Kyoto University",
+      "pageTitle": "アカデミックカレンダー | 京都大学",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "令和9（2027）年度アカデミックカレンダー（学年暦） 前期 始まり 4月1日（木曜日） 後期 始まり 10月1日（金曜日）",
+      "fieldScope": [
+        "semesterOneStart",
+        "semesterTwoStart"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "kyoto-university",
+      "language": "ja",
+      "confidence": 0.97
+    },
+    {
+      "id": "ulster-pg-2027-28-filter-empty",
+      "sourceUrl": "https://www.ulster.ac.uk/courses?f.Entry_year_u%7Centryyear=2027%2F28&f.Level_u%7CY=Postgraduate",
+      "sourceType": "OFFICIAL_UNIVERSITY",
+      "publisherName": "Ulster University",
+      "pageTitle": "Courses at Ulster University | Courses at Ulster University",
+      "retrievedAt": "2026-10-29T09:30:00Z",
+      "httpStatus": 200,
+      "excerpt": "Study Level Postgraduate Entry Year 2026/27 2027/28 Search Results 0 search results Clear all filters",
+      "fieldScope": [
+        "postgraduate2027_28ListingCount"
+      ],
+      "entityType": "UNIVERSITY",
+      "universitySlug": "ulster-university",
+      "confidence": 0.9
+    }
+  ],
+  "universities": [
+    {
+      "slug": "university-of-manchester",
+      "name": "The University of Manchester",
+      "country": "United Kingdom",
+      "countrySlug": "uk",
+      "city": "Manchester",
+      "officialWebsite": "https://www.manchester.ac.uk/",
+      "catalogueUrl": "https://www.manchester.ac.uk/study/masters/courses/list/",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Official 2027 master's catalogue reached and read; full pagination not yet traversed (listing truncated after 34 programme links)."
+    },
+    {
+      "slug": "centennial-college",
+      "name": "Centennial College",
+      "country": "Canada",
+      "countrySlug": "canada",
+      "city": "Toronto",
+      "officialWebsite": "https://www.centennialcollege.ca/",
+      "catalogueUrl": "https://www.centennialcollege.ca/programs-courses/full-time",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Two official programme pages read end-to-end including availability tables and tuition tables."
+    },
+    {
+      "slug": "monash-university",
+      "name": "Monash University",
+      "country": "Australia",
+      "countrySlug": "australia",
+      "city": "Melbourne",
+      "officialWebsite": "https://www.monash.edu/",
+      "catalogueUrl": "https://handbook.monash.edu/2027/courses/",
+      "verificationStatus": "PARTIALLY_VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "2027 handbook entry verified for B6005. The public course page (intakes/fees) was not traversed in this cycle."
+    },
+    {
+      "slug": "dublin-business-school",
+      "name": "Dublin Business School",
+      "country": "Ireland",
+      "countrySlug": "ireland",
+      "city": "Dublin",
+      "officialWebsite": "https://www.dbs.ie/",
+      "catalogueUrl": "https://www.dbs.ie/courses/international",
+      "verificationStatus": "PARTIALLY_VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Institution-level 2027 intake months verified. Course-level fees/requirements still queued."
+    },
+    {
+      "slug": "kyoto-university",
+      "name": "Kyoto University",
+      "country": "Japan",
+      "countrySlug": "japan",
+      "city": "Kyoto",
+      "officialWebsite": "https://www.kyoto-u.ac.jp/",
+      "catalogueUrl": "https://www.kyoto-u.ac.jp/en/education-campus/education-and-admissions/calendar",
+      "verificationStatus": "PARTIALLY_VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "2027 academic calendar verified (semester start dates). Graduate-school programme pages queued."
+    },
+    {
+      "slug": "ulster-university",
+      "name": "Ulster University",
+      "country": "United Kingdom",
+      "countrySlug": "uk",
+      "city": "Belfast",
+      "officialWebsite": "https://www.ulster.ac.uk/",
+      "catalogueUrl": "https://www.ulster.ac.uk/courses",
+      "verificationStatus": "PARTIALLY_VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Postgraduate 2027/28 course-finder filter returned 0 results at collection time; undergraduate 2027/28 listing queued."
+    }
+  ],
+  "courses": [
+    {
+      "slug": "manchester-msc-accounting",
+      "universitySlug": "university-of-manchester",
+      "title": "MSc Accounting",
+      "qualification": "MSc",
+      "studyLevel": "Postgraduate",
+      "subjectArea": "Accounting and Finance",
+      "durationMonths": 12,
+      "studyMode": "Full-time: In person",
+      "campus": "Manchester",
+      "officialCourseUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "applicationUrl": "https://www.alliancembs.manchester.ac.uk/study/masters/how-to-apply/",
+      "academicYear": "2027/28",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Year of entry 2027; academic year beginning September 2027. Exact teaching start date and staged-admission deadlines are published on the AMBS how-to-apply page (not traversed in this cycle)."
+    },
+    {
+      "slug": "centennial-biotechnology-fast-track",
+      "universitySlug": "centennial-college",
+      "title": "Biotechnology (Fast-Track)",
+      "qualification": "Ontario College Diploma",
+      "studyLevel": "Diploma",
+      "subjectArea": "Applied Sciences",
+      "durationMonths": 12,
+      "studyMode": "Hybrid",
+      "campus": "Morningside Campus",
+      "officialCourseUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "applicationUrl": "https://www.centennialcollege.ca/international-education/how-to-apply-to-centennial-college",
+      "academicYear": "2026/27 and 2027/28 availability confirmed",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Program code 3621. Availability table lists January 2027, May 2027, September 2027, January 2028 and May 2028 as Available to international applicants."
+    },
+    {
+      "slug": "centennial-construction-project-management",
+      "universitySlug": "centennial-college",
+      "title": "Construction Project Management",
+      "qualification": "Ontario College Graduate Certificate",
+      "studyLevel": "Postgraduate",
+      "subjectArea": "Construction Management",
+      "durationMonths": 12,
+      "studyMode": "Hybrid",
+      "campus": "Progress Campus",
+      "officialCourseUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "applicationUrl": "https://www.centennialcollege.ca/international-education/how-to-apply-to-centennial-college",
+      "academicYear": "2026/27 and 2027/28 availability confirmed",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "Program code 3130. Availability table lists January 2027, May 2027, September 2027, January 2028 and May 2028 as Available."
+    },
+    {
+      "slug": "monash-master-of-business",
+      "universitySlug": "monash-university",
+      "title": "Master of Business",
+      "qualification": "Master of Business (B6005)",
+      "studyLevel": "Postgraduate",
+      "subjectArea": "Business and Economics",
+      "durationMonths": 0,
+      "studyMode": "On campus",
+      "campus": "Caulfield",
+      "officialCourseUrl": "https://handbook.monash.edu/2027/courses/B6005",
+      "applicationUrl": "https://www.monash.edu/study/how-to-apply",
+      "academicYear": "2027 handbook edition",
+      "verificationStatus": "VERIFIED",
+      "lastVerifiedAt": "2026-10-29T09:30:00Z",
+      "notes": "2027 handbook: 96 credit points, Caulfield campus, on campus. Intake months and international fee are not published in the handbook."
+    }
+  ],
+  "coverage": [
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 1,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 2,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 3,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 4,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 5,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 6,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 7,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 8,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 9,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "September 2027 entry (academic year beginning September 2027)",
+      "feeAmount": 39700,
+      "feeCurrency": "GBP",
+      "academicYear": "2027/28",
+      "feePeriod": "per annum",
+      "studentCategory": "INTERNATIONAL",
+      "applicationFee": 60,
+      "applicationFeeCurrency": "GBP",
+      "depositAmount": 2500,
+      "depositCurrency": "GBP",
+      "academicRequirement": "First or Upper Second class honours degree (2:1, with 60% average) in accounting or overseas equivalent",
+      "englishRequirements": {
+        "sourceNote": "Course page refers to the Alliance MBS language requirements page; test scores are NOT_PUBLISHED on the course page."
+      },
+      "documentRequirements": [
+        "valid English language qualification",
+        "first and second year transcript",
+        "list of final year modules",
+        "statement of purpose"
+      ],
+      "internationalEligibility": "open to international applicants (international fee published for 2027 entry)",
+      "studyMode": "Full-time: In person",
+      "campus": "Manchester",
+      "qualification": "MSc",
+      "courseSourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "feeSourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "intakeSourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "requirementSourceUrl": "https://www.manchester.ac.uk/study/masters/courses/list/10867/msc-accounting/",
+      "evidenceIds": [
+        "man-msc-accounting-overview",
+        "man-msc-accounting-fees-2027",
+        "man-msc-accounting-application-fee",
+        "man-msc-accounting-deposit",
+        "man-msc-accounting-entry-requirement",
+        "man-msc-accounting-documents"
+      ],
+      "confidence": 0.95,
+      "notes": "International fee £39,700 per annum for entry in the academic year beginning September 2027 (official fee statement). Application fee £60, deposit £2,500. Exact teaching start date not published on the course page."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 10,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 11,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2027,
+      "month": 12,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "year": 2028,
+      "month": 1,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "man-msc-accounting-overview"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 course page states a single entry for the academic year beginning September 2027 and does not publish intake availability for this month. Not treated as proof of absence."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 1,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "January 2027",
+      "studyMode": "Hybrid",
+      "academicRequirement": "Diploma or degree in chemistry/biology, or engineering, or related discipline",
+      "documentRequirements": [
+        "transcript review",
+        "Centennial English Admission Test or accepted English language proficiency evidence"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme page lists an English language proficiency requirement and Centennial English Admission Test; numeric IELTS/TOEFL scores are NOT_PUBLISHED on this page."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "evidenceIds": [
+        "cent-biotech-availability",
+        "cent-biotech-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 2,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 3,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 4,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 5,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "May 2027",
+      "studyMode": "Hybrid",
+      "academicRequirement": "Diploma or degree in chemistry/biology, or engineering, or related discipline",
+      "documentRequirements": [
+        "transcript review",
+        "Centennial English Admission Test or accepted English language proficiency evidence"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme page lists an English language proficiency requirement and Centennial English Admission Test; numeric IELTS/TOEFL scores are NOT_PUBLISHED on this page."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "evidenceIds": [
+        "cent-biotech-availability",
+        "cent-biotech-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 6,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 7,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 8,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 9,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "September 2027",
+      "studyMode": "Hybrid",
+      "academicRequirement": "Diploma or degree in chemistry/biology, or engineering, or related discipline",
+      "documentRequirements": [
+        "transcript review",
+        "Centennial English Admission Test or accepted English language proficiency evidence"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme page lists an English language proficiency requirement and Centennial English Admission Test; numeric IELTS/TOEFL scores are NOT_PUBLISHED on this page."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "evidenceIds": [
+        "cent-biotech-availability",
+        "cent-biotech-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 10,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 11,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2027,
+      "month": 12,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-biotech-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "year": 2028,
+      "month": 1,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "January 2028",
+      "studyMode": "Hybrid",
+      "academicRequirement": "Diploma or degree in chemistry/biology, or engineering, or related discipline",
+      "documentRequirements": [
+        "transcript review",
+        "Centennial English Admission Test or accepted English language proficiency evidence"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme page lists an English language proficiency requirement and Centennial English Admission Test; numeric IELTS/TOEFL scores are NOT_PUBLISHED on this page."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/biotechnology-fast-track",
+      "evidenceIds": [
+        "cent-biotech-availability",
+        "cent-biotech-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 1,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "January 2027",
+      "studyMode": "Hybrid",
+      "academicRequirement": "As published on the programme page (graduate certificate admission requirements section not fully traversed)",
+      "documentRequirements": [
+        "official transcripts"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme-level English requirements are not published on the availability section read in this cycle."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "evidenceIds": [
+        "cent-cpm-availability",
+        "cent-cpm-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 2,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 3,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 4,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 5,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "May 2027",
+      "studyMode": "Hybrid",
+      "academicRequirement": "As published on the programme page (graduate certificate admission requirements section not fully traversed)",
+      "documentRequirements": [
+        "official transcripts"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme-level English requirements are not published on the availability section read in this cycle."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "evidenceIds": [
+        "cent-cpm-availability",
+        "cent-cpm-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 6,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 7,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 8,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 9,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "September 2027",
+      "studyMode": "Hybrid",
+      "academicRequirement": "As published on the programme page (graduate certificate admission requirements section not fully traversed)",
+      "documentRequirements": [
+        "official transcripts"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme-level English requirements are not published on the availability section read in this cycle."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "evidenceIds": [
+        "cent-cpm-availability",
+        "cent-cpm-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 10,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 11,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2027,
+      "month": 12,
+      "status": "VERIFIED_NOT_OFFERED",
+      "evidenceIds": [
+        "cent-cpm-availability"
+      ],
+      "confidence": 0.8,
+      "conflictNote": "Intake availability table on the official programme page enumerates January 2027, May 2027, September 2027, January 2028 and May 2028 only; this month is absent from that enumeration.",
+      "notes": "No intake in this month according to the official availability table."
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "year": 2028,
+      "month": 1,
+      "status": "VERIFIED_AVAILABLE",
+      "intakeName": "January 2028",
+      "studyMode": "Hybrid",
+      "academicRequirement": "As published on the programme page (graduate certificate admission requirements section not fully traversed)",
+      "documentRequirements": [
+        "official transcripts"
+      ],
+      "englishRequirements": {
+        "sourceNote": "Programme-level English requirements are not published on the availability section read in this cycle."
+      },
+      "internationalEligibility": "open to international applicants (official availability table)",
+      "courseSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "intakeSourceUrl": "https://www.centennialcollege.ca/programs-courses/full-time/construction-project-management",
+      "evidenceIds": [
+        "cent-cpm-availability",
+        "cent-cpm-program-details"
+      ],
+      "confidence": 0.95,
+      "notes": "Intake confirmed for international applicants. Tuition published on the page is explicitly based on two semesters beginning Fall 2026, so no 2027-start fee is asserted here: fee NOT_PUBLISHED for this intake."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 1,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 2,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 3,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 4,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 5,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 6,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 7,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 8,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 9,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 10,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 11,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2027,
+      "month": 12,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "year": 2028,
+      "month": 1,
+      "status": "NOT_PUBLISHED",
+      "evidenceIds": [
+        "mon-b6005-handbook-2027"
+      ],
+      "confidence": 0.9,
+      "notes": "The 2027 handbook publishes campus, study mode and credit points but not intake months or the international fee. Intake/fee verification is queued against the Monash course page."
+    }
+  ],
+  "traversals": [
+    {
+      "universitySlug": "university-of-manchester",
+      "countrySlug": "uk",
+      "catalogueUrl": "https://www.manchester.ac.uk/study/masters/courses/list/",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Master's courses for entry in 2027",
+      "programmeLinksObserved": 34,
+      "coursesDiscovered": 34,
+      "coursesVerified": 1,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "lastTraversedAt": "2026-10-29T09:30:00Z",
+      "notes": "Listing for 2027 entry reached; fetcher returned the first result block only. Remaining results and undergraduate catalogue queued."
+    },
+    {
+      "universitySlug": "centennial-college",
+      "countrySlug": "canada",
+      "catalogueUrl": "https://www.centennialcollege.ca/programs-courses/full-time",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Full-time Programs | Centennial College",
+      "programmeLinksObserved": 2,
+      "coursesDiscovered": 2,
+      "coursesVerified": 2,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "lastTraversedAt": "2026-10-29T09:30:00Z",
+      "notes": "Two programme pages traversed end-to-end. The full-time programme index itself was not enumerated in this cycle."
+    },
+    {
+      "universitySlug": "monash-university",
+      "countrySlug": "australia",
+      "catalogueUrl": "https://handbook.monash.edu/2027/courses/",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Handbook | Monash University",
+      "programmeLinksObserved": 1,
+      "coursesDiscovered": 1,
+      "coursesVerified": 1,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "lastTraversedAt": "2026-10-29T09:30:00Z",
+      "notes": "2027 handbook course entry B6005 verified. Faculty/department directory traversal queued."
+    },
+    {
+      "universitySlug": "dublin-business-school",
+      "countrySlug": "ireland",
+      "catalogueUrl": "https://www.dbs.ie/courses/international",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "International Programmes | DBS",
+      "programmeLinksObserved": 0,
+      "coursesDiscovered": 0,
+      "coursesVerified": 0,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "lastTraversedAt": "2026-10-29T09:30:00Z",
+      "notes": "Institution-level statement verified (January, April and September 2027). Course-level pages queued."
+    },
+    {
+      "universitySlug": "kyoto-university",
+      "countrySlug": "japan",
+      "catalogueUrl": "https://www.kyoto-u.ac.jp/ja/education-campus/curriculum/calendar",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "アカデミックカレンダー | 京都大学",
+      "programmeLinksObserved": 0,
+      "coursesDiscovered": 0,
+      "coursesVerified": 0,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "lastTraversedAt": "2026-10-29T09:30:00Z",
+      "notes": "2027 academic calendar verified. Graduate school admission schedules and programme pages queued."
+    },
+    {
+      "universitySlug": "ulster-university",
+      "countrySlug": "uk",
+      "catalogueUrl": "https://www.ulster.ac.uk/courses",
+      "catalogueType": "PROGRAMME_LIST",
+      "httpStatus": 200,
+      "pageTitle": "Courses at Ulster University",
+      "programmeLinksObserved": 0,
+      "coursesDiscovered": 0,
+      "coursesVerified": 0,
+      "paginationComplete": false,
+      "completeness": "PARTIAL",
+      "lastTraversedAt": "2026-10-29T09:30:00Z",
+      "notes": "Postgraduate 2027/28 filter returned 0 results on collection date; undergraduate 2027/28 browsing queued."
+    }
+  ],
+  "researchQueue": [
+    {
+      "countrySlug": "usa",
+      "universityName": "Arizona State University",
+      "priority": 8,
+      "status": "QUEUED",
+      "reason": "No official-source verification completed in this cycle; spring 2027 (January) intake and programme fees still unpublished in ALO.",
+      "nextAction": "Verify official degree page + spring 2027 intake calendar, then extract 2027 tuition and English requirements."
+    },
+    {
+      "countrySlug": "germany",
+      "universityName": "Technical University of Munich",
+      "priority": 8,
+      "status": "QUEUED",
+      "reason": "Winter semester 2027/28 application window not yet verified against official TUM pages.",
+      "nextAction": "Verify TUM application periods page, then programme-level requirements and semester fee."
+    },
+    {
+      "countrySlug": "uae",
+      "universityName": "University of Dubai",
+      "priority": 7,
+      "status": "QUEUED",
+      "reason": "Official admissions calendar and fees for 2027 not yet collected.",
+      "nextAction": "Verify official site, spring/fall 2027 intakes, tuition and KHDA accreditation evidence."
+    },
+    {
+      "countrySlug": "malaysia",
+      "universityName": "Taylor's University",
+      "priority": 7,
+      "status": "QUEUED",
+      "reason": "Intake calendar for 2027 not yet verified from the official site.",
+      "nextAction": "Verify official intake calendar and programme fees; capture MQA accreditation references."
+    },
+    {
+      "countrySlug": "new-zealand",
+      "universityName": "The University of Auckland",
+      "priority": 7,
+      "status": "QUEUED",
+      "reason": "Semester One 2027 programme pages and international fees not yet verified (the key-dates URL used in this cycle returned 404).",
+      "nextAction": "Locate the current official key-dates URL, then verify programme pages and 2027 international fees."
+    },
+    {
+      "countrySlug": "denmark",
+      "universityName": "Technical University of Denmark (DTU)",
+      "priority": 6,
+      "status": "QUEUED",
+      "reason": "Autumn 2027 MSc application window and tuition not yet verified.",
+      "nextAction": "Verify DTU admission pages (non-EU deadline) and programme tuition."
+    },
+    {
+      "countrySlug": "south-korea",
+      "universityName": "Seoul National University",
+      "priority": 6,
+      "status": "QUEUED",
+      "reason": "Spring/Fall 2027 international admission schedules not yet verified.",
+      "nextAction": "Verify SNU official admission schedule and programme requirements."
+    },
+    {
+      "countrySlug": "uk",
+      "universityName": "University of Manchester",
+      "universitySlug": "university-of-manchester",
+      "officialWebsite": "https://www.manchester.ac.uk/",
+      "priority": 9,
+      "status": "IN_PROGRESS",
+      "reason": "Only 1 of 34 observed 2027 master's programmes has been verified so far.",
+      "nextAction": "Traverse remaining 2027 master's listing pages and undergraduate catalogue; verify course-level pages."
+    },
+    {
+      "countrySlug": "uk",
+      "universityName": "Ulster University",
+      "universitySlug": "ulster-university",
+      "officialWebsite": "https://www.ulster.ac.uk/",
+      "priority": 8,
+      "status": "IN_PROGRESS",
+      "reason": "Undergraduate 2027/28 listings and January 2027 / January 2028 start dates observed but not yet extracted.",
+      "nextAction": "Traverse undergraduate 2027/28 course finder, verify course pages with January 2027 and January 2028 starts."
+    },
+    {
+      "countrySlug": "ireland",
+      "universityName": "Dublin Business School",
+      "universitySlug": "dublin-business-school",
+      "officialWebsite": "https://www.dbs.ie/",
+      "priority": 8,
+      "status": "IN_PROGRESS",
+      "reason": "Institution-level 2027 intakes verified, but no course-level fee/requirement record exists yet.",
+      "nextAction": "Traverse /courses/international programme pages and the international fees page."
+    },
+    {
+      "countrySlug": "japan",
+      "universityName": "Kyoto University",
+      "universitySlug": "kyoto-university",
+      "officialWebsite": "https://www.kyoto-u.ac.jp/",
+      "priority": 6,
+      "status": "IN_PROGRESS",
+      "reason": "University calendar verified; graduate-school programme pages and admission schedules not yet traversed.",
+      "nextAction": "Traverse graduate school admission pages (2027) and extract application periods and fees."
+    },
+    {
+      "countrySlug": "australia",
+      "universityName": "Monash University",
+      "universitySlug": "monash-university",
+      "officialWebsite": "https://www.monash.edu/",
+      "priority": 8,
+      "status": "IN_PROGRESS",
+      "reason": "2027 handbook entry verified but intake months and international fee are still NOT_PUBLISHED in ALO.",
+      "nextAction": "Verify the Monash course page fee/intake tabs and the 2027 graduate international course guide PDF."
+    },
+    {
+      "countrySlug": "canada",
+      "universityName": "Centennial College",
+      "universitySlug": "centennial-college",
+      "officialWebsite": "https://www.centennialcollege.ca/",
+      "priority": 8,
+      "status": "IN_PROGRESS",
+      "reason": "Two programmes verified; 2027-start tuition is not published on the programme pages.",
+      "nextAction": "Verify the official tuition-and-fees page for 2027-28 rates and the English language requirements page."
+    }
+  ]
+}

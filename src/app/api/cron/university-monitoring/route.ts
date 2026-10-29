@@ -80,7 +80,26 @@ async function handle(req: Request) {
         { success: false, status: 'FAILED', runId: result.runId, runKey: result.runKey, error: result.error },
         { status: 500 },
       );
-    default:
+    default: {
+      // 13-month coverage SLA: refresh stale course-months after every cycle.
+      // Failures here must never mark the official-source run as failed, so the
+      // coverage pass is isolated and its outcome is reported separately.
+      let coverage: unknown = null;
+      try {
+        const { runCoverageMonitoringCycle } = await import('@/lib/verified-catalogue/monitoring');
+        const { db } = await import('@/lib/db');
+        const report = await runCoverageMonitoringCycle(db, { apply: true, actorUserId: guard.actor?.userId ?? 'system:coverage-monitor' });
+        coverage = {
+          courses: report.courses,
+          publishedRows: report.publishedRows,
+          totals: report.totals,
+          staleCourseMonths: report.staleCourseMonths.length,
+          conflictsAwaitingReview: report.conflictsAwaitingReview,
+          recheckItemsCreated: report.actionsTaken.recheckItemsCreated,
+        };
+      } catch {
+        coverage = { error: 'coverage check failed; official-source run unaffected' };
+      }
       return NextResponse.json({
         success: true,
         status: result.status,
@@ -88,7 +107,9 @@ async function handle(req: Request) {
         runKey: result.runKey,
         ...result.counts,
         aiReportSummary: result.aiReportSummary,
+        coverage,
       });
+    }
   }
 }
 
