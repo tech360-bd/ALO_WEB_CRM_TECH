@@ -185,7 +185,7 @@ export default function StudentDocumentDetail() {
                   <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-red-900">
                     {document.rejectionReason}
                   </p>
-                  <Button asChild className="mt-3 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
+                  <Button asChild className="mt-3 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]">
                     <Link href="/student/documents">Upload a Replacement</Link>
                   </Button>
                 </div>

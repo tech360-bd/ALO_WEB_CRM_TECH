@@ -167,7 +167,7 @@ export default function TestStudentView() {
                           <p className="mt-1 text-xs font-medium text-amber-700">{check.requiredFix}</p>
                         )}
                       </div>
-                      <span className="ml-auto shrink-0 text-[10px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{check.status}</span>
+                      <span className="ml-auto shrink-0 text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{check.status}</span>
                     </div>
                   </Card>
                 );

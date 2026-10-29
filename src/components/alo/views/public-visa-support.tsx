@@ -137,7 +137,7 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
               we monitor 25 government sources weekly so our advice is always current.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
+              <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-alo-cta-solid px-6 text-white hover:bg-alo-cta-solid-hover">
                 <Icon name="CalendarCheck" className="size-4" />
                 Book Visa Consultation
               </Button>
@@ -274,21 +274,21 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
       </section>
 
       {/* CTA */}
-      <section className="bg-[var(--alo-text)]">
+      <section className="bg-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
-              <h2 className="text-3xl font-black text-white">Book your visa consultation</h2>
-              <p className="mt-3 text-base leading-relaxed text-white/80">
+              <h2 className="text-3xl font-black text-[var(--alo-text)]">Book your visa consultation</h2>
+              <p className="mt-3 text-base leading-relaxed text-[var(--alo-text-secondary)]">
                 Speak with an ALO visa officer about your specific case. Free 30-minute consultation — no commitment.
                 We'll review your profile, recommend the right destination, and outline a clear path to visa approval.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
+                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-alo-cta-solid px-6 text-white hover:bg-alo-cta-solid-hover">
                   <Icon name="CalendarCheck" className="size-4" />
                   Book Consultation
                 </Button>
-                <Button onClick={() => onNavigate("public-application-process")} variant="outline" className="h-12 border-white/30 bg-transparent px-6 text-white hover:bg-white/10">
+                <Button onClick={() => onNavigate("public-application-process")} variant="outline" className="h-12 border-[var(--alo-border-strong)] bg-white px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                   <Icon name="Route" className="size-4" />
                   See Full Journey
                 </Button>

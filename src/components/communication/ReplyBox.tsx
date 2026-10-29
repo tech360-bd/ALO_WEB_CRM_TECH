@@ -47,7 +47,7 @@ export default function ReplyBox({
             <SelectItem value="portal_message">Portal Message</SelectItem>
             <SelectItem value="phone_call_log">Phone Call Log</SelectItem>
             <SelectItem value="internal_note">Internal Note</SelectItem>
-            {canUseB2B && <SelectItem value="b2b_confidential">B2B Confidential 🔒</SelectItem>}
+            {canUseB2B && <SelectItem value="b2b_confidential">B2B Confidential</SelectItem>}
           </SelectContent>
         </Select>
         <Select value={visibility} onValueChange={setVisibility}>
@@ -60,7 +60,7 @@ export default function ReplyBox({
             <SelectItem value="visa_team_visible">Visa Team Only</SelectItem>
             <SelectItem value="finance_visible">Finance Only</SelectItem>
             <SelectItem value="internal_only">Internal Only</SelectItem>
-            {canUseB2B && <SelectItem value="b2b_confidential">B2B Confidential 🔒</SelectItem>}
+            {canUseB2B && <SelectItem value="b2b_confidential">B2B Confidential</SelectItem>}
           </SelectContent>
         </Select>
         <Button size="sm" variant="outline" className="h-7 " onClick={() => setShowTemplates(!showTemplates)}><FileText className="w-3.5 h-3.5 mr-1" /> Templates</Button>

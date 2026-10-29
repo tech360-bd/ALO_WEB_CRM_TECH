@@ -15,8 +15,18 @@ const require = createRequire(import.meta.url);
 const clientDir = dirname(require.resolve('.prisma/client/package.json'));
 const loaderPath = join(clientDir, 'wasm-worker-loader.mjs');
 
-if (!existsSync(join(clientDir, 'query_engine_bg.wasm'))) {
-  console.error('query_engine_bg.wasm not found — generate the dev client first.');
+// Prisma renamed the bundled artifact between client versions: 6.19.x with the
+// `queryCompiler` preview emits `query_compiler_bg.wasm`, older ones emit
+// `query_engine_bg.wasm`. Accept either so the sandbox keeps working across
+// `prisma generate` runs.
+const WASM_CANDIDATES = ['query_compiler_bg.wasm', 'query_engine_bg.wasm'];
+const wasmFile = WASM_CANDIDATES.find((f) => existsSync(join(clientDir, f)));
+
+if (!wasmFile) {
+  console.error(
+    `No Prisma WASM artifact found (looked for ${WASM_CANDIDATES.join(', ')}) — generate the dev client first:`,
+  );
+  console.error('  npx prisma generate --schema prisma/schema.dev.prisma --config prisma/dev-sqlite.config.ts');
   process.exit(1);
 }
 
@@ -24,7 +34,7 @@ writeFileSync(loaderPath, `// Patched by scripts/dev-sqlite/patch-wasm-loader.mj
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const wasmPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'query_engine_bg.wasm');
+const wasmPath = path.join(path.dirname(fileURLToPath(import.meta.url)), ${JSON.stringify(wasmFile)});
 export default Promise.resolve({ default: new WebAssembly.Module(fs.readFileSync(wasmPath)) });
 `);
-console.log(`Patched ${loaderPath}`);
+console.log(`Patched ${loaderPath} -> ${wasmFile}`);

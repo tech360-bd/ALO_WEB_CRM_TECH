@@ -52,7 +52,7 @@ export default function MarketingBudgetView() {
               <div className="grid md:grid-cols-3 gap-3">
                 <Input value={newBudget.campaign} onChange={e=>setNewBudget({...newBudget, campaign:e.target.value})} placeholder="Campaign name" className="h-9" />
                 <Input type="number" value={newBudget.amount} onChange={e=>setNewBudget({...newBudget, amount: parseInt(e.target.value)||0})} className="h-9" />
-                <Button onClick={handleAllocate} className="bg-[var(--alo-cta)] text-black ">Allocate → Approval</Button>
+                <Button onClick={handleAllocate} className="bg-[var(--alo-cta)] text-white ">Allocate → Approval</Button>
               </div>
               {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
               <p className="text-[11px] text-[var(--alo-text-muted)]">Server rejects if `budget &gt; approvedBudget` without `MarketingApproval.status=approved`. Recorded: approved budget, approving user, timestamp, execution result. No AI auto-spend.</p>

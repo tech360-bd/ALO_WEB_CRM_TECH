@@ -43,7 +43,7 @@ function LegacyUnverifiedSEOBlogManagerView() {
           <Card>
             <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Search className="w-4 h-4 text-[var(--alo-cta)]" />Keyword Research</CardTitle></CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex gap-2"><Input value={keyword} onChange={e=>setKeyword(e.target.value)} placeholder="e.g. study in Canada without IELTS from Bangladesh" className="flex-1" /><Button onClick={handleResearch} disabled={loading || !keyword.trim()} className="bg-[var(--alo-cta)] text-black">{loading? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Research</Button></div>
+              <div className="flex gap-2"><Input value={keyword} onChange={e=>setKeyword(e.target.value)} placeholder="e.g. study in Canada without IELTS from Bangladesh" className="flex-1" /><Button onClick={handleResearch} disabled={loading || !keyword.trim()} className="bg-[var(--alo-cta)] text-white">{loading? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Research</Button></div>
               {result && <div className="p-4 bg-[var(--alo-page)] border rounded-xl text-xs space-y-2">
                 <p className="font-semibold">Intent: {result.intent || 'Informational/Transactional'}</p>
                 <p className="text-[var(--alo-body)] whitespace-pre-wrap">{result.brief || result.content || JSON.stringify(result).slice(0,1000)}</p>

@@ -12,16 +12,37 @@ const hero = readFileSync(join(process.cwd(), 'src/components/website/HomepagePa
  * guard the whole site + CRM, not just one screen.
  */
 describe('ALO master design tokens', () => {
-  it('uses the current user-specified brand palette', () => {
+  it('uses the master brand palette (Master §03)', () => {
     for (const token of [
-      '--alo-brand: #0066CC', '--alo-brand-hover: #003F87',
+      // Brand Blue family
+      '--alo-brand: #0057B8', '--alo-brand-hover: #003F87',
+      '--alo-brand-deep: #003F87',
       '--alo-brand-light: #EAF3FF', '--alo-brand-pale: #F4F8FF',
-      '--alo-cta: #F37021', '--alo-cta-hover: #C93D13', '--alo-cta-soft: #FFF1EA',
-      '--alo-text: #000000', '--alo-body: #555555', '--alo-text-muted: #64748B',
+      // CTA Orange family. The *solid* fill is the approved Deep Orange so a
+      // white label clears 4.5:1 (see the contrast test below).
+      '--alo-cta: #C93D13', '--alo-cta-vivid: #E8501A',
+      '--alo-cta-solid: #C93D13', '--alo-cta-solid-hover: #9E300B',
+      '--alo-cta-soft: #FFF1EA',
+      // Text hierarchy
+      '--alo-text: #0F172A', '--alo-body: #334155',
+      '--alo-text-secondary: #475569', '--alo-text-muted: #64748B',
+      // Surfaces & semantics
       '--alo-border: #E2E8F0', '--alo-border-strong: #CBD5E1',
       '--alo-success: #10B981', '--alo-warning: #F59E0B', '--alo-error: #EF4444',
       '--alo-info: #0284C7',
     ]) expect(css).toContain(token);
+  });
+
+  it('retires the superseded palette hexes (no #0066CC / #F37021 / #FFB347)', () => {
+    for (const hex of ['#0066CC', '#F37021', '#FFB347']) expect(css).not.toContain(hex);
+  });
+
+  it('keeps white CTA labels on an accessible orange (Master §07)', () => {
+    // #E8501A + white is 3.75:1 — under the 4.5:1 floor for a 15–16px label.
+    // The vivid orange must therefore never be a label background.
+    expect(button).toContain('bg-alo-cta-solid text-white');
+    expect(button).not.toContain('bg-alo-cta text-white');
+    expect(button).not.toContain('bg-alo-cta text-black');
   });
 
   it('uses the Master section 13 semantic badge tints', () => {
@@ -52,7 +73,10 @@ describe('ALO master design tokens', () => {
   });
 
   it('homepage hero is an editorial split with no dark photo overlay (Master section 08)', () => {
-    const heroBlock = hero.slice(hero.indexOf('Country-specific hero'), hero.indexOf('Quick reference for missing icon'));
+    // Slice on the function boundary rather than a prose comment so the
+    // assertion keeps working when the hero's explanatory comments change.
+    const heroBlock = hero.slice(hero.indexOf('function HeroSection'), hero.indexOf('/* Quick reference for missing icon'));
+    expect(heroBlock.length).toBeGreaterThan(0);
     expect(heroBlock).not.toContain('from-black');
     expect(heroBlock).not.toContain('/95 via');
     expect(heroBlock).toContain('bg-white');
@@ -73,9 +97,9 @@ describe('image asset integrity (redesign §6)', () => {
   });
 
   it('legacy purple/violet/indigo utilities resolve to the master info-blue family', () => {
-    expect(css).toContain('--color-purple-600: #0066CC');
+    expect(css).toContain('--color-purple-600: #0057B8');
     expect(css).toContain('--color-violet-500: #0284C7');
-    expect(css).toContain('--color-indigo-600: #0066CC');
+    expect(css).toContain('--color-indigo-600: #0057B8');
   });
 });
 
@@ -191,7 +215,7 @@ describe('redesign guardrails', () => {
   it('expresses the brand palette through tokens, not raw hex classes (Master §03)', () => {
     // Social brand colours and pure white are legitimately literal.
     const allowed = ['bg-[#FFFFFF]', 'bg-[#1877F2]', 'text-[#1877F2]'];
-    const hits = scan(/\b(?:bg|text|border)-\[#0066CC\]|\b(?:bg|text|border)-\[#F37021\]/);
+    const hits = scan(/\b(?:bg|text|border)-\[#0057B8\]|\b(?:bg|text|border)-\[#E8501A\]|\b(?:bg|text|border)-\[#FFB347\]/);
     expect(hits.filter((h) => !allowed.some((a) => h.match.startsWith(a)))).toEqual([]);
   });
 

@@ -579,7 +579,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button
                   onClick={handleConsult}
-                  className="h-12 bg-[var(--alo-cta)] px-5 text-black hover:bg-[var(--alo-cta)]/90"
+                  className="h-12 bg-[var(--alo-cta)] px-5 text-white hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="CalendarCheck" className="size-4" />
                   Request Consultation
@@ -820,7 +820,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button onClick={handleSearch} className="h-12 flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+                <Button onClick={handleSearch} className="h-12 flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
                   <Icon name="Search" className="size-4" />
                   Find Courses
                 </Button>
@@ -907,7 +907,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                       </Button>
                       <Button
  onClick={handleFindCourses}
- className=" w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  >
                         Find Courses
                       </Button>
@@ -957,7 +957,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   <Icon name="Info" className="size-4" />
                   Learn More
                 </Button>
-                <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] px-5 text-black hover:bg-[var(--alo-cta)]/90">
+                <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] px-5 text-white hover:bg-[var(--alo-cta)]/90">
                   <Icon name="CalendarCheck" className="size-4" />
                   Request Consultation
                 </Button>
@@ -1079,7 +1079,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               icon="Sparkles"
               title="Services unavailable right now"
               description="Our service catalog is being finalized. Talk to a counselor to learn more."
-              action={<Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">Request Consultation</Button>}
+              action={<Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">Request Consultation</Button>}
             />
           )}
         </div>
@@ -1198,7 +1198,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                       <Button onClick={() => handleViewCountry(slide.countrySlug)} variant="outline" className="h-10 flex-1 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
                         View Country Guide
                       </Button>
-                      <Button onClick={handleConsult} className=" flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+                      <Button onClick={handleConsult} className=" flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
                         Talk to Counselor
                       </Button>
                     </div>
@@ -1357,8 +1357,9 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         loading="lazy"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                      {u.country?.flag && <span className="absolute left-3 top-3 text-2xl drop-shadow-lg">{u.country.flag}</span>}
+                      {/* No dark scrim (Master §02) — the flag and ranking sit in
+                          their own light chips so the photo keeps its colour. */}
+                      {u.country?.flag && <span className="absolute left-3 top-3 rounded-lg border border-[var(--alo-border)] bg-white/95 px-1.5 py-0.5 text-base leading-none">{u.country.flag}</span>}
                       {ranking && (
                         <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-[var(--alo-brand)]">#{ranking}</span>
                       )}
@@ -2027,7 +2028,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 </p>
 
                 <div className="mt-7 flex flex-wrap gap-3">
-                  <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+                  <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
                     <Icon name="CalendarCheck" className="size-4" />
                     Request Consultation
                   </Button>

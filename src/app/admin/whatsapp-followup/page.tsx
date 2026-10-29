@@ -64,11 +64,11 @@ export default function WhatsAppFollowUpPage() {
   useEffect(() => { fetchData(); }, []);
 
   return (
-    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+    <div className="p-6 space-y-6 bg-[var(--alo-page)] min-h-screen text-[var(--alo-text)]">
+      <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-            <Calendar className="w-5 h-5 text-white" />
+            <Calendar className="w-5 h-5 text-[var(--alo-text)]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">Follow-Up Automation — Day 3/7/14/21/25/30</h1>
@@ -76,28 +76,28 @@ export default function WhatsAppFollowUpPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={fetchData} variant="outline" className="border-white/10"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
+          <Button onClick={fetchData} variant="outline" className="border-[var(--alo-border)]"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
           <Button onClick={triggerProcess} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)]"><Play className="w-4 h-4 mr-2" />Process Due</Button>
         </div>
       </div>
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardHeader><CardTitle className="text-sm">Templates (Variables: name, student_code, portal_link, counselor_name, branch_name, country, intake)</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {templates.map((t) => (
-            <div key={t.id} className="p-3 rounded-lg bg-white/5 border border-white/10 text-xs">
+            <div key={t.id} className="p-3 rounded-lg bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] text-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-bold">{t.templateName} • Day {t.day} • {t.language}</span>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="bg-amber-500/20 text-amber-300">ALO: {t.approvalStatus}</Badge>
-                  <Badge className={t.metaTemplateStatus === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}>Meta: {t.metaTemplateStatus || 'unknown'}</Badge>
-                  <Badge className="bg-blue-500/20 text-blue-300">{t.activeStatus}</Badge>
+                  <Badge className="bg-crm-warning-bg text-crm-warning-text">ALO: {t.approvalStatus}</Badge>
+                  <Badge className={t.metaTemplateStatus === 'APPROVED' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-warning-bg text-crm-warning-text'}>Meta: {t.metaTemplateStatus || 'unknown'}</Badge>
+                  <Badge className="bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]">{t.activeStatus}</Badge>
                 </div>
               </div>
               <p className="text-[var(--alo-placeholder)] mt-1">{t.messageBody}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Meta name: {t.metaTemplateName} · {t.metaLanguage} · Last checked: {t.metaTemplateCheckedAt ? new Date(t.metaTemplateCheckedAt).toLocaleString() : 'never'}{t.metaTemplateCheckError ? ` · ${t.metaTemplateCheckError}` : ''}</p>
               <div className="mt-2 flex gap-2">
-                <Button size="sm" variant="outline" disabled={actionBusy === `${t.id}:verify_meta`} onClick={() => templateAction(t.id, 'verify_meta')} className="h-7 border-white/20 text-white">{actionBusy === `${t.id}:verify_meta` ? 'Checking…' : 'Verify with Meta'}</Button>
+                <Button size="sm" variant="outline" disabled={actionBusy === `${t.id}:verify_meta`} onClick={() => templateAction(t.id, 'verify_meta')} className="h-7 border-[var(--alo-border)] text-[var(--alo-text)]">{actionBusy === `${t.id}:verify_meta` ? 'Checking…' : 'Verify with Meta'}</Button>
                 {t.approvalStatus === 'approved' && t.metaTemplateStatus === 'APPROVED' && t.activeStatus !== 'active' && <Button size="sm" disabled={actionBusy === `${t.id}:activate`} onClick={() => templateAction(t.id, 'activate')} className="h-7">Activate</Button>}
               </div>
             </div>
@@ -105,14 +105,14 @@ export default function WhatsAppFollowUpPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardHeader><CardTitle className="text-sm">Schedules (Idempotent, No Duplicate on Double Cron)</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {schedules.slice(0,50).map((s) => (
-            <div key={s.id} className="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/10 text-xs">
+            <div key={s.id} className="flex items-center justify-between p-2 rounded-lg bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] text-xs">
               <div><span className="font-mono">{s.studentId.slice(0,8)}</span> • Day {s.scheduledDay} • {s.contactPhone} • {new Date(s.scheduledAt).toLocaleString()}</div>
               <div className="flex items-center gap-2">
-                <Badge className={s.status==='sent' ? 'bg-emerald-500/20 text-emerald-300' : s.status==='scheduled' ? 'bg-blue-500/20 text-blue-300' : 'bg-amber-500/20 text-amber-300'}>{s.status}</Badge>
+                <Badge className={s.status==='sent' ? 'bg-crm-success-bg text-crm-success-text' : s.status==='scheduled' ? 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]' : 'bg-crm-warning-bg text-crm-warning-text'}>{s.status}</Badge>
                 <span className="text-[var(--alo-text-muted)]">Attempts: {s.attemptCount}/{s.maxAttempts}</span>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function WhatsAppFollowUpPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardContent className="p-4 text-xs text-[var(--alo-placeholder)]">
           <p className="font-bold">STOP/START Handling</p>
           <p>STOP or supported Bangla opt-out commands append purpose-specific withdrawal evidence and suppress/cancel promotional work. START records a new explicit grant; the earlier STOP record is retained. A missing or failed evidence write never clears suppression.</p>

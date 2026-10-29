@@ -713,7 +713,7 @@ function ActiveConversation({
                 Clear
               </Button>
               <Button
-                className="h-12 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90"
+                className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta)]/90"
                 onClick={onSend}
                 disabled={sending || !replyText.trim()}
               >

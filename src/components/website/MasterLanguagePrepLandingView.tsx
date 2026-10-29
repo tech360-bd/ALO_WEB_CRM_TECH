@@ -147,7 +147,7 @@ export default function MasterLanguagePrepLandingView() {
 
               {/* QUICK HERO BUTTONS */}
               <div className="flex flex-wrap gap-4 pt-2">
-                <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
+                <Button asChild className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg flex items-center gap-2"><a href="#book-counseling">
                     Request Counselling <ArrowRight className="h-4 w-4" />
                   </a></Button>
                 <Button asChild variant="outline" className="border-[var(--alo-border)] bg-card font-bold text-sm h-12 px-6 rounded-xl text-[var(--alo-text)] hover:border-[var(--alo-brand)] hover:text-[var(--alo-brand)]"><a href="#test-discovery">
@@ -263,7 +263,7 @@ export default function MasterLanguagePrepLandingView() {
                     <Button
                       type="submit"
                       disabled={submittingLead}
-                      className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
+                      className="w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 rounded-xl mt-2 shadow-md"
                     >
                       {submittingLead ? 'Scheduling Session...' : 'Get Test Score Plan →'}
                     </Button>
@@ -541,7 +541,7 @@ export default function MasterLanguagePrepLandingView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-[var(--alo-cta)] text-black font-bold text-xs px-3 py-1 mb-3 uppercase">
+            <Badge className="bg-[var(--alo-cta)] text-white font-bold text-xs px-3 py-1 mb-3 uppercase">
               STRUCTURED SUCCESS METHOD
             </Badge>
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">8-Step English Preparation Roadmap</h2>
@@ -620,7 +620,7 @@ export default function MasterLanguagePrepLandingView() {
             Tell us your target destination, university and study intake. Our senior counselors evaluate your background and provide the fastest, most cost-effective preparation pathway.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
-            <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
+            <Button asChild className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counseling">
                 Request Test Counselling →
               </a></Button>
             <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank" rel="noopener noreferrer">

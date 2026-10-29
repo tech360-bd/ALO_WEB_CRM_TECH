@@ -94,7 +94,7 @@ export default function StudentCredibilityInterview() {
               description="Your counselor schedules a mock credibility interview once your visa file is ready. You can practise questions with the AI coach in the meantime."
               action={
                 <div className="flex flex-wrap justify-center gap-2">
-                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
+                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]">
                     <Link href="/ai/visa-coach">Practise with AI Coach</Link>
                   </Button>
                   <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-4 text-[13px] font-semibold">

@@ -21,6 +21,7 @@ export const DESTINATION_CARD_IMAGES: Record<string, string> = {
   'new-zealand': '/images/cards/new-zealand.png',
   dubai: '/images/cards/dubai.png',
   'dubai-uae': '/images/cards/dubai.png',
+  germany: '/images/cards/germany.webp',
 };
 
 export function destinationCardImage(slug: string, fallback?: string): string {

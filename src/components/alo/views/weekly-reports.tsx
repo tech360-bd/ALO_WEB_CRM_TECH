@@ -324,7 +324,7 @@ export function WeeklyReports() {
         action={
           <Button
             onClick={handleGenerate}
-            className="h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+            className="h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
           >
             <Icon name="Sparkles" className="size-4" />
             Generate New Report

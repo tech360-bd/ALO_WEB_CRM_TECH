@@ -534,7 +534,7 @@ export function EmployeeManagement() {
           title="No employees match your filters"
           description="Try adjusting the filters above, or create a new employee account."
           action={
-            <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+            <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
               <Icon name="Plus" className="size-4" />
               Create Employee
             </Button>
@@ -546,7 +546,7 @@ export function EmployeeManagement() {
           description={`${filtered.length} of ${employees.length} employees`}
           icon="Users"
           action={
-            <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+            <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
               <Icon name="Plus" className="size-4" />
               Create Employee
             </Button>
@@ -867,7 +867,7 @@ export function EmployeeManagement() {
               </ScrollArea>
               <DialogFooter className="border-t border-border/60 px-6 py-4">
                 <Button type="button" variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
-                <Button type="submit" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
+                <Button type="submit" className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={creating}>
                   {creating ? (
                     <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
                   ) : (
@@ -1325,7 +1325,7 @@ function CreateEmployeeSuccess({
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
+        <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>

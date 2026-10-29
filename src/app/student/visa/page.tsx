@@ -59,7 +59,7 @@ export default function StudentVisaReadinessPage() {
     <div className="space-y-6 max-w-5xl mx-auto p-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-[var(--alo-text)] flex items-center gap-2">
             <Shield className="w-6 h-6 text-[var(--alo-brand)]" />
             <span>Visa Readiness & Preparation</span>
           </h1>
@@ -73,14 +73,14 @@ export default function StudentVisaReadinessPage() {
         </Link>
       </div>
 
-      <Card className="bg-gradient-to-br from-[var(--alo-text)] to-[#152238] border-white/10 text-white">
+      <Card className="border-crm-success-border bg-crm-success-bg text-[var(--alo-text)]">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <p className="text-xs text-blue-300 font-semibold tracking-wider uppercase">Current Visa Readiness Score — 10 Components = 100% — Profile 10% Passport 10% Academic 10% English 10% Offer/CAS 10% Funding 15% Bank 10% Study Gap 10% Interview 10% Risk 5%</p>
+              <p className="text-xs text-[var(--alo-info-text)] font-semibold tracking-wider uppercase">Current Visa Readiness Score — 10 Components = 100% — Profile 10% Passport 10% Academic 10% English 10% Offer/CAS 10% Funding 15% Bank 10% Study Gap 10% Interview 10% Risk 5%</p>
               <div className="flex items-baseline gap-3 mt-2">
-                <span className="text-5xl font-extrabold text-white">{score}%</span>
-                <Badge className={score >= 80 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : score >= 60 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}>
+                <span className="text-5xl font-extrabold text-[var(--alo-text)]">{score}%</span>
+                <Badge className={score >= 80 ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : score >= 60 ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border'}>
                   {score >= 80 ? 'READY' : score >= 60 ? 'NEEDS_DOCUMENTS' : score > 0 ? 'NEEDS_PRACTICE' : 'NOT_STARTED — proper empty state'}
                 </Badge>
               </div>
@@ -90,7 +90,7 @@ export default function StudentVisaReadinessPage() {
               {visaCase && <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Case: {visaCase.caseCode} • Stage: {visaCase.currentStage} • Destination: {visaCase.destinationCountry} • University: {visaCase.university} • Course: {visaCase.course} • Intake: {visaCase.intake} • API: /api/student-portal/visa</p>}
             </div>
             <div className="flex-1 max-w-md">
-              <div className="h-3 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-cta)] rounded-full transition-all duration-500" style={{ width: `${score}%` }} /></div>
+              <div className="h-3 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-cta)] rounded-full transition-all duration-500" style={{ width: `${score}%` }} /></div>
               <div className="flex justify-between text-[11px] text-[var(--alo-text-muted)] mt-2"><span>Profile 10% Passport 10% Academic 10% English 10% Offer/CAS 10%</span><span>Funding 15% Bank 10% Study Gap 10% Interview 10% Risk 5%</span></div>
             </div>
           </div>
@@ -99,30 +99,30 @@ export default function StudentVisaReadinessPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-4">
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-base font-semibold flex items-center justify-between"><span>Visa Document Checklist</span><span className="text-xs text-[var(--alo-text-muted)]">{checklist.filter((i: any) => i.status === 'APPROVED' || i.status === 'approved').length} of {checklist.length} Verified</span></CardTitle></CardHeader>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+            <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-base font-semibold flex items-center justify-between"><span>Visa Document Checklist</span><span className="text-xs text-[var(--alo-text-muted)]">{checklist.filter((i: any) => i.status === 'APPROVED' || i.status === 'approved').length} of {checklist.length} Verified</span></CardTitle></CardHeader>
             <CardContent className="p-4 space-y-3">
               {checklist.length === 0 ? (
-                <div className="p-8 text-center text-xs text-[var(--alo-text-muted)] border border-dashed border-white/10 rounded-xl">
+                <div className="p-8 text-center text-xs text-[var(--alo-text-muted)] border border-dashed border-[var(--alo-border)] rounded-xl">
                   No checklist items yet — proper empty state — — 25+ docs Passport/Photo/Offer Letter/CAS/Academic Certificates/Transcripts/English Test/Bank Statement/Solvency Certificate/Sponsor Letter/Sponsor ID/Sponsor Occupation Proof/Source of Funds/Birth Certificate/Marriage Certificate/Work Experience/Study Gap Evidence/Refusal Letter/TB/Medical/Accommodation/Consent Documents/Visa Application/Biometric Appointment/Payment Receipt/Other Country-specific — statuses NOT_UPLOADED/UPLOADED/PENDING_REVIEW/APPROVED/REJECTED/NEEDS_UPDATE/EXPIRED/NOT_APPLICABLE — actions Request/Approve/Reject/Needs Update/Add Note/Notify/Timeline never permanent delete version history
                 </div>
               ) : checklist.map((item: any, idx: number) => (
-                <div key={idx} className="p-3 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
+                <div key={idx} className="p-3 bg-[var(--alo-surface-muted)] rounded-xl border border-[var(--alo-border)] flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    {item.status === 'APPROVED' || item.status === 'approved' ? <div className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center"><Check className="w-4 h-4" /></div> : item.status === 'PENDING_REVIEW' || item.status === 'under_review' ? <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center"><Clock className="w-4 h-4" /></div> : <div className="w-7 h-7 rounded-full bg-white/10 text-[var(--alo-text-muted)] flex items-center justify-center"><FileText className="w-4 h-4" /></div>}
-                    <span className="text-sm text-gray-200">{item.item || item.documentName}</span>
+                    {item.status === 'APPROVED' || item.status === 'approved' ? <div className="w-7 h-7 rounded-full bg-crm-success-bg text-crm-success-text flex items-center justify-center"><Check className="w-4 h-4" /></div> : item.status === 'PENDING_REVIEW' || item.status === 'under_review' ? <div className="w-7 h-7 rounded-full bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><Clock className="w-4 h-4" /></div> : <div className="w-7 h-7 rounded-full bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] flex items-center justify-center"><FileText className="w-4 h-4" /></div>}
+                    <span className="text-sm text-[var(--alo-body)]">{item.item || item.documentName}</span>
                   </div>
-                  <Badge className={item.status === 'APPROVED' || item.status === 'approved' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-gray-500/20 text-[var(--alo-text-muted)] border-gray-500/30'}>{(item.status || 'NOT_UPLOADED').replace(/_/g, ' ').toUpperCase()}</Badge>
+                  <Badge className={item.status === 'APPROVED' || item.status === 'approved' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-gray-500/20 text-[var(--alo-text-muted)] border-gray-500/30'}>{(item.status || 'NOT_UPLOADED').replace(/_/g, ' ').toUpperCase()}</Badge>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Your Tasks</CardTitle></CardHeader>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+            <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Your Tasks</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2">
               {tasks.length === 0 ? <div className="text-xs text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-lg">No tasks assigned — proper empty state</div> : tasks.map((t: any, i: number) => (
-                <div key={i} className="p-2 bg-white/5 rounded-lg border border-white/5 flex items-center justify-between text-xs"><span>{t.title}</span><Badge className="text-[11px]">{t.status}</Badge></div>
+                <div key={i} className="p-2 bg-[var(--alo-surface-muted)] rounded-lg border border-[var(--alo-border)] flex items-center justify-between text-xs"><span>{t.title}</span><Badge className="text-[11px]">{t.status}</Badge></div>
               ))}
             </CardContent>
           </Card>
@@ -138,19 +138,19 @@ export default function StudentVisaReadinessPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Officer Feedback</CardTitle></CardHeader>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+            <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-xs font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Officer Feedback</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2">
-              {latestFeedback ? <p className="text-xs text-[var(--alo-placeholder)] leading-relaxed">{latestFeedback}</p> : <div className="text-xs text-[var(--alo-text-muted)] p-4 text-center border-dashed border border-white/10 rounded-lg">No officer feedback yet — proper empty state — student-safe feedback supportive/clear/professional/actionable never include internal risk labels/confidential comments/staff criticism/unsupported claims/visa guarantees — officer must approve before sending — save to Student Portal/Timeline/Notifications/Messages</div>}
-              <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-[var(--alo-text-muted)]"><span>Visa Team Officer — Approved</span><span>Student-Safe — Timeline</span></div>
+              {latestFeedback ? <p className="text-xs text-[var(--alo-placeholder)] leading-relaxed">{latestFeedback}</p> : <div className="text-xs text-[var(--alo-text-muted)] p-4 text-center border-dashed border border-[var(--alo-border)] rounded-lg">No officer feedback yet — proper empty state — student-safe feedback supportive/clear/professional/actionable never include internal risk labels/confidential comments/staff criticism/unsupported claims/visa guarantees — officer must approve before sending — save to Student Portal/Timeline/Notifications/Messages</div>}
+              <div className="pt-2 border-t border-[var(--alo-border)] flex items-center justify-between text-[11px] text-[var(--alo-text-muted)]"><span>Visa Team Officer — Approved</span><span>Student-Safe — Timeline</span></div>
             </CardContent>
           </Card>
 
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Documents</CardTitle></CardHeader>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+            <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-xs font-semibold uppercase tracking-wider">Documents</CardTitle></CardHeader>
             <CardContent className="p-4 space-y-2">
               {documents.length === 0 ? <div className="text-xs text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-lg">No documents uploaded — proper empty state</div> : documents.slice(0,5).map((d: any, i: number) => (
-                <div key={i} className="p-2 bg-white/5 rounded border border-white/5 text-xs flex justify-between"><span>{d.fileName || d.category}</span><Badge className="text-[11px]">{d.status}</Badge></div>
+                <div key={i} className="p-2 bg-[var(--alo-surface-muted)] rounded border border-[var(--alo-border)] text-xs flex justify-between"><span>{d.fileName || d.category}</span><Badge className="text-[11px]">{d.status}</Badge></div>
               ))}
             </CardContent>
           </Card>

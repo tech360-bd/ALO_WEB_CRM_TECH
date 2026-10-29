@@ -194,7 +194,7 @@ export function PublicSearch({ onNavigate }: PublicSearchProps) {
                 autoFocus
               />
             </div>
-            <Button type="submit" disabled={loading || query.trim().length < 2} className="h-14 px-6 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]">
+            <Button type="submit" disabled={loading || query.trim().length < 2} className="h-14 px-6 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               {loading ? <Icon name="Loader2" className="size-5 animate-spin" /> : <Icon name="Search" className="size-5" />}
               <span className="ml-2 font-semibold">Search</span>
             </Button>

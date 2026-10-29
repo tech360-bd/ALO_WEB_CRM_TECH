@@ -1,10 +1,18 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import * as LucideIcons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { NEWS_ARTICLES } from '@/lib/news-data';
+
+/** Resolves the per-category Lucide glyph with a single consistent fallback. */
+function NewsIcon({ name, className }: { name: string; className?: string }) {
+  const Cmp = (LucideIcons as unknown as Record<string, LucideIcon>)[name] ?? LucideIcons.Newspaper;
+  return <Cmp className={className} />;
+}
 
 export function generateStaticParams() {
   return NEWS_ARTICLES.map((article) => ({
@@ -59,11 +67,19 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           </div>
         </div>
 
-        {/* Hero Banner */}
-        <div className={`w-full h-64 md:h-96 rounded-2xl bg-gradient-to-br ${article.thumbnailColor} flex items-center justify-center p-8 mb-10 shadow-inner`}>
-          <h2 className="text-white text-2xl md:text-4xl font-bold text-center max-w-2xl leading-snug">
-            {article.title}
-          </h2>
+        {/* Editorial band (Master §08-E / §02) — a controlled brand-tinted
+            surface with one category icon. The article title is the H1 above;
+            repeating it over a dark gradient block is not allowed. */}
+        <div className={`mb-10 flex items-center gap-5 rounded-2xl border border-[var(--alo-border)] px-6 py-8 sm:px-8 ${article.surface}`}>
+          <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm">
+            <NewsIcon name={article.icon} className="size-8" />
+          </span>
+          <div className="min-w-0">
+            <p className="caption-text">{article.category}</p>
+            <p className="mt-1 text-lg font-semibold leading-snug text-[var(--alo-text)] sm:text-xl">
+              {article.excerpt}
+            </p>
+          </div>
         </div>
 
         {/* Article Body */}
@@ -96,7 +112,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
             Speak with an expert ALO counselor to select the right university, prepare your application, and navigate visa requirements smoothly.
           </p>
           <Link href="/book-consultation">
-            <Button className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black rounded-xl font-bold">
+            <Button className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white rounded-xl font-bold">
               Request Consultation
             </Button>
           </Link>

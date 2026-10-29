@@ -11,11 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
-import {
-  ShieldAlert, CheckCircle2, AlertTriangle, FileText, UserCheck, Play,
-  Download, Clock, Search, Lock, Eye, Send, RefreshCw, XCircle, Award,
-  Globe, FileCheck, PhoneCall
-} from 'lucide-react';
+import { AlertTriangle, Award, CalendarClock, CheckCircle2, Clock, Download, Eye, FileCheck, FileText, FolderClock, Globe, Lock, PhoneCall, Play, RefreshCw, Search, Send, ShieldAlert, TriangleAlert, UserCheck, UserRoundCheck, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import DashboardCommunicationWidget from '@/components/communication/DashboardCommunicationWidget';
 
@@ -169,13 +165,13 @@ export default function VisaOfficerDashboard() {
             <Badge className="bg-emerald-50 text-emerald-700 text-[11px]">RBAC Protected</Badge>
           </div>
           <p className="text-xs text-[var(--alo-text-muted)] flex flex-wrap items-center gap-3">
-            <span>📅 Interview Queue: <strong className="text-[var(--alo-body)]">{interviewQueueCount}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-3.5 text-[var(--alo-text-muted)]" />Interview Queue: <strong className="text-[var(--alo-body)]">{interviewQueueCount}</strong></span>
             <span>•</span>
-            <span>🚨 High-Risk Cases: <strong className="text-rose-600">{highRiskCount ?? 'Restricted'}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><TriangleAlert className="size-3.5 text-[var(--alo-text-muted)]" />High-Risk Cases: <strong className="text-rose-600">{highRiskCount ?? 'Restricted'}</strong></span>
             <span>•</span>
-            <span>📁 Pending Docs: <strong className="text-amber-600">{docsPendingCount}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><FolderClock className="size-3.5 text-[var(--alo-text-muted)]" />Pending Docs: <strong className="text-amber-600">{docsPendingCount}</strong></span>
             <span>•</span>
-            <span>🧑‍⚕️ Human follow-up: <strong className="text-indigo-600">{metrics.interviewsNeedingHumanFollowUp ?? '—'}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><UserRoundCheck className="size-3.5 text-[var(--alo-text-muted)]" />Human follow-up: <strong className="text-indigo-600">{metrics.interviewsNeedingHumanFollowUp ?? '—'}</strong></span>
           </p>
         </div>
 

@@ -338,7 +338,7 @@ export function PermissionMatrix() {
           action={
             <Button
               onClick={fetchPermissions}
-              className="h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+              className="h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
             >
               <Icon name="RefreshCw" className="size-4" /> Reload
             </Button>

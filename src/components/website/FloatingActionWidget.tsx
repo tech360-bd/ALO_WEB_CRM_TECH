@@ -127,7 +127,7 @@ export default function FloatingActionWidget() {
                 <Bot className="h-4 w-4 text-white" />
               </span>
               <span className="text-xs font-bold whitespace-nowrap pr-1">Chat with AI Agent</span>
-              <Badge className="bg-[var(--alo-cta)] text-black text-[11px] px-1.5 py-0.5 font-bold">24/7</Badge>
+              <Badge className="bg-[var(--alo-cta)] text-white text-[11px] px-1.5 py-0.5 font-bold">24/7</Badge>
             </button>
 
             {/* 2. WHATSAPP BUTTON */}
@@ -167,7 +167,7 @@ export default function FloatingActionWidget() {
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
           aria-label={expanded ? 'Close contact options' : 'Open contact options'}
-          className="h-12 w-12 rounded-full bg-[var(--alo-cta)] text-black shadow-2xl flex items-center justify-center hover:bg-[var(--alo-cta-hover)] transition-all border-2 border-white"
+          className="h-12 w-12 rounded-full bg-[var(--alo-cta)] text-white shadow-2xl flex items-center justify-center hover:bg-[var(--alo-cta-hover)] transition-all border-2 border-white"
         >
           {expanded ? <X className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
         </button>
@@ -190,7 +190,7 @@ export default function FloatingActionWidget() {
             {/* HEADER */}
             <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="h-9 w-9 rounded-full bg-[var(--alo-cta)] flex items-center justify-center text-black font-bold">
+                <span className="h-9 w-9 rounded-full bg-[var(--alo-cta)] flex items-center justify-center text-white font-bold">
                   <Bot className="h-5 w-5" />
                 </span>
                 <div>
@@ -267,7 +267,7 @@ export default function FloatingActionWidget() {
                 placeholder="Ask about courses, fees, or your application..."
                 className="flex-1 h-10 px-3 rounded-xl border border-[var(--alo-border)] text-xs focus:outline-none focus:border-[var(--alo-brand)]"
               />
-              <Button type="submit" aria-label="Send message" className="bg-[var(--alo-cta)] text-black h-12 px-4 rounded-xl font-bold ">
+              <Button type="submit" aria-label="Send message" className="bg-[var(--alo-cta)] text-white h-12 px-4 rounded-xl font-bold ">
                 <Send className="h-3.5 w-3.5" />
               </Button>
             </form>

@@ -676,7 +676,7 @@ export function AuditLogs() {
                   <Icon name="Copy" className="size-4" /> Copy JSON
                 </Button>
                 <Button
-                  className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                  className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                   onClick={() => {
                     toast({
                       title: "Event flagged for review",

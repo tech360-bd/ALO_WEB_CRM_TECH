@@ -1026,7 +1026,7 @@ function Student360Sheet({
             </div>
 
             <Button
-              className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+              className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               onClick={() =>
                 toast({
                   title: "Open full Student 360",

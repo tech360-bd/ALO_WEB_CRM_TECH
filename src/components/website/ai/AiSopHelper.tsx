@@ -220,7 +220,7 @@ export default function AiSopHelper() {
             className="min-h-[360px] rounded-input border-alo-border text-[14px] leading-relaxed"
           />
           <div className="mt-4 flex flex-wrap gap-3">
-            <Button onClick={() => setReviewed(draft)} disabled={draft.trim().length === 0} className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover disabled:opacity-50">
+            <Button onClick={() => setReviewed(draft)} disabled={draft.trim().length === 0} className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover disabled:opacity-50">
               <Sparkles className="mr-2 h-4 w-4" aria-hidden="true" />
               Review Draft
             </Button>
@@ -304,7 +304,7 @@ export default function AiSopHelper() {
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
+          <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-white hover:bg-alo-cta-hover">
             <Link href="/book-consultation">Request Consultation</Link>
           </Button>
           <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">

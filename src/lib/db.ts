@@ -12,17 +12,26 @@ const prismaLogLevel = process.env.NODE_ENV === 'production'
 /**
  * Production always uses the MySQL datasource configured in prisma/schema.prisma.
  *
- * `ALO_DB_DRIVER=sqlite` is an offline-verification-only escape hatch used by
- * scripts/ai-workforce/run-verification.mjs so the AI Workforce acceptance
- * gates can be proved against a real relational database (real rows, real
- * constraints) in environments where no MySQL server is reachable. It is never
- * set in production and never changes application behaviour or schema shape.
+ * Two offline escape hatches exist so the application can be run against a real
+ * relational database where no MySQL server (and no binaries.prisma.sh download)
+ * is reachable. Neither is ever set in production — `DATABASE_URL` there is a
+ * `mysql://` URL, so the plain `new PrismaClient()` branch below is taken — and
+ * neither changes application behaviour or schema shape.
+ *
+ *  1. `DATABASE_URL` starting with `file:` — the documented SQLite development
+ *     sandbox (docs/DEV-SQLITE-SANDBOX.md). The generated WASM client
+ *     (`prisma/schema.dev.prisma`, provider `sqlite`) is driven through the
+ *     libsql driver adapter.
+ *  2. `ALO_DB_DRIVER=sqlite` — the AI-Workforce offline verification harness,
+ *     which uses its own generated mirror client.
  */
 function createPrismaClient(): PrismaClient {
-  if (process.env.ALO_DB_DRIVER === 'sqlite') {
-    const url = process.env.DATABASE_URL;
-    if (!url || !url.startsWith('file:')) {
-      throw new Error('ALO_DB_DRIVER=sqlite requires a file: DATABASE_URL');
+  const url = process.env.DATABASE_URL ?? '';
+  const wantsSqlite = process.env.ALO_DB_DRIVER === 'sqlite' || url.startsWith('file:');
+
+  if (wantsSqlite) {
+    if (!url.startsWith('file:')) {
+      throw new Error('SQLite mode requires a file: DATABASE_URL');
     }
     // Resolved at runtime so the Next.js bundler never pulls the verification
     // adapter into an application build.
@@ -43,19 +52,26 @@ function createPrismaClient(): PrismaClient {
     ).getBuiltinModule?.('module');
     if (!nodeModule) {
       throw new Error(
-        'ALO_DB_DRIVER=sqlite requires Node >= 22.3 (process.getBuiltinModule is unavailable)',
+        'SQLite mode requires Node >= 22.3 (process.getBuiltinModule is unavailable)',
       );
     }
     const requireAdapter = nodeModule.createRequire(`${process.cwd()}/`);
     const { PrismaLibSQL } = requireAdapter('@prisma/adapter-libsql');
-    // The verification mirror client is generated from
-    // prisma/verification-mirror/schema.sqlite.prisma, which is produced from
-    // prisma/schema.prisma by scripts/ai-workforce/mirror-schema.mjs — same
-    // models, same fields, SQLite provider.
-    const { PrismaClient: MirrorPrismaClient } = requireAdapter('./node_modules/.prisma-sqlite/client');
     const adapter = new PrismaLibSQL({ url });
-    return new MirrorPrismaClient({ adapter, log: [...prismaLogLevel] }) as PrismaClient;
+
+    // Prefer the AI-Workforce verification mirror client when it has been
+    // generated (scripts/ai-workforce/mirror-schema.mjs →
+    // node_modules/.prisma-sqlite/client); otherwise fall back to the dev
+    // sandbox WASM client generated from prisma/schema.dev.prisma.
+    let ClientCtor: new (options: Record<string, unknown>) => PrismaClient;
+    try {
+      ClientCtor = requireAdapter('./node_modules/.prisma-sqlite/client').PrismaClient;
+    } catch {
+      ClientCtor = requireAdapter('.prisma/client/wasm').PrismaClient;
+    }
+    return new ClientCtor({ adapter, log: [...prismaLogLevel] }) as PrismaClient;
   }
+
   return new PrismaClient({ log: [...prismaLogLevel] });
 }
 

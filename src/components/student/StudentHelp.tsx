@@ -181,7 +181,7 @@ export default function StudentHelp() {
                   The fastest route is a message on your file, because your counselor can see your applications and
                   documents.
                 </p>
-                <Button asChild className="mt-3 w-full rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
+                <Button asChild className="mt-3 w-full rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]">
                   <Link href="/student/messages">
                     <MessageSquare className="mr-2 h-4 w-4" aria-hidden="true" />
                     Message Your Counselor

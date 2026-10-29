@@ -49,7 +49,7 @@ export function Section({
             {badge}
           </div>
           {description ? (
-            <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-500">{description}</p>
+            <p className="mt-1 max-w-3xl text-xs leading-relaxed text-[var(--alo-text-muted)]">{description}</p>
           ) : null}
         </div>
         {right ? <div className="flex flex-wrap items-center gap-2">{right}</div> : null}
@@ -81,7 +81,7 @@ export function EmptyState({ title, hint }: { title: string; hint?: string }) {
       style={{ borderColor: TOKENS.border, backgroundColor: TOKENS.soft }}
     >
       <p className="text-sm font-medium" style={{ color: TOKENS.text }}>{title}</p>
-      {hint ? <p className="mt-1 text-xs text-slate-500">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-[var(--alo-text-muted)]">{hint}</p> : null}
     </div>
   );
 }
@@ -140,7 +140,7 @@ export function Metric({ label, value, tone }: { label: string; value: React.Rea
         : TOKENS.text;
   return (
     <div className="flex items-baseline justify-between gap-2 border-b border-dashed py-1 last:border-0" style={{ borderColor: TOKENS.border }}>
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="text-xs text-[var(--alo-text-muted)]">{label}</span>
       <span className="text-xs font-semibold tabular-nums" style={{ color }}>{value}</span>
     </div>
   );

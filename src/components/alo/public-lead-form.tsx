@@ -245,7 +245,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
             Optional: I agree to receive promotional updates from ALO Education by email or WhatsApp. I can withdraw this permission at any time. This choice is separate from the response to my enquiry.
           </span>
         </label>
-        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
           {loading ? (
             <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting...</>
           ) : (

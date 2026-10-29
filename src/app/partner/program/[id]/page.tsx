@@ -22,7 +22,7 @@ export default function PartnerProgramDetailPage() {
           <p className="text-sm text-[var(--alo-body)] mt-2">{course.university?.name} • {course.country} • {course.studyLevel} • Tuition: {course.tuitionFee ? `${course.currency} ${course.tuitionFee}` : 'Check with counselor'}</p>
           <p className="text-xs text-[var(--alo-text-muted)] mt-3">Own commission where permitted: {course.commissions?.[0]?.partnerCommission ? `${course.commissions[0].partnerCommission}` : 'Check permitted — backend enforced, partner sees only own commission, other partner commissions/internal ALO notes/staff risk notes/full finance blocked.'}</p>
           <div className="flex gap-3 mt-6">
-            <Link href={`/partner/apply/demo-student/${course.courseId}`}><Button className="bg-[var(--alo-cta)] text-black h-12 px-6 font-bold">Apply for Own Student</Button></Link>
+            <Link href={`/partner/apply/demo-student/${course.courseId}`}><Button className="bg-[var(--alo-cta)] text-white h-12 px-6 font-bold">Apply for Own Student</Button></Link>
             <Link href="/partner/search-programs"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Back to Search</Button></Link>
           </div>
         </Card>

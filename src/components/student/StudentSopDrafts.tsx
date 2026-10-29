@@ -109,7 +109,7 @@ export default function StudentSop() {
               </Button>
               <Button
  type="button"
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  onClick={() => setCreating((value) => !value)}
               >
                 {creating ? 'Cancel' : 'New Draft'}
@@ -179,7 +179,7 @@ export default function StudentSop() {
                 <Button
  type="submit"
  disabled={submitting}
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  >
                   {submitting ? 'Saving…' : 'Save Draft'}
                 </Button>
@@ -205,7 +205,7 @@ export default function StudentSop() {
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
  type="button"
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  onClick={() => setCreating(true)}
                   >
                     Create Blank Draft

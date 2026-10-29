@@ -42,7 +42,7 @@ export default function CrmHrmHubPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] capitalize text-xs">{roleStr.replace(/_/g,' ')}</Badge>
-          <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">My HR Profile</Button></Link>
+          <Link href="/crm/hrm/profile"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white ">My HR Profile</Button></Link>
         </div>
       </div>
 

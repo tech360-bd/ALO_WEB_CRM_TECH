@@ -7,9 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import {
-  GraduationCap, Clock, Briefcase, Coins, ShieldCheck, CheckCircle2, AlertTriangle, Globe, MapPin, Building2, BookOpen, FileText, HelpCircle, Phone, MessageSquare, Sparkles, Calculator, Award, ArrowRight, Users, Compass, Star, ExternalLink, DollarSign, Calendar, CheckSquare, FileCheck, Send, UploadCloud
-} from 'lucide-react';
+import { AlertTriangle, ArrowRight, Award, BadgeCheck, BookOpen, Briefcase, Building2, Calculator, Calendar, CheckCircle2, CheckSquare, Clock, Coins, Compass, DollarSign, ExternalLink, FileCheck, FileText, Globe, GraduationCap, HelpCircle, MapPin, MessageSquare, Phone, Send, ShieldCheck, Sparkles, Star, UploadCloud, Users } from 'lucide-react';
 import { CountryDestinationData } from '@/lib/country-destinations-data';
 import { destinationCardImage } from './ImageMapping';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
@@ -119,7 +117,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <h1 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold tracking-[-0.025em] leading-[1.06] text-[var(--alo-text)]">Study in {countryData.name} from Bangladesh</h1>
               <p className="text-base md:text-lg text-[var(--alo-body)] leading-relaxed max-w-2xl">{countryData.heroSubtitle} {countryData.overview}</p>
               <div className="flex flex-wrap gap-3 pt-2">
-                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
+                <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-sm">Find Courses</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] h-12 px-8 font-semibold rounded-xl">Check Eligibility</Button></Link>
                 <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-8 font-semibold rounded-xl">Request Consultation</Button></Link>
               </div>
@@ -180,7 +178,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Quick facts about studying in {countryData.name}</h2>
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">✓ Verified {countryData.lastVerifiedAt}</Badge>
+            <Badge className="gap-1 bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]"><BadgeCheck className="size-3" />Verified {countryData.lastVerifiedAt}</Badge>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {countryData.quickFacts.map((fact, i) => (
@@ -391,7 +389,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
               <h2 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)]">Entry requirements for {countryData.name}</h2>
               <p className="text-sm text-[var(--alo-body)] mt-2 max-w-3xl">Entry requirements vary by study level and by university. The table below shows the typical academic and English requirements for {countryData.name}; your counsellor will confirm the exact requirements for your chosen course.</p>
             </div>
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">✓ {countryData.entryRequirements.length} Levels • Verified {countryData.lastVerifiedAt}</Badge>
+            <Badge className="gap-1 bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]"><BadgeCheck className="size-3" />{countryData.entryRequirements.length} Levels • Verified {countryData.lastVerifiedAt}</Badge>
           </div>
           <Tabs defaultValue={countryData.entryRequirements[0]?.level || '0'} className="w-full">
             <div className="overflow-x-auto pb-2">
@@ -660,7 +658,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
             <p className="text-sm text-[var(--alo-body)]">Browse available course records or submit an enquiry about studying in {countryData.name}. Enquiries are sent for staff review; response timing and any applicable service fees are confirmed separately.</p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <Link href="/eligibility-check"><Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] h-12 px-8 font-bold rounded-xl">Check Eligibility</Button></Link>
-              <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
+              <Link href={`/course-finder?country=${encodeURIComponent(countryData.name)}`}><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl">Find Courses</Button></Link>
               <Link href="/book-consultation"><Button variant="outline" className="bg-white border-[var(--alo-border)] h-12 px-8 font-semibold rounded-xl">Request Consultation</Button></Link>
               <Button asChild variant="outline" className="bg-[var(--alo-whatsapp)]/10 border-[var(--alo-whatsapp)]/20 text-[var(--alo-whatsapp)] hover:bg-[var(--alo-whatsapp)] hover:text-white h-12 px-8 font-bold rounded-xl"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
             </div>
@@ -686,7 +684,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <div className="sm:col-span-2"><label className="font-semibold">English Score</label><input value={leadForm.englishScore} onChange={e=>setLeadForm({...leadForm, englishScore:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-11" placeholder="Optional" /></div>
                 <div className="sm:col-span-2"><label className="font-semibold">Message</label><textarea value={leadForm.message} onChange={e=>setLeadForm({...leadForm, message:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm min-h-[80px]" placeholder="Add any questions or context you want the team to review." /></div>
               </div>
-              <Button type="submit" disabled={submittingLead} className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting enquiry…' : 'Submit Enquiry'}</Button>
+              <Button type="submit" disabled={submittingLead} className="w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting enquiry…' : 'Submit Enquiry'}</Button>
               {leadError && <p role="alert" className="text-center text-xs font-medium text-red-700">{leadError}</p>}
               <p className="text-[11px] text-[var(--alo-text-muted)] text-center">Submitting creates a public enquiry for staff review. No promotional contact consent is recorded by this form.</p>
             </form>

@@ -22,9 +22,9 @@ const VISIBILITY_META: Record<string, { label: string; color: string }> = {
   visa_team_visible: { label: 'Visa Team', color: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
   finance_visible: { label: 'Finance', color: 'bg-teal-50 text-teal-700 border-teal-200' },
   marketing_visible: { label: 'Marketing', color: 'bg-pink-50 text-pink-700 border-pink-200' },
-  b2b_confidential: { label: 'B2B 🔒', color: 'bg-rose-100 text-rose-800 border-rose-200' },
+  b2b_confidential: { label: 'B2B', color: 'bg-rose-100 text-rose-800 border-rose-200' },
   internal_only: { label: 'Internal Only', color: 'bg-amber-100 text-amber-900 border-amber-200' },
-  super_admin_only: { label: 'Super Admin 🔐', color: 'bg-red-100 text-red-900 border-red-200' },
+  super_admin_only: { label: 'Super Admin', color: 'bg-red-100 text-red-900 border-red-200' },
 };
 
 const CHANNEL_ICON: Record<string, any> = {

@@ -446,7 +446,7 @@ export default function CrmHRMPage() {
               <Button variant="outline" onClick={() => setShowReassignModal(false)} className="text-xs font-bold">
                 Cancel
               </Button>
-              <Button onClick={handleReassignWork} disabled={reassigning} className="bg-[var(--alo-cta)] text-black font-bold px-4 py-2 rounded-xl">
+              <Button onClick={handleReassignWork} disabled={reassigning} className="bg-[var(--alo-cta)] text-white font-bold px-4 py-2 rounded-xl">
                 {reassigning ? 'Reassigning...' : 'Execute Reassignment'}
               </Button>
             </div>

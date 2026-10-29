@@ -229,7 +229,7 @@ export default function StudentReferrals() {
                   <Button
  type="submit"
  disabled={submitting}
- className=" w-full rounded-button bg-alo-cta text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" w-full rounded-button bg-alo-cta text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  >
                     {submitting ? 'Saving…' : 'Save Referral'}
                   </Button>

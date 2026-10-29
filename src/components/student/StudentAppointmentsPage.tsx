@@ -118,7 +118,7 @@ export default function StudentAppointmentsPage() {
           action={
             <Button
  type="button"
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  onClick={() => setBooking((value) => !value)}
             >
               <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
@@ -203,7 +203,7 @@ export default function StudentAppointmentsPage() {
                 <Button
  type="submit"
  disabled={submitting}
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  >
                   {submitting ? 'Sending…' : 'Send Request'}
                 </Button>
@@ -238,7 +238,7 @@ export default function StudentAppointmentsPage() {
                 <div className="flex flex-wrap justify-center gap-2">
                   <Button
  type="button"
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  onClick={() => setBooking(true)}
                   >
                     Request Appointment

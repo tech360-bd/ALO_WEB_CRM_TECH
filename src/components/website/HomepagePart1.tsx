@@ -6,7 +6,7 @@ import { BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight, staggerC
 import {
   Globe, GraduationCap, Users, Award, BookOpen, Target, Eye, Heart,
   Search, ArrowRight, MapPin, Calendar, DollarSign, MessageCircle, Phone,
-  CheckCircle, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck, Download,
+  CheckCircle, ChevronLeft, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck, Download,
 } from 'lucide-react';
 import { buildStudyGuideText, destinationGuidePath, studyGuideFileName } from '@/lib/alo-study-steps';
 import { destinationCardImage } from './ImageMapping';
@@ -32,13 +32,14 @@ interface HomepageData { countries: CountryData[]; heroSlides: HeroCountry[]; en
 // These entries are visual destination choices only. Live availability,
 // current intakes and inventory counts come from the database API below.
 const FALLBACK_COUNTRIES: HeroCountry[] = [
-  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0066CC', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
+  { id: '1', name: 'United Kingdom', slug: 'uk', flag: '🇬🇧', accentColor: '#0057B8', heroImage: '/images/cards/uk.png', heroCity: 'London', heroSubtitle: 'World-Class Education in the Heart of Europe' },
   { id: '2', name: 'United States', slug: 'usa', flag: '🇺🇸', accentColor: '#0284C7', heroImage: '/images/cards/usa.png', heroCity: 'New York', heroSubtitle: 'Top Universities & Endless Career Opportunities' },
-  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#F37021', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
+  { id: '3', name: 'Canada', slug: 'canada', flag: '🇨🇦', accentColor: '#E8501A', heroImage: '/images/cards/canada.png', heroCity: 'Toronto', heroSubtitle: 'Immigration-Friendly Pathways to Your Future' },
   { id: '4', name: 'Australia', slug: 'australia', flag: '🇦🇺', accentColor: '#10B981', heroImage: '/images/cards/australia.png', heroCity: 'Sydney', heroSubtitle: 'Quality Education & Post-Study Work Rights' },
   { id: '5', name: 'New Zealand', slug: 'new-zealand', flag: '🇳🇿', accentColor: '#0EA5E9', heroImage: '/images/cards/new-zealand.png', heroCity: 'Auckland', heroSubtitle: 'Safe, Peaceful & Work While You Study' },
   { id: '6', name: 'Ireland', slug: 'ireland', flag: '🇮🇪', accentColor: '#10B981', heroImage: '/images/cards/ireland.png', heroCity: 'Dublin', heroSubtitle: 'Stay Back Visa & Growing Tech Hub' },
   { id: '7', name: 'Dubai / UAE', slug: 'dubai-uae', flag: '🇦🇪', accentColor: '#F59E0B', heroImage: '/images/cards/dubai.png', heroCity: 'Dubai', heroSubtitle: 'Career Growth in the Gulf' },
+  { id: '8', name: 'Germany', slug: 'germany', flag: '🇩🇪', accentColor: '#DD0000', heroImage: '/images/cards/germany.webp', heroCity: 'Berlin', heroSubtitle: 'Research-Led Degrees Across Europe' },
 ];
 
 const FALLBACK_DESTINATIONS: CountryData[] = FALLBACK_COUNTRIES.map(c => ({
@@ -66,10 +67,40 @@ function useHomepageData() {
 }
 
 /* ═══════════════════════════════════════════════════════════════ HERO ═══ */
+/* Phase 1 §3 — carousel rotation order. Destinations named first run in this
+   sequence; any other active destination follows in the order the database
+   returns it. Nothing is invented here: only destinations the platform already
+   holds are shown. */
+const HERO_ROTATION_ORDER = ['uk', 'canada', 'australia', 'usa', 'germany'];
+
+/** Destination-specific hero copy written for Bangladeshi applicants. */
+const HERO_COUNTRY_BLURB: Record<string, string> = {
+  uk: 'From HSC to a UK honours degree — ALO Education maps your Bangladeshi qualifications to UK entry requirements, shortlists universities that recognise them, and builds your application and Student visa file with you.',
+  canada: 'Canadian colleges and universities assess Bangladeshi qualifications course by course. ALO Education helps you compare programmes, prepare your study permit documentation and plan around each intake deadline.',
+  australia: 'Australian degrees start in February and July. ALO Education helps you match your qualifications to the right course level, understand the Genuine Student requirement and assemble your student visa evidence.',
+  usa: 'US admissions look at the whole profile. ALO Education helps Bangladeshi students shortlist universities, prepare transcripts and English test scores, and complete the F-1 visa paperwork.',
+  germany: 'Germany is a widely chosen European destination. ALO Education explains how Bangladeshi qualifications are assessed for German university entry, and what the application timetable and visa documentation involve.',
+};
+
+function heroBlurb(slide: HeroCountry): string {
+  return HERO_COUNTRY_BLURB[slide.slug]
+    || `${slide.name} is an active study destination for Bangladeshi students. ALO Education helps you compare entry routes, match your qualifications to university requirements, and prepare a complete application and visa file.`;
+}
+
 function HeroSection() {
   const { t } = useI18n();
   const { data } = useHomepageData();
-  const slides = data?.heroSlides?.length ? data.heroSlides : FALLBACK_COUNTRIES;
+  const rawSlides = data?.heroSlides?.length ? data.heroSlides : FALLBACK_COUNTRIES;
+
+  // Present the named rotation order first, then any other active destination.
+  const slides = useMemo(() => {
+    const rank = (s: HeroCountry) => {
+      const i = HERO_ROTATION_ORDER.indexOf(s.slug);
+      return i === -1 ? HERO_ROTATION_ORDER.length : i;
+    };
+    return [...rawSlides].sort((a, b) => rank(a) - rank(b));
+  }, [rawSlides]);
+
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -87,102 +118,90 @@ function HeroSection() {
   }, []);
 
   const startTimer = useCallback(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || paused) return;
     if (timer.current) clearInterval(timer.current);
     timer.current = setInterval(() => setCurrent(p => (p + 1) % slides.length), 5000);
-  }, [slides.length, reduceMotion]);
+  }, [slides.length, reduceMotion, paused]);
 
   useEffect(() => { startTimer(); return () => { if (timer.current) clearInterval(timer.current); }; }, [startTimer]);
-  useEffect(() => { if (paused && timer.current) clearInterval(timer.current); if (!paused) startTimer(); }, [paused, startTimer]);
 
   const slide = slides[current];
-  const go = (i: number) => setCurrent(i);
+  const go = useCallback((i: number) => setCurrent(((i % slides.length) + slides.length) % slides.length), [slides.length]);
+  const next = useCallback(() => setCurrent(p => (p + 1) % slides.length), [slides.length]);
+  const prev = useCallback(() => setCurrent(p => (p - 1 + slides.length) % slides.length), [slides.length]);
 
-  // Country-specific hero — Master §08 Variant A (editorial split):
-  // white background, H1 in main text with the country highlighted in brand
-  // blue, supporting copy in body text, ALO Orange primary CTA, and the
-  // country landmark photograph in a rounded frame on a pale-blue panel.
-  // NO dark overlay on the photograph. Country pills switch the featured
-  // country; the auto-advance timer pauses on hover.
   const countryInPhrase =
-    slide.name === 'United Kingdom'
-      ? 'the United Kingdom'
-      : slide.name === 'United States'
-        ? 'the United States'
+    slide.name === 'United Kingdom' ? 'the United Kingdom'
+      : slide.name === 'United States' ? 'the United States'
         : slide.name;
-  const countrySentence =
-    countryInPhrase.charAt(0).toUpperCase() + countryInPhrase.slice(1);
+
+  // Keyboard: left/right arrows move between destinations while the carousel
+  // region holds focus.
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  }, [next, prev]);
 
   return (
     <section
-      aria-label={`Study in ${slide.name}`}
+      aria-roledescription="carousel"
+      aria-label="Study destinations"
       className="relative w-full bg-white"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      onKeyDown={onKeyDown}
+      tabIndex={-1}
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8 lg:py-20">
-        {/* Left: eyebrow, H1, description, CTAs, country selector */}
-        <div className="space-y-6 lg:col-span-6">
+        {/* Left: badge, stable H1, dynamic headline, description, CTAs, finder */}
+        <div className="space-y-5 lg:col-span-6">
+          <Badge variant="brand" className="gap-2 px-3 py-1 text-xs">
+            <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
+            Study Abroad
+          </Badge>
+
+          <h1 className="font-heading text-[34px] font-extrabold leading-[1.1] tracking-tight text-[var(--alo-text)] md:text-[46px]">
+            Your Future Starts Here
+          </h1>
+
           <AnimatePresence mode="wait">
-            <motion.div key={`eyebrow-${slide.name}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: reduceMotion ? 0 : 0.3 }}>
-              <Badge variant="brand" className="gap-2 px-3 py-1 text-xs">
-                <span aria-hidden="true">{slide.flag}</span>
-                {slide.name}
-                {slide.heroCity ? ` · ${slide.heroCity}` : ''}
-              </Badge>
+            <motion.div
+              key={`headline-${slide.name}`}
+              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -12 }}
+              transition={{ duration: reduceMotion ? 0 : 0.3 }}
+            >
+              <p className="font-heading text-[20px] font-bold leading-[1.3] text-[var(--alo-brand)] md:text-[24px]" aria-live="polite">
+                Unlock a World-Class Education in the {countryInPhrase} with Expert Guidance
+              </p>
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-[var(--alo-body)]">
+                {heroBlurb(slide)}
+              </p>
             </motion.div>
           </AnimatePresence>
 
-          <h1 className="font-heading text-[34px] font-extrabold leading-[1.12] tracking-tight text-[var(--alo-text)] md:text-[52px]" aria-live="polite">
-            Unlock a world-class education in{' '}
-            <span className="text-[var(--alo-brand)]">{countryInPhrase}</span> with expert guidance
-          </h1>
-
-          <p className="max-w-xl text-lg leading-relaxed text-[var(--alo-body)]">
-            {countrySentence} offers globally recognized education, strong career prospects, and a
-            welcoming environment for international students. At ALO Education, we guide you every
-            step of the way—from choosing the right course to submitting a strong application.
-          </p>
-
           <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-            <Button asChild size="lg" className="h-12 bg-[var(--alo-cta)] px-6 font-heading text-[15px] font-semibold text-black shadow-card hover:bg-[var(--alo-cta-hover)]">
-              <Link href="/book-consultation">
-                Request Counselling
+            <Button asChild size="lg" className="h-12 bg-[var(--alo-cta)] px-6 font-heading text-[15px] font-semibold text-white shadow-card hover:bg-[var(--alo-cta-hover)]">
+              <Link href={`/course-finder?country=${encodeURIComponent(slide.name)}`}>
+                Find Courses
                 <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 px-6 font-heading text-[15px] font-semibold">
-              <Link href={`/course-finder?country=${encodeURIComponent(slide.name)}`}>
-                {t('cta.findCourse')} in {slide.name}
-              </Link>
+              <Link href="/book-consultation">Book a Free Consultation</Link>
             </Button>
           </div>
 
-          {slides.length > 1 && (
-            <div className="flex flex-wrap items-center gap-2 pt-2" role="tablist" aria-label="Choose a destination to feature">
-              {slides.map((s, i) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={i === current}
-                  aria-label={`Show ${s.name}`}
-                  onClick={() => go(i)}
-                  className={`inline-flex min-h-[48px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
-                    i === current
-                      ? 'border-[var(--alo-brand)] bg-[var(--alo-brand-light)] text-[var(--alo-brand)]'
-                      : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:border-[var(--alo-brand-border)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)]'
-                  }`}
-                >
-                  <span aria-hidden="true">{s.flag}</span>
-                  {s.name}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Phase 1 §4 — the homepage course search is merged into the hero
+              rather than removed: /course-finder, its facets API, the saved
+              search-log call and the 7-step guide download are all unchanged. */}
+          <CourseFinderCard />
         </div>
 
-        {/* Right: landmark photograph — rounded frame, pale-blue panel, no overlay */}
+        {/* Right: photograph, flag, country name, destination link, controls, indicators */}
         <div className="relative lg:col-span-6">
           <div className="absolute -inset-3 rounded-[24px] bg-[var(--alo-brand-pale)]" aria-hidden="true" />
           <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[20px] border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] shadow-card">
@@ -215,19 +234,80 @@ function HeroSection() {
             </AnimatePresence>
           </div>
 
-          {/* Floating information card — real destination info only */}
-          {slide.heroCity && (
-            <div className="relative z-10 mx-4 -mt-6 flex items-center gap-3 rounded-2xl border border-[var(--alo-border)] bg-white p-4 shadow-floating sm:mx-6">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)]">
-                <MapPin className="h-5 w-5 text-[var(--alo-brand)]" aria-hidden="true" />
-              </span>
-              <div className="min-w-0">
-                <p className="font-heading text-sm font-bold text-[var(--alo-text)]">{slide.heroCity}, {slide.name}</p>
-                <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[var(--alo-brand)] hover:underline">
-                  Explore the {slide.name} destination guide
-                </Link>
+          {/* Country name, flag and destination link */}
+          <div className="relative z-10 mx-4 -mt-6 flex items-center gap-3 rounded-2xl border border-[var(--alo-border)] bg-white p-4 shadow-floating sm:mx-6">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-lg" aria-hidden="true">
+              {slide.flag}
+            </span>
+            <div className="min-w-0">
+              <p className="font-heading text-sm font-bold text-[var(--alo-text)]">{slide.name}</p>
+              <Link href={`/destinations/${slide.slug}`} className="text-xs font-semibold text-[var(--alo-brand)] hover:underline">
+                Explore the {slide.name} destination guide
+              </Link>
+            </div>
+            <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
+          </div>
+
+          {/* Previous / next controls and active slide indicators */}
+          {slides.length > 1 && (
+            <div className="relative z-10 mt-4 flex items-center justify-between gap-3 px-4 sm:px-6">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={prev}
+                  aria-label="Previous destination"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--alo-border)] bg-white text-[var(--alo-text)] transition-colors hover:border-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
+                >
+                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={next}
+                  aria-label="Next destination"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--alo-border)] bg-white text-[var(--alo-text)] transition-colors hover:border-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2"
+                >
+                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                </button>
               </div>
-              <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-[var(--alo-text-muted)]" aria-hidden="true" />
+
+              <div className="flex items-center gap-2" role="tablist" aria-label="Choose a destination to feature">
+                {slides.map((s, i) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={i === current}
+                    aria-label={`Show ${s.name}`}
+                    onClick={() => go(i)}
+                    className={`h-2.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
+                      i === current ? 'w-7 bg-[var(--alo-brand)]' : 'w-2.5 bg-[var(--alo-border)] hover:bg-[var(--alo-brand-border)]'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Country pills stay as the fast, labelled way to pick a destination. */}
+          {slides.length > 1 && (
+            <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2 px-4 sm:px-6">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  aria-pressed={i === current}
+                  aria-label={`Show ${s.name}`}
+                  onClick={() => go(i)}
+                  className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)] focus-visible:ring-offset-2 ${
+                    i === current
+                      ? 'border-[var(--alo-brand)] bg-[var(--alo-brand-light)] text-[var(--alo-brand)]'
+                      : 'border-[var(--alo-border)] bg-white text-[var(--alo-body)] hover:border-[var(--alo-brand-border)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)]'
+                  }`}
+                >
+                  <span aria-hidden="true">{s.flag}</span>
+                  {s.name}
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -251,7 +331,7 @@ function FileTextIcon(props: React.ComponentType<React.SVGProps<SVGSVGElement>> 
  *   Action: Search — ALO Orange icon button → /course-finder (results page)
  * Below the box, the selected country's 7-step study guide can be downloaded.
  */
-function CourseFinderSection() {
+function CourseFinderCard() {
   const { data } = useHomepageData();
   const countries = data?.countries?.length ? data.countries : FALLBACK_DESTINATIONS;
   const router = useRouter();
@@ -322,15 +402,8 @@ function CourseFinderSection() {
   const inputClass = 'h-12 w-full rounded-xl border border-[var(--alo-border)] bg-white px-3 text-sm text-[var(--alo-text)] outline-none placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-brand)] focus:ring-2 focus:ring-[var(--alo-brand)]/20';
 
   return (
-    <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-20 bg-white" aria-labelledby="smart-course-finder-heading">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div variants={staggerContainer} className="text-center mb-10">
-          <motion.div variants={staggerItem}><Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/25 mb-4">Smart Course Finder</Badge></motion.div>
-          <motion.h2 id="smart-course-finder-heading" variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Find Your Perfect Course</motion.h2>
-          <motion.p variants={sectionSubtitle} className="text-[var(--alo-text-muted)] text-lg mt-3 max-w-2xl mx-auto">Search verified courses and universities — tuition fees, intakes, interview requirements and world rankings in one place.</motion.p>
-        </motion.div>
-
-        <motion.div variants={fadeUp} className="bg-white rounded-2xl shadow-xl border border-[var(--alo-border)] overflow-hidden">
+    <div className="pt-2">
+      <div className="rounded-2xl border border-[var(--alo-border)] bg-white shadow-lg overflow-hidden">
           {/* Tabs: COURSES | UNIVERSITIES */}
           <div role="tablist" aria-label="Smart Course Finder mode" className="flex gap-1 border-b border-[var(--alo-border)] bg-[var(--alo-page)] p-1.5">
             {([
@@ -381,7 +454,7 @@ function CourseFinderSection() {
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-black bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             ) : (
@@ -397,7 +470,7 @@ function CourseFinderSection() {
                   <datalist id="home-uf-universities">{facets.universities.map(u => <option key={u.name} value={u.name} />)}</datalist>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-black bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Search className="mr-2 h-4 w-4" /> Search</Button>
+                  <Button onClick={handleSearch} className="h-12 w-full rounded-xl font-heading font-bold text-white bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]"><Search className="mr-2 h-4 w-4" /> Search</Button>
                 </div>
               </div>
             )}
@@ -410,7 +483,7 @@ function CourseFinderSection() {
                   <span className="text-[var(--alo-text-secondary)]">Download the {selectedCountry.name} 7-step study guide — from counseling to pre-departure.</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-[13px] font-bold text-black hover:bg-[var(--alo-cta-hover)]">
+                  <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-[13px] font-bold text-white hover:bg-[var(--alo-cta-hover)]">
                     <Download className="mr-2 h-4 w-4" /> Download 7-Step Guide
                   </Button>
                   <Button asChild variant="outline" className="h-12 rounded-xl border-[var(--alo-brand)] px-5 font-heading text-[13px] font-bold text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
@@ -428,9 +501,8 @@ function CourseFinderSection() {
               </Button>
             </div>
           </div>
-        </motion.div>
       </div>
-    </motion.section>
+    </div>
   );
 }
 
@@ -599,49 +671,131 @@ function AboutSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════ MISSION VISION VALUES ═══ */
-function MissionVisionValues() {
-  const cards = [
-    { icon: Target, title: 'Our Mission', color: C.blue, gradient: gradients.blue, paras: ['At ALO Education, our mission is simple yet powerful — turning student dreams into global opportunities. We strive to be a trusted pathway to world-class education, guiding every student with honesty, professionalism, and genuine care.', 'Our commitment goes beyond admissions. We are dedicated to guiding ambitions, shaping brighter futures, and ensuring that students from Bangladesh to the world can access education without boundaries.'] },
-    { icon: Eye, title: 'Our Vision', color: C.orange, gradient: gradients.orange, paras: ['The vision of ALO Education is to become a globally recognized education consultancy that inspires trust, integrity, and excellence in everything we do. We aspire to guide students toward courses and institutions that best suit their academic interests and career goals.', 'Our focus is on nurturing holistic development by enhancing knowledge, skills, and confidence so students can thrive in a competitive world. With continuous innovation, we provide seamless, high-quality services.'] },
-    { icon: Heart, title: 'Our Core Values', color: '#10B981', gradient: 'linear-gradient(135deg, #10B981, #059669)', paras: ['Built on honesty and transparency. We provide accurate information and realistic guidance every student can rely on throughout their journey.', 'Leveraging AI tools and modern technology to enhance the student experience, streamline processes, and deliver faster, smarter results.'], values: true },
-  ];
+/**
+ * Mission, Vision & Values (Phase 1 §5).
+ *
+ * Eight cards on one shared template: identical image aspect ratio, identical
+ * padding, one icon per card, and a description block that grows so the cards
+ * in a row stay the same height. Company facts are limited to what the business
+ * publishes — founded in February 2023 by Taslima Akter.
+ */
+const PURPOSE_CARDS = [
+  {
+    icon: Target,
+    image: '/images/about/mission.webp',
+    alt: 'An ALO Education counsellor handing a university offer folder to a student',
+    title: 'Our Mission',
+    body: 'To turn student dreams into global opportunities. We work as a trusted pathway to world-class education, guiding every student with honesty, professionalism and genuine care — from the first counselling session through to enrolment.',
+    extra: 'Our commitment goes beyond admissions. We are dedicated to guiding ambitions and shaping brighter futures, so students from Bangladesh can access education without boundaries.',
+    tone: 'brand' as const,
+  },
+  {
+    icon: Eye,
+    image: '/images/about/vision.webp',
+    alt: 'International students walking together across a university campus',
+    title: 'Our Vision',
+    body: 'To become a globally recognised education consultancy that inspires trust, integrity and excellence in everything we do, and to guide students toward the courses and institutions that best suit their academic interests and career goals.',
+    extra: 'Our focus is on holistic development — building the knowledge, skills and confidence students need to thrive in a competitive world, supported by continuous improvement in how we work.',
+    tone: 'cta' as const,
+  },
+  {
+    icon: Shield,
+    image: '/images/about/trust-integrity.webp',
+    alt: 'Two hands shaking across a desk beside a printed document',
+    title: 'Trust & Integrity',
+    body: 'Every recommendation we make is one we can stand behind. We give accurate, current information and realistic guidance about entry requirements, timelines and outcomes — including when a plan is unlikely to succeed.',
+    extra: 'Where a policy, fee or visa rule is uncertain, we say so and point you to the official source rather than guessing.',
+    tone: 'brand' as const,
+  },
+  {
+    icon: CheckCircle,
+    image: '/images/about/transparency.webp',
+    alt: 'An open fee schedule, calculator and pen laid out on a white desk',
+    title: 'Transparency',
+    body: 'Every fee, every timeline and every risk is communicated upfront. You see what a service costs, what it includes and what happens if an application is unsuccessful — before you commit to anything.',
+    extra: 'No hidden charges, and no surprise commissions added behind your back.',
+    tone: 'cta' as const,
+  },
+  {
+    icon: Zap,
+    image: '/images/about/innovation.webp',
+    alt: 'A woman working on a laptop showing a clean analytics dashboard',
+    title: 'Innovation',
+    body: 'We use modern tools and AI-assisted workflows to make the process faster and clearer: smarter course matching, structured document tracking and quicker answers to the questions that hold applications up.',
+    extra: 'Technology supports the counsellor — it never replaces the human judgement your application deserves.',
+    tone: 'brand' as const,
+  },
+  {
+    icon: Award,
+    image: '/images/about/excellence.webp',
+    alt: 'A framed graduation certificate and honour medal on a wooden desk',
+    title: 'Excellence',
+    body: 'We hold our work to the standard of the universities we apply to: complete documents, accurate forms, submissions ahead of deadline and applications that present each student accurately and well.',
+    extra: 'Quality is checked before anything is sent, not after a rejection arrives.',
+    tone: 'cta' as const,
+  },
+  {
+    icon: Heart,
+    image: '/images/about/student-first.webp',
+    alt: 'A student and an adviser reviewing a shortlist of universities together',
+    title: 'Student-First Guidance',
+    body: 'Every decision starts from the student in front of us — their academic profile, budget, timeline and destination preference — not from what is easiest to place.',
+    extra: 'We shortlist courses that genuinely fit, and we will recommend against an application we do not believe serves you.',
+    tone: 'brand' as const,
+  },
+  {
+    icon: Users,
+    image: '/images/about/professional-support.webp',
+    alt: 'A team of education professionals reviewing application files together',
+    title: 'Professional Support',
+    body: 'A dedicated counsellor stays with you from the first consultation through course selection, application, English test planning, visa documentation and pre-departure preparation.',
+    extra: 'You always know who is handling your file and what the next step is.',
+    tone: 'cta' as const,
+  },
+];
 
+function MissionVisionValues() {
   return (
-    <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }}>
+    <motion.section initial="hidden" whileInView="visible" viewport={viewportOnce} className="py-16 lg:py-24" style={{ backgroundColor: C.bg }} aria-labelledby="our-purpose-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div variants={staggerContainer} className="text-center mb-12">
           <motion.div variants={staggerItem}><Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 mb-4">Our Purpose</Badge></motion.div>
-          <motion.h2 variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>Our Commitment to Your Study-Abroad Dream</motion.h2>
+          <motion.h2 id="our-purpose-heading" variants={sectionTitle} className="text-3xl sm:text-4xl font-bold" style={{ color: C.text }}>
+            Our Commitment to Your Study-Abroad Dream
+          </motion.h2>
+          <motion.p variants={sectionSubtitle} className="text-[var(--alo-body)] mt-3 mx-auto max-w-3xl leading-relaxed">
+            ALO Education was founded in February 2023 by Taslima Akter. These are the principles we work to on every application.
+          </motion.p>
         </motion.div>
-        <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {cards.map(card => (
-            <motion.div key={card.title} variants={staggerItemScale} whileHover={{ y: -6 }}>
-              <Card className="h-full rounded-2xl border border-[var(--alo-border)] shadow-sm hover:shadow-lg transition-all overflow-hidden">
-                <div className="h-2" style={{ background: card.gradient }} />
-                <CardContent className="p-6 space-y-4">
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: card.gradient }}><card.icon className="w-7 h-7 text-white" /></div>
-                  <h3 className="text-xl font-bold" style={{ color: C.text }}>{card.title}</h3>
-                  {card.values ? (
-                    <div className="space-y-3">
-                      {[
-                        { icon: Shield, t: 'Trust & Integrity', d: 'Built on honesty and transparency. Accurate information and realistic guidance.' },
-                        { icon: Zap, t: 'Innovation', d: 'Leveraging AI tools and modern technology for smarter results.' },
-                        { icon: Users, t: 'Student-First', d: 'Every decision prioritizes student success and well-being.' },
-                      ].map(v => (
-                        <div key={v.t} className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[var(--alo-cta-soft)]"><v.icon className="w-4 h-4" style={{ color: C.orange }} /></div>
-                          <div><div className="text-sm font-semibold" style={{ color: C.text }}>{v.t}</div><div className="text-xs text-[var(--alo-text-muted)]">{v.d}</div></div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    card.paras.map((p, i) => <p key={i} className="text-[var(--alo-text-muted)] leading-relaxed">{p}</p>)
-                  )}
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          {PURPOSE_CARDS.map((card) => (
+            <motion.div key={card.title} variants={staggerItemScale} whileHover={{ y: -6 }} className="h-full">
+              <Card className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--alo-border)] bg-white shadow-sm transition-shadow hover:shadow-lg">
+                {/* Fixed aspect ratio so every image aligns across the row. */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--alo-brand-pale)]">
+                  <Image
+                    src={card.image}
+                    alt={card.alt}
+                    fill
+                    sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="flex flex-1 flex-col p-5">
+                  <span className={`mb-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                    card.tone === 'cta' ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
+                  }`}>
+                    <card.icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="text-lg font-bold leading-snug" style={{ color: C.text }}>{card.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--alo-body)]">{card.body}</p>
+                  <p className="mt-3 text-xs leading-relaxed text-[var(--alo-text-muted)]">{card.extra}</p>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </motion.section>
   );
@@ -652,7 +806,6 @@ export default function HomepagePart1() {
   return (
     <>
       <HeroSection />
-      <CourseFinderSection />
       <EnglishExamBanner location="homepage_banner" />
       <DestinationsSection />
       <AboutSection />

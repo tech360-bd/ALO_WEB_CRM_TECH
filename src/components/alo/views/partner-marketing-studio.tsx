@@ -803,7 +803,7 @@ export function PartnerMarketingStudio() {
                       </div>
                     </div>
                     <Button
-                      className="w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12"
+                      className="w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12"
                       disabled={generating || !canCreateCampaign}
                       onClick={generateContent}
                     >
@@ -1106,7 +1106,7 @@ export function PartnerMarketingStudio() {
                     ? 'Submitted partner campaigns that require ALO review will appear here.'
                     : 'Generate your first marketing campaign in the Create Campaign tab.'}
                   action={!isAloReviewMode ? (
-                    <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => setTab("create")}>
+                    <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => setTab("create")}>
                       <Icon name="Sparkles" className="size-4" />
                       Create Campaign
                     </Button>

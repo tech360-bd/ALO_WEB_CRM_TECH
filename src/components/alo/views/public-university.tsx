@@ -271,7 +271,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
             description="This university page may have been moved or is being updated. Browse all universities to find a partner near you."
             action={
               <div className="flex gap-2">
-                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 " onClick={() => onNavigate("public-universities")}>
+                <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 " onClick={() => onNavigate("public-universities")}>
                   <Icon name="Building2" className="size-4" /> All universities
                 </Button>
                 <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => onNavigate("public-courses")}>
@@ -334,7 +334,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
 
           {/* Action buttons */}
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => scrollToId("apply")}>
+            <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => scrollToId("apply")}>
               <Icon name="Send" className="size-4" /> Apply through ALO
             </Button>
             <Button
@@ -488,7 +488,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
                     </Button>
                     <Button
  size="sm"
- className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 "
  onClick={() => {
                         setSelectedCourseSlug(c.slug);
                         toast({ title: "Course selected", description: `${c.name} pre-filled in the application form below.` });
@@ -722,7 +722,7 @@ export function PublicUniversity({ slug, onNavigate }: PublicUniversityProps) {
               </div>
             </div>
             <Button
- className="mt-3 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className="mt-3 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  disabled={eligLoading || !eligForm.academicLevel}
  onClick={runEligibility}
  >

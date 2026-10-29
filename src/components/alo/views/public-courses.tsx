@@ -298,7 +298,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
             description="Try removing one or more filters — or use the AI Course Finder to get personalised recommendations."
             action={
               <div className="flex flex-wrap justify-center gap-2">
-                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 " onClick={resetFilters}>
+                <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 " onClick={resetFilters}>
                   <Icon name="RotateCcw" className="size-4" /> Reset filters
                 </Button>
                 <Button
@@ -412,7 +412,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                           <Icon name="FileText" className="size-4" /> View Details
                         </Button>
                         <Button
- className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ className="flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 "
  onClick={() => {
                             toast({
                               title: "Application started",

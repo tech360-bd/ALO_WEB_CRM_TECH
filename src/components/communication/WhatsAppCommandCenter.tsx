@@ -6,20 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import SlaCountdownBadge from './SlaCountdownBadge';
-import {
-  MessageSquare, Search, Send, Bot, User, Paperclip, FileText,
-  CheckCircle2, XCircle, Clock, Phone, ArrowRight, Sparkles,
-  ShieldCheck, RefreshCw, AlertCircle, ChevronRight, X,
-  Eye, Tag, Zap
-} from 'lucide-react';
+import { MessageSquare, Search, Send, Bot, User, Paperclip, FileText, CheckCircle2, XCircle, Clock, Phone, ArrowRight, Sparkles, ShieldCheck, RefreshCw, AlertCircle, ChevronRight, X, Eye, Tag, Zap, CheckCheck, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Message delivery status icons
+// Message delivery status icons (Master §10 — one icon per meaning, Lucide only)
 const DeliveryIcon = ({ status }: { status: string }) => {
-  if (status === 'read') return <span className="text-[var(--alo-brand)] text-[11px] font-bold">✓✓</span>;
-  if (status === 'delivered') return <span className="text-[var(--alo-text-muted)] text-[11px]">✓✓</span>;
-  if (status === 'sent') return <span className="text-[var(--alo-text-muted)] text-[11px]">✓</span>;
-  if (status === 'failed') return <span className="text-red-500 text-[11px]">✗</span>;
+  if (status === 'read') return <CheckCheck className="size-3.5 text-[var(--alo-brand)]" aria-label="Read" />;
+  if (status === 'delivered') return <CheckCheck className="size-3.5 text-[var(--alo-text-muted)]" aria-label="Delivered" />;
+  if (status === 'sent') return <Check className="size-3.5 text-[var(--alo-text-muted)]" aria-label="Sent" />;
+  if (status === 'failed') return <X className="size-3.5 text-[var(--alo-error)]" aria-label="Failed" />;
   return null;
 };
 
@@ -172,7 +167,7 @@ export default function WhatsAppCommandCenter() {
         setAiApproved(false);
         fetchMessages(selectedThread.id);
         fetchThreads();
-        toast.success('Message sent ✓');
+        toast.success('Message sent');
       } else {
         toast.error(json.error || 'Failed to send message');
       }
@@ -257,7 +252,7 @@ export default function WhatsAppCommandCenter() {
                 key={thread.id}
                 onClick={() => selectThread(thread)}
                 className={`w-full text-left p-3 border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-colors ${
-                  selectedThread?.id === thread.id ? 'bg-[var(--alo-brand-pale)] border-l-2 border-l-[#0057B8]' : ''
+                  selectedThread?.id === thread.id ? 'bg-[var(--alo-brand-pale)] border-l-2 border-l-alo-brand' : ''
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-1">
@@ -328,7 +323,7 @@ export default function WhatsAppCommandCenter() {
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-amber-600" />
                 <div>
-                  <p className="text-xs font-bold text-amber-900">📎 Student sent a document via WhatsApp</p>
+                  <p className="text-xs font-bold text-amber-900">Student sent a document via WhatsApp</p>
                   <p className="text-[11px] text-amber-700">DOCUMENT MATCH REVIEW REQUIRED — Select the application and document slot before saving</p>
                 </div>
               </div>

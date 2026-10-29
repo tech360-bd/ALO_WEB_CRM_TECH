@@ -1,5 +1,8 @@
 'use client';
 
+import { TriangleAlert } from 'lucide-react';
+import { NamedIcon } from '@/components/ui/named-icon';
+
 // ============================================================
 // ALO EDUCATION — SUPER ADMIN OPERATING DASHBOARD
 //
@@ -144,7 +147,7 @@ function ReasonDialog({ request, onClose }: { request: ReasonRequest | null; onC
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-lg rounded-2xl border bg-white p-5 shadow-xl" style={{ borderColor: TOKENS.border }}>
         <h3 className="text-base font-semibold" style={{ color: TOKENS.text }}>{request.title}</h3>
-        <p className="mt-1 text-xs leading-relaxed text-slate-500">{request.description}</p>
+        <p className="mt-1 text-xs leading-relaxed text-[var(--alo-text-muted)]">{request.description}</p>
         <label className="mt-4 block text-xs font-semibold" style={{ color: TOKENS.text }} htmlFor="reason-input">
           Reason (recorded in the audit log, minimum 8 characters)
         </label>
@@ -202,11 +205,9 @@ async function mutate(url: string, method: 'POST' | 'PATCH', body: unknown): Pro
 
 // ── KPI card ────────────────────────────────────────────────
 
-const KPI_ICON: Record<string, string> = {
-  GraduationCap: '🎓', Users: '👥', FileText: '📄', Handshake: '🤝', UserCog: '🧑‍💼',
-  Target: '🎯', Megaphone: '📣', Plane: '✈️', Languages: '🗣️', Wallet: '💰',
-  CalendarCheck: '🗓️', Bot: '🤖',
-};
+// Master §10: KPI glyphs come from Lucide, not emoji. The keys are already
+// Lucide export names, so the map just resolves them directly (with the same
+// `•` fallback for an unknown key).
 
 function KpiTile({ card }: { card: KpiCard }) {
   const tone = card.status === 'critical' ? TOKENS.danger
@@ -223,12 +224,12 @@ function KpiTile({ card }: { card: KpiCard }) {
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">{card.label}</p>
+          <p className="truncate text-xs font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">{card.label}</p>
           <p className="mt-1 text-2xl font-bold tabular-nums" style={{ color: TOKENS.text }}>
             {card.available && card.value !== null ? card.value.toLocaleString() : '—'}
           </p>
         </div>
-        <span className="text-xl" aria-hidden="true">{KPI_ICON[card.icon] || '•'}</span>
+        <NamedIcon name={card.icon} className="size-5" />
       </div>
 
       <div className="mt-2">
@@ -239,7 +240,7 @@ function KpiTile({ card }: { card: KpiCard }) {
                 <Metric key={sub.label} label={sub.label} value={sub.value ?? '—'} tone={sub.tone} />
               ))}
             </div>
-          ) : <p className="text-xs text-slate-400">No breakdown available.</p>
+          ) : <p className="text-xs text-[var(--alo-text-muted)]">No breakdown available.</p>
         ) : (
           <p className="text-xs" style={{ color: '#94A3B8' }}>{unavailableText(card.unavailableReason)}</p>
         )}
@@ -524,8 +525,8 @@ export default function SuperAdminOperatingDashboard() {
               </div>
             ) : null}
             {metrics.data?.warnings?.length ? (
-              <ul className="mt-3 space-y-1 rounded-lg border border-dashed p-2 text-[11px] text-slate-500" style={{ borderColor: TOKENS.border }}>
-                {metrics.data.warnings.map((warning) => <li key={warning}>⚠ {warning}</li>)}
+              <ul className="mt-3 space-y-1 rounded-lg border border-dashed p-2 text-[11px] text-[var(--alo-text-muted)]" style={{ borderColor: TOKENS.border }}>
+                {metrics.data.warnings.map((warning) => <li key={warning} className="flex items-start gap-1.5"><TriangleAlert className="mt-0.5 size-3.5 shrink-0" />{warning}</li>)}
               </ul>
             ) : null}
           </header>
@@ -593,7 +594,7 @@ export default function SuperAdminOperatingDashboard() {
           <div className="col-span-12">
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-base font-semibold sm:text-lg">Business overview</h2>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-[var(--alo-text-muted)]">
                 {metrics.data ? `Generated ${new Date(metrics.data.generatedAt).toLocaleTimeString()}` : 'Loading…'}
               </span>
             </div>
@@ -641,7 +642,7 @@ export default function SuperAdminOperatingDashboard() {
                     <thead>
                       <tr className="border-b" style={{ borderColor: TOKENS.border }}>
                         {['Employee', 'Role / Department', 'Branch', 'Status', 'Sessions', 'Tasks', 'Last login', 'Actions'].map((heading) => (
-                          <th key={heading} className="px-2 py-2 font-semibold text-slate-500">{heading}</th>
+                          <th key={heading} className="px-2 py-2 font-semibold text-[var(--alo-text-muted)]">{heading}</th>
                         ))}
                       </tr>
                     </thead>
@@ -650,14 +651,14 @@ export default function SuperAdminOperatingDashboard() {
                         <tr key={row.id} className="border-b align-top" style={{ borderColor: TOKENS.border }}>
                           <td className="px-2 py-2">
                             <p className="font-semibold">{row.name}</p>
-                            <p className="text-[11px] text-slate-500">{row.employeeId} · {row.email}</p>
+                            <p className="text-[11px] text-[var(--alo-text-muted)]">{row.employeeId} · {row.email}</p>
                             {row.assignedRoles.length === 0 ? (
                               <StatusPill tone="warning">no RBAC role</StatusPill>
                             ) : null}
                           </td>
                           <td className="px-2 py-2">
                             <p className="font-medium">{row.role}</p>
-                            <p className="text-[11px] text-slate-500">{row.department || '—'}</p>
+                            <p className="text-[11px] text-[var(--alo-text-muted)]">{row.department || '—'}</p>
                           </td>
                           <td className="px-2 py-2">{row.branch || '—'}</td>
                           <td className="px-2 py-2">
@@ -668,7 +669,7 @@ export default function SuperAdminOperatingDashboard() {
                           </td>
                           <td className="px-2 py-2 tabular-nums">{row.activeSessions}</td>
                           <td className="px-2 py-2 tabular-nums">{row.openTasks}</td>
-                          <td className="px-2 py-2 text-[11px] text-slate-500">
+                          <td className="px-2 py-2 text-[11px] text-[var(--alo-text-muted)]">
                             {row.lastLoginAt ? new Date(row.lastLoginAt).toLocaleString() : 'Never'}
                           </td>
                           <td className="px-2 py-2">
@@ -703,7 +704,7 @@ export default function SuperAdminOperatingDashboard() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{row.name}</p>
-                          <p className="text-[11px] text-slate-500">{row.employeeId} · {row.role}</p>
+                          <p className="text-[11px] text-[var(--alo-text-muted)]">{row.employeeId} · {row.role}</p>
                         </div>
                         <StatusPill tone={row.status.toLowerCase() === 'active' ? 'ok' : 'attention'}>{row.status}</StatusPill>
                       </div>
@@ -737,7 +738,7 @@ export default function SuperAdminOperatingDashboard() {
                 <div key={launcher.name} className="flex min-h-[112px] flex-col justify-between rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
                   <div>
                     <p className="text-sm font-semibold">{launcher.name}</p>
-                    <p className="mt-0.5 text-[11px] text-slate-500">{launcher.role}</p>
+                    <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">{launcher.role}</p>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1">
                     <Link
@@ -776,7 +777,7 @@ export default function SuperAdminOperatingDashboard() {
                   <thead>
                     <tr className="border-b" style={{ borderColor: TOKENS.border }}>
                       {['Role', 'Permissions', 'Users', 'Modules', 'Grant a group'].map((heading) => (
-                        <th key={heading} className="px-2 py-2 font-semibold text-slate-500">{heading}</th>
+                        <th key={heading} className="px-2 py-2 font-semibold text-[var(--alo-text-muted)]">{heading}</th>
                       ))}
                     </tr>
                   </thead>
@@ -784,11 +785,11 @@ export default function SuperAdminOperatingDashboard() {
                     {roles.data.roles.map((role) => (
                       <tr key={role.id} className="border-b" style={{ borderColor: TOKENS.border }}>
                         <td className="px-2 py-1.5 font-semibold">{role.label}
-                          {role.isSystem ? <span className="ml-1 text-[10px] text-slate-400">system</span> : null}
+                          {role.isSystem ? <span className="ml-1 text-[11px] text-[var(--alo-text-muted)]">system</span> : null}
                         </td>
                         <td className="px-2 py-1.5 tabular-nums">{role.permissionCount}</td>
                         <td className="px-2 py-1.5 tabular-nums">{role.userCount}</td>
-                        <td className="px-2 py-1.5 text-[11px] text-slate-500">{role.modules.slice(0, 4).join(', ') || '—'}</td>
+                        <td className="px-2 py-1.5 text-[11px] text-[var(--alo-text-muted)]">{role.modules.slice(0, 4).join(', ') || '—'}</td>
                         <td className="px-2 py-1.5">
                           <div className="flex flex-wrap gap-1">
                             {(groups.data?.groups || []).slice(0, 3).map((group) => (
@@ -815,7 +816,7 @@ export default function SuperAdminOperatingDashboard() {
                   <div key={group.key} className="rounded-lg border p-2" style={{ borderColor: TOKENS.border }}>
                     <p className="truncate text-[11px] font-semibold" title={group.name}>{group.name}</p>
                     <div className="mt-1 flex items-center justify-between">
-                      <span className="text-[10px] text-slate-500">{group.permissionCount} perms</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)]">{group.permissionCount} perms</span>
                       <span
                         className="h-1.5 w-1.5 rounded-full"
                         title={`risk: ${group.riskLevel}`}
@@ -851,14 +852,14 @@ export default function SuperAdminOperatingDashboard() {
                       <thead>
                         <tr className="border-b" style={{ borderColor: TOKENS.border }}>
                           {['Branch', 'City', 'Employees', 'Leads', 'Status'].map((heading) => (
-                            <th key={heading} className="px-2 py-2 font-semibold text-slate-500">{heading}</th>
+                            <th key={heading} className="px-2 py-2 font-semibold text-[var(--alo-text-muted)]">{heading}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {branches.data.branches.map((branch) => (
                           <tr key={branch.id} className="border-b" style={{ borderColor: TOKENS.border }}>
-                            <td className="px-2 py-1.5 font-semibold">{branch.name}<span className="ml-1 text-[10px] text-slate-400">{branch.code}</span></td>
+                            <td className="px-2 py-1.5 font-semibold">{branch.name}<span className="ml-1 text-[11px] text-[var(--alo-text-muted)]">{branch.code}</span></td>
                             <td className="px-2 py-1.5">{branch.city || '—'}</td>
                             <td className="px-2 py-1.5 tabular-nums">{branch.employees}</td>
                             <td className="px-2 py-1.5 tabular-nums">{branch.activeLeads}</td>
@@ -870,7 +871,7 @@ export default function SuperAdminOperatingDashboard() {
                   </div>
                 ) : null}
                 {branches.data?.notes?.length ? (
-                  <ul className="mt-2 space-y-1 text-[11px] text-slate-500">
+                  <ul className="mt-2 space-y-1 text-[11px] text-[var(--alo-text-muted)]">
                     {branches.data.notes.map((note) => <li key={note}>• {note}</li>)}
                   </ul>
                 ) : null}
@@ -893,7 +894,7 @@ export default function SuperAdminOperatingDashboard() {
                       <thead>
                         <tr className="border-b" style={{ borderColor: TOKENS.border }}>
                           {['Country', 'Leads', 'Applications', 'Visa cases', 'High risk', 'Readiness'].map((heading) => (
-                            <th key={heading} className="px-2 py-2 font-semibold text-slate-500">{heading}</th>
+                            <th key={heading} className="px-2 py-2 font-semibold text-[var(--alo-text-muted)]">{heading}</th>
                           ))}
                         </tr>
                       </thead>
@@ -939,7 +940,7 @@ export default function SuperAdminOperatingDashboard() {
                           {row.priority}
                         </StatusPill>
                       </div>
-                      <p className="mt-1 text-[11px] text-slate-500">{row.type} · {row.requestedByName}</p>
+                      <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">{row.type} · {row.requestedByName}</p>
                       <div className="mt-2 flex flex-wrap gap-1">
                         <ActionButton variant="primary" onClick={() => decide(row, 'approve')}>Approve</ActionButton>
                         <ActionButton variant="danger" onClick={() => decide(row, 'reject')}>Reject</ActionButton>
@@ -969,7 +970,7 @@ export default function SuperAdminOperatingDashboard() {
                       <Metric label="Suspended accounts" value={security.data.summary.suspendedAccounts ?? '—'} />
                     </div>
                     {security.data.events.length === 0 ? (
-                      <p className="mt-2 text-[11px] text-slate-500">No unresolved security events.</p>
+                      <p className="mt-2 text-[11px] text-[var(--alo-text-muted)]">No unresolved security events.</p>
                     ) : (
                       <ul className="mt-2 space-y-1">
                         {security.data.events.slice(0, 4).map((event) => (
@@ -1009,8 +1010,8 @@ export default function SuperAdminOperatingDashboard() {
                   <Metric label="Running jobs" value={agents.data.runningJobs} />
                 </div>
                 {agents.data.warnings.length ? (
-                  <ul className="mt-2 space-y-1 text-[11px] text-slate-500">
-                    {agents.data.warnings.map((warning) => <li key={warning}>⚠ {warning}</li>)}
+                  <ul className="mt-2 space-y-1 text-[11px] text-[var(--alo-text-muted)]">
+                    {agents.data.warnings.map((warning) => <li key={warning} className="flex items-start gap-1.5"><TriangleAlert className="mt-0.5 size-3.5 shrink-0" />{warning}</li>)}
                   </ul>
                 ) : null}
               </>
@@ -1029,10 +1030,10 @@ export default function SuperAdminOperatingDashboard() {
                   {agents.data.departments.slice(0, 16).map((department) => (
                     <div key={department.key} className="rounded-lg border p-2" style={{ borderColor: TOKENS.border }}>
                       <p className="truncate text-[11px] font-semibold" title={department.name}>{department.name}</p>
-                      <p className="mt-0.5 text-[10px] text-slate-500">
+                      <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">
                         {department.persistedAgents}/{department.logicalAgents} live
                       </p>
-                      <p className="text-[10px]" style={{ color: department.failed ? TOKENS.danger : TOKENS.success }}>
+                      <p className="text-[11px]" style={{ color: department.failed ? TOKENS.danger : TOKENS.success }}>
                         {department.failed ? `${department.failed} failed` : 'healthy'}
                       </p>
                     </div>
@@ -1073,9 +1074,9 @@ export default function SuperAdminOperatingDashboard() {
               <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-5">
                 {Object.entries(searchResults).map(([group, rows]) => (
                   <div key={group} className="rounded-lg border p-2" style={{ borderColor: TOKENS.border }}>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{group}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">{group}</p>
                     <p className="mt-1 text-lg font-bold tabular-nums">{rows.length}</p>
-                    {rows.length === 0 ? <p className="text-[10px] text-slate-400">no matches</p> : null}
+                    {rows.length === 0 ? <p className="text-[11px] text-[var(--alo-text-muted)]">no matches</p> : null}
                   </div>
                 ))}
               </div>
@@ -1117,7 +1118,7 @@ export default function SuperAdminOperatingDashboard() {
                         style={{ borderColor: TOKENS.border }}
                       />
                     )}
-                    <span className="mt-1 block truncate text-[10px] text-slate-400">{row.key}</span>
+                    <span className="mt-1 block truncate text-[11px] text-[var(--alo-text-muted)]">{row.key}</span>
                   </label>
                 ))}
               </div>
@@ -1142,20 +1143,20 @@ export default function SuperAdminOperatingDashboard() {
                   <thead>
                     <tr className="border-b" style={{ borderColor: TOKENS.border }}>
                       {['When', 'Action', 'Actor', 'Resource'].map((heading) => (
-                        <th key={heading} className="px-2 py-2 font-semibold text-slate-500">{heading}</th>
+                        <th key={heading} className="px-2 py-2 font-semibold text-[var(--alo-text-muted)]">{heading}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {audit.data.logs.map((log) => (
                       <tr key={log.id} className="border-b" style={{ borderColor: TOKENS.border }}>
-                        <td className="whitespace-nowrap px-2 py-1.5 text-slate-500">{new Date(log.createdAt).toLocaleString()}</td>
+                        <td className="whitespace-nowrap px-2 py-1.5 text-[var(--alo-text-muted)]">{new Date(log.createdAt).toLocaleString()}</td>
                         <td className="px-2 py-1.5 font-semibold">{log.action}</td>
                         <td className="px-2 py-1.5">
                           {log.actorRole || 'SUPER_ADMIN'}
                           {log.actingAsRole ? <StatusPill tone="attention">acting-as</StatusPill> : null}
                         </td>
-                        <td className="px-2 py-1.5 text-slate-500">{log.resource}{log.resourceId ? ` · ${log.resourceId.slice(0, 12)}` : ''}</td>
+                        <td className="px-2 py-1.5 text-[var(--alo-text-muted)]">{log.resource}{log.resourceId ? ` · ${log.resourceId.slice(0, 12)}` : ''}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1164,9 +1165,10 @@ export default function SuperAdminOperatingDashboard() {
             ) : null}
           </Section>
 
-          <footer className="col-span-12 pb-6 text-center text-[11px] text-slate-400">
+          {/* In-grid footnote, not a page footer landmark — the app renders one public footer and one portal footer. */}
+          <div className="col-span-12 pb-6 text-center text-[11px] text-[var(--alo-text-muted)]">
             ALO Education · Super Admin Operating Dashboard · every figure on this page is read from the database.
-          </footer>
+          </div>
         </div>
       </div>
 

@@ -55,7 +55,7 @@ export default function AIVideoStudioView() {
             <div><label className="text-xs font-semibold">Language Voice</label><Select value={language} onValueChange={setLanguage}><SelectTrigger className="mt-1 h-9"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="bangla">Bangla</SelectItem><SelectItem value="english">English</SelectItem><SelectItem value="mixed">Mixed</SelectItem></SelectContent></Select></div>
             <div><label className="text-xs font-semibold">Duration (sec)</label><Input type="number" value={duration} onChange={e=>setDuration(parseInt(e.target.value)||30)} className="mt-1 h-9 w-24" /></div>
           </div>
-          <Button onClick={handleScript} disabled={loading || !title.trim()} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate Script</Button>
+          <Button onClick={handleScript} disabled={loading || !title.trim()} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate Script</Button>
           <div className="flex gap-2 text-[11px]">
             <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]">Aspect: {aspect}</Badge>
             <Badge className="bg-[var(--alo-cta-accent)]/20 text-[var(--alo-text)]">Brand overlay: ALO Orange</Badge>

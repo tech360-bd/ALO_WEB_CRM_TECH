@@ -58,7 +58,7 @@ export default function StudentVisaChecklist() {
           title="Visa Document Checklist"
           description="Every document your visa file needs, grouped by category."
           action={
-            <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
+            <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]">
               <Link href="/student/documents">
                 <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
                 Upload Documents

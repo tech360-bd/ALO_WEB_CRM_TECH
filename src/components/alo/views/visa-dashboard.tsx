@@ -468,7 +468,7 @@ export function VisaDashboard() {
                               </Button>
                               <Button
  size="sm"
- className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
  onClick={() => openStageDialog(c)}
                               >
                                 Update
@@ -776,7 +776,7 @@ export function VisaDashboard() {
               Cancel
             </Button>
             <Button
- className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
  onClick={saveStage}
  disabled={savingStage || !stageValue}
  >
@@ -928,7 +928,7 @@ export function VisaDashboard() {
               Schedule Interview
             </Button>
             <Button
- className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
  onClick={() => {
                 if (detailsCase) {
                   setStageDialogCase(detailsCase);

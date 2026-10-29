@@ -94,15 +94,15 @@ export function ImageCard({ image, imageAlt, title, description, ctaLabel, onCta
 }) {
   return (
     <AloCardBase onClick={onClick} className={className}>
+      {/* Master §09 image card: the photograph keeps its own contrast — the
+          title sits underneath in the white information area, never on top of
+          a dark scrim. */}
       <div className="relative h-48 overflow-hidden bg-[var(--alo-gray-light)]">
         <img src={image} alt={imageAlt} className="alo-card-img size-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-3 left-4 right-4">
-          <h3 className="text-lg font-bold text-white drop-shadow-md">{title}</h3>
-        </div>
       </div>
       <CardContent className="p-5">
-        {description && <p className="text-sm text-[var(--alo-text-secondary)]">{description}</p>}
+        <h3 className="text-lg font-bold text-[var(--alo-text)]">{title}</h3>
+        {description && <p className="mt-1 text-sm text-[var(--alo-text-secondary)]">{description}</p>}
         {ctaLabel && (
           <Button variant="alo" size="sm" className="alo-card-cta mt-3 w-full" onClick={onCta}>
             {ctaLabel}
@@ -287,22 +287,25 @@ export function CountryCard({ name, flag, image, universityCount, courseCount, p
 }) {
   return (
     <AloCardBase onClick={onView} accent className={className}>
+      {/* Master §09 image card: photograph on top, name + metadata in the
+          white information area. No dark scrim, no text over photography. */}
       <div className="relative h-40 overflow-hidden bg-[var(--alo-gray-light)]">
         {image ? (
           <img src={image} alt={`${name} — study abroad destination`} className="alo-card-img size-full object-cover" loading="lazy" />
         ) : (
-          <div className="flex size-full items-center justify-center bg-alo-gradient">
-            <span className="text-5xl">{flag || "🌍"}</span>
+          <div className="flex size-full items-center justify-center bg-[var(--alo-brand-pale)]">
+            <Icon name="Globe" className="size-10 text-[var(--alo-brand)]" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        {flag && <span className="absolute left-3 top-3 text-3xl drop-shadow-lg">{flag}</span>}
-        <div className="absolute bottom-2 left-3 right-3">
-          <h3 className="text-lg font-black text-white drop-shadow-md">{name}</h3>
-        </div>
+        {flag && (
+          <span className="absolute left-3 top-3 rounded-lg border border-[var(--alo-border)] bg-white/95 px-2 py-0.5 text-base leading-none">
+            {flag}
+          </span>
+        )}
       </div>
       <CardContent className="p-4">
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <h3 className="text-base font-bold text-[var(--alo-text)]">{name}</h3>
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
           {universityCount !== undefined && (
             <div className="rounded-lg bg-[var(--alo-gray-light)] p-2">
               <p className="caption-text">Universities</p>

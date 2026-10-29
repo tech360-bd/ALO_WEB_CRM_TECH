@@ -151,7 +151,7 @@ export default function ResourcesHubPage() {
             <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
             <p className="text-sm text-[var(--alo-brand-pale)] mb-6">Research first, act with confidence — ALO is your execution and support layer.</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Request Consultation</Button></Link>
+              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Request Consultation</Button></Link>
               <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Courses</Button></Link>
               <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
             </div>

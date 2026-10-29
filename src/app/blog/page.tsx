@@ -41,7 +41,7 @@ export default function BlogPage() {
                 key={category} 
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   category === 'All' 
-                    ? 'bg-[var(--alo-cta)] text-black'
+                    ? 'bg-[var(--alo-cta)] text-white'
                     : 'bg-white text-[var(--alo-body)] hover:bg-gray-200 border border-[var(--alo-border)]'
                 }`}
               >

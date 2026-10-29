@@ -9,10 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* PRIMARY ACTION — ALO Orange #F37021 (hover #C93D13, active #C93D13); black text for contrast. */
+        /* PRIMARY ACTION (Master §07) — solid fill is the accessible Deep
+           Orange #C93D13 / #9E300B (5.05:1 and 7.29:1 with white text). The
+           vivid CTA Orange #E8501A is only 3.75:1 against white, so it is used
+           for accents and rules, never as a label background. */
         default:
-          "bg-alo-cta text-black shadow-sm hover:bg-alo-cta-hover hover:text-white active:bg-alo-cta-active active:text-white",
-        /* Information / navigation / system actions — ALO Blue #0066CC */
+          "bg-alo-cta-solid text-white shadow-sm hover:bg-alo-cta-solid-hover active:bg-alo-cta-solid-hover",
+        /* Information / navigation / system actions — ALO Brand Blue #0057B8 */
         brand:
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
         /* Legacy alias of `brand` — kept so existing call sites stay valid. */
@@ -20,7 +23,7 @@ const buttonVariants = cva(
           "bg-alo-brand text-white shadow-sm hover:bg-alo-brand-hover active:bg-alo-brand-hover",
         /* Legacy alias of `default` (orange primary). */
         cta:
-          "bg-alo-cta text-black shadow-sm hover:bg-alo-cta-hover hover:text-white active:bg-alo-cta-active active:text-white",
+          "bg-alo-cta-solid text-white shadow-sm hover:bg-alo-cta-solid-hover active:bg-alo-cta-solid-hover",
         /* SECONDARY (Master §07) — white, blue text, blue-tint border, pale-blue hover */
         outline:
           "border border-alo-brand-border bg-white text-alo-brand shadow-sm hover:bg-alo-brand-light dark:bg-card dark:text-foreground dark:hover:bg-secondary",
@@ -45,9 +48,9 @@ const buttonVariants = cva(
         /* Brand outline (blue information action) */
         "brand-outline":
           "border border-alo-brand text-alo-brand bg-white hover:bg-alo-brand-light",
-        /* CTA outline (orange secondary primary) */
+        /* CTA outline (orange secondary action) */
         "cta-outline":
-          "border border-alo-cta text-alo-cta-active bg-white hover:bg-alo-cta-soft",
+          "border border-alo-cta-solid text-alo-cta-solid bg-white hover:bg-alo-cta-soft",
       },
       size: {
         /* Master §07: ALL buttons are at least 48px tall (touch-safe).

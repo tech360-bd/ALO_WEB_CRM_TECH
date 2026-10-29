@@ -100,11 +100,11 @@ export default function WhatsAppNumbersAdminPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+    <div className="p-6 space-y-6 bg-[var(--alo-page)] min-h-screen text-[var(--alo-text)]">
+      <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center">
-            <Phone className="w-5 h-5 text-white" />
+            <Phone className="w-5 h-5 text-[var(--alo-text)]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">WhatsApp Sender Registry</h1>
@@ -113,11 +113,11 @@ export default function WhatsAppNumbersAdminPage() {
         </div>
         <div className="flex gap-2">
           {stats && stats.total < stats.expected && (
-            <Button onClick={initializePool} disabled={initializing} variant="outline" className="border-amber-500/30 text-amber-200">
+            <Button onClick={initializePool} disabled={initializing} variant="outline" className="border-crm-warning-border text-amber-200">
               {initializing ? 'Initializing…' : 'Initialize configured sender records'}
             </Button>
           )}
-          <Button onClick={fetchNumbers} variant="outline" className="border-white/10">
+          <Button onClick={fetchNumbers} variant="outline" className="border-[var(--alo-border)]">
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
         </div>
@@ -125,40 +125,40 @@ export default function WhatsAppNumbersAdminPage() {
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Registry / Configured</p><p className="text-xl font-bold">{stats.total} / {stats.expected}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Connected</p><p className="text-xl font-bold text-emerald-400">{stats.connected}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Disconnected</p><p className="text-xl font-bold text-amber-400">{stats.disconnected}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Employee Pool</p><p className="text-xl font-bold">{stats.employeePool}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Registry / Configured</p><p className="text-xl font-bold">{stats.total} / {stats.expected}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Connected</p><p className="text-xl font-bold text-crm-success-text">{stats.connected}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Disconnected</p><p className="text-xl font-bold text-crm-warning-text">{stats.disconnected}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Employee Pool</p><p className="text-xl font-bold">{stats.employeePool}</p></CardContent></Card>
         </div>
       )}
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardHeader><CardTitle className="text-sm">Number Management (Auditable)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {loading ? <p className="text-sm text-[var(--alo-text-muted)]">Loading...</p> : numbers.length === 0 ? (
             <p className="text-sm text-[var(--alo-text-muted)]">No sender numbers are configured. Add owner-confirmed values to the deployment environment, then initialize disconnected registry records.</p>
           ) : numbers.map((num) => (
-            <div key={num.id} className="grid grid-cols-12 gap-2 items-center p-3 rounded-lg bg-white/5 border border-white/10">
+            <div key={num.id} className="grid grid-cols-12 gap-2 items-center p-3 rounded-lg bg-[var(--alo-surface-muted)] border border-[var(--alo-border)]">
               <div className="col-span-2">
                 <p className="font-mono text-sm font-bold">{num.phoneNumber}</p>
                 <p className="text-[11px] text-[var(--alo-text-muted)]">{num.normalizedPhone}</p>
               </div>
-              <div className="col-span-2"><Input value={num.displayName} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, displayName: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" /></div>
-              <div className="col-span-2"><Input value={num.ownerType} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, ownerType: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="ALO_MAIN/COO/EMPLOYEE" /></div>
-              <div className="col-span-1"><Input value={num.employeeOwnerIdDraft ?? num.employeeOwnerId ?? ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, employeeOwnerIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="Employee ID" title="Active employee database ID, user ID, or employee ID" /></div>
-              <div className="col-span-1"><Input value={num.branch} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, branch: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="Branch" /></div>
+              <div className="col-span-2"><Input value={num.displayName} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, displayName: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-page)] border-[var(--alo-border)]" /></div>
+              <div className="col-span-2"><Input value={num.ownerType} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, ownerType: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-page)] border-[var(--alo-border)]" placeholder="ALO_MAIN/COO/EMPLOYEE" /></div>
+              <div className="col-span-1"><Input value={num.employeeOwnerIdDraft ?? num.employeeOwnerId ?? ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, employeeOwnerIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-page)] border-[var(--alo-border)]" placeholder="Employee ID" title="Active employee database ID, user ID, or employee ID" /></div>
+              <div className="col-span-1"><Input value={num.branch} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, branch: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-page)] border-[var(--alo-border)]" placeholder="Branch" /></div>
               <div className="col-span-1">
-                <Input value={num.metaPhoneNumberIdDraft || ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, metaPhoneNumberIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder={num.metaPhoneNumberIdMasked ? `Configured ${num.metaPhoneNumberIdMasked} · enter replacement` : 'Meta ID (Super Admin)'} />
+                <Input value={num.metaPhoneNumberIdDraft || ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, metaPhoneNumberIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-page)] border-[var(--alo-border)]" placeholder={num.metaPhoneNumberIdMasked ? `Configured ${num.metaPhoneNumberIdMasked} · enter replacement` : 'Meta ID (Super Admin)'} />
               </div>
               <div className="col-span-1 flex flex-col gap-1">
-                <Badge className={num.connectionStatus === 'connected' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}>{num.connectionStatus === 'configured_unverified' ? 'CONFIGURED · UNVERIFIED' : String(num.connectionStatus || 'disconnected').toUpperCase()}</Badge>
-                {num.isDefaultSender && <Badge className="bg-blue-500/20 text-blue-300 text-[11px]">DEFAULT</Badge>}
-                {num.isSupport247 && <Badge className="bg-rose-500/20 text-rose-300 text-[11px]">24/7</Badge>}
-                <span className="text-[10px] text-[var(--alo-text-muted)]">{num.lastConnectionCheckAt ? `Checked ${new Date(num.lastConnectionCheckAt).toLocaleString()}` : 'Not checked'}</span>
+                <Badge className={num.connectionStatus === 'connected' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-warning-bg text-crm-warning-text'}>{num.connectionStatus === 'configured_unverified' ? 'CONFIGURED · UNVERIFIED' : String(num.connectionStatus || 'disconnected').toUpperCase()}</Badge>
+                {num.isDefaultSender && <Badge className="bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] text-[11px]">DEFAULT</Badge>}
+                {num.isSupport247 && <Badge className="bg-crm-danger-bg text-crm-danger-text text-[11px]">24/7</Badge>}
+                <span className="text-[11px] text-[var(--alo-text-muted)]">{num.lastConnectionCheckAt ? `Checked ${new Date(num.lastConnectionCheckAt).toLocaleString()}` : 'Not checked'}</span>
               </div>
               <div className="col-span-2 flex gap-1">
                 <Button size="sm" onClick={() => handleSave(num)} className="h-8"><Save className="w-3 h-3 mr-1" />Save</Button>
-                <Button size="sm" variant="outline" disabled={verifying === num.id || !num.metaConfigured} onClick={() => verifyConnection(num)} className="h-8 border-white/20 text-white">
+                <Button size="sm" variant="outline" disabled={verifying === num.id || !num.metaConfigured} onClick={() => verifyConnection(num)} className="h-8 border-[var(--alo-border)] text-[var(--alo-text)]">
                   <ShieldCheck className={`w-3 h-3 mr-1 ${verifying === num.id ? 'animate-pulse' : ''}`} />{verifying === num.id ? 'Checking…' : 'Verify'}
                 </Button>
               </div>
@@ -167,11 +167,11 @@ export default function WhatsAppNumbersAdminPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-[var(--alo-text)] border-amber-500/20 text-white">
+      <Card className="bg-[var(--alo-page)] border-crm-warning-border text-[var(--alo-text)]">
         <CardContent className="p-4 flex gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+          <AlertTriangle className="w-5 h-5 text-crm-warning-text shrink-0" />
           <div className="text-xs text-[var(--alo-placeholder)]">
-            <p className="font-bold text-amber-300">External Credential Blocker</p>
+            <p className="font-bold text-crm-warning-text">External Credential Blocker</p>
             <p>A saved phone_number_id or access token is configuration only—not proof of a working Cloud API connection. Connection status stays unverified until an authorized provider check succeeds. Never spoof numbers; use official Meta WhatsApp Cloud API only.</p>
             <p className="mt-1">If no recently verified configured sender is available, outbound sending must fail closed. No fallback number is assumed.</p>
           </div>

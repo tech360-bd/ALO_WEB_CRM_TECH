@@ -198,6 +198,9 @@
   --color-alo-info-border: var(--alo-info-border);
   --color-alo-cta: var(--alo-cta);
   --color-alo-cta-hover: var(--alo-cta-hover);
+  --color-alo-cta-vivid: var(--alo-cta-vivid);
+  --color-alo-cta-solid: var(--alo-cta-solid);
+  --color-alo-cta-solid-hover: var(--alo-cta-solid-hover);
   --color-alo-cta-active: var(--alo-cta-active);
   --color-alo-cta-accent: var(--alo-cta-accent);
   --color-alo-cta-light: var(--alo-cta-light);
@@ -268,12 +271,12 @@
          the exact master brand colours, so one token change re-skins every
          surface without a second competing palette. --- */
   --color-blue-500: #0284C7;
-  --color-blue-600: #0066CC;
+  --color-blue-600: #0057B8;
   --color-blue-700: #003F87;
   --color-blue-800: #003F87;
   --color-orange-50: #FFF1EA;
   --color-orange-100: #FFE8DD;
-  --color-orange-500: #F37021;
+  --color-orange-500: #E8501A;
   --color-orange-600: #C93D13;
   --color-orange-700: #C93D13;
   --color-green-500: #10B981;
@@ -293,7 +296,7 @@
   --color-purple-300: #93C5FD;
   --color-purple-400: #0284C7;
   --color-purple-500: #0284C7;
-  --color-purple-600: #0066CC;
+  --color-purple-600: #0057B8;
   --color-purple-700: #003F87;
   --color-purple-800: #003F87;
   --color-violet-50: #EFF6FF;
@@ -302,10 +305,10 @@
   --color-violet-300: #93C5FD;
   --color-violet-400: #0284C7;
   --color-violet-500: #0284C7;
-  --color-violet-600: #0066CC;
+  --color-violet-600: #0057B8;
   --color-violet-700: #003F87;
   --color-indigo-500: #0284C7;
-  --color-indigo-600: #0066CC;
+  --color-indigo-600: #0057B8;
   --color-indigo-700: #003F87;
 
   /* --- Typography scale (desktop) --- */
@@ -348,8 +351,8 @@
   --popover: #FFFFFF;
   --popover-foreground: #0F172A;
 
-  /* Primary (selected states, focus, links) — Education Blue #0066CC */
-  --primary: #0066CC;
+  /* Primary (selected states, focus, links) — Brand Blue #0057B8 */
+  --primary: #0057B8;
   --primary-foreground: #FFFFFF;
 
   /* Secondary / muted surfaces */
@@ -368,27 +371,41 @@
   /* Border & input */
   --border: #E2E8F0;
   --input: #CBD5E1;
-  --ring: #0066CC;
+  --ring: #0057B8;
 
   /* ── Brand ─────────────────────────────────────────────── */
   /* Neutral — text / structure */
   --alo-navy: #0F172A;
   --alo-navy-dark: #0F172A;
-  /* Blue — Education Blue #0066CC (navigation / information / links) */
-  --alo-brand: #0066CC;
+  /* Blue — Brand Blue #0057B8 (navigation / information / links) */
+  --alo-brand: #0057B8;
   --alo-brand-hover: #003F87;
   --alo-brand-deep: #003F87;
   --alo-brand-light: #EAF3FF;
   --alo-brand-border: #BFDBFE;
-  /* Orange — ALO Orange #F37021 (primary action) */
-  --alo-cta: #F37021;
-  --alo-cta-hover: #C93D13;
-  --alo-cta-active: #C93D13;
-  --alo-cta-accent: #FFB347;
+  /* Orange — CTA Orange #E8501A / Deep Orange #C93D13 (Master §03).
+     Master §07 requires white-on-orange to be contrast-checked first:
+       #E8501A + white = 3.75:1  → below the 4.5:1 floor for a 15–16px label
+       #C93D13 + white = 5.05:1  → passes AA
+       #9E300B + white = 7.29:1  → passes AA
+     So the *solid* CTA fill is the approved Deep Orange, and the vivid CTA
+     Orange is kept as the decorative accent (rules, rings, gradient ends,
+     icon tints) where only the 3:1 non-text threshold applies — exactly the
+     "darker accessible orange while retaining the approved brand palette"
+     escape hatch the master specifies. */
+  --alo-cta: #C93D13;           /* solid CTA fill + orange text (AA on white) */
+  --alo-cta-hover: #9E300B;
+  --alo-cta-active: #9E300B;
+  --alo-cta-vivid: #E8501A;     /* decorative accent only — never a label bg */
+  --alo-cta-solid: #C93D13;
+  --alo-cta-solid-hover: #9E300B;
+  /* Accent — Deep Orange #C93D13 (highlights, badge borders, focus accents).
+     It replaces the legacy "sunshine" yellow, which measured 1.9:1 on white
+     as a text and icon colour and is not part of the master palette. */
+  --alo-cta-accent: #C93D13;
   --alo-cta-light: #FFE8DD;
   --alo-cta-soft: #FFF1EA;
-  /* Accent — #FFB347 (highlights, badges, focus accents) */
-  --alo-accent: #FFB347;
+  --alo-accent: #E8501A;
   /* Green — success / WhatsApp */
   --alo-success: #10B981;
   --alo-success-dark: #047857;
@@ -421,25 +438,28 @@
   --crm-neutral-text: #475569;
   --crm-neutral-border: #E2E8F0;
   --alo-brand-pale: #F4F8FF;
-  --alo-body: #555555;
+  --alo-body: #334155;
   --alo-info: #0284C7;
   --alo-info-bg: #EFF6FF;
   --alo-info-text: #1D4ED8;
   --alo-info-border: #BFDBFE;
 
-  /* Neutrals — brand Neutral #000 / #555 */
+  /* Neutrals — Master §03 text hierarchy:
+     Main #0F172A · Body #334155 · Secondary #475569 (also §09 card body)
+     · Muted #64748B. #94A3B8 is reserved for non-text decoration only
+     (it is 2.6:1 on white and must never carry readable copy). */
   --alo-page: #F8FAFC;
   --alo-surface-muted: #F1F5F9;
-  --alo-text: #000000;
-  --alo-text-secondary: #555555;
+  --alo-text: #0F172A;
+  --alo-text-secondary: #475569;
   --alo-text-muted: #64748B;
   --alo-border: #E2E8F0;
   --alo-border-strong: #CBD5E1;
   --alo-placeholder: #64748B;
 
   /* Charts — max five series, no rainbow */
-  --chart-1: #0066CC;
-  --chart-2: #F37021;
+  --chart-1: #0057B8;
+  --chart-2: #E8501A;
   --chart-3: #10B981;
   --chart-4: #0284C7;
   --chart-5: #F59E0B;
@@ -447,12 +467,12 @@
   /* Sidebar (CRM / portals) */
   --sidebar: #FFFFFF;
   --sidebar-foreground: #0F172A;
-  --sidebar-primary: #0066CC;
+  --sidebar-primary: #0057B8;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #EAF3FF;
   --sidebar-accent-foreground: #003F87;
   --sidebar-border: #E2E8F0;
-  --sidebar-ring: #0066CC;
+  --sidebar-ring: #0057B8;
 }
 
 /* ============================================================
@@ -493,12 +513,18 @@
   --alo-brand-light: #10305A;
   --alo-brand-border: #1B4E8C;
   --alo-cta: #FF7A45;
-  --alo-cta-hover: #F37021;
-  --alo-cta-active: #C93D13;
-  --alo-cta-accent: #FFB347;
+  --alo-cta-hover: #FF9065;
+  --alo-cta-active: #FF7A45;
+  /* Dark mode: the solid CTA fill must clear 4.5:1 against WHITE text, so it
+     stays on the light side of the orange (contrast is measured against the
+     label, not the surface). */
+  --alo-cta-vivid: #FF7A45;
+  --alo-cta-solid: #C93D13;
+  --alo-cta-solid-hover: #E8501A;
+  --alo-cta-accent: #C93D13;
   --alo-cta-light: #431407;
   --alo-cta-soft: #2A1408;
-  --alo-accent: #FFB347;
+  --alo-accent: #FF7A45;
   --alo-success: #34D399;
   --alo-success-dark: #86EFAC;
   --alo-success-soft: #14532D;
@@ -761,12 +787,12 @@ html[lang="bn"] h4, html[lang="bn"] h5, html[lang="bn"] h6 {
    Older CRM components reference short semantic aliases. Each one is
    bound to the master token it was always meant to represent. */
 :root {
-  --alo-blue: var(--alo-brand);              /* #0066CC */
+  --alo-blue: var(--alo-brand);              /* #0057B8 */
   --alo-blue-soft: var(--alo-brand-light);   /* #EAF3FF */
   --alo-blue-strong: var(--alo-brand-deep);  /* #003F87 */
-  --alo-orange: var(--alo-cta);              /* #F37021 */
+  --alo-orange: var(--alo-cta);              /* #C93D13 accessible CTA */
   --alo-orange-soft: var(--alo-cta-soft);    /* #FFF1EA */
-  --alo-orange-strong: var(--alo-cta-hover); /* #C93D13 */
+  --alo-orange-strong: var(--alo-cta-hover); /* #9E300B */
   --alo-success-strong: var(--alo-success-dark);
   --alo-warning-strong: #92400E;
   --alo-danger: var(--alo-error);
@@ -1171,7 +1197,7 @@ summary:focus-visible {
   background-image: radial-gradient(120% 140% at 82% -10%, var(--alo-brand-light) 0%, transparent 62%);
 }
 .bg-alo-gradient-orange {
-  background-image: linear-gradient(90deg, var(--alo-cta) 0%, var(--alo-cta-accent) 100%);
+  background-image: linear-gradient(90deg, var(--alo-cta) 0%, var(--alo-cta-vivid) 100%);
 }
 
 /* Graduate-cap marquee used by the public footer */

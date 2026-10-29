@@ -175,7 +175,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
               All requirements verified against official university sources weekly.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
+              <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-alo-cta-solid px-6 text-white hover:bg-alo-cta-solid-hover">
                 <Icon name="UserCheck" className="size-4" />
                 Get Free Profile Assessment
               </Button>
@@ -346,21 +346,21 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
       </section>
 
       {/* CTA */}
-      <section className="bg-[var(--alo-text)]">
+      <section className="bg-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
-              <h2 className="text-3xl font-black text-white">Not sure if you qualify?</h2>
-              <p className="mt-3 text-base leading-relaxed text-white/80">
+              <h2 className="text-3xl font-black text-[var(--alo-text)]">Not sure if you qualify?</h2>
+              <p className="mt-3 text-base leading-relaxed text-[var(--alo-text-secondary)]">
                 Our free Profile Assessment reviews your academics, English scores, and budget against the entry
                 requirements of your target universities — giving you a clear chance-of-admission estimate.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
+                <Button onClick={() => onNavigate("public-services", "profile-assessment")} className="h-12 bg-alo-cta-solid px-6 text-white hover:bg-alo-cta-solid-hover">
                   <Icon name="UserCheck" className="size-4" />
                   Get Profile Assessment
                 </Button>
-                <Button onClick={() => onNavigate("public-course-finder")} variant="outline" className="h-12 border-white/30 bg-transparent px-6 text-white hover:bg-white/10">
+                <Button onClick={() => onNavigate("public-course-finder")} variant="outline" className="h-12 border-[var(--alo-border-strong)] bg-white px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                   <Icon name="Search" className="size-4" />
                   Find Courses
                 </Button>

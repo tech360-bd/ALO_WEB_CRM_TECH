@@ -340,11 +340,11 @@ export default function MarketingAutomationDashboard() {
             </div>
             {logoUploaded ? (
               <span className="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full border border-emerald-300">
-                ✓ Logo Configured
+                Logo Configured
               </span>
             ) : (
               <span className="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full border border-amber-300">
-                ⚠️ Logo Missing
+                Logo Missing
               </span>
             )}
           </div>

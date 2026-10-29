@@ -720,7 +720,7 @@ export function DocumentHub() {
             <Button
  onClick={submitUpload}
  disabled={uploadSaving}
- className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  >
               {uploadSaving ? (
                 <>

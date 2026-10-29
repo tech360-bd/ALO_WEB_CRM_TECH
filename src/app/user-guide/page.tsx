@@ -53,7 +53,7 @@ export default function UserGuidePage() {
             <p>Follow the deployment’s documented backup and restore process. This guide does not certify that a live backup or recovery test has run.</p>
           </div>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Link href="/book-consultation" className="inline-flex items-center justify-center rounded-xl bg-[var(--alo-cta)] px-5 py-2.5 text-sm font-bold text-black hover:brightness-110">Request Consultation</Link>
+            <Link href="/book-consultation" className="inline-flex items-center justify-center rounded-xl bg-[var(--alo-cta)] px-5 py-2.5 text-sm font-bold text-white hover:brightness-110">Request Consultation</Link>
             <Link href="/contact" className="inline-flex items-center justify-center rounded-xl border border-[var(--alo-brand)] px-5 py-2.5 text-sm font-bold text-[var(--alo-brand)]">Contact Support</Link>
           </div>
         </Card>

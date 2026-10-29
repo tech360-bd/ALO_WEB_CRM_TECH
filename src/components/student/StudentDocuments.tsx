@@ -317,7 +317,7 @@ function UploadDialog({
                   ? 'border-[var(--alo-cta-hover)] bg-[var(--alo-cta-soft)]/50'
                   : file
                     ? 'border-emerald-300 bg-emerald-50/30'
-                    : 'border-[var(--alo-text)]/15 bg-[var(--alo-text)]/[0.01] hover:border-[var(--alo-text)]/30 hover:bg-[var(--alo-text)]/[0.02]'
+                    : 'border-[var(--alo-text)]/15 bg-[var(--alo-page)]/[0.01] hover:border-[var(--alo-text)]/30 hover:bg-[var(--alo-page)]/[0.02]'
               )}
             >
               <input
@@ -416,7 +416,7 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
         {/* Top: icon + name + status */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
-            <div className="flex items-center justify-center size-10 rounded-lg bg-[var(--alo-text)]/5 border border-[var(--alo-text)]/10 shrink-0">
+            <div className="flex items-center justify-center size-10 rounded-lg bg-[var(--alo-page)]/5 border border-[var(--alo-text)]/10 shrink-0">
               <FileTypeIcon className="size-5 text-[var(--alo-text)]/40" />
             </div>
             <div className="min-w-0">
@@ -478,11 +478,11 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1 border-t border-border/40 mt-1">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-text)]/5 ">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-page)]/5 ">
             <Eye className="size-3.5" />
             View
           </Button>
-          <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-text)]/5 text-xs h-8">
+          <Button disabled={!doc.downloadUrl} onClick={() => doc.downloadUrl && window.location.assign(doc.downloadUrl)} variant="ghost" size="sm" className="gap-1.5 text-[var(--alo-text)]/60 hover:text-[var(--alo-text)] hover:bg-[var(--alo-page)]/5 text-xs h-8">
             <Download className="size-3.5" />
             Download
           </Button>
@@ -613,7 +613,7 @@ export default function StudentDocuments() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-[var(--alo-text)]">My Documents</h1>
-          <Badge className="bg-[var(--alo-text)] text-white hover:bg-[var(--alo-text)]/90 text-sm px-2.5">
+          <Badge className="bg-[var(--alo-page)] text-[var(--alo-text)] hover:bg-[var(--alo-page)]/90 text-sm px-2.5">
             {uploadedCount}
           </Badge>
         </div>
@@ -639,8 +639,8 @@ export default function StudentDocuments() {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs">
             <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><CheckCircle2 className="size-3 text-emerald-500" />{approvedCount} approved</span>
             <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><Clock className="size-3 text-[var(--alo-text-muted)]" />{pendingCount} pending</span>
-            <span className="inline-flex items-center gap-1.5 text-red-600"><XCircle className="size-3 text-red-400" />{rejectedCount} rejected</span>
-            {needsReviewCount > 0 && <span className="inline-flex items-center gap-1.5 text-amber-600"><AlertTriangle className="size-3 text-amber-400" />{needsReviewCount} needs review</span>}
+            <span className="inline-flex items-center gap-1.5 text-red-600"><XCircle className="size-3 text-crm-danger-text" />{rejectedCount} rejected</span>
+            {needsReviewCount > 0 && <span className="inline-flex items-center gap-1.5 text-amber-600"><AlertTriangle className="size-3 text-crm-warning-text" />{needsReviewCount} needs review</span>}
           </div>
         </CardContent>
       </Card>
@@ -659,7 +659,7 @@ export default function StudentDocuments() {
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors shrink-0',
                   isActive
-                    ? 'bg-[var(--alo-text)] text-white border-[var(--alo-text)]'
+                    ? 'bg-[var(--alo-page)] text-[var(--alo-text)] border-[var(--alo-text)]'
                     : 'bg-white text-[var(--alo-text)]/60 border-[var(--alo-text)]/10 hover:border-[var(--alo-text)]/25 hover:text-[var(--alo-text)]'
                 )}
               >
@@ -668,7 +668,7 @@ export default function StudentDocuments() {
                 <span
                   className={cn(
                     'ml-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold',
-                    isActive ? 'bg-white/20 text-white' : 'bg-[var(--alo-text)]/5 text-[var(--alo-text)]/40'
+                    isActive ? 'bg-[var(--alo-brand-light)] text-[var(--alo-text)]' : 'bg-[var(--alo-page)]/5 text-[var(--alo-text)]/40'
                   )}
                 >
                   {categoryCounts[cat] || 0}
@@ -709,7 +709,7 @@ export default function StudentDocuments() {
                   onClick={() => setViewMode('card')}
                   className={cn(
                     'flex items-center justify-center rounded-md p-1.5 transition-colors',
-                    viewMode === 'card' ? 'bg-[var(--alo-text)] text-white' : 'text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]/70'
+                    viewMode === 'card' ? 'bg-[var(--alo-page)] text-[var(--alo-text)]' : 'text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]/70'
                   )}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
@@ -718,7 +718,7 @@ export default function StudentDocuments() {
                   onClick={() => setViewMode('table')}
                   className={cn(
                     'flex items-center justify-center rounded-md p-1.5 transition-colors',
-                    viewMode === 'table' ? 'bg-[var(--alo-text)] text-white' : 'text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]/70'
+                    viewMode === 'table' ? 'bg-[var(--alo-page)] text-[var(--alo-text)]' : 'text-[var(--alo-text)]/40 hover:text-[var(--alo-text)]/70'
                   )}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
@@ -776,7 +776,7 @@ export default function StudentDocuments() {
                   <TableRow key={doc.id}>
                     <TableCell>
                       <div className="flex items-center gap-2.5">
-                        <div className="flex items-center justify-center size-8 rounded-md bg-[var(--alo-text)]/5 border border-[var(--alo-text)]/10 shrink-0">
+                        <div className="flex items-center justify-center size-8 rounded-md bg-[var(--alo-page)]/5 border border-[var(--alo-text)]/10 shrink-0">
                           {doc.fileType === 'PDF' ? (
                             <FileText className="size-4 text-[var(--alo-text)]/40" />
                           ) : (

@@ -15,9 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Activity, AlertTriangle, Bot, CheckCircle2, Cpu, Gauge, History, Play, RefreshCw, ShieldCheck, Workflow as WorkflowIcon, Wrench,
-} from 'lucide-react';
+import { Activity, AlertTriangle, Bot, CheckCircle2, Cpu, Gauge, History, Play, RefreshCw, ShieldCheck, TriangleAlert, Workflow as WorkflowIcon, Wrench } from 'lucide-react';
 
 type Json = Record<string, unknown>;
 
@@ -361,7 +359,7 @@ export default function AiWorkforceConsole() {
                 </tbody>
               </table>
               {((health?.notes as string[] | undefined) ?? []).map((note) => (
-                <p key={note} className="mt-2 text-xs text-amber-700">⚠ {note}</p>
+                <p key={note} className="mt-2 flex items-start gap-1.5 text-xs text-amber-700"><TriangleAlert className="mt-0.5 size-3 shrink-0" />{note}</p>
               ))}
               <Button
                 className="mt-3"

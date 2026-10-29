@@ -191,7 +191,7 @@ export default function PremiumStudentDashboard() {
             <div className="flex flex-wrap justify-center gap-3 mt-6">
               <Link href="/student/register"><Button className="bg-[var(--alo-brand)] text-white h-12 px-8 font-bold rounded-xl">Start Registration</Button></Link>
               <Link href="/student/login"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-8 rounded-xl">Student Login</Button></Link>
-              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black h-12 px-8 font-bold rounded-xl">Book Consultation</Button></Link>
+              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-white h-12 px-8 font-bold rounded-xl">Book Consultation</Button></Link>
             </div>
           </Card>
         </div>
@@ -242,7 +242,7 @@ export default function PremiumStudentDashboard() {
               <p className="text-sm text-[var(--alo-brand-pale)] mt-2 max-w-2xl leading-relaxed">{nextAction?.reason || 'No next action is currently available from your student record.'}</p>
             </div>
             <div className="flex flex-col gap-3 shrink-0">
-              <Link href={nextAction?.actionUrl || '/student/profile'}><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-md">{nextAction?.cta || 'Continue'} →</Button></Link>
+              <Link href={nextAction?.actionUrl || '/student/profile'}><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold rounded-xl shadow-md">{nextAction?.cta || 'Continue'} →</Button></Link>
               <Link href="/student/messages"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 rounded-xl ">Message ALO for help</Button></Link>
             </div>
           </div>

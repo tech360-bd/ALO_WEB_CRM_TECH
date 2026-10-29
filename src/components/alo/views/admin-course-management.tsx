@@ -665,7 +665,7 @@ export function AdminCourseManagement() {
             </Button>
             <Button
               onClick={openAddDialog}
-              className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+              className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
             >
               <Icon name="Plus" className="size-4" />
               Add Course
@@ -763,7 +763,7 @@ export function AdminCourseManagement() {
             <div className="flex flex-wrap justify-center gap-2">
               <Button
                 onClick={openAddDialog}
-                className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Plus" className="size-4" />
                 Add Course
@@ -1295,7 +1295,7 @@ export function AdminCourseManagement() {
                 </Button>
                 <Button
  onClick={submitForm}
- className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  disabled={saving}
  >
                   {saving ? (

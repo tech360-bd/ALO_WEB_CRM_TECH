@@ -1,12 +1,20 @@
 'use client';
 
 import Link from 'next/link';
+import * as LucideIcons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Calendar, ArrowRight, Mail } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NEWS_ARTICLES } from '@/lib/news-data';
+
+/** Resolves the per-category Lucide glyph with a single consistent fallback. */
+function NewsIcon({ name, className }: { name: string; className?: string }) {
+  const Cmp = (LucideIcons as unknown as Record<string, LucideIcon>)[name] ?? LucideIcons.Newspaper;
+  return <Cmp className={className} />;
+}
 
 export default function NewsListingPage() {
   return (
@@ -26,11 +34,13 @@ export default function NewsListingPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {NEWS_ARTICLES.map((article) => (
             <Card key={article.slug} className="flex flex-col overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 group">
-              <div className={`h-48 bg-gradient-to-br ${article.thumbnailColor} relative overflow-hidden flex items-center justify-center`}>
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                <h3 className="text-white font-bold text-xl px-6 text-center opacity-80 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-300">
-                  {article.category}
-                </h3>
+              {/* Master §09 image card: a controlled brand-tinted surface with
+                  one Lucide icon — no rainbow gradient, no dark scrim. */}
+              <div className={`flex h-48 flex-col items-center justify-center gap-3 border-b border-[var(--alo-border)] ${article.surface}`}>
+                <span className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+                  <NewsIcon name={article.icon} className="size-7" />
+                </span>
+                <p className="caption-text">{article.category}</p>
               </div>
               <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center justify-between mb-3">
@@ -78,7 +88,7 @@ export default function NewsListingPage() {
                   required
                 />
               </div>
-              <Button type="submit" className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black rounded-xl font-bold shrink-0 shadow-md">
+              <Button type="submit" className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white rounded-xl font-bold shrink-0 shadow-md">
                 Subscribe
               </Button>
             </form>

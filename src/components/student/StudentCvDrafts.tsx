@@ -136,7 +136,7 @@ export default function StudentCv() {
               </Button>
               <Button
  type="button"
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  onClick={() => setCreating((value) => !value)}
               >
                 {creating ? 'Cancel' : 'New Draft'}
@@ -182,7 +182,7 @@ export default function StudentCv() {
                 <Button
  type="submit"
  disabled={submitting}
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  >
                   {submitting ? 'Saving…' : 'Save Draft'}
                 </Button>
@@ -206,7 +206,7 @@ export default function StudentCv() {
               description="The CV Helper builds one from your education and experience, or you can start a blank draft here."
               action={
                 <div className="flex flex-wrap justify-center gap-2">
-                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]">
+                  <Button asChild className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]">
                     <Link href="/ai/cv-helper">Build CV with Helper</Link>
                   </Button>
                   <Button

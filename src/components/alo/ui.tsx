@@ -28,13 +28,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as LucideIcons from "lucide-react";
+import { NamedIcon } from "@/components/ui/named-icon";
 import { format, type Locale } from "date-fns";
 
+/** Re-exported from the single canonical resolver (Master §10). */
 export function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (LucideIcons as any)[name] as React.ComponentType<{ className?: string }>;
-  if (!Cmp) return <LucideIcons.Circle className={className} />;
-  return <Cmp className={className} />;
+  return <NamedIcon name={name} className={className} />;
 }
 
 /* ─── Accent color tokens (shared) ─── */

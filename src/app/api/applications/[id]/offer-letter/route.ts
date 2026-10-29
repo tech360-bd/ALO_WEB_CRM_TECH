@@ -92,9 +92,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     ],
     bodyHtml: `
       ${rows ? `<table class="amounts"><tbody>${rows}</tbody></table>` : ''}
-      <h2 style="font-size:13px;margin:16px 0 4px;color:#0066CC">Conditions of this offer</h2>
+      <h2 style="font-size:13px;margin:16px 0 4px;color:#0057B8">Conditions of this offer</h2>
       <p>${conditions ? escapeHtml(conditions) : 'No conditions have been recorded on this offer.'}</p>
-      ${offer.decisionNote ? `<h2 style="font-size:13px;margin:16px 0 4px;color:#0066CC">Decision note</h2><p>${escapeHtml(offer.decisionNote)}</p>` : ''}
+      ${offer.decisionNote ? `<h2 style="font-size:13px;margin:16px 0 4px;color:#0057B8">Decision note</h2><p>${escapeHtml(offer.decisionNote)}</p>` : ''}
       <p class="note">This letter restates the university&apos;s decision as recorded by ALO Education. The university&apos;s own offer document remains the authoritative record; where the two differ, the university document governs.</p>
     `,
   });

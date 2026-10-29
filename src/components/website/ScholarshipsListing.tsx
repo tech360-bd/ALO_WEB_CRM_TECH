@@ -117,7 +117,7 @@ export default function ScholarshipsListing() {
           <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--alo-text)] sm:text-[36px] lg:text-[42px] mb-4">Find Scholarships for Your Study Abroad Journey</h1>
           <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Request Consultation</Button></Link>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function ScholarshipsListing() {
           <h3 className="text-2xl font-bold mb-2">Ready to Start?</h3>
           <p className="text-sm text-[var(--alo-brand-pale)] mb-6">Never promise scholarship success — but a correct strategy and verified information improve your genuine chances.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
+            <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Matching Courses</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Request Consultation</Button></Link>
           </div>

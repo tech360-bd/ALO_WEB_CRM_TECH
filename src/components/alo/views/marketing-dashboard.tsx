@@ -1,4 +1,5 @@
 "use client";
+import { TriangleAlert } from 'lucide-react';
 
 import * as React from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -963,7 +964,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
               <Icon name="Plus" className="size-4" /> Add Keyword
             </Button>
           </DialogTrigger>
@@ -1045,7 +1046,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
             </div>
             <DialogFooter>
               <Button variant="outline" className="" onClick={() => setDialogOpen(false)}>Cancel</Button>
-              <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={saveTrigger}>
+              <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={saveTrigger}>
                 {saving ? "Saving..." : "Create Trigger"}
               </Button>
             </DialogFooter>
@@ -1256,7 +1257,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
           <div className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
             <div className="space-y-1.5"><Label>Idea / verified update *</Label><Input value={autoIdea} onChange={e=> setAutoIdea(e.target.value)} placeholder="Use an ALO-approved or official-source update; review claims before submission"/></div>
             <div className="space-y-1.5"><Label>Optional source image URL (HTTPS)</Label><Input value={autoImageUrl} onChange={e=> setAutoImageUrl(e.target.value)} placeholder="https://approved-cdn.example/brand-image.jpg"/></div>
-            <div className="flex items-end"><Button className=" bg-[var(--alo-cta)] text-black w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Creating drafts...":"Create Drafts & Prompts"}</Button></div>
+            <div className="flex items-end"><Button className=" bg-[var(--alo-cta)] text-white w-full md:w-auto" disabled={autoRunning} onClick={runAutoPipeline}><Icon name={autoRunning?"Loader2":"Wand2"} className={autoRunning?"size-4 animate-spin":"size-4"}/>{autoRunning?"Creating drafts...":"Create Drafts & Prompts"}</Button></div>
           </div>
           <p className="text-[11px] text-muted-foreground">Every generated item remains an internal draft. A Marketing Manager must review and approve it; no automatic indexing, posting, outreach, or lead assignment is claimed.</p>
         </CardContent>
@@ -1298,7 +1299,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
               <Icon name="Plus" className="size-4" /> Create Post
             </Button>
           </DialogTrigger>
@@ -1377,7 +1378,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
             </div>
             <DialogFooter>
               <Button variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
-              <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || logoMissing} onClick={createPost}>
+              <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving || logoMissing} onClick={createPost}>
                 {saving ? "Creating..." : "Create as Draft"}
               </Button>
             </DialogFooter>
@@ -1411,7 +1412,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                       <TableCell>
                         <p className="font-medium text-foreground line-clamp-1">{p.title}</p>
                         {tags.length > 0 && <p className="text-[11px] text-muted-foreground line-clamp-1">{tags.slice(0, 3).join(" ")}</p>}
-                        {p.rejectionReason && <p className="text-[11px] text-red-600 line-clamp-1">⚠ {p.rejectionReason}</p>}
+                        {p.rejectionReason && <p className="flex items-start gap-1 text-[11px] text-red-600 line-clamp-1"><TriangleAlert className="mt-0.5 size-3 shrink-0" />{p.rejectionReason}</p>}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="border-[var(--alo-border)]">{p.category.replace(/_/g, " ")}</Badge>
@@ -1454,7 +1455,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                               <Button size="sm" variant="outline" className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)]" onClick={() => { setScheduleTarget(p); setScheduleDate(""); }}>
                                 <Icon name="Calendar" className="size-3" /> Schedule
                               </Button>
-                              <Button size="sm" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={() => patchPost(p.id, "publish")}>
+                              <Button size="sm" className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={() => patchPost(p.id, "publish")}>
                                 <Icon name="Send" className="size-3" /> Publish
                               </Button>
                             </>
@@ -1648,7 +1649,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
               </div>
               <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
                 <DialogTrigger asChild>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
                     <Icon name="Upload" className="size-4" /> Upload Logo
                   </Button>
                 </DialogTrigger>
@@ -1671,7 +1672,7 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
                   </div>
                   <DialogFooter>
                     <Button variant="outline" className="" onClick={() => setUploadOpen(false)}>Cancel</Button>
-                    <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={uploadLogo}>
+                    <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={uploadLogo}>
                       {saving ? "Uploading..." : "Upload"}
                     </Button>
                   </DialogFooter>
@@ -2102,7 +2103,7 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+            <Button className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
               <Icon name="Plus" className="size-4" /> Add placeholder
             </Button>
           </DialogTrigger>
@@ -2132,7 +2133,7 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
             </div>
             <DialogFooter>
               <Button variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
-              <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={createWorkflowPlaceholder}>
+              <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={createWorkflowPlaceholder}>
                 {saving ? "Saving..." : "Save placeholder"}
               </Button>
             </DialogFooter>
@@ -2395,7 +2396,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
         action={
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={slotsRemaining === 0}>
+              <Button size="sm" className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={slotsRemaining === 0}>
                 <Icon name="UserPlus" className="size-3.5" /> Add Approved User
               </Button>
             </DialogTrigger>
@@ -2420,7 +2421,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
               </div>
               <DialogFooter>
                 <Button variant="outline" className="" onClick={() => setAddOpen(false)}>Cancel</Button>
-                <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={addUser}>
+                <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving} onClick={addUser}>
                   {saving ? "Granting..." : "Grant Access"}
                 </Button>
               </DialogFooter>
@@ -2571,7 +2572,7 @@ function LibraryRepostTab() {
                     <Button key={pl} size="sm" className=" bg-[var(--alo-brand)] text-white text-[11px]" onClick={()=> repost(p, pl)}><Icon name="Share2" className="size-3"/> Create {pl} Draft</Button>
                   ))}
                 </div>
-                <p className="text-[11px] text-muted-foreground">Brand: {p.brandAssetApplied? "✓ Applied":"—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
+                <p className="text-[11px] text-muted-foreground">Brand: {p.brandAssetApplied ? "Applied" : "—"} • {fmtDate(p.approvedAt||p.createdAt)}</p>
               </CardContent>
             </Card>
           ))}

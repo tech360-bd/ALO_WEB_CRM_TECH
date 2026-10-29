@@ -481,7 +481,7 @@ export function CsvImportCenter() {
                     <Button
                       onClick={parseAndPreview}
                       disabled={parsing}
-                      className="h-12 flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                      className="h-12 flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                     >
                       {parsing ? (
                         <>
@@ -559,7 +559,7 @@ export function CsvImportCenter() {
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3">
-                    <pre className="max-h-64 overflow-auto rounded-lg bg-[var(--alo-text)] p-3 font-mono text-[11px] leading-relaxed text-slate-100">
+                    <pre className="max-h-64 overflow-auto rounded-lg bg-[var(--alo-page)] p-3 font-mono text-[11px] leading-relaxed text-[var(--alo-text)]">
                       {SAMPLE_CSVS[importType] || "Select an import type first."}
                     </pre>
                     <Button

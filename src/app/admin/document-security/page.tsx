@@ -23,21 +23,21 @@ export default function DocumentSecurityPage() {
   useEffect(() => { fetchIncidents(); }, []);
 
   return (
-    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+    <div className="p-6 space-y-6 bg-[var(--alo-page)] min-h-screen text-[var(--alo-text)]">
+      <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-amber-600 flex items-center justify-center">
-            <ShieldAlert className="w-5 h-5 text-white" />
+            <ShieldAlert className="w-5 h-5 text-[var(--alo-text)]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">Document Security Incidents</h1>
             <p className="text-[var(--alo-text-muted)] text-sm">Private storage • Controlled download/view • Audit every access • Block unauthorized sharing</p>
           </div>
         </div>
-        <Button onClick={fetchIncidents} variant="outline" className="border-white/10"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
+        <Button onClick={fetchIncidents} variant="outline" className="border-[var(--alo-border)]"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
       </div>
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardHeader><CardTitle className="text-sm">Security Policy</CardTitle></CardHeader>
         <CardContent className="text-xs text-[var(--alo-placeholder)] space-y-2">
           <p><strong>Allowed Recipients:</strong> student's verified number, approved university/partner contact, official ALO contact, authorized employee, approved application recipient</p>
@@ -47,19 +47,19 @@ export default function DocumentSecurityPage() {
         </CardContent>
       </Card>
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardHeader><CardTitle className="text-sm">Incidents ({incidents.length})</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {incidents.map((inc) => (
-            <div key={inc.id} className="p-3 rounded-lg bg-white/5 border border-white/10 text-xs flex items-center justify-between">
+            <div key={inc.id} className="p-3 rounded-lg bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] text-xs flex items-center justify-between">
               <div>
                 <p className="font-bold">{inc.documentId} → {inc.recipient} ({inc.recipientType}) • {inc.action}</p>
                 <p className="text-[var(--alo-text-muted)]">{inc.reason} • By {inc.attemptedByName} ({inc.attemptedByRole}) • {new Date(inc.createdAt).toLocaleString()}</p>
               </div>
               <div className="flex gap-2">
-                <Badge className={inc.severity==='critical' ? 'bg-rose-500/20 text-rose-300' : inc.severity==='high' ? 'bg-[var(--alo-cta)]/20 text-orange-300' : 'bg-amber-500/20 text-amber-300'}>{inc.severity}</Badge>
-                <Badge className={inc.status==='blocked' ? 'bg-rose-500/20 text-rose-300' : 'bg-blue-500/20 text-blue-300'}>{inc.status}</Badge>
-                {inc.blocked && <Badge className="bg-rose-500/20 text-rose-300">BLOCKED</Badge>}
+                <Badge className={inc.severity==='critical' ? 'bg-crm-danger-bg text-crm-danger-text' : inc.severity==='high' ? 'bg-[var(--alo-cta)]/20 text-orange-300' : 'bg-crm-warning-bg text-crm-warning-text'}>{inc.severity}</Badge>
+                <Badge className={inc.status==='blocked' ? 'bg-crm-danger-bg text-crm-danger-text' : 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]'}>{inc.status}</Badge>
+                {inc.blocked && <Badge className="bg-crm-danger-bg text-crm-danger-text">BLOCKED</Badge>}
               </div>
             </div>
           ))}

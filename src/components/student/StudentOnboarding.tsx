@@ -255,7 +255,7 @@ export default function StudentOnboarding() {
                 <Button
  type="submit"
  disabled={saving}
- className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-black hover:bg-[var(--alo-cta)]"
+ className=" rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]"
  >
                   {saving ? 'Saving…' : 'Save My Details'}
                 </Button>

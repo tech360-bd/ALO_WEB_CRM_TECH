@@ -1549,7 +1549,7 @@ export function StudentProfileForm() {
               {form.hasPreviousVisa && (
                 <div className="mt-4 space-y-3">
                   {form.visaHistory.length === 0 ? (
-                    <EmptyState icon="Plane" title="No visa records added" description="Add each previous visa application, including refusals." action={<Button type="button" size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black " onClick={() => addList("visaHistory", emptyVisa)}><Icon name="Plus" className="size-4" />Add Visa Record</Button>} />
+                    <EmptyState icon="Plane" title="No visa records added" description="Add each previous visa application, including refusals." action={<Button type="button" size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white " onClick={() => addList("visaHistory", emptyVisa)}><Icon name="Plus" className="size-4" />Add Visa Record</Button>} />
                   ) : (
                     form.visaHistory.map((v, idx) => (
                       <RepeatableCard key={v.id} index={idx} title={`Visa Record #${idx + 1}`} canRemove={form.visaHistory.length > 0} onRemove={() => removeList("visaHistory", v.id)}>
@@ -1712,7 +1712,7 @@ export function StudentProfileForm() {
                 Back
               </Button>
               <Button
- className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black px-6"
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white px-6"
  onClick={handleNext}
  >
                 {step === 4 ? (

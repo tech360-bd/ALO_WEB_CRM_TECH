@@ -1,4 +1,5 @@
 "use client";
+import { NamedIcon } from "@/components/ui/named-icon";
 
 /**
  * ALO Labs AI-EOS Master Blueprint.
@@ -45,30 +46,30 @@ type ViewKey =
 
 const NAV: { group: string; items: { key: ViewKey; label: string; icon: string }[] }[] = [
   { group: "Overview", items: [
-    { key: "dashboard", label: "Executive Dashboard", icon: "📊" },
-    { key: "streams", label: "4 Parallel Streams", icon: "🌊" },
-    { key: "roadmap", label: "52-Week Roadmap", icon: "📅" },
+    { key: "dashboard", label: "Executive Dashboard", icon: "BarChart3" },
+    { key: "streams", label: "4 Parallel Streams", icon: "Waves" },
+    { key: "roadmap", label: "52-Week Roadmap", icon: "CalendarDays" },
   ] },
   { group: "Deliverables", items: [
-    { key: "deliverables", label: "10 Deliverables", icon: "📦" },
-    { key: "strategy", label: "15 Strategic Recommendations", icon: "🎯" },
+    { key: "deliverables", label: "10 Deliverables", icon: "Package" },
+    { key: "strategy", label: "15 Strategic Recommendations", icon: "Target" },
   ] },
   { group: "Mobile Apps", items: [
-    { key: "app-customer", label: "Customer App", icon: "📱" },
-    { key: "app-admin", label: "Admin App", icon: "🔐" },
-    { key: "app-agent", label: "Agent Management", icon: "🤖" },
-    { key: "app-reseller", label: "Reseller App", icon: "💼" },
+    { key: "app-customer", label: "Customer App", icon: "Smartphone" },
+    { key: "app-admin", label: "Admin App", icon: "ShieldCheck" },
+    { key: "app-agent", label: "Agent Management", icon: "Bot" },
+    { key: "app-reseller", label: "Reseller App", icon: "Briefcase" },
   ] },
   { group: "Deployment", items: [
-    { key: "departments", label: "100 Departments", icon: "🏛️" },
-    { key: "agents", label: "2,000 AI Agents", icon: "🤖" },
+    { key: "departments", label: "100 Departments", icon: "Landmark" },
+    { key: "agents", label: "2,000 AI Agents", icon: "Bot" },
   ] },
   { group: "Strategy", items: [
-    { key: "infrastructure", label: "Infrastructure", icon: "⚙️" },
-    { key: "governance", label: "Governance & DCC", icon: "📜" },
-    { key: "revenue", label: "Revenue Strategy", icon: "💰" },
-    { key: "budget", label: "Budget & ROI", icon: "📉" },
-    { key: "team", label: "Team & Resources", icon: "👥" },
+    { key: "infrastructure", label: "Infrastructure", icon: "Settings" },
+    { key: "governance", label: "Governance & DCC", icon: "ScrollText" },
+    { key: "revenue", label: "Revenue Strategy", icon: "Wallet" },
+    { key: "budget", label: "Budget & ROI", icon: "TrendingDown" },
+    { key: "team", label: "Team & Resources", icon: "Users" },
   ] },
 ];
 
@@ -123,7 +124,7 @@ export default function AiEosMasterBlueprint() {
                   className={cn("w-full flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition-colors", view === item.key ? "text-[var(--cc-blue)]" : "text-[var(--cc-text-2)] hover:bg-[var(--cc-card-hover)]")}
                   style={view === item.key ? { background: "rgba(59,130,246,0.15)" } : undefined}
                 >
-                  <span>{item.icon}</span>
+                  <NamedIcon name={item.icon} className="size-4" />
                   <span>{item.label}</span>
                 </button>
               ))}
@@ -184,14 +185,14 @@ export default function AiEosMasterBlueprint() {
 /* ---------- Executive Dashboard ---------- */
 function DashboardView() {
   const hero = [
-    { icon: "📱", value: "4", label: "Mobile Apps", tone: "blue" },
+    { icon: "Smartphone", value: "4", label: "Mobile Apps", tone: "blue" },
     { icon: "🏢", value: "100", label: "Departments", tone: "cyan" },
-    { icon: "🤖", value: "2,000", label: "AI Agents", tone: "green" },
-    { icon: "⚡", value: "10K+", label: "Skills", tone: "purple" },
-    { icon: "📝", value: "50K+", label: "Prompts", tone: "orange" },
-    { icon: "📋", value: "500+", label: "SOPs", tone: "pink" },
-    { icon: "📅", value: "52", label: "Weeks", tone: "gold" },
-    { icon: "💰", value: "$2-50K", label: "Monthly Cost", tone: "green" },
+    { icon: "Bot", value: "2,000", label: "AI Agents", tone: "green" },
+    { icon: "Zap", value: "10K+", label: "Skills", tone: "purple" },
+    { icon: "FileEdit", value: "50K+", label: "Prompts", tone: "orange" },
+    { icon: "ClipboardList", value: "500+", label: "SOPs", tone: "pink" },
+    { icon: "CalendarDays", value: "52", label: "Weeks", tone: "gold" },
+    { icon: "Wallet", value: "$2-50K", label: "Monthly Cost", tone: "green" },
   ];
   return (
     <div className="space-y-6">
@@ -205,7 +206,7 @@ function DashboardView() {
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         {hero.map((h, i) => (
           <div key={i} className="rounded-xl p-4 border border-[var(--cc-border)] bg-gradient-to-br from-[var(--cc-card)] to-[var(--cc-bg-2)]">
-            <div className="text-2xl mb-1">{h.icon}</div>
+            <div className="mb-1"><NamedIcon name={h.icon} className="size-6" /></div>
             <div className={cn("text-xl font-bold", TONE[h.tone])}>{h.value}</div>
             <div className="text-xs text-[var(--cc-text-3)]">{h.label}</div>
           </div>
@@ -328,7 +329,7 @@ function RoadmapView() {
                 <div className={cn("text-xs font-bold", TONE[wk.color])}>W{wk.week}</div>
               </div>
               <div className="flex-1 text-xs text-[var(--cc-text-2)]">{wk.stream2}</div>
-              {wk.milestone && <span className="cc-badge cc-badge-operational text-[10px]">{wk.milestone}</span>}
+              {wk.milestone && <span className="cc-badge cc-badge-operational text-[11px]">{wk.milestone}</span>}
             </div>
           ))}
         </div>
@@ -346,7 +347,7 @@ function DeliverablesView() {
         {DELIVERABLES.map((d) => (
           <Card key={d.num}>
             <div className="flex items-start gap-3 mb-3">
-              <div className="w-12 h-12 rounded-xl bg-[var(--cc-bg-2)] flex items-center justify-center text-2xl">{d.icon}</div>
+              <div className="w-12 h-12 rounded-xl bg-[var(--cc-bg-2)] flex items-center justify-center"><NamedIcon name={d.icon} className="size-6" /></div>
               <div>
                 <div className="text-xs text-[var(--cc-text-3)]">DELIVERABLE {d.num}</div>
                 <div className="font-semibold text-sm">{d.name}</div>
@@ -370,7 +371,7 @@ function StrategyView() {
         {STRATEGIES.map((s) => (
           <Card key={s.num}>
             <div className="flex items-start gap-3 mb-3">
-              <div className="w-12 h-12 rounded-xl bg-[var(--cc-bg-2)] flex items-center justify-center text-2xl">{s.icon}</div>
+              <div className="w-12 h-12 rounded-xl bg-[var(--cc-bg-2)] flex items-center justify-center"><NamedIcon name={s.icon} className="size-6" /></div>
               <div>
                 <div className="text-xs text-[var(--cc-text-3)]">RECOMMENDATION {s.num}</div>
                 <div className={cn("font-semibold text-sm", TONE[s.color])}>{s.title}</div>
@@ -389,7 +390,7 @@ function AppView({ appKey }: { appKey: "customer" | "admin" | "agent" | "reselle
   const app = EOS_APPS.find((a) => a.key === appKey)!;
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">{app.icon} {app.name}</h2>
+      <h2 className="text-xl font-bold mb-2 flex items-center gap-2"><NamedIcon name={app.icon} className="size-5" />{app.name}</h2>
       <p className="text-sm text-[var(--cc-text-2)] mb-4">{app.platforms} • {app.purpose}</p>
       <div className="grid grid-cols-3 gap-3 mb-6">
         <MiniStat label="Screens" value={`${app.screens.length}+`} tone={app.color} />
@@ -562,9 +563,9 @@ function InfrastructureView() {
 /* ---------- Governance ---------- */
 function GovernanceView() {
   const metrics = [
-    { icon: "📜", value: "500+", label: "Constitutional Rules", tone: "blue" },
-    { icon: "🏅", value: "9", label: "DCC Criteria", tone: "green" },
-    { icon: "🔍", value: "100%", label: "Actions Logged", tone: "orange" },
+    { icon: "ScrollText", value: "500+", label: "Constitutional Rules", tone: "blue" },
+    { icon: "Award", value: "9", label: "DCC Criteria", tone: "green" },
+    { icon: "Search", value: "100%", label: "Actions Logged", tone: "orange" },
     { icon: "👤", value: "Founder", label: "Ultimate Authority", tone: "purple" },
   ];
   const criteria = [
@@ -584,7 +585,7 @@ function GovernanceView() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {metrics.map((m, i) => (
           <Card key={i} className="flex items-center gap-3">
-            <div className="text-2xl">{m.icon}</div>
+            <div><NamedIcon name={m.icon} className="size-6" /></div>
             <div>
               <div className={cn("text-lg font-bold", TONE[m.tone])}>{m.value}</div>
               <div className="text-xs text-[var(--cc-text-3)]">{m.label}</div>
@@ -701,7 +702,7 @@ function TeamView() {
         <div className="space-y-2">
           {TEAM_ROLES.map((r) => (
             <div key={r.name} className="flex items-center gap-3 p-3 rounded-lg bg-[var(--cc-bg-2)]">
-              <div className="w-8 h-8 rounded-lg bg-[var(--cc-blue)]/20 flex items-center justify-center text-xs">{r.icon}</div>
+              <div className="w-8 h-8 rounded-lg bg-[var(--cc-blue)]/20 flex items-center justify-center"><NamedIcon name={r.icon} className="size-4" /></div>
               <div className="flex-1">
                 <div className="text-sm font-medium">{r.name}</div>
                 <div className="text-xs text-[var(--cc-text-3)]">{r.desc}</div>

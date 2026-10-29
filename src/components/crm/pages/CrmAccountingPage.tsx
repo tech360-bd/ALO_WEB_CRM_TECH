@@ -128,7 +128,7 @@ export default function CrmAccountingPage() {
           <Button size="sm" variant="outline" onClick={loadAll} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} Refresh
           </Button>
-          <Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" onClick={seedChart} disabled={busy}>
+          <Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white" onClick={seedChart} disabled={busy}>
             <ListTree className="h-4 w-4" /> Seed canonical chart
           </Button>
         </div>
@@ -304,7 +304,7 @@ export default function CrmAccountingPage() {
                   <Input type="number" min="0" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
                 </div>
               </div>
-              <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" onClick={postManualJournal}>
+              <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white" onClick={postManualJournal}>
                 <BookOpen className="h-4 w-4" /> Post journal
               </Button>
               {postable.length === 0 && (

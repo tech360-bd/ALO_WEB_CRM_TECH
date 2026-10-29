@@ -14,7 +14,7 @@ export default function MarketingSettingsView() {
     timezone:'Asia/Dhaka',
     brandOrange:'#E8501A',
     brandBlue:'#0057B8',
-    brandAccent:'#FFB347',
+    brandAccent:'#C93D13',
     autoPublish:false,
     requireApprovalFor:'medium',
     budgetLimit: 100000,

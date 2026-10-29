@@ -173,7 +173,7 @@ export async function buildOfficialDocumentHtml(input: OfficialDocumentInput): P
 <title>${escapeHtml(input.title)} — ALO Education</title>
 <meta name="robots" content="noindex, nofollow" />
 <style>
-  :root { --blue: #0066CC; --orange: #F37021; --accent: #FFB347; --ink: #000000; --ink-soft: #555555; }
+  :root { --blue: #0057B8; --orange: #E8501A; --accent: #C93D13; --ink: #000000; --ink-soft: #555555; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #eef1f5; color: var(--ink); }
   body { font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif; font-size: 12.5px; line-height: 1.5; }

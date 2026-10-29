@@ -83,8 +83,8 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /* ------------------------------------------------------------------ */
 /*  DECORATIVE CAP-ICON STRIP                                          */
 /*                                                                     */
-/*  Three ALO brand colours — Education Blue #0066CC, ALO Orange        */
-/*  #F37021 and Accent #FFB347 — drifting in opposite directions behind  */
+/*  Three ALO brand colours — Education Blue #0057B8, ALO Orange        */
+/*  #E8501A and Accent #C93D13 — drifting in opposite directions behind  */
 /*  the footer. Each row renders the same sequence of graduation caps    */
 /*  four times inside a `width: max-content` track and animates it by    */
 /*  exactly one sequence (-25%), so the loop is seamless and the strip   */
@@ -92,7 +92,7 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /*  aria-hidden and every animation stops for prefers-reduced-motion.    */
 /* ------------------------------------------------------------------ */
 
-const CAP_COLORS = ['#0066CC', '#F37021', '#FFB347'] as const;
+const CAP_COLORS = ['#0057B8', '#E8501A', '#C93D13'] as const;
 
 /** One sequence of caps. Rendered CAP_SEQUENCE_COPIES times per row. */
 const CAP_SEQUENCE = [
@@ -415,7 +415,7 @@ export default function PublicFooter() {
                       rel="noopener noreferrer"
                       aria-label={social.ariaLabel}
                       title={social.label}
-                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-alo-brand-border bg-alo-brand-light text-alo-brand transition-colors hover:border-alo-cta hover:bg-alo-cta hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg border border-alo-brand-border bg-alo-brand-light text-alo-brand transition-colors hover:border-alo-cta hover:bg-alo-cta hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
                     >
                       <Icon className="h-5 w-5" />
                     </a>
@@ -426,7 +426,7 @@ export default function PublicFooter() {
 
             <Link
               href="/book-consultation"
-              className="inline-flex w-fit items-center gap-2 rounded-button bg-alo-cta px-5 py-3 font-heading text-[13px] font-bold text-black shadow-sm transition-colors hover:bg-alo-cta-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
+              className="inline-flex w-fit items-center gap-2 rounded-button bg-alo-cta px-5 py-3 font-heading text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-alo-cta-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
             >
               Request Counseling
             </Link>
@@ -453,8 +453,8 @@ export default function PublicFooter() {
       {/* Decorative moving cap-icon strip — three ALO brand colours */}
       <GraduationCapStrip />
 
-      {/* Bottom bar — ALO Orange #F37021. Black text preserves strong contrast on the required brand orange. */}
-      <div className="bg-alo-cta py-4 text-black">
+      {/* Bottom bar — ALO Orange #E8501A. Black text preserves strong contrast on the required brand orange. */}
+      <div className="bg-alo-cta py-4 text-white">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs font-medium sm:flex-row sm:px-6 lg:px-8">
           <p className="font-heading font-bold tracking-wide">© ALO Education. All rights reserved.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-end">

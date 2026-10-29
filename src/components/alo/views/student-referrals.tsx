@@ -180,7 +180,7 @@ export function StudentReferrals() {
             <Button
               onClick={handleRefer}
               disabled={submitting}
-              className="mt-4 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]"
+              className="mt-4 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]"
             >
               <Icon name="Send" className="mr-1.5 size-4" />
               Send Referral

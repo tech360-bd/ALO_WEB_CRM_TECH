@@ -1364,7 +1364,7 @@ function EligibilityChecker({ countryName }: { countryName: string }) {
         </div>
       </div>
 
-      <Button onClick={run} disabled={loading} className="mt-4 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+      <Button onClick={run} disabled={loading} className="mt-4 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
         {loading ? (
           <><Icon name="Loader2" className="mr-2 size-4 animate-spin" /> AI assessing...</>
         ) : (

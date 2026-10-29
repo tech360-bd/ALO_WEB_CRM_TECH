@@ -467,7 +467,7 @@ export function PublicDestinationPage({ slug }: { slug: string | null }) {
         <p className="text-[var(--alo-brand-pale)] mb-5">
           Fees and visa rules change. A counselor confirms the current requirements for your case.
         </p>
-        <Button asChild className="bg-[var(--alo-cta)] text-black hover:brightness-110">
+        <Button asChild className="bg-[var(--alo-cta)] text-white hover:brightness-110">
           <a href="/book-consultation">Request Consultation</a>
         </Button>
       </div>
@@ -691,7 +691,8 @@ export function PublicServicesPage() {
                 <div className="h-44 w-full overflow-hidden relative">
                   <img src={s.heroImage} alt={s.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                   <div className="absolute top-3 left-3">
-                    <Badge className="bg-black/60 text-white backdrop-blur-md border-0 text-[11px] font-bold">
+                    {/* Light chip, not a translucent black scrim (Master §02). */}
+                    <Badge className="border border-[var(--alo-border)] bg-white/95 text-[var(--alo-brand)] text-[11px] font-bold">
                       SERVICE 0{i + 1}
                     </Badge>
                   </div>
@@ -716,7 +717,7 @@ export function PublicServicesPage() {
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] rounded-2xl p-8 text-white text-center shadow-lg">
         <h3 className="text-2xl font-bold mb-2">Get Started Today</h3>
         <p className="text-[var(--alo-brand-pale)] mb-5 text-sm">Request an initial consultation. Confirm availability and any applicable fee with ALO Education before booking.</p>
-        <Button asChild className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
+        <Button asChild className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] font-bold px-6 py-3 rounded-xl shadow-md"><a href="/eligibility-check">
             Request Consultation
           </a></Button>
       </div>
@@ -1370,7 +1371,7 @@ export function PublicVisaReadinessPage() {
           Fees, processing times and document rules change and differ by nationality. A counselor checks the current
           requirements for your case against the official source.
         </p>
-        <Button asChild className="bg-[var(--alo-cta)] text-black hover:brightness-110">
+        <Button asChild className="bg-[var(--alo-cta)] text-white hover:brightness-110">
           <a href="/book-consultation">Book Visa Consultation</a>
         </Button>
       </Card>
@@ -1430,7 +1431,7 @@ export function PublicCourseDetail({ slug }: { slug: string | null }) {
               Start your application with ALO Education for full application support and visa counseling.
             </p>
             <div className="space-y-2.5">
-              <Button asChild className="w-full bg-[var(--alo-cta)] text-black hover:brightness-110 py-2.5"><a href="/eligibility-check" className="block w-full">
+              <Button asChild className="w-full bg-[var(--alo-cta)] text-white hover:brightness-110 py-2.5"><a href="/eligibility-check" className="block w-full">
                   Check Your Eligibility
                 </a></Button>
               <Button asChild variant="outline" className="w-full py-2.5 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"><a href="/book-consultation" className="block w-full">
@@ -1463,7 +1464,7 @@ export function PublicComparePage() {
           Select courses from the Course Finder to evaluate entry requirements, scholarships, and deposit deadlines.
         </p>
         <div className="pt-4 flex gap-3">
-          <Button asChild className="bg-[var(--alo-cta)] text-black "><a href="/course-finder">Add Courses to Compare</a></Button>
+          <Button asChild className="bg-[var(--alo-cta)] text-white "><a href="/course-finder">Add Courses to Compare</a></Button>
         </div>
       </Card>
     </PublicShell>

@@ -236,7 +236,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button
                 onClick={scrollToLeadForm}
-                className="h-12 w-full bg-[var(--alo-cta)] px-8 text-base font-semibold text-black hover:bg-[var(--alo-cta)]/90 sm:w-auto"
+                className="h-12 w-full bg-[var(--alo-cta)] px-8 text-base font-semibold text-white hover:bg-[var(--alo-cta)]/90 sm:w-auto"
               >
                 <Icon name="Rocket" className="size-5" />
                 Start Your Application
@@ -647,7 +647,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                   <Button
                     type="submit"
                     disabled={submitting}
-                    className="h-12 w-full bg-[var(--alo-cta)] text-base font-semibold text-black hover:bg-[var(--alo-cta)]/90"
+                    className="h-12 w-full bg-[var(--alo-cta)] text-base font-semibold text-white hover:bg-[var(--alo-cta)]/90"
                   >
                     {submitting ? (
                       <>
@@ -689,7 +689,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
               </div>
               <Button
                 onClick={scrollToLeadForm}
-                className="h-12 shrink-0 bg-[var(--alo-cta)] px-8 text-base font-semibold text-black hover:bg-[var(--alo-cta)]/90"
+                className="h-12 shrink-0 bg-[var(--alo-cta)] px-8 text-base font-semibold text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="ArrowUp" className="size-5" />
                 Submit Your Lead

@@ -259,13 +259,13 @@ export default function StudentMigrationCenter() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
+    <div className="p-6 space-y-6 bg-[var(--alo-page)] min-h-screen text-[var(--alo-text)]">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--alo-border)] pb-6">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
-              <Database className="w-5 h-5 text-white" />
+              <Database className="w-5 h-5 text-[var(--alo-text)]" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Old CRM Student Migration Center</h1>
@@ -285,7 +285,7 @@ export default function StudentMigrationCenter() {
           <Button
             onClick={() => { fetchBatches(); }}
             variant="outline"
-            className="border-white/10 text-[var(--alo-placeholder)] hover:text-white"
+            className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:text-[var(--alo-text)]"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
@@ -295,7 +295,7 @@ export default function StudentMigrationCenter() {
       {/* Alert Banner */}
       {message && (
         <div className={`p-4 rounded-xl flex items-center gap-3 border ${
-          message.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+          message.type === 'success' ? 'bg-[var(--alo-surface-muted)] border-emerald-500/20 text-crm-success-text' : 'bg-[var(--alo-surface-muted)] border-red-500/20 text-crm-danger-text'
         }`}>
           {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
           <p className="text-sm font-medium">{message.text}</p>
@@ -303,11 +303,11 @@ export default function StudentMigrationCenter() {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-white/10 gap-2">
+      <div className="flex border-b border-[var(--alo-border)] gap-2">
         <button
           onClick={() => setActiveTab('batches')}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'batches' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
+            activeTab === 'batches' ? 'border-[var(--alo-brand)] text-[var(--alo-text)]' : 'border-transparent text-[var(--alo-text-muted)] hover:text-[var(--alo-text)]'
           }`}
         >
           Import Batches ({batches.length})
@@ -315,7 +315,7 @@ export default function StudentMigrationCenter() {
         <button
           onClick={() => setActiveTab('upload')}
           className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-            activeTab === 'upload' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
+            activeTab === 'upload' ? 'border-[var(--alo-brand)] text-[var(--alo-text)]' : 'border-transparent text-[var(--alo-text-muted)] hover:text-[var(--alo-text)]'
           }`}
         >
           Upload & Map
@@ -324,7 +324,7 @@ export default function StudentMigrationCenter() {
           <button
             onClick={() => setActiveTab('preview')}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all ${
-              activeTab === 'preview' ? 'border-[var(--alo-brand)] text-white' : 'border-transparent text-[var(--alo-text-muted)] hover:text-white'
+              activeTab === 'preview' ? 'border-[var(--alo-brand)] text-[var(--alo-text)]' : 'border-transparent text-[var(--alo-text-muted)] hover:text-[var(--alo-text)]'
             }`}
           >
             Batch Preview: {selectedBatch.fileName || selectedBatch.id}
@@ -336,47 +336,47 @@ export default function StudentMigrationCenter() {
       {activeTab === 'batches' && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+            <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
               <CardContent className="p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Total Import Batches</p>
                 <p className="text-2xl font-bold mt-1">{batches.length}</p>
               </CardContent>
             </Card>
-            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+            <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
               <CardContent className="p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Total Rows Staged</p>
-                <p className="text-2xl font-bold mt-1 text-blue-400">
+                <p className="text-2xl font-bold mt-1 text-[var(--alo-info-text)]">
                   {batches.reduce((acc, b) => acc + (b.totalRows || 0), 0)}
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+            <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
               <CardContent className="p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Duplicate Candidates</p>
-                <p className="text-2xl font-bold mt-1 text-amber-400">
+                <p className="text-2xl font-bold mt-1 text-crm-warning-text">
                   {batches.reduce((acc, b) => acc + (b.duplicateCount || 0), 0)}
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+            <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
               <CardContent className="p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Completed Imports</p>
-                <p className="text-2xl font-bold mt-1 text-emerald-400">
+                <p className="text-2xl font-bold mt-1 text-crm-success-text">
                   {batches.filter(b => b.status === 'completed' || b.status === 'completed_with_errors').length}
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10 flex flex-row items-center justify-between">
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+            <CardHeader className="p-4 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
               <CardTitle className="text-base font-semibold">Staging & Import History</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
+                    <tr className="border-b border-[var(--alo-border)] text-left text-[var(--alo-text-muted)] bg-[var(--alo-surface-muted)]">
                       <th className="p-3 font-medium">Batch ID</th>
                       <th className="p-3 font-medium">Source CRM</th>
                       <th className="p-3 font-medium">File Name</th>
@@ -397,18 +397,18 @@ export default function StudentMigrationCenter() {
                       </tr>
                     ) : (
                       batches.map(b => (
-                        <tr key={b.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="p-3 font-mono text-xs text-blue-400">{b.id}</td>
+                        <tr key={b.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-colors">
+                          <td className="p-3 font-mono text-xs text-[var(--alo-info-text)]">{b.id}</td>
                           <td className="p-3">{b.sourceCrmName}</td>
                           <td className="p-3 text-[var(--alo-placeholder)]">{b.fileName || 'data.csv'}</td>
                           <td className="p-3 font-semibold">{b.totalRows}</td>
-                          <td className="p-3 text-emerald-400">{b.newCount}</td>
-                          <td className="p-3 text-amber-400">{b.duplicateCount}</td>
+                          <td className="p-3 text-crm-success-text">{b.newCount}</td>
+                          <td className="p-3 text-crm-warning-text">{b.duplicateCount}</td>
                           <td className="p-3">
                             <Badge className={
-                              b.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                              b.status === 'approved' ? 'bg-blue-500/20 text-blue-400 border-[var(--alo-brand)]/30' :
-                              b.status === 'ready_for_review' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                              b.status === 'completed' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' :
+                              b.status === 'approved' ? 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-brand)]/30' :
+                              b.status === 'ready_for_review' ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' :
                               'bg-gray-500/20 text-[var(--alo-text-muted)] border-gray-500/30'
                             }>
                               {b.status.replace(/_/g, ' ').toUpperCase()}
@@ -421,7 +421,7 @@ export default function StudentMigrationCenter() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => handleSelectBatch(b)}
-                                className="text-[var(--alo-placeholder)] hover:text-white"
+                                className="text-[var(--alo-placeholder)] hover:text-[var(--alo-text)]"
                               >
                                 <Eye className="w-4 h-4 mr-1" />
                                 Inspect
@@ -454,7 +454,7 @@ export default function StudentMigrationCenter() {
                                   variant="outline"
                                   onClick={() => handleRollbackBatch(b.id)}
                                   disabled={processing}
-                                  className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                                  className="border-crm-warning-border text-crm-warning-text hover:bg-[var(--alo-surface-muted)]"
                                 >
                                   <RotateCcw className="w-3.5 h-3.5 mr-1" />
                                   Request review
@@ -475,8 +475,8 @@ export default function StudentMigrationCenter() {
 
       {/* TAB 2: Upload & Map */}
       {activeTab === 'upload' && (
-        <Card className="bg-[var(--alo-text)] border-white/10 text-white max-w-2xl mx-auto">
-          <CardHeader className="p-6 border-b border-white/10">
+        <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)] max-w-2xl mx-auto">
+          <CardHeader className="p-6 border-b border-[var(--alo-border)]">
             <CardTitle className="text-lg font-bold">Upload Old CRM Student Export</CardTitle>
             <p className="text-xs text-[var(--alo-text-muted)]">Upload CSV/XLSX file. The system will stage, validate, and compute duplicate scores before committing to live database.</p>
           </CardHeader>
@@ -488,14 +488,14 @@ export default function StudentMigrationCenter() {
                   value={sourceCrmName}
                   onChange={e => setSourceCrmName(e.target.value)}
                   placeholder="e.g. Zoho, HubSpot, Legacy Excel"
-                  className="bg-white/5 border-white/10 text-white"
+                  className="bg-[var(--alo-surface-muted)] border-[var(--alo-border)] text-[var(--alo-text)]"
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-[var(--alo-placeholder)] mb-2">Select CSV or Excel File</label>
-                <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-[var(--alo-brand)] transition-colors cursor-pointer bg-white/5">
+                <div className="border-2 border-dashed border-[var(--alo-border)] rounded-xl p-8 text-center hover:border-[var(--alo-brand)] transition-colors cursor-pointer bg-[var(--alo-surface-muted)]">
                   <input
                     type="file"
                     accept=".csv,.xlsx"
@@ -504,10 +504,10 @@ export default function StudentMigrationCenter() {
                     id="file-upload"
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <FileSpreadsheet className="w-12 h-12 text-blue-400 mx-auto mb-3" />
+                    <FileSpreadsheet className="w-12 h-12 text-[var(--alo-info-text)] mx-auto mb-3" />
                     {file ? (
                       <div>
-                        <p className="font-semibold text-white">{file.name}</p>
+                        <p className="font-semibold text-[var(--alo-text)]">{file.name}</p>
                         <p className="text-xs text-[var(--alo-text-muted)] mt-1">{(file.size / 1024).toFixed(1)} KB</p>
                       </div>
                     ) : (
@@ -520,7 +520,7 @@ export default function StudentMigrationCenter() {
                 </div>
               </div>
 
-              <div className="bg-blue-500/10 border border-[var(--alo-brand)]/20 rounded-xl p-4 text-xs text-blue-300 space-y-1">
+              <div className="bg-[var(--alo-surface-muted)] border border-[var(--alo-brand)]/20 rounded-xl p-4 text-xs text-[var(--alo-info-text)] space-y-1">
                 <p className="font-semibold text-[var(--alo-brand-pale)]">Automated Pipeline Safeguards:</p>
                 <p>1. Data is placed into staging table first — never touches live database immediately.</p>
                 <p>2. Duplicate detector matches against phone, email, WhatsApp, and passport.</p>
@@ -550,11 +550,11 @@ export default function StudentMigrationCenter() {
       {/* TAB 3: Batch Preview */}
       {activeTab === 'preview' && selectedBatch && (
         <div className="space-y-6">
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-            <CardHeader className="p-4 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+            <CardHeader className="p-4 border-b border-[var(--alo-border)] flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-blue-400 text-blue-400">{selectedBatch.id}</Badge>
+                  <Badge variant="outline" className="border-blue-400 text-[var(--alo-info-text)]">{selectedBatch.id}</Badge>
                   <h2 className="text-lg font-bold">{selectedBatch.fileName || 'Batch Inspection'}</h2>
                 </div>
                 <p className="text-xs text-[var(--alo-text-muted)] mt-1">Source: {selectedBatch.sourceCrmName} | Uploaded: {new Date(selectedBatch.createdAt).toLocaleString()}</p>
@@ -584,7 +584,7 @@ export default function StudentMigrationCenter() {
                     variant="outline"
                     onClick={() => handleRollbackBatch(selectedBatch.id)}
                     disabled={processing}
-                    className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                    className="border-crm-warning-border text-crm-warning-text hover:bg-[var(--alo-surface-muted)]"
                   >
                     <RotateCcw className="w-4 h-4 mr-1.5" /> Request rollback review
                   </Button>
@@ -595,7 +595,7 @@ export default function StudentMigrationCenter() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
+                    <tr className="border-b border-[var(--alo-border)] text-left text-[var(--alo-text-muted)] bg-[var(--alo-surface-muted)]">
                       <th className="p-3 font-medium">Student Name</th>
                       <th className="p-3 font-medium">Phone</th>
                       <th className="p-3 font-medium">Email</th>
@@ -616,7 +616,7 @@ export default function StudentMigrationCenter() {
                       </tr>
                     ) : (
                       stagedStudents.map(s => (
-                        <tr key={s.id} className="border-b border-white/5 hover:bg-white/5">
+                        <tr key={s.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)]">
                           <td className="p-3 font-semibold">{s.studentName}</td>
                           <td className="p-3 font-mono text-xs">{s.phone}</td>
                           <td className="p-3 text-[var(--alo-placeholder)]">{s.email}</td>
@@ -625,21 +625,21 @@ export default function StudentMigrationCenter() {
                           <td className="p-3 text-xs text-[var(--alo-placeholder)]">{s.courseInterest} - {s.universityInterest}</td>
                           <td className="p-3">
                             <Badge className={
-                              s.duplicateRiskLevel === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-                              s.duplicateRiskLevel === 'medium' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                              'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                              s.duplicateRiskLevel === 'high' ? 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' :
+                              s.duplicateRiskLevel === 'medium' ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' :
+                              'bg-crm-success-bg text-crm-success-text border-crm-success-border'
                             }>
                               {s.duplicateRiskLevel.toUpperCase()}
                             </Badge>
                           </td>
                           <td className="p-3">
-                            <Badge variant="outline" className="text-[var(--alo-text-muted)] border-white/10">
+                            <Badge variant="outline" className="text-[var(--alo-text-muted)] border-[var(--alo-border)]">
                               {s.status}
                             </Badge>
                           </td>
                           <td className="p-3">
                             {s.status === 'merged' ? (
-                              <span className="text-xs text-emerald-400">Decision saved</span>
+                              <span className="text-xs text-crm-success-text">Decision saved</span>
                             ) : s.status === 'possible_duplicate' && s.matchedStudentId && selectedBatch.status === 'ready_for_review' ? (
                               <Button size="sm" variant="outline" onClick={() => startMergeReview(s)} disabled={processing}>
                                 <GitMerge className="mr-1 h-3.5 w-3.5" /> Review match
@@ -656,7 +656,7 @@ export default function StudentMigrationCenter() {
                   </tbody>
                 </table>
               </div>
-              <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-xs text-[var(--alo-text-muted)]">
+              <div className="flex items-center justify-between gap-3 border-t border-[var(--alo-border)] px-4 py-3 text-xs text-[var(--alo-text-muted)]">
                 <span>Rows {batchTotal ? (batchPage - 1) * 100 + 1 : 0}–{Math.min(batchPage * 100, batchTotal)} of {batchTotal}</span>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" disabled={batchPage <= 1 || processing} onClick={() => handleSelectBatch(selectedBatch, batchPage - 1)}>Previous</Button>
@@ -667,10 +667,10 @@ export default function StudentMigrationCenter() {
           </Card>
 
           {mergeTarget && (
-            <Card className="bg-[var(--alo-text)] border-amber-500/30 text-white">
-              <CardHeader className="border-b border-white/10">
+            <Card className="bg-[var(--alo-page)] border-crm-warning-border text-[var(--alo-text)]">
+              <CardHeader className="border-b border-[var(--alo-border)]">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <GitMerge className="h-4 w-4 text-amber-400" /> Duplicate decision — row {mergeTarget.rowNumber}
+                  <GitMerge className="h-4 w-4 text-crm-warning-text" /> Duplicate decision — row {mergeTarget.rowNumber}
                 </CardTitle>
                 <p className="text-xs text-[var(--alo-text-muted)]">
                   Choose what happens to each supported field. No student data changes now; decisions are applied only after the batch is approved and executed.
@@ -679,20 +679,20 @@ export default function StudentMigrationCenter() {
               <CardContent className="space-y-4 p-4">
                 {existingByStagedId[mergeTarget.id] ? (
                   <>
-                    <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm">
-                      Existing ALO record: <span className="font-mono text-blue-300">{existingByStagedId[mergeTarget.id]?.studentId}</span>
+                    <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 text-sm">
+                      Existing ALO record: <span className="font-mono text-[var(--alo-info-text)]">{existingByStagedId[mergeTarget.id]?.studentId}</span>
                       <span className="ml-2">{existingByStagedId[mergeTarget.id]?.name}</span>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-white/10 text-left text-xs text-[var(--alo-text-muted)]">
+                          <tr className="border-b border-[var(--alo-border)] text-left text-xs text-[var(--alo-text-muted)]">
                             <th className="p-2">Field</th><th className="p-2">Existing ALO value</th><th className="p-2">Imported value</th><th className="p-2">Decision</th>
                           </tr>
                         </thead>
                         <tbody>
                           {MERGE_FIELDS.map(({ key, label, existingValue }) => (
-                            <tr key={key} className="border-b border-white/5">
+                            <tr key={key} className="border-b border-[var(--alo-border)]">
                               <td className="p-2 font-medium">{label}</td>
                               <td className="max-w-64 break-words p-2 text-[var(--alo-placeholder)]">{existingValue(existingByStagedId[mergeTarget.id]!) || '—'}</td>
                               <td className="max-w-64 break-words p-2">{(mergeTarget as unknown as Record<string, string>)[key] || '—'}</td>
@@ -704,7 +704,7 @@ export default function StudentMigrationCenter() {
                                     ...current,
                                     [mergeTarget.id]: { ...current[mergeTarget.id], [key]: event.target.value as MergeDecision },
                                   }))}
-                                  className="rounded-md border border-white/15 bg-[var(--alo-text)] px-2 py-1.5 text-sm text-white"
+                                  className="rounded-md border border-[var(--alo-border)] bg-[var(--alo-page)] px-2 py-1.5 text-sm text-[var(--alo-text)]"
                                 >
                                   <option value="KEEP_EXISTING">Keep existing</option>
                                   <option value="USE_IMPORTED">Use imported</option>
@@ -718,7 +718,7 @@ export default function StudentMigrationCenter() {
                     </div>
                     <div className="flex flex-wrap justify-end gap-2">
                       <Button variant="outline" onClick={() => setMergeTarget(null)} disabled={processing}>Cancel</Button>
-                      <Button onClick={handleSaveMergeDecision} disabled={processing} className="bg-amber-600 text-white hover:bg-amber-700">
+                      <Button onClick={handleSaveMergeDecision} disabled={processing} className="bg-amber-600 text-[var(--alo-text)] hover:bg-amber-700">
                         {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
                         Save field decisions
                       </Button>

@@ -449,7 +449,7 @@ export function EnterpriseAiCommand() {
       // Refresh data so table reflects new certification status
       await fetchData();
       toast({
-        title: json.allPassed ? "DCC Certified ✓" : "DCC Check Failed",
+        title: json.allPassed ? "DCC Certified" : "DCC Check Failed",
         description: json.message,
         variant: json.allPassed ? "default" : "destructive",
       });
@@ -1370,7 +1370,7 @@ export function EnterpriseAiCommand() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className={cn("text-sm font-bold", dccResult.allPassed ? "text-emerald-900" : "text-rose-900")}>
-                    {dccResult.allPassed ? "DCC Certified ✓" : `DCC Check Failed — ${dccResult.checks.filter((c) => !c.passed).length} criteria not met`}
+                    {dccResult.allPassed ? "DCC Certified" : `DCC Check Failed — ${dccResult.checks.filter((c) => !c.passed).length} criteria not met`}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{dccResult.message}</p>
                 </div>

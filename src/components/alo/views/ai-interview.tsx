@@ -577,7 +577,7 @@ function SetupPhase({
         <Button
           onClick={onStart}
           disabled={!canStart}
-          className="h-12 bg-[var(--alo-cta)] px-8 text-black hover:bg-[var(--alo-cta)]/90 disabled:opacity-50"
+          className="h-12 bg-[var(--alo-cta)] px-8 text-white hover:bg-[var(--alo-cta)]/90 disabled:opacity-50"
         >
           <Icon name="Mic" className="size-5" />
           Start Interview
@@ -752,7 +752,7 @@ function InterviewPhase({
               <Button
                 onClick={onSend}
                 disabled={thinking || !answer.trim()}
-                className="h-12 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90 sm:w-auto"
+                className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta)]/90 sm:w-auto"
               >
                 <Icon name="Send" className="size-4" />
                 Send Answer
@@ -1027,7 +1027,7 @@ function ReportPhase({
         </div>
         <Button
           onClick={onReset}
-          className="h-12 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90"
+          className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta)]/90"
         >
           <Icon name="RotateCcw" className="size-4" />
           Practice Again

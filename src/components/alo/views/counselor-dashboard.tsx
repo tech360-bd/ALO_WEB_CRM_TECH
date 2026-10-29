@@ -648,7 +648,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                       </div>
                       <p className="mt-1.5 text-xs text-muted-foreground">
                         {overdue
-                          ? "⚠ This conversation has breached its first-response SLA — please respond immediately to avoid escalation."
+                          ? "This conversation has breached its first-response SLA — please respond immediately to avoid escalation."
                           : "Inbound message awaiting your first response."}
                       </p>
                     </div>

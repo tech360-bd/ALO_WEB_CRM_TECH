@@ -250,7 +250,7 @@ export default function EnquiryForm({
       <button
         type="submit"
         disabled={state === 'sending'}
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-black transition hover:brightness-95 disabled:opacity-60"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-white transition hover:brightness-95 disabled:opacity-60"
       >
         {state === 'sending' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         {copy.cta}

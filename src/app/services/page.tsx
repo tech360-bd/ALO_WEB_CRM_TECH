@@ -38,7 +38,7 @@ export default function ServicesDirectoryPage() {
             <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] mb-4">Complete Support for Your Study Abroad Journey</h1>
             <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] md:text-base">Provide professional guidance from course selection and university applications to visa preparation, pre-departure planning and post-arrival support.</p>
             <div className="flex flex-wrap gap-3 mt-6">
-              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Request Consultation</Button></Link>
+              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Request Consultation</Button></Link>
               <Link href="/course-finder"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6 font-bold text-[var(--alo-brand)]">Explore Course Finder</Button></Link>
             </div>
             <div className="flex gap-2 mt-4">
@@ -76,7 +76,7 @@ export default function ServicesDirectoryPage() {
             <h3 className="text-2xl md:text-3xl font-bold mb-2">Ready to Take the Next Step?</h3>
             <p className="text-sm text-[var(--alo-body)] mb-6 max-w-xl mx-auto">Talk to an ALO counselor about the services that fit your plan — or explore courses and check eligibility first.</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] font-bold text-sm px-8 h-12 rounded-xl shadow-sm">Request Consultation</Button></Link>
+              <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] font-bold text-sm px-8 h-12 rounded-xl shadow-sm">Request Consultation</Button></Link>
               <Link href="/course-finder"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6 font-bold text-[var(--alo-brand)]">Start Course Finder</Button></Link>
               <Link href="/eligibility-check"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6 font-bold text-[var(--alo-brand)]">Check Eligibility</Button></Link>
               <Button asChild variant="outline" className="border-emerald-300 text-emerald-700 h-12 px-6 font-bold"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
