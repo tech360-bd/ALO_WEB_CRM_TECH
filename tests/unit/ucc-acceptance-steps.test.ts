@@ -15,7 +15,8 @@ const src = (p: string) => readFileSync(path.join(root, p), "utf8");
 const has = (p: string) => existsSync(path.join(root, p));
 
 // Route/lib seam files
-const WEBHOOK = "src/app/api/crm/ucc/webhooks/whatsapp/route.ts";
+const WEBHOOK = "src/app/api/whatsapp/webhook/route.ts";
+const LEGACY_WEBHOOK = "src/app/api/crm/ucc/webhooks/whatsapp/route.ts";
 const HANDLER = "src/lib/whatsapp-webhook-handler.ts";
 const CLOUDAPI = "src/lib/whatsapp-cloud-api.ts";
 const MATCH = "src/app/api/communications/contacts/match/route.ts";
@@ -29,22 +30,30 @@ const CALLS = "src/app/api/communications/calls/outcomes/route.ts";
 const SCHEMA = "prisma/schema.prisma";
 
 describe("§176 step 1-8 — WhatsApp intake, authentication, contact matching", () => {
-  it("(1) webhook endpoint exists and verifies the official signature", () => {
+  it("(1) canonical webhook verifies the official signature and the legacy URL delegates to it", () => {
     expect(has(WEBHOOK)).toBe(true);
     const w = src(WEBHOOK);
-    expect(w).toContain("verifySignatureStrict");
-    expect(w).toContain("503"); // secret missing -> not configured, never silently accepted
+    expect(w).toContain("verifySignature(");
+    expect(w).toContain("WHATSAPP_APP_SECRET");
+    expect(w).toContain("Invalid signature");
+    const legacy = src(LEGACY_WEBHOOK);
+    expect(legacy).toContain("processCanonicalWhatsAppWebhook");
+    expect(legacy).toContain("verifyCanonicalWhatsAppWebhook");
   });
-  it("(2) invalid/missing signatures are rejected (403) before processing", () => {
-    expect(src(HANDLER)).toContain("Signature mismatch");
+  it("(2) invalid/missing signatures are rejected before processing", () => {
+    const w = src(WEBHOOK);
+    expect(w).toContain("if (!signatureValid)");
+    expect(w).toContain("Invalid signature — webhook not verified");
   });
   it("(3) inbound phone is normalized E.164 for matching", () => {
+    expect(src(WEBHOOK)).toContain("normalizePhoneE164");
     expect(src(HANDLER)).toContain("normalizePhoneE164");
   });
-  it("(4) idempotency: provider message id is the dedup key", () => {
+  it("(4) idempotency claims the provider message ID before processing", () => {
     const w = src(WEBHOOK);
-    expect(w).toContain("providerMsgId");
-    expect(w).toContain("findFirst"); // existing message check before insert
+    expect(w).toContain("providerMessageId");
+    expect(w).toContain("claimWebhookEvent");
+    expect(w).toContain("findUnique"); // archive dedupe before insert
   });
   it("(5) student match by phone -> thread attached to student", () => {
     expect(src(WEBHOOK)).toContain("matchedStudentId");
@@ -53,7 +62,7 @@ describe("§176 step 1-8 — WhatsApp intake, authentication, contact matching",
     expect(src(WEBHOOK)).toContain("matchedLeadId");
   });
   it("(7) unmatched contacts create a review record, NEVER an auto-Student", () => {
-    expect(src(MATCH)).toContain("possibleDuplicates");
+    expect(src(MATCH)).toContain("identity.candidates");
     expect(src(MATCH)).toContain("contactMatchReview");
   });
   it("(8) review decisions are OPEN_EXISTING | MERGE_REQUEST | CREATE_NEW, authorized roles only, CREATE_NEW elevated, decidedBy from auth", () => {
@@ -69,8 +78,8 @@ describe("§176 step 1-8 — WhatsApp intake, authentication, contact matching",
 describe("§176 step 9-14 — thread, message, SLA recording", () => {
   it("(9) one open thread per contact+channel; thread carries intent/priority", () => {
     const w = src(WEBHOOK);
-    expect(w).toContain("status: 'open'");
-    expect(w).toContain("classifyIntent");
+    expect(w).toContain('status: "open"');
+    expect(w).toContain("classifyIntentCRM");
     expect(w).toContain("detectPriority");
   });
   it("(10) inbound message persisted with direction/sender/delivery status", () => {
@@ -80,8 +89,10 @@ describe("§176 step 9-14 — thread, message, SLA recording", () => {
   });
   it("(11) §150 SLA event created at intake with received/assigned timestamps", () => {
     const w = src(WEBHOOK);
-    expect(w).toContain("communicationSlaEvent.create");
-    expect(w).toContain("assignedAt");
+    expect(w).toContain("startSlaForThread");
+    const sla = src("src/lib/sla-engine.ts");
+    expect(sla).toContain("communicationSlaEvent.create");
+    expect(sla).toContain("assignedAt: params.counselorId ? now : null");
   });
   it("(12) §150 first response and resolution recorded precisely on staff reply", () => {
     const s = src("src/lib/sla-engine.ts");
@@ -114,7 +125,7 @@ describe("§176 step 15-21 — attachments & document requirements (§131, §135
   it("(17) §131 outbound attachments go through the official Cloud API (media by https link), never fabricated", () => {
     const c = src(CLOUDAPI);
     expect(c).toContain("sendWhatsAppMedia");
-    expect(c).toContain("graph.facebook.com");
+    expect(c).toContain("getWhatsAppGraphUrl");
     expect(src(REPLY)).toContain("CHANNEL_UNSUPPORTED_FOR_MEDIA");
   });
   it("(18) failed attachment sends are recorded truthfully and surface errors", () => {
@@ -164,7 +175,7 @@ describe("§176 step 22-27 — outbound reply, drafts, tasks, audit", () => {
     }
   });
   it("(26) audits recorded for match decisions, rejections, sends", () => {
-    expect(src(RESOLVE)).toContain("CONTACT_MATCH_RESOLVED");
+    expect(src(RESOLVE)).toContain("CONTACT_MATCH_${decision}");
     expect(src(REJECT)).toContain("tx.auditLog.create");
     expect(src(REJECT)).toContain("tx.documentAudit.create");
     expect(src(REPLY)).toContain("ATTACHMENT_SENT");

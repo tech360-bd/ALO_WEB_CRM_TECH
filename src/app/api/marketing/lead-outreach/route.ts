@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { AuthContext } from '@/lib/auth-middleware';
 import { withMarketingAccess } from '@/lib/marketing/access';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { isEligibleForMarketing } from '@/lib/communications/consent-management';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const CHANNELS = new Set(['WHATSAPP', 'EMAIL', 'SMS', 'PHONE', 'FACEBOOK', 'INSTAGRAM']);
+const CHANNELS = new Set(['WHATSAPP', 'EMAIL', 'SMS', 'CALL', 'PHONE', 'FACEBOOK', 'INSTAGRAM', 'MESSENGER']);
 
 // PII and consent-ledger records are manager-only until an audited assigned-lead scope exists.
 export const GET = withMarketingAccess(async (_req: Request, _auth: AuthContext) => {
@@ -24,6 +26,7 @@ export const GET = withMarketingAccess(async (_req: Request, _auth: AuthContext)
 
 // POST creates an unsent draft only, and only for a lead with a current opted-in consent ledger entry.
 export const POST = withMarketingAccess(async (req: Request, auth: AuthContext) => {
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
   const body = await req.json().catch(() => null) as Record<string, unknown> | null;
   const leadId = typeof body?.leadId === 'string' ? body.leadId.trim() : '';
   const channel = typeof body?.channel === 'string' ? body.channel.trim().toUpperCase() : '';
@@ -37,29 +40,33 @@ export const POST = withMarketingAccess(async (req: Request, auth: AuthContext) 
     return NextResponse.json({ success: false, error: 'Unsupported outreach source type.' }, { status: 400 });
   }
   try {
-    const lead = await db.lead.findUnique({ where: { id: leadId }, select: { id: true } });
+    const lead = await db.lead.findUnique({ where: { id: leadId }, select: { id: true, phone: true, email: true } });
     if (!lead) return NextResponse.json({ success: false, error: 'CRM lead not found.' }, { status: 404 });
-    const consent = await db.consentRecord.findFirst({
-      where: { leadId: lead.id, channel },
-      orderBy: { createdAt: 'desc' },
-      select: { id: true, consentStatus: true, optOutDate: true },
-    });
-    if (!consent || consent.consentStatus !== 'OPTED_IN' || consent.optOutDate) {
-      return NextResponse.json({ success: false, error: 'A current OPTED_IN consent record for this exact channel is required. No outreach draft was saved.' }, { status: 403 });
+    const channelPurpose = channel === 'PHONE' ? 'CALL' : channel;
+    const eligibility = await isEligibleForMarketing({
+      leadId: lead.id,
+      phone: lead.phone || undefined,
+      email: lead.email || undefined,
+      channel: channelPurpose,
+      purpose: 'PROMOTIONAL_MARKETING',
+    }).catch(() => ({ eligible: false as const, reason: 'missing_consent' as const }));
+    if (!eligibility.eligible) {
+      return NextResponse.json({ success: false, error: `Current purpose-specific promotional consent is required (${eligibility.reason}). No outreach draft was saved.` }, { status: 403 });
     }
     const outreach = await db.leadOutreach.create({
       data: {
         leadId: lead.id,
         sourceName: sourceName || 'Manual',
         sourceType,
-        channel,
+        channel: channelPurpose,
+        purpose: 'PROMOTIONAL_MARKETING',
         consentStatus: 'OPTED_IN',
-        outreachHistory: JSON.stringify([{ date: new Date().toISOString(), channel, message, result: 'DRAFT_NOT_SENT', consentRecordId: consent.id }]),
+        outreachHistory: JSON.stringify([{ date: new Date().toISOString(), channel: channelPurpose, purpose: 'PROMOTIONAL_MARKETING', message, result: 'DRAFT_NOT_SENT', consentRecordId: eligibility.consentRecordId }]),
         status: 'DRAFT',
       },
     });
-    await db.auditLog.create({ data: { userId: auth.userId, action: 'MESSAGE_ACTION', resource: 'LeadOutreach', resourceId: outreach.id, details: JSON.stringify({ leadId: lead.id, channel, consentRecordId: consent.id, state: 'DRAFT_NOT_SENT' }) } });
-    return NextResponse.json({ success: true, sent: false, state: 'DRAFT_NOT_SENT', outreach, message: 'Draft recorded against verified consent. No provider message was sent.' }, { status: 201 });
+    await db.auditLog.create({ data: { userId: auth.userId, action: 'MESSAGE_ACTION', resource: 'LeadOutreach', resourceId: outreach.id, details: JSON.stringify({ leadId: lead.id, channel: channelPurpose, purpose: 'PROMOTIONAL_MARKETING', consentRecordId: eligibility.consentRecordId, state: 'DRAFT_NOT_SENT' }) } });
+    return NextResponse.json({ success: true, sent: false, state: 'DRAFT_NOT_SENT', outreach, message: 'Draft recorded against current purpose-specific consent. No provider message was sent.' }, { status: 201 });
   } catch (error) {
     console.error('[marketing.lead-outreach] draft failed', { error: error instanceof Error ? error.name : 'UnknownError' });
     return NextResponse.json({ success: false, error: 'Unable to record outreach draft.' }, { status: 503 });

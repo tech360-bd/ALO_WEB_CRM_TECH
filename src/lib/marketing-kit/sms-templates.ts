@@ -28,7 +28,7 @@ export const SMS_TEMPLATES: SmsTemplate[] = [
     trigger: 'Website form submitted',
     timing: 'Immediate',
     body:
-      'ALO Education: thanks {{first_name}}! A counselor will call you within 24 hours. Your free consultation link: {{booking_url}}. Reply STOP to opt out.',
+      'ALO Education: thanks {{first_name}}! A counselor will call you within 24 hours. Your consultation link: {{booking_url}}. Reply STOP to opt out.',
     compliance: 'Sender name + STOP opt-out in every send; send only 8am–8pm local time.',
   },
   {
@@ -38,7 +38,7 @@ export const SMS_TEMPLATES: SmsTemplate[] = [
     trigger: 'Consultation booked',
     timing: '24 hours before, then 1 hour before',
     body:
-      'ALO Education: reminder — your free consultation with {{counselor_name}} is {{when}}. Join: {{meeting_link}}. Need to reschedule? Reply here.',
+      'ALO Education: reminder — your consultation with {{counselor_name}} is {{when}}. Join: {{meeting_link}}. Need to reschedule? Reply here.',
     compliance: 'Transactional — may send outside promo windows, but never after 9pm local.',
   },
   {

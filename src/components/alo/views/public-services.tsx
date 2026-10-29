@@ -130,8 +130,8 @@ export function PublicServices({ slug, onNavigate }: Props) {
 
               <div className="rounded-2xl bg-alo-gradient p-6 text-center text-white alo-shadow-lg">
                 <h3 className="text-xl font-bold">Get Started Today</h3>
-                <p className="mt-2 text-sm text-white/90">Book a free consultation with an ALO counselor.</p>
-                <Button onClick={() => onNavigate("public-contact")} className="mt-4 w-full bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">Book Free Consultation</Button>
+                <p className="mt-2 text-sm text-white/90">Request a consultation with an ALO counselor.</p>
+                <Button onClick={() => onNavigate("public-contact")} className="mt-4 w-full bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">Request Consultation</Button>
               </div>
             </div>
           </div>
@@ -175,9 +175,9 @@ export function PublicServices({ slug, onNavigate }: Props) {
       <section className="bg-[var(--alo-page)] py-16">
         <div className="mx-auto max-w-[1280px] px-4 text-center lg:px-6">
           <h2 className="text-2xl font-bold text-[var(--alo-text)]">Ready to Start Your Journey?</h2>
-          <p className="mt-2 text-[var(--alo-text-muted)]">Book a free consultation today and get a personalized study abroad roadmap.</p>
+          <p className="mt-2 text-[var(--alo-text-muted)]">Request a consultation today and get a personalized study abroad roadmap.</p>
           <Button onClick={() => onNavigate("public-contact")} className="mt-6 rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-white hover:bg-[var(--alo-cta-hover)]">
-            <Icon name="CalendarCheck" className="mr-2 size-4" /> Book Free Consultation
+            <Icon name="CalendarCheck" className="mr-2 size-4" /> Request Consultation
           </Button>
         </div>
       </section>

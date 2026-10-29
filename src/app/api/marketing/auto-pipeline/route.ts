@@ -47,7 +47,7 @@ export const POST = withMarketingAccess(async (req: Request, auth: AuthContext) 
   const rawHashtags = body.hashtags === undefined ? ['StudyAbroad', 'ALOEducation', 'Scholarship'] : body.hashtags;
   if (!Array.isArray(rawHashtags) || rawHashtags.length > 30 || rawHashtags.some((tag) => typeof tag !== 'string' || tag.length > 80)) return NextResponse.json({ success: false, error: 'hashtags must contain at most 30 short text tags.' }, { status: 400 });
   const hashtags = rawHashtags.map((tag: string) => tag.trim());
-  const ctaText = typeof body.ctaText === 'string' ? body.ctaText.slice(0, 300) : 'Book Free Consultation';
+  const ctaText = typeof body.ctaText === 'string' ? body.ctaText.slice(0, 300) : 'Request Consultation';
   const ctaUrl = typeof body.ctaUrl === 'string' ? body.ctaUrl.trim() : '';
   if (ctaUrl) {
     try { if (new URL(ctaUrl).protocol !== 'https:') throw new Error('https required'); }

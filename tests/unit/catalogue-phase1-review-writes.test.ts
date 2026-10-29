@@ -366,7 +366,7 @@ describe('remaining catalogue writers (crm/scholarships, country destination sav
     expect(res.status).toBe(201);
     const data = m.calls.find((c) => c.op === 'crmScholarship.create')!.args.data;
     expect(data).toEqual({ universityId: 'UNI-1', courseId: '', scholarshipName: 'Merit', scholarshipAmount: 5000, scholarshipCurrency: 'NZD' });
-    // No verificationStatus written: the schema default (NEEDS_REVIEW) applies, which publicScholarshipWhere excludes.
+    // No verificationStatus written: the schema default (NEEDS_REVIEW) applies, which the public CRM scholarship predicate excludes.
     resetDb();
   });
 

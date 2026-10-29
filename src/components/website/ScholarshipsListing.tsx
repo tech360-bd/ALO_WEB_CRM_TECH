@@ -118,7 +118,7 @@ export default function ScholarshipsListing() {
           <p className="max-w-[62ch] text-[15px] leading-7 text-[var(--alo-body)] sm:text-base">Discover verified scholarship opportunities and understand their eligibility, funding, deadlines and application requirements.</p>
           <div className="flex flex-wrap gap-3 mt-6">
             <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Check My Scholarship Eligibility</Button></Link>
-            <Link href="/book-consultation"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Book Free Consultation</Button></Link>
+            <Link href="/book-consultation"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Request Consultation</Button></Link>
           </div>
         </div>
 
@@ -197,7 +197,7 @@ export default function ScholarshipsListing() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)] h-12 px-8 font-bold">Check My Scholarship Eligibility</Button></Link>
             <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Find Matching Courses</Button></Link>
-            <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Book Free Consultation</Button></Link>
+            <Link href="/book-consultation"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Request Consultation</Button></Link>
           </div>
         </Card>
       </div>

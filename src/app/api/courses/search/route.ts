@@ -4,7 +4,7 @@ import {
   publicCourseWhere,
   publicIntakeWhere,
   publicRequirementWhere,
-  publicScholarshipWhere,
+  publicCrmScholarshipWhere,
   ENGLISH_TEST_KEYS,
   buildEnglishTestWhere,
   intakeMonthVariants,
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
     if (discipline) and.push({ disciplineArea: { contains: discipline } });
     if (openProgram) and.push({ internationalEligibility: { not: 'closed' } });
     if (tag) and.push({ publicTags: { contains: tag } });
-    if (scholarship) and.push({ scholarshipRecords: { some: { status: 'active' } } });
+    if (scholarship) and.push({ scholarshipRecords: { some: isPrivileged ? { status: 'active' } : publicCrmScholarshipWhere() } });
 
     // Intake (single month/year or the year-qualified window tokens).
     if (intakeMonth || intakeYear) {
@@ -240,7 +240,7 @@ export async function GET(request: NextRequest) {
             },
           },
           scholarshipRecords: {
-            ...(isPrivileged ? {} : { where: publicScholarshipWhere() }),
+            ...(!isPrivileged ? { where: publicCrmScholarshipWhere() } : {}),
             take: 3,
             select: {
               scholarshipName: true,

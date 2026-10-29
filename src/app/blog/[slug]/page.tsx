@@ -173,7 +173,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   Get personalized guidance from our expert counselors to turn your dream into reality.
                 </p>
                 <Link href="/book-consultation" className="inline-block w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold py-3 px-6 rounded-xl transition-colors relative z-10">
-                  Book Free Consultation
+                  Request Consultation
                 </Link>
               </div>
             </div>

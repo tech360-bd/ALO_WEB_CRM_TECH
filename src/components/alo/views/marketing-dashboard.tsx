@@ -1360,7 +1360,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="ctaText">CTA Text</Label>
-                <Input id="ctaText" placeholder="Book Free Consultation" value={form.ctaText} onChange={(e) => setForm({ ...form, ctaText: e.target.value })} />
+                <Input id="ctaText" placeholder="Request Consultation" value={form.ctaText} onChange={(e) => setForm({ ...form, ctaText: e.target.value })} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="ctaUrl">CTA URL</Label>
@@ -1859,7 +1859,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
     { trigger: "Salam / আসসালামু আলাইকুম", reply: "Waalaykum Assalam! Welcome to ALO Education. How may we assist you with your study abroad journey?" },
     { trigger: "Thanks / Thank you / ধন্যবাদ", reply: "You're most welcome! Feel free to reach out anytime. ALO Education is here to help." },
     { trigger: "Bye / Goodbye / বিদায়", reply: "Goodbye! Wishing you the best with your study abroad plans. ALO Education team." },
-    { trigger: "Price / Fee / খরচ", reply: "Our consultation is FREE for students. Application and visa fees depend on the country and university. Shall I connect you with a counselor?" },
+    { trigger: "Price / Fee / খরচ", reply: "Consultation availability and any applicable service fee are confirmed before booking. University, application, test, and visa fees are set by their providers. Shall I connect you with a counselor?" },
   ];
 
   const approveDraft = async (msg: InboxMessage) => {

@@ -863,7 +863,7 @@ export function EnglishTestDashboard() {
             <p className="mt-1 text-foreground/80">
               This portal is for students taking English tests only (no full admission counseling). Need help choosing a
               test, preparing for university applications, or booking the official exam? Contact your ALO counselor or
-              visit any ALO branch for a free consultation.
+              visit any ALO branch for a consultation.
             </p>
           </div>
         </CardContent>

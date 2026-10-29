@@ -8,6 +8,7 @@ export type PermissionModule =
   | "student"
   | "documents"
   | "communication"
+  | "contacts"
   | "applications"
   | "visa"
   | "marketing"
@@ -33,6 +34,7 @@ export type PermissionAction =
   | "approve"
   | "reject"
   | "export"
+  | "import"
   | "download"
   | "upload_on_behalf"
   | "request"
@@ -202,6 +204,13 @@ export const PERMISSION_CATALOG: Permission[] = [
   { id: "c8", module: "communication", feature: "communication", action: "student_visible_comment", description: "Add student-visible comment" },
   { id: "c9", module: "communication", feature: "communication", action: "view_partner_email_updates", description: "View partner email updates" },
 
+  // --- SHARED CONTACT REGISTRY ---
+  { id: "contacts.view", module: "contacts", feature: "contacts", action: "view_assigned", description: "View contact records within assigned, branch, or partner scope" },
+  { id: "contacts.manage", module: "contacts", feature: "contacts", action: "manage", description: "Create or update contacts within authorized scope" },
+  { id: "contacts.merge_review", module: "contacts", feature: "contacts.merge_review", action: "review", description: "Review and decide a contact-match request; never silently merge" },
+  { id: "contacts.consent.manage", module: "contacts", feature: "contacts.consent", action: "manage", description: "Record purpose-specific consent or withdrawal evidence" },
+  { id: "contacts.import", module: "contacts", feature: "contacts.import", action: "import", description: "Import authorized contacts after identity and consent checks" },
+
   // --- APPLICATIONS MODULE ---
   { id: "a1", module: "applications", feature: "applications", action: "view_assigned", description: "View assigned applications" },
   { id: "a2", module: "applications", feature: "applications", action: "create_draft", description: "Create application draft" },
@@ -328,6 +337,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
     "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9",
     "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d9",
     "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9",
+    "contacts.view", "contacts.manage", "contacts.merge_review", "contacts.consent.manage",
     "a1", "a2", "a3", "a4", "a5",
     "v1", "v2", "v3", "v4", "v5", "v6",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
@@ -343,6 +353,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
     "s1", "s3", "s4", "s6", "s8", "s9",
     "d1", "d2", "d3", "d7",
     "c1", "c2", "c3", "c4", "c5", "c7", "c8",
+    "contacts.view", "contacts.manage", "contacts.consent.manage",
     "a1", "a2", "a3",
     "v1", "v3", "v5",
     "visa.cases.summary.view",
@@ -417,6 +428,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
     "employee.dashboard.view",
     "s2", "s5",
     "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9",
+    "contacts.view", "contacts.import",
     "c1", "c5", "c7",
   ],
   hr_manager: [

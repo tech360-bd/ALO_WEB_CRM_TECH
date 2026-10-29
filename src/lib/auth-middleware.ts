@@ -307,10 +307,11 @@ export async function authenticateRequest(request: Request): Promise<AuthContext
   const employeeRoute = pathname.startsWith('/api/employee-access/') || pathname.startsWith('/api/admin/employees') || pathname.startsWith('/api/admin/payroll') || pathname === '/api/finance' || pathname.startsWith('/api/finance/') || pathname.startsWith('/api/crm/finance');
   // Employee deactivation applies across every CRM/communication/AI route,
   // not only HR endpoints. Revalidate the effective employee on every request.
-  const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true } });
+  const employee = await db.employee.findFirst({ where: { userId: result.userId }, select: { status: true, branch: true } });
   if (employee && employee.status.toLowerCase() !== 'active') {
     return NextResponse.json({ success: false, error: 'Employee account is not active.' }, { status: 403 });
   }
+  if (employee?.branch) result.branch = employee.branch;
   if (employeeRoute || pathname === '/api/employee' || pathname.startsWith('/api/employee/')) {
     if (['STUDENT', 'PARTNER'].includes(result.userType.toUpperCase())) {
       return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });

@@ -16,6 +16,7 @@ import {
 import { Breadcrumb, Disclaimer } from "@/components/alo/public-shared";
 import { PublicLeadForm } from "@/components/alo/public-lead-form";
 import { fmtDate, type ViewKey } from "@/lib/alo-types";
+import { ALO_CONTACT } from "@/lib/alo-site-info";
 
 interface PublicDestinationsProps {
   onNavigate: (v: ViewKey, slug?: string) => void;
@@ -44,13 +45,6 @@ function safeParse<T>(raw: string | null | undefined, fallback: T): T {
   }
 }
 
-const STATS = [
-  { icon: "Globe", value: "13", label: "Countries", accent: "blue" as const },
-  { icon: "Building2", value: "12+", label: "Universities", accent: "orange" as const },
-  { icon: "ShieldCheck", value: "Verified", label: "Data & sources", accent: "emerald" as const },
-  { icon: "Bot", value: "AI", label: "Course matching", accent: "violet" as const },
-];
-
 export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
   const { toast } = useToast();
   const [countries, setCountries] = React.useState<CountryListItem[]>([]);
@@ -74,11 +68,24 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
     return () => { cancelled = true; };
   }, []);
 
+  const latestReview = countries
+    .map((country) => new Date(country.lastVerifiedAt || ""))
+    .filter((date) => !Number.isNaN(date.getTime()))
+    .sort((a, b) => b.getTime() - a.getTime())[0];
+  const stats = [
+    { icon: "Globe", value: countries.length, label: "Current destination guides", accent: "blue" as const },
+    { icon: "ShieldCheck", value: countries.filter((country) => Boolean(country.sourceUrl)).length, label: "HTTPS source-linked guides", accent: "emerald" as const },
+    { icon: "CalendarDays", value: latestReview ? fmtDate(latestReview.toISOString()) : "—", label: "Latest source review", accent: "violet" as const },
+  ];
+
   function handleWhatsApp() {
-    toast({
-      title: "Opening WhatsApp",
-      description: "Our counselor will respond within working hours. Direct line: 01805020101",
-    });
+    if (ALO_CONTACT.hasWhatsApp) {
+      window.open(ALO_CONTACT.whatsappHref, "_blank", "noopener,noreferrer");
+      toast({ title: "Opening WhatsApp", description: `Contact ${ALO_CONTACT.whatsappDisplay} during working hours.` });
+      return;
+    }
+    toast({ title: "Contact ALO Education", description: "No public WhatsApp number is configured. Use the contact form." });
+    onNavigate("public-contact");
   }
 
   return (
@@ -101,17 +108,17 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
           <div className="max-w-3xl">
             <Badge variant="outline" className="mb-4 border-[var(--alo-brand)]/30 bg-white/70 text-[var(--alo-brand)]">
               <Icon name="Globe" className="mr-1.5 size-3.5" />
-              {countries.length || 13} verified destinations
+              {countries.length} current destination guides
             </Badge>
             <h1 className="text-4xl font-black text-[var(--alo-brand)] md:text-5xl">Study Destinations</h1>
             <p className="mt-3 text-base text-muted-foreground md:text-lg">
-              Explore {countries.length || 13} countries with verified tuition, visa, work rights, and scholarship data — all written in ALO's own words.
+              Browse currently source-reviewed destination guides. Requirements and costs can change; verify details with the relevant official institution or authority before acting.
             </p>
           </div>
 
           {/* Stats row */}
-          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-            {STATS.map((s) => (
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {stats.map((s) => (
               <div key={s.label} className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white/80 px-4 py-4">
                 <div className="flex items-center gap-2">
                   <div className={cn(
@@ -178,7 +185,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                     {c.verificationStatus === "VERIFIED" && (
                       <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-[11px] text-emerald-700">
                         <Icon name="ShieldCheck" className="mr-1 size-3" />
-                        Verified
+                        Source reviewed
                       </Badge>
                     )}
                   </div>
@@ -207,7 +214,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
 
                   <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Icon name="ShieldCheck" className="size-3.5 text-emerald-600" />
-                    Last verified: <span className="font-semibold text-foreground">{fmtDate(c.lastVerifiedAt)}</span>
+                    Last reviewed: <span className="font-semibold text-foreground">{fmtDate(c.lastVerifiedAt)}</span>
                   </div>
 
                   <div className="mt-auto flex flex-col gap-2 pt-5 sm:flex-row">
@@ -243,7 +250,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">Still deciding?</p>
                 <h2 className="mt-1 text-3xl font-black text-[var(--alo-brand)] md:text-4xl">Not sure which country is right for you?</h2>
                 <p className="mt-3 text-base text-muted-foreground">
-                  Use our AI Course Finder to match your background, budget, and goals to the right destination — or book a free consultation with a senior ALO counselor.
+                  Use our AI Course Finder to match your background, budget, and goals to the right destination — or request a consultation with a senior ALO counselor.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Button
@@ -259,7 +266,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                     className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                   >
                     <Icon name={showConsult ? "X" : "CalendarCheck"} className="mr-2 size-4" />
-                    {showConsult ? "Hide form" : "Book Free Consultation"}
+                    {showConsult ? "Hide form" : "Request Consultation"}
                   </Button>
                   <Button
                     onClick={handleWhatsApp}
@@ -267,11 +274,11 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                     className="border-emerald-500 text-emerald-700 hover:bg-emerald-50"
                   >
                     <Icon name="Whatsapp" className="mr-2 size-4" />
-                    WhatsApp Us
+                    {ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : "Contact ALO Education"}
                   </Button>
                 </div>
                 <div className="mt-5">
-                  <Disclaimer text="ALO Education is an independent consultancy. We are not affiliated with any government immigration authority. All guidance is based on publicly available rules and our experience with previous applicants." />
+                  <Disclaimer text="ALO Education is an independent consultancy and is not a government immigration authority. Guidance is informational, may be incomplete, and does not replace current rules from official government or institution sources. Confirm requirements directly with the relevant authority before making decisions." />
                 </div>
               </div>
 
@@ -279,8 +286,8 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                 <div>
                   <PublicLeadForm
                     sourceTag="Destinations page — bottom CTA"
-                    title="Book your free consultation"
-                    subtitle="Tell us about your goals — we'll call you within 24 hours."
+                    title="Book your consultation"
+                    subtitle="Share your goals and our team will review your enquiry for follow-up."
                     compact
                   />
                 </div>

@@ -91,18 +91,22 @@ export default function PortalFooter({ scope = 'student' }: PortalFooterProps) {
             </Link>
 
             <ul className="mt-4 flex flex-col gap-1.5 text-[12.5px] text-alo-text-secondary">
-              <li className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
-                <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-alo-brand hover:text-alo-cta">
-                  WhatsApp {ALO_CONTACT.whatsappDisplay}
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
-                <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
-                  {ALO_CONTACT.mobileDisplay}
-                </a>
-              </li>
+              {ALO_CONTACT.hasWhatsApp && (
+                <li className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                  <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-alo-brand hover:text-alo-cta">
+                    WhatsApp {ALO_CONTACT.whatsappDisplay}
+                  </a>
+                </li>
+              )}
+              {ALO_CONTACT.hasContactPhone && (
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                  <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
+                    {ALO_CONTACT.mobileDisplay}
+                  </a>
+                </li>
+              )}
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
                 <a href={ALO_CONTACT.emailHref} className="font-medium text-alo-brand hover:text-alo-cta">

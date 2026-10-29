@@ -63,9 +63,10 @@ export function validateWhatsAppMediaRequest(params: SendWhatsAppMediaParams): {
 /** Honest configuration check — §175: never fabricate a send when not configured. */
 export function whatsappCloudConfigError(): string | null {
   const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  if (!token || !phoneNumberId) {
-    return "not configured — WHATSAPP_ACCESS_TOKEN / WHATSAPP_PHONE_NUMBER_ID required";
+  const graphVersion = process.env.WHATSAPP_GRAPH_VERSION || process.env.WHATSAPP_GRAPH_API_VERSION || process.env.WHATSAPP_API_VERSION || 'v22.0';
+  if (!token) return 'not configured — WHATSAPP_ACCESS_TOKEN or WHATSAPP_TOKEN is required';
+  if (!/^v\d+\.\d+$/.test(graphVersion.trim())) {
+    return 'not configured — a valid WHATSAPP_GRAPH_VERSION is required';
   }
   return null;
 }

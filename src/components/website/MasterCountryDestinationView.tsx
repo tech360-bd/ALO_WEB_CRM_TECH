@@ -211,7 +211,7 @@ export default function MasterCountryDestinationView({
                   href="/book-consultation"
                   className="h-12 px-6 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-text)] font-bold text-sm rounded-xl border border-[var(--alo-border)] flex items-center justify-center gap-2 transition"
                 >
-                  Book Free Consultation
+                  Request Consultation
                 </Link>
                 <a
                   href="https://wa.me/8801805020101"

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { PUBLIC_SCHOLARSHIP_STATUSES } from "@/lib/website/public-content";
+import { hasCurrentScholarshipSourceVerification } from "@/lib/scholarships/status-engine";
+import { publicScholarshipWhere } from "@/lib/public-catalog";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     const { slug } = await params;
 
     const scholarship = await db.scholarship.findUnique({
-      where: { slug },
+      where: { slug, ...publicScholarshipWhere() },
       include: {
         faqs: { where: { status: "active" }, orderBy: { sortOrder: "asc" } },
       },
@@ -20,7 +22,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     if (!scholarship) {
       return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
     }
-    if (!PUBLIC_SCHOLARSHIP_STATUSES.includes(scholarship.status)) {
+    if (!PUBLIC_SCHOLARSHIP_STATUSES.includes(scholarship.status) || !hasCurrentScholarshipSourceVerification({
+      verificationStatus: scholarship.verificationStatus,
+      lastVerifiedAt: scholarship.lastVerifiedAt,
+      officialSourceUrl: scholarship.officialSourceUrl,
+    })) {
       return NextResponse.json({ error: "Scholarship not found" }, { status: 404 });
     }
 
@@ -73,7 +79,10 @@ async function hydrateRelationships(rels: any[]): Promise<any[]> {
           target = await db.service.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true, shortDescription: true } });
           break;
         case "SCHOLARSHIP":
-          target = await db.scholarship.findUnique({ where: { id: r.targetId, status: { in: PUBLIC_SCHOLARSHIP_STATUSES } }, select: { slug: true, name: true, fundingType: true, amount: true, currency: true } });
+          target = await db.scholarship.findUnique({
+            where: { id: r.targetId, ...publicScholarshipWhere() },
+            select: { slug: true, name: true, fundingType: true, amount: true, currency: true, verificationStatus: true, lastVerifiedAt: true, officialSourceUrl: true },
+          });
           break;
         case "RESOURCE":
           target = await db.resource.findUnique({ where: { id: r.targetId, status: "PUBLISHED" }, select: { slug: true, title: true, excerpt: true, featuredImage: true } });
@@ -81,6 +90,11 @@ async function hydrateRelationships(rels: any[]): Promise<any[]> {
       }
     } catch {}
     if (!target) continue;
+    if (r.targetType === "SCHOLARSHIP" && !hasCurrentScholarshipSourceVerification({
+      verificationStatus: target.verificationStatus,
+      lastVerifiedAt: target.lastVerifiedAt,
+      officialSourceUrl: target.officialSourceUrl,
+    })) continue;
     out.push({
       id: r.id,
       direction: r._direction,

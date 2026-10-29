@@ -363,29 +363,28 @@ export default function PublicFooter() {
                   </a>
                 </span>
               </li>
-              <li className="flex items-start gap-2.5">
-                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
-                <span className="text-alo-text-secondary">
-                  <span className="font-semibold text-alo-text">WhatsApp: </span>
-                  <a
-                    href={ALO_CONTACT.whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-alo-brand hover:text-alo-cta"
-                  >
-                    {ALO_CONTACT.whatsappDisplay}
-                  </a>
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
-                <span className="text-alo-text-secondary">
-                  <span className="font-semibold text-alo-text">Mobile: </span>
-                  <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
-                    {ALO_CONTACT.mobileDisplay}
-                  </a>
-                </span>
-              </li>
+              {ALO_CONTACT.hasWhatsApp && (
+                <li className="flex items-start gap-2.5">
+                  <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                  <span className="text-alo-text-secondary">
+                    <span className="font-semibold text-alo-text">WhatsApp: </span>
+                    <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-alo-brand hover:text-alo-cta">
+                      {ALO_CONTACT.whatsappDisplay}
+                    </a>
+                  </span>
+                </li>
+              )}
+              {ALO_CONTACT.hasContactPhone && (
+                <li className="flex items-start gap-2.5">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                  <span className="text-alo-text-secondary">
+                    <span className="font-semibold text-alo-text">Mobile: </span>
+                    <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
+                      {ALO_CONTACT.mobileDisplay}
+                    </a>
+                  </span>
+                </li>
+              )}
               <li className="flex items-start gap-2.5">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
                 <span className="text-alo-text-secondary">
@@ -429,7 +428,7 @@ export default function PublicFooter() {
               href="/book-consultation"
               className="inline-flex w-fit items-center gap-2 rounded-button bg-alo-cta px-5 py-3 font-heading text-[13px] font-bold text-black shadow-sm transition-colors hover:bg-alo-cta-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
             >
-              Book Free Counseling
+              Request Counseling
             </Link>
           </div>
 

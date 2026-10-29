@@ -21,7 +21,7 @@ export default function EligibilityCheckPage() {
         <div className="container mx-auto px-4 md:px-6 max-w-6xl py-10 space-y-8">
           <EligibilityFlowDiagram />
           <div className="flex justify-center">
-            <AloCtaLink href="/book-consultation">Book a Free Consultation</AloCtaLink>
+            <AloCtaLink href="/book-consultation">Request a Consultation</AloCtaLink>
           </div>
         </div>
         <EligibilityCheckerEnhanced />

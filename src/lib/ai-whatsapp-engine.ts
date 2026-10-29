@@ -194,12 +194,12 @@ export async function generateAiReply(params: {
   if (language === 'bangla') {
     if (sensitive) reply = 'আপনার নিরাপত্তার জন্য এই WhatsApp চ্যাটে Student ID, পাসপোর্ট, ব্যাংক/কার্ড তথ্য, OTP, পাসওয়ার্ড বা ব্যক্তিগত নথি পাঠাবেন না। অ্যাকাউন্ট-সম্পর্কিত সহায়তার জন্য নিরাপদ Student Portal ব্যবহার করুন।';
     else if (/visa|cas|i-20|coe|ভিসা/i.test(lower)) reply = 'ভিসা বা যোগ্যতা সম্পর্কে চূড়ান্ত সিদ্ধান্ত এই খসড়ায় দেওয়া হচ্ছে না। শর্ত পরিবর্তিত হতে পারে—বর্তমান সরকারি/বিশ্ববিদ্যালয়ের অফিসিয়াল উৎসে যাচাই করুন বা অনুমোদিত ALO ভিসা কর্মকর্তার পরামর্শ নিন।';
-    else if (complaint || urgent || asksHuman) reply = 'আপনার বার্তাটি একজন অনুমোদিত কাউন্সেলরের মানব পর্যালোচনার জন্য খসড়া করা হয়েছে। প্রয়োজন হলে ২৪/৭ জরুরি সহায়তার জন্য 01805020101 নম্বরে কল করুন। এই চ্যাটে গোপন তথ্য বা নথি পাঠাবেন না।';
+    else if (complaint || urgent || asksHuman) reply = 'আপনার বার্তাটি একজন অনুমোদিত কাউন্সেলরের মানব পর্যালোচনার জন্য পাঠানো হয়েছে। এই চ্যাটে গোপন তথ্য বা নথি পাঠাবেন না।';
     else reply = 'ALO Education-এ যোগাযোগের জন্য ধন্যবাদ। সাধারণ সহায়তার জন্য পছন্দের দেশ, পড়াশোনার স্তর ও সম্ভাব্য intake জানাতে পারেন। নির্দিষ্ট ভর্তি-সংক্রান্ত শর্ত বর্তমান অফিসিয়াল উৎসে যাচাই করুন; কোনো ফলাফল নিশ্চিত নয়।';
   } else {
     if (sensitive) reply = 'For your security, do not share a Student ID, passport, bank/card details, OTP, password, or private document in this WhatsApp chat. Use the secure Student Portal for account-specific help.';
     else if (/visa|cas|i-20|coe|eligib|refusal/.test(lower)) reply = 'This draft does not make a visa or eligibility decision. Requirements can change; verify current information through official government/university sources or an authorized ALO visa officer.';
-    else if (complaint || urgent || asksHuman) reply = 'This message needs review by an authorized counselor. For immediate urgent support, call 01805020101. Do not share credentials or private documents in chat.';
+    else if (complaint || urgent || asksHuman) reply = 'This message has been routed for review by an authorized counselor. Do not share credentials or private documents in chat.';
     else reply = 'Thank you for contacting ALO Education. For general guidance, you may share your preferred destination, study level, and intended intake. Verify specific requirements with current official sources; no outcome is guaranteed.';
   }
 

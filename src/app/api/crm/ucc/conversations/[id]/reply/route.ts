@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
 import { sendWhatsAppMessage, sendWhatsAppPrivateMedia } from '@/lib/whatsapp-cloud-api';
+import { determineSenderNumber } from '@/lib/whatsapp-number-pool';
 import { readPrivateFile } from '@/lib/storage/private-file-store';
 import { canAccessUccConversation, canAccessUccDocumentConversation, canUseUccCommunication, canUseUccDocuments, canViewUccB2B } from '@/lib/ucc/document-access';
 import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
@@ -108,8 +109,22 @@ export async function POST(
     }
     if (!isInternalNote || attachment) {
       const policyBlock = outboundReplyPolicyBlock();
-      if (policyBlock) return NextResponse.json(policyBlock, {status:503});
+      if (policyBlock) return NextResponse.json(policyBlock, { status: 503 });
     }
+    if (!isInternalNote && conversation.channel === 'whatsapp') {
+      const serviceWindowStart = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const recentInbound = await db.uccMessage.findFirst({
+        where: { conversationId: id, direction: 'inbound', createdAt: { gte: serviceWindowStart } },
+        select: { id: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (!recentInbound) {
+        return NextResponse.json({ success: false, code: 'WHATSAPP_SERVICE_WINDOW_CLOSED', error: 'A customer service reply requires an inbound WhatsApp message in the last 24 hours. Use the approved-template workflow instead.' }, { status: 422 });
+      }
+    }
+    const senderRoute = conversation.channel === 'whatsapp'
+      ? await determineSenderNumber({ counselorId: auth.userId, studentId: conversation.studentId || undefined, leadId: conversation.leadId || undefined })
+      : null;
     if (attachment) {
       if (conversation.channel !== 'whatsapp') {
         return NextResponse.json(
@@ -252,6 +267,11 @@ export async function POST(
         mimeType: privateAttachment.mimeType,
         fileName: privateAttachment.fileName,
         caption: caption || undefined,
+        actorId: auth.userId,
+        senderNumber: senderRoute?.number,
+        studentId: conversation.studentId || undefined,
+        leadId: conversation.leadId || undefined,
+        conversationId: id,
       });
       if (!mediaSend.success || !mediaSend.messageId) {
         const sendError = mediaSend.error || 'The provider did not confirm the media message.';
@@ -327,7 +347,17 @@ export async function POST(
       if (!conversation.participantPhone) {
         return NextResponse.json({ success: false, error: 'Cannot send reply — conversation has no recipient phone number.' }, { status: 422 });
       }
-      waTextSend = await sendWhatsAppMessage({ to: conversation.participantPhone, text: content });
+      waTextSend = await sendWhatsAppMessage({
+        to: conversation.participantPhone,
+        text: content,
+        purpose: 'SERVICE',
+        conversationId: id,
+        actorId: auth.userId,
+        employeeSenderId: auth.userId,
+        senderNumber: senderRoute?.number,
+        studentId: conversation.studentId || undefined,
+        leadId: conversation.leadId || undefined,
+      });
       if (!waTextSend.success || !waTextSend.messageId) {
         const sendError = waTextSend.error || 'The provider did not confirm message delivery.';
         const failedMessage = await db.uccMessage.create({

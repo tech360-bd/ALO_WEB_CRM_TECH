@@ -179,7 +179,7 @@ export default function AiCourseMatch({ countries }: { countries: CountryOption[
             'Our verified course catalogue has no published course matching this profile and these filters yet. Widen your country or subject selection, or talk to an advisor about destinations we can source for you.',
           action: (
             <Button asChild variant="outline" className="mt-2 h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
-              <Link href="/book-consultation">Book Free Consultation</Link>
+              <Link href="/book-consultation">Request Consultation</Link>
             </Button>
           ),
         });

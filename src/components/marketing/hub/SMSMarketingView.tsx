@@ -9,7 +9,7 @@ import { MessageSquare, Send, Users, ShieldCheck, AlertTriangle, Loader2 } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function SMSMarketingView() {
-  const [campaign, setCampaign] = useState({ segment:'hot_leads', message:'ALO Education: UK Jan 2027 intake open. Scholarships available. Reply YES for free counseling. Opt-out: STOP', senderId:'ALOEDU' });
+  const [campaign, setCampaign] = useState({ segment:'hot_leads', message:'ALO Education: UK Jan 2027 intake open. Scholarships available. Reply YES for counseling. Opt-out: STOP', senderId:'ALOEDU' });
   const [sending, setSending] = useState(false);
   const [log, setLog] = useState<string|null>(null);
   const [consentInfo, setConsentInfo] = useState<any>(null);

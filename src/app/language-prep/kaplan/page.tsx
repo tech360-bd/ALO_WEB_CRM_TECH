@@ -1,14 +1,11 @@
-import { Metadata } from 'next';
 import LanguageTestPage from '@/components/language-prep/LanguageTestPage';
-import { getTestBySlug } from '@/lib/language-prep/data';
+import { getLanguagePrepMetadata } from '@/lib/language-prep/metadata';
 
-const test = getTestBySlug('kaplan');
+export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: test?.seoTitle || 'kaplan Preparation | Requirements, Format & Study Abroad Guidance | ALO Education',
-  description: test?.seoDescription || 'Prepare for kaplan with expert guidance from ALO Education.',
-  alternates: { canonical: 'https://aloeducation.com/language-prep/kaplan' },
-};
+export async function generateMetadata() {
+  return getLanguagePrepMetadata('kaplan');
+}
 
 export default function Page() {
   return <LanguageTestPage slug="kaplan" />;

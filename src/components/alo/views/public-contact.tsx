@@ -1,6 +1,6 @@
 "use client";
 
-import { ALO_CONTACT, ALO_SOCIALS } from '@/lib/alo-site-info';
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA, ALO_SOCIALS } from '@/lib/alo-site-info';
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ interface PublicContactProps {
 }
 
 const SUBJECTS = [
-  "Free Counseling Request",
+  "Counseling Request",
   "Application Support",
   "Visa & Immigration Question",
   "Scholarship Inquiry",
@@ -49,20 +49,20 @@ const CONTACT_INFO = [
     value: ALO_CONTACT.address,
     accent: "blue" as const,
   },
-  {
+  ...(ALO_CONTACT.hasContactPhone ? [{
     icon: "Phone",
     label: "Phone",
-    value: "+880 1805 020101",
-    href: "tel:+8801805020101",
+    value: ALO_CONTACT.mobileDisplay,
+    href: ALO_CONTACT.mobileHref,
     accent: "orange" as const,
-  },
-  {
+  }] : []),
+  ...(ALO_CONTACT.hasWhatsApp ? [{
     icon: "MessageCircle",
     label: "WhatsApp",
-    value: "+880 1805 020101",
-    href: "https://wa.me/8801805020101",
+    value: ALO_CONTACT.whatsappDisplay,
+    href: ALO_CONTACT.whatsappHref,
     accent: "emerald" as const,
-  },
+  }] : []),
   {
     icon: "Mail",
     label: "Email",
@@ -86,9 +86,9 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
     fullName: "",
     phone: "",
     email: "",
-    subject: "Free Counseling Request",
+    subject: "Counseling Request",
     message: "",
-    consent: true,
+    consent: false,
   });
   const [loading, setLoading] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
@@ -123,14 +123,14 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
       } else {
         setSubmitted(true);
         toast({
-          title: "Message sent!",
-          description: data.message || "An ALO counselor will reach out within 24 hours.",
+          title: "Enquiry received",
+          description: data.message || "Your enquiry has been submitted for staff review.",
         });
       }
     } catch {
       toast({
         title: "Network error",
-        description: "Please try again or call us at 01805020101.",
+        description: `Please try again or contact us via ${ALO_PUBLIC_CONTACT_CTA.label}.`,
         variant: "destructive",
       });
     } finally {
@@ -271,8 +271,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                   </div>
                   <p className="mt-5 text-xl font-black text-emerald-900">Message received!</p>
                   <p className="mt-2 text-sm leading-relaxed text-emerald-800">
-                    Thank you for contacting ALO Education. One of our counselors will reach out within 24 hours via
-                    phone or WhatsApp. For urgent matters, call us at <span className="font-semibold">01805020101</span>.
+                    Thank you for contacting ALO Education. Your enquiry has been received. Our team will respond according to current service hours and availability. For urgent matters, use <a className="font-semibold underline" href={ALO_PUBLIC_CONTACT_CTA.href}>{ALO_PUBLIC_CONTACT_CTA.label}</a>.
                   </p>
                   <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
                     <Button
@@ -285,7 +284,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                     <Button
                       onClick={() => {
                         setSubmitted(false);
-                        setForm({ fullName: "", phone: "", email: "", subject: "Free Counseling Request", message: "", consent: true });
+                        setForm({ fullName: "", phone: "", email: "", subject: "Counseling Request", message: "", consent: false });
                       }}
                       variant="outline"
                       className="h-11 border-emerald-400 text-emerald-700 hover:bg-emerald-100"
@@ -321,7 +320,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                           value={form.phone}
                           onChange={(e) => setForm({ ...form, phone: e.target.value })}
                           className="mt-1 h-11"
-                          placeholder="+8801805020100"
+                          placeholder="01XXXXXXXXX"
                         />
                       </div>
                     </div>

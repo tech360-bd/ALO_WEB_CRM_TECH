@@ -376,7 +376,7 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
                   <Icon name="CalendarCheck" className="size-4" />
-                  Book Free Consultation
+                  Request Consultation
                 </Button>
                 <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-white/30 bg-transparent px-6 text-white hover:bg-white/10">
                   <Icon name="Briefcase" className="size-4" />

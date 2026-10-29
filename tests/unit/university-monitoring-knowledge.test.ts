@@ -41,7 +41,13 @@ describe('approved Knowledge Center catalogue search', () => {
   });
   it('requires source evidence and a public university for scholarship results', async () => {
     await GET(request('q=scholarship'));
-    expect(m.scholarships.mock.calls[0][0].where.AND).toContainEqual({ officialScholarshipUrl: { not: '' } });
+    const scholarshipWhere = m.scholarships.mock.calls[0][0].where.AND[0];
+    expect(scholarshipWhere).toMatchObject({
+      status: 'active',
+      verificationStatus: { in: ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] },
+      lastCheckedAt: { gte: expect.any(String), lte: expect.any(String) },
+      officialScholarshipUrl: { startsWith: 'https://' },
+    });
     expect(m.scholarships.mock.calls[0][0].where.AND).toContainEqual({ university: { is: publicUniversityWhere() } });
   });
   it('reports DB failures rather than turning them into empty verified results', async () => {

@@ -5,6 +5,7 @@ import {
   publicCourseWhere,
   publicIntakeWhere,
   publicRequirementWhere,
+  publicCrmScholarshipWhere,
   publicUniversityIdentifierWhere,
   publicUniversityWhere,
   stripInternalFields,
@@ -81,7 +82,7 @@ export async function GET(
             university: true,
             intakeFees: { where: publicIntakeWhere() as any },
             requirements: { where: publicRequirementWhere() as any },
-            scholarshipRecords: { where: { status: 'active', verificationStatus: { in: ['VERIFIED', 'verified'] } } },
+            scholarshipRecords: { where: publicCrmScholarshipWhere() },
           },
         })
       : null;

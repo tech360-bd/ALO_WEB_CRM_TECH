@@ -15,12 +15,12 @@ import { toast } from 'sonner';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
 import { submitLanguagePrepLead } from '@/lib/language-prep/submit-lead';
 import { LanguageSectionVisual, LanguageTestComparison } from './LanguagePrepVisuals';
-import { ENGLISH_PREP_TESTS } from '@/lib/language-prep/data';
 import { preparationSteps, ACCEPTANCE_NOTICE, LANGUAGE_TEST_FAQS, makePreparationPlan } from '@/lib/language-prep/editorial';
 import LanguageRequirementChecker from './LanguageRequirementChecker';
 import type { EnglishTest } from '@/lib/language-prep/types';
 import { EnglishExamCard } from '@/components/website/EnglishExamCta';
 import { isEnglishProficiencyTestSlug } from '@/lib/english-exam';
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA } from '@/lib/alo-site-info';
 
 function safeJsonLd(value: unknown) { return JSON.stringify(value).replace(/</g, '\\u003c'); }
 
@@ -36,15 +36,22 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
   const [acceptance, setAcceptance] = useState<any[]>([]);
   const [resources, setResources] = useState<any[]>([]);
   const [successStories, setSuccessStories] = useState<any[]>([]);
+  const [allTests, setAllTests] = useState<EnglishTest[]>([]);
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(!initialTest);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [scorePlanner, setScorePlanner] = useState({ current: '', target: '', examDate: '', hours: '10' });
   const [plannerResult, setPlannerResult] = useState<any>(null);
-  const [leadForm, setLeadForm] = useState({ name: '', phone: '', email: '', targetCountry: 'UK', currentScore: '', targetScore: '' });
+  const [leadForm, setLeadForm] = useState({ name: '', phone: '', email: '', targetCountry: '', currentScore: '', targetScore: '' });
 
   useEffect(() => {
     const controller = new AbortController();
+    fetch('/api/language-prep/tests', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!controller.signal.aborted && data?.success && Array.isArray(data.tests)) setAllTests(data.tests);
+      })
+      .catch(() => {});
     setTest(initialTest || null);
     setLoading(!initialTest);
     setLoadError(false);
@@ -89,14 +96,14 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
       testName: test?.name || slug,
       testId: test?.id || '',
       currentScore: leadForm.currentScore || scorePlanner.current,
-      targetScore: leadForm.targetScore || scorePlanner.target || test?.scoringSystem,
+      targetScore: leadForm.targetScore || scorePlanner.target || '',
       source: 'language_prep',
       sourceSection: `${slug}_${section}`,
       notes: `Test detail lead for ${test?.name} — Current: ${leadForm.currentScore}, Target: ${leadForm.targetScore}`,
     });
     if (result.ok) {
-      toast.success('Your enquiry has been received. Our team will contact you.');
-      setLeadForm({ name: '', phone: '', email: '', targetCountry: 'UK', currentScore: '', targetScore: '' });
+      toast.success(result.message);
+      setLeadForm({ name: '', phone: '', email: '', targetCountry: '', currentScore: '', targetScore: '' });
     } else {
       toast.error(result.message);
     }
@@ -179,7 +186,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
-                    Book Free {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
+                    Request {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold text-sm h-12 px-6 rounded-xl"><a href="#assessment">
                     Plan Your {test.shortName} Preparation
@@ -264,7 +271,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <ol className="space-y-4">{preparationSteps(test).map((step, index) => <li key={step} className="flex gap-3 rounded-xl border border-[var(--alo-brand)] bg-white p-4"><span className="font-bold text-[var(--alo-cta)]">{index + 1}.</span><p className="text-sm leading-relaxed text-[var(--alo-body)]">{step}</p></li>)}</ol>
               <h3 className="mt-6 text-xl font-bold">Benefits of a structured preparation plan</h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--alo-body)]">Become familiar with the format, identify weaker skills through practice, plan feedback and work towards the score your course requires. Progress depends on your starting point, practice and circumstances.</p>
-              <div className="mt-5 flex flex-wrap gap-3"><Button asChild><a href="#book-counselling">Prepare for {test.shortName} with ALO</a></Button><Button asChild variant="outline"><a href="/book-consultation">Book Free {test.shortName} Counselling</a></Button></div>
+              <div className="mt-5 flex flex-wrap gap-3"><Button asChild><a href="#book-counselling">Prepare for {test.shortName} with ALO</a></Button><Button asChild variant="outline"><a href="/book-consultation">Request {test.shortName} Counselling</a></Button></div>
             </section>
 
             {/* Test Modules — 4-card layout */}
@@ -398,7 +405,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-6">{test.name} Preparation Process — 8 Steps</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 {[
-                  { step: '01', title: 'Assessment', desc: 'Free initial assessment to evaluate current level' },
+                  { step: '01', title: 'Assessment', desc: 'Initial assessment to evaluate current level' },
                   { step: '02', title: 'Target Score', desc: 'Set realistic target based on course requirement' },
                   { step: '03', title: 'Study Plan', desc: 'Custom plan with daily milestones and materials' },
                   { step: '04', title: 'Module Training', desc: `Intensive training on ${test.name} modules and question types` },
@@ -424,7 +431,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">{test.name} Preparation with ALO Education</h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {[
-                  { title: 'Free Initial Assessment', desc: 'Diagnostic test to evaluate baseline' },
+                  { title: 'Initial Assessment', desc: 'Assessment availability and any applicable fee are confirmed before booking.' },
                   { title: 'Target Band Planning', desc: `Set realistic ${test.shortName} target based on course` },
                   ...modules.slice(0, 4).map((m: any) => ({ title: `${m.moduleName} Preparation`, desc: m.preparationTips?.slice(0,80) || `Focused ${m.moduleName} strategy` })),
                   { title: 'Practice Tests', desc: 'Get familiar with the format and timing' },
@@ -524,7 +531,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               )}
             </section>
 
-            <section id="compare-tests"><LanguageSectionVisual index={2} /><h2 className="mb-5 text-2xl font-bold">Compare all tests before choosing {test.shortName}</h2><LanguageTestComparison tests={ENGLISH_PREP_TESTS} /></section>
+            <section id="compare-tests"><LanguageSectionVisual index={2} /><h2 className="mb-5 text-2xl font-bold">Compare all tests before choosing {test.shortName}</h2><LanguageTestComparison tests={allTests} /></section>
 
             {/* FAQ — 15-20 per test */}
             <section>
@@ -563,21 +570,21 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                   <Input placeholder="Phone" value={leadForm.phone} onChange={e => setLeadForm({ ...leadForm, phone: e.target.value })} className="h-11 rounded-xl bg-white text-[var(--alo-text)] border-0" />
                   <Input placeholder="Email" value={leadForm.email} onChange={e => setLeadForm({ ...leadForm, email: e.target.value })} className="h-11 rounded-xl bg-white text-[var(--alo-text)] border-0" />
                   <select value={leadForm.targetCountry} onChange={e => setLeadForm({ ...leadForm, targetCountry: e.target.value })} className="h-11 px-3 rounded-xl bg-white text-[var(--alo-text)] text-sm border-0">
-                    <option>UK</option><option>Canada</option><option>Australia</option><option>USA</option><option>Ireland</option><option>New Zealand</option><option>UAE</option><option>Europe</option>
+                    <option value="">Choose a country (optional)</option><option>UK</option><option>Canada</option><option>Australia</option><option>USA</option><option>Ireland</option><option>New Zealand</option><option>UAE</option><option>Europe</option>
                   </select>
                   <Input placeholder="Current Score" value={leadForm.currentScore} onChange={e => setLeadForm({ ...leadForm, currentScore: e.target.value })} className="h-11 rounded-xl bg-white text-[var(--alo-text)] border-0" />
                   <Input placeholder="Target Score" value={leadForm.targetScore} onChange={e => setLeadForm({ ...leadForm, targetScore: e.target.value })} className="h-11 rounded-xl bg-white text-[var(--alo-text)] border-0" />
                   <div className="sm:col-span-2">
-                    <Button type="submit" className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold h-12 rounded-xl">Book Free Counselling →</Button>
+                    <Button type="submit" className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold h-12 rounded-xl">Submit Enquiry →</Button>
                   </div>
                 </form>
 
                 <div className="flex flex-wrap justify-center gap-3 mt-6">
                   <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl text-sm"><a href="/language-prep#test-discovery">Find My Test</a></Button>
-                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl text-sm flex items-center gap-2"><a href="https://wa.me/8801805020101" target="_blank"><MessageSquare className="w-4 h-4" /> WhatsApp +880 180 502 0101</a></Button>
+                  <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold rounded-xl text-sm flex items-center gap-2"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}><MessageSquare className="w-4 h-4" /> {ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
                 </div>
 
-                <p className="text-[11px] text-[var(--alo-brand-pale)] text-center mt-6">Email: info@aloeducation.com • Lead stored with source language_prep and source_section {slug}_final_cta • Do not create duplicate leads unnecessarily</p>
+                <p className="text-[11px] text-[var(--alo-brand-pale)] text-center mt-6">Email: {ALO_CONTACT.email}</p>
               </Card>
             </section>
           </div>
@@ -607,8 +614,8 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <Card className="p-5 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-[var(--alo-brand-pale)] leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
-                <Button asChild className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold rounded-xl "><a href="#book-counselling">Book Free Counselling →</a></Button>
-                <p className="text-[11px] text-[var(--alo-brand-pale)] mt-3">WhatsApp: +880 180 502 0101 • Email: info@aloeducation.com</p>
+                <Button asChild className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold rounded-xl "><a href="#book-counselling">Request Counselling →</a></Button>
+                <p className="text-[11px] text-[var(--alo-brand-pale)] mt-3">{ALO_CONTACT.hasWhatsApp ? `WhatsApp: ${ALO_CONTACT.whatsappDisplay} • ` : ''}Email: {ALO_CONTACT.email}</p>
               </Card>
 
               {/* Resources */}

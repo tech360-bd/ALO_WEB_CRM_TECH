@@ -8,9 +8,9 @@ export async function GET() {
       success: true,
       tests,
       count: tests.length,
-      note: 'Real DB or verified fallback — no fake pricing/result time — Check current provider information where not verified — Acceptance varies by university, course and visa route',
+      note: 'Only active database records with a recent verified marker and HTTPS source are returned. This code-level gate is not independent external verification.',
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Language prep tests API error', error);
     return NextResponse.json({ success: false, error: 'Failed to fetch tests' }, { status: 500 });
   }

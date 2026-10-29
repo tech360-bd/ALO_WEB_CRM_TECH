@@ -52,7 +52,7 @@ export default function VisaSupportHub({ countries }: { countries: VisaCountryOp
           />
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild className="h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
-              <Link href="/book-consultation">Book Free Consultation</Link>
+              <Link href="/book-consultation">Request Consultation</Link>
             </Button>
             <Button asChild variant="outline" className="h-12 rounded-button border-alo-border px-5 text-[14px] font-semibold">
               <Link href="/ai/visa-coach">Practise Your Interview</Link>
@@ -102,7 +102,7 @@ export default function VisaSupportHub({ countries }: { countries: VisaCountryOp
               destination is in progress — talk to an advisor for current requirements in the meantime.
             </p>
             <Button asChild className="mt-2 h-12 rounded-button bg-alo-cta px-5 text-[14px] font-semibold text-black hover:bg-alo-cta-hover">
-              <Link href="/book-consultation">Book Free Consultation</Link>
+              <Link href="/book-consultation">Request Consultation</Link>
             </Button>
           </Panel>
         ) : (

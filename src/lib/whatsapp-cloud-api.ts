@@ -4,10 +4,9 @@
  *   - verifyWhatsAppSignature  : HMAC-SHA-256 with WHATSAPP_APP_SECRET,
  *                                 timingSafeEqual. If secret not set → log
  *                                 warning + return true (dev-friendly).
- *   - sendWhatsAppMessage      : POST to graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages.
- *                                 Missing credentials or a provider rejection returns
- *                                 success=false; successful provider acknowledgements are persisted.
- *                                 SocialInboxMessage + WhatsAppMessageStatus.
+ *   - sendWhatsAppMessage      : routes only through a recently verified official number
+ *                                 and the configured Graph API version; purpose and promotional
+ *                                 consent are checked before provider submission.
  *   - parseWhatsAppInbound     : map webhook payload → fields.
  *   - parseWhatsAppStatus      : map webhook payload → status fields.
  *   - persistWhatsAppStatus    : upsert WhatsAppMessageStatus by messageId.
@@ -18,16 +17,14 @@
 import crypto from "node:crypto";
 import { db } from "@/lib/db";
 import { normalizePhone } from "@/lib/phone-normalization";
+import { isEligibleForMarketing } from "@/lib/communications/consent-management";
+import { getWhatsAppAccessToken, getWhatsAppGraphUrl } from "@/lib/whatsapp-config";
+import { resolveAuthorizedWhatsAppSender } from "@/lib/whatsapp-sender";
+import { mapProviderStatus, shouldApplyStatus } from '@/lib/communications/webhook-idempotency';
 
 // ─── Env access (graceful when missing) ─────────────────────────
 
 const WHATSAPP_APP_SECRET = process.env.WHATSAPP_APP_SECRET;
-const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
-const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
-const WHATSAPP_BUSINESS_PHONE = process.env.WHATSAPP_BUSINESS_PHONE; // E.164 of WABA number
-
-const GRAPH_API_VERSION = "v18.0";
-const GRAPH_API_BASE = `https://graph.facebook.com/${GRAPH_API_VERSION}`;
 
 // ─── Signature verification ─────────────────────────────────────
 
@@ -79,13 +76,36 @@ export function verifyWhatsAppSignature(
 
 // ─── Send message ───────────────────────────────────────────────
 
+export type WhatsAppMessagePurpose = 'SERVICE' | 'TRANSACTIONAL' | 'PROMOTIONAL_MARKETING';
+
+const TEMPLATE_PURPOSES: Record<WhatsAppMessagePurpose, ReadonlySet<string>> = {
+  SERVICE: new Set(['SERVICE', 'CUSTOMER_SERVICE', 'CUSTOMER_SUPPORT', 'SUPPORT', 'SERVICE_UPDATE']),
+  TRANSACTIONAL: new Set(['TRANSACTIONAL', 'TRANSACTIONAL_NOTIFICATION', 'STUDENT_TRANSACTIONAL', 'PORTAL_INVITATION', 'ACCOUNT_SECURITY', 'APPLICATION_STATUS', 'DOCUMENT_STATUS']),
+  PROMOTIONAL_MARKETING: new Set(['PROMOTIONAL_MARKETING', 'MARKETING', 'PROMOTIONAL', 'OUTREACH', 'CAMPAIGN', 'FOLLOW_UP', 'FOLLOWUP']),
+};
+
+export function isWhatsAppTemplatePurposeCompatible(templatePurpose: string, messagePurpose: WhatsAppMessagePurpose): boolean {
+  const normalized = templatePurpose.trim().toUpperCase().replace(/[\\s-]+/g, '_');
+  return TEMPLATE_PURPOSES[messagePurpose].has(normalized);
+}
+
 export interface SendWhatsAppParams {
-  /** Template language code. Defaults to en_US, the only variant approved so far. */
-  templateLanguage?: string;
-  to: string;                  // phone (any format — normalized internally)
+  /** Any format; normalized through the shared Bangladesh/international phone helper. */
+  to: string;
+  purpose: WhatsAppMessagePurpose;
   text?: string;
   templateName?: string;
+  templateLanguage?: string;
   templateParams?: string[];
+  contactId?: string;
+  conversationId?: string;
+  studentId?: string;
+  leadId?: string;
+  campaignId?: string;
+  approvalId?: string;
+  actorId?: string;
+  employeeSenderId?: string;
+  senderNumber?: string;
 }
 
 export interface SendWhatsAppResult {
@@ -94,26 +114,21 @@ export interface SendWhatsAppResult {
   error?: string;
   socialMessageId?: string;
   statusRecorded?: boolean;
+  senderNumber?: string;
+  fallbackUsed?: boolean;
 }
 
 /**
- * Send a WhatsApp Cloud API message. Missing credentials and provider rejection
- * are explicit failures; callers must not record a send without provider ack.
- *
- * Side-effects:
- *   - Creates a SocialInboxMessage only after the provider accepts the message.
- *   - Persists WhatsAppMessageStatus once the API returns a message ID.
+ * Purpose-gated Cloud API send. Promotional sends require an approved marketing
+ * item plus current purpose/channel-specific consent. Every send requires a
+ * number pool record whose Meta connectivity was recently verified.
  */
 export async function sendWhatsAppMessage(
   params: SendWhatsAppParams
 ): Promise<SendWhatsAppResult> {
-  // ── Credential check ──
-  if (!WHATSAPP_ACCESS_TOKEN || !WHATSAPP_PHONE_NUMBER_ID) {
-    return {
-      messageId: null,
-      success: false,
-      error: "WhatsApp Cloud API credentials are not configured",
-    };
+  const purpose = String(params.purpose || '').toUpperCase() as WhatsAppMessagePurpose;
+  if (!['SERVICE', 'TRANSACTIONAL', 'PROMOTIONAL_MARKETING'].includes(purpose)) {
+    return { messageId: null, success: false, error: 'MESSAGE_PURPOSE_REQUIRED' };
   }
   if (!params.templateName && (!params.text || !params.text.trim())) {
     return { messageId: null, success: false, error: 'Message text or an approved template is required' };
@@ -121,112 +136,273 @@ export async function sendWhatsAppMessage(
   if (params.text && params.text.length > 4096) {
     return { messageId: null, success: false, error: 'Message text exceeds the provider limit of 4096 characters' };
   }
+  if (params.templateName && !/^[a-z0-9_]{1,512}$/.test(params.templateName)) {
+    return { messageId: null, success: false, error: 'INVALID_TEMPLATE_NAME' };
+  }
 
+  const verifiedTemplate = params.templateName
+    ? await db.whatsAppFollowUpTemplate.findFirst({
+        where: {
+          metaTemplateName: params.templateName,
+          approvalStatus: 'approved',
+          metaTemplateStatus: 'APPROVED',
+          activeStatus: 'active',
+          metaTemplateCheckedAt: {
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            lte: new Date(),
+          },
+        },
+        select: { id: true, metaLanguage: true, purpose: true },
+      }).catch(() => null)
+    : null;
+  if (params.templateName && !verifiedTemplate) {
+    return { messageId: null, success: false, error: 'WHATSAPP_META_TEMPLATE_NOT_APPROVED_AND_RECENTLY_VERIFIED' };
+  }
+  if (params.templateName && verifiedTemplate && !isWhatsAppTemplatePurposeCompatible(verifiedTemplate.purpose, purpose)) {
+    return { messageId: null, success: false, error: 'WHATSAPP_TEMPLATE_PURPOSE_MISMATCH' };
+  }
+  if (params.templateName && verifiedTemplate && params.templateLanguage && params.templateLanguage !== verifiedTemplate.metaLanguage) {
+    return { messageId: null, success: false, error: 'WHATSAPP_META_TEMPLATE_LANGUAGE_MISMATCH' };
+  }
+
+  const accessToken = getWhatsAppAccessToken();
+  if (!accessToken) return { messageId: null, success: false, error: 'WHATSAPP_CLOUD_API_NOT_CONFIGURED' };
   const toNormalized = normalizePhone(params.to);
-  if (!toNormalized) {
-    return { messageId: null, success: false, error: "Invalid recipient phone" };
+  if (!toNormalized) return { messageId: null, success: false, error: 'INVALID_RECIPIENT_PHONE' };
+
+  let consentRecordId: string | undefined;
+  if (purpose === 'SERVICE' && !params.templateName) {
+    const conversationId = params.conversationId?.trim() || '';
+    if (!conversationId) return { messageId: null, success: false, error: 'SERVICE_CONVERSATION_REQUIRED' };
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    let contextVerified = false;
+    const uccConversation = await db.uccConversation.findUnique({
+      where: { id: conversationId },
+      select: { id: true, channel: true, participantPhone: true, assignedToUserId: true },
+    }).catch(() => null);
+    if (uccConversation) {
+      const assignmentValid = !uccConversation.assignedToUserId
+        || params.actorId === 'system'
+        || uccConversation.assignedToUserId === params.actorId;
+      const recentInbound = await db.uccMessage.findFirst({
+        where: { conversationId, direction: 'inbound', createdAt: { gte: cutoff } },
+        select: { id: true },
+      }).catch(() => null);
+      contextVerified = uccConversation.channel.toLowerCase() === 'whatsapp'
+        && normalizePhone(uccConversation.participantPhone || '') === toNormalized
+        && assignmentValid
+        && Boolean(recentInbound);
+    } else {
+      const legacyThread = await db.communicationThread.findUnique({
+        where: { id: conversationId },
+        select: { id: true, channel: true, studentId: true, leadId: true, assignedToId: true },
+      }).catch(() => null);
+      if (legacyThread) {
+        const linkedStudent = legacyThread.studentId
+          ? await db.student.findUnique({ where: { id: legacyThread.studentId }, select: { phone: true } }).catch(() => null)
+          : null;
+        const linkedLead = legacyThread.leadId
+          ? await db.lead.findUnique({ where: { id: legacyThread.leadId }, select: { phone: true } }).catch(() => null)
+          : null;
+        const assignmentValid = !legacyThread.assignedToId
+          || params.actorId === 'system'
+          || legacyThread.assignedToId === params.actorId;
+        const recentInbound = await db.communicationMessage.findFirst({
+          where: { threadId: conversationId, direction: 'inbound', createdAt: { gte: cutoff } },
+          select: { id: true },
+        }).catch(() => null);
+        contextVerified = legacyThread.channel.toLowerCase() === 'whatsapp'
+          && normalizePhone(linkedStudent?.phone || linkedLead?.phone || '') === toNormalized
+          && assignmentValid
+          && Boolean(recentInbound);
+      }
+    }
+    if (!contextVerified) return { messageId: null, success: false, error: 'WHATSAPP_SERVICE_WINDOW_CLOSED_OR_CONTEXT_MISMATCH' };
   }
 
-  // Build request body
-  let body: Record<string, unknown>;
-  if (params.templateName) {
-    body = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to: toNormalized,
-      type: "template",
-      template: {
-        name: params.templateName,
-        language: { code: params.templateLanguage || "en_US" },
-        components: params.templateParams && params.templateParams.length > 0
-          ? [{
-              type: "body",
-              parameters: params.templateParams.map((p) => ({ type: "text", text: p })),
-            }]
-          : [],
-      },
-    };
-  } else {
-    body = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to: toNormalized,
-      type: "text",
-      text: { preview_url: false, body: params.text ?? "" },
-    };
+  if (purpose === 'PROMOTIONAL_MARKETING') {
+    if (!params.campaignId || !params.approvalId) {
+      return { messageId: null, success: false, error: 'PROMOTIONAL_APPROVAL_REQUIRED' };
+    }
+    if (!params.templateName) return { messageId: null, success: false, error: 'PROMOTIONAL_SEND_REQUIRES_APPROVED_META_TEMPLATE' };
+    const approval = await db.marketingApproval.findFirst({
+      where: { id: params.approvalId, itemId: params.campaignId, status: 'approved' },
+      select: { id: true, itemType: true },
+    }).catch(() => null);
+    if (!approval || !['MarketingCampaign', 'WhatsAppFollowUpTemplate'].includes(approval.itemType)) {
+      return { messageId: null, success: false, error: 'PROMOTIONAL_APPROVAL_NOT_FOUND' };
+    }
+    if (!verifiedTemplate) return { messageId: null, success: false, error: 'PROMOTIONAL_META_TEMPLATE_NOT_VERIFIED' };
+    const eligibility = await isEligibleForMarketing({
+      contactId: params.contactId,
+      phone: toNormalized,
+      studentId: params.studentId,
+      leadId: params.leadId,
+      channel: 'WHATSAPP',
+      purpose: 'PROMOTIONAL_MARKETING',
+    }).catch(() => ({ eligible: false as const, reason: 'missing_consent' as const }));
+    if (!eligibility.eligible) {
+      return { messageId: null, success: false, error: `PROMOTIONAL_SEND_BLOCKED_${eligibility.reason.toUpperCase()}` };
+    }
+    consentRecordId = eligibility.consentRecordId;
   }
 
-  let socialMessageId: string | undefined;
+  const { sender, error: senderError } = await resolveAuthorizedWhatsAppSender(params.senderNumber, params.actorId || params.employeeSenderId);
+  if (!sender) return { messageId: null, success: false, error: senderError || 'NO_RECENTLY_VERIFIED_OFFICIAL_NUMBER' };
+  const messagesUrl = getWhatsAppGraphUrl(`${sender.metaPhoneNumberId}/messages`);
+  if (!messagesUrl) return { messageId: null, success: false, error: 'INVALID_WHATSAPP_GRAPH_API_CONFIGURATION' };
 
-  // Call the official provider before recording a successful outbound message.
-  const url = `${GRAPH_API_BASE}/${WHATSAPP_PHONE_NUMBER_ID}/messages`;
+  // Recheck immediately before the provider request. This narrows the window in
+  // which a concurrent STOP could otherwise race a previously eligible send.
+  if (purpose === 'PROMOTIONAL_MARKETING') {
+    const latestEligibility = await isEligibleForMarketing({
+      contactId: params.contactId,
+      phone: toNormalized,
+      studentId: params.studentId,
+      leadId: params.leadId,
+      channel: 'WHATSAPP',
+      purpose: 'PROMOTIONAL_MARKETING',
+    }).catch(() => ({ eligible: false as const, reason: 'missing_consent' as const }));
+    if (!latestEligibility.eligible) {
+      return { messageId: null, success: false, error: `PROMOTIONAL_SEND_BLOCKED_${latestEligibility.reason.toUpperCase()}` };
+    }
+    consentRecordId = latestEligibility.consentRecordId;
+  }
+
+  const body: Record<string, unknown> = params.templateName
+    ? {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: toNormalized,
+        type: 'template',
+        template: {
+          name: params.templateName,
+          language: { code: params.templateLanguage || 'en_US' },
+          components: params.templateParams?.length
+            ? [{ type: 'body', parameters: params.templateParams.map((value) => ({ type: 'text', text: value })) }]
+            : [],
+        },
+      }
+    : {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: toNormalized,
+        type: 'text',
+        text: { preview_url: false, body: params.text ?? '' },
+      };
+
   let providerMessageId: string | null = null;
   let errorMessage: string | undefined;
-
   try {
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(messagesUrl, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-
-    const json: any = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
-      errorMessage = json?.error?.message ?? `HTTP ${resp.status}`;
-      console.error("[whatsapp-cloud-api] send failed:", errorMessage, json);
-    } else {
-      providerMessageId = json?.messages?.[0]?.id ?? null;
+    const json: any = await response.json().catch(() => ({}));
+    providerMessageId = typeof json?.messages?.[0]?.id === 'string' ? json.messages[0].id : null;
+    if (!response.ok || !providerMessageId) {
+      const providerCode = Number(json?.error?.code);
+      providerMessageId = null;
+      errorMessage = `WHATSAPP_PROVIDER_REJECTED_HTTP_${response.status}${Number.isFinite(providerCode) ? `_CODE_${providerCode}` : ''}`;
+      console.warn('[whatsapp-cloud-api] Provider rejected outbound send', { status: response.status, providerCode: Number.isFinite(providerCode) ? providerCode : undefined });
     }
-  } catch (err: any) {
-    errorMessage = err?.message ?? String(err);
-    console.error("[whatsapp-cloud-api] network error during send:", err);
+  } catch {
+    errorMessage = 'WHATSAPP_PROVIDER_NETWORK_ERROR';
   }
 
-  if (providerMessageId) {
-    try {
-      const socialMsg = await db.socialInboxMessage.create({
-        data: {
-          platform: "WHATSAPP",
-          direction: "OUTBOUND",
-          recipientId: WHATSAPP_BUSINESS_PHONE ?? null,
-          senderId: toNormalized,
-          senderName: null,
-          messageText: params.text ?? params.templateName ?? "",
-          conversationId: `wa:${toNormalized}`,
-          sentAt: new Date(),
-        },
-      });
-      socialMessageId = socialMsg.id;
-    } catch (err) {
-      console.error("[whatsapp-cloud-api] failed to persist accepted SocialInboxMessage:", err);
-    }
+  if (!providerMessageId) return { messageId: null, success: false, error: errorMessage || 'WHATSAPP_PROVIDER_REJECTED' };
+
+  let socialMessageId: string | undefined;
+  let recordsPersisted = false;
+  const conversationId = `wa:${toNormalized}`;
+  const messageText = params.text ?? `[WhatsApp template: ${params.templateName}]`;
+  const employeeId = params.employeeSenderId || params.actorId || null;
+  try {
+    const socialMsg = await db.socialInboxMessage.create({
+      data: {
+        platform: 'WHATSAPP',
+        direction: 'OUTBOUND',
+        recipientId: toNormalized,
+        senderId: sender.normalizedPhone,
+        senderName: 'ALO Education',
+        messageText,
+        conversationId,
+        leadId: params.leadId || null,
+        studentId: params.studentId || null,
+        employeeId,
+        externalId: providerMessageId,
+        sentAt: new Date(),
+      },
+    });
+    socialMessageId = socialMsg.id;
+    await db.whatsAppMessageArchive.create({
+      data: {
+        whatsappMessageId: providerMessageId,
+        conversationId,
+        threadId: conversationId,
+        studentId: params.studentId || '',
+        leadId: params.leadId || '',
+        senderPhone: sender.normalizedPhone,
+        receiverPhone: toNormalized,
+        senderNumber: sender.phoneNumber,
+        messageType: params.templateName ? 'template' : 'text',
+        messageBody: messageText.slice(0, 10000),
+        campaignId: params.campaignId || '',
+        timestamp: new Date(),
+        direction: 'outbound',
+        deliveryStatus: 'sent',
+        employeeSenderId: employeeId || '',
+      },
+    });
+    recordsPersisted = true;
+  } catch (error) {
+    console.error('[whatsapp-cloud-api] Provider accepted a message but CRM archive persistence failed', error);
   }
 
-  // Persist WhatsAppMessageStatus (messageId is @unique)
   let statusRecorded = false;
-  if (providerMessageId) {
-    try {
-      await persistWhatsAppStatus(
-        providerMessageId,
-        "sent",
-        toNormalized,
-        { socialMessageId, templateName: params.templateName ?? null }
-      );
-      statusRecorded = true;
-    } catch (err) {
-      console.error("[whatsapp-cloud-api] failed to persist status:", err);
-    }
+  try {
+    statusRecorded = await persistWhatsAppStatus(providerMessageId, 'sent', toNormalized, {
+      socialMessageId,
+      templateName: params.templateName ?? null,
+      purpose,
+    });
+  } catch (error) {
+    console.error('[whatsapp-cloud-api] Provider accepted a message but status persistence failed', error);
+  }
+
+  try {
+    const recipientHash = crypto.createHash('sha256').update(toNormalized).digest('hex').slice(0, 16);
+    await db.auditLog.create({
+      data: {
+        userId: params.actorId && params.actorId !== 'system' ? params.actorId : null,
+        action: 'WHATSAPP_OUTBOUND_PROVIDER_ACCEPTED',
+        resource: 'WhatsAppMessageArchive',
+        resourceId: providerMessageId,
+        actorRole: params.actorId && params.actorId !== 'system' ? 'authenticated_actor' : 'system',
+        details: JSON.stringify({
+          purpose,
+          recipientHash,
+          senderPhone: sender.phoneNumber,
+          fallbackUsed: sender.fallbackUsed,
+          campaignId: purpose === 'PROMOTIONAL_MARKETING' ? params.campaignId : undefined,
+          consentRecordId,
+          crmArchivePersisted: recordsPersisted,
+          statusRecorded,
+        }),
+      },
+    });
+  } catch (error) {
+    console.error('[whatsapp-cloud-api] Failed to write outbound send audit record', error);
   }
 
   return {
     messageId: providerMessageId,
-    success: providerMessageId !== null,
-    error: errorMessage,
+    success: true,
     socialMessageId,
-    statusRecorded,
+    statusRecorded: statusRecorded && recordsPersisted,
+    senderNumber: sender.phoneNumber,
+    fallbackUsed: sender.fallbackUsed,
   };
 }
 
@@ -337,16 +513,16 @@ export async function persistWhatsAppStatus(
   status: string,
   recipientPhone: string,
   payload?: Record<string, unknown> | null
-): Promise<void> {
-  if (!messageId) return;
+): Promise<boolean> {
+  if (!messageId) return false;
   const socialMessageId = (payload as any)?.socialMessageId ?? null;
   const providerPayload = payload ? JSON.stringify(payload) : null;
   const providerTimestamp = Number((payload as any)?.providerTimestamp);
   const statusTimestamp = Number.isFinite(providerTimestamp) && providerTimestamp > 0
     ? new Date(providerTimestamp * 1000)
     : new Date();
-  const rank: Record<string, number> = { sent: 1, failed: 2, delivered: 3, read: 4 };
-  const normalizedStatus = status.toLowerCase();
+  const normalizedStatus = mapProviderStatus(status);
+  if (!normalizedStatus) return false;
 
   try {
     const existing = await db.whatsAppMessageStatus.findUnique({
@@ -354,9 +530,9 @@ export async function persistWhatsAppStatus(
       select: { status: true, statusTimestamp: true },
     });
     if (existing) {
-      const priorRank = rank[String(existing.status).toLowerCase()] ?? 0;
-      const nextRank = rank[normalizedStatus] ?? 0;
-      if (nextRank < priorRank || (nextRank === priorRank && statusTimestamp < existing.statusTimestamp)) return;
+      const previousStatus = mapProviderStatus(existing.status);
+      if (!shouldApplyStatus(previousStatus, normalizedStatus)) return true;
+      if (previousStatus === normalizedStatus && statusTimestamp < existing.statusTimestamp) return true;
     }
     await db.whatsAppMessageStatus.upsert({
       where: { messageId },
@@ -378,8 +554,10 @@ export async function persistWhatsAppStatus(
         errorMessage: typeof (payload as any)?.providerError === 'string' ? (payload as any).providerError.slice(0, 500) : undefined,
       },
     });
+    return true;
   } catch (err) {
     console.error("[whatsapp-cloud-api] persistWhatsAppStatus failed:", err);
+    return false;
   }
 }
 
@@ -421,18 +599,21 @@ export interface SendWhatsAppPrivateMediaParams {
   mimeType: string;
   fileName: string;
   caption?: string;
+  actorId: string;
+  senderNumber?: string;
+  studentId?: string;
+  leadId?: string;
+  conversationId?: string;
 }
 
-/**
- * Send a privately stored CRM document without exposing it through a public URL.
- * Bytes are uploaded to the official WhatsApp Cloud API media endpoint, then
- * referenced by the returned provider media ID in the outbound message.
- */
+/** Upload a protected CRM document to Meta only after the user-authorized UCC
+ * route has validated the conversation, actor, service window, and permissions. */
 export async function sendWhatsAppPrivateMedia(params: SendWhatsAppPrivateMediaParams): Promise<{
   messageId: string | null;
   providerMediaId?: string;
   success: boolean;
   error?: string;
+  senderNumber?: string;
 }> {
   if (!params.bytes.byteLength || params.bytes.byteLength > 20 * 1024 * 1024) {
     return { messageId: null, success: false, error: 'Document must be non-empty and no larger than 20 MB.' };
@@ -446,27 +627,31 @@ export async function sendWhatsAppPrivateMedia(params: SendWhatsAppPrivateMediaP
   }
   const configError = whatsappCloudConfigError();
   if (configError) return { messageId: null, success: false, error: configError };
+  const accessToken = getWhatsAppAccessToken();
   const toNormalized = normalizePhone(params.to);
-  if (!toNormalized) return { messageId: null, success: false, error: 'Invalid recipient phone.' };
+  if (!toNormalized) return { messageId: null, success: false, error: 'INVALID_RECIPIENT_PHONE' };
+  const { sender, error: senderError } = await resolveAuthorizedWhatsAppSender(params.senderNumber, params.actorId);
+  if (!sender) return { messageId: null, success: false, error: senderError || 'NO_RECENTLY_VERIFIED_OFFICIAL_NUMBER' };
+  const mediaUrl = getWhatsAppGraphUrl(`${sender.metaPhoneNumberId}/media`);
+  const messageUrl = getWhatsAppGraphUrl(`${sender.metaPhoneNumberId}/messages`);
+  if (!accessToken || !mediaUrl || !messageUrl) {
+    return { messageId: null, success: false, error: 'WHATSAPP_CLOUD_API_NOT_CONFIGURED' };
+  }
 
   try {
     const form = new FormData();
     form.set('messaging_product', 'whatsapp');
     form.set('type', mimeType);
     form.set('file', new Blob([Uint8Array.from(params.bytes)], { type: mimeType }), params.fileName);
-    const uploadResponse = await fetch(`${GRAPH_API_BASE}/${WHATSAPP_PHONE_NUMBER_ID}/media`, {
+    const uploadResponse = await fetch(mediaUrl, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
       body: form,
     });
     const uploadData: any = await uploadResponse.json().catch(() => ({}));
     const providerMediaId = typeof uploadData?.id === 'string' ? uploadData.id : '';
     if (!uploadResponse.ok || !providerMediaId) {
-      return {
-        messageId: null,
-        success: false,
-        error: uploadData?.error?.message || `WhatsApp media upload failed with HTTP ${uploadResponse.status}.`,
-      };
+      return { messageId: null, success: false, error: `WHATSAPP_MEDIA_UPLOAD_REJECTED_HTTP_${uploadResponse.status}` };
     }
 
     const messagePayload = buildWhatsAppUploadedMediaPayload(toNormalized, {
@@ -475,53 +660,106 @@ export async function sendWhatsAppPrivateMedia(params: SendWhatsAppPrivateMediaP
       fileName: params.fileName,
       caption: params.caption,
     });
-    const messageResponse = await fetch(`${GRAPH_API_BASE}/${WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+    const messageResponse = await fetch(messageUrl, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(messagePayload),
     });
     const messageData: any = await messageResponse.json().catch(() => ({}));
     const messageId = typeof messageData?.messages?.[0]?.id === 'string' ? messageData.messages[0].id : null;
     if (!messageResponse.ok || !messageId) {
-      return {
-        messageId: null,
-        providerMediaId,
-        success: false,
-        error: messageData?.error?.message || `WhatsApp media send failed with HTTP ${messageResponse.status}.`,
-      };
+      return { messageId: null, providerMediaId, success: false, error: `WHATSAPP_MEDIA_SEND_REJECTED_HTTP_${messageResponse.status}` };
     }
+
+    const conversationId = params.conversationId || `wa:${toNormalized}`;
+    await db.whatsAppMessageArchive.create({
+      data: {
+        whatsappMessageId: messageId,
+        conversationId,
+        threadId: conversationId,
+        studentId: params.studentId || '',
+        leadId: params.leadId || '',
+        senderPhone: sender.normalizedPhone,
+        receiverPhone: toNormalized,
+        senderNumber: sender.phoneNumber,
+        messageType: mediaType,
+        messageBody: (params.caption || '').slice(0, 10000),
+        mediaId: providerMediaId,
+        campaignId: '',
+        timestamp: new Date(),
+        direction: 'outbound',
+        deliveryStatus: 'sent',
+        employeeSenderId: params.actorId,
+      },
+    });
     await persistWhatsAppStatus(messageId, 'sent', toNormalized, { uccPrivateMedia: true, providerMediaId });
-    return { messageId, providerMediaId, success: true };
-  } catch (error: any) {
-    return { messageId: null, success: false, error: error?.message || 'Network error sending private document.' };
+    await db.auditLog.create({
+      data: {
+        userId: params.actorId,
+        action: 'WHATSAPP_PRIVATE_MEDIA_PROVIDER_ACCEPTED',
+        resource: 'WhatsAppMessageArchive',
+        resourceId: messageId,
+        actorRole: 'authenticated_actor',
+        details: JSON.stringify({ senderPhone: sender.phoneNumber, conversationId, mediaType, fileName: params.fileName.slice(0, 128) }),
+      },
+    }).catch((error) => console.error('[whatsapp-cloud-api] Private media audit write failed', error));
+    return { messageId, providerMediaId, success: true, senderNumber: sender.phoneNumber };
+  } catch {
+    return { messageId: null, success: false, error: 'WHATSAPP_PRIVATE_MEDIA_NETWORK_OR_PERSISTENCE_ERROR' };
   }
 }
 
-export async function sendWhatsAppMedia(params: SendWhatsAppMediaParams): Promise<{ messageId: string | null; success: boolean; error?: string }> {
+export type PurposeGatedWhatsAppMediaParams = SendWhatsAppMediaParams & {
+  purpose: WhatsAppMessagePurpose;
+  actorId?: string;
+  senderNumber?: string;
+};
+
+/** Send public media only for explicit service/transactional requests. Promotional
+ * media must use a campaign approval flow that carries contact-level consent. */
+export async function sendWhatsAppMedia(params: PurposeGatedWhatsAppMediaParams): Promise<{ messageId: string | null; success: boolean; error?: string }> {
   const invalid = validateWhatsAppMediaRequest(params);
   if (!invalid.ok) return { messageId: null, success: false, error: invalid.error };
+  if (!['SERVICE', 'TRANSACTIONAL'].includes(String(params.purpose).toUpperCase())) {
+    return { messageId: null, success: false, error: 'PROMOTIONAL_MEDIA_REQUIRES_APPROVED_CONSENT_AWARE_CAMPAIGN_FLOW' };
+  }
   const configError = whatsappCloudConfigError();
   if (configError) return { messageId: null, success: false, error: configError };
+  const accessToken = getWhatsAppAccessToken();
   const toNormalized = normalizePhone(params.to);
-  if (!toNormalized) {
-    return { messageId: null, success: false, error: "Invalid recipient phone" };
-  }
+  if (!toNormalized) return { messageId: null, success: false, error: 'INVALID_RECIPIENT_PHONE' };
+  const { sender, error: senderError } = await resolveAuthorizedWhatsAppSender(params.senderNumber, params.actorId);
+  if (!sender) return { messageId: null, success: false, error: senderError || 'NO_RECENTLY_VERIFIED_OFFICIAL_NUMBER' };
+  const url = getWhatsAppGraphUrl(`${sender.metaPhoneNumberId}/messages`);
+  if (!accessToken || !url) return { messageId: null, success: false, error: 'WHATSAPP_CLOUD_API_NOT_CONFIGURED' };
   try {
-    const res = await fetch(`https://graph.facebook.com/v20.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`, "Content-Type": "application/json" },
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(buildWhatsAppMediaPayload(toNormalized, params)),
     });
-    const json = await res.json().catch(() => ({}));
-    const messageId = json?.messages?.[0]?.id || null;
-    if (!messageId) {
-      return { messageId: null, success: false, error: json?.error?.message || `Cloud API returned ${res.status}` };
-    }
+    const json: any = await response.json().catch(() => ({}));
+    const messageId = typeof json?.messages?.[0]?.id === 'string' ? json.messages[0].id : null;
+    if (!response.ok || !messageId) return { messageId: null, success: false, error: `WHATSAPP_MEDIA_SEND_REJECTED_HTTP_${response.status}` };
+    await db.whatsAppMessageArchive.create({
+      data: {
+        whatsappMessageId: messageId,
+        conversationId: `wa:${toNormalized}`,
+        threadId: `wa:${toNormalized}`,
+        senderPhone: sender.normalizedPhone,
+        receiverPhone: toNormalized,
+        senderNumber: sender.phoneNumber,
+        messageType: params.mediaType,
+        messageBody: (params.caption || params.fileName || '').slice(0, 10000),
+        timestamp: new Date(),
+        direction: 'outbound',
+        deliveryStatus: 'sent',
+        employeeSenderId: params.actorId || '',
+      },
+    });
+    await persistWhatsAppStatus(messageId, 'sent', toNormalized, { purpose: params.purpose });
     return { messageId, success: true };
-  } catch (err: any) {
-    return { messageId: null, success: false, error: err?.message || "Network error sending media" };
+  } catch {
+    return { messageId: null, success: false, error: 'WHATSAPP_MEDIA_NETWORK_OR_PERSISTENCE_ERROR' };
   }
 }

@@ -188,7 +188,7 @@ Generate a ${contentType} with the following specifications:
 - Language: ${language}
 - Platform: ${platform}
 - Tone: ${tone}
-- Call to Action: ${cta || 'Contact ALO Education for free counseling'}
+- Call to Action: ${cta || 'Contact ALO Education for counseling'}
 - Include Image Description: ${includeImage}
 - Include Video Concept: ${includeVideo}
 - Target Country: ${targetCountry || 'Any'}

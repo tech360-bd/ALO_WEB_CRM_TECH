@@ -110,7 +110,7 @@ export function PrepVsExamSplit({
         <p className="mt-2 text-sm leading-relaxed text-[var(--alo-body)]">{COPY.en.preparationBody}</p>
         <Link
  href={prepHref}
- className="mt-auto inline-flex min- w-fit items-center gap-2 pt-4 text-sm font-semibold text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]"
+ className="mt-auto inline-flex min-h-[44px] w-fit items-center gap-2 pt-4 text-sm font-semibold text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]"
  >
           {prepCta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>

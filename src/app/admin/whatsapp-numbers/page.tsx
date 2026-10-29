@@ -13,6 +13,7 @@ export default function WhatsAppNumbersAdminPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [initializing, setInitializing] = useState(false);
+  const [verifying, setVerifying] = useState('');
 
   const fetchNumbers = async () => {
     setLoading(true);
@@ -37,10 +38,10 @@ export default function WhatsAppNumbersAdminPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        toast.error(data.error || 'Only Super Admin may initialize the pool.');
+        toast.error(data.error || 'Only Super Admin may initialize configured sender records.');
         return;
       }
-      toast.success(`${data.result.created} missing number rows added; no Meta connection was assumed.`);
+      toast.success(`${data.result.created} configured sender rows added; no ownership or Meta connection was assumed.`);
       await fetchNumbers();
     } catch {
       toast.error('Official number pool could not be initialized.');
@@ -57,6 +58,7 @@ export default function WhatsAppNumbersAdminPage() {
         phoneNumber: num.phoneNumber,
         displayName: num.displayName,
         ownerType: num.ownerType,
+        employeeOwnerId: num.employeeOwnerIdDraft ?? num.employeeOwnerId ?? '',
         branch: num.branch,
         reason: 'Number assignment updated from WhatsApp pool dashboard',
       };
@@ -69,10 +71,31 @@ export default function WhatsAppNumbersAdminPage() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (data.success) toast.success(`Number ${num.phoneNumber} updated`);
-      else toast.error(data.error || 'Failed');
+      if (data.success) {
+        toast.success(`Number ${num.phoneNumber} updated`);
+        await fetchNumbers();
+      } else toast.error(data.error || 'Failed');
     } catch (e: any) {
       toast.error(e.message);
+    }
+  };
+
+  const verifyConnection = async (num: any) => {
+    setVerifying(num.id);
+    try {
+      const res = await fetch('/api/whatsapp/numbers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'verify_connection', phoneNumber: num.phoneNumber }),
+      });
+      const data = await res.json();
+      if (data.success && data.verified) toast.success(`${num.phoneNumber} was verified against Meta Cloud API.`);
+      else toast.error(data.error || 'Meta connection could not be verified.');
+      await fetchNumbers();
+    } catch {
+      toast.error('Meta connection check failed.');
+    } finally {
+      setVerifying('');
     }
   };
 
@@ -84,14 +107,14 @@ export default function WhatsAppNumbersAdminPage() {
             <Phone className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">WhatsApp Official Number Pool</h1>
-            <p className="text-[var(--alo-text-muted)] text-sm">20 official numbers 01805020100-01805020119 • Main: 01805020100 • COO 24/7: 01805020101</p>
+            <h1 className="text-2xl font-bold">WhatsApp Sender Registry</h1>
+            <p className="text-[var(--alo-text-muted)] text-sm">Operator-configured numbers only. A configured value is not proof of ownership or Meta connectivity.</p>
           </div>
         </div>
         <div className="flex gap-2">
           {stats && stats.total < stats.expected && (
             <Button onClick={initializePool} disabled={initializing} variant="outline" className="border-amber-500/30 text-amber-200">
-              {initializing ? 'Initializing…' : 'Initialize missing pool entries'}
+              {initializing ? 'Initializing…' : 'Initialize configured sender records'}
             </Button>
           )}
           <Button onClick={fetchNumbers} variant="outline" className="border-white/10">
@@ -102,7 +125,7 @@ export default function WhatsAppNumbersAdminPage() {
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Total / Expected</p><p className="text-xl font-bold">{stats.total} / {stats.expected}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Registry / Configured</p><p className="text-xl font-bold">{stats.total} / {stats.expected}</p></CardContent></Card>
           <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Connected</p><p className="text-xl font-bold text-emerald-400">{stats.connected}</p></CardContent></Card>
           <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Disconnected</p><p className="text-xl font-bold text-amber-400">{stats.disconnected}</p></CardContent></Card>
           <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Employee Pool</p><p className="text-xl font-bold">{stats.employeePool}</p></CardContent></Card>
@@ -112,7 +135,9 @@ export default function WhatsAppNumbersAdminPage() {
       <Card className="bg-[var(--alo-text)] border-white/10 text-white">
         <CardHeader><CardTitle className="text-sm">Number Management (Auditable)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          {loading ? <p className="text-sm text-[var(--alo-text-muted)]">Loading...</p> : numbers.map((num) => (
+          {loading ? <p className="text-sm text-[var(--alo-text-muted)]">Loading...</p> : numbers.length === 0 ? (
+            <p className="text-sm text-[var(--alo-text-muted)]">No sender numbers are configured. Add owner-confirmed values to the deployment environment, then initialize disconnected registry records.</p>
+          ) : numbers.map((num) => (
             <div key={num.id} className="grid grid-cols-12 gap-2 items-center p-3 rounded-lg bg-white/5 border border-white/10">
               <div className="col-span-2">
                 <p className="font-mono text-sm font-bold">{num.phoneNumber}</p>
@@ -120,16 +145,23 @@ export default function WhatsAppNumbersAdminPage() {
               </div>
               <div className="col-span-2"><Input value={num.displayName} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, displayName: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" /></div>
               <div className="col-span-2"><Input value={num.ownerType} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, ownerType: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="ALO_MAIN/COO/EMPLOYEE" /></div>
+              <div className="col-span-1"><Input value={num.employeeOwnerIdDraft ?? num.employeeOwnerId ?? ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, employeeOwnerIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="Employee ID" title="Active employee database ID, user ID, or employee ID" /></div>
               <div className="col-span-1"><Input value={num.branch} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, branch: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder="Branch" /></div>
-              <div className="col-span-2">
-                <Input value={num.metaPhoneNumberIdDraft || ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, metaPhoneNumberIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder={num.metaPhoneNumberIdMasked ? `Configured ${num.metaPhoneNumberIdMasked} · enter replacement` : 'Meta phone_number_id (Super Admin)'} />
+              <div className="col-span-1">
+                <Input value={num.metaPhoneNumberIdDraft || ''} onChange={(e) => setNumbers(prev => prev.map(n => n.id===num.id ? {...n, metaPhoneNumberIdDraft: e.target.value} : n))} className="h-8 text-xs bg-[var(--alo-text)] border-white/10" placeholder={num.metaPhoneNumberIdMasked ? `Configured ${num.metaPhoneNumberIdMasked} · enter replacement` : 'Meta ID (Super Admin)'} />
               </div>
-              <div className="col-span-2 flex items-center gap-2">
-                <Badge className="bg-amber-500/20 text-amber-300">{num.connectionStatus === 'configured_unverified' ? 'CONFIGURED · UNVERIFIED' : String(num.connectionStatus || 'disconnected').toUpperCase()}</Badge>
+              <div className="col-span-1 flex flex-col gap-1">
+                <Badge className={num.connectionStatus === 'connected' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}>{num.connectionStatus === 'configured_unverified' ? 'CONFIGURED · UNVERIFIED' : String(num.connectionStatus || 'disconnected').toUpperCase()}</Badge>
                 {num.isDefaultSender && <Badge className="bg-blue-500/20 text-blue-300 text-[11px]">DEFAULT</Badge>}
                 {num.isSupport247 && <Badge className="bg-rose-500/20 text-rose-300 text-[11px]">24/7</Badge>}
+                <span className="text-[10px] text-[var(--alo-text-muted)]">{num.lastConnectionCheckAt ? `Checked ${new Date(num.lastConnectionCheckAt).toLocaleString()}` : 'Not checked'}</span>
               </div>
-              <div className="col-span-1"><Button size="sm" onClick={() => handleSave(num)} className="h-8"><Save className="w-3 h-3 mr-1" />Save</Button></div>
+              <div className="col-span-2 flex gap-1">
+                <Button size="sm" onClick={() => handleSave(num)} className="h-8"><Save className="w-3 h-3 mr-1" />Save</Button>
+                <Button size="sm" variant="outline" disabled={verifying === num.id || !num.metaConfigured} onClick={() => verifyConnection(num)} className="h-8 border-white/20 text-white">
+                  <ShieldCheck className={`w-3 h-3 mr-1 ${verifying === num.id ? 'animate-pulse' : ''}`} />{verifying === num.id ? 'Checking…' : 'Verify'}
+                </Button>
+              </div>
             </div>
           ))}
         </CardContent>
@@ -141,7 +173,7 @@ export default function WhatsAppNumbersAdminPage() {
           <div className="text-xs text-[var(--alo-placeholder)]">
             <p className="font-bold text-amber-300">External Credential Blocker</p>
             <p>A saved phone_number_id or access token is configuration only—not proof of a working Cloud API connection. Connection status stays unverified until an authorized provider check succeeds. Never spoof numbers; use official Meta WhatsApp Cloud API only.</p>
-            <p className="mt-1">Fallback: 01805020100 | Urgent: 01805020101 | Follow-up: 01805020100 | Complaint: 01805020100</p>
+            <p className="mt-1">If no recently verified configured sender is available, outbound sending must fail closed. No fallback number is assumed.</p>
           </div>
         </CardContent>
       </Card>

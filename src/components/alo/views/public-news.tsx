@@ -388,11 +388,11 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-bold text-[var(--alo-text)]">Have questions about this update?</p>
-              <p className="text-sm text-[var(--alo-text-muted)]">Talk to a counselor — free consultation, no commitment.</p>
+              <p className="text-sm text-[var(--alo-text-muted)]">Talk to a counselor — consultation, no commitment.</p>
             </div>
             <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               <Icon name="CalendarCheck" className="size-4" />
-              Book Free Consultation
+              Request Consultation
             </Button>
           </div>
         </div>

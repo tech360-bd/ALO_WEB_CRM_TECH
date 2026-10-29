@@ -126,7 +126,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const ALO_SUPPORT_STEPS = [
-  { icon: "MessageCircle", label: "Free counselling" },
+  { icon: "MessageCircle", label: "Counseling" },
   { icon: "Bot", label: "AI course matching" },
   { icon: "ListChecks", label: "University shortlisting" },
   { icon: "ClipboardList", label: "Application support" },
@@ -326,7 +326,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] h-12"
                 >
                   <Icon name="CalendarCheck" className="mr-2 size-4" />
-                  Book Free Consultation
+                  Request Consultation
                 </Button>
                 <Button
                   onClick={handleWhatsApp}
@@ -1045,7 +1045,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 Ready to start your {country.shortName} study journey?
               </h2>
               <p className="mt-3 text-base text-muted-foreground">
-                Book a free consultation with a senior ALO counselor. We'll review your background, recommend universities, and walk you through every step — from documents to visa.
+                Request a consultation with a senior ALO counselor. We'll review your background, recommend universities, and walk you through every step — from documents to visa.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Button onClick={() => scrollToId("eligibility")} variant="outline" className="border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">

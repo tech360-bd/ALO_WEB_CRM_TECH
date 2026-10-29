@@ -210,7 +210,7 @@ const DEFAULT_FAQS: FaqItem[] = [
   },
   {
     question: 'How do I book a consultation with ALO Education?',
-    answer: 'You can book a free consultation through our website, call our hotline, send a WhatsApp message, or visit our office. Our consultations are obligation-free and designed to understand your goals.',
+    answer: 'You can request a consultation through our website, call our hotline, send a WhatsApp message, or visit our office. Our consultations are obligation-free and designed to understand your goals.',
   },
   {
     question: 'What makes ALO Education different from other agencies?',
@@ -739,7 +739,7 @@ function FinalCtaSection() {
               >
                 <Link href="/book-consultation">
                   <CalendarCheck className="mr-2 h-4 w-4" />
-                  Book a Free Consultation
+                  Request a Consultation
                 </Link>
               </Button>
               <Button
@@ -757,17 +757,21 @@ function FinalCtaSection() {
 
             {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
-                  <Phone className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
+              {(ALO_CONTACT.hasContactPhone || ALO_CONTACT.hasWhatsApp) && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                    <Phone className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-[var(--alo-text-muted)]">{ALO_CONTACT.hasWhatsApp ? 'Call / WhatsApp' : 'Call'}</p>
+                    {ALO_CONTACT.hasWhatsApp ? (
+                      <a href={ALO_CONTACT.whatsappHref} className="text-sm font-semibold hover:underline">{ALO_CONTACT.whatsappDisplay}</a>
+                    ) : (
+                      <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">{ALO_CONTACT.mobileDisplay}</a>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-[var(--alo-text-muted)]">Call / WhatsApp</p>
-                  <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">
-                    {ALO_CONTACT.mobileDisplay}
-                  </a>
-                </div>
-              </div>
+              )}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
                   <Mail className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
@@ -807,7 +811,7 @@ function FinalCtaSection() {
           >
             <Card className="rounded-2xl shadow-xl border-none">
               <CardContent className="p-6 md:p-8">
-                <h3 className="text-xl font-bold mb-1" style={{ color: C.text }}>Get Your Free Consultation</h3>
+                <h3 className="text-xl font-bold mb-1" style={{ color: C.text }}>Request a Consultation</h3>
                 <p className="text-sm mb-6" style={{ color: C.textSoft }}>Fill in the form below and we&apos;ll reach out within 24 hours.</p>
 
                 {submitResult && (

@@ -119,7 +119,7 @@ export default function GlobalOfficesPage() {
               href="/book-consultation"
               className="mt-6 inline-flex h-12 items-center rounded-xl bg-[var(--alo-cta)] px-6 font-heading text-sm font-bold text-black transition-colors hover:bg-[var(--alo-cta-hover)]"
             >
-              Book Free Counseling
+              Request Counseling
             </Link>
           </section>
 

@@ -96,6 +96,15 @@ interface Conversation {
   lastMessageAt: string;
 }
 
+interface ContactMatchCandidate {
+  kind: 'student' | 'lead' | 'partner_contact' | 'unknown';
+  id: string;
+  reference?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  email?: string | null;
+}
+
 interface InboxResponse {
   conversations: Conversation[];
   totalMessages: number;
@@ -333,6 +342,7 @@ export function WhatsAppCommandCenter() {
   const [studentLoading, setStudentLoading] = React.useState(false);
   const [studentError, setStudentError] = React.useState<string | null>(null);
   const [contactMatchId, setContactMatchId] = React.useState<string | null>(null);
+  const [contactMatchCandidates, setContactMatchCandidates] = React.useState<ContactMatchCandidate[]>([]);
 
   // AI draft
   const [aiDraft, setAiDraft] = React.useState<string | null>(null);
@@ -439,8 +449,11 @@ export function WhatsAppCommandCenter() {
     if (!selected) {
       setStudent(null);
       setContactMatchId(null);
+      setContactMatchCandidates([]);
       return;
     }
+    setContactMatchId(null);
+    setContactMatchCandidates([]);
     if (selected.studentId) {
       setStudentLoading(true);
       setStudentError(null);
@@ -464,13 +477,20 @@ export function WhatsAppCommandCenter() {
         fetch("/api/communications/contacts/match", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: selected.fromPhone }),
+          body: JSON.stringify({
+            phone: selected.fromPhone,
+            name: selected.studentName,
+            conversationId: selected.source === 'ucc_conversation' ? selected.key.replace(/^ucc_conversation:/, '') : undefined,
+          }),
         })
           .then(async (r) => {
             if (!r.ok) return null;
             const data = await r.json();
-            // The endpoint returns the review record id (if any)
             if (data?.review?.id) setContactMatchId(data.review.id);
+            const matches = Array.isArray(data?.candidates) ? data.candidates : data?.existingRecord ? [data.existingRecord] : [];
+            setContactMatchCandidates(matches.filter((item: unknown): item is ContactMatchCandidate =>
+              !!item && typeof item === 'object' && typeof (item as ContactMatchCandidate).id === 'string'
+            ));
           })
           .catch(() => {
             // ignore — UI gracefully falls back to NEW CONTACT view
@@ -704,7 +724,7 @@ export function WhatsAppCommandCenter() {
   }
 
   // ── Resolve contact match (Open Existing / Merge / Create New) ──────────
-  async function resolveContact(decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") {
+  async function resolveContact(decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW", candidate?: ContactMatchCandidate) {
     if (!contactMatchId) {
       toast({
         title: "No review record",
@@ -717,7 +737,10 @@ export function WhatsAppCommandCenter() {
       const res = await fetch(`/api/communications/contacts/match/${contactMatchId}/resolve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision, decidedBy: currentUserId }),
+        body: JSON.stringify({
+          decision,
+          candidate: candidate ? { kind: candidate.kind, id: candidate.id } : undefined,
+        }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -728,6 +751,7 @@ export function WhatsAppCommandCenter() {
         description: `Contact resolution: ${decision.replace(/_/g, " ").toLowerCase()}`,
       });
       setContactMatchId(null);
+      setContactMatchCandidates([]);
       // Refetch inbox so the conversation is re-grouped correctly
       fetchInbox();
     } catch (e) {
@@ -1330,6 +1354,7 @@ export function WhatsAppCommandCenter() {
             <NewContactPanel
               phone={selected.fromPhone || selected.fromEmail || "—"}
               contactMatchId={contactMatchId}
+              candidates={contactMatchCandidates}
               onResolve={resolveContact}
             />
           )}
@@ -1512,7 +1537,7 @@ function suggestNextBestAction(
     return `Request the ${missingDocs} missing document${missingDocs > 1 ? "s" : ""} from the student. Send a friendly checklist via WhatsApp and offer upload assistance.`;
   }
   if (activeApps.length === 0) {
-    return "No active applications. Recommend booking a free consultation to shortlist universities and programs.";
+    return "No active applications. Recommend booking a consultation to shortlist universities and programs.";
   }
   const latestStage = activeApps[0]?.stage;
   if (latestStage === "APPLICATION_SUBMITTED") {
@@ -1530,24 +1555,46 @@ function suggestNextBestAction(
 function NewContactPanel({
   phone,
   contactMatchId,
+  candidates,
   onResolve,
 }: {
   phone: string;
   contactMatchId: string | null;
-  onResolve: (d: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") => void;
+  candidates: ContactMatchCandidate[];
+  onResolve: (d: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW", candidate?: ContactMatchCandidate) => void;
 }) {
+  const linkableCandidates = candidates.filter((candidate) => candidate.kind !== 'unknown');
   return (
     <>
-      <SectionCard title="New Contact" icon="UserPlus" accent="orange">
+      <SectionCard title={linkableCandidates.length ? "Identity Review" : "Unlinked Contact"} icon="UserPlus" accent="orange">
         <div className="space-y-2">
           <div className="flex items-center gap-2 rounded-md bg-[var(--alo-orange-soft)] px-3 py-2 text-sm">
             <Icon name="Phone" className="size-4 text-[var(--alo-orange-strong)]" />
             <span className="font-mono font-semibold text-[var(--alo-orange-strong)]">{phone}</span>
           </div>
           <p className="body-text text-[var(--alo-text-secondary)]">
-            This phone number is not linked to an existing student or lead.
-            Send a welcome message and triage the contact below.
+            An inbound message is not promotional consent. Verify identity and capture separate channel- and purpose-specific consent before marketing outreach.
           </p>
+          {linkableCandidates.length > 0 ? (
+            <div className="space-y-2 pt-1">
+              <p className="text-xs font-medium text-[var(--alo-text-secondary)]">Possible existing records (review before linking):</p>
+              {linkableCandidates.map((candidate) => (
+                <div key={`${candidate.kind}:${candidate.id}`} className="flex items-center justify-between gap-2 rounded-md border border-[var(--alo-border)] p-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold">{candidate.name || candidate.reference || candidate.kind}</p>
+                    <p className="truncate text-[11px] text-[var(--alo-muted)]">
+                      {candidate.kind.replace('_', ' ')}{candidate.reference ? ` · ${candidate.reference}` : ''}{candidate.phone ? ` · ${candidate.phone}` : ''}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" disabled={!contactMatchId} onClick={() => onResolve("OPEN_EXISTING", candidate)}>
+                    <Icon name="FolderOpen" className="size-3.5" /> Open Existing
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-[var(--alo-muted)]">No in-scope CRM candidate is confirmed. The contact remains unlinked until reviewed.</p>
+          )}
         </div>
       </SectionCard>
 
@@ -1555,39 +1602,27 @@ function NewContactPanel({
         title="Contact Match Review"
         icon="Shuffle"
         accent="amber"
-        description="Possible existing contact detected. Choose how to resolve this match."
+        description="A human decision is required. Merge requests are queued; this screen never merges student records."
       >
         {!contactMatchId ? (
-          <p className="text-xs text-[var(--alo-muted)]">
-            No automated review record found. Use the actions below to triage manually.
-          </p>
+          <p className="text-xs text-[var(--alo-muted)]">A review record is unavailable. No identity link or new contact was created.</p>
         ) : (
           <p className="text-xs text-[var(--alo-muted)]">
             Review ID: <span className="font-mono">{contactMatchId.slice(0, 12)}…</span>
           </p>
         )}
         <div className="mt-3 flex flex-col gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onResolve("OPEN_EXISTING")}
-          >
-            <Icon name="FolderOpen" className="size-3.5" /> Open Existing
+          <Button variant="outline" size="sm" disabled={!contactMatchId} onClick={() => onResolve("MERGE_REQUEST")}>
+            <Icon name="GitMerge" className="size-3.5" /> Request Human Merge Review
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onResolve("MERGE_REQUEST")}
-          >
-            <Icon name="GitMerge" className="size-3.5" /> Merge Request
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+            disabled={!contactMatchId}
             onClick={() => onResolve("CREATE_NEW")}
             className="text-[var(--alo-orange-strong)] border-[var(--alo-orange)]/40 hover:bg-[var(--alo-orange-soft)]"
           >
-            <Icon name="UserPlus" className="size-3.5" /> Create New (Authorized Role Only)
+            <Icon name="UserPlus" className="size-3.5" /> Create Unlinked Contact (Authorized Role Only)
           </Button>
         </div>
       </SectionCard>

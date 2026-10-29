@@ -2,6 +2,8 @@ import { contentAuditLog } from "@/lib/content-audit";
 import { normalizeContentRelationshipType } from "@/lib/content-validation";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { publicScholarshipWhere } from "@/lib/public-catalog";
+import { hasCurrentScholarshipSourceVerification } from "@/lib/scholarships/status-engine";
 import { withAuth, AuthContext } from "@/lib/auth-middleware";
 
 export const runtime = "nodejs";
@@ -130,8 +132,21 @@ async function resolveEntity(type: string, id: string): Promise<any> {
     switch (type) {
       case "SERVICE":
         return await db.service.findUnique({ where: { id, status: "PUBLISHED" }, select: { slug: true, title: true, icon: true } });
-      case "SCHOLARSHIP":
-        return await db.scholarship.findUnique({ where: { id, status: { not: "DRAFT" } }, select: { slug: true, name: true, fundingType: true } });
+      case "SCHOLARSHIP": {
+        const scholarship = await db.scholarship.findUnique({
+          where: { id, ...publicScholarshipWhere() },
+          select: {
+            slug: true, name: true, fundingType: true,
+            verificationStatus: true, lastVerifiedAt: true, officialSourceUrl: true,
+          },
+        });
+        if (!scholarship || !hasCurrentScholarshipSourceVerification({
+          verificationStatus: scholarship.verificationStatus,
+          lastVerifiedAt: scholarship.lastVerifiedAt,
+          officialSourceUrl: scholarship.officialSourceUrl,
+        })) return null;
+        return { slug: scholarship.slug, name: scholarship.name, fundingType: scholarship.fundingType };
+      }
       case "RESOURCE":
         return await db.resource.findUnique({ where: { id, status: "PUBLISHED" }, select: { slug: true, title: true, featuredImage: true } });
       // COURSE / UNIVERSITY / COUNTRY / etc. are resolved by other systems (e.g. CountryPage) — return null here.

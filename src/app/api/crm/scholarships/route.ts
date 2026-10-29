@@ -71,8 +71,8 @@ export async function POST(request: NextRequest) {
       // amount typed without a currency was stored as a GBP fact. A currency is
       // now required whenever an amount is supplied; nothing is assumed. The
       // record keeps the schema default verificationStatus (NEEDS_REVIEW), so
-      // it stays out of public listings (publicScholarshipWhere requires
-      // VERIFIED). Clients cannot set verification or publication here.
+      // it stays out of public listings until a reviewer verifies a recent
+      // official source. Clients cannot set verification or publication here.
       const control = presentControlFields(body);
       if (control.length || Object.prototype.hasOwnProperty.call(body, 'status')) {
         return NextResponse.json({ success: false, error: `Field(s) not accepted on create: ${[...control, ...(Object.prototype.hasOwnProperty.call(body, 'status') ? ['status'] : [])].join(', ')}` }, { status: 400 });

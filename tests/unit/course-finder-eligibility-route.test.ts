@@ -17,7 +17,7 @@ vi.mock('@/lib/rate-limiter', () => ({ rateLimitMiddleware: () => null }));
 
 import { NextResponse } from 'next/server';
 import { POST } from '@/app/api/course-finder/eligibility-engine/route';
-import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere } from '@/lib/public-catalog';
 
 function course(overrides: Record<string, unknown> = {}) {
   return {
@@ -60,7 +60,7 @@ describe('POST /api/course-finder/eligibility-engine', () => {
     const json = JSON.stringify(first.where);
     expect(json).toContain('United Kingdom');
     expect(json).not.toContain('specialisation');
-    expect(first.select.requirements.where).toEqual({ verificationStatus: 'VERIFIED' });
+    expect(first.select.requirements.where).toEqual(publicRequirementWhere());
     expect(first.select.intakeFees.where).toEqual(publicIntakeWhere());
   });
 

@@ -147,7 +147,7 @@ function HeroSection() {
           <div className="flex flex-col gap-3 pt-1 sm:flex-row">
             <Button asChild size="lg" className="h-12 bg-[var(--alo-cta)] px-6 font-heading text-[15px] font-semibold text-black shadow-card hover:bg-[var(--alo-cta-hover)]">
               <Link href="/book-consultation">
-                Book Free Counselling
+                Request Counselling
                 <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
@@ -407,7 +407,7 @@ function CourseFinderSection() {
               <div className="mt-5 flex flex-col items-start justify-between gap-3 rounded-xl border border-[var(--alo-cta-accent)]/50 bg-[var(--alo-cta-soft)] p-4 sm:flex-row sm:items-center">
                 <p className="text-sm text-[var(--alo-text)]">
                   <span className="font-heading font-bold">Planning to study in {selectedCountry.name}?</span>{' '}
-                  <span className="text-[var(--alo-text-secondary)]">Download the {selectedCountry.name} 7-step study guide — from free counseling to pre-departure.</span>
+                  <span className="text-[var(--alo-text-secondary)]">Download the {selectedCountry.name} 7-step study guide — from counseling to pre-departure.</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" onClick={downloadGuide} className="h-12 rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-[13px] font-bold text-black hover:bg-[var(--alo-cta-hover)]">

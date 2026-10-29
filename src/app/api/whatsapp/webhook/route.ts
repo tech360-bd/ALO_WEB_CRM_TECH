@@ -4,25 +4,25 @@ import { db } from "@/lib/db";
 import { downloadWhatsAppInboundMedia } from "@/lib/whatsapp-inbound-media";
 import { removePrivateFile, storePrivateFile } from "@/lib/storage/private-file-store";
 import crypto from "crypto";
-import { normalizeBdPhone, determineSenderNumber, MAIN_NUMBER, COO_NUMBER } from "@/lib/whatsapp-number-pool";
+import { determineSenderNumber, MAIN_NUMBER } from "@/lib/whatsapp-number-pool";
 import { detectLanguage, detectIntent, detectSentiment, logAiOperation, calculateLeadScore } from "@/lib/ai-whatsapp-engine";
 import { handleIntakeMessage as handleStudentIntake } from "@/lib/ai-agents/student-intake-agent";
 import { startSlaForThread, calculateSlaDueAt } from "@/lib/sla-engine";
 import { handleStopStartCommand } from "@/lib/whatsapp-followup-engine";
+import { persistWhatsAppStatus, sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
 import { handleAfterHoursMessage } from "@/lib/communication/after-hours";
 import { classifyIntent as classifyIntentCRM, detectPriority, normalizePhoneE164, extractMessageContent as extractMessageContentHandler } from "@/lib/whatsapp-webhook-handler";
 import { deriveWebhookEventId, mapProviderStatus, shouldApplyStatus } from '@/lib/communications/webhook-idempotency';
+import { claimWebhookEvent, completeWebhookEvent } from '@/lib/communications/webhook-event-claim';
+import { normalizePhone, phoneMatchConditions } from '@/lib/phone-normalization';
+import { autoAssignCounselor } from '@/lib/crm-automation';
 import { createLeadWithReference } from '@/lib/lead-reference';
-import { resolveContactIdentity, shouldAutoCreateLead } from '@/lib/communications/contact-identity';
+import { resolveContactIdentity, shouldAutoCreateLead, type ContactCandidate } from '@/lib/communications/contact-identity';
 // Consolidated 2026-09-14: handler provides CRM intent/priority + E.164 + comprehensive extractMessageContent (additional, not replacing local)
 // Existing phone normalization, signature verification, routing and message processing stay in place; student IDs are generated only by the reviewed student-creation workflow.
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function normalizePhone(phone: string): string {
-  return normalizeBdPhone(phone);
-}
 
 function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -46,32 +46,6 @@ function verifySignature(rawBody: string, signature: string): boolean {
   if (!signature) return false;
   const expected = "sha256=" + crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex");
   return safeEqual(expected, signature);
-}
-
-async function sendOutboundViaApi(recipientPhone: string, text: string): Promise<{ messageId: string | null; apiResponse: any }> {
-  const token = process.env.WHATSAPP_TOKEN || process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  if (!token || !phoneNumberId) {
-    return { messageId: null, apiResponse: { error: "WHATSAPP_TOKEN or WHATSAPP_PHONE_NUMBER_ID not configured" } };
-  }
-  const payload = {
-    messaging_product: "whatsapp",
-    to: recipientPhone,
-    type: "text",
-    text: { body: text },
-  };
-  try {
-    const res = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const json = await res.json();
-    const messageId = json?.messages?.[0]?.id || null;
-    return { messageId, apiResponse: json };
-  } catch (err: any) {
-    return { messageId: null, apiResponse: { error: err.message } };
-  }
 }
 
 function classifyWhatsAppDocument(fileName: string): string {
@@ -136,7 +110,14 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const declaredLength = Number(req.headers.get('content-length') || 0);
+  if (Number.isFinite(declaredLength) && declaredLength > 2_000_000) {
+    return NextResponse.json({ error: 'Webhook payload exceeds the allowed size.' }, { status: 413 });
+  }
   const rawBody = await req.text();
+  if (Buffer.byteLength(rawBody, 'utf8') > 2_000_000) {
+    return NextResponse.json({ error: 'Webhook payload exceeds the allowed size.' }, { status: 413 });
+  }
   const signature = req.headers.get("x-hub-signature-256") || "";
 
   // 1. Validate payload & source
@@ -168,37 +149,77 @@ export async function POST(req: NextRequest) {
         skipped.push({ messageId, providerStatus: s.status ?? null, reason: deliveryStatus ? 'missing_message_id' : 'not_a_delivery_status' });
         continue;
       }
-      const status = deliveryStatus.toUpperCase();
-      // Spec §171: a retried callback must not create a second row, and a stale
-      // 'sent' arriving after 'read' must not walk the status backwards.
+      const status = deliveryStatus;
       const eventId = deriveWebhookEventId({ provider: 'whatsapp', messageId, status: deliveryStatus, eventType: 'status' }).eventId;
       try {
-        const alreadyStored = await db.whatsAppMessageStatus.findFirst({
-          where: { messageId, status },
-          select: { id: true },
-        });
-        if (alreadyStored) {
-          skipped.push({ messageId, status, reason: 'duplicate' });
-          continue;
-        }
-        const latest = await db.whatsAppMessageStatus.findFirst({
+        const latest = await db.whatsAppMessageStatus.findUnique({
           where: { messageId },
-          orderBy: { createdAt: 'desc' },
-          select: { status: true },
+          select: { id: true, status: true, statusTimestamp: true },
         });
-        if (latest && !shouldApplyStatus(mapProviderStatus(latest.status), deliveryStatus)) {
-          skipped.push({ messageId, status, reason: 'out_of_order' });
-          continue;
+        const providerTimestamp = Number(s.timestamp);
+        const eventTimestamp = Number.isFinite(providerTimestamp) && providerTimestamp > 0
+          ? new Date(providerTimestamp * 1000)
+          : new Date();
+        if (latest) {
+          const prior = mapProviderStatus(latest.status);
+          if (!shouldApplyStatus(prior, deliveryStatus)
+            || (prior === deliveryStatus && eventTimestamp < latest.statusTimestamp)) {
+            skipped.push({ messageId, status, reason: 'duplicate_or_out_of_order' });
+            continue;
+          }
         }
-        const record = await db.whatsAppMessageStatus.create({
-          data: { messageId, recipientPhone, status, errorMessage, providerPayload: JSON.stringify(s) },
+
+        const persisted = await persistWhatsAppStatus(messageId, deliveryStatus, recipientPhone, {
+          providerTimestamp,
+          providerError: errorMessage || '',
+          providerStatus: s.status,
+          providerPayload: s,
         });
-        // Also update archive
+        if (!persisted) throw new Error('WHATSAPP_STATUS_PERSIST_FAILED');
+
+        const archiveStatus = deliveryStatus === 'accepted' ? 'sent' : deliveryStatus;
         await db.whatsAppMessageArchive.updateMany({
           where: { whatsappMessageId: messageId },
-          data: { deliveryStatus: status, readStatus: status === 'read' ? 'read' : status === 'delivered' ? 'delivered' : 'sent' },
+          data: {
+            deliveryStatus: archiveStatus,
+            readStatus: deliveryStatus === 'read' ? 'read'
+              : deliveryStatus === 'delivered' ? 'delivered'
+              : deliveryStatus === 'failed' ? 'failed'
+              : 'sent',
+          },
         }).catch(() => {});
-        updated.push({ messageId, status, eventId, recordId: record.id });
+
+        await db.communicationMessage.updateMany({
+          where: { direction: 'outbound', channel: 'whatsapp', OR: [{ communicationCode: messageId }, { content: messageId }] },
+          data: { deliveryStatus: archiveStatus },
+        }).catch(() => {});
+
+        const uccCandidates = await db.uccMessage.findMany({
+          where: { direction: 'outbound', channel: 'whatsapp', metadata: { contains: messageId } },
+          orderBy: { createdAt: 'desc' },
+          take: 20,
+          select: { id: true, metadata: true },
+        }).catch(() => []);
+        const uccMessage = uccCandidates.find((candidate) => {
+          try { return JSON.parse(candidate.metadata || '{}')?.providerMessageId === messageId; }
+          catch { return false; }
+        });
+        if (uccMessage) {
+          let metadata: Record<string, unknown> = {};
+          try {
+            const parsed = JSON.parse(uccMessage.metadata || '{}');
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) metadata = parsed;
+          } catch {}
+          await db.uccMessage.update({
+            where: { id: uccMessage.id },
+            data: {
+              status: deliveryStatus,
+              metadata: JSON.stringify({ ...metadata, deliveryStatus, providerStatusAt: eventTimestamp.toISOString(), ...(errorMessage ? { providerError: String(errorMessage).slice(0, 500) } : {}) }),
+            },
+          }).catch(() => {});
+        }
+        const record = await db.whatsAppMessageStatus.findUnique({ where: { messageId }, select: { id: true } });
+        updated.push({ messageId, status, eventId, recordId: record?.id || null });
       } catch (err: any) {
         updated.push({ messageId, status, error: err.message });
       }
@@ -280,9 +301,29 @@ export async function POST(req: NextRequest) {
   const results = [];
 
   for (const { msg, receivingPhone, phoneNumberId, contact, entryId } of allMessages) {
-    const providerMessageId = msg.id;
+    const providerMessageId = typeof msg.id === 'string' ? msg.id : '';
+    if (!providerMessageId) {
+      results.push({ messageId: null, skipped: true, reason: 'missing_provider_message_id' });
+      continue;
+    }
+    const eventClaim = await claimWebhookEvent({
+      provider: 'WHATSAPP',
+      eventId: providerMessageId,
+      eventType: `MESSAGE_${String(msg.type || 'text').toUpperCase()}`,
+      payload: rawBody,
+      signature,
+      verified: signatureValid,
+    });
+    if (!eventClaim.claimed) {
+      results.push({ messageId: providerMessageId, idempotent: true, reason: eventClaim.reason });
+      continue;
+    }
+    const webhookEvent = { id: eventClaim.id };
     const from = msg.from;
-    const timestamp = msg.timestamp ? new Date(parseInt(msg.timestamp, 10) * 1000) : new Date();
+    const providerSeconds = Number(msg.timestamp);
+    const timestamp = Number.isFinite(providerSeconds) && providerSeconds > 0 && providerSeconds < 8_640_000_000
+      ? new Date(providerSeconds * 1000)
+      : new Date();
     const { type, body: messageBody, mediaId, extra } = extractMessageContent(msg);
     const fromName = contact?.profile?.name || from;
     let mediaIngestionFailure = false;
@@ -293,46 +334,13 @@ export async function POST(req: NextRequest) {
         where: { whatsappMessageId: providerMessageId },
       });
       if (existingArchive) {
+        await completeWebhookEvent(eventClaim);
         results.push({ messageId: providerMessageId, idempotent: true, duplicate: true });
         continue; // Skip duplicate
       }
     } catch {}
 
-    // 5. Idempotency via webhookEvent provider+eventId
-    let webhookEvent: any = null;
-    try {
-      webhookEvent = await db.webhookEvent.findUnique({
-        where: { provider_eventId: { provider: "WHATSAPP", eventId: providerMessageId } },
-      });
-      if (webhookEvent?.processed) {
-        results.push({ messageId: providerMessageId, idempotent: true, webhookEventId: webhookEvent.id });
-        continue;
-      }
-    } catch {}
-
-    if (!webhookEvent) {
-      try {
-        webhookEvent = await db.webhookEvent.create({
-          data: {
-            provider: "WHATSAPP",
-            eventId: providerMessageId,
-            eventType: `MESSAGE_${type.toUpperCase()}`,
-            payload: rawBody,
-            signature,
-            verified: signatureValid,
-            processed: false,
-          },
-        });
-      } catch {
-        try {
-          webhookEvent = await db.webhookEvent.findUnique({
-            where: { provider_eventId: { provider: "WHATSAPP", eventId: providerMessageId } },
-          });
-        } catch {}
-      }
-    }
-
-    // 6. Save raw event safely
+    // 5. Save raw event safely
     await db.uccWebhookEvent.create({
       data: {
         provider: "WHATSAPP",
@@ -343,152 +351,271 @@ export async function POST(req: NextRequest) {
       },
     }).catch(() => {});
 
-    // 7. Normalize phone, search existing
+    // 7. Normalize the sender and upsert the existing WhatsAppContact model as
+    // the shared phone registry. An inbound message records identity only; it
+    // never creates marketing consent.
     const normalizedFrom = normalizePhone(from);
+    if (!normalizedFrom) {
+      await completeWebhookEvent(eventClaim);
+      results.push({ messageId: providerMessageId, skipped: true, reason: 'invalid_sender_phone' });
+      continue;
+    }
+    const incomingDisplayName = String(fromName || '').trim().slice(0, 120);
+    let waContact = await db.whatsAppContact.upsert({
+      where: { normalizedPhone: normalizedFrom },
+      create: {
+        phone: from,
+        normalizedPhone: normalizedFrom,
+        externalContactId: String(contact?.wa_id || from).slice(0, 191),
+        displayName: incomingDisplayName || `WhatsApp ${normalizedFrom.slice(-4)}`,
+        profileName: incomingDisplayName,
+        firstContactAt: timestamp,
+        lastContactAt: timestamp,
+        source: 'WHATSAPP',
+      },
+      update: {
+        lastContactAt: timestamp,
+        ...(incomingDisplayName ? { displayName: incomingDisplayName, profileName: incomingDisplayName } : {}),
+        ...(contact?.wa_id ? { externalContactId: String(contact.wa_id).slice(0, 191) } : {}),
+      },
+    });
 
-    // Search existing WhatsApp contact
-    let waContact = null;
-    try {
-      waContact = await db.whatsAppContact.findUnique({
-        where: { normalizedPhone: normalizedFrom },
+    const studentPhoneWhere = phoneMatchConditions(from, ['phone']);
+    const leadPhoneWhere = phoneMatchConditions(from, ['phone', 'altPhone']);
+    const phoneVariants = phoneMatchConditions(from, ['phone'])?.OR.map((condition) => condition.phone) || [];
+    const [studentMatches, leadMatches, partnerMatches] = await Promise.all([
+      studentPhoneWhere
+        ? db.student.findMany({
+            where: studentPhoneWhere,
+            select: { id: true, studentId: true, name: true, phone: true, email: true, counselorId: true, counselorName: true },
+            take: 50,
+          })
+        : Promise.resolve([]),
+      leadPhoneWhere
+        ? db.lead.findMany({
+            where: leadPhoneWhere,
+            select: { id: true, leadId: true, fullName: true, phone: true, altPhone: true, email: true, counselorId: true, branch: true },
+            take: 50,
+          })
+        : Promise.resolve([]),
+      phoneVariants.length
+        ? db.b2BContact.findMany({
+            where: { phone: { in: phoneVariants } },
+            select: { id: true, name: true, phone: true, email: true, organization: true },
+            take: 50,
+          }).catch(() => [])
+        : Promise.resolve([]),
+    ]);
+
+    const candidatesByKey = new Map<string, ContactCandidate>();
+    const addCandidate = (candidate: ContactCandidate) => {
+      candidatesByKey.set(`${candidate.kind}:${candidate.id}`, candidate);
+    };
+    for (const student of studentMatches) addCandidate({
+      kind: 'student', id: student.id, reference: student.studentId, name: student.name, phone: student.phone, email: student.email,
+    });
+    for (const lead of leadMatches) addCandidate({
+      kind: 'lead', id: lead.id, reference: lead.leadId, name: lead.fullName, phone: lead.phone, altPhone: lead.altPhone, email: lead.email,
+    });
+
+    // Honor historical registry links, but only as weak candidates: if the
+    // linked CRM record's phone no longer matches, a human must review it.
+    if (waContact.studentId) {
+      const linkedStudent = await db.student.findFirst({
+        where: { OR: [{ id: waContact.studentId }, { studentId: waContact.studentId }] },
+        select: { id: true, studentId: true, name: true, phone: true, email: true, counselorId: true, counselorName: true },
+      }).catch(() => null);
+      if (linkedStudent) addCandidate({
+        kind: 'student', id: linkedStudent.id, reference: linkedStudent.studentId, name: linkedStudent.name,
+        phone: linkedStudent.phone, email: linkedStudent.email, matchedOn: 'student_reference',
       });
-    } catch {}
-
-    // Resolve a real Student row only; portal profile/contact IDs are not
-    // trusted as Student primary keys until they are looked up explicitly.
-    let existingStudent: any = null;
-    try {
-      existingStudent = await db.student.findFirst({ where: { phone: { in: [from, normalizedFrom] } } });
-      if (!existingStudent && waContact?.studentId) {
-        existingStudent = await db.student.findFirst({ where: { OR: [{ id: waContact.studentId }, { studentId: waContact.studentId }] } });
-      }
-      if (!existingStudent) {
-        const portalUser = await db.portalUser.findFirst({ where: { phone: { in: [from, normalizedFrom] } }, select: { id: true } });
-        if (portalUser) existingStudent = await db.student.findFirst({ where: { userId: portalUser.id } });
-      }
-      if (!existingStudent) {
-        const profile = await db.portalStudentProfile.findFirst({ where: { altPhone: { in: [from, normalizedFrom] } }, select: { studentId: true, userId: true } });
-        if (profile) existingStudent = await db.student.findFirst({ where: { OR: [{ id: profile.studentId }, { studentId: profile.studentId }, { userId: profile.userId }] } });
-      }
-    } catch (error) {
-      console.error('[whatsapp.webhook] existing student match lookup failed:', error instanceof Error ? error.message : 'unknown');
+    }
+    if (waContact.leadId) {
+      const linkedLead = await db.lead.findFirst({
+        where: { OR: [{ id: waContact.leadId }, { leadId: waContact.leadId }] },
+        select: { id: true, leadId: true, fullName: true, phone: true, altPhone: true, email: true, counselorId: true, branch: true },
+      }).catch(() => null);
+      if (linkedLead) addCandidate({
+        kind: 'lead', id: linkedLead.id, reference: linkedLead.leadId, name: linkedLead.fullName,
+        phone: linkedLead.phone, altPhone: linkedLead.altPhone, email: linkedLead.email, matchedOn: 'lead_reference',
+      });
     }
 
-    let leadId: string | null = waContact?.leadId || null;
+    const identity = resolveContactIdentity(
+      { phone: from, whatsappNumber: waContact.normalizedPhone || normalizedFrom },
+      [...candidatesByKey.values()],
+    );
+    const uniqueExactCrmMatch = identity.confidence === 'exact'
+      && identity.candidates.length === 1
+      && (identity.candidates[0].kind === 'student' || identity.candidates[0].kind === 'lead');
+    const selectedIdentity = uniqueExactCrmMatch ? identity.candidates[0] : null;
+    let existingStudent: any = selectedIdentity?.kind === 'student'
+      ? studentMatches.find((student) => student.id === selectedIdentity.id) || await db.student.findUnique({ where: { id: selectedIdentity.id } }).catch(() => null)
+      : null;
+    let existingLead: any = selectedIdentity?.kind === 'lead'
+      ? leadMatches.find((lead) => lead.id === selectedIdentity.id) || await db.lead.findUnique({ where: { id: selectedIdentity.id } }).catch(() => null)
+      : null;
     let studentId: string | null = existingStudent?.id || null;
+    let leadId: string | null = existingLead?.id || null;
+    let identityReviewId = '';
+    const hasPartnerIdentity = Boolean(waContact.partnerId) || partnerMatches.length > 0
+      || identity.candidates.some((candidate) => candidate.kind === 'partner_contact');
 
-    // Search existing lead if no student, keeping the owner for UCC assignment.
-    let existingLead: any = null;
-    if (!studentId) {
-      try {
-        existingLead = await db.lead.findFirst({
-          where: {
-            OR: [
-              { phone: from },
-              { phone: normalizedFrom },
-              { altPhone: from },
-              { altPhone: normalizedFrom },
-            ],
-          },
-        });
-        leadId = existingLead?.id || null;
-      } catch {}
+    // Exact competing matches and weak/reference-only matches are never
+    // silently selected. Keep the WhatsApp contact unlinked until an authorized
+    // reviewer resolves the candidates from the command center.
+    const identityNeedsReview = identity.candidates.length > 1
+      || (identity.candidates.length > 0 && !uniqueExactCrmMatch);
+    if (identityNeedsReview) {
+      const pendingReview = await db.contactMatchReview.findFirst({
+        where: { normalizedPhone: normalizedFrom, incomingEmail: null, conversationId: '', status: 'PENDING' },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true },
+      });
+      const review = pendingReview || await db.contactMatchReview.create({
+        data: {
+          incomingPhone: from,
+          normalizedPhone: normalizedFrom,
+          incomingName: incomingDisplayName || null,
+          conversationId: '',
+          matchedStudentId: identity.candidates.find((candidate) => candidate.kind === 'student')?.id || null,
+          matchedLeadId: identity.candidates.find((candidate) => candidate.kind === 'lead')?.id || null,
+          matchedPartnerId: identity.candidates.find((candidate) => candidate.kind === 'partner_contact')?.id || null,
+          matchConfidence: identity.confidence === 'exact' ? 100 : identity.confidence === 'possible' ? 60 : 0,
+          matchReason: JSON.stringify({
+            matchedOn: identity.matchedOn,
+            ambiguity: identity.candidates.length > 1,
+            candidateIds: identity.candidates.map((candidate) => ({ kind: candidate.kind, id: candidate.id })),
+          }).slice(0, 1000),
+          status: 'PENDING',
+        },
+        select: { id: true },
+      });
+      identityReviewId = review.id;
     }
-    const assignedUserId = String(existingStudent?.counselorId || existingLead?.counselorId || '').trim();
 
-    // 8. Handle STOP/START
-    const stopStart = await handleStopStartCommand(from, messageBody).catch(() => ({ action: 'NONE' }));
+    // Explicit STOP/START is processed before any lead creation. STOP is an
+    // opt-out; START is only renewed consent evidence. Neither command creates
+    // a Student or an unsolicited lead.
+    const stopStart = await handleStopStartCommand(from, messageBody, providerMessageId).catch(() => ({ action: 'NONE' as const }));
+    let isNewStudent = false;
+    let assignedUserId = String(existingStudent?.counselorId || existingLead?.counselorId || waContact.assignedCounselorId || '').trim();
 
-    // 9. Unknown WhatsApp senders become leads/contacts only. Never create a
-    // student from a phone number or an unverified inbound document: the intake
-    // workflow must first match an existing student or obtain human confirmation.
-    const isNewStudent = false;
-    if (!studentId && !leadId) {
-      try {
-        const altCheck = await db.whatsAppContact.findFirst({
-          where: { OR: [{ phone: from }, { normalizedPhone: normalizedFrom }] },
-        });
-        if (altCheck) {
-          leadId = altCheck.leadId || null;
-        } else {
-          // ── §126 deduplication before creation ──────────────────────────────
-          // The candidate list is everything the lookup above already found; the
-          // identity policy decides whether a NEW record is justified. A contact
-          // that only matches on a weak field (alternate phone, WhatsApp identity)
-          // is flagged POSSIBLE EXISTING CONTACT and carries the review notice, so
-          // an operator sees the duplicate risk instead of finding two leads later.
-          const identity = resolveContactIdentity(
-            { phone: from, whatsappNumber: waContact?.normalizedPhone || undefined, altPhone: undefined },
-            [
-              ...(existingStudent ? [{ kind: 'student' as const, id: existingStudent.id, name: existingStudent.name ?? null, phone: existingStudent.phone ?? null }] : []),
-              ...(existingLead ? [{ kind: 'lead' as const, id: existingLead.id, reference: existingLead.leadId ?? null, name: existingLead.fullName ?? null, phone: existingLead.phone ?? null, altPhone: existingLead.altPhone ?? null }] : []),
-              ...(waContact ? [{ kind: (waContact.leadId ? 'lead' : 'partner_contact') as const, id: waContact.id, name: waContact.displayName ?? null, whatsappNumber: waContact.normalizedPhone ?? null, matchedOn: 'whatsapp_identity' as const }] : []),
-            ],
-          );
-
-          if (!shouldAutoCreateLead(identity)) {
-            // Impossible here (no candidate means nothing matched), but the guard
-            // makes the rule explicit rather than implied by control flow.
-            results.push({ messageId: providerMessageId, identity: identity.confidence, skippedLeadCreation: true });
-          } else {
-          const newLead = await createLeadWithReference(db, {
-            fullName: fromName || `WhatsApp ${from.slice(-4)}`,
-            phone: from,
-            source: "WHATSAPP",
-            sourceDetail: `WhatsApp inbound - ${type}`,
-            notes: [
-              `Contact identity not yet matched. First WhatsApp message: "${messageBody.slice(0, 200)}"`,
-              identity.notice ? `Identity review: ${identity.notice}` : '',
-            ].filter(Boolean).join('\n'),
-            status: "NEW",
-            welcomeSent: false,
-          }).catch((error) => {
-            console.error('[whatsapp.webhook] lead creation failed:', error instanceof Error ? error.message : 'unknown');
-            return null;
-          });
-
-          if (newLead) {
-            leadId = newLead.id;
-            await db.whatsAppContact.create({
-              data: {
-                phone: from,
-                normalizedPhone: normalizedFrom,
-                displayName: fromName || `WhatsApp ${from.slice(-4)}`,
-                profileName: fromName,
-                studentId: '',
-                leadId: newLead.id,
-                source: "WHATSAPP",
-                firstContactAt: timestamp,
-                lastContactAt: timestamp,
-              },
-            }).catch(() => {});
-            await db.timelineEvent.create({
-              data: {
-                studentId: '',
-                leadId: newLead.id,
-                stage: "LEAD_CREATED",
-                type: "LEAD_CREATED",
-                title: identity.confidence === 'possible' ? "POSSIBLE EXISTING CONTACT — identity review required" : "WhatsApp contact requires identity match",
-                description: [
-                  `Lead recorded from WhatsApp inbound (${type}); no student profile was created.`,
-                  identity.notice || '',
-                ].filter(Boolean).join(' '),
-              },
-            }).catch(() => {});
-          }
-          }
-        }
-      } catch (err) {
-        console.error("WhatsApp contact review record creation failed:", err);
-      }
-    } else if (waContact) {
-      // Update existing contact lastContactAt
+    if (selectedIdentity) {
+      const branch = existingLead?.branch || '';
       await db.whatsAppContact.update({
         where: { id: waContact.id },
-        data: { lastContactAt: new Date(), displayName: fromName || waContact.displayName, ...(studentId ? { studentId } : {}), ...(leadId ? { leadId } : {}) },
+        data: {
+          ...(studentId ? { studentId } : {}),
+          ...(leadId ? { leadId } : {}),
+          assignedCounselorId: assignedUserId,
+          ...(branch ? { branch } : {}),
+          lastContactAt: timestamp,
+        },
       }).catch(() => {});
-    }
+    } else if (
+      shouldAutoCreateLead(identity)
+      && !hasPartnerIdentity
+      && stopStart.action === 'NONE'
+    ) {
+      // Resolve an explicitly configured employee/branch inbox before choosing
+      // an owner. No sender-number ownership or provider connection is inferred
+      // from the incoming display number alone.
+      const receivingNormalized = normalizePhone(receivingPhone);
+      const numberConfig = await db.whatsAppOfficialNumber.findFirst({
+        where: { OR: [
+          ...(phoneNumberId ? [{ metaPhoneNumberId: phoneNumberId }] : []),
+          ...(receivingNormalized ? [{ normalizedPhone: receivingNormalized }] : []),
+        ] },
+        select: { ownerType: true, employeeOwnerId: true, branch: true },
+      }).catch(() => null);
+      const ownerEmployee = numberConfig?.ownerType.toUpperCase() === 'EMPLOYEE' && numberConfig.employeeOwnerId
+        ? await db.employee.findFirst({
+            where: { OR: [
+              { id: numberConfig.employeeOwnerId },
+              { userId: numberConfig.employeeOwnerId },
+              { employeeId: numberConfig.employeeOwnerId },
+            ], status: 'active' },
+            select: { userId: true, name: true, branch: true, role: true },
+          }).catch(() => null)
+        : null;
+      const ownerRole = String(ownerEmployee?.role || '').toLowerCase();
+      const directOwnerId = ownerEmployee && ownerRole.includes('counselor') ? ownerEmployee.userId : '';
+      const assignedBranch = String(numberConfig?.branch || ownerEmployee?.branch || '').trim();
 
+      const createdLead = await db.$transaction(async (tx) => {
+        const currentContact = await tx.whatsAppContact.findUnique({ where: { id: waContact.id } });
+        if (!currentContact) throw new Error('WHATSAPP_CONTACT_REGISTRY_MISSING');
+        if (currentContact.studentId || currentContact.leadId || currentContact.partnerId) {
+          return { created: false as const, studentId: currentContact.studentId, leadId: currentContact.leadId, partnerId: currentContact.partnerId };
+        }
+        const claim = await tx.whatsAppContact.updateMany({
+          where: { id: currentContact.id, studentId: '', leadId: '', partnerId: '' },
+          data: { leadId: `__pending__${providerMessageId}` },
+        });
+        if (claim.count !== 1) return { created: false as const, studentId: '', leadId: '', partnerId: '' };
+
+        const lead = await createLeadWithReference<{ id: string; counselorId: string | null }>(tx, {
+          fullName: incomingDisplayName || `WhatsApp ${normalizedFrom.slice(-4)}`,
+          phone: from,
+          source: 'WHATSAPP',
+          sourceDetail: `WhatsApp inbound - ${type}`,
+          notes: `Inbound identity has no exact Student, Lead, or partner-contact match. First message: ${messageBody.slice(0, 300)}`,
+          status: 'NEW',
+          welcomeSent: false,
+          counselorId: directOwnerId || null,
+          branch: assignedBranch || null,
+          assignedReason: directOwnerId ? `Inbound WhatsApp number owner ${ownerEmployee?.name || directOwnerId}` : null,
+        });
+        let finalLead = lead;
+        if (!directOwnerId && !assignedBranch) {
+          await autoAssignCounselor(lead.id, tx).catch(() => null);
+          finalLead = await tx.lead.findUnique({ where: { id: lead.id }, select: { id: true, counselorId: true } }) || lead;
+        }
+        await tx.whatsAppContact.update({
+          where: { id: currentContact.id },
+          data: {
+            leadId: lead.id,
+            assignedCounselorId: finalLead.counselorId || '',
+            branch: assignedBranch,
+            displayName: incomingDisplayName || undefined,
+            lastContactAt: timestamp,
+          },
+        });
+        await tx.timelineEvent.create({
+          data: {
+            studentId: '',
+            leadId: lead.id,
+            stage: 'LEAD_CREATED',
+            type: 'LEAD_CREATED',
+            title: 'Inbound WhatsApp lead created',
+            description: assignedBranch && !finalLead.counselorId
+              ? `New WhatsApp lead is queued for branch ${assignedBranch}; no cross-branch counselor was selected.`
+              : 'Lead created after exact cross-channel identity search; no Student record was created.',
+          },
+        }).catch(() => {});
+        return { created: true as const, studentId: '', leadId: lead.id, partnerId: '', counselorId: finalLead.counselorId || '', branch: assignedBranch };
+      });
+
+      if (createdLead.created) {
+        leadId = createdLead.leadId;
+        existingLead = leadId ? await db.lead.findUnique({ where: { id: leadId } }).catch(() => null) : null;
+        assignedUserId = createdLead.counselorId || '';
+        waContact = await db.whatsAppContact.findUnique({ where: { id: waContact.id } }) || waContact;
+      } else if (createdLead.studentId || createdLead.leadId) {
+        const linkedStudentId = String(createdLead.studentId || '');
+        const linkedLeadId = String(createdLead.leadId || '');
+        if (linkedStudentId && !linkedStudentId.startsWith('__pending__')) {
+          existingStudent = await db.student.findFirst({ where: { OR: [{ id: linkedStudentId }, { studentId: linkedStudentId }] } }).catch(() => null);
+          studentId = existingStudent?.id || null;
+        }
+        if (linkedLeadId && !linkedLeadId.startsWith('__pending__')) {
+          existingLead = await db.lead.findFirst({ where: { OR: [{ id: linkedLeadId }, { leadId: linkedLeadId }] } }).catch(() => null);
+          leadId = existingLead?.id || null;
+        }
+        assignedUserId = String(existingStudent?.counselorId || existingLead?.counselorId || '').trim();
+      }
+    }
     // 10. Save normalized message to permanent archive
     let conversationId = `wa-${normalizedFrom}`;
     let threadId = "";
@@ -496,7 +623,10 @@ export async function POST(req: NextRequest) {
     // Find or create CommunicationThread
     try {
       let thread = await db.communicationThread.findFirst({
-        where: { OR: [{ threadCode: conversationId }, { studentId: studentId || "" }] },
+        // A thread is keyed by this normalized channel identity. A student may
+        // have several contact methods, so matching by studentId alone could
+        // attach a different phone's conversation to the wrong person.
+        where: { threadCode: conversationId, channel: 'whatsapp' },
         orderBy: { createdAt: 'desc' },
       });
 
@@ -525,6 +655,39 @@ export async function POST(req: NextRequest) {
       conversationId = thread.id;
     } catch {}
 
+    let legacyCommunicationMessage: any = null;
+    if (threadId) {
+      legacyCommunicationMessage = await db.communicationMessage.create({
+        data: {
+          threadId,
+          communicationCode: providerMessageId,
+          channel: 'whatsapp',
+          direction: 'inbound',
+          source: 'whatsapp_webhook',
+          senderUserId: '',
+          senderName: fromName,
+          senderContact: from,
+          recipientContact: receivingPhone || '',
+          leadId: leadId || '',
+          studentId: studentId || '',
+          messageSubject: '',
+          messageBody,
+          content: providerMessageId,
+          type,
+          messageType: type,
+          status: 'unread',
+          deliveryStatus: 'delivered',
+          isRead: false,
+          senderType: studentId ? 'student' : leadId ? 'lead' : 'lead',
+          senderId: studentId || leadId || '',
+          createdBy: 'whatsapp-webhook',
+        },
+      }).catch((error) => {
+        console.error('[whatsapp.webhook] legacy communication message persistence failed', error instanceof Error ? error.message : 'unknown');
+        return null;
+      });
+    }
+
     // Save to WhatsAppMessageArchive (permanent)
     try {
       await db.whatsAppMessageArchive.create({
@@ -535,8 +698,8 @@ export async function POST(req: NextRequest) {
           studentId: studentId || "",
           leadId: leadId || "",
           senderPhone: from,
-          receiverPhone: receivingPhone || MAIN_NUMBER,
-          senderNumber: receivingPhone || MAIN_NUMBER,
+          receiverPhone: receivingPhone || '',
+          senderNumber: receivingPhone || '',
           messageType: type,
           messageBody,
           mediaId: mediaId || "",
@@ -562,7 +725,7 @@ export async function POST(req: NextRequest) {
           senderId: from,
           senderName: fromName,
           messageText: messageBody,
-          conversationId: `wa-${from}`,
+          conversationId: `wa-${normalizedFrom}`,
           leadId: leadId || "",
           studentId: studentId || "",
           aiHandled: false,
@@ -572,9 +735,11 @@ export async function POST(req: NextRequest) {
     } catch {}
 
     // Save to UccMessage
+    let uccConversationId = '';
     try {
       let uccConv = await db.uccConversation.findFirst({
-        where: { participantPhone: normalizedFrom },
+        where: { channel: 'whatsapp', participantPhone: normalizedFrom },
+        orderBy: { lastMessageAt: 'desc' },
       });
       if (!uccConv) {
         uccConv = await db.uccConversation.create({
@@ -595,9 +760,47 @@ export async function POST(req: NextRequest) {
           },
         });
       } else {
-        await db.uccConversation.update({
-          where: { id: uccConv.id },
-          data: { lastMessageText: messageBody.slice(0, 200), lastMessageAt: new Date(), unreadCount: { increment: 1 }, ...(!uccConv.assignedToUserId && assignedUserId ? { assignedToUserId: assignedUserId, assignedRole: 'COUNSELOR' } : {}) },
+        const identityConflict = Boolean(
+          (uccConv.studentId && studentId && uccConv.studentId !== studentId)
+          || (uccConv.leadId && leadId && uccConv.leadId !== leadId)
+          || (uccConv.studentId && leadId)
+          || (uccConv.leadId && studentId)
+        );
+        if (identityConflict && !identityReviewId) {
+          const review = await db.contactMatchReview.create({
+            data: {
+              incomingPhone: from,
+              normalizedPhone: normalizedFrom,
+              incomingName: incomingDisplayName || null,
+              conversationId: uccConv.id,
+              matchedStudentId: studentId,
+              matchedLeadId: leadId,
+              matchConfidence: 100,
+              matchReason: JSON.stringify({ identityConflict: true, currentStudentId: uccConv.studentId, currentLeadId: uccConv.leadId, candidateIds: identity.candidates.map((candidate) => ({ kind: candidate.kind, id: candidate.id })) }).slice(0, 1000),
+              status: 'PENDING',
+            },
+            select: { id: true },
+          }).catch(() => null);
+          identityReviewId = review?.id || '';
+        }
+        const canAttachIdentity = !identityConflict;
+        await db.uccConversation.updateMany({
+          where: { id: uccConv.id, studentId: uccConv.studentId, leadId: uccConv.leadId },
+          data: {
+            lastMessageText: messageBody.slice(0, 200),
+            lastMessageAt: new Date(),
+            unreadCount: { increment: 1 },
+            ...(!uccConv.assignedToUserId && assignedUserId ? { assignedToUserId: assignedUserId, assignedRole: 'COUNSELOR' } : {}),
+            ...(canAttachIdentity && studentId && !uccConv.studentId ? { studentId } : {}),
+            ...(canAttachIdentity && leadId && !uccConv.leadId ? { leadId } : {}),
+          },
+        }).catch(() => {});
+      }
+      uccConversationId = uccConv.id;
+      if (identityReviewId) {
+        await db.contactMatchReview.updateMany({
+          where: { id: identityReviewId, status: 'PENDING' },
+          data: { conversationId: uccConv.id },
         }).catch(() => {});
       }
 
@@ -619,7 +822,7 @@ export async function POST(req: NextRequest) {
       // Inbound media is downloaded from Meta, MIME/signature/size/hash checked,
       // and written to private storage before any document/OCR record is created.
       // A media ID or caller-supplied URL alone is never treated as an upload.
-      if (mediaId && ['image', 'document'].includes(type)) {
+      if (mediaId && ['image', 'document', 'audio', 'video'].includes(type)) {
         const inboundName = String(extra?.filename || `${type}-${providerMessageId}`);
         const detectedDocumentType = classifyWhatsAppDocument(inboundName);
         let storedPath = '';
@@ -629,30 +832,31 @@ export async function POST(req: NextRequest) {
           storedPath = stored.storagePath;
           try {
             await db.$transaction(async (tx) => {
+              let verifiedStudentId = '';
+              if (studentId) {
+                const matchedStudent = await tx.student.findUnique({ where: { id: studentId }, select: { id: true, status: true, suspended: true } }).catch(() => null);
+                if (matchedStudent && !matchedStudent.suspended && matchedStudent.status.toLowerCase() === 'active') verifiedStudentId = matchedStudent.id;
+              }
+              const documentMedia = type === 'image' || type === 'document';
               const attachment = await tx.uccAttachment.create({
                 data: {
                   conversationId: uccConv.id,
                   messageId: uccMessage.id,
                   fileName: media.fileName,
-                  fileType: detectedDocumentType.toLowerCase(),
+                  fileType: documentMedia ? detectedDocumentType.toLowerCase() : type,
                   mimeType: media.mimeType,
                   fileSize: stored.fileSize,
                   fileUrl: '',
-                  detectedDocType: detectedDocumentType.toLowerCase(),
-                  studentId: studentId || undefined,
+                  detectedDocType: documentMedia ? detectedDocumentType.toLowerCase() : null,
+                  studentId: verifiedStudentId || undefined,
                   ocrExtractedData: JSON.stringify({ storagePath: stored.storagePath, fileHash: stored.fileHash, originalName: media.fileName, source: 'WHATSAPP_CLOUD_API', providerMediaId: media.providerMediaId, providerSha256: media.providerSha256 }),
                 },
               });
               const staffDownloadUrl = `/api/crm/ucc/documents/${attachment.id}/download`;
               await tx.uccAttachment.update({ where: { id: attachment.id }, data: { fileUrl: staffDownloadUrl } });
 
-              let verifiedStudentId = '';
-              if (studentId) {
-                const matchedStudent = await tx.student.findUnique({ where: { id: studentId }, select: { id: true, status: true, suspended: true } }).catch(() => null);
-                if (matchedStudent && !matchedStudent.suspended && matchedStudent.status.toLowerCase() === 'active') verifiedStudentId = matchedStudent.id;
-              }
               let studentDocumentId = '';
-              if (verifiedStudentId) {
+              if (documentMedia && verifiedStudentId) {
                 const existingDocument = await tx.studentDocument.findFirst({
                   where: { studentId: verifiedStudentId, fileHash: stored.fileHash, isArchived: false },
                   select: { id: true },
@@ -683,20 +887,43 @@ export async function POST(req: NextRequest) {
                   });
                 }
               }
-              const existingOcrJob = await tx.ocrJob.findFirst({ where: { attachmentId: attachment.id }, select: { id: true } });
-              if (!existingOcrJob) {
-                await tx.ocrJob.create({
+              if (documentMedia) {
+                const existingOcrJob = await tx.ocrJob.findFirst({ where: { attachmentId: attachment.id }, select: { id: true } });
+                if (!existingOcrJob) {
+                  await tx.ocrJob.create({
+                    data: {
+                      documentId: studentDocumentId || attachment.id,
+                      documentType: detectedDocumentType,
+                      fileUrl: staffDownloadUrl,
+                      fileName: media.fileName,
+                      mimeType: media.mimeType,
+                      fileHash: stored.fileHash,
+                      status: 'queued',
+                      studentId: verifiedStudentId || undefined,
+                      conversationId: uccConv.id,
+                      attachmentId: attachment.id,
+                    },
+                  });
+                }
+              }
+              if (legacyCommunicationMessage?.id && threadId) {
+                await tx.communicationAttachment.create({
                   data: {
-                    documentId: studentDocumentId || attachment.id,
-                    documentType: detectedDocumentType,
-                    fileUrl: staffDownloadUrl,
-                    fileName: media.fileName,
-                    mimeType: media.mimeType,
-                    fileHash: stored.fileHash,
-                    status: 'queued',
+                    messageId: legacyCommunicationMessage.id,
+                    threadId,
                     studentId: verifiedStudentId || undefined,
-                    conversationId: uccConv.id,
-                    attachmentId: attachment.id,
+                    channel: 'whatsapp',
+                    direction: 'inbound',
+                    providerFileId: media.providerMediaId,
+                    fileName: media.fileName,
+                    fileType: documentMedia ? detectedDocumentType.toLowerCase() : type,
+                    fileSizeBytes: stored.fileSize,
+                    matchReviewRequired: !verifiedStudentId || !documentMedia,
+                    whatsappMsgRef: providerMessageId,
+                    documentId: studentDocumentId,
+                    senderContact: from,
+                    recipientContact: receivingPhone || '',
+                    deliveryStatus: 'delivered',
                   },
                 });
               }
@@ -717,7 +944,7 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (err) {
-      if (mediaId && ['image', 'document'].includes(type)) mediaIngestionFailure = true;
+      if (mediaId && ['image', 'document', 'audio', 'video'].includes(type)) mediaIngestionFailure = true;
       console.error("UCC save error:", err);
     }
 
@@ -734,7 +961,7 @@ export async function POST(req: NextRequest) {
     // Public intake may create a safe reply draft. It is never sent automatically;
     // only the configured, pre-approved after-hours acknowledgement may be sent.
     // Respect STOP opt-out; still allow media (image/doc/audio) to be routed via intake
-    const shouldAiHandle = !stopStart.optedOut && ((type === 'text' && messageBody.length > 0) || ['image','document','audio','video'].includes(type));
+    const shouldAiHandle = stopStart.action === 'NONE' && ((type === 'text' && messageBody.length > 0) || ['image','document','audio','video'].includes(type));
     if (mediaIngestionFailure && !stopStart.optedOut) {
       aiReplyText = 'We could not securely store your attachment. Please resend it as a PDF or clear image, or contact your ALO counsellor. The file has not been added to your student record.';
       if (inboundMessage?.id) {
@@ -833,7 +1060,7 @@ export async function POST(req: NextRequest) {
     const routingContext = {
       studentId: studentId || undefined,
       leadId: leadId || undefined,
-      counselorId: (existingStudent as any)?.counselorId || undefined,
+      counselorId: assignedUserId || (existingStudent as any)?.counselorId || (existingLead as any)?.counselorId || undefined,
       isComplaint: intent.intent === 'complaint',
       isUrgent: sentiment.isUrgent || intent.intent === 'urgent_support',
       isFollowUp: false,
@@ -891,31 +1118,34 @@ export async function POST(req: NextRequest) {
         data: {
           studentId: studentId || "",
           title: sentiment.isUrgent ? 'Urgent Support Request' : 'Complaint Detected',
-          message: `Urgent: ${messageBody.slice(0, 100)} from ${fromName} (${from}). Shared COO number ${COO_NUMBER}.`,
+          message: `Urgent: ${messageBody.slice(0, 100)} from ${fromName} (${from}). Human follow-up is required; no number value is treated as a verified contact channel.`,
           type: 'critical',
         },
       }).catch(() => {});
 
-      // Create urgent task
-      await db.counselorTask.create({
-        data: {
-          employeeId: routingContext.counselorId || 'COO',
-          studentId: studentId || "",
-          title: `${sentiment.isUrgent ? 'Urgent' : 'Complaint'}: ${fromName} - ${intent.intent}`,
-          description: `Message: ${messageBody.slice(0, 200)}. Shared ${COO_NUMBER}.`,
-          type: 'urgent_support',
-          priority: 'urgent',
-          status: 'pending',
-          dueDate: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        },
-      }).catch(() => {});
+      // Only assign an operational task to a real, known counselor identity.
+      // The dashboard alarm remains available for manual assignment otherwise.
+      if (routingContext.counselorId) {
+        await db.counselorTask.create({
+          data: {
+            employeeId: routingContext.counselorId,
+            studentId: studentId || "",
+            title: `${sentiment.isUrgent ? 'Urgent' : 'Complaint'}: ${fromName} - ${intent.intent}`,
+            description: `Message: ${messageBody.slice(0, 200)}. Human review required.`,
+            type: 'urgent_support',
+            priority: 'urgent',
+            status: 'pending',
+            dueDate: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+          },
+        }).catch(() => {});
+      }
 
       // Urgent/complaint responses stay as human-review drafts. Never repeat a
       // Student ID or ask for credentials/private records in a public reply.
       if (sentiment.isUrgent) {
         aiReplyText = lang.language === 'bangla'
-          ? `জরুরি সহায়তার জন্য ${COO_NUMBER} নম্বরে কল করুন। এই খসড়াটি অনুমোদিত মানব পর্যালোচনার জন্য; এই চ্যাটে Student ID, OTP, পাসওয়ার্ড বা ব্যক্তিগত নথি দেবেন না।`
-          : `For immediate urgent support, call ${COO_NUMBER}. This draft requires authorized human review. Do not share a Student ID, OTP, password, or private document in this chat.`;
+          ? 'আপনার জরুরি সহায়তার অনুরোধ মানব পর্যালোচনার জন্য পাঠানো হয়েছে। এই চ্যাটে Student ID, OTP, পাসওয়ার্ড বা ব্যক্তিগত নথি দেবেন না।'
+          : 'Your urgent support request has been routed for human review. Do not share a Student ID, OTP, password, or private document in this chat.';
         if (inboundMessage?.id) {
           await db.socialInboxMessage.update({
             where: { id: inboundMessage.id },
@@ -930,77 +1160,32 @@ export async function POST(req: NextRequest) {
     let outboundMessage: any = null;
 
     if (afterHoursAutoReply && !shouldHandover && !stopStart.optedOut) {
-      const approvedTemplateText = afterHoursAutoReply;
       try {
-        outboundMessage = await db.socialInboxMessage.create({
-          data: {
-            platform: "WHATSAPP",
-            direction: "OUTBOUND",
-            senderName: "ALO Education",
-            recipientId: from,
-            messageText: approvedTemplateText,
-            conversationId: `wa-${from}`,
-            leadId: leadId || "",
-            studentId: studentId || "",
-            aiHandled: false,
-            humanApproved: false,
-            isRead: true,
-            messageMediaMetadata: JSON.stringify({ deliveryStatus: 'PENDING', source: 'approved_after_hours_template', automationApproved: true }),
-          },
-        }).catch(() => null);
-
-        // Do not send externally unless the durable CRM record exists.
-        if (!outboundMessage?.id) {
-          outboundApiResult = { sent: false, status: 'record_failed' };
-        } else {
-          const sendResult = await sendOutboundViaApi(normalizedFrom || from, approvedTemplateText);
-          if (sendResult.messageId) {
-            outboundApiResult = { sent: true, status: 'sent' };
+        const sendResult = await sendWhatsAppMessage({
+          to: normalizedFrom || from,
+          text: afterHoursAutoReply,
+          purpose: 'SERVICE',
+          conversationId: threadId || undefined,
+          actorId: 'system',
+          studentId: studentId || undefined,
+          leadId: leadId || undefined,
+          senderNumber: routing.number || MAIN_NUMBER,
+        });
+        if (sendResult.success && sendResult.messageId) {
+          outboundApiResult = { sent: true, status: 'sent', messageId: sendResult.messageId };
+          outboundMessage = sendResult.socialMessageId
+            ? await db.socialInboxMessage.findUnique({ where: { id: sendResult.socialMessageId } }).catch(() => null)
+            : null;
+          if (outboundMessage?.id) {
             await db.socialInboxMessage.update({
               where: { id: outboundMessage.id },
               data: {
-                externalId: sendResult.messageId,
-                sentAt: new Date(),
                 messageMediaMetadata: JSON.stringify({ deliveryStatus: 'SENT', source: 'approved_after_hours_template', automationApproved: true }),
               },
             }).catch(() => {});
-
-            await db.whatsAppMessageStatus.create({
-              data: {
-                messageId: sendResult.messageId,
-                socialMessageId: outboundMessage.id,
-                recipientPhone: normalizedFrom || from,
-                status: "SENT",
-                providerPayload: JSON.stringify({ status: 'sent' }),
-              },
-            }).catch(() => {});
-
-            await db.whatsAppMessageArchive.create({
-              data: {
-                whatsappMessageId: sendResult.messageId,
-                conversationId,
-                threadId,
-                studentId: studentId || "",
-                leadId: leadId || "",
-                senderPhone: receivingPhone || MAIN_NUMBER,
-                receiverPhone: from,
-                senderNumber: receivingPhone || MAIN_NUMBER,
-                messageType: 'text',
-                messageBody: approvedTemplateText,
-                timestamp: new Date(),
-                direction: 'outbound',
-                deliveryStatus: 'sent',
-                aiGenerated: false,
-                rawEventId: webhookEvent?.id || "",
-              },
-            }).catch(() => {});
-          } else {
-            outboundApiResult = { sent: false, status: 'failed_or_unconfigured' };
-            await db.socialInboxMessage.update({
-              where: { id: outboundMessage.id },
-              data: { messageMediaMetadata: JSON.stringify({ deliveryStatus: 'FAILED', source: 'approved_after_hours_template', automationApproved: true }) },
-            }).catch(() => {});
           }
+        } else {
+          outboundApiResult = { sent: false, status: sendResult.error || 'provider_rejected' };
         }
       } catch {
         outboundApiResult = { sent: false, status: 'failed' };
@@ -1064,19 +1249,17 @@ export async function POST(req: NextRequest) {
       },
     }).catch(() => {});
 
-    // Mark webhook as processed
-    if (webhookEvent) {
-      try {
-        await db.webhookEvent.update({
-          where: { id: webhookEvent.id },
-          data: { processed: true, processedAt: new Date(), errorMessage: null },
-        });
-        await db.uccWebhookEvent.updateMany({
-          where: { eventId: providerMessageId },
-          data: { status: "processed" },
-        }).catch(() => {});
-      } catch {}
-    }
+    // Complete the atomic provider-event lease only after all inbound side
+    // effects have been attempted. A crashed worker can be recovered after the
+    // lease expires; concurrent duplicate callbacks do not create duplicate
+    // CRM rows.
+    await db.uccWebhookEvent.updateMany({
+      where: { eventId: providerMessageId },
+      data: { status: "processed" },
+    }).catch(() => {});
+    await completeWebhookEvent(eventClaim).catch((error) => {
+      console.error('[whatsapp.webhook] event lease completion failed', error instanceof Error ? error.message : 'unknown');
+    });
 
     results.push({
       messageId: providerMessageId,

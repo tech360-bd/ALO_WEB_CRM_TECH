@@ -12,6 +12,7 @@ export default function WhatsAppFollowUpPage() {
   const [templates, setTemplates] = useState<any[]>([]);
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionBusy, setActionBusy] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
@@ -41,6 +42,25 @@ export default function WhatsAppFollowUpPage() {
     } catch (e: any) { toast.error(e.message); }
   };
 
+  const templateAction = async (templateId: string, action: 'verify_meta' | 'activate') => {
+    setActionBusy(`${templateId}:${action}`);
+    try {
+      const res = await fetch('/api/whatsapp/followup/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, templateId }),
+      });
+      const data = await res.json();
+      if (data.success) toast.success(action === 'verify_meta' ? 'Meta template status verified.' : 'Template activated after approval checks.');
+      else toast.error(data.error || 'Template action failed.');
+      await fetchData();
+    } catch {
+      toast.error('Template action failed.');
+    } finally {
+      setActionBusy('');
+    }
+  };
+
   useEffect(() => { fetchData(); }, []);
 
   return (
@@ -52,7 +72,7 @@ export default function WhatsAppFollowUpPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">Follow-Up Automation — Day 3/7/14/21/25/30</h1>
-            <p className="text-[var(--alo-text-muted)] text-sm">Sender: 01805020100 • Respects STOP/START, consent, opt-out, application active pause, partner-only mode</p>
+            <p className="text-[var(--alo-text-muted)] text-sm">Requested sender: 01805020100 • Sends remain blocked until consent, ALO approval, Meta template verification, and official-number verification all pass.</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -66,12 +86,20 @@ export default function WhatsAppFollowUpPage() {
         <CardContent className="space-y-2">
           {templates.map((t) => (
             <div key={t.id} className="p-3 rounded-lg bg-white/5 border border-white/10 text-xs">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-bold">{t.templateName} • Day {t.day} • {t.language}</span>
-                <div className="flex gap-2"><Badge className="bg-emerald-500/20 text-emerald-300">{t.approvalStatus}</Badge><Badge className="bg-blue-500/20 text-blue-300">{t.activeStatus}</Badge></div>
+                <div className="flex flex-wrap gap-2">
+                  <Badge className="bg-amber-500/20 text-amber-300">ALO: {t.approvalStatus}</Badge>
+                  <Badge className={t.metaTemplateStatus === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}>Meta: {t.metaTemplateStatus || 'unknown'}</Badge>
+                  <Badge className="bg-blue-500/20 text-blue-300">{t.activeStatus}</Badge>
+                </div>
               </div>
               <p className="text-[var(--alo-placeholder)] mt-1">{t.messageBody}</p>
-              <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Meta: {t.metaTemplateName} • Vars: {t.variables}</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Meta name: {t.metaTemplateName} · {t.metaLanguage} · Last checked: {t.metaTemplateCheckedAt ? new Date(t.metaTemplateCheckedAt).toLocaleString() : 'never'}{t.metaTemplateCheckError ? ` · ${t.metaTemplateCheckError}` : ''}</p>
+              <div className="mt-2 flex gap-2">
+                <Button size="sm" variant="outline" disabled={actionBusy === `${t.id}:verify_meta`} onClick={() => templateAction(t.id, 'verify_meta')} className="h-7 border-white/20 text-white">{actionBusy === `${t.id}:verify_meta` ? 'Checking…' : 'Verify with Meta'}</Button>
+                {t.approvalStatus === 'approved' && t.metaTemplateStatus === 'APPROVED' && t.activeStatus !== 'active' && <Button size="sm" disabled={actionBusy === `${t.id}:activate`} onClick={() => templateAction(t.id, 'activate')} className="h-7">Activate</Button>}
+              </div>
             </div>
           ))}
         </CardContent>
@@ -96,9 +124,11 @@ export default function WhatsAppFollowUpPage() {
       <Card className="bg-[var(--alo-text)] border-white/10 text-white">
         <CardContent className="p-4 text-xs text-[var(--alo-placeholder)]">
           <p className="font-bold">STOP/START Handling</p>
-          <p>If student says STOP → follow-up paused/cancelled, opt-out recorded, consent false. If START → reactivation per policy (if no active application).</p>
+          <p>STOP or supported Bangla opt-out commands append purpose-specific withdrawal evidence and suppress/cancel promotional work. START records a new explicit grant; the earlier STOP record is retained. A missing or failed evidence write never clears suppression.</p>
+          <p className="mt-2 font-bold">Send-time controls</p>
+          <p>Every due attempt rechecks the contact phone, promotional consent, current opt-out/block state, active application, ALO approval, recently verified Meta template, and official sender. Legacy/unverified items fail closed.</p>
           <p className="mt-2 font-bold">Idempotency</p>
-          <p>Repeated cron execution must not create duplicate messages — checked via existing scheduled/sent same day + unique studentId+day.</p>
+          <p>Unique schedule keys prevent duplicate student/day schedules; compare-and-swap claims prevent concurrent cron workers from submitting the same due item.</p>
         </CardContent>
       </Card>
     </div>

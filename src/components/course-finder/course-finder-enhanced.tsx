@@ -1354,9 +1354,9 @@ export function CourseFinderEnhanced() {
         <section style={{ backgroundColor: '#F0F6FF' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--alo-text)]">Ready to Study Abroad?</h2>
-            <p className="mt-3 text-[var(--alo-body)] text-sm sm:text-base max-w-xl mx-auto">Book a Free Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
+            <p className="mt-3 text-[var(--alo-body)] text-sm sm:text-base max-w-xl mx-auto">Request a Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Book a Free Consultation<ArrowRight className="size-4 ml-2" /></Button>
+              <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Request a Consultation<ArrowRight className="size-4 ml-2" /></Button>
               <Button variant="outline" size="lg" className="px-8 text-sm font-medium" style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} asChild>
                 <a href="https://wa.me/8801805020100" target="_blank" rel="noopener noreferrer"><MessageCircle className="size-4 mr-2" />Chat on WhatsApp</a>
               </Button>
@@ -1635,9 +1635,9 @@ export function CourseFinderEnhanced() {
       <section className="mt-12" style={{ backgroundColor: '#F0F6FF' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-[var(--alo-text)]">Ready to Study Abroad?</h2>
-          <p className="mt-3 text-[var(--alo-body)] text-sm sm:text-base max-w-xl mx-auto">Book a Free Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
+          <p className="mt-3 text-[var(--alo-body)] text-sm sm:text-base max-w-xl mx-auto">Request a Consultation with ALO Education. Our expert counsellors will guide you through every step.</p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Book a Free Consultation<ArrowRight className="size-4 ml-2" /></Button>
+            <Button size="lg" className="px-8 text-sm font-semibold text-white" style={{ backgroundColor: ALO_ORANGE }} onClick={() => setView('counsellor')}>Request a Consultation<ArrowRight className="size-4 ml-2" /></Button>
             <Button variant="outline" size="lg" className="px-8 text-sm font-medium" style={{ borderColor: ALO_BLUE, color: ALO_BLUE }} onClick={() => setView('profile')}><GraduationCap className="size-4 mr-2" />Check Eligibility</Button>
           </div>
         </div>

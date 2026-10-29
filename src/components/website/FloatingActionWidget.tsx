@@ -6,6 +6,7 @@ import { Bot, MessageCircle, Facebook, X, Sparkles, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { usePortalStore } from '@/lib/stores/portal-store';
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA } from '@/lib/alo-site-info';
 
 // Single global floating contact widget.
 // - Mounted once from src/app/layout.tsx. This is the ONLY AI / WhatsApp / Facebook
@@ -17,7 +18,9 @@ import { usePortalStore } from '@/lib/stores/portal-store';
 // - The assistant is an honest guided flow: it never claims to verify identity,
 //   send OTPs, or look up student records — those live in the Student Portal.
 
-const WHATSAPP_URL = 'https://wa.me/8801805020100?text=Hi%20ALO%20Education%2C%20I%20want%20to%20apply%20for%20study%20abroad';
+const WHATSAPP_URL = ALO_CONTACT.hasWhatsApp
+  ? `${ALO_CONTACT.whatsappHref}?text=Hi%20ALO%20Education%2C%20I%20want%20to%20apply%20for%20study%20abroad`
+  : '/contact';
 const FACEBOOK_URL = 'https://m.me/aloeducation';
 const MAP_URL = 'https://maps.app.goo.gl/t4w8dRNfH7U4BMBR8';
 const OFFICE_ADDRESS = 'ALO Education, Barek Mansion-02, Lift-05, 58/9 Box Culvert Road, Panthapath, Dhaka-1205.';
@@ -27,8 +30,7 @@ type ChatMsg = { sender: 'ai' | 'user'; text: string };
 const GREETING: ChatMsg[] = [
   {
     sender: 'ai',
-    text:
-      'Hello! I am the ALO Education guided assistant.\n\nI can help you in three honest ways:\n• Find courses — browse verified universities & courses in the Course Finder\n• Talk to a counselor — WhatsApp our senior counselor (01805020100)\n• Already an ALO student? — sign in to the Student Portal for your real application & visa status\n\nকোনো তথ্য জাল বা অনুমান নয় — শুধু যাচাই করা ডেটা এবং সত্যিকারের পরামর্শ।',
+    text: `Hello! I am the ALO Education guided assistant.\n\nI can help you in three honest ways:\n• Find courses — browse the Course Finder\n• Talk to a counselor — ${ALO_PUBLIC_CONTACT_CTA.label} (${ALO_PUBLIC_CONTACT_CTA.href})\n• Already an ALO student? — sign in to the Student Portal for your application and visa status\n\nকোনো তথ্য জাল বা অনুমান নয় — শুধু যাচাই করা ডেটা এবং সত্যিকারের পরামর্শ।`,
   },
 ];
 
@@ -74,34 +76,34 @@ export default function FloatingActionWidget() {
 
     if (lower.includes('course') || lower.includes('university') || lower.includes('কোর্স')) {
       reply(
-        'Use the Course Finder to search verified courses and universities:\n/course-finder\n\nEvery listing shows its verification status. If a course you need is not listed yet, its official data has not been verified — message us on WhatsApp (01805020100) and a counselor will research it from official sources.'
+        `Use the Course Finder to search courses and universities:\n/course-finder\n\nCheck each listing's source and review status. If you need more information, contact ALO Education: ${ALO_PUBLIC_CONTACT_CTA.label} (${ALO_PUBLIC_CONTACT_CTA.href}).`,
       );
       return;
     }
 
     if (lower.includes('status') || lower.includes('visa') || lower.includes('application') || lower.includes('student id') || lower.includes('otp') || lower.includes('ae-')) {
       reply(
-        'For your real application, document and visa status, sign in to the Student Portal:\n/portal/login\n\nThis chat cannot verify your identity or read student records — anyone claiming otherwise in a chat would be guessing. If you cannot sign in, WhatsApp 01805020100 and our team will help you recover access.'
+        'For your application, document and visa status, sign in to the Student Portal:\n/portal/login\n\nThis chat cannot verify your identity or read student records. If you cannot sign in, contact ALO Education through the Contact page: /contact.',
       );
       return;
     }
 
     if (lower.includes('whatsapp') || lower.includes('counselor') || lower.includes('contact') || lower.includes('call') || lower.includes('phone')) {
       reply(
-        `You can reach a real counselor right now:\n• WhatsApp: 01805020100 (${WHATSAPP_URL})\n• Office: ${OFFICE_ADDRESS}\n• Map: ${MAP_URL}`
+        `Contact ALO Education:\n• ${ALO_PUBLIC_CONTACT_CTA.label}: ${ALO_PUBLIC_CONTACT_CTA.href}\n• Office: ${OFFICE_ADDRESS}\n• Map: ${MAP_URL}`
       );
       return;
     }
 
     if (lower.includes('fee') || lower.includes('cost') || lower.includes('tuition') || lower.includes('scholarship')) {
       reply(
-        'Fees and scholarships change every intake, so we only publish figures taken from official university sources — each course page shows its fee verification status and source link.\n\nOpen the Course Finder (/course-finder), pick a course, and check the Tuition & Scholarships section. If it shows “needs official source”, the verified figure is not available yet — ask a counselor on WhatsApp (01805020100) and we will confirm it with the university for you.'
+        `Fees and scholarships can change. Check the current source and review status shown with a course record, then confirm terms directly with the institution. For help, contact ALO Education: ${ALO_PUBLIC_CONTACT_CTA.label} (${ALO_PUBLIC_CONTACT_CTA.href}).`,
       );
       return;
     }
 
     reply(
-      `I am a guided assistant, so I will not guess an answer.\n\n• Courses & universities: /course-finder\n• Your application/visa status: Student Portal (/portal/login)\n• Anything else: WhatsApp 01805020100 or visit ${OFFICE_ADDRESS} (${MAP_URL})`
+      `I am a guided assistant, so I will not guess an answer.\n\n• Courses & universities: /course-finder\n• Your application/visa status: Student Portal (/portal/login)\n• Anything else: ${ALO_PUBLIC_CONTACT_CTA.label} (${ALO_PUBLIC_CONTACT_CTA.href}) or visit ${OFFICE_ADDRESS} (${MAP_URL})`,
     );
   };
 
@@ -131,17 +133,16 @@ export default function FloatingActionWidget() {
             {/* 2. WHATSAPP BUTTON */}
             <a
               href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Message ALO Education on WhatsApp (opens in a new tab)"
+              {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              aria-label={ALO_CONTACT.hasWhatsApp ? 'Message ALO Education on WhatsApp' : 'Contact ALO Education'}
               className="flex items-center gap-2.5 bg-[var(--alo-whatsapp)] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-[#20bd5a] transition-all hover:scale-105 group border-2 border-white"
             >
               <span className="h-7 w-7 rounded-full bg-white/20 flex items-center justify-center">
                 <MessageCircle className="h-4 w-4 text-white" />
               </span>
               <span className="text-left">
-                <span className="text-xs font-bold block leading-none">WhatsApp Counselor</span>
-                <span className="text-[11px] opacity-90 block leading-none mt-0.5">01805020100</span>
+                <span className="text-xs font-bold block leading-none">{ALO_CONTACT.hasWhatsApp ? 'WhatsApp Counselor' : 'Contact ALO Education'}</span>
+                <span className="text-[11px] opacity-90 block leading-none mt-0.5">{ALO_CONTACT.hasWhatsApp ? ALO_CONTACT.whatsappDisplay : 'Use the contact form'}</span>
               </span>
             </a>
 
@@ -194,7 +195,7 @@ export default function FloatingActionWidget() {
                 </span>
                 <div>
                   <h3 className="font-bold text-sm leading-tight">ALO Guided Assistant (24/7)</h3>
-                  <p className="text-[11px] text-[var(--alo-brand-pale)]">WhatsApp: 01805020100 • Honest answers only</p>
+                  <p className="text-[11px] text-[var(--alo-brand-pale)]">{ALO_CONTACT.hasWhatsApp ? `WhatsApp: ${ALO_CONTACT.whatsappDisplay}` : 'Contact ALO Education via the Contact page'} • Honest answers only</p>
                 </div>
               </div>
               <button

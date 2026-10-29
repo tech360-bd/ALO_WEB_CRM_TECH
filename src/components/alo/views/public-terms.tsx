@@ -25,7 +25,7 @@ const SECTIONS = [
     title: "2. Our Services",
     body: [
       "ALO Education provides the following services to Bangladeshi students seeking to study abroad:",
-      "• Free counseling and profile assessment.",
+      "• Counseling and profile-assessment services; any applicable fees are confirmed before booking.",
       "• University shortlisting and application support.",
       "• SOP and CV writing support.",
       "• Scholarship guidance and application support.",

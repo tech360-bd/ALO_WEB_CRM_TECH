@@ -30,6 +30,8 @@ function matches(rec: Rec | null | undefined, where: any): boolean {
         if (op === 'in') return arg.includes(val);
         if (op === 'notIn') return !arg.includes(val);
         if (op === 'not') return val !== arg;
+        if (op === 'gte') return val instanceof Date && arg instanceof Date ? val.getTime() >= arg.getTime() : String(val ?? '') >= String(arg);
+        if (op === 'lte') return val instanceof Date && arg instanceof Date ? val.getTime() <= arg.getTime() : String(val ?? '') <= String(arg);
         if (op === 'mode') return true;
         throw new Error(`unsupported operator ${op}`);
       });
@@ -254,7 +256,7 @@ describe('P0-C Crm* student surfaces use the canonical public gate', () => {
 
   it('student-portal scholarships require a source-verified scholarship of a public university', async () => {
     h.data.crmScholarship = [
-      { id: 's1', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'VERIFIED', university: crmUni },
+      { id: 's1', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'VERIFIED', officialScholarshipUrl: OK_SRC, lastCheckedAt: new Date().toISOString(), university: crmUni },
       { id: 's2', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'NEEDS_REVIEW', university: crmUni },
       { id: 's3', universityId: 'U1', courseId: '', status: 'active', verificationStatus: 'VERIFIED', university: { ...crmUni, publicationStatus: 'draft' } },
     ];

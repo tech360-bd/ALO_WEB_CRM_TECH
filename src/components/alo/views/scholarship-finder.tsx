@@ -389,7 +389,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                 ) : (
                   <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={handleConsultation}>
                     <Icon name="CalendarCheck" className="size-4" />
-                    Book a free consultation
+                    Request a consultation
                   </Button>
                 )
               }
@@ -523,7 +523,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                 onClick={handleConsultation}
               >
                 <Icon name="CalendarCheck" className="size-4" />
-                Book a free consultation
+                Request a consultation
               </Button>
             </CardContent>
           </Card>

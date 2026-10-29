@@ -352,7 +352,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <div>
               <label className="font-semibold text-[var(--alo-body)] block mb-1">Campaign Idea / Objective:</label>
               <Input
-                placeholder="e.g. September 2026 UK Intake Free Counseling Drive"
+                placeholder="e.g. September 2026 UK Intake Counseling Drive"
                 value={mIdea}
                 onChange={(e) => setMIdea(e.target.value)}
                 className="text-xs bg-[var(--alo-page)]"

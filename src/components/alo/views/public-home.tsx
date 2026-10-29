@@ -40,6 +40,7 @@ import {
 } from "@/components/alo/shared";
 import { PublicLeadForm } from "@/components/alo/public-lead-form";
 import { fmtDate, type ViewKey } from "@/lib/alo-types";
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA } from "@/lib/alo-site-info";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // PROPS & TYPES
@@ -231,13 +232,13 @@ const WHY_CHOOSE: { icon: string; title: string; description: string }[] = [
   { icon: "Mic", title: "Interview Preparation", description: "Mock interviews with scoring on confidence, clarity, and credibility — university, pre-CAS, and visa scenarios." },
   { icon: "FolderCheck", title: "Document Review", description: "Every passport, transcript, and bank statement reviewed twice before submission to reduce refusal risk." },
   { icon: "LayoutDashboard", title: "Student Portal Tracking", description: "Real-time status of profile, documents, applications, and visa inside one dashboard — no phone tag required." },
-  { icon: "MessageCircle", title: "WhatsApp Support", description: "Quick questions answered on WhatsApp at 01805020101 during working hours, with audit-logged responses." },
+  { icon: "MessageCircle", title: "WhatsApp Support", description: ALO_CONTACT.hasWhatsApp ? `Quick questions can be sent to WhatsApp ${ALO_CONTACT.whatsappDisplay} during working hours.` : "Use the Contact page to reach ALO Education.", },
   { icon: "Award", title: "Scholarship Guidance", description: "Identifying country, university, and program-level scholarships — and helping you write a winning application." },
 ];
 
 // Section 9 — Student Journey Timeline (12 steps)
 const JOURNEY_STEPS: { icon: string; title: string; description: string }[] = [
-  { icon: "MessageSquare", title: "Free Counseling", description: "A 30-minute call to understand your goals, budget, and study plan." },
+  { icon: "MessageSquare", title: "Counseling", description: "A 30-minute call to understand your goals, budget, and study plan." },
   { icon: "UserCheck", title: "Profile Review", description: "Counselor reviews your academic, English, and financial background." },
   { icon: "Sparkles", title: "Course Match", description: "AI scores eligible courses against your profile; counselor shortlists." },
   { icon: "Building2", title: "University Shortlist", description: "Final list of ambitious, realistic, and safe university options." },
@@ -477,16 +478,19 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
   }
 
   function handleWhatsApp() {
-    toast({
-      title: "Opening WhatsApp",
-      description: "Our counselor will respond within working hours. Direct line: 01805020101",
-    });
+    if (ALO_CONTACT.hasWhatsApp) {
+      window.open(ALO_CONTACT.whatsappHref, "_blank", "noopener,noreferrer");
+      toast({ title: "Opening WhatsApp", description: `Contact ${ALO_CONTACT.whatsappDisplay} during working hours.` });
+      return;
+    }
+    toast({ title: "Contact ALO Education", description: "No public WhatsApp number is configured. Use the contact form." });
+    onNavigate("public-contact");
   }
 
   function handleConsult() {
     toast({
-      title: "Book Free Consultation",
-      description: "Scroll down to the lead form or WhatsApp us at 01805020101.",
+      title: "Request Consultation",
+      description: `Scroll down to the lead form or contact ALO Education via ${ALO_PUBLIC_CONTACT_CTA.label} (${ALO_PUBLIC_CONTACT_CTA.href}).`,
     });
     document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth" });
   }
@@ -578,7 +582,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   className="h-12 bg-[var(--alo-cta)] px-5 text-black hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="CalendarCheck" className="size-4" />
-                  Book Free Consultation
+                  Request Consultation
                 </Button>
                 <Button
                   onClick={handleFindCourses}
@@ -602,7 +606,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   className="h-12 border-emerald-500 px-4 text-emerald-600 hover:bg-emerald-50"
                 >
                   <Icon name="MessageCircle" className="size-4" />
-                  WhatsApp 01805020101
+                  {ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : "Contact ALO Education"}
                 </Button>
               </div>
 
@@ -944,7 +948,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   Our process is <span className="font-semibold text-[var(--alo-text)]">transparent</span> — clear fees, clear timelines, clear next steps. Every student gets a <span className="font-semibold text-[var(--alo-text)]">student portal</span> to track profile, documents, applications, and visa stages in real time.
                 </p>
                 <p>
-                  Quick questions? Reach us on <span className="font-semibold text-[var(--alo-text)]">WhatsApp at 01805020101</span> during working hours. We answer in Bangla or English — your choice.
+                  Quick questions? Contact ALO Education via <a className="font-semibold text-[var(--alo-text)] underline" href={ALO_PUBLIC_CONTACT_CTA.href}>{ALO_PUBLIC_CONTACT_CTA.label}</a> during working hours. We answer in Bangla or English where support is available.
                 </p>
               </div>
 
@@ -955,7 +959,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 </Button>
                 <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] px-5 text-black hover:bg-[var(--alo-cta)]/90">
                   <Icon name="CalendarCheck" className="size-4" />
-                  Book Free Consultation
+                  Request Consultation
                 </Button>
               </div>
             </div>
@@ -966,7 +970,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 { icon: "Users", title: "Bangladesh Focus", text: "Built around SSC/HSC backgrounds, Taka budgets, and family expectations." },
                 { icon: "Glasses", title: "Transparent Process", text: "Every fee, every step, every risk — communicated upfront." },
                 { icon: "LayoutDashboard", title: "Student Portal", text: "Track your journey from lead to enrollment in real time." },
-                { icon: "MessageCircle", title: "WhatsApp Support", text: "Quick replies on 01805020101 during working hours." },
+                { icon: "MessageCircle", title: ALO_CONTACT.hasWhatsApp ? "WhatsApp Support" : "Contact Support", text: ALO_CONTACT.hasWhatsApp ? `Contact ${ALO_CONTACT.whatsappDisplay} during working hours.` : "Use the Contact page to reach ALO Education." },
                 { icon: "ShieldCheck", title: "Audit-Logged", text: "Every action on your profile is recorded for safety." },
               ].map((c) => (
                 <Card key={c.title} className="rounded-2xl border-2 border-[var(--alo-border)] bg-white">
@@ -1075,7 +1079,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
               icon="Sparkles"
               title="Services unavailable right now"
               description="Our service catalog is being finalized. Talk to a counselor to learn more."
-              action={<Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">Book Free Consultation</Button>}
+              action={<Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">Request Consultation</Button>}
             />
           )}
         </div>
@@ -2025,7 +2029,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 <div className="mt-7 flex flex-wrap gap-3">
                   <Button onClick={handleConsult} className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
                     <Icon name="CalendarCheck" className="size-4" />
-                    Book Free Consultation
+                    Request Consultation
                   </Button>
                   <Button onClick={handleFindCourses} variant="outline" className="h-12 border-white bg-transparent text-white hover:bg-white/10">
                     <Icon name="Search" className="size-4" />
@@ -2037,7 +2041,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   </Button>
                   <Button onClick={handleWhatsApp} variant="outline" className="h-12 border-emerald-300 bg-transparent text-emerald-200 hover:bg-emerald-500/10">
                     <Icon name="MessageCircle" className="size-4" />
-                    WhatsApp 01805020101
+                    {ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : "Contact ALO Education"}
                   </Button>
                 </div>
 

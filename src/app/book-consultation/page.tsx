@@ -1,12 +1,12 @@
 import PublicConsultationPage from '@/components/website/public-pages/PublicConsultationPage';
 
 export const metadata = {
-  title: 'Book Free Consultation | ALO Education Study Abroad',
-  description: 'Book a free study abroad consultation with ALO Education. Tell us your goals and we\'ll match you to the right university, course, and country.',
+  title: 'Request Consultation | ALO Education Study Abroad',
+  description: 'Request study-abroad guidance from ALO Education. Share your goals and our team will review your enquiry; confirm availability and any applicable fee before booking.',
   alternates: { canonical: 'https://aloeducation.com/book-consultation' },
   openGraph: {
-    title: 'Book Free Consultation | ALO Education',
-    description: 'Get expert guidance on university applications, visa requirements, and scholarships — completely free.',
+    title: 'Request Consultation | ALO Education',
+    description: 'Request guidance on university applications, visa requirements, and scholarships. Confirm availability and any applicable fee before booking.',
     url: 'https://aloeducation.com/book-consultation',
     type: 'website',
   },

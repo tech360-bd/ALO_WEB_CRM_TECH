@@ -23,9 +23,18 @@ import CountryDestinationPage from '@/app/destinations/[slug]/page';
 import CountryCoursesPage from '@/app/destinations/[slug]/courses/page';
 import CountryUniversitiesPage from '@/app/destinations/[slug]/universities/page';
 import CountryScholarshipsPage from '@/app/destinations/[slug]/scholarships/page';
-import { publicCourseWhere, publicIntakeWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicUniversityWhere } from '@/lib/public-catalog';
 
 const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
+
+function expectCurrentCrmScholarshipFilter(where: unknown) {
+  expect(where).toMatchObject({
+    status: 'active',
+    verificationStatus: { in: ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] },
+    lastCheckedAt: { gte: expect.any(String), lte: expect.any(String) },
+    officialScholarshipUrl: { startsWith: 'https://' },
+  });
+}
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -48,7 +57,7 @@ describe('/api/destinations/[slug]', () => {
     expect(res.status).toBe(200);
     expect(m.courseFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicCourseWhere());
     expect(m.uniFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicUniversityWhere());
-    expect(m.scholFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicScholarshipWhere());
+    expectCurrentCrmScholarshipFilter(m.scholFindMany.mock.calls[0][0].where.AND[0]);
     const { data } = await res.json();
     const text = JSON.stringify([data.linkedCourses, data.linkedUniversities, data.linkedScholarships]);
     expect(text).toContain('C1');
@@ -71,9 +80,9 @@ describe('/destinations/[slug] pages', () => {
     const courseQuery = m.courseFindMany.mock.calls[0][0];
     expect(courseQuery.where.AND[0]).toEqual(publicCourseWhere());
     expect(courseQuery.include.intakeFees.where).toEqual(publicIntakeWhere());
-    expect(courseQuery.include.requirements.where).toEqual({ verificationStatus: 'VERIFIED' });
+    expect(courseQuery.include.requirements.where).toEqual(publicRequirementWhere());
     expect(m.uniFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicUniversityWhere());
-    expect(m.scholFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicScholarshipWhere());
+    expectCurrentCrmScholarshipFilter(m.scholFindMany.mock.calls[0][0].where.AND[0]);
   });
 
   it('courses / universities / scholarships sub-pages use the same public filters', async () => {
@@ -82,6 +91,6 @@ describe('/destinations/[slug] pages', () => {
     await CountryScholarshipsPage(params('uk'));
     expect(m.courseFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicCourseWhere());
     expect(m.uniFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicUniversityWhere());
-    expect(m.scholFindMany.mock.calls[0][0].where.AND[0]).toEqual(publicScholarshipWhere());
+    expectCurrentCrmScholarshipFilter(m.scholFindMany.mock.calls[0][0].where.AND[0]);
   });
 });

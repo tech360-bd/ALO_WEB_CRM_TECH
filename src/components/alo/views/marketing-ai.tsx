@@ -32,6 +32,7 @@ import { fmtDate } from "@/lib/alo-types";
 // -----------------------------------------------------------------------------
 
 interface GeneratedContent {
+  id: string;
   content: string;
   contentType: string;
   topic: string;
@@ -49,11 +50,13 @@ interface CalendarItem {
 
 interface ReplyQueueItem {
   id: string;
+  messageId: string;
+  conversationId: string;
   channel: string;
+  canEdit: boolean;
   fromName: string;
   originalMessage: string;
   suggestedReply: string;
-  studentName?: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -108,9 +111,12 @@ const CONTENT_TYPE_ICONS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
   IDEA: "bg-slate-200 text-[var(--alo-body)]",
   DRAFT: "bg-amber-100 text-amber-700",
+  PENDING_APPROVAL: "bg-violet-100 text-violet-700",
   APPROVED: "bg-emerald-100 text-emerald-700",
   SCHEDULED: "bg-sky-100 text-sky-700",
   PUBLISHED: "bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]",
+  CANCELLED: "bg-slate-200 text-slate-700",
+  FAILED: "bg-red-100 text-red-700",
 };
 
 const CHANNEL_ICONS: Record<string, string> = {
@@ -121,105 +127,6 @@ const CHANNEL_ICONS: Record<string, string> = {
   WEBSITE_CHAT: "Globe",
   SMS: "Smartphone",
 };
-
-// Static sample data for the campaign calendar (ContentCalendar model exists, but no GET API yet)
-const SAMPLE_CALENDAR: CalendarItem[] = [
-  {
-    id: "cal-1",
-    title: "UK September Intake Deadline Reminder",
-    platform: "FACEBOOK",
-    type: "POST",
-    scheduledAt: new Date(Date.now() + 86400000).toISOString(),
-    status: "SCHEDULED",
-  },
-  {
-    id: "cal-2",
-    title: "Reel: Student Success Story — Canada",
-    platform: "INSTAGRAM",
-    type: "REEL",
-    scheduledAt: new Date(Date.now() + 2 * 86400000).toISOString(),
-    status: "DRAFT",
-  },
-  {
-    id: "cal-3",
-    title: "Live Q&A: Study in Germany",
-    platform: "FACEBOOK",
-    type: "LIVE",
-    scheduledAt: new Date(Date.now() + 5 * 86400000).toISOString(),
-    status: "IDEA",
-  },
-  {
-    id: "cal-4",
-    title: "Post: IELTS vs PTE — Which to choose?",
-    platform: "LINKEDIN",
-    type: "POST",
-    scheduledAt: new Date(Date.now() + 3 * 86400000).toISOString(),
-    status: "APPROVED",
-  },
-  {
-    id: "cal-5",
-    title: "Story: Scholarship deadline this week",
-    platform: "INSTAGRAM",
-    type: "STORY",
-    scheduledAt: new Date(Date.now() - 86400000).toISOString(),
-    status: "PUBLISHED",
-  },
-  {
-    id: "cal-6",
-    title: "Email: September intake newsletter",
-    platform: "EMAIL",
-    type: "EMAIL",
-    scheduledAt: new Date(Date.now() + 4 * 86400000).toISOString(),
-    status: "SCHEDULED",
-  },
-];
-
-// Static sample data for AI Reply Queue (AiReplyLog model exists, but no GET API yet)
-const SAMPLE_REPLY_QUEUE: ReplyQueueItem[] = [
-  {
-    id: "rq-1",
-    channel: "WHATSAPP",
-    fromName: "Tahsin Rahman",
-    studentName: "ALO-S-20003",
-    originalMessage:
-      "Hi, I want to know about September intake for UK universities. Is IELTS 6.0 enough?",
-    suggestedReply:
-      "Hello Tahsin, thank you for reaching out! September intake is open at most UK universities. IELTS 6.0 may work for foundation or some bachelor programs, but most master's courses require 6.5. Would you like to book a free consultation so we can shortlist the best-fit universities for your profile? You can book at alo-education.com/book.",
-  },
-  {
-    id: "rq-2",
-    channel: "FACEBOOK",
-    fromName: "Anonymous commenter",
-    originalMessage: "Do you guarantee visa approval if I apply through ALO?",
-    suggestedReply:
-      "Thank you for your question! At ALO Education we do not guarantee visa approval — no ethical agency can. What we do promise is a thorough, expert-led application: document verification, financial preparation, mock interviews, and a strong SOP. Our visa approval rate is strong because of preparation, not promises. Book a free consultation to learn more.",
-  },
-  {
-    id: "rq-3",
-    channel: "INSTAGRAM",
-    fromName: "@rahila_07",
-    originalMessage: "What's the cost to study in Canada including living?",
-    suggestedReply:
-      "Hi Rahila! Great question. For Canada: tuition ranges CAD 15,000–35,000/year depending on the program, plus ~CAD 12,000–15,000/year for living. Total budget roughly BDT 22–35 lakh/year. Scholarships can reduce this. Would you like a personalised budget estimate? Comment 'INFO' and our team will DM you.",
-  },
-  {
-    id: "rq-4",
-    channel: "EMAIL",
-    fromName: "parent.of.student@gmail.com",
-    originalMessage:
-      "My son wants to study in Australia. What documents do we need to start? He is in HSC final year.",
-    suggestedReply:
-      "Dear Parent, thank you for your email — exciting that your son is considering Australia! To start, we'll need: academic transcripts (SSC + HSC), passport copy, English test score (IELTS/PTE), and a brief statement of interest. We can begin counselling even before HSC results. Please book a consultation at alo-education.com/book and we'll guide you step by step.",
-  },
-  {
-    id: "rq-5",
-    channel: "WEBSITE_CHAT",
-    fromName: "Website visitor",
-    originalMessage: "Can I apply with a 2-year study gap? I worked during that time.",
-    suggestedReply:
-      "Yes, you can absolutely apply with a 2-year study gap — and work experience actually strengthens your application! We'll help you frame the gap credibly in your SOP and CV. Book a free consultation and our counselors will review your profile and recommend suitable universities.",
-  },
-];
 
 const BRAND_CHECKLIST = [
   { id: "brand-voice", label: "Follows ALO brand voice", icon: "Sparkles" },
@@ -242,10 +149,10 @@ function BrandRulesBanner() {
           </div>
           <div>
             <CardTitle className="text-base text-[var(--alo-cta)]">
-              AI Content Rules — Brand Compliance Guardrails
+              Marketing review guardrails
             </CardTitle>
             <CardDescription className="text-xs">
-              Every AI-generated marketing asset is bound by these rules. Violations block publishing.
+              Staff review reminders only. This screen does not automatically enforce, approve, or publish content.
             </CardDescription>
           </div>
         </div>
@@ -258,11 +165,11 @@ function BrandRulesBanner() {
             </p>
             <ul className="space-y-1.5">
               {[
-                "Follow ALO brand voice — professional, encouraging, student-first.",
-                "Never promise visa or admission guarantees.",
-                "Collect lead info (name, phone, email, interest).",
-                "Create a CRM lead for every inbound enquiry.",
-                "Handover to a counselor when a query needs human expertise.",
+                "Use accurate, source-checked claims and identify information that may change.",
+                "Never promise visa, admission, scholarship, or employment outcomes.",
+                "Use a clear, optional next step without implying consent to marketing.",
+                "Do not invent prices, deadlines, availability, or service guarantees.",
+                "Refer case-specific eligibility or immigration questions for qualified human review.",
               ].map((rule) => (
                 <li
                   key={rule}
@@ -280,11 +187,11 @@ function BrandRulesBanner() {
             </p>
             <ul className="space-y-1.5">
               {[
-                "Publish without human approval (where required).",
-                "Share private student data without consent.",
-                "Post after-hours without manager review.",
-                "Use clickbait, false scarcity, or invented deadlines.",
-                "Quote specific visa/approval rates as promises.",
+                "Treat AI output as verified fact or publish without required human approval.",
+                "Share private student or lead information without an approved lawful basis.",
+                "Claim an account, number, scheduler, or provider is connected without verification.",
+                "Use false scarcity, invented deadlines, or unsupported service promises.",
+                "Treat an enquiry or inbound message as promotional consent.",
               ].map((rule) => (
                 <li
                   key={rule}
@@ -311,10 +218,12 @@ function ContentGeneratorTab() {
     tone: "Warm",
     targetAudience: "",
     keyMessage: "",
-    cta: "Book a free consultation",
+    cta: "",
   });
   const [generating, setGenerating] = React.useState(false);
+  const [savingPlan, setSavingPlan] = React.useState(false);
   const [result, setResult] = React.useState<GeneratedContent | null>(null);
+  const [planningAt, setPlanningAt] = React.useState("");
   const [checks, setChecks] = React.useState<Record<string, boolean>>({
     "brand-voice": false,
     "no-guarantees": false,
@@ -322,43 +231,60 @@ function ContentGeneratorTab() {
     "platform-fit": false,
   });
 
-  const setField = (k: keyof typeof form, v: string) =>
-    setForm((f) => ({ ...f, [k]: v }));
+  const setField = (key: keyof typeof form, value: string) =>
+    setForm((current) => ({ ...current, [key]: value }));
 
   const handleGenerate = async () => {
-    if (!form.topic.trim()) {
-      toast({
-        title: "Topic required",
-        description: "Please enter a topic before generating content.",
-        variant: "destructive",
-      });
+    const topic = form.topic.trim();
+    if (!topic) {
+      toast({ title: "Topic required", description: "Enter a topic before generating content.", variant: "destructive" });
       return;
     }
     setGenerating(true);
     try {
-      const res = await fetch("/api/marketing/content-generate", {
+      const response = await fetch("/api/marketing/content?action=generate", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          contentType: form.contentType,
+          topic,
+          keywords: form.keyMessage.trim() ? [form.keyMessage.trim()] : [],
+          language: "english",
+          platform: form.platform.toLowerCase(),
+          tone: form.tone.toLowerCase(),
+          cta: form.cta.trim(),
+          includeImage: false,
+          includeVideo: false,
+          variations: 1,
+          approvalRequired: true,
+          targetStudentType: form.targetAudience.trim(),
+          targetCountry: "",
+          targetCourse: "",
+        }),
       });
-      if (!res.ok) throw new Error("Content generation failed");
-      const data = (await res.json()) as GeneratedContent;
-      setResult(data);
-      // Auto-tick the brand-voice + clear-cta checks based on what was generated
-      setChecks({
-        "brand-voice": true,
-        "no-guarantees": !/guarantee|100%|sure\s+approval/i.test(data.content),
-        "clear-cta": /book|comment|dm|click|contact|visit|message/i.test(data.content),
-        "platform-fit": true,
+      const payload = await response.json().catch(() => null);
+      const content = payload?.content;
+      if (!response.ok || !content?.id || typeof content.body !== "string") {
+        throw new Error(payload?.error || "Content generation or persistence failed.");
+      }
+      setResult({
+        id: content.id,
+        content: content.body,
+        contentType: form.contentType,
+        topic,
+        platform: form.platform,
       });
+      setPlanningAt("");
+      setChecks({ "brand-voice": false, "no-guarantees": false, "clear-cta": false, "platform-fit": false });
       toast({
-        title: "Content generated",
-        description: `AI drafted a ${data.contentType} for ${data.platform}. Review the brand checklist before publishing.`,
+        title: "Draft saved for manager review",
+        description: "The content and approval request were stored. Nothing was published.",
       });
-    } catch (err) {
+    } catch (error) {
       toast({
-        title: "Generation failed",
-        description: err instanceof Error ? err.message : "Please try again.",
+        title: "Content was not generated or saved",
+        description: error instanceof Error ? error.message : "The server could not complete the request.",
         variant: "destructive",
       });
     } finally {
@@ -370,277 +296,152 @@ function ContentGeneratorTab() {
     if (!result?.content) return;
     try {
       await navigator.clipboard.writeText(result.content);
-      toast({ title: "Copied to clipboard", description: "Content ready to paste." });
+      toast({ title: "Copied to clipboard", description: "The draft is ready to paste." });
     } catch {
-      toast({
-        title: "Copy failed",
-        description: "Please select the text manually.",
-        variant: "destructive",
-      });
+      toast({ title: "Copy failed", description: "Select and copy the text manually.", variant: "destructive" });
     }
   };
 
-  const handleRegenerate = () => {
-    handleGenerate();
-  };
-
-  const handleSchedule = () => {
-    toast({
-      title: "Post scheduled",
-      description: "Added to the campaign calendar. Will publish at the scheduled time after manager review.",
-    });
-  };
-
-  const handleApprovePublish = () => {
-    const allChecked = Object.values(checks).every(Boolean);
-    if (!allChecked) {
-      toast({
-        title: "Brand checklist incomplete",
-        description: "Please confirm all four compliance checks before publishing.",
-        variant: "destructive",
-      });
+  const handleSavePlanningDraft = async () => {
+    if (!result) return;
+    if (!planningAt) {
+      toast({ title: "Planning date required", description: "Choose a date and time for the calendar planning entry.", variant: "destructive" });
       return;
     }
-    toast({
-      title: "Content approved for publishing",
-      description: "Sent to the publishing queue and logged to audit.",
-    });
+    const plannedDate = new Date(planningAt);
+    if (Number.isNaN(plannedDate.getTime())) {
+      toast({ title: "Invalid planning date", description: "Choose a valid date and time.", variant: "destructive" });
+      return;
+    }
+    setSavingPlan(true);
+    try {
+      const response = await fetch("/api/marketing/calendar", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: result.topic,
+          description: result.content.slice(0, 2000),
+          platform: result.platform.toLowerCase(),
+          scheduledAt: plannedDate.toISOString(),
+          contentId: result.id,
+        }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success || payload.scheduled) {
+        throw new Error(payload?.error || "The planning entry was not saved.");
+      }
+      toast({
+        title: "Planning draft saved",
+        description: payload.message || "Saved to the database calendar. No scheduler or provider post was created.",
+      });
+    } catch (error) {
+      toast({ title: "Planning draft not saved", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
+    } finally {
+      setSavingPlan(false);
+    }
   };
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      {/* Form */}
-      <SectionCard
-        title="Content brief"
-        icon="PenLine"
-        description="Describe what you need — AI will draft on-brand copy ready for review."
-      >
+      <SectionCard title="Content brief" icon="PenLine" description="Create a draft for human review; generation stores it in the marketing approval workflow and does not publish it.">
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">Content type</Label>
-              <Select value={form.contentType} onValueChange={(v) => setField("contentType", v)}>
-                <SelectTrigger className="h-11">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CONTENT_TYPES.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+              <Select value={form.contentType} onValueChange={(value) => setField("contentType", value)}>
+                <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+                <SelectContent>{CONTENT_TYPES.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">Platform</Label>
-              <Select value={form.platform} onValueChange={(v) => setField("platform", v)}>
-                <SelectTrigger className="h-11">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PLATFORMS.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+              <Select value={form.platform} onValueChange={(value) => setField("platform", value)}>
+                <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+                <SelectContent>{PLATFORMS.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
           </div>
-
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold">Topic</Label>
-            <Input
-              className="h-11"
-              placeholder="e.g. UK September intake — last 2 weeks to apply"
-              value={form.topic}
-              onChange={(e) => setField("topic", e.target.value)}
-            />
+            <Input className="h-11" placeholder="Enter a topic to develop" value={form.topic} onChange={(event) => setField("topic", event.target.value)} />
           </div>
-
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">Tone</Label>
-              <Select value={form.tone} onValueChange={(v) => setField("tone", v)}>
-                <SelectTrigger className="h-11">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TONES.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>
-                      {t.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+              <Select value={form.tone} onValueChange={(value) => setField("tone", value)}>
+                <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
+                <SelectContent>{TONES.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">Target audience</Label>
-              <Input
-                className="h-11"
-                placeholder="e.g. HSC graduates in Dhaka"
-                value={form.targetAudience}
-                onChange={(e) => setField("targetAudience", e.target.value)}
-              />
+              <Label className="text-xs font-semibold">Target audience (optional)</Label>
+              <Input className="h-11" placeholder="Describe the intended audience" value={form.targetAudience} onChange={(event) => setField("targetAudience", event.target.value)} />
             </div>
           </div>
-
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">Key message</Label>
-            <Textarea
-              rows={3}
-              placeholder="The single most important point the content should communicate."
-              value={form.keyMessage}
-              onChange={(e) => setField("keyMessage", e.target.value)}
-            />
+            <Label className="text-xs font-semibold">Key message (optional)</Label>
+            <Textarea rows={3} placeholder="The main point the draft should communicate." value={form.keyMessage} onChange={(event) => setField("keyMessage", event.target.value)} />
           </div>
-
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">Call to action</Label>
-            <Input
-              className="h-11"
-              placeholder="e.g. Book a free consultation"
-              value={form.cta}
-              onChange={(e) => setField("cta", e.target.value)}
-            />
+            <Label className="text-xs font-semibold">Call to action (optional)</Label>
+            <Input className="h-11" placeholder="Add a verified, appropriate next step" value={form.cta} onChange={(event) => setField("cta", event.target.value)} />
           </div>
-
-          <Button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="h-12 w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
-          >
-            <Icon
-              name={generating ? "Loader2" : "Sparkles"}
-              className={cn("size-4", generating && "animate-spin")}
-            />
-            {generating ? "AI is drafting..." : "Generate Content"}
+          <Button onClick={handleGenerate} disabled={generating} className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+            <Icon name={generating ? "Loader2" : "Sparkles"} className={cn("size-4", generating && "animate-spin")} />
+            {generating ? "Generating and saving..." : "Generate Review Draft"}
           </Button>
         </div>
       </SectionCard>
 
-      {/* Preview / result */}
       <div className="space-y-4">
-        <SectionCard
-          title="Generated preview"
-          icon="FileText"
-          description="Review the AI draft, run the brand checklist, then schedule or publish."
-        >
+        <SectionCard title="Generated draft" icon="FileText" description="Review the saved text. AI output may contain errors; verify every factual claim before approval or use.">
           {generating ? (
-            <div className="space-y-3">
+            <div className="space-y-3" aria-live="polite">
               <div className="h-4 w-32 animate-pulse rounded bg-muted" />
               <div className="h-3 w-full animate-pulse rounded bg-muted" />
               <div className="h-3 w-full animate-pulse rounded bg-muted" />
-              <div className="h-3 w-3/4 animate-pulse rounded bg-muted" />
-              <div className="h-3 w-5/6 animate-pulse rounded bg-muted" />
-              <p className="text-xs text-muted-foreground">
-                AI is composing your {form.contentType.toLowerCase()} for {form.platform}...
-              </p>
+              <p className="text-xs text-muted-foreground">Generating and saving a draft for {form.platform}...</p>
             </div>
           ) : result ? (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">{result.contentType}</Badge>
                 <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">{result.platform}</Badge>
-                <Badge variant="outline" className="border-violet-200 text-violet-700">
-                  <Icon name="Bot" className="mr-1 size-3" /> AI draft
-                </Badge>
+                <Badge variant="outline" className="border-violet-200 text-violet-700"><Icon name="Bot" className="mr-1 size-3" /> Pending manager review</Badge>
               </div>
               <div className="max-h-[280px] overflow-y-auto rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
-                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
-                  {result.content}
-                </pre>
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">{result.content}</pre>
               </div>
+              <p className="text-xs text-muted-foreground">Content ID: <span className="font-mono">{result.id}</span>. This screen does not publish content or deliver it to a social platform.</p>
               <div className="flex flex-wrap gap-2">
-                <Button
- size="sm"
- variant="outline"
- onClick={handleCopy}
- className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
- >
-                  <Icon name="Copy" className="size-3.5" /> Copy
-                </Button>
-                <Button
- size="sm"
- variant="outline"
- onClick={handleRegenerate}
- disabled={generating}
- className=" border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
- >
-                  <Icon name="RefreshCw" className="size-3.5" /> Regenerate
-                </Button>
-                <Button
- size="sm"
- onClick={handleSchedule}
- className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/90 text-white"
- >
-                  <Icon name="CalendarClock" className="size-3.5" /> Schedule Post
-                </Button>
-                <Button
- size="sm"
- onClick={handleApprovePublish}
- className=" bg-emerald-600 hover:bg-emerald-600/90 text-white"
- >
-                  <Icon name="Send" className="size-3.5" /> Approve & Publish
-                </Button>
+                <Button size="sm" variant="outline" onClick={handleCopy} className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"><Icon name="Copy" className="size-3.5" /> Copy</Button>
+                <Button size="sm" variant="outline" onClick={handleGenerate} disabled={generating} className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"><Icon name="RefreshCw" className="size-3.5" /> Generate another draft</Button>
+              </div>
+              <div className="space-y-2 rounded-xl border border-[var(--alo-border)] bg-white p-3">
+                <Label className="text-xs font-semibold">Optional calendar planning date</Label>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Input type="datetime-local" value={planningAt} onChange={(event) => setPlanningAt(event.target.value)} className="min-w-0" aria-label="Calendar planning date and time" />
+                  <Button size="sm" onClick={handleSavePlanningDraft} disabled={savingPlan} className="shrink-0 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
+                    <Icon name={savingPlan ? "Loader2" : "CalendarClock"} className={cn("size-3.5", savingPlan && "animate-spin")} />
+                    {savingPlan ? "Saving..." : "Save planning draft"}
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground">This saves a calendar plan only. No publication schedule or provider post is created; the linked draft remains in the approval workflow and calendar notes are limited to 2,000 characters.</p>
               </div>
             </div>
           ) : (
-            <EmptyState
-              icon="Sparkles"
-              title="No content generated yet"
-              description="Fill in the brief on the left and click Generate Content. The AI draft will appear here with a brand-compliance checklist."
-            />
+            <EmptyState icon="Sparkles" title="No content generated yet" description="Enter a topic and generate a review draft. It will be saved through the marketing approval workflow." />
           )}
         </SectionCard>
 
-        {/* Brand compliance checklist */}
-        <SectionCard
-          title="Brand compliance checklist"
-          icon="ShieldCheck"
-          description="Confirm all four checks before approving for publish."
-        >
+        <SectionCard title="Human review checklist" icon="ShieldCheck" description="Local reminders only. Checking these boxes does not approve, publish, or audit the saved draft.">
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            {BRAND_CHECKLIST.map((c) => (
-              <label
-                key={c.id}
-                htmlFor={c.id}
-                className={cn(
-                  "flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-colors",
-                  checks[c.id]
-                    ? "border-emerald-300 bg-emerald-50/50"
-                    : "border-[var(--alo-border)] bg-white hover:bg-[var(--alo-page)]"
-                )}
-              >
-                <Checkbox
-                  id={c.id}
-                  checked={checks[c.id]}
-                  onCheckedChange={(v) =>
-                    setChecks((s) => ({ ...s, [c.id]: !!v }))
-                  }
-                  className={cn(
-                    "size-5 rounded-md border-2",
-                    checks[c.id]
-                      ? "border-emerald-600 bg-emerald-600 text-white"
-                      : "border-[var(--alo-border-strong)]"
-                  )}
-                />
-                <Icon
-                  name={c.icon}
-                  className={cn(
-                    "size-4",
-                    checks[c.id] ? "text-emerald-600" : "text-muted-foreground"
-                  )}
-                />
-                <span
-                  className={cn(
-                    "text-xs font-medium",
-                    checks[c.id] ? "text-emerald-800" : "text-foreground"
-                  )}
-                >
-                  {c.label}
-                </span>
+            {BRAND_CHECKLIST.map((item) => (
+              <label key={item.id} htmlFor={item.id} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-colors", checks[item.id] ? "border-emerald-300 bg-emerald-50/50" : "border-[var(--alo-border)] bg-white hover:bg-[var(--alo-page)]")}>
+                <Checkbox id={item.id} checked={checks[item.id]} onCheckedChange={(value) => setChecks((current) => ({ ...current, [item.id]: !!value }))} className={cn("size-5 rounded-md border-2", checks[item.id] ? "border-emerald-600 bg-emerald-600 text-white" : "border-[var(--alo-border-strong)]")} />
+                <Icon name={item.icon} className={cn("size-4", checks[item.id] ? "text-emerald-600" : "text-muted-foreground")} />
+                <span className={cn("text-xs font-medium", checks[item.id] ? "text-emerald-800" : "text-foreground")}>{item.label}</span>
               </label>
             ))}
           </div>
@@ -652,140 +453,369 @@ function ContentGeneratorTab() {
 
 function CampaignCalendarTab() {
   const { toast } = useToast();
-  const [filter, setFilter] = React.useState<string>("ALL");
-  const [items, setItems] = React.useState<CalendarItem[]>(SAMPLE_CALENDAR);
+  const [filter, setFilter] = React.useState("ALL");
+  const [items, setItems] = React.useState<CalendarItem[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [saving, setSaving] = React.useState(false);
+  const [createOpen, setCreateOpen] = React.useState(false);
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [platform, setPlatform] = React.useState("");
+  const [scheduledAt, setScheduledAt] = React.useState("");
 
-  const statusOptions = ["ALL", "IDEA", "DRAFT", "APPROVED", "SCHEDULED", "PUBLISHED"];
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/marketing/calendar", { credentials: "include" });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success || !Array.isArray(payload.items)) {
+        throw new Error(payload?.error || "Unable to load the saved marketing calendar.");
+      }
+      setItems(payload.items as CalendarItem[]);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Unable to load the saved marketing calendar.");
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => { void load(); }, [load]);
+
+  const statusOptions = [
+    { value: "ALL", label: "All statuses" },
+    { value: "DRAFT", label: "Draft" },
+    { value: "PENDING_APPROVAL", label: "Pending approval" },
+    { value: "APPROVED", label: "Approved" },
+    { value: "SCHEDULED", label: "Scheduled" },
+    { value: "PUBLISHED", label: "Published" },
+    { value: "CANCELLED", label: "Cancelled" },
+    { value: "FAILED", label: "Failed" },
+  ];
   const filtered = React.useMemo(
-    () => (filter === "ALL" ? items : items.filter((i) => i.status === filter)),
-    [items, filter]
+    () => filter === "ALL" ? items : items.filter((item) => item.status.toUpperCase() === filter),
+    [items, filter],
   );
 
-  const handleNewIdea = () => {
-    toast({
-      title: "New content idea",
-      description: "Opening the idea capture form. AI can expand it into a full brief on request.",
-    });
+  const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const plannedDate = new Date(scheduledAt);
+    if (!title.trim() || !platform || !scheduledAt || Number.isNaN(plannedDate.getTime())) {
+      toast({ title: "Planning details required", description: "Add a title, platform, and valid planning date.", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const response = await fetch("/api/marketing/calendar", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: title.trim(), description: description.trim(), platform, scheduledAt: plannedDate.toISOString() }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success || payload.scheduled) {
+        throw new Error(payload?.error || "The planning entry was not saved.");
+      }
+      toast({ title: "Planning draft saved", description: payload.message || "Saved locally; no social post was scheduled." });
+      setTitle("");
+      setDescription("");
+      setPlatform("");
+      setScheduledAt("");
+      setCreateOpen(false);
+      await load();
+    } catch (saveError) {
+      toast({ title: "Planning draft not saved", description: saveError instanceof Error ? saveError.message : "Please try again.", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleItemAction = (item: CalendarItem, action: "edit" | "duplicate" | "publish") => {
-    const messages = {
-      edit: { title: "Opening editor", description: `Editing "${item.title}".` },
-      duplicate: { title: "Content duplicated", description: `A copy of "${item.title}" was added as DRAFT.` },
-      publish: { title: "Content published", description: `"${item.title}" is now live.` },
-    } as const;
-    toast(messages[action]);
-    if (action === "duplicate") {
-      setItems((prev) => [
-        { ...item, id: `cal-${Date.now()}`, status: "DRAFT", title: `${item.title} (copy)` },
-        ...prev,
-      ]);
-    }
-    if (action === "publish") {
-      setItems((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, status: "PUBLISHED" } : i))
-      );
+  const handleCancelPlan = async (item: CalendarItem) => {
+    if (item.type !== "calendar") return;
+    setSaving(true);
+    try {
+      const response = await fetch("/api/marketing/calendar", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: item.id, status: "cancelled" }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success || payload.published) {
+        throw new Error(payload?.error || "The planning record was not cancelled.");
+      }
+      toast({ title: "Planning record cancelled", description: payload.message || "The local planning entry was cancelled." });
+      await load();
+    } catch (cancelError) {
+      toast({ title: "Planning record not changed", description: cancelError instanceof Error ? cancelError.message : "Please try again.", variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
     <SectionCard
-      title="Campaign calendar"
+      title="Marketing planning calendar"
       icon="CalendarRange"
-      description="Upcoming posts, reels, stories, lives, and email drops across all channels."
-      action={
-        <Button
- onClick={handleNewIdea}
- className=" bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
- >
-          <Icon name="Plus" className="size-4" /> New Content Idea
-        </Button>
-      }
+      description="Database-backed planning records and campaign-post workflow statuses. No connected scheduler or provider publishes from this calendar."
+      action={<Button onClick={() => setCreateOpen((open) => !open)} className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"><Icon name={createOpen ? "X" : "Plus"} className="size-4" /> {createOpen ? "Close form" : "Add planning entry"}</Button>}
     >
-      {/* Filter row */}
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        {statusOptions.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setFilter(s)}
-            className={cn(
-              "rounded-full border-2 px-3 py-1 text-[11px] font-semibold transition-colors",
-              filter === s
-                ? "border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white"
-                : "border-[var(--alo-brand)]/15 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-            )}
-          >
-            {s === "ALL" ? "All statuses" : s}
-          </button>
-        ))}
+      {createOpen && (
+        <form onSubmit={handleCreate} className="mb-5 space-y-3 rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-page)] p-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="calendar-title" className="text-xs font-semibold">Planning title</Label>
+              <Input id="calendar-title" maxLength={200} value={title} onChange={(event) => setTitle(event.target.value)} required />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Platform</Label>
+              <Select value={platform} onValueChange={setPlatform}>
+                <SelectTrigger><SelectValue placeholder="Choose a platform" /></SelectTrigger>
+                <SelectContent>
+                  {["facebook", "instagram", "whatsapp", "linkedin", "tiktok", "email", "sms", "website"].map((value) => <SelectItem key={value} value={value}>{value.charAt(0).toUpperCase() + value.slice(1)}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="calendar-description" className="text-xs font-semibold">Planning notes (optional)</Label>
+            <Textarea id="calendar-description" maxLength={2000} rows={3} value={description} onChange={(event) => setDescription(event.target.value)} />
+          </div>
+          <div className="space-y-1.5 sm:max-w-sm">
+            <Label htmlFor="calendar-date" className="text-xs font-semibold">Planning date and time</Label>
+            <Input id="calendar-date" type="datetime-local" value={scheduledAt} onChange={(event) => setScheduledAt(event.target.value)} required />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="submit" disabled={saving} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"><Icon name={saving ? "Loader2" : "Save"} className={cn("size-3.5", saving && "animate-spin")} /> {saving ? "Saving..." : "Save planning draft"}</Button>
+            <span className="text-xs text-muted-foreground">This is not an executable social publishing schedule.</span>
+          </div>
+        </form>
+      )}
+
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-1.5">
+          {statusOptions.map((status) => (
+            <button key={status.value} type="button" onClick={() => setFilter(status.value)} className={cn("rounded-full border-2 px-3 py-1 text-[11px] font-semibold transition-colors", filter === status.value ? "border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white" : "border-[var(--alo-brand)]/15 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]")}>
+              {status.label}
+            </button>
+          ))}
+        </div>
+        <Button variant="outline" onClick={() => void load()} disabled={loading || saving}><Icon name="RefreshCw" className={cn("size-3.5", loading && "animate-spin")} /> Refresh</Button>
       </div>
 
-      {filtered.length === 0 ? (
-        <EmptyState
-          icon="CalendarX"
-          title="No content in this status"
-          description="Try a different filter or add a new content idea."
-        />
+      {loading ? (
+        <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed p-8 text-sm text-muted-foreground"><Icon name="Loader2" className="size-4 animate-spin" /> Loading saved calendar records...</div>
+      ) : error ? (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>Retry</Button></div>
+      ) : filtered.length === 0 ? (
+        <EmptyState icon="CalendarX" title={items.length ? "No records in this status" : "No saved calendar records"} description={items.length ? "Choose another status filter." : "Planning drafts saved to the database calendar will appear here."} />
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((item) => {
-            const icon = CONTENT_TYPE_ICONS[item.type] || "FileText";
-            const platformIcon = PLATFORM_ICONS[item.platform] || "Globe";
+            const statusKey = item.status.toUpperCase();
+            const platformIcon = PLATFORM_ICONS[item.platform.toUpperCase()] || PLATFORM_ICONS[item.platform] || "Globe";
+            const canCancel = item.type === "calendar" && ["draft", "scheduled"].includes(item.status.toLowerCase());
             return (
-              <Card
-                key={item.id}
-                className="flex flex-col rounded-2xl border-2 border-[var(--alo-brand)]/12 p-4"
-              >
+              <Card key={`${item.type}:${item.id}`} className="flex flex-col rounded-2xl border-2 border-[var(--alo-brand)]/12 p-4">
                 <div className="mb-3 flex items-start justify-between gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
-                    <Icon name={icon} className="size-4.5" />
-                  </div>
-                  <Badge className={STATUS_COLORS[item.status] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
-                    {item.status}
-                  </Badge>
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"><Icon name={CONTENT_TYPE_ICONS[item.type.toUpperCase()] || "CalendarDays"} className="size-4" /></div>
+                  <Badge className={STATUS_COLORS[statusKey] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>{statusKey.replaceAll("_", " ")}</Badge>
                 </div>
-                <p className="line-clamp-2 text-sm font-semibold text-foreground">
-                  {item.title}
-                </p>
+                <p className="line-clamp-2 text-sm font-semibold text-foreground">{item.title}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                  <span className="inline-flex items-center gap-1">
-                    <Icon name={platformIcon} className="size-3" />
-                    {item.platform}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><Icon name={platformIcon} className="size-3" /> {item.platform}</span>
                   <span>·</span>
-                  <span className="inline-flex items-center gap-1">
-                    <Icon name="Clock" className="size-3" />
-                    {fmtDate(item.scheduledAt)}
-                  </span>
+                  <span className="inline-flex items-center gap-1"><Icon name="Clock" className="size-3" /> {fmtDate(item.scheduledAt)}</span>
+                  <span>·</span>
+                  <span>{item.type === "campaignPost" ? "Campaign post" : "Planning record"}</span>
                 </div>
-                <div className="mt-3 flex gap-1.5 border-t border-[var(--alo-brand)]/10 pt-3">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleItemAction(item, "edit")}
-                    className="h-8 flex-1 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                  >
-                    <Icon name="Pencil" className="size-3" /> Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleItemAction(item, "duplicate")}
-                    className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                  >
-                    <Icon name="Copy" className="size-3" />
-                  </Button>
-                  {item.status === "APPROVED" && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleItemAction(item, "publish")}
-                      className="h-8 bg-emerald-600 hover:bg-emerald-600/90 text-white"
-                    >
-                      <Icon name="Send" className="size-3" /> Publish
-                    </Button>
+                {canCancel && <div className="mt-3 border-t border-[var(--alo-brand)]/10 pt-3"><Button size="sm" variant="outline" disabled={saving} onClick={() => void handleCancelPlan(item)} className="h-8 border-red-300 text-red-700 hover:bg-red-50"><Icon name="X" className="size-3" /> Cancel planning record</Button></div>}
+              </Card>
+            );
+          })}
+        </div>
+      )}
+      <p className="mt-4 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-muted-foreground">Calendar records are plans only unless a separately verified publishing integration is configured. Statuses shown for campaign posts come from their approval workflow; they do not confirm external delivery.</p>
+    </SectionCard>
+  );
+}
+
+function ReplyQueueTab() {
+  const { toast } = useToast();
+  const [items, setItems] = React.useState<ReplyQueueItem[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [savingId, setSavingId] = React.useState<string | null>(null);
+  const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [editText, setEditText] = React.useState("");
+
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/marketing/social-inbox", { credentials: "include" });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success || !Array.isArray(payload.conversations)) {
+        throw new Error(payload?.error || "Unable to load the assigned social inbox.");
+      }
+      const queue: ReplyQueueItem[] = payload.conversations.flatMap((conversation: any) =>
+        (Array.isArray(conversation.messages) ? conversation.messages : [])
+          .filter((message: any) => message.direction === "INBOUND" && typeof message.aiDraftReply === "string" && message.aiDraftReply.trim() && !message.humanApproved)
+          .map((message: any) => ({
+            id: message.id,
+            messageId: message.id,
+            conversationId: typeof message.conversationId === "string" ? message.conversationId : "",
+            channel: String(message.platform || conversation.platform || "UNKNOWN").toUpperCase(),
+            canEdit: Boolean(message.conversationId) && ["FACEBOOK", "INSTAGRAM", "WHATSAPP", "EMAIL", "SMS", "WEBSITE_CHAT"].includes(String(message.platform || conversation.platform || "").toUpperCase()),
+            fromName: message.senderName || conversation.senderName || message.senderId || "Unknown sender",
+            originalMessage: message.messageText || "(No text content on this inbound message)",
+            suggestedReply: message.aiDraftReply,
+          })),
+      );
+      setItems(queue);
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Unable to load the assigned social inbox.");
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => { void load(); }, [load]);
+
+  const postAction = async (body: Record<string, unknown>) => {
+    const response = await fetch("/api/marketing/social-inbox", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok || !payload?.success || payload.sent) {
+      throw new Error(payload?.error || "The inbox action was not completed.");
+    }
+    return payload;
+  };
+
+  const handleApproveDraft = async (item: ReplyQueueItem) => {
+    setSavingId(item.id);
+    try {
+      const payload = await postAction({ action: "approve_draft", messageId: item.messageId });
+      toast({ title: "Draft approved internally", description: payload.message || "No message was sent." });
+      await load();
+    } catch (actionError) {
+      toast({ title: "Draft was not approved", description: actionError instanceof Error ? actionError.message : "The server rejected this action.", variant: "destructive" });
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const handleRejectDraft = async (item: ReplyQueueItem) => {
+    setSavingId(item.id);
+    try {
+      const payload = await postAction({ action: "reject_draft", messageId: item.messageId });
+      toast({ title: "Draft rejected", description: payload.message || "The draft was removed. No message was sent." });
+      await load();
+    } catch (actionError) {
+      toast({ title: "Draft was not rejected", description: actionError instanceof Error ? actionError.message : "The server rejected this action.", variant: "destructive" });
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const handleEditDraft = (item: ReplyQueueItem) => {
+    setEditingId(item.id);
+    setEditText(item.suggestedReply);
+  };
+
+  const handleSaveEdit = async (item: ReplyQueueItem) => {
+    const draft = editText.trim();
+    if (!draft) {
+      toast({ title: "Reply draft is empty", description: "Enter text before saving the revised draft.", variant: "destructive" });
+      return;
+    }
+    setSavingId(item.id);
+    try {
+      const payload = await postAction({
+        action: "save_draft",
+        platform: item.channel,
+        conversationId: item.conversationId,
+        messageText: draft,
+        aiDraftUsed: true,
+      });
+      toast({ title: "Revised draft saved", description: payload.message || "Saved for manager review. No message was sent." });
+      setEditingId(null);
+      setEditText("");
+      await load();
+    } catch (actionError) {
+      toast({ title: "Revised draft not saved", description: actionError instanceof Error ? actionError.message : "The server rejected this action.", variant: "destructive" });
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  return (
+    <SectionCard title="AI reply draft queue" icon="Inbox" description="Database-backed inbound reply drafts. Review, revise, approve internally, or reject; approval here never sends a message.">
+      <div className="mb-4 flex items-start justify-between gap-3 rounded-xl border-2 border-violet-200 bg-violet-50/50 p-3">
+        <div className="flex items-start gap-2.5">
+          <Icon name="Bot" className="mt-0.5 size-4 shrink-0 text-violet-700" />
+          <p className="text-xs text-violet-900/80">AI suggestions must be fact-checked by a person. Approving or saving a draft records an internal workflow action only; no reply is delivered by this screen.</p>
+        </div>
+        <Button size="sm" variant="outline" onClick={() => void load()} disabled={loading || savingId !== null} aria-label="Refresh reply drafts"><Icon name="RefreshCw" className={cn("size-3.5", loading && "animate-spin")} /></Button>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed p-8 text-sm text-muted-foreground"><Icon name="Loader2" className="size-4 animate-spin" /> Loading reply drafts...</div>
+      ) : error ? (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>Retry</Button></div>
+      ) : items.length === 0 ? (
+        <EmptyState icon="Inbox" title="No pending reply drafts" description="Only saved inbound drafts awaiting internal review are shown here. This screen does not create sample conversations." />
+      ) : (
+        <div className="space-y-3">
+          {items.map((item) => {
+            const channelIcon = CHANNEL_ICONS[item.channel] || "MessageSquare";
+            return (
+              <Card key={item.id} className="rounded-2xl border-2 border-[var(--alo-brand)]/12 p-4">
+                <div className="mb-3 flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"><Icon name={channelIcon} className="size-4" /></div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{item.fromName}</p>
+                      <p className="text-[11px] text-muted-foreground">{item.channel}{item.studentName ? ` · Record ${item.studentName}` : ""}</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="border-violet-200 text-violet-700"><Icon name="Bot" className="mr-1 size-3" /> Pending human review</Badge>
+                </div>
+                <div className="space-y-2.5">
+                  <div className="rounded-xl bg-[var(--alo-page)] p-3">
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Original inbound message</p>
+                    <p className="whitespace-pre-wrap text-sm text-foreground">{item.originalMessage}</p>
+                  </div>
+                  {editingId === item.id ? (
+                    <div className="rounded-xl border-2 border-[var(--alo-brand)]/30 bg-[var(--alo-brand-light)]/30 p-3">
+                      <Label htmlFor={`reply-edit-${item.id}`} className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-brand)]">Edit reply draft</Label>
+                      <Textarea id={`reply-edit-${item.id}`} rows={5} maxLength={5000} value={editText} onChange={(event) => setEditText(event.target.value)} className="border-[var(--alo-brand)]/20" />
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <Button size="sm" onClick={() => void handleSaveEdit(item)} disabled={savingId === item.id} className="h-9 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"><Icon name={savingId === item.id ? "Loader2" : "Save"} className={cn("size-3.5", savingId === item.id && "animate-spin")} /> Save revised draft</Button>
+                        <Button size="sm" variant="outline" onClick={() => { setEditingId(null); setEditText(""); }} disabled={savingId === item.id} className="h-9">Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border-2 border-violet-200 bg-violet-50/40 p-3">
+                      <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-violet-700"><Icon name="Sparkles" className="size-3" /> Suggested reply draft</p>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{item.suggestedReply}</p>
+                    </div>
                   )}
                 </div>
+                {editingId !== item.id && (
+                  <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--alo-brand)]/10 pt-3">
+                    <Button size="sm" onClick={() => void handleApproveDraft(item)} disabled={savingId === item.id} className="h-9 bg-emerald-700 text-white hover:bg-emerald-700/90"><Icon name={savingId === item.id ? "Loader2" : "Check"} className={cn("size-3.5", savingId === item.id && "animate-spin")} /> Approve internally</Button>
+                    <Button size="sm" variant="outline" onClick={() => handleEditDraft(item)} disabled={savingId === item.id} className="h-9 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"><Icon name="Pencil" className="size-3.5" /> Edit draft</Button>
+                    <Button size="sm" variant="outline" onClick={() => void handleRejectDraft(item)} disabled={savingId === item.id} className="h-9 border-red-300 text-red-700 hover:bg-red-50"><Icon name="X" className="size-3.5" /> Reject draft</Button>
+                  </div>
+                )}
               </Card>
             );
           })}
@@ -795,182 +825,49 @@ function CampaignCalendarTab() {
   );
 }
 
-function ReplyQueueTab() {
-  const { toast } = useToast();
-  const [items, setItems] = React.useState<ReplyQueueItem[]>(SAMPLE_REPLY_QUEUE);
-  const [editingId, setEditingId] = React.useState<string | null>(null);
-  const [editText, setEditText] = React.useState("");
+function MarketingDataSummary() {
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [summary, setSummary] = React.useState({ planningRecords: 0, conversations: 0, pendingDrafts: 0 });
 
-  const removeItem = (id: string) =>
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const [calendarResponse, inboxResponse] = await Promise.all([
+        fetch("/api/marketing/calendar", { credentials: "include" }),
+        fetch("/api/marketing/social-inbox", { credentials: "include" }),
+      ]);
+      const [calendar, inbox] = await Promise.all([
+        calendarResponse.json().catch(() => null),
+        inboxResponse.json().catch(() => null),
+      ]);
+      if (!calendarResponse.ok || !calendar?.success || !Array.isArray(calendar.items) || !inboxResponse.ok || !inbox?.success || !Array.isArray(inbox.conversations)) {
+        throw new Error("Marketing data is unavailable.");
+      }
+      const pendingDrafts = inbox.conversations.reduce((total: number, conversation: any) => total + (Array.isArray(conversation.messages) ? conversation.messages.filter((message: any) => message.direction === "INBOUND" && typeof message.aiDraftReply === "string" && message.aiDraftReply.trim() && !message.humanApproved).length : 0), 0);
+      setSummary({ planningRecords: calendar.items.length, conversations: inbox.conversations.length, pendingDrafts });
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const handleApprove = (item: ReplyQueueItem) => {
-    toast({
-      title: "Reply sent and logged",
-      description: `Approved reply sent via ${item.channel}. Logged to the student timeline and audit.`,
-    });
-    removeItem(item.id);
-  };
-
-  const handleEditApprove = (item: ReplyQueueItem) => {
-    setEditingId(item.id);
-    setEditText(item.suggestedReply);
-  };
-
-  const handleSaveEdit = (item: ReplyQueueItem) => {
-    toast({
-      title: "Edited reply sent and logged",
-      description: `Your edited reply was sent via ${item.channel}. Logged to timeline.`,
-    });
-    setEditingId(null);
-    setEditText("");
-    removeItem(item.id);
-  };
-
-  const handleReject = (item: ReplyQueueItem) => {
-    toast({
-      title: "Reply rejected",
-      description: `AI suggestion discarded. Logged for model retraining feedback.`,
-      variant: "destructive",
-    });
-    removeItem(item.id);
-  };
+  React.useEffect(() => { void load(); }, [load]);
 
   return (
-    <SectionCard
-      title="AI reply queue"
-      icon="Inbox"
-      description="AI-drafted replies awaiting manager approval. Review, edit, or reject each one."
-    >
-      {/* Compliance note */}
-      <div className="mb-4 flex items-start gap-2.5 rounded-xl border-2 border-violet-200 bg-violet-50/50 p-3">
-        <Icon name="Bot" className="mt-0.5 size-4 shrink-0 text-violet-700" />
-        <p className="text-xs text-violet-900/80">
-          AI replies follow ALO brand guidelines and never promise visa or admission outcomes. Every
-          approved reply is logged to the student timeline and audit.
-        </p>
+    <div className="space-y-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label="Calendar records" value={loading ? "…" : error ? "—" : summary.planningRecords} icon="CalendarDays" accent="blue" hint="Database records; not proof of publishing" />
+        <StatCard label="Inbox conversations" value={loading ? "…" : error ? "—" : summary.conversations} icon="Inbox" accent="orange" hint="Visible under your current access scope" />
+        <StatCard label="Pending reply drafts" value={loading ? "…" : error ? "—" : summary.pendingDrafts} icon="MessageSquare" accent="violet" hint="Internal review only; no messages sent" />
       </div>
-
-      {items.length === 0 ? (
-        <EmptyState
-          icon="CheckCircle2"
-          title="Queue is clear"
-          description="No AI replies waiting for approval. New suggestions will appear here as they come in."
-        />
-      ) : (
-        <div className="space-y-3">
-          {items.map((item) => {
-            const channelIcon = CHANNEL_ICONS[item.channel] || "MessageSquare";
-            return (
-              <Card
-                key={item.id}
-                className="rounded-2xl border-2 border-[var(--alo-brand)]/12 p-4"
-              >
-                <div className="mb-3 flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
-                      <Icon name={channelIcon} className="size-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        {item.fromName}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">
-                        {item.channel}
-                        {item.studentName ? ` · Student ${item.studentName}` : ""}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="border-violet-200 text-violet-700">
-                    <Icon name="Bot" className="mr-1 size-3" /> AI drafted
-                  </Badge>
-                </div>
-
-                <div className="space-y-2.5">
-                  <div className="rounded-xl bg-[var(--alo-page)] p-3">
-                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                      Original message
-                    </p>
-                    <p className="text-sm text-foreground">{item.originalMessage}</p>
-                  </div>
-
-                  {editingId === item.id ? (
-                    <div className="rounded-xl border-2 border-[var(--alo-brand)]/30 bg-[var(--alo-brand-light)]/30 p-3">
-                      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-brand)]">
-                        Edit reply
-                      </p>
-                      <Textarea
-                        rows={5}
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        className="border-[var(--alo-brand)]/20"
-                      />
-                      <div className="mt-2 flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleSaveEdit(item)}
-                          className="h-9 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/90 text-white"
-                        >
-                          <Icon name="Send" className="size-3.5" /> Send edited reply
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditText("");
-                          }}
-                          className="h-9 border-[var(--alo-border-strong)] text-[var(--alo-body)]"
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="rounded-xl border-2 border-violet-200 bg-violet-50/40 p-3">
-                      <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-violet-700">
-                        <Icon name="Sparkles" className="size-3" /> Suggested AI reply
-                      </p>
-                      <p className="text-sm leading-relaxed text-foreground">
-                        {item.suggestedReply}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {editingId !== item.id && (
-                  <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--alo-brand)]/10 pt-3">
-                    <Button
-                      size="sm"
-                      onClick={() => handleApprove(item)}
-                      className="h-9 bg-emerald-600 hover:bg-emerald-600/90 text-white"
-                    >
-                      <Icon name="Check" className="size-3.5" /> Approve
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleEditApprove(item)}
-                      className="h-9 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
-                      variant="outline"
-                    >
-                      <Icon name="Pencil" className="size-3.5" /> Edit & Approve
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleReject(item)}
-                      className="h-9 border-red-300 text-red-600 hover:bg-red-50"
-                      variant="outline"
-                    >
-                      <Icon name="X" className="size-3.5" /> Reject
-                    </Button>
-                  </div>
-                )}
-              </Card>
-            );
-          })}
-        </div>
-      )}
-    </SectionCard>
+      <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>{error ? "Live marketing counts could not be loaded; values are not estimated." : "Counts are loaded from the authenticated marketing APIs."}</span>
+        <Button variant="ghost" size="sm" onClick={() => void load()} disabled={loading}><Icon name="RefreshCw" className={cn("size-3.5", loading && "animate-spin")} /> Refresh</Button>
+      </div>
+    </div>
   );
 }
 
@@ -984,42 +881,12 @@ export function MarketingAi() {
       <PageHeader
         title="Marketing AI Engine"
         icon="Sparkles"
-        subtitle="AI-powered content generation, campaign management, and social media automation."
+        subtitle="AI-assisted marketing drafts, database-backed planning, and human-reviewed inbox drafts. No social provider is published to from this screen."
       />
 
       <BrandRulesBanner />
 
-      {/* Campaign performance summary */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Total Campaigns"
-          value="6"
-          icon="Megaphone"
-          accent="blue"
-          hint="2 scheduled this week"
-        />
-        <StatCard
-          label="Leads This Week"
-          value="145"
-          icon="Users"
-          accent="orange"
-          trend="+18% vs last week"
-        />
-        <StatCard
-          label="Conversion Rate"
-          value="17%"
-          icon="Target"
-          accent="emerald"
-          trend="+2.3 pts"
-        />
-        <StatCard
-          label="Cost Per Lead"
-          value="৳351"
-          icon="DollarSign"
-          accent="violet"
-          hint="Facebook strongest channel"
-        />
-      </div>
+      <MarketingDataSummary />
 
       <Tabs defaultValue="generator">
         <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-2xl bg-[var(--alo-brand-light)] p-1.5">

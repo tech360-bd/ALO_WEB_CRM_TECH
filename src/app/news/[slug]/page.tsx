@@ -85,7 +85,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           </ul>
 
           <p>
-            For more details on how this update affects your individual study timeline, book a free consultation with our senior education advisors today.
+            For more details on how this update affects your individual study timeline, request a consultation with our senior education advisors today.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           </p>
           <Link href="/book-consultation">
             <Button className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black rounded-xl font-bold">
-              Book Free Consultation
+              Request Consultation
             </Button>
           </Link>
         </div>

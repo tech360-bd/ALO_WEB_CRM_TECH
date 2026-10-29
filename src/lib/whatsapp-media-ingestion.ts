@@ -2,11 +2,12 @@ import { createHash } from 'node:crypto';
 import { db } from '@/lib/db';
 import { normalizePhone } from '@/lib/phone-normalization';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
+import { getWhatsAppAccessToken, getWhatsAppGraphVersion } from '@/lib/whatsapp-config';
 
 const MAX_BYTES = 20 * 1024 * 1024;
 export const whatsappGraphBase = () => {
-  const version = process.env.WHATSAPP_GRAPH_VERSION || 'v23.0';
-  if (!/^v\d+\.0$/.test(version)) throw new Error('Invalid WHATSAPP_GRAPH_VERSION');
+  const version = getWhatsAppGraphVersion();
+  if (!version) throw new Error('WhatsApp Graph API version is not configured');
   return `https://graph.facebook.com/${version}`;
 };
 
@@ -40,6 +41,33 @@ export function classifyIncomingDocument(fileName: string): string {
   return 'other'; // Classification never marks a document as verified.
 }
 
+function isMetaMediaHost(hostname: string): boolean {
+  return hostname === 'lookaside.fbsbx.com' || hostname.endsWith('.fbcdn.net');
+}
+
+async function fetchMetaMedia(url: URL, token: string): Promise<Response> {
+  let current = url;
+  for (let redirects = 0; redirects <= 3; redirects += 1) {
+    if (current.protocol !== 'https:' || current.username || current.password || current.port || !isMetaMediaHost(current.hostname)) {
+      throw new Error('WhatsApp returned an untrusted media URL');
+    }
+    const response = await fetch(current, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+      redirect: 'manual',
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('location');
+      if (!location || redirects === 3) throw new Error('WhatsApp media redirect is invalid');
+      try { current = new URL(location, current); } catch { throw new Error('WhatsApp media redirect is invalid'); }
+      continue;
+    }
+    return response;
+  }
+  throw new Error('WhatsApp media redirect is invalid');
+}
+
 async function boundedBytes(response: Response): Promise<Buffer> {
   if (!response.ok || !response.body) throw new Error('WhatsApp media download failed');
   if (Number(response.headers.get('content-length')) > MAX_BYTES) throw new Error('WhatsApp media exceeds 20 MB');
@@ -61,8 +89,9 @@ async function boundedBytes(response: Response): Promise<Buffer> {
 
 export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: string) {
   if (!/^\d+$/.test(mediaId)) throw new Error('Invalid WhatsApp media ID');
-  const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
+  const token = getWhatsAppAccessToken();
   if (!token) throw new Error('WhatsApp media access is not configured');
+  if (phoneNumberId && !/^\d{1,64}$/.test(phoneNumberId)) throw new Error('Invalid WhatsApp phone number ID');
   const metadataUrl = new URL(`${whatsappGraphBase()}/${mediaId}`);
   if (phoneNumberId) metadataUrl.searchParams.set('phone_number_id', phoneNumberId);
   const options = { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' as const, redirect: 'error' as const, signal: AbortSignal.timeout(30_000) };
@@ -78,7 +107,7 @@ export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: str
       !(url.hostname === 'lookaside.fbsbx.com' || url.hostname.endsWith('.fbcdn.net'))) {
     throw new Error('WhatsApp returned an untrusted media URL');
   }
-  const bytes = await boundedBytes(await fetch(url, { ...options, signal: AbortSignal.timeout(30_000) }));
+  const bytes = await boundedBytes(await fetchMetaMedia(url, token));
   if (typeof declaredFileSize === 'number' && declaredFileSize !== bytes.byteLength) {
     throw new Error('WhatsApp media file size does not match downloaded bytes');
   }
