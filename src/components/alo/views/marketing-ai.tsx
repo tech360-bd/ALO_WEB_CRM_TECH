@@ -54,6 +54,7 @@ interface ReplyQueueItem {
   conversationId: string;
   channel: string;
   canEdit: boolean;
+  studentName?: string;
   fromName: string;
   originalMessage: string;
   suggestedReply: string;

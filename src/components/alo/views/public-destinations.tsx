@@ -124,7 +124,6 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                   <div className={cn(
                     "flex size-8 items-center justify-center rounded-lg",
                     s.accent === "blue" && "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-                    s.accent === "orange" && "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
                     s.accent === "emerald" && "bg-emerald-50 text-emerald-600",
                     s.accent === "violet" && "bg-violet-50 text-violet-600",
                   )}>

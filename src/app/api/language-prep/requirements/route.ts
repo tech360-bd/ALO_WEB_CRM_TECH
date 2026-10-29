@@ -95,22 +95,25 @@ export async function GET(req: Request) {
           officialUrl: row.officialRequirementUrl,
           lastVerifiedAt: row.lastCheckedAt,
         }))
-        .map((row) => ({
-          id: row.id,
-          testId: '',
-          testName: selectedTest?.name || row.englishTest || 'See recorded minimum',
-          countryName: countries.find((item) => [item.id, item.slug, item.code, item.countryCode].includes(row.course.countryId))?.name || '',
-          universityName: row.university.name,
-          courseName: row.course.courseTitle,
-          studyLevel: row.course.studyLevel,
-          minimumScore: field ? `${testSlug}: ${row[field]}${testSlug === 'toefl-ibt' && row[field] > 6 ? ' (legacy score; confirm current equivalence with the institution)' : ''}` : row.englishTest || (row.ieltsOverall ? `IELTS: ${row.ieltsOverall}` : 'Not recorded'),
-          componentRequirements: row.componentScores,
-          waiverAvailable: row.moiAccepted,
-          remarks: 'Confirm the current source before applying.',
-          sourceUrl: row.officialRequirementUrl,
-          sourceName: 'University course requirement',
-          lastVerifiedAt: row.lastCheckedAt,
-        }));
+        .map((row) => {
+          const verifiedAt = new Date(row.lastCheckedAt);
+          return {
+            id: row.id,
+            testId: '',
+            testName: selectedTest?.name || row.englishTest || 'See recorded minimum',
+            countryName: countries.find((item) => [item.id, item.slug, item.code, item.countryCode].includes(row.course.countryId))?.name || '',
+            universityName: row.university.name,
+            courseName: row.course.courseTitle,
+            studyLevel: row.course.studyLevel,
+            minimumScore: field ? `${testSlug}: ${row[field]}${testSlug === 'toefl-ibt' && row[field] > 6 ? ' (legacy score; confirm current equivalence with the institution)' : ''}` : row.englishTest || (row.ieltsOverall ? `IELTS: ${row.ieltsOverall}` : 'Not recorded'),
+            componentRequirements: row.componentScores,
+            waiverAvailable: row.moiAccepted,
+            remarks: 'Confirm the current source before applying.',
+            sourceUrl: row.officialRequirementUrl,
+            sourceName: 'University course requirement',
+            lastVerifiedAt: Number.isNaN(verifiedAt.getTime()) ? null : verifiedAt,
+          };
+        });
     }
 
     return NextResponse.json({

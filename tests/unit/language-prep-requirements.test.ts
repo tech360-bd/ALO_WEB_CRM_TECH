@@ -1,10 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-const mocks = vi.hoisted(() => ({ recorded: vi.fn(), crm: vi.fn(), countries: vi.fn() }));
+const mocks = vi.hoisted(() => ({ recorded: vi.fn(), crm: vi.fn(), countries: vi.fn(), publishedTests: vi.fn() }));
 vi.mock('@/lib/db', () => ({ db: { englishPrepRequirement: { findMany: mocks.recorded }, crmCourseRequirement: { findMany: mocks.crm }, country: { findMany: mocks.countries } } }));
+vi.mock('@/lib/language-prep/service', () => ({ getAllEnglishPrepTestsFromDB: mocks.publishedTests }));
 import { GET } from '@/app/api/language-prep/requirements/route';
 
 describe('language requirement lookup authorization-free public catalogue filtering', () => {
-  beforeEach(() => { vi.resetAllMocks(); mocks.recorded.mockResolvedValue([]); mocks.crm.mockResolvedValue([]); mocks.countries.mockResolvedValue([]); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mocks.recorded.mockResolvedValue([]);
+    mocks.crm.mockResolvedValue([]);
+    mocks.countries.mockResolvedValue([]);
+    mocks.publishedTests.mockResolvedValue([{
+      name: 'PTE Academic',
+      slug: 'pte-academic',
+      verificationStatus: 'verified_recent',
+      sourceUrl: 'https://www.pearsonpte.com/',
+      lastVerifiedAt: new Date().toISOString(),
+    }]);
+  });
   it('validates search bounds before querying the database', async () => {
     expect((await GET(new Request('http://localhost/api/language-prep/requirements'))).status).toBe(400);
     expect((await GET(new Request(`http://localhost/api/language-prep/requirements?university=${'a'.repeat(121)}`))).status).toBe(400);

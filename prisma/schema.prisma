@@ -4790,6 +4790,7 @@ model WhatsAppRetryQueue {
 
   @@index([status])
   @@index([nextRetryAt])
+  @@index([purpose, status])
 }
 
 model CronJobLog {
@@ -13726,12 +13727,12 @@ model PermissionGroup {
   id          String   @id @default(cuid())
   key         String   @unique
   name        String
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   department  String   @default("")
   /// standard | sensitive | critical — critical groups still require an
   /// explicit SUPER_ADMIN confirmation on every assignment.
   riskLevel   String   @default("standard")
-  permissions String   @default("[]") @db.Text
+  permissions String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
   isSystem    Boolean  @default(false)
   isActive    Boolean  @default(true)
   createdBy   String   @default("")
@@ -13754,7 +13755,7 @@ model PermissionGroupGrant {
   ownerType String
   ownerId   String
   grantedBy String    @default("")
-  reason    String    @default("") @db.Text
+  reason    String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   expiresAt DateTime?
   isActive  Boolean   @default(true)
   revokedAt DateTime?
@@ -13775,12 +13776,12 @@ model PermissionGroupGrant {
 model SystemSetting {
   id          String   @id @default(cuid())
   key         String   @unique
-  value       String   @default("") @db.Text
+  value       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   /// string | number | boolean | json
   valueType   String   @default("string")
   category    String   @default("general")
   label       String   @default("")
-  description String   @default("") @db.Text
+  description String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   isSensitive Boolean  @default(false)
   updatedBy   String   @default("")
   createdAt   DateTime @default(now())
@@ -13803,7 +13804,7 @@ model UserPermissionOverride {
   permissionKey String
   /// ALLOW | DENY
   effect        String
-  reason        String   @default("") @db.Text
+  reason        String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdBy     String   @default("")
   updatedBy     String   @default("")
   createdAt     DateTime @default(now())
@@ -13827,13 +13828,13 @@ model Report {
   category     String
   title        String
   /// Shape: { dateFrom, dateTo, branch, country, role, employeeId, … }
-  filters      String    @default("{}") @db.Text
+  filters      String    @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
   /// csv | json (xlsx/pdf are produced by the export pipeline when available)
   format       String    @default("csv")
   status       String    @default("READY")
   rowCount     Int       @default(0)
   /// CSV/JSON payload for small reports, kept server-side only.
-  payload      String    @default("") @db.LongText
+  payload      String    @default(dbgenerated("(_utf8mb4'')")) @db.LongText
   generatedBy  String    @default("")
   generatedAt  DateTime  @default(now())
   expiresAt    DateTime?
@@ -13868,16 +13869,16 @@ model ModuleBuildRequest {
   publishAfterApproval Boolean @default(false)
   status        String    @default("PLAN_REQUESTED")
   /// JSON: { steps: string[], filesToChange: string[], sandboxResult: {...} }
-  plan          String    @default("{}") @db.LongText
-  proposedFiles String    @default("[]") @db.Text
-  patchProposal String    @default("") @db.LongText
-  sandboxResult String    @default("{}") @db.LongText
+  plan          String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
+  proposedFiles String    @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  patchProposal String    @default(dbgenerated("(_utf8mb4'')")) @db.LongText
+  sandboxResult String    @default(dbgenerated("(_utf8mb4'{}')")) @db.LongText
   requestedBy   String    @default("")
   reviewedBy    String    @default("")
   reviewedAt    DateTime?
   appliedBy     String    @default("")
   appliedAt     DateTime?
-  decisionNote  String    @default("") @db.Text
+  decisionNote  String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
