@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-10-29T03:23:26.567Z",
+  "window": [
+    "2027-01",
+    "2027-02",
+    "2027-03",
+    "2027-04",
+    "2027-05",
+    "2027-06",
+    "2027-07",
+    "2027-08",
+    "2027-09",
+    "2027-10",
+    "2027-11",
+    "2027-12",
+    "2028-01"
+  ],
+  "totals": {
+    "VERIFIED_AVAILABLE": 15,
+    "VERIFIED_NOT_OFFERED": 52,
+    "NOT_PUBLISHED": 37,
+    "VERIFICATION_PENDING": 0,
+    "SOURCE_UNAVAILABLE": 0,
+    "CONFLICT_REQUIRES_REVIEW": 0,
+    "MISSING": 0
+  },
+  "courses": 8,
+  "publishedRows": 104,
+  "pendingApprovals": 0,
+  "rejectedRows": 0,
+  "staleCourseMonths": [],
+  "missingCourseMonths": [],
+  "conflictsAwaitingReview": 1,
+  "failedOfficialSources": 0,
+  "researchQueue": {
+    "total": 17,
+    "byStatus": {
+      "IN_PROGRESS": 8,
+      "VERIFIED": 4,
+      "DEFERRED": 1,
+      "BLOCKED": 2,
+      "QUEUED": 2
+    },
+    "byCountry": {
+      "uk": 2,
+      "ireland": 1,
+      "japan": 1,
+      "australia": 1,
+      "canada": 1,
+      "germany": 1,
+      "new-zealand": 1,
+      "denmark": 2,
+      "south-korea": 2,
+      "usa": 1,
+      "uae": 2,
+      "malaysia": 2
+    }
+  },
+  "evidenceRecords": 30,
+  "uninspectedEvidence": 0,
+  "courseMatrix": [
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "availableMonths": [
+        "2027-09"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "availableMonths": [
+        "2027-01",
+        "2027-05",
+        "2027-09",
+        "2028-01"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "availableMonths": [
+        "2027-01",
+        "2027-05",
+        "2027-09",
+        "2028-01"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "availableMonths": [],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "tum-master-informatics",
+      "availableMonths": [
+        "2027-04",
+        "2027-10"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "auckland-master-of-data-science",
+      "availableMonths": [
+        "2027-03",
+        "2027-07"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "copenhagen-master-computer-science",
+      "availableMonths": [
+        "2027-09"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "yonsei-bsc-computer-science",
+      "availableMonths": [
+        "2027-03"
+      ],
+      "missingMonths": []
+    }
+  ],
+  "actionsTaken": {
+    "recheckItemsCreated": 0,
+    "recheckItemsExisting": 0
+  }
+}

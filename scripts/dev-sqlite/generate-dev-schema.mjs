@@ -70,7 +70,7 @@ if (leftover) {
 // ---------------------------------------------------------------------------
 s = s.replace(/provider = "mysql"/, 'provider = "sqlite"');
 s = s.replace(/^\s*binaryTargets\s*=\s*\[[^\]]*\]\s*$/m, '');
-s = s.replace(/generator client \{/, 'generator client {\n  previewFeatures = ["driverAdapters", "queryCompiler"]');
+s = s.replace(/generator client \{/, 'generator client {\n  previewFeatures = ["driverAdapters", "queryCompiler"]\n  engineType     = "client"');
 s = s.replace(/[ \t]+@db\.[A-Za-z]+(\([^)]*\))?/g, '');
 
 const header = `/// GENERATED FILE — do not edit by hand.

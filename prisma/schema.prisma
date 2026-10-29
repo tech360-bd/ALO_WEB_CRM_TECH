@@ -1688,6 +1688,7 @@ model CrmUniversity {
 
   // Relations
   courses            CrmCourse[]
+  monthlyCoverage    CrmCourseMonthlyCoverage[]
   campusRecords      Campus[]
   intakeFees         CrmCourseIntakeFee[]
   requirements       CrmCourseRequirement[]
@@ -1771,6 +1772,7 @@ model CrmCourse {
 
   // Relations
   university          CrmUniversity          @relation(fields: [universityId], references: [universityId])
+  monthlyCoverage     CrmCourseMonthlyCoverage[]
   intakeFees          CrmCourseIntakeFee[]
   courseIntakes       CourseIntake[]
   entryRequirements   EntryRequirement[]
@@ -13885,4 +13887,242 @@ model ModuleBuildRequest {
   @@index([taskType])
   @@index([requestedBy])
   @@map("module_build_requests")
+}
+
+// ==========================================
+// VERIFIED UNIVERSITY CATALOGUE + 13-MONTH COVERAGE
+// (January 2027 — January 2028)
+// ==========================================
+// Design notes (2026-10-29 deliverable):
+//  • Additive only. No existing model is dropped, renamed or narrowed.
+//  • Every value that reaches the public catalogue must be traceable to one
+//    CrmOfficialEvidence row (immutable excerpt + content hash + retrieval
+//    timestamp + source URL) and one approval decision.
+//  • Coverage is per course-month. A month is never marked "offered" or
+//    "not offered" without an official source; absence of publication is
+//    recorded as NOT_PUBLISHED, never silently converted to NOT_OFFERED.
+
+model CrmOfficialEvidence {
+  id                 String   @id @default(cuid())
+  /// Deterministic dedupe key: sha256(sourceUrl + entity target + field scope + content hash)
+  evidenceKey        String   @unique
+  sourceUrl          String   @db.Text
+  finalUrl           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  sourceType         String   @default("OFFICIAL_UNIVERSITY") // OFFICIAL_UNIVERSITY | OFFICIAL_GOVERNMENT | OFFICIAL_AUTHORITY | OFFICIAL_TEST_PROVIDER | OFFICIAL_SCHOLARSHIP
+  publisherName      String   @default("")
+  pageTitle          String   @default("")
+  /// Collection timestamp (when the researcher actually retrieved the page).
+  retrievedAt        DateTime @default(now())
+  /// Publication date stated by the source, when detectable. Empty = not stated.
+  publishedAt        String   @default("")
+  httpStatus         Int      @default(200)
+  /// sha256 of the stored excerpt — proves the excerpt was not edited afterwards.
+  contentHash        String   @default("")
+  excerpt            String   @db.Text
+  entityType         String   @default("COURSE") // UNIVERSITY | COURSE | COUNTRY
+  universitySlug     String   @default("")
+  courseSlug         String   @default("")
+  /// JSON array of the field names this excerpt supports.
+  fieldScope         String   @default("[]")
+  language           String   @default("en")
+  verificationStatus String   @default("PENDING_REVIEW") // PENDING_REVIEW | VERIFIED | REJECTED | SUPERSEDED
+  confidence         Float    @default(0)
+  version            Int      @default(1)
+  supersedesId       String?
+  collectedBy        String   @default("alo-research-agent")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  coverage CrmCourseMonthlyCoverage[] @relation("CoverageEvidence")
+
+  @@index([universitySlug])
+  @@index([courseSlug])
+  @@index([verificationStatus])
+  @@index([sourceType])
+}
+
+model CrmCourseMonthlyCoverage {
+  id                        String   @id @default(cuid())
+  /// Deterministic key: courseSlug + ":" + YYYY-MM
+  coverageKey               String   @unique
+  universityId              String
+  courseId                  String
+  year                      Int
+  month                     Int
+  monthLabel                String   @default("")
+  /// VERIFIED_AVAILABLE | VERIFIED_NOT_OFFERED | NOT_PUBLISHED |
+  /// VERIFICATION_PENDING | SOURCE_UNAVAILABLE | CONFLICT_REQUIRES_REVIEW
+  status                    String   @default("NOT_PUBLISHED")
+  intakeName                String   @default("")
+  startDate                 String   @default("")
+  applicationOpens          String   @default("")
+  applicationCloses         String   @default("")
+  internationalDeadline     String   @default("")
+  feeAmount                 Float    @default(0)
+  feeCurrency               String   @default("")
+  academicYear              String   @default("")
+  feePeriod                 String   @default("")
+  studentCategory           String   @default("INTERNATIONAL")
+  applicationFee            Float    @default(0)
+  applicationFeeCurrency    String   @default("")
+  depositAmount             Float    @default(0)
+  depositCurrency           String   @default("")
+  scholarshipNote           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  academicRequirement       String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  bangladeshRequirement     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  /// JSON: {"ielts":"6.5","pte":"","toefl":"","duolingo":"","other":""}
+  englishRequirements       String   @default(dbgenerated("(_utf8mb4'{}')")) @db.Text
+  workExperienceRequirement String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  portfolioRequirement      String   @default("")
+  interviewRequirement      String   @default("")
+  /// JSON array of required documents stated by the source.
+  documentRequirements      String   @default(dbgenerated("(_utf8mb4'[]')")) @db.Text
+  internationalEligibility  String   @default("not_verified")
+  studyMode                 String   @default("")
+  campus                    String   @default("")
+  qualification             String   @default("")
+  courseSourceUrl           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  feeSourceUrl              String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  intakeSourceUrl           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  requirementSourceUrl      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  sourcePublishedAt         String   @default("")
+  collectedAt               DateTime?
+  lastVerifiedAt            DateTime?
+  /// PENDING | APPROVED | REJECTED | SUPERSEDED
+  approvalStatus            String   @default("PENDING")
+  published                 Boolean  @default(false)
+  evidenceId                String?
+  evidence                  CrmOfficialEvidence? @relation("CoverageEvidence", fields: [evidenceId], references: [id], onDelete: SetNull)
+  confidence                Float    @default(0)
+  conflictNote              String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  notes                     String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  reviewedBy                String   @default("")
+  reviewedAt                DateTime?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  course     CrmCourse     @relation(fields: [courseId], references: [courseId])
+  university CrmUniversity @relation(fields: [universityId], references: [universityId])
+
+  @@unique([courseId, year, month])
+  @@index([year, month])
+  @@index([status])
+  @@index([published])
+  @@index([approvalStatus])
+  @@index([universityId])
+}
+
+model CrmCatalogueTraversal {
+  id                     String   @id @default(cuid())
+  /// Deterministic key: universitySlug + sha256(catalogueUrl + facultyOrDepartment)
+  traversalKey           String   @unique
+  universityId           String   @default("")
+  universitySlug         String   @default("")
+  countrySlug            String   @default("")
+  catalogueUrl           String   @db.Text
+  /// PROGRAMME_LIST | FACULTY_DIRECTORY | DEPARTMENT_LIST | PDF_PROSPECTUS
+  catalogueType          String   @default("PROGRAMME_LIST")
+  facultyOrDepartment    String   @default("")
+  httpStatus             Int      @default(0)
+  pageTitle              String   @default("")
+  programmeLinksObserved Int      @default(0)
+  coursesDiscovered      Int      @default(0)
+  coursesVerified        Int      @default(0)
+  paginationComplete     Boolean  @default(false)
+  nextPageUrl            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  /// NOT_STARTED | PARTIAL | COMPLETE_VERIFIED | BLOCKED | ROBOTS_DISALLOWED
+  completeness           String   @default("PARTIAL")
+  notes                  String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  lastTraversedAt        DateTime?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([universitySlug])
+  @@index([countrySlug])
+  @@index([completeness])
+}
+
+model CrmResearchQueueItem {
+  id               String   @id @default(cuid())
+  queueKey         String   @unique
+  countrySlug      String   @default("")
+  universityName   String   @default("")
+  universitySlug   String   @default("")
+  officialWebsite  String   @default("")
+  catalogueUrl     String   @default("")
+  priority         Int      @default(0)
+  /// QUEUED | IN_PROGRESS | VERIFIED | BLOCKED | DEFERRED
+  status           String   @default("QUEUED")
+  reason           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  discoveredVia    String   @default("")
+  nextAction       String   @default("")
+  attempts         Int      @default(0)
+  lastAttemptAt    DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([countrySlug])
+  @@index([status])
+  @@index([priority])
+}
+
+/// Append-only revision log for course-month coverage and its approval trail.
+/// Historical values are never destroyed when a newer value is detected.
+model CrmCoverageRevision {
+  id                String   @id @default(cuid())
+  coverageKey       String
+  courseId          String
+  year              Int
+  month             Int
+  revision          Int      @default(1)
+  /// CREATED | UPDATED | CONFLICT_DETECTED | APPROVED | REJECTED | PUBLISHED | SUPERSEDED
+  changeType        String   @default("UPDATED")
+  status            String   @default("")
+  previousValueJson String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  newValueJson      String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  evidenceId        String?
+  actorUserId       String   @default("")
+  reason            String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  createdAt         DateTime @default(now())
+
+  @@index([coverageKey])
+  @@index([courseId, year, month])
+  @@index([changeType])
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Inbound channel identity bindings (omnichannel identity engine)
+//
+// One row links a provider-scoped identity (WhatsApp wa_id, Messenger PSID,
+// Instagram IGSID, SMS number, web-chat/email identity) to exactly one ALO
+// student. Rows are never deleted: unlinking flips `active` to false and
+// records who/why, so the merge/unlink history required by the identity
+// policy is preserved and a re-link attempt can be detected instead of
+// silently recreating a student.
+// ═══════════════════════════════════════════════════════════════════════════
+model StudentChannelIdentity {
+  id               String    @id @default(cuid())
+  /// WHATSAPP | FACEBOOK | INSTAGRAM | SMS | WEB_CHAT | EMAIL
+  channel          String
+  /// Provider account that received the message (Meta phone_number_id, Page ID, SMS shortcode...)
+  channelAccountId String    @default("")
+  /// Provider-scoped sender id (wa_id, PSID, IGSID, E.164 number, verified email)
+  externalUserId   String
+  /// ALO student identifier (AE-YYYYNNNN). Not a foreign key: the two student
+  /// tables (Student, PortalStudentProfile) are not yet unified, so the binding
+  /// stores the identifier value that both tables already use.
+  studentId        String
+  /// false once an authorised reviewer unlinks it; the row is kept for history.
+  active           Boolean   @default(true)
+  linkedBy         String    @default("")
+  linkedAt         DateTime  @default(now())
+  unlinkedBy       String    @default("")
+  unlinkedAt       DateTime?
+  unlinkReason     String    @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([channel, channelAccountId, externalUserId])
+  @@index([studentId])
+  @@index([active])
 }

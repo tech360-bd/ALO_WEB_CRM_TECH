@@ -36,7 +36,15 @@
     "db:verify-client": "node scripts/verify-prisma-client.mjs",
     "db:diagnose": "node scripts/db-diagnose.mjs",
     "audit:env": "node scripts/audit-env-vars.mjs",
-    "typecheck:references": "npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit"
+    "typecheck:references": "npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit",
+    "verified:validate": "tsx scripts/verified-catalogue/validate-dataset.ts",
+    "verified:ingest": "tsx scripts/verified-catalogue/ingest.ts --apply",
+    "verified:ingest:dry": "tsx scripts/verified-catalogue/ingest.ts --dry-run",
+    "verified:decide": "tsx scripts/verified-catalogue/decide.ts",
+    "verified:report": "tsx scripts/verified-catalogue/report-coverage.ts",
+    "verified:e2e": "tsx scripts/verified-catalogue/e2e-verify.ts",
+    "verified:coverage-monitor": "tsx scripts/verified-catalogue/run-coverage-monitor.ts",
+    "typecheck:verified": "tsc --project tsconfig.verified-catalogue-check.json --noEmit"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

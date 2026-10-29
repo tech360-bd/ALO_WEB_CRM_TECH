@@ -94,3 +94,34 @@ describe('matchInboundIdentity', () => {
     expect(matchInboundIdentity({ email: 'alice@example.com' }, [])).toEqual({ kind: 'none' });
   });
 });
+
+/**
+ * REGRESSION — the exact_student_id tier used to accept only a five-digit tail
+ * (`AE-YYYYNNNNN`), but the live allocator pads AE identifiers to four digits
+ * (`AE-20260001`). Every real Student ID therefore fell through the strongest
+ * tier and was matched — if at all — on weaker evidence. The pattern must accept
+ * every identifier format the system has issued; legacy IDs are never rewritten.
+ */
+describe('student identifier formats accepted by the exact-ID tier', () => {
+  const widths = [
+    ['AE-20260001', '4-digit (current allocator output)'],
+    ['AE-202600001', '5-digit (2026-10-24 target format)'],
+    ['AE-2026000001', '6-digit (earliest legacy form)'],
+  ] as const;
+
+  for (const [studentId, label] of widths) {
+    it(`matches a ${label} Student ID`, () => {
+      const candidate: MatchCandidate = { studentId };
+      expect(matchInboundIdentity({ studentId }, [candidate])).toEqual({ kind: 'exact_student_id', studentId });
+    });
+  }
+
+  it('accepts a lowercase supplied ID and normalises it', () => {
+    const candidate: MatchCandidate = { studentId: 'AE-20260001' };
+    expect(matchInboundIdentity({ studentId: 'ae-20260001' }, [candidate]).kind).toBe('exact_student_id');
+  });
+
+  it('treats a malformed ID as absent instead of matching it', () => {
+    expect(matchInboundIdentity({ studentId: 'ALO-1234' }, [{ studentId: 'AE-20260001' }])).toEqual({ kind: 'none' });
+  });
+});

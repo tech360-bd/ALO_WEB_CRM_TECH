@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/lib/verified-catalogue/**/*.ts",
+    "scripts/verified-catalogue/**/*.ts",
+    "src/app/api/university-catalogue/**/*.ts",
+    "tests/unit/verified-catalogue.test.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}
