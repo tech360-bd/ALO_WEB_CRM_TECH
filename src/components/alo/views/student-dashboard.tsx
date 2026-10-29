@@ -260,7 +260,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
         description={error || "Once your counselor creates your student record, your mission-control dashboard will appear here."}
         action={
           <Button
- className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white "
  onClick={() => onNavigate("student-profile")}
           >
             <Icon name="ArrowRight" className="size-4" />
@@ -354,7 +354,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 </div>
                 <div className="mt-3">
                   <Button
- className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white "
  onClick={() => onNavigate("student-profile")}
                   >
                     <Icon name="UserSquare" className="size-4" />
@@ -429,7 +429,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                 Upload Now
               </Button>
               <Button
- className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white "
  onClick={() => toast({ title: "Reminder snoozed", description: "We'll remind you tomorrow morning." })}
               >
                 <Icon name="BellOff" className="size-4" />
@@ -619,7 +619,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </div>
                   )}
                   <Button
- className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white "
  onClick={() => onNavigate("ai-interview")}
                   >
                     <Icon name="Mic" className="size-4" />
@@ -638,7 +638,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                     </p>
                   </div>
                   <Button
- className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white "
  onClick={() => onNavigate("ai-interview")}
                   >
                     <Icon name="Sparkles" className="size-4" />
@@ -695,7 +695,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                   description="Take a free mock test to estimate your IELTS/PTE band score."
                   action={
                     <Button
- className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black "
+ className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white "
  onClick={() => onNavigate("english-test")}
                     >
                       <Icon name="Sparkles" className="size-4" />

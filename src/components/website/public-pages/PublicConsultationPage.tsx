@@ -348,7 +348,7 @@ export default function PublicConsultationPage() {
                   <Button
                     type="submit"
                     disabled={submitting}
-                    className="w-full h-12 bg-[var(--alo-cta)] text-black font-semibold rounded-xl hover:brightness-110 transition-all"
+                    className="w-full h-12 bg-[var(--alo-cta)] text-white font-semibold rounded-xl hover:brightness-110 transition-all"
                   >
                     {submitting ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>

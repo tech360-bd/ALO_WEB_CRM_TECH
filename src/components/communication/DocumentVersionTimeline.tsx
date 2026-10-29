@@ -3,7 +3,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, Clock, Upload, FileText, ChevronRight, Lock } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Clock, FileText, Lock, Paperclip, Upload, XCircle } from 'lucide-react';
 
 interface DocumentVersion {
   id: string;
@@ -49,7 +49,7 @@ const versionStatusConfig: Record<string, { label: string; classes: string; icon
     icon: <XCircle className="w-3 h-3" />,
   },
   verified: {
-    label: 'Verified ✓',
+    label: 'Verified',
     classes: 'bg-emerald-50 text-emerald-700 border-emerald-300',
     icon: <CheckCircle2 className="w-3 h-3" />,
   },
@@ -166,7 +166,7 @@ export default function DocumentVersionTimeline({
                 </div>
 
                 {ver.fileName && (
-                  <p className="font-mono text-[11px] opacity-80 mt-0.5">📎 {ver.fileName}</p>
+                  <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[11px] opacity-80"><Paperclip className="size-3 shrink-0" />{ver.fileName}</p>
                 )}
 
                 {ver.status === 'rejected' && ver.rejectionReason && (
@@ -192,7 +192,7 @@ export default function DocumentVersionTimeline({
       {canUploadReplacement && (
         <div className="ml-4 p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
           <p className="text-xs font-bold text-amber-900">
-            📄 DOCUMENT REJECTED — Upload a replacement
+            DOCUMENT REJECTED — Upload a replacement
           </p>
           <p className="text-[11px] text-amber-700">
             Reason: <strong>{latestVersion?.rejectionReason}</strong>
@@ -258,7 +258,7 @@ export default function DocumentVersionTimeline({
             </div>
 
             <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800">
-              ⚠️ The rejected document will remain in version history. The student will receive this rejection reason.
+              The rejected document will remain in version history. The student will receive this rejection reason.
             </div>
 
             <div className="flex gap-3 pt-1">

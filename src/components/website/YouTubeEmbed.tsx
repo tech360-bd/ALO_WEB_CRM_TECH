@@ -134,8 +134,10 @@ export default function YouTubeEmbed({
   const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?${srcParams.toString()}`;
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-[var(--alo-border)] bg-black ${className}`}>
-      <div className="relative w-full" style={{ paddingBottom: ASPECT_PADDING[aspect] }}>
+    <div className={`overflow-hidden rounded-xl border border-[var(--alo-border)] bg-white ${className}`}>
+      {/* The dark box is the video letterbox only — it is the media surface,
+          never a page section (Master §02). */}
+      <div className="relative w-full bg-black" style={{ paddingBottom: ASPECT_PADDING[aspect] }}>
         {activated ? (
           <iframe
             src={src}
@@ -152,7 +154,7 @@ export default function YouTubeEmbed({
           <button
             type="button"
             onClick={activate}
-            className="group absolute inset-0 size-full cursor-pointer border-0 bg-slate-900 p-0"
+            className="group absolute inset-0 size-full cursor-pointer border-0 bg-[var(--alo-surface-muted)] p-0"
             aria-label={`Play video: ${title}. Loads from YouTube when played.`}
           >
             {/* A plain <img> rather than next/image: the thumbnail comes from an
@@ -176,11 +178,13 @@ export default function YouTubeEmbed({
                 </svg>
               </span>
             </span>
-            <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3 text-left text-sm font-medium text-white">
-              {title}
-            </span>
           </button>
         )}
+      </div>
+      {/* Caption sits on the white card surface below the media, not on a dark
+          scrim over the poster (Master §02). */}
+      <div className="border-t border-[var(--alo-border)] px-4 py-3 text-left text-sm font-medium text-[var(--alo-text)]">
+        {title}
       </div>
     </div>
   );

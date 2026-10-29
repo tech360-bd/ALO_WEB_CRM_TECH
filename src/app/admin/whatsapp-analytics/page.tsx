@@ -22,38 +22,38 @@ export default function WhatsAppAnalyticsPage() {
   useEffect(() => { fetchAnalytics(); }, []);
 
   return (
-    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+    <div className="p-6 space-y-6 bg-[var(--alo-page)] min-h-screen text-[var(--alo-text)]">
+      <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-600 flex items-center justify-center">
-            <BarChart3 className="w-5 h-5 text-white" />
+            <BarChart3 className="w-5 h-5 text-[var(--alo-text)]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">WhatsApp Analytics</h1>
             <p className="text-[var(--alo-text-muted)] text-sm">Total conversations, leads, active, unread, AI handled, human handled, handovers, avg response, SLA breaches, escalations, urgent, follow-up, conversion, counselor/branch performance</p>
           </div>
         </div>
-        <Button onClick={fetchAnalytics} variant="outline" className="border-white/10"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
+        <Button onClick={fetchAnalytics} variant="outline" className="border-[var(--alo-border)]"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
       </div>
 
       {data && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Total Conversations</p><p className="text-xl font-bold">{data.summary?.totalConversations || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Active</p><p className="text-xl font-bold text-emerald-400">{data.summary?.activeConversations || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">SLA Overdue</p><p className="text-xl font-bold text-rose-400">{data.summary?.slaOverdue || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Urgent Alarms</p><p className="text-xl font-bold text-amber-400">{data.summary?.urgentAlarms || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Follow-up Pending</p><p className="text-xl font-bold">{data.summary?.followUpPending || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Documents</p><p className="text-xl font-bold">{data.summary?.documentVolume || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Contacts</p><p className="text-xl font-bold">{data.summary?.contacts || 0}</p></CardContent></Card>
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Daily Records</p><p className="text-xl font-bold">{data.daily?.length || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Total Conversations</p><p className="text-xl font-bold">{data.summary?.totalConversations || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Active</p><p className="text-xl font-bold text-crm-success-text">{data.summary?.activeConversations || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">SLA Overdue</p><p className="text-xl font-bold text-crm-danger-text">{data.summary?.slaOverdue || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Urgent Alarms</p><p className="text-xl font-bold text-crm-warning-text">{data.summary?.urgentAlarms || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Follow-up Pending</p><p className="text-xl font-bold">{data.summary?.followUpPending || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Documents</p><p className="text-xl font-bold">{data.summary?.documentVolume || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Contacts</p><p className="text-xl font-bold">{data.summary?.contacts || 0}</p></CardContent></Card>
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]"><CardContent className="p-4"><p className="text-xs text-[var(--alo-text-muted)]">Daily Records</p><p className="text-xl font-bold">{data.daily?.length || 0}</p></CardContent></Card>
         </div>
       )}
 
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
         <CardHeader><CardTitle className="text-sm">Daily Analytics</CardTitle></CardHeader>
         <CardContent className="space-y-1">
           {(data?.daily || []).slice(0,30).map((d: any) => (
-            <div key={d.id} className="flex items-center justify-between p-2 rounded bg-white/5 text-xs">
+            <div key={d.id} className="flex items-center justify-between p-2 rounded bg-[var(--alo-surface-muted)] text-xs">
               <span className="font-mono">{d.date}</span>
               <span>Conv: {d.totalConversations} • Leads: {d.newLeads} • AI: {d.aiHandled} • SLA Breach: {d.slaBreaches} • Urgent: {d.urgentCases} • Follow-up: {d.followUpSent} • Docs: {d.documentVolume}</span>
             </div>

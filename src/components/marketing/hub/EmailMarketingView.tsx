@@ -300,7 +300,7 @@ export default function EmailMarketingView() {
                 <input type="checkbox" className="mt-0.5" checked={draft.testMode} onChange={(e) => setDraft({ ...draft, testMode: e.target.checked })} />
                 <span>Test campaign: keep only the configured test recipients. Turn this off only for a real send.</span>
               </label>
-              <Button onClick={createDraft} disabled={busy} className="bg-[var(--alo-cta)] text-black">
+              <Button onClick={createDraft} disabled={busy} className="bg-[var(--alo-cta)] text-white">
                 {busy ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}Create draft (nothing is sent)
               </Button>
             </CardContent>
@@ -385,7 +385,7 @@ export default function EmailMarketingView() {
                       <p className="text-[var(--alo-body)]">Type the exact recipient count ({campaign.recipientCount}) and subject to queue this campaign.</p>
                       <Input value={queueConfirm.recipientCount} onChange={(e) => setQueueConfirm({ ...queueConfirm, recipientCount: e.target.value })} placeholder={`Recipient count: ${campaign.recipientCount}`} className="h-8" />
                       <Input value={queueConfirm.subject} onChange={(e) => setQueueConfirm({ ...queueConfirm, subject: e.target.value })} placeholder="Subject (exact)" className="h-8" />
-                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[var(--alo-cta)] text-black">
+                      <Button size="sm" onClick={queueCampaign} disabled={busy || !confirmReady} className="bg-[var(--alo-cta)] text-white">
                         Queue {campaign.recipientCount} email(s)
                       </Button>
                     </div>

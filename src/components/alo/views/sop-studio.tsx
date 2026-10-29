@@ -469,7 +469,7 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                   <FieldTextarea label="Study gap explanation (optional)" value={studyGap} onChange={setStudyGap} placeholder="If there's a gap, explain credibly..." />
 
                   <Button
-                    className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                    className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                     onClick={handleGenerate}
                     disabled={generating || !studentId}
                   >
@@ -591,7 +591,7 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                   <FieldTextarea label="Achievements" value={cvAchievements} onChange={setCvAchievements} placeholder="Awards, certifications, projects..." />
 
                   <Button
-                    className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                    className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                     onClick={handleGenerateCv}
                     disabled={cvGenerating || !studentId}
                   >
@@ -793,7 +793,7 @@ function SopResultView({
         <CardContent className="space-y-4 pt-5">
           <div className="flex flex-wrap gap-2">
             <Button
-              className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+              className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               onClick={() => {
                 setStatus("STUDENT_REVIEW");
                 toast({ title: "Sent to student portal", description: "Student has been notified to review and personalize the draft." });
@@ -904,7 +904,7 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
           <div className="flex flex-wrap gap-2">
             <Button
  size="sm"
- className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  onClick={() => {
                 setStatus("STUDENT_REVIEW");
                 toast({ title: "Sent to student portal for review" });

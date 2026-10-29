@@ -1,4 +1,5 @@
 "use client";
+import { NamedIcon } from "@/components/ui/named-icon";
 
 import { useState } from "react";
 import { SuperAdminWebsiteCmsHub } from "./SuperAdminWebsiteCmsHub";
@@ -30,14 +31,14 @@ export function SuperAdminMasterCommandCenter() {
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4">
         <div className="flex flex-wrap gap-2 bg-white rounded-xl border p-2 shadow-sm">
           {[
-            { key: "website", label: "Website CMS", icon: "🌐", desc: "Hero, Services, Stories, Team, FAQs, Countries" },
-            { key: "crm", label: "CRM Command", icon: "💼", desc: "Leads, Students, Applications, Finance, HR, Partners" },
-            { key: "agent-tasks", label: "Agent Tasks Hub", icon: "✅", desc: "Perform any agent task realistically" },
-            { key: "system", label: "System & Audit", icon: "🔧", desc: "Health, Audit, Permissions, PWA Status" },
-            { key: "mobile", label: "Mobile PWA", icon: "📱", desc: "Native app-like experience verification" },
+            { key: "website", label: "Website CMS", icon: "Globe", desc: "Hero, Services, Stories, Team, FAQs, Countries" },
+            { key: "crm", label: "CRM Command", icon: "Briefcase", desc: "Leads, Students, Applications, Finance, HR, Partners" },
+            { key: "agent-tasks", label: "Agent Tasks Hub", icon: "CheckCircle2", desc: "Perform any agent task realistically" },
+            { key: "system", label: "System & Audit", icon: "Wrench", desc: "Health, Audit, Permissions, PWA Status" },
+            { key: "mobile", label: "Mobile PWA", icon: "Smartphone", desc: "Native app-like experience verification" },
           ].map(t => (
             <button key={t.key} onClick={()=>setActiveTab(t.key as Tab)} className={`flex-1 min-w-[140px] text-left px-4 py-3 rounded-xl border transition-all ${activeTab===t.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow-md" : "bg-[var(--alo-page)] hover:bg-white border-[var(--alo-border)] text-[var(--alo-body)]"}`}>
-              <div className="flex items-center gap-2 font-semibold text-sm"><span>{t.icon}</span>{t.label}</div>
+              <div className="flex items-center gap-2 font-semibold text-sm"><NamedIcon name={t.icon} className="size-4" />{t.label}</div>
               <div className={`text-[11px] mt-1 ${activeTab===t.key ? "text-[var(--alo-brand-pale)]" : "text-[var(--alo-text-muted)]"}`}>{t.desc}</div>
             </button>
           ))}
@@ -55,18 +56,18 @@ export function SuperAdminMasterCommandCenter() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                   {[
-                    { role: "Counselor", tasks: ["Lead qualification & scoring (uses country/course DB)", "Course matching with eligibility check (IELTS, GPA, budget)", "Student profile completion tracking", "Application draft → review → ready to submit", "SOP/CV review with AI originality check", "Follow-up tasks with SLA"], icon: "🎓" },
-                    { role: "Application Team", tasks: ["Application submission to university/B2B", "Document checklist verification", "Offer management (conditional/unconditional)", "Deposit/CAS/I20/COE tracking", "Deadline monitoring with auto-reminders", "University communication"], icon: "📝" },
-                    { role: "Visa Officer", tasks: ["Visa case creation & readiness score", "Document checklist per country (UK, USA, Canada...)", "Funding review, sponsor verification", "Study gap & refusal review", "Mock interview & feedback", "Visa readiness report with risk flags"], icon: "🛂" },
-                    { role: "Finance", tasks: ["Payment instruction creation", "Commission tracking (university & partner)", "Payroll generation & approval", "Invoice management", "Revenue reporting"], icon: "💰" },
-                    { role: "Marketing", tasks: ["Campaign creation with brand check", "Content generation with approval workflow", "Lead scoring & assignment", "Social inbox & auto-reply", "Calendar scheduling"], icon: "📣" },
-                    { role: "HR & Admin", tasks: ["Employee attendance & leave approval", "Payroll config & run", "Device management", "Document verification (NID, certificates)", "Performance tracking"], icon: "👥" },
-                    { role: "Partner Manager", tasks: ["Partner lead tracking", "Commission calculation", "Partner performance dashboard", "Agreement management"], icon: "🤝" },
-                    { role: "International Officer", tasks: ["University research activity", "Partnership communication (email/agreement)", "Business strategy for rapid partnerships", "Evidence collection with source URLs"], icon: "🌍" },
-                    { role: "Data & Compliance", tasks: ["University/course data verification", "Source change detection", "Approval queue for critical changes", "Content audit logs"], icon: "🔒" },
+                    { role: "Counselor", tasks: ["Lead qualification & scoring (uses country/course DB)", "Course matching with eligibility check (IELTS, GPA, budget)", "Student profile completion tracking", "Application draft → review → ready to submit", "SOP/CV review with AI originality check", "Follow-up tasks with SLA"], icon: "GraduationCap" },
+                    { role: "Application Team", tasks: ["Application submission to university/B2B", "Document checklist verification", "Offer management (conditional/unconditional)", "Deposit/CAS/I20/COE tracking", "Deadline monitoring with auto-reminders", "University communication"], icon: "FileEdit" },
+                    { role: "Visa Officer", tasks: ["Visa case creation & readiness score", "Document checklist per country (UK, USA, Canada...)", "Funding review, sponsor verification", "Study gap & refusal review", "Mock interview & feedback", "Visa readiness report with risk flags"], icon: "Stamp" },
+                    { role: "Finance", tasks: ["Payment instruction creation", "Commission tracking (university & partner)", "Payroll generation & approval", "Invoice management", "Revenue reporting"], icon: "Wallet" },
+                    { role: "Marketing", tasks: ["Campaign creation with brand check", "Content generation with approval workflow", "Lead scoring & assignment", "Social inbox & auto-reply", "Calendar scheduling"], icon: "Megaphone" },
+                    { role: "HR & Admin", tasks: ["Employee attendance & leave approval", "Payroll config & run", "Device management", "Document verification (NID, certificates)", "Performance tracking"], icon: "Users" },
+                    { role: "Partner Manager", tasks: ["Partner lead tracking", "Commission calculation", "Partner performance dashboard", "Agreement management"], icon: "Handshake" },
+                    { role: "International Officer", tasks: ["University research activity", "Partnership communication (email/agreement)", "Business strategy for rapid partnerships", "Evidence collection with source URLs"], icon: "Globe" },
+                    { role: "Data & Compliance", tasks: ["University/course data verification", "Source change detection", "Approval queue for critical changes", "Content audit logs"], icon: "Lock" },
                   ].map(card => (
                     <div key={card.role} className="border rounded-xl p-4 bg-[var(--alo-page)] hover:bg-white hover:shadow-sm transition-all">
-                      <div className="flex items-center gap-2 font-semibold text-sm"><span className="text-lg">{card.icon}</span>{card.role}</div>
+                      <div className="flex items-center gap-2 font-semibold text-sm"><NamedIcon name={card.icon} className="size-5" />{card.role}</div>
                       <ul className="mt-3 space-y-1.5">
                         {card.tasks.map(t=><li key={t} className="text-xs text-[var(--alo-body)] flex gap-1.5"><span className="text-green-600">✓</span><span>{t}</span></li>)}
                       </ul>

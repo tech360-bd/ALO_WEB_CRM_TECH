@@ -129,7 +129,7 @@ export function LineChart({
         ))}
       </svg>
       {labels.length > 0 && (
-        <div className="flex justify-between text-[10px] text-[var(--cc-text-3)] px-1 mt-1">
+        <div className="flex justify-between text-[11px] text-[var(--cc-text-3)] px-1 mt-1">
           {labels.map((l, i) => (
             <span key={i}>{l}</span>
           ))}
@@ -153,7 +153,7 @@ export function BarChart({ segments, height = 180 }: { segments: Segment[]; heig
     <div className="flex items-end gap-2" style={{ height }}>
       {segments.map((s, i) => (
         <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
-          <div className="text-[10px] text-[var(--cc-text-2)]">{s.value}</div>
+          <div className="text-[11px] text-[var(--cc-text-2)]">{s.value}</div>
           <div
             className="w-full rounded-t-md transition-all"
             style={{ height: `${Math.max(4, (s.value / Math.max(...segments.map((x) => x.value))) * 100)}%`, background: s.color }}

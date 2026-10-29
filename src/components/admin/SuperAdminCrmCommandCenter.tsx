@@ -1,4 +1,5 @@
 "use client";
+import { NamedIcon } from "@/components/ui/named-icon";
 
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -6,22 +7,22 @@ import { toast } from "@/hooks/use-toast";
 type CrmModule = "overview" | "leads" | "students" | "applications" | "documents" | "visa" | "finance" | "marketing" | "hr" | "partners" | "universities" | "courses" | "communications" | "tasks" | "reports" | "audit";
 
 const MODULES: { key: CrmModule; label: string; icon: string; desc: string }[] = [
-  { key: "overview", label: "Overview", icon: "📊", desc: "Real metrics" },
-  { key: "leads", label: "Leads", icon: "🎯", desc: "Lead intake & assignment" },
-  { key: "students", label: "Students", icon: "🎓", desc: "Student profiles" },
-  { key: "applications", label: "Applications", icon: "📝", desc: "Pipeline & stages" },
-  { key: "documents", label: "Documents", icon: "📄", desc: "Verification" },
-  { key: "visa", label: "Visa & Compliance", icon: "🛂", desc: "Cases & interviews" },
-  { key: "finance", label: "Finance", icon: "💰", desc: "Payments, commissions, payroll" },
-  { key: "marketing", label: "Marketing", icon: "📣", desc: "Campaigns & content" },
-  { key: "hr", label: "HR & Employees", icon: "👥", desc: "Attendance, leave, payroll" },
-  { key: "partners", label: "Partners", icon: "🤝", desc: "Partner network" },
-  { key: "universities", label: "Universities", icon: "🏛️", desc: "CRM universities" },
-  { key: "courses", label: "Courses", icon: "📚", desc: "CRM courses" },
-  { key: "communications", label: "Comms & SLA", icon: "💬", desc: "Threads, messages, SLA" },
-  { key: "tasks", label: "Agent Tasks", icon: "✅", desc: "All agent tasks" },
-  { key: "reports", label: "Reports", icon: "📈", desc: "Weekly, marketing, visa" },
-  { key: "audit", label: "Audit Logs", icon: "🔒", desc: "Security & audit" },
+  { key: "overview", label: "Overview", icon: "BarChart3", desc: "Real metrics" },
+  { key: "leads", label: "Leads", icon: "Target", desc: "Lead intake & assignment" },
+  { key: "students", label: "Students", icon: "GraduationCap", desc: "Student profiles" },
+  { key: "applications", label: "Applications", icon: "FileEdit", desc: "Pipeline & stages" },
+  { key: "documents", label: "Documents", icon: "FileText", desc: "Verification" },
+  { key: "visa", label: "Visa & Compliance", icon: "Stamp", desc: "Cases & interviews" },
+  { key: "finance", label: "Finance", icon: "Wallet", desc: "Payments, commissions, payroll" },
+  { key: "marketing", label: "Marketing", icon: "Megaphone", desc: "Campaigns & content" },
+  { key: "hr", label: "HR & Employees", icon: "Users", desc: "Attendance, leave, payroll" },
+  { key: "partners", label: "Partners", icon: "Handshake", desc: "Partner network" },
+  { key: "universities", label: "Universities", icon: "Landmark", desc: "CRM universities" },
+  { key: "courses", label: "Courses", icon: "BookOpen", desc: "CRM courses" },
+  { key: "communications", label: "Comms & SLA", icon: "MessageSquare", desc: "Threads, messages, SLA" },
+  { key: "tasks", label: "Agent Tasks", icon: "CheckCircle2", desc: "All agent tasks" },
+  { key: "reports", label: "Reports", icon: "TrendingUp", desc: "Weekly, marketing, visa" },
+  { key: "audit", label: "Audit Logs", icon: "Lock", desc: "Security & audit" },
 ];
 
 export function SuperAdminCrmCommandCenter() {
@@ -76,21 +77,21 @@ export function SuperAdminCrmCommandCenter() {
       <div className="space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {[
-            { label: "Leads", value: c.leads, icon: "🎯", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
-            { label: "Students", value: c.students, icon: "🎓", color: "bg-green-50 text-green-700 border-green-200" },
-            { label: "Applications", value: c.applications, icon: "📝", color: "bg-purple-50 text-purple-700 border-purple-200" },
-            { label: "Visa Cases", value: c.visaCases, icon: "🛂", color: "bg-amber-50 text-amber-700 border-amber-200" },
-            { label: "Docs Pending", value: c.documentsPending, icon: "📄", color: "bg-red-50 text-red-700 border-red-200" },
-            { label: "Employees", value: c.employees, icon: "👥", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-            { label: "Partners", value: c.partners, icon: "🤝", color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-            { label: "Universities", value: c.universities, icon: "🏛️", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
-            { label: "Courses", value: c.courses, icon: "📚", color: "bg-pink-50 text-pink-700 border-pink-200" },
-            { label: "Campaigns", value: c.campaigns, icon: "📣", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-            { label: "Tasks Pending", value: c.tasksPending, icon: "✅", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+            { label: "Leads", value: c.leads, icon: "Target", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+            { label: "Students", value: c.students, icon: "GraduationCap", color: "bg-green-50 text-green-700 border-green-200" },
+            { label: "Applications", value: c.applications, icon: "FileEdit", color: "bg-purple-50 text-purple-700 border-purple-200" },
+            { label: "Visa Cases", value: c.visaCases, icon: "Stamp", color: "bg-amber-50 text-amber-700 border-amber-200" },
+            { label: "Docs Pending", value: c.documentsPending, icon: "FileText", color: "bg-red-50 text-red-700 border-red-200" },
+            { label: "Employees", value: c.employees, icon: "Users", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
+            { label: "Partners", value: c.partners, icon: "Handshake", color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+            { label: "Universities", value: c.universities, icon: "Landmark", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
+            { label: "Courses", value: c.courses, icon: "BookOpen", color: "bg-pink-50 text-pink-700 border-pink-200" },
+            { label: "Campaigns", value: c.campaigns, icon: "Megaphone", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
+            { label: "Tasks Pending", value: c.tasksPending, icon: "CheckCircle2", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
             { label: "SLA Breaches", value: c.slaBreaches, icon: "⏰", color: "bg-red-50 text-red-700 border-red-200" },
           ].map(k => (
             <div key={k.label} className={`rounded-xl border p-4 ${k.color}`}>
-              <div className="flex items-center justify-between"><span className="text-lg">{k.icon}</span><span className="text-2xl font-bold">{k.value ?? 0}</span></div>
+              <div className="flex items-center justify-between"><NamedIcon name={k.icon} className="size-5" /><span className="text-2xl font-bold">{k.value ?? 0}</span></div>
               <div className="text-xs font-medium mt-1">{k.label}</div>
               <div className="text-[11px] opacity-70 mt-1">Live data</div>
             </div>
@@ -209,7 +210,7 @@ export function SuperAdminCrmCommandCenter() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]"}`}><span>{m.icon}</span>{m.label}</button>)}
+        {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]"}`}><NamedIcon name={m.icon} className="size-4" />{m.label}</button>)}
       </div>
 
       {loading ? <div className="bg-white rounded-xl border p-12 text-center text-sm text-[var(--alo-text-muted)]">Loading real CRM data...</div> : activeModule==="overview" ? renderOverview() : renderListModule()}

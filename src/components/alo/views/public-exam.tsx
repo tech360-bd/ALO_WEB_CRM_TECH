@@ -289,7 +289,7 @@ function ExamDetail({
             <div className="flex flex-col gap-2 lg:w-72">
               <Button
                 onClick={startMock}
-                className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Play" className="size-4" />
                 Start Free Mock
@@ -580,7 +580,7 @@ function ExamDetail({
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Button
                 onClick={startMock}
-                className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Play" className="size-4" />
                 Start Free Mock

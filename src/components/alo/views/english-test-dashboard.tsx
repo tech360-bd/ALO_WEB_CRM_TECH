@@ -420,7 +420,7 @@ export function EnglishTestDashboard() {
                 band-score estimate and line-by-line comments.
               </p>
               <Button
- className="mt-3 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className="mt-3 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  onClick={handleWritingReview}
  >
                 <Icon name="Send" className="size-4" />
@@ -462,7 +462,7 @@ export function EnglishTestDashboard() {
               title="No mock tests yet"
               description="Take your first mock test from the “Take New Test” tab. ALO students get 3 free mocks to start."
               action={
-                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setTab("new")}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => setTab("new")}>
                   <Icon name="Plus" className="size-4" />
                   Take New Test
                 </Button>
@@ -605,7 +605,7 @@ export function EnglishTestDashboard() {
                     </p>
                     <div className="mt-auto pt-4">
                       <Button
- className=" w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ className=" w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
  onClick={() => handleStartMock(t.name, freeMocksRemaining)}
                       >
                         <Icon name="Play" className="size-4" />
@@ -654,7 +654,7 @@ export function EnglishTestDashboard() {
               title="No improvement data yet"
               description="Take a few mock tests first — your weak areas will be aggregated here with AI recommendations and a personalised study plan."
               action={
-                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setTab("new")}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => setTab("new")}>
                   <Icon name="Plus" className="size-4" />
                   Take a Mock Test
                 </Button>
@@ -712,7 +712,7 @@ export function EnglishTestDashboard() {
                         </Button>
                         <Button
  size="sm"
- className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  onClick={handleWritingReview}
  >
                           <Icon name="PenLine" className="size-3.5" />
@@ -836,7 +836,7 @@ export function EnglishTestDashboard() {
                           Learn More
                         </Button>
                         <Button
- className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
  onClick={() => handleStartMock(t.name, freeMocksRemaining)}
                         >
                           <Icon name="Play" className="size-3.5" />

@@ -1063,7 +1063,7 @@ export default function UnifiedEmployeeDashboard({
                 <Button type="button" variant="outline" size="sm" onClick={() => setShowLeadModal(false)} className="text-xs">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={creatingLead} size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-semibold">
+                <Button type="submit" disabled={creatingLead} size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-semibold">
                   {creatingLead ? 'Saving...' : 'Register Lead'}
                 </Button>
               </div>

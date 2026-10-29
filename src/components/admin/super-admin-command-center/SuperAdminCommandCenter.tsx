@@ -1,4 +1,5 @@
 "use client";
+import { NamedIcon } from "@/components/ui/named-icon";
 
 /**
  * ALO Enterprise Command Center — Super Admin Dashboard.
@@ -57,36 +58,36 @@ const NAV: NavGroup[] = [
   {
     group: "Overview",
     items: [
-      { key: "command-center", label: "Command Center", icon: "🛡️" },
-      { key: "departments", label: "Departments", icon: "🏛️", badge: "100" },
-      { key: "agents", label: "AI Employees", icon: "🤖", badge: "2,000" },
-      { key: "skills", label: "Skills", icon: "⚡", badge: "10,000+" },
-      { key: "prompts", label: "Prompt Templates", icon: "📝", badge: "50,000+" },
+      { key: "command-center", label: "Command Center", icon: "Shield" },
+      { key: "departments", label: "Departments", icon: "Landmark", badge: "100" },
+      { key: "agents", label: "AI Employees", icon: "Bot", badge: "2,000" },
+      { key: "skills", label: "Skills", icon: "Zap", badge: "10,000+" },
+      { key: "prompts", label: "Prompt Templates", icon: "FileEdit", badge: "50,000+" },
     ],
   },
   {
     group: "Governance",
     items: [
-      { key: "constitutional", label: "Constitutional Rules", icon: "📜", badge: "500+" },
-      { key: "sops", label: "SOPs", icon: "📋", badge: "500+" },
-      { key: "dcc", label: "DCC Certification", icon: "🏅" },
-      { key: "audit", label: "Audit & Compliance", icon: "🔍" },
+      { key: "constitutional", label: "Constitutional Rules", icon: "ScrollText", badge: "500+" },
+      { key: "sops", label: "SOPs", icon: "ClipboardList", badge: "500+" },
+      { key: "dcc", label: "DCC Certification", icon: "Award" },
+      { key: "audit", label: "Audit & Compliance", icon: "Search" },
     ],
   },
   {
     group: "Engines",
     items: [
-      { key: "engines", label: "Enterprise Engines", icon: "⚙️", badge: "28" },
-      { key: "memory", label: "Memory & Knowledge", icon: "🧠" },
-      { key: "security", label: "Security Center", icon: "🔐" },
+      { key: "engines", label: "Enterprise Engines", icon: "Settings", badge: "28" },
+      { key: "memory", label: "Memory & Knowledge", icon: "Brain" },
+      { key: "security", label: "Security Center", icon: "ShieldCheck" },
     ],
   },
   {
     group: "System",
     items: [
-      { key: "monitoring", label: "Observability", icon: "📊" },
-      { key: "rbac", label: "Identity & RBAC", icon: "👥" },
-      { key: "settings", label: "Settings", icon: "⚙️" },
+      { key: "monitoring", label: "Observability", icon: "BarChart3" },
+      { key: "rbac", label: "Identity & RBAC", icon: "Users" },
+      { key: "settings", label: "Settings", icon: "Settings" },
     ],
   },
 ];
@@ -217,10 +218,10 @@ export default function SuperAdminCommandCenter() {
                   )}
                   style={tab === item.key ? { background: "rgba(59,130,246,0.15)", color: "var(--cc-blue)" } : undefined}
                 >
-                  <span>{item.icon}</span>
+                  <NamedIcon name={item.icon} className="size-4" />
                   <span>{item.label}</span>
                   {item.badge && (
-                    <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-[var(--cc-blue)]/20 text-[var(--cc-blue)]">{item.badge}</span>
+                    <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-[var(--cc-blue)]/20 text-[var(--cc-blue)]">{item.badge}</span>
                   )}
                 </button>
               ))}
@@ -273,7 +274,7 @@ export default function SuperAdminCommandCenter() {
             <button className="px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-green)]/20 text-[var(--cc-green)] hover:bg-[var(--cc-green)]/30 transition">⚡ Deploy Agent</button>
             <button className="relative px-3 py-1.5 text-sm rounded-lg hover:bg-[var(--cc-card)] transition">
               🔔
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--cc-red)] text-white text-[10px] rounded-full flex items-center justify-center">3</span>
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--cc-red)] text-white text-[11px] rounded-full flex items-center justify-center">3</span>
             </button>
           </div>
         </header>

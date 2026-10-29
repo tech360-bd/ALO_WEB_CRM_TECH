@@ -1,4 +1,5 @@
 "use client";
+import { TriangleAlert } from 'lucide-react';
 
 import * as React from "react";
 import { Icon, StatCard, SectionCard, EmptyState, LoadingGrid, PageHeader, MiniBar } from "@/components/alo/shared";
@@ -142,9 +143,9 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
                 />
               </div>
               <div className="mt-2 flex justify-between text-xs text-[var(--alo-text-muted)]">
-                <span>⚠️ {pool.warningThreshold}%</span>
-                <span>🟠 {pool.highThreshold}%</span>
-                <span>🔴 {pool.criticalThreshold}%</span>
+                <span className="inline-flex items-center gap-1"><TriangleAlert className="size-3.5 text-[var(--alo-warning)]" />{pool.warningThreshold}%</span>
+                <span className="inline-flex items-center gap-1"><TriangleAlert className="size-3.5 text-[var(--alo-cta)]" />{pool.highThreshold}%</span>
+                <span className="inline-flex items-center gap-1"><TriangleAlert className="size-3.5 text-[var(--alo-error)]" />{pool.criticalThreshold}%</span>
               </div>
               {pool.lastHealthCheck && (
                 <div className="mt-2 text-xs text-[var(--alo-text-muted)]">Last health check: {timeAgo(pool.lastHealthCheck)}</div>

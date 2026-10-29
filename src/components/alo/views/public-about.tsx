@@ -364,21 +364,21 @@ export function PublicAbout({ onNavigate }: PublicAboutProps) {
       </section>
 
       {/* CTA */}
-      <section className="bg-[var(--alo-text)]">
+      <section className="bg-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
-              <h2 className="text-3xl font-black text-white">Ready to start your journey?</h2>
-              <p className="mt-3 text-base leading-relaxed text-white/80">
+              <h2 className="text-3xl font-black text-[var(--alo-text)]">Ready to start your journey?</h2>
+              <p className="mt-3 text-base leading-relaxed text-[var(--alo-text-secondary)]">
                 Book a free 30-minute consultation with one of our counselors. We'll review your profile,
                 recommend destinations and courses, and outline a clear path to admission — no commitment required.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta-hover)]">
+                <Button onClick={() => onNavigate("public-contact")} className="h-12 bg-alo-cta-solid px-6 text-white hover:bg-alo-cta-solid-hover">
                   <Icon name="CalendarCheck" className="size-4" />
                   Request Consultation
                 </Button>
-                <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-white/30 bg-transparent px-6 text-white hover:bg-white/10">
+                <Button onClick={() => onNavigate("public-services")} variant="outline" className="h-12 border-[var(--alo-border-strong)] bg-white px-6 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                   <Icon name="Briefcase" className="size-4" />
                   Explore Services
                 </Button>

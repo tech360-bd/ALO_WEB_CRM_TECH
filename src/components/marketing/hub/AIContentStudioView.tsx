@@ -62,7 +62,7 @@ export default function AIContentStudioView() {
           </div>
           <div className="flex items-center gap-3">
             <label className="text-xs font-semibold">Variations</label><Input type="number" min={1} max={5} value={variations} onChange={e=>setVariations(parseInt(e.target.value)||1)} className="w-20 h-9" />
-            <Button onClick={handleGenerate} disabled={loading || !topic.trim()} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black"><>{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate</></Button>
+            <Button onClick={handleGenerate} disabled={loading || !topic.trim()} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white"><>{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}Generate</></Button>
             <Badge className="bg-[var(--alo-cta-accent)]/20 text-[var(--alo-text)] border-[var(--alo-cta-accent)]">Brand: ALO Orange #E8501A • Blue #0057B8</Badge>
           </div>
         </CardContent>

@@ -2,7 +2,7 @@ import type { EnglishTest } from './types';
 
 /** Official-source editorial facts, not student results or a visa decision. */
 export const REVIEWED_ON = '2026-10-26';
-export const REQUIRED_TEST_SLUGS = ['ielts', 'ielts-ukvi', 'pte-academic', 'oietc', 'toefl-ibt', 'duolingo', 'languagecert', 'kaplan', 'oet', 'cambridge-english', 'gre', 'gmat', 'sat', 'act'] as const;
+export const REQUIRED_TEST_SLUGS = ['ielts', 'ielts-ukvi', 'pte-academic', 'oietc', 'toefl-ibt', 'duolingo', 'languagecert', 'kaplan', 'oet', 'password', 'cambridge-english', 'gre', 'gmat', 'sat', 'act'] as const;
 export const PROVIDER_FEE_NOTICE = 'Fees depend on location, delivery mode and booking date. View the provider booking price before payment.';
 export const ACCEPTANCE_NOTICE = 'Confirm the exact exam, delivery mode and minimum score with your university. Visa evidence rules are separate; a university offer does not confirm visa eligibility.';
 
@@ -23,6 +23,7 @@ export const REVIEWED_TEST_FACTS: Record<string, Facts> = {
   gmat: { durationDisplay: '2h 15m, excluding an optional break', scoringSystem: 'Total 205–805; section scores 60–90.', resultTimeline: 'Consult your GMAT account for official score-report availability.', sourceUrl: 'https://www.mba.com/exams/gmat-exam/register' },
   sat: { durationDisplay: '2h 14m, excluding breaks', scoringSystem: 'Total 400–1600', resultTimeline: 'Use the College Board release date for your specific sitting.', sourceUrl: 'https://satsuite.collegeboard.org/sat/whats-on-the-test/structure' },
   act: { durationDisplay: 'Enhanced core test: 2h 05m; optional science/writing add time.', scoringSystem: 'Composite 1–36; confirm the enhanced format for your administration.', resultTimeline: 'Use ACT’s release schedule for your sitting and optional sections.', sourceUrl: 'https://www.act.org/content/dam/act/unsecured/documents/act-enhancements-educator-guide.pdf' },
+  password: { durationDisplay: 'About 3h 05m online, live-proctored', scoringSystem: 'CEFR-aligned Password score across reading, writing, listening and speaking', resultTimeline: 'Result certificates emailed within five working days.', sourceUrl: 'https://passwordplus.englishlanguagetesting.co.uk/' },
 };
 
 export const CAMBRIDGE_TEST: EnglishTest = {
@@ -58,6 +59,7 @@ export function preparationSteps(test: Pick<EnglishTest, 'slug' | 'name'>): stri
     kaplan: 'Review the official certified KTE format and remote-proctoring requirements; practise academic communication.',
     oet: 'Use profession-specific healthcare reading, writing, listening and role-play speaking tasks.',
     'cambridge-english': 'Choose C1 Advanced or C2 Proficiency and practise Use of English, extended writing and paired speaking.',
+    password: 'Practise the four online modules under timed, proctored conditions and confirm which Password version your institution requires.',
     gre: 'Balance verbal reasoning, quantitative reasoning and analytical writing using current ETS practice tasks.',
     gmat: 'Plan Quantitative Reasoning, Verbal Reasoning and Data Insights practice using current GMAC materials.',
     sat: 'Practise digital Reading and Writing and Math with the current College Board tools and timing.',

@@ -135,13 +135,13 @@ export default function UniversityUpdatesCenter() {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-[var(--alo-text)] min-h-screen text-white">
+    <div className="p-6 space-y-6 bg-[var(--alo-page)] min-h-screen text-[var(--alo-text)]">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--alo-border)] pb-6">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-white" />
+              <ShieldCheck className="w-5 h-5 text-[var(--alo-text)]" />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Weekly AI University Update Center</h1>
@@ -159,7 +159,7 @@ export default function UniversityUpdatesCenter() {
             {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             <span>Run On-Demand Scan</span>
           </Button>
-          <Button onClick={fetchUpdates} variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white">
+          <Button onClick={fetchUpdates} variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:text-[var(--alo-text)]">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
@@ -168,7 +168,7 @@ export default function UniversityUpdatesCenter() {
       {/* Message */}
       {message && (
         <div className={`p-4 rounded-xl flex items-center gap-3 border ${
-          message.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+          message.type === 'success' ? 'bg-[var(--alo-surface-muted)] border-emerald-500/20 text-crm-success-text' : 'bg-[var(--alo-surface-muted)] border-red-500/20 text-crm-danger-text'
         }`}>
           {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
           <p className="text-sm font-medium">{message.text}</p>
@@ -177,25 +177,25 @@ export default function UniversityUpdatesCenter() {
 
       {/* AI Safeguards Banner */}
       <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/20 border border-[var(--alo-brand)]/20 rounded-2xl p-4 flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-          <ShieldCheck className="w-5 h-5 text-blue-400" />
+        <div className="w-10 h-10 rounded-xl bg-[var(--alo-info-bg)] flex items-center justify-center flex-shrink-0">
+          <ShieldCheck className="w-5 h-5 text-[var(--alo-info-text)]" />
         </div>
         <div className="text-xs text-[var(--alo-brand-pale)]">
-          <p className="font-semibold text-white text-sm">Human-in-the-Loop AI Architecture Active</p>
+          <p className="font-semibold text-[var(--alo-text)] text-sm">Human-in-the-Loop AI Architecture Active</p>
           <p className="mt-0.5">This queue contains unverified proposals. Legacy scan and publication actions are unavailable until official field-level evidence and versioned publication are implemented.</p>
         </div>
       </div>
 
       {/* Table */}
-      <Card className="bg-[var(--alo-text)] border-white/10 text-white">
-        <CardHeader className="p-4 border-b border-white/10">
+      <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
+        <CardHeader className="p-4 border-b border-[var(--alo-border)]">
           <CardTitle className="text-base font-semibold">Review Queue ({updates.length})</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-[var(--alo-text-muted)] bg-white/5">
+                <tr className="border-b border-[var(--alo-border)] text-left text-[var(--alo-text-muted)] bg-[var(--alo-surface-muted)]">
                   <th className="p-3 font-medium">Entity & Country</th>
                   <th className="p-3 font-medium">Field</th>
                   <th className="p-3 font-medium">Current Database</th>
@@ -215,23 +215,23 @@ export default function UniversityUpdatesCenter() {
                   </tr>
                 ) : (
                   updates.map(u => (
-                    <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <tr key={u.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-colors">
                       <td className="p-3">
-                        <p className="font-semibold text-white">{u.entityName}</p>
+                        <p className="font-semibold text-[var(--alo-text)]">{u.entityName}</p>
                         <p className="text-xs text-[var(--alo-text-muted)]">{u.country} - {u.entityType}</p>
                       </td>
-                      <td className="p-3 font-mono text-xs text-blue-400">{u.fieldName}</td>
-                      <td className="p-3 text-red-400 text-xs line-through">{u.oldValue || 'None'}</td>
-                      <td className="p-3 text-emerald-400 text-xs font-semibold">{u.newValue}</td>
+                      <td className="p-3 font-mono text-xs text-[var(--alo-info-text)]">{u.fieldName}</td>
+                      <td className="p-3 text-crm-danger-text text-xs line-through">{u.oldValue || 'None'}</td>
+                      <td className="p-3 text-crm-success-text text-xs font-semibold">{u.newValue}</td>
                       <td className="p-3">
                         <Badge className={
-                          u.aiConfidence >= 0.85 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                          'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                          u.aiConfidence >= 0.85 ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' :
+                          'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border'
                         }>
                           {(u.aiConfidence * 100).toFixed(0)}% CONFIDENCE
                         </Badge>
                       </td>
-                      <td className="p-3 text-xs text-blue-400">
+                      <td className="p-3 text-xs text-[var(--alo-info-text)]">
                         {u.evidenceUrl ? (
                           <a href={u.evidenceUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:underline">
                             <span>Official Page</span>
@@ -242,7 +242,7 @@ export default function UniversityUpdatesCenter() {
                         )}
                       </td>
                       <td className="p-3">
-                        <Badge variant="outline" className="border-white/10 text-[var(--alo-placeholder)]">
+                        <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)]">
                           {u.status.toUpperCase()}
                         </Badge>
                       </td>
@@ -262,7 +262,7 @@ export default function UniversityUpdatesCenter() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => handleReject(u.id)}
-                                className="text-red-400 hover:bg-red-500/10"
+                                className="text-crm-danger-text hover:bg-[var(--alo-surface-muted)]"
                               >
                                 <X className="w-3.5 h-3.5" />
                               </Button>

@@ -112,7 +112,7 @@ export default function HrmProfilePage() {
             <section><p className="font-semibold text-[var(--alo-body)]">Languages</p><div className="mt-1 flex flex-wrap gap-1">{data.languages?.length ? data.languages.map((item: any) => <Badge key={item.id} variant="outline">{item.name}: {item.speaking}/{item.writing}</Badge>) : <span className="text-[var(--alo-text-muted)]">No languages.</span>}</div></section>
           </CardContent></Card></TabsContent>
           <div className="flex gap-2">
-            {data.canEdit && <Button type="submit" disabled={saving} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black text-sm">{saving ? 'Saving…' : 'Save personal-profile fields'}</Button>}
+            {data.canEdit && <Button type="submit" disabled={saving} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white text-sm">{saving ? 'Saving…' : 'Save personal-profile fields'}</Button>}
             <Button type="button" variant="outline" onClick={() => void fetchProfile()} className="h-9 text-sm">Reload</Button>
           </div>
           <p className="text-xs text-[var(--alo-text-muted)]">Employment, role, branch, access, lifecycle, salary and bank changes must use their dedicated reviewed workflows; they cannot be changed here.</p>

@@ -57,6 +57,12 @@ interface ReplyQueueItem {
   fromName: string;
   originalMessage: string;
   suggestedReply: string;
+  /**
+   * Optional: only conversations that resolve a student record carry it, so
+   * the queue builder leaves it undefined rather than guessing a name. The
+   * UI already renders the "· Record …" suffix conditionally.
+   */
+  studentName?: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -387,7 +393,7 @@ function ContentGeneratorTab() {
             <Label className="text-xs font-semibold">Call to action (optional)</Label>
             <Input className="h-11" placeholder="Add a verified, appropriate next step" value={form.cta} onChange={(event) => setField("cta", event.target.value)} />
           </div>
-          <Button onClick={handleGenerate} disabled={generating} className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90">
+          <Button onClick={handleGenerate} disabled={generating} className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
             <Icon name={generating ? "Loader2" : "Sparkles"} className={cn("size-4", generating && "animate-spin")} />
             {generating ? "Generating and saving..." : "Generate Review Draft"}
           </Button>
@@ -560,7 +566,7 @@ function CampaignCalendarTab() {
       title="Marketing planning calendar"
       icon="CalendarRange"
       description="Database-backed planning records and campaign-post workflow statuses. No connected scheduler or provider publishes from this calendar."
-      action={<Button onClick={() => setCreateOpen((open) => !open)} className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"><Icon name={createOpen ? "X" : "Plus"} className="size-4" /> {createOpen ? "Close form" : "Add planning entry"}</Button>}
+      action={<Button onClick={() => setCreateOpen((open) => !open)} className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"><Icon name={createOpen ? "X" : "Plus"} className="size-4" /> {createOpen ? "Close form" : "Add planning entry"}</Button>}
     >
       {createOpen && (
         <form onSubmit={handleCreate} className="mb-5 space-y-3 rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-page)] p-4">

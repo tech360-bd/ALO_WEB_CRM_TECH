@@ -83,7 +83,7 @@ export default function PartnerSearchProgramsPage() {
                 <p className="text-xs text-[var(--alo-text-muted)]">{c.university?.name} • {c.country}</p>
                 <div className="flex gap-2 mt-3">
                   <Link href={`/partner/program/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[var(--alo-brand)] text-white ">View Program</Button></Link>
-                  <Link href={`/partner/apply/${selectedStudent?.id || 'student'}/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[var(--alo-cta)] text-black " disabled={!selectedStudent}>Apply for Own Student</Button></Link>
+                  <Link href={`/partner/apply/${selectedStudent?.id || 'student'}/${c.courseId}`} className="flex-1"><Button size="sm" className="w-full bg-[var(--alo-cta)] text-white " disabled={!selectedStudent}>Apply for Own Student</Button></Link>
                 </div>
                 <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Partner can see ONLY own permitted commission — backend must enforce, not frontend hiding. Other partner students/commissions/internal ALO notes/staff risk notes/full finance blocked.</p>
               </Card>

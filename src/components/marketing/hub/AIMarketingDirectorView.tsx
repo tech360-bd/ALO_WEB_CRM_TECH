@@ -143,7 +143,7 @@ export default function AIMarketingDirectorView() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleGenerate} disabled={loading || !instruction.trim()} className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">
+              <Button onClick={handleGenerate} disabled={loading || !instruction.trim()} className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white ">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
                 Generate Plan
               </Button>

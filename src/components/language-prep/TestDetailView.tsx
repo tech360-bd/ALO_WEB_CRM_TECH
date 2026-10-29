@@ -9,7 +9,7 @@ import {
   Award, BookOpen, Clock, Globe, GraduationCap, HelpCircle, MapPin, MessageSquare, Phone,
   Search, ShieldCheck, Sparkles, Target, ArrowRight, CheckCircle2, ChevronDown, FileText,
   BarChart3, Headphones, PenTool, Mic, BookOpenCheck, Timer, Trophy, TrendingUp, AlertCircle,
-  Building2, Layers, Lightbulb, Video, Library, BookMarked, ClipboardCheck, Users, Star,
+  Building2, Layers, Lightbulb, Video, Library, BookMarked, ClipboardCheck, Users, Star, ArrowUpRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import TestPreparationMiniCard from '@/components/website/TestPreparationMiniCard';
@@ -162,7 +162,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <div className="flex flex-wrap items-center gap-2.5">
                 <Badge className="bg-[var(--alo-brand)] text-white font-bold text-[11px] px-3 py-1">{test.name}</Badge>
                 {test.testType !== 'moi_guidance' && <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-text)] font-semibold text-[11px]">{test.format}</Badge>}
-                {test.isPopular && <Badge className="bg-[var(--alo-cta)] text-black font-bold text-[11px]">Popular</Badge>}
+                {test.isPopular && <Badge className="bg-[var(--alo-cta)] text-white font-bold text-[11px]">Popular</Badge>}
                 {isMoi && <Badge className="bg-amber-50 text-amber-700 border-amber-200 font-bold text-[11px]">Guidance Resource — Not a test</Badge>}
               </div>
 
@@ -185,7 +185,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               )}
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
+                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
                     Request {test.shortName} Counselling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold text-sm h-12 px-6 rounded-xl"><a href="#assessment">
@@ -225,7 +225,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                 </div>
 
                 <Button asChild variant="outline" className="w-full bg-white border-[var(--alo-border)] font-semibold rounded-xl "><a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
-                    Official Provider: {test.provider} ↗
+                    Official Provider: {test.provider} <ArrowUpRight className="inline-block h-3.5 w-3.5" aria-hidden="true" />
                   </a></Button>
               </Card>
             </div>
@@ -277,7 +277,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
             {/* Test Modules — 4-card layout */}
             <section>
               <LanguageSectionVisual index={4} />
-              <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-6">{test.name} Modules — {modules.length} modules</h2>
+              <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-6">{test.name} Modules{modules.length > 0 ? ` — ${modules.length} modules` : ''}</h2>
               <div className="grid sm:grid-cols-2 gap-5">
                 {modules.map((mod: any, i: number) => (
                   <Card key={mod.id || i} className="p-6 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition rounded-3xl">
@@ -536,7 +536,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
             {/* FAQ — 15-20 per test */}
             <section>
               <LanguageSectionVisual index={14} />
-              <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">FAQ — {test.name} — {faqs.length} questions</h2>
+              <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">FAQ — {test.name}{faqs.length > 0 ? ` — ${faqs.length} questions` : ''}</h2>
               <p className="text-xs text-[var(--alo-text-muted)] mb-4">Test guidance, admission requirements and preparation questions</p>
               <div className="space-y-3">
                 {faqs.map((faq: any, idx: number) => (
@@ -575,7 +575,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                   <Input placeholder="Current Score" value={leadForm.currentScore} onChange={e => setLeadForm({ ...leadForm, currentScore: e.target.value })} className="h-11 rounded-xl bg-white text-[var(--alo-text)] border-0" />
                   <Input placeholder="Target Score" value={leadForm.targetScore} onChange={e => setLeadForm({ ...leadForm, targetScore: e.target.value })} className="h-11 rounded-xl bg-white text-[var(--alo-text)] border-0" />
                   <div className="sm:col-span-2">
-                    <Button type="submit" className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold h-12 rounded-xl">Submit Enquiry →</Button>
+                    <Button type="submit" className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold h-12 rounded-xl">Submit Enquiry →</Button>
                   </div>
                 </form>
 
@@ -614,7 +614,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <Card className="p-5 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-lg rounded-2xl">
                 <h4 className="text-sm font-bold mb-2">Need Help?</h4>
                 <p className="text-xs text-[var(--alo-brand-pale)] leading-relaxed mb-4">Not sure which test your university requires? Tell us your destination and course.</p>
-                <Button asChild className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold rounded-xl "><a href="#book-counselling">Request Counselling →</a></Button>
+                <Button asChild className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold rounded-xl "><a href="#book-counselling">Request Counselling →</a></Button>
                 <p className="text-[11px] text-[var(--alo-brand-pale)] mt-3">{ALO_CONTACT.hasWhatsApp ? `WhatsApp: ${ALO_CONTACT.whatsappDisplay} • ` : ''}Email: {ALO_CONTACT.email}</p>
               </Card>
 
@@ -626,7 +626,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                     <a key={i} href={r.resourceUrl} target={r.isExternal ? '_blank' : '_self'} className="block p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)] hover:bg-white hover:border-[var(--alo-brand)]/20 transition">
                       <p className="text-xs font-semibold text-[var(--alo-text)]">{r.title}</p>
                       <p className="text-[11px] text-[var(--alo-text-muted)] mt-1 line-clamp-2">{r.description}</p>
-                      <span className="text-[11px] text-[var(--alo-brand)] font-bold mt-1 inline-block">{r.resourceType} {r.isExternal ? '↗' : '→'}</span>
+                      <span className="text-[11px] text-[var(--alo-brand)] font-bold mt-1 inline-block">{r.resourceType} {r.isExternal ? <ArrowUpRight className="inline-block h-3 w-3" aria-hidden="true" /> : <ArrowRight className="inline-block h-3 w-3" aria-hidden="true" />}</span>
                     </a>
                   ))}
                 </div>

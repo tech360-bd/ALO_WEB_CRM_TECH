@@ -454,7 +454,7 @@ function StageFlowStepper({ currentStatus }: { currentStatus: ApplicationStatus 
                   )}
                 >
                   {isCompleted ? (
-                    <CheckCircle2 className="size-4 text-white" />
+                    <CheckCircle2 className="size-4 text-[var(--alo-text)]" />
                   ) : isCurrent ? (
                     <Icon className={cn('size-3.5', config.textColor)} />
                   ) : (
@@ -502,7 +502,7 @@ function ApplicationCard({
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="flex items-start gap-3">
             {/* Logo placeholder */}
-            <div className="flex items-center justify-center size-12 rounded-lg bg-[var(--alo-text)]/5 border border-[var(--alo-text)]/10 shrink-0">
+            <div className="flex items-center justify-center size-12 rounded-lg bg-[var(--alo-page)]/5 border border-[var(--alo-text)]/10 shrink-0">
               <Building2 className="size-6 text-[var(--alo-text)]/40" />
             </div>
             <div>
@@ -629,7 +629,7 @@ function ApplicationTableRow({
     <TableRow className="cursor-pointer" onClick={() => onViewDetails(application)}>
       <TableCell>
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center size-8 rounded-md bg-[var(--alo-text)]/5 border border-[var(--alo-text)]/10 shrink-0">
+          <div className="flex items-center justify-center size-8 rounded-md bg-[var(--alo-page)]/5 border border-[var(--alo-text)]/10 shrink-0">
             <Building2 className="size-4 text-[var(--alo-text)]/40" />
           </div>
           <div>
@@ -905,7 +905,7 @@ function EmptyState() {
   const setView = usePortalStore((s) => s.setView);
 
   return (
-    <Card className="border-dashed border-2 border-[var(--alo-text)]/10 bg-[var(--alo-text)]/[0.01]">
+    <Card className="border-dashed border-2 border-[var(--alo-text)]/10 bg-[var(--alo-page)]/[0.01]">
       <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
         <div className="flex items-center justify-center size-20 rounded-full bg-[var(--alo-cta-soft)] mb-6">
           <GraduationCap className="size-10 text-[var(--alo-cta-hover)]/70" />
@@ -1107,7 +1107,7 @@ export default function StudentApplications() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-[var(--alo-text)]">My Applications</h1>
-          <Badge className="bg-[var(--alo-text)] text-white hover:bg-[var(--alo-text)]/90 text-sm px-2.5">
+          <Badge className="bg-[var(--alo-page)] text-[var(--alo-text)] hover:bg-[var(--alo-page)]/90 text-sm px-2.5">
             {applications.length}
           </Badge>
         </div>
@@ -1116,7 +1116,7 @@ export default function StudentApplications() {
             variant={viewMode === 'card' ? 'default' : 'ghost'}
             size="icon-sm"
             onClick={() => setViewMode('card')}
-            className={viewMode === 'card' ? 'bg-[var(--alo-text)] hover:bg-[var(--alo-text)]/90 text-white' : 'text-[var(--alo-text)]/50'}
+            className={viewMode === 'card' ? 'bg-[var(--alo-page)] hover:bg-[var(--alo-page)]/90 text-[var(--alo-text)]' : 'text-[var(--alo-text)]/50'}
           >
             <LayoutGrid className="size-4" />
           </Button>
@@ -1124,7 +1124,7 @@ export default function StudentApplications() {
             variant={viewMode === 'table' ? 'default' : 'ghost'}
             size="icon-sm"
             onClick={() => setViewMode('table')}
-            className={viewMode === 'table' ? 'bg-[var(--alo-text)] hover:bg-[var(--alo-text)]/90 text-white' : 'text-[var(--alo-text)]/50'}
+            className={viewMode === 'table' ? 'bg-[var(--alo-page)] hover:bg-[var(--alo-page)]/90 text-[var(--alo-text)]' : 'text-[var(--alo-text)]/50'}
           >
             <List className="size-4" />
           </Button>

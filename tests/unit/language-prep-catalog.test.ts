@@ -51,12 +51,12 @@ describe('language preparation catalogue acceptance', () => {
     expect(reviewedModules('toefl-ibt', 'db-id')?.map(m => m.moduleName)).toEqual(['Reading', 'Listening', 'Writing', 'Speaking']);
     expect(reviewedModules('toefl-ibt', 'db-id', '2026-11-01')).toBeNull();
   });
-  it('renders all fourteen test families in one accessible comparison with cost and source links', () => {
+  it('renders every required test family in one accessible comparison with cost and source links', () => {
     const html = renderToStaticMarkup(createElement(LanguageTestComparison, { tests: ENGLISH_PREP_TESTS }));
     expect(html).toContain('University &amp; visa acceptance');
     expect(html).toContain('Cost');
     for (const slug of REQUIRED_TEST_SLUGS) expect(html).toContain(`href="/language-prep/${slug}"`);
-    expect(html.match(/scope="row"/g)).toHaveLength(14);
+    expect(html.match(/scope="row"/g)).toHaveLength(REQUIRED_TEST_SLUGS.length);
   });
   it('uses existing local photography rather than broken external media placeholders', () => {
     for (const image of LANGUAGE_PREP_PHOTOS) expect(existsSync(`public${image.src}`)).toBe(true);

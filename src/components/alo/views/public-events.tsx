@@ -449,7 +449,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                   )}
                 </div>
                 {!isPast && !registered && (
-                  <Button onClick={register} disabled={registering} className="mt-5 h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]">
+                  <Button onClick={register} disabled={registering} className="mt-5 h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
                     {registering ? (
                       <><Icon name="Loader2" className="size-4 animate-spin" /> Registering...</>
                     ) : (

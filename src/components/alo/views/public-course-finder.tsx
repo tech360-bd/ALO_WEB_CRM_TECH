@@ -794,7 +794,7 @@ function CourseCard({
           </Button>
           <Button
  onClick={onApply}
- className=" flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  size="sm"
  >
             <Icon name="Send" className="size-4" />

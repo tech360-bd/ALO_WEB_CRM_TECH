@@ -163,19 +163,19 @@ export default function StudentAiInterviewPage() {
 
   if (!sessionId) {
     return (
-      <div className="space-y-6 max-w-4xl mx-auto text-white p-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="space-y-6 max-w-4xl mx-auto text-[var(--alo-text)] p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--alo-border)] pb-6">
           <div>
             <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-[#60a5fa] border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
             <p className="text-[var(--alo-text-muted)] text-xs mt-1">Practise embassy credibility questions one at a time. The AI is accent-tolerant — it evaluates the meaning, clarity and consistency of your answers, never your accent — and follows up where an answer is incomplete. This is practice only: it cannot guarantee a visa outcome, and a human officer makes the final internal assessment.</p>
           </div>
-          <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white ">Back to Visa Readiness</Button></Link>
+          <Link href="/student/visa"><Button variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:text-[var(--alo-text)] ">Back to Visa Readiness</Button></Link>
         </div>
 
-        <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+        <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
           <CardHeader><CardTitle className="text-sm">Select Interview Type — 9 Types: Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <select value={interviewType} onChange={e => setInterviewType(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-white">
+            <select value={interviewType} onChange={e => setInterviewType(e.target.value)} className="w-full bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] rounded-lg p-3 text-sm text-[var(--alo-text)]">
               <option value="embassy_mock">Embassy Mock — Common Questions</option>
               <option value="credibility">Credibility Interview — UKVI Style</option>
               <option value="pre_cas">Pre-CAS Interview — University</option>
@@ -195,34 +195,34 @@ export default function StudentAiInterviewPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto text-white p-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="space-y-6 max-w-4xl mx-auto text-[var(--alo-text)] p-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--alo-border)] pb-6">
         <div>
           <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-[#60a5fa] border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator — Session {sessionId}</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
           <p className="text-[var(--alo-text-muted)] text-xs mt-1">One general practice question at a time. Responses are saved for officer review; automated language, risk, and eligibility scoring is not enabled.</p>
         </div>
-        <Link href="/student/visa"><Button variant="outline" className="border-white/10 text-[var(--alo-placeholder)] hover:text-white ">Back to Visa Readiness</Button></Link>
+        <Link href="/student/visa"><Button variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:text-[var(--alo-text)] ">Back to Visa Readiness</Button></Link>
       </div>
 
       {!completed ? (
         <div className="space-y-6">
-          <div className="flex items-center justify-between text-xs text-[var(--alo-text-muted)]"><span>Question {currentIdx + 1} of {questions.length}</span><span>Category: <strong className="text-white">{currentQ?.category}</strong> • Label: {currentQ?.researchLabel || 'Practice'}</span></div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-cta)] transition-all duration-300" style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }} /></div>
+          <div className="flex items-center justify-between text-xs text-[var(--alo-text-muted)]"><span>Question {currentIdx + 1} of {questions.length}</span><span>Category: <strong className="text-[var(--alo-text)]">{currentQ?.category}</strong> • Label: {currentQ?.researchLabel || 'Practice'}</span></div>
+          <div className="h-1.5 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-cta)] transition-all duration-300" style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }} /></div>
 
-          <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+          <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)]/20 text-[#60a5fa] flex items-center justify-center flex-shrink-0 mt-0.5"><span className="font-bold text-sm">Q{currentIdx + 1}</span></div>
-                <div><h2 className="text-lg font-semibold text-white leading-relaxed">{currentQ?.question}</h2><p className="text-[11px] text-blue-300 mt-2 bg-blue-500/10 p-2.5 rounded-lg border border-[var(--alo-brand)]/20">Counsellor tip: Focus on specific curriculum modules, faculty, research facilities, your legitimate source of funds and your career plan after graduation. Keep every answer truthful and consistent with your documents.</p></div>
+                <div><h2 className="text-lg font-semibold text-[var(--alo-text)] leading-relaxed">{currentQ?.question}</h2><p className="text-[11px] text-[var(--alo-info-text)] mt-2 bg-[var(--alo-surface-muted)] p-2.5 rounded-lg border border-[var(--alo-brand)]/20">Counsellor tip: Focus on specific curriculum modules, faculty, research facilities, your legitimate source of funds and your career plan after graduation. Keep every answer truthful and consistent with your documents.</p></div>
               </div>
             </CardContent>
           </Card>
 
           {!feedback ? (
-            <Card className="bg-[var(--alo-text)] border-white/10 text-white">
+            <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
               <CardContent className="p-6 space-y-4">
                 <label className="block text-xs font-medium text-[var(--alo-placeholder)]">Your Answer (Type) — practice only; do not include account numbers, passwords, OTPs, or facts you cannot verify</label>
-                <textarea rows={5} value={userAnswer} onChange={e => setUserAnswer(e.target.value)} placeholder="State your clear, genuine answer here — based on your real documents and plans" className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[var(--alo-brand)] text-sm" />
+                <textarea rows={5} value={userAnswer} onChange={e => setUserAnswer(e.target.value)} placeholder="State your clear, genuine answer here — based on your real documents and plans" className="w-full p-4 bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] rounded-xl text-[var(--alo-text)] placeholder-gray-500 focus:outline-none focus:border-[var(--alo-brand)] text-sm" />
                 <div className="flex items-center justify-between gap-4">
                   <p className="text-[11px] text-[var(--alo-text-muted)]">Audio recording is not available in this practice workflow.</p>
                   <Button onClick={handleSubmitAnswer} disabled={!userAnswer.trim() || submitting} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white flex items-center gap-2">{submitting ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Saving response…</span> : <span className="flex items-center gap-2"><Send className="w-4 h-4" /> Save Practice Response</span>}</Button>
@@ -230,31 +230,31 @@ export default function StudentAiInterviewPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="bg-gradient-to-br from-[var(--alo-text)] to-[#152238] border-emerald-500/30 text-white animate-in fade-in">
-              <CardHeader className="p-6 border-b border-white/10 flex flex-row items-center justify-between"><div><Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30">Saved — human review pending</Badge><CardTitle className="text-base font-bold mt-1">Practice response saved</CardTitle></div><div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs">REVIEW</div></CardHeader>
+            <Card className="border-crm-success-border bg-crm-success-bg text-[var(--alo-text)] animate-in fade-in">
+              <CardHeader className="p-6 border-b border-[var(--alo-border)] flex flex-row items-center justify-between"><div><Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border">Saved — human review pending</Badge><CardTitle className="text-base font-bold mt-1">Practice response saved</CardTitle></div><div className="w-12 h-12 rounded-2xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center font-bold text-xs">REVIEW</div></CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div><p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Status</p><p className="text-sm text-gray-200 mt-1">{feedback.strengths}</p></div>
-                <div><p className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Practice reminder</p><p className="text-sm text-gray-200 mt-1">{feedback.improvements}</p></div>
-                {feedback.flags?.length > 0 && <div className="bg-amber-500/10 p-3 rounded-lg border border-amber-500/20 text-xs text-amber-300">Practice note: {feedback.flags.join(', ')}. You may add more detail in your own words; do not invent information.</div>}
-                <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-xs text-[var(--alo-text-muted)]">{feedback.accentToleranceNote}</div>
-                <div className="bg-blue-500/10 p-3 rounded-lg border border-[var(--alo-brand)]/20 text-xs text-blue-300">Your saved question and response are for practice only. Automated assessment is not enabled; a human officer must review the session.</div>
-                <div className="flex justify-end pt-4 border-t border-white/10"><Button onClick={handleNext} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white flex items-center gap-2"><span>{currentIdx < questions.length - 1 ? 'Next Practice Question' : 'Finish Practice Session'}</span><ArrowRight className="w-4 h-4" /></Button></div>
+                <div><p className="text-xs font-semibold text-crm-success-text uppercase tracking-wider">Status</p><p className="text-sm text-[var(--alo-body)] mt-1">{feedback.strengths}</p></div>
+                <div><p className="text-xs font-semibold text-crm-warning-text uppercase tracking-wider">Practice reminder</p><p className="text-sm text-[var(--alo-body)] mt-1">{feedback.improvements}</p></div>
+                {feedback.flags?.length > 0 && <div className="bg-[var(--alo-surface-muted)] p-3 rounded-lg border border-crm-warning-border text-xs text-crm-warning-text">Practice note: {feedback.flags.join(', ')}. You may add more detail in your own words; do not invent information.</div>}
+                <div className="bg-[var(--alo-surface-muted)] p-3 rounded-lg border border-[var(--alo-border)] text-xs text-[var(--alo-text-muted)]">{feedback.accentToleranceNote}</div>
+                <div className="bg-[var(--alo-surface-muted)] p-3 rounded-lg border border-[var(--alo-brand)]/20 text-xs text-[var(--alo-info-text)]">Your saved question and response are for practice only. Automated assessment is not enabled; a human officer must review the session.</div>
+                <div className="flex justify-end pt-4 border-t border-[var(--alo-border)]"><Button onClick={handleNext} className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white flex items-center gap-2"><span>{currentIdx < questions.length - 1 ? 'Next Practice Question' : 'Finish Practice Session'}</span><ArrowRight className="w-4 h-4" /></Button></div>
               </CardContent>
             </Card>
           )}
         </div>
       ) : (
-        <Card className="bg-[var(--alo-text)] border-white/10 text-white text-center p-8">
+        <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)] text-center p-8">
           <CardContent className="space-y-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center mx-auto"><Award className="w-8 h-8 text-white" /></div>
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-cta)] flex items-center justify-center mx-auto"><Award className="w-8 h-8 text-[var(--alo-text)]" /></div>
             <div><h2 className="text-2xl font-bold">Practice Session Completed</h2><p className="text-[var(--alo-text-muted)] text-xs mt-1">Your transcript has been saved. Automated scoring is not enabled; officer review is pending. This is not an official embassy interview or visa decision.</p></div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-[var(--alo-text-muted)]">Automated Score</p><p className="text-sm font-bold text-[var(--alo-placeholder)] mt-2">Not calculated</p></div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-[var(--alo-text-muted)]">Responses Saved</p><p className="text-2xl font-bold text-white mt-1">{history.length}</p></div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10"><p className="text-xs text-[var(--alo-text-muted)]">Human Review</p><p className="text-sm font-bold text-amber-400 mt-2">{finalResult?.assessmentStatus || 'Pending'}</p></div>
+              <div className="bg-[var(--alo-surface-muted)] p-4 rounded-xl border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Automated Score</p><p className="text-sm font-bold text-[var(--alo-placeholder)] mt-2">Not calculated</p></div>
+              <div className="bg-[var(--alo-surface-muted)] p-4 rounded-xl border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Responses Saved</p><p className="text-2xl font-bold text-[var(--alo-text)] mt-1">{history.length}</p></div>
+              <div className="bg-[var(--alo-surface-muted)] p-4 rounded-xl border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Human Review</p><p className="text-sm font-bold text-crm-warning-text mt-2">{finalResult?.assessmentStatus || 'Pending'}</p></div>
             </div>
             <div className="text-[11px] text-[var(--alo-text-muted)]">No automated assessment or visa decision is made by this practice flow. Share only facts you can verify and never enter banking credentials or OTPs.</div>
-            <div className="flex justify-center gap-4 pt-4"><Button onClick={handleRestart} variant="outline" className="border-white/10 text-[var(--alo-placeholder)] flex items-center gap-2"><RotateCcw className="w-4 h-4" /><span>Practice Again</span></Button><Link href="/student/visa"><Button className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white">Return to Visa Center</Button></Link></div>
+            <div className="flex justify-center gap-4 pt-4"><Button onClick={handleRestart} variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)] flex items-center gap-2"><RotateCcw className="w-4 h-4" /><span>Practice Again</span></Button><Link href="/student/visa"><Button className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white">Return to Visa Center</Button></Link></div>
           </CardContent>
         </Card>
       )}

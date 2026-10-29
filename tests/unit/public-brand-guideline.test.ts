@@ -9,11 +9,13 @@ const navbar = read('src/components/website/PublicNavbar.tsx');
 describe('public brand guideline contract', () => {
   it('uses the exact requested colours and neutral text', () => {
     const css = read('src/app/globals.css');
-    for (const declaration of ['--alo-brand: #0066CC;', '--alo-cta: #F37021;', '--alo-accent: #FFB347;', '--alo-text: #000000;', '--alo-text-secondary: #555555;']) {
+    // Master §03 palette: Brand Blue #0057B8, CTA Orange #E8501A (solid fill
+    // #C93D13 so a white label clears 4.5:1), Main Text #0F172A.
+    for (const declaration of ['--alo-brand: #0057B8;', '--alo-cta-vivid: #E8501A;', '--alo-cta-solid: #C93D13;', '--alo-text: #0F172A;', '--alo-body: #334155;']) {
       expect(css).toContain(declaration);
     }
-    expect(footer).toContain("['#0066CC', '#F37021', '#FFB347']");
-    expect(JSON.parse(read('public/manifest.json')).theme_color).toBe('#0066CC');
+    expect(footer).toContain("['#0057B8', '#E8501A', '#C93D13']");
+    expect(JSON.parse(read('public/manifest.json')).theme_color).toBe('#0057B8');
   });
 
   it('keeps all required destination and company pages reachable', () => {

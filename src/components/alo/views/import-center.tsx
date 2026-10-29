@@ -1120,7 +1120,7 @@ export function ImportCenter() {
                       Parse &amp; Preview
                     </Button>
                     <Button
-                      className="h-12 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                      className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                       disabled={importing}
                       onClick={handleImportDraft}
                     >

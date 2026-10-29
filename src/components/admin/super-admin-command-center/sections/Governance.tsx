@@ -1,4 +1,5 @@
 "use client";
+import { CheckCircle2, TriangleAlert, XCircle } from 'lucide-react';
 
 import * as React from "react";
 import {
@@ -58,15 +59,15 @@ function ConstitutionalRules() {
         <SectionTitle>Rule Enforcement (Last 24h)</SectionTitle>
         <div className="space-y-2">
           <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--cc-bg-2)]">
-            <span className="text-sm text-[var(--cc-green)]">✓ Rules passed</span>
+            <span className="flex items-center gap-1.5 text-sm text-[var(--cc-green)]"><CheckCircle2 className="size-4" />Rules passed</span>
             <span className="text-sm font-bold text-[var(--cc-green)]">14,832</span>
           </div>
           <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--cc-bg-2)]">
-            <span className="text-sm text-[var(--cc-orange)]">⚠ Rules warned</span>
+            <span className="flex items-center gap-1.5 text-sm text-[var(--cc-orange)]"><TriangleAlert className="size-4" />Rules warned</span>
             <span className="text-sm font-bold text-[var(--cc-orange)]">47</span>
           </div>
           <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--cc-bg-2)]">
-            <span className="text-sm text-[var(--cc-red)]">✗ Rules blocked</span>
+            <span className="flex items-center gap-1.5 text-sm text-[var(--cc-red)]"><XCircle className="size-4" />Rules blocked</span>
             <span className="text-sm font-bold text-[var(--cc-red)]">3</span>
           </div>
         </div>

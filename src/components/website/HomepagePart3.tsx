@@ -462,7 +462,7 @@ function EnglishTestsSection() {
           <motion.div variants={staggerItem}>
             <EnglishExamButton
               location="homepage_english_tests"
-              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[var(--alo-cta)] px-6 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
+              className="inline-flex h-12 min-h-[48px] items-center justify-center rounded-xl bg-[var(--alo-cta)] px-6 text-sm font-semibold text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
             >
               Take the English Test
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />

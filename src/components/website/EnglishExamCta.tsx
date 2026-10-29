@@ -117,7 +117,7 @@ export function PrepVsExamSplit({
       </div>
 
       <div className="flex flex-col rounded-3xl border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] p-6 shadow-sm">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
+        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
           <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
           {COPY.en.realExamLabel}
         </span>
@@ -126,7 +126,7 @@ export function PrepVsExamSplit({
         <p className="mt-2 text-xs text-[var(--alo-text-muted)]">{COPY.en.leaving}</p>
         <EnglishExamButton
           location={location}
-          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[var(--alo-cta)] px-5 py-3 text-sm font-bold text-black shadow-sm transition hover:bg-[var(--alo-cta-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+          className="mt-auto inline-flex min-h-11 w-fit items-center gap-2 rounded-xl bg-[var(--alo-cta)] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[var(--alo-cta-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
         >
           {COPY.bn.button} · {COPY.en.button} <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </EnglishExamButton>
@@ -140,7 +140,7 @@ export function PrepVsExamSplit({
 export function EnglishExamCard({ location, testName }: { location: EnglishExamCtaLocation; testName?: string }) {
   return (
     <div className="rounded-2xl border border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] p-5">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-black">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--alo-cta)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
         <GraduationCap className="h-3 w-3" aria-hidden="true" />
         {COPY.en.realExamLabel}
       </span>
@@ -150,7 +150,7 @@ export function EnglishExamCard({ location, testName }: { location: EnglishExamC
       <p className="mt-1 text-xs text-[var(--alo-body)]">{COPY.en.realExamBody}</p>
       <EnglishExamButton
         location={location}
-        className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--alo-cta)] px-4 py-3 text-sm font-bold text-black transition hover:bg-[var(--alo-cta-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+        className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--alo-cta)] px-4 py-3 text-sm font-bold text-white transition hover:bg-[var(--alo-cta-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
       >
         {COPY.en.button} <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </EnglishExamButton>

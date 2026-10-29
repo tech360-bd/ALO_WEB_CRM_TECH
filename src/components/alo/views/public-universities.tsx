@@ -206,7 +206,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
             action={
               <div className="flex gap-2">
                 <Button
- className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 "
  onClick={() => { setCountryFilter("all"); setSearch(""); }}
                 >
                   <Icon name="RotateCcw" className="size-4" /> Reset filters
@@ -308,7 +308,7 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                     </div>
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <Button
- className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ className="flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 "
  onClick={() => onNavigate("public-university", u.slug)}
                       >
                         <Icon name="ArrowRight" className="size-4" /> View University

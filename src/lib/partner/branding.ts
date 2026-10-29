@@ -19,9 +19,9 @@
 
 /** ALO Education brand tokens — the fallback for every partner. */
 export const ALO_BRAND_COLORS = {
-  primary: '#0066CC',
-  secondary: '#F37021',
-  accent: '#FFB347',
+  primary: '#0057B8',
+  secondary: '#E8501A',
+  accent: '#C93D13',
   text: '#000000',
   textMuted: '#555555',
 } as const;
@@ -187,7 +187,7 @@ export function validatePartnerBranding(input: unknown): BrandingValidation {
 
   for (const field of ['primaryColor', 'secondaryColor', 'accentColor'] as const) {
     if (raw[field] !== undefined && raw[field] !== '' && !isHexColor(raw[field])) {
-      return { ok: false, error: 'Brand colours must be 6-digit hex values, e.g. #0066CC.', field };
+      return { ok: false, error: 'Brand colours must be 6-digit hex values, e.g. #0057B8.', field };
     }
   }
 

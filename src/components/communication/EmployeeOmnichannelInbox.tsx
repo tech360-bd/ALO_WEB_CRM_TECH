@@ -342,7 +342,7 @@ export default function EmployeeOmnichannelInbox() {
                 onClick={() => selectConversation(conv)}
                 className={`w-full text-left px-4 py-3 border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition-all ${
                   selectedConv?.id === conv.id
-                    ? 'bg-[var(--alo-brand-pale)] border-l-2 border-l-[#0057B8]'
+                    ? 'bg-[var(--alo-brand-pale)] border-l-2 border-l-alo-brand'
                     : 'border-l-2 border-l-transparent'
                 }`}
               >

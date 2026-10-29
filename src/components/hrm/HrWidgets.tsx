@@ -55,7 +55,7 @@ export function HrRoleWidgets({ role: _role }: WidgetProps) {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-[var(--alo-text)]">HR Overview</h3>
-          <Link href="/crm/hrm"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black h-7 ">Open HR Center</Button></Link>
+          <Link href="/crm/hrm"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white h-7 ">Open HR Center</Button></Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard title="Active Headcount" value={widgets.activeEmployees ?? '—'} sub={widgets.headcount == null ? 'Headcount unavailable' : `${widgets.headcount} total employee records`} icon={Users} href="/crm/hrm/analytics" />
@@ -117,7 +117,7 @@ export function HrRoleWidgets({ role: _role }: WidgetProps) {
 export function HrmQuickActions({ role: _role }: { role: string }) {
   return (
     <div className="bg-white border border-[var(--alo-border)] rounded-xl p-3 flex flex-wrap gap-2">
-      <Link href="/crm/hrm/attendance"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black ">Clock In / Out</Button></Link>
+      <Link href="/crm/hrm/attendance"><Button size="sm" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white ">Clock In / Out</Button></Link>
       <Link href="/crm/hrm/leave"><Button size="sm" variant="outline" className=" ">Apply Leave</Button></Link>
       <Link href="/crm/hrm/documents"><Button size="sm" variant="outline" className=" ">My Documents</Button></Link>
       <Link href="/crm/hrm/profile"><Button size="sm" variant="outline" className=" ">My HR Profile</Button></Link>

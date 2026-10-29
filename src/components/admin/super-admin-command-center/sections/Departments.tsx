@@ -12,7 +12,7 @@ function dccMetric(label: string, value: number, threshold: number, inverse?: bo
       <div className="text-xs text-[var(--cc-text-3)]">{label}</div>
       <div className={`font-bold ${pass ? "text-[var(--cc-green)]" : "text-[var(--cc-red)]"}`}>{value}%</div>
       <div className={`text-[11px] ${pass ? "text-[var(--cc-green)]" : "text-[var(--cc-red)]"}`}>
-        {pass ? "✓ Pass" : "✗ Fail"} (≥ {threshold}%)
+        {pass ? "Pass" : "Fail"} (≥ {threshold}%)
       </div>
     </div>
   );

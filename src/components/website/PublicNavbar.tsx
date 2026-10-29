@@ -7,8 +7,8 @@
  *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
  *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
  *     Resources ▾ · Portal ▾ · AI SUPPORT ▾
- *   • CTA: "Request Counseling" (ALO Orange #F37021 button)
- *   • Education Blue #0066CC for navigation/links, #FFB347 accent, #000/#555
+ *   • CTA: "Request Counseling" (ALO Orange #E8501A button)
+ *   • Education Blue #0057B8 for navigation/links, #C93D13 accent, #000/#555
  *     neutral text — all values come from the design tokens in globals.css.
  *
  * The footer and this header are mounted once for the whole public site by
@@ -69,6 +69,41 @@ const DEFAULT_DESTINATIONS = [
   { label: 'New Zealand', href: '/destinations/new-zealand' },
   { label: 'Dubai / UAE', href: '/destinations/dubai' },
   { label: 'More Countries', href: '/destinations' },
+];
+
+/**
+ * Language Prep menu (Phase 1 §2).
+ *
+ * Every item points at a real, dedicated route. The English-language tests and
+ * the academic tests are separate database-driven pages under /language-prep;
+ * none of them redirects to a shared generic page. Routes that did not exist
+ * were added rather than linked to a placeholder.
+ */
+const LANGUAGE_PREP_ENGLISH_ITEMS = [
+  { label: 'IELTS', href: '/language-prep/ielts' },
+  { label: 'IELTS UKVI', href: '/language-prep/ielts-ukvi' },
+  { label: 'PTE Academic', href: '/language-prep/pte-academic' },
+  { label: 'TOEFL iBT', href: '/language-prep/toefl-ibt' },
+  { label: 'Duolingo English Test', href: '/language-prep/duolingo' },
+  { label: 'OIETC / ELLT', href: '/language-prep/oietc' },
+  { label: 'Oxford ELLT', href: '/language-prep/oxford-ellt' },
+  { label: 'LanguageCert', href: '/language-prep/languagecert' },
+  { label: 'Password English Language Test', href: '/language-prep/password' },
+  { label: 'Kaplan English Test', href: '/language-prep/kaplan' },
+  { label: 'OET', href: '/language-prep/oet' },
+  { label: 'CAE / CPE — Cambridge English', href: '/language-prep/cambridge-english' },
+];
+
+const LANGUAGE_PREP_ACADEMIC_ITEMS = [
+  { label: 'GRE', href: '/language-prep/gre' },
+  { label: 'GMAT', href: '/language-prep/gmat' },
+  { label: 'SAT', href: '/language-prep/sat' },
+  { label: 'ACT', href: '/language-prep/act' },
+];
+
+const LANGUAGE_PREP_GUIDANCE_ITEMS = [
+  { label: 'MOI Guidance', href: '/language-prep/moi' },
+  { label: 'English Test Comparison', href: '/language-prep/comparison' },
 ];
 
 const RESOURCE_ITEMS = [
@@ -186,7 +221,7 @@ function DropdownTrigger({
               aria-label={label}
               className="overflow-hidden rounded-xl border border-alo-border bg-white p-2 shadow-xl"
             >
-              {/* Accent hairline — brand accent #FFB347 */}
+              {/* Accent hairline — brand accent #C93D13 */}
               <span className="mb-2 block h-[3px] w-10 rounded-full bg-alo-cta-accent" aria-hidden="true" />
               {children}
             </div>
@@ -507,7 +542,25 @@ export default function PublicNavbar() {
 
           <DesktopLink href="/course-finder" label={t('nav.courseFinder')} />
           <DesktopLink href="/services" label={t('nav.services')} />
-          <DesktopLink href="/language-prep" label={t('nav.languagePrep')} />
+          <DropdownTrigger label={t('nav.languagePrep')} id="header-language-prep" {...triggerProps('language-prep')}>
+            <div className="max-h-[70vh] w-[300px] overflow-y-auto">
+              <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">English language tests</p>
+              {LANGUAGE_PREP_ENGLISH_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+              <p className="border-t border-alo-border px-3 pb-1 pt-3 text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">Academic / aptitude tests</p>
+              {LANGUAGE_PREP_ACADEMIC_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+              <p className="border-t border-alo-border px-3 pb-1 pt-3 text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">Guidance</p>
+              {LANGUAGE_PREP_GUIDANCE_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+              <div className="mt-1 border-t border-alo-border pt-1">
+                <DropdownLink href="/language-prep" label="All Language Prep" />
+              </div>
+            </div>
+          </DropdownTrigger>
           <DropdownTrigger label={t('nav.resources')} id="header-resources" {...triggerProps('resources')}>
             <div className="grid w-[440px] grid-cols-2 gap-x-4 gap-y-0.5">
               {RESOURCE_ITEMS.map((item) => (
@@ -554,7 +607,7 @@ export default function PublicNavbar() {
           <Button
             asChild
             size="lg"
-            className="hidden shrink-0 bg-alo-cta px-5 font-heading text-[14px] font-bold text-black shadow-sm transition-all hover:bg-alo-cta-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex"
+            className="hidden shrink-0 bg-alo-cta px-5 font-heading text-[14px] font-bold text-white shadow-sm transition-all hover:bg-alo-cta-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex"
           >
             <Link href="/book-consultation">{t('cta.bookConsultation')}</Link>
           </Button>
@@ -593,7 +646,18 @@ export default function PublicNavbar() {
 
                       <MobileLink href="/course-finder" label={t('nav.courseFinder')} onClick={closeMobile} />
                       <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
-                      <MobileLink href="/language-prep" label={t('nav.languagePrep')} onClick={closeMobile} />
+                      <MobileAccordionSection value="language-prep" label={t('nav.languagePrep')}>
+                        <MobileLink href="/language-prep" label="All Language Prep" onClick={closeMobile} />
+                        {LANGUAGE_PREP_ENGLISH_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                        {LANGUAGE_PREP_ACADEMIC_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                        {LANGUAGE_PREP_GUIDANCE_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                      </MobileAccordionSection>
                       <MobileAccordionSection value="resources" label={t('nav.resources')}>
                         {RESOURCE_ITEMS.map((item) => (
                           <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
@@ -630,7 +694,7 @@ export default function PublicNavbar() {
                       <Button
                         asChild
                         size="lg"
-                        className="w-full bg-alo-cta font-heading text-[14px] font-bold text-black shadow-sm transition-all hover:bg-alo-cta-hover"
+                        className="w-full bg-alo-cta font-heading text-[14px] font-bold text-white shadow-sm transition-all hover:bg-alo-cta-hover"
                       >
                         <Link href="/book-consultation" onClick={closeMobile}>
                           {t('cta.bookConsultation')}

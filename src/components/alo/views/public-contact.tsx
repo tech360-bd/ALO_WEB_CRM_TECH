@@ -368,7 +368,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                     <Button
                       type="submit"
                       disabled={loading || !form.fullName || !form.phone || !form.consent}
-                      className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta-hover)]"
+                      className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]"
                     >
                       {loading ? (
                         <><Icon name="Loader2" className="size-4 animate-spin" /> Sending...</>

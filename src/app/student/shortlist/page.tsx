@@ -144,7 +144,7 @@ export default function StudentShortlistPage() {
                       </Button>
                     </Link>
                     <Link href={`/student/apply/${encodeURIComponent(courseId)}`}>
-                      <Button size="sm" className="bg-[var(--alo-cta)] text-black">
+                      <Button size="sm" className="bg-[var(--alo-cta)] text-white">
                         <Send className="w-3 h-3 mr-1" />Apply
                       </Button>
                     </Link>

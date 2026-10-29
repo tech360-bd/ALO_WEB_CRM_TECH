@@ -156,7 +156,7 @@ export default function PortalFooter({ scope = 'student' }: PortalFooterProps) {
                       rel="noopener noreferrer"
                       aria-label={social.ariaLabel}
                       title={social.label}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-alo-brand-border bg-alo-brand-light text-alo-brand transition-colors hover:border-alo-cta hover:bg-alo-cta hover:text-black"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-alo-brand-border bg-alo-brand-light text-alo-brand transition-colors hover:border-alo-cta hover:bg-alo-cta hover:text-white"
                     >
                       <Icon className="h-4 w-4" />
                     </a>
@@ -255,7 +255,7 @@ export default function PortalFooter({ scope = 'student' }: PortalFooterProps) {
       )}
 
       {/* Bottom bar — ALO Orange, one copyright statement, no repeated links */}
-      <div className="bg-alo-cta py-3 text-black">
+      <div className="bg-alo-cta py-3 text-white">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-2 px-4 text-[11.5px] font-medium sm:flex-row sm:px-6 lg:px-8">
           <p className="font-heading font-bold tracking-wide">© {new Date().getFullYear()} ALO Education</p>
           <p className="text-center sm:text-right">{ALO_TAGLINE}</p>

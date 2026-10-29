@@ -35,7 +35,7 @@ export default function StudentIntakeControlPanel() {
       <CardHeader className="pb-3 border-b border-[var(--alo-border)]">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-[var(--alo-cta)]" />Secure General Intake — Website / WhatsApp / Facebook</CardTitle>
-          <Badge className={health?.officeHours ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}>
+          <Badge className={health?.officeHours ? 'bg-emerald-500 text-[var(--alo-text)]' : 'bg-amber-500 text-[var(--alo-text)]'}>
             {health?.officeHours ? 'During office hours' : 'Outside office hours'}
           </Badge>
         </div>
@@ -48,10 +48,10 @@ export default function StudentIntakeControlPanel() {
           <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[11px] text-[var(--alo-text-muted)]">Public inputs</p><p className="font-bold flex gap-1 mt-1"><FileText className="w-3 h-3"/> public uploads disabled <Mic className="w-3 h-3"/> voice disabled</p></div>
           <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[11px] text-[var(--alo-text-muted)]">Office</p><p className="font-bold flex gap-1 mt-1"><Clock className="w-3 h-3"/> {officeCfg.window}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{health?.memory || 'pseudonymized, time-limited memory when configured'}</p></div>
         </div>
-        <div className="bg-[var(--alo-text)] text-white rounded-xl p-3">
+        <div className="bg-[var(--alo-page)] text-[var(--alo-text)] rounded-xl p-3">
           <p className="font-bold text-[12px]">Contract</p>
-          <p className="text-[11px] text-[var(--alo-placeholder)] mt-1"><code className="bg-white/10 px-1 rounded">POST /api/ai/student-intake</code> {'{'} channel, senderId, text, mediaType, mediaInfo {'}'}</p>
-          <p className="text-[11px] text-[var(--alo-placeholder)]">Webhooks: <code className="bg-white/10 px-1 rounded">POST /api/whatsapp/webhook</code> and <code className="bg-white/10 px-1 rounded">POST /api/facebook/webhook</code> (Messenger) → shared safe general-intake handler.</p>
+          <p className="text-[11px] text-[var(--alo-placeholder)] mt-1"><code className="bg-[var(--alo-surface-muted)] px-1 rounded">POST /api/ai/student-intake</code> {'{'} channel, senderId, text, mediaType, mediaInfo {'}'}</p>
+          <p className="text-[11px] text-[var(--alo-placeholder)]">Webhooks: <code className="bg-[var(--alo-surface-muted)] px-1 rounded">POST /api/whatsapp/webhook</code> and <code className="bg-[var(--alo-surface-muted)] px-1 rounded">POST /api/facebook/webhook</code> (Messenger) → shared safe general-intake handler.</p>
           <p className="text-[11px] text-[var(--alo-placeholder)] mt-1">This public chat does not accept files or verify voice transcripts. Use the authenticated Student Portal Documents area or an authorized staff workflow; never send private documents here.</p>
         </div>
         <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[11px] text-amber-900">

@@ -280,7 +280,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           <Button
             onClick={submit}
             disabled={submitting || rating === 0 || reviewText.trim().length < 10}
-            className="w-full h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+            className="w-full h-12 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
           >
             {submitting ? (
               <><Icon name="Loader2" className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>

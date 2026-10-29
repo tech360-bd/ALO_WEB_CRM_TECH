@@ -9,7 +9,7 @@ import {
   Award, BookOpen, Calendar, CheckCircle2, ChevronDown, Clock, Compass, Globe, GraduationCap,
   HelpCircle, Layers, MapPin, MessageSquare, Phone, Search, ShieldCheck, Sparkles, Star,
   Target, Users, Zap, ArrowRight, Play, FileText, BarChart3, Lightbulb, Timer, BookMarked,
-  Headphones, PenTool, Mic, BookOpenCheck, Trophy, TrendingUp, AlertCircle, Building2,
+  Headphones, PenTool, Mic, BookOpenCheck, Trophy, TrendingUp, AlertCircle, Building2, Languages,
   Bookmark, ClipboardCheck, MessageCircle, Video, Library, GraduationCap as GradCap,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -184,8 +184,8 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
-                    Request Counselling <ArrowRight className="w-4 h-4 ml-1" />
+                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold text-sm h-12 px-7 rounded-xl shadow-sm"><a href="#book-counselling">
+                    Book Free Counseling <ArrowRight className="w-4 h-4 ml-1" />
                   </a></Button>
                 <Button asChild variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] font-semibold text-sm h-12 px-6 rounded-xl bg-white"><a href="#test-discovery">
                     Find Your English Test
@@ -257,7 +257,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 2. TEST DISCOVERY ============ */}
       <section id="test-discovery" className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={2} />
+          <LanguageSectionVisual index={1} />
           <div className="text-center max-w-3xl mx-auto mb-10">
             <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-brand)] font-bold text-[11px] px-3 py-1 mb-3">TEST DISCOVERY</Badge>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--alo-text)]">Which English Test Is Right for You?</h2>
@@ -369,7 +369,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 3. WHY ENGLISH PROFICIENCY MATTERS ============ */}
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={3} />
+          <LanguageSectionVisual index={2} />
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-7">
               <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] font-bold text-[11px] px-3 py-1 mb-3">WHY IT MATTERS</Badge>
@@ -428,7 +428,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 4. WHY TAKE AN ENGLISH TEST — 4 cards ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={4} />
+          <LanguageSectionVisual index={3} />
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Why take an English language proficiency test to study abroad?</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Four key reasons students take English proficiency tests for study abroad.</p>
@@ -462,7 +462,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 5. FIND THE CORRECT TEST — 4-step journey ============ */}
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={5} />
+          <LanguageSectionVisual index={4} />
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Find the Correct Test — 4-Step Journey</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Logical steps to choose destination, check requirements, select suitable test and prepare for target score.</p>
@@ -491,7 +491,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 6. ENGLISH TEST CARDS — Dynamic ============ */}
       <section id="test-cards" className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={6} />
+          <LanguageSectionVisual index={5} />
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
               <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">English language and academic tests</h2>
@@ -503,18 +503,36 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
             <Button asChild variant="outline" className="bg-white border-[var(--alo-border)] font-semibold text-sm rounded-xl"><a href="/language-prep/comparison">Compare All Tests →</a></Button>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {testCards.map((t: any) => (
-              <LanguageTestCard key={t.id} test={t} index={testCards.indexOf(t)} />
-            ))}
-          </div>
+          {[
+            { key: 'english', title: 'English Language Tests', note: 'Proficiency tests used for university admission and, where required, visa evidence.', icon: Languages,
+              items: testCards.filter((t: any) => t.testType !== 'academic' && t.testType !== 'moi_guidance') },
+            { key: 'academic', title: 'Academic / Aptitude Tests', note: 'Admissions tests required by some programmes. These do not replace English-language evidence.', icon: GraduationCap,
+              items: testCards.filter((t: any) => t.testType === 'academic') },
+            { key: 'waiver', title: 'Language Waiver Guidance', note: 'Not a test — check whether your institution will waive the English requirement.', icon: FileText,
+              items: testCards.filter((t: any) => t.testType === 'moi_guidance') },
+          ].filter(group => group.items.length > 0).map((group) => (
+            <div key={group.key} className="mb-10 last:mb-0">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"><group.icon className="h-4 w-4" /></span>
+                <div>
+                  <h3 className="text-lg font-bold text-[var(--alo-text)]">{group.title}</h3>
+                  <p className="text-xs text-[var(--alo-body)]">{group.note}</p>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {group.items.map((t: any) => (
+                  <LanguageTestCard key={t.id} test={t} index={testCards.indexOf(t)} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* ============ 7. TEST COMPARISON ============ */}
       <section id="test-comparison" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={7} />
+          <LanguageSectionVisual index={6} />
           <div className="text-center max-w-3xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Compare English Tests</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats.</p>
@@ -531,7 +549,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 8. DESTINATION ACCEPTANCE EXPLORER ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={8} />
+          <LanguageSectionVisual index={0} />
           <div className="text-center max-w-3xl mx-auto mb-8">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Destination Acceptance Explorer</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Select a country to see relevant English tests. Acceptance varies by university, course and visa route.</p>
@@ -582,7 +600,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 9. SCORE REQUIREMENT EXPLORER ============ */}
       <section id="score-explorer" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={9} />
+          <LanguageSectionVisual index={1} />
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-5">
               <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Score Requirement Explorer</h2>
@@ -662,7 +680,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 10. PREPARATION ROADMAP — 8 steps timeline ============ */}
       <section id="prep-roadmap" className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={10} />
+          <LanguageSectionVisual index={2} />
           <div className="text-center max-w-3xl mx-auto mb-12">
             <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-brand)] font-bold text-[11px] px-3 py-1 mb-3">PREPARATION ROADMAP</Badge>
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">8-Step Preparation Roadmap</h2>
@@ -702,7 +720,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 11. ALO PREPARATION SUPPORT — Premium cards ============ */}
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={11} />
+          <LanguageSectionVisual index={3} />
           <div className="text-center max-w-3xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">ALO Education Language Preparation Support</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Comprehensive support from test selection to exam readiness.</p>
@@ -732,7 +750,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 12. PREPARATION RESOURCES — real destinations only ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={12} />
+          <LanguageSectionVisual index={4} />
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Preparation Resources</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Study guides for each test, a side-by-side comparison, and counselling for a personal study plan.</p>
@@ -753,7 +771,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
             ))}
           </div>
           <div className="mt-8 text-center">
-            <a href="#book-counselling" className="inline-flex min-h-[44px] items-center rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-sm font-bold text-black hover:bg-[var(--alo-cta-hover)]">Book counselling</a>
+            <a href="#book-counselling" className="inline-flex min-h-[44px] items-center rounded-xl bg-[var(--alo-cta)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--alo-cta-hover)]">Book counselling</a>
           </div>
         </div>
       </section>
@@ -761,7 +779,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 14. FAQ — 10 general ============ */}
       <section className="py-16 bg-[var(--alo-page)] border-y border-[var(--alo-border)]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={13} />
+          <LanguageSectionVisual index={5} compact />
           <div className="text-center mb-10">
             <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">Frequently Asked Questions</h2>
             <p className="text-sm text-[var(--alo-body)] mt-2">Common questions about English language tests for international students — minimum 15-20 FAQs per test on detail pages.</p>
@@ -790,7 +808,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
 
       {/* ============ 15. FINAL CTA ============ */}
       <section id="language-success-stories" className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><LanguageSectionVisual index={2} />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><LanguageSectionVisual index={6} compact />
           <h2 className="text-3xl font-bold">Student language preparation stories</h2>
           <p className="mt-3 text-sm leading-relaxed text-[var(--alo-body)]">Published with student consent. Individual experiences do not guarantee a score, university offer or visa outcome.</p>
           {stories.length ? <div className="mt-6 grid gap-5 md:grid-cols-2">{stories.map(story => <article key={story.id} className="rounded-2xl border border-[var(--alo-brand)] bg-white p-6"><h3 className="text-lg font-bold text-[var(--alo-cta)]">{story.studentName}</h3><p className="mt-2 text-sm">{story.universityName} {story.courseName}</p>{story.finalScore && <p className="mt-3 text-sm font-semibold">{story.previousScore ? `${story.previousScore} → ` : ''}{story.finalScore}</p>}<blockquote className="mt-3 text-sm leading-relaxed text-[var(--alo-body)]">{story.testimonial}</blockquote></article>)}</div> : <p className="mt-6 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-5 text-sm">No consent-approved language preparation stories are published yet.</p>}
@@ -799,7 +817,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
 
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <LanguageSectionVisual index={14} />
+          <LanguageSectionVisual index={0} compact />
           <Card className="p-8 sm:p-12 bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white border-0 shadow-xl rounded-3xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl pointer-events-none" />
             <div className="relative text-center space-y-6">
@@ -808,12 +826,12 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
                 Tell us your destination, university and study plan. Our team can help you understand the relevant English requirement and preparation route.
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
-                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Request Counselling →</a></Button>
-                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl"><a href="#test-discovery">Find My Test</a></Button>
-                <Button asChild variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                <Button asChild className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] font-bold text-sm h-12 px-8 rounded-xl shadow-lg"><a href="#book-counselling">Book Free Counseling</a></Button>
+                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold text-sm h-12 px-6 rounded-xl shadow-lg"><a href="#test-cards">Learn More</a></Button>
+                <Button asChild className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold text-sm h-12 px-6 rounded-xl shadow-lg"><a href="#prep-roadmap">Prepare with ALO</a></Button>
+                <Button asChild variant="outline" className="bg-white/10 text-white border-white/40 hover:bg-white/20 font-bold text-sm h-12 px-6 rounded-xl flex items-center gap-2"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
                     <MessageSquare className="w-4 h-4" /> {ALO_PUBLIC_CONTACT_CTA.label}
-                  </a></Button>
-              <Button asChild variant="outline"><a href="#test-cards">Learn More</a></Button><Button asChild><a href="#prep-roadmap">Prepare with ALO</a></Button></div>
+                  </a></Button></div>
               <div className="flex flex-wrap justify-center gap-6 pt-6 text-xs text-[var(--alo-brand-pale)] border-t border-white/20">
                 {ALO_CONTACT.hasWhatsApp && <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> WhatsApp: {ALO_CONTACT.whatsappDisplay}</span>}
                 <span className="flex items-center gap-1.5"><MessageSquare className="w-3.5 h-3.5" /> Email: {ALO_CONTACT.email}</span>
@@ -826,7 +844,6 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
       {/* ============ 16. FOOTER NOTE — Source verification ============ */}
       <section className="py-8 bg-[var(--alo-page)] border-t border-[var(--alo-border)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <LanguageSectionVisual index={15} />
           <p className="text-[11px] text-[var(--alo-text-muted)] leading-relaxed max-w-4xl mx-auto">Test information is taken from official provider sources where available. Acceptance varies by university, course and visa route. Check the official provider for the latest details. MOI is a guidance resource, not an English proficiency test.</p>
         </div>
       </section>

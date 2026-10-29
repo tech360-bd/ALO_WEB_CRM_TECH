@@ -53,6 +53,7 @@ import {
   Workflow,
   Shield,
   Search,
+  ChevronDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import FeatureAccessRulesPanel from '@/components/employee/FeatureAccessRulesPanel';
@@ -273,26 +274,46 @@ export default function SuperAdminAccessControlCenter() {
   return (
     <div className="p-4 max-w-[1600px] mx-auto space-y-4">
       {/* MASTER HEADER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-5 rounded-2xl text-white shadow-xl border border-blue-900/30">
-        <div className="space-y-2">
+      {/* Master §08-D: compact CRM page header on a light brand surface —
+          white/pale-blue panel, navy title, secondary text, no dark block. */}
+      <div className="flex flex-col gap-5 rounded-[20px] border border-[var(--alo-brand-border)] bg-[var(--alo-brand-pale)] p-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-[var(--alo-cta)] text-white font-black text-[11px] uppercase px-2.5 py-1">MASTER CONTROL CENTER</Badge>
-            <Badge className="bg-[var(--alo-brand-deep)] text-[var(--alo-brand-pale)] font-mono text-[11px]">ALO_EMPLOYEE_ACCESS_SYSTEM v3.0</Badge>
-            <Badge className="bg-emerald-900 text-emerald-100 text-[11px]">LEAST PRIVILEGE</Badge>
-            <Badge className="bg-amber-900 text-amber-100 text-[11px]">18 MODELS • 40+ APIs</Badge>
+            <Badge className="bg-alo-cta-solid text-white font-black text-[11px] uppercase px-2.5 py-1">Master control center</Badge>
+            <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand-deep)] font-mono text-[11px]">ALO_EMPLOYEE_ACCESS_SYSTEM v3.0</Badge>
+            <Badge className="bg-crm-success-bg text-crm-success-text border border-crm-success-border text-[11px]">Least privilege</Badge>
+            <Badge className="bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border text-[11px]">18 models • 40+ APIs</Badge>
           </div>
-          <h1 className="text-xl font-black tracking-tight flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-[var(--alo-cta-accent)]" /> Master Access Control & HR Security System
-          </h1>
-          <p className="text-[11px] text-[var(--alo-brand-pale)] max-w-4xl leading-relaxed">
-            Centralized ROLE+DESIGNATION+PERMISSION+SCOPE+OBJECT+FIELD+WORKFLOW+APPROVAL+QUOTA+TEMPORARY+AUDIT — Employee INVITED→ACTIVE hashed one-time token expiry, private visibility Employee+SuperAdmin+Chairman+HR explicit, document versioning V1/V2/V3 no permanent delete, HR agreement digital signature immutable, ACCEPT vs APPROVE separation, Separation of Duties MAKER→REVIEWER→APPROVER no self-approval, temporary auto-revoke, break-glass reason/approver/expiry audit, payroll AI cannot finalize high-risk, login IP/browser/OS/fingerprint/location/time/failed/session/MFA/rate limiting/suspicious, WhatsApp phone_normalized, SLA reminder/warning/escalation, application serial ALO-UK-2026-000123, two comment systems student-visible vs internal never shown, university payment verified bank, interview research/prep/practice/scoring/recording/human final review.
-          </p>
+          <div className="flex items-start gap-2.5">
+            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
+              <ShieldCheck className="size-5" />
+            </span>
+            <div>
+              <h1 className="text-xl font-black tracking-tight text-[var(--alo-text)]">
+                Master Access Control &amp; HR Security System
+              </h1>
+              <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-[var(--alo-text-muted)]">
+                Roles, designations, permissions, scopes and approvals for every employee record, with a full audit trail.
+              </p>
+            </div>
+          </div>
+          {/* The full control register stays available but organised, instead of
+              reading as a wall of uppercase text (Master §05). */}
+          <details className="group rounded-xl border border-[var(--alo-border)] bg-white px-4 py-3">
+            <summary className="flex cursor-pointer list-none items-center gap-2 text-[13px] font-semibold text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]">
+              <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
+              Full control register
+            </summary>
+            <p className="mt-3 max-w-4xl text-[12px] leading-relaxed text-[var(--alo-text-secondary)]">
+              Centralized ROLE+DESIGNATION+PERMISSION+SCOPE+OBJECT+FIELD+WORKFLOW+APPROVAL+QUOTA+TEMPORARY+AUDIT — Employee INVITED→ACTIVE hashed one-time token expiry, private visibility Employee+SuperAdmin+Chairman+HR explicit, document versioning V1/V2/V3 no permanent delete, HR agreement digital signature immutable, ACCEPT vs APPROVE separation, Separation of Duties MAKER→REVIEWER→APPROVER no self-approval, temporary auto-revoke, break-glass reason/approver/expiry audit, payroll AI cannot finalize high-risk, login IP/browser/OS/fingerprint/location/time/failed/session/MFA/rate limiting/suspicious, WhatsApp phone_normalized, SLA reminder/warning/escalation, application serial ALO-UK-2026-000123, two comment systems student-visible vs internal never shown, university payment verified bank, interview research/prep/practice/scoring/recording/human final review.
+            </p>
+          </details>
         </div>
-        <div className="flex flex-col gap-2 shrink-0">
-          <Button onClick={() => setShowEmpModal(true)} className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md flex items-center gap-2">
+        <div className="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col">
+          <Button onClick={() => setShowEmpModal(true)} className="font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2">
             <Plus className="w-4 h-4" /> Create Employee — Secure Activation
           </Button>
-          <Button onClick={fetchControlData} variant="outline" className="bg-white/10 border-white/20 text-white rounded-xl"><RefreshCw className="w-3 h-3 mr-1" /> Refresh</Button>
+          <Button onClick={fetchControlData} variant="outline" className="rounded-xl"><RefreshCw className="w-3 h-3 mr-1" /> Refresh</Button>
         </div>
       </div>
 
@@ -701,7 +722,7 @@ export default function SuperAdminAccessControlCenter() {
               </div>
               <div className="p-2 bg-[var(--alo-page)] rounded-lg border text-[11px] space-y-1"><div className="font-bold">Activation Flow:</div><div>1. Generate employeeCode ALO-EMP-YYYYNNNNN sequential</div><div>2. Generate tokenRaw randomBytes 32 hex — tokenHash sha256 — expires 48h — status active</div><div>3. Create portalUser userType EMPLOYEE status pending_activation firstLoginRequired true emailVerified false</div><div>4. Create employeeProfile + employeeActivationToken + audit employee_account_created + sendActivationEmail</div><div>5. Activation: POST /api/admin/employees/activate token+password — validate strength 8 chars uppercase number — hash token find active — check expiry — transaction set passwordHash PBKDF2 salt:hash — status active emailVerified true — token status used usedAt — invalidate other active tokens — audit employee_account_activated</div></div>
             </div>
-            <div className="flex justify-end gap-2 pt-2 border-t"><Button variant="outline" onClick={()=>setShowEmpModal(false)} className="text-xs h-8">Cancel</Button><Button onClick={handleCreateEmployee} disabled={creatingEmp} className="bg-[var(--alo-cta)] text-black font-bold">{creatingEmp?'Creating...':'Create & Send Activation Email'}</Button></div>
+            <div className="flex justify-end gap-2 pt-2 border-t"><Button variant="outline" onClick={()=>setShowEmpModal(false)} className="text-xs h-8">Cancel</Button><Button onClick={handleCreateEmployee} disabled={creatingEmp} className="bg-[var(--alo-cta)] text-white font-bold">{creatingEmp?'Creating...':'Create & Send Activation Email'}</Button></div>
           </Card>
         </div>
       )}

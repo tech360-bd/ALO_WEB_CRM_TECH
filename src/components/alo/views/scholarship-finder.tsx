@@ -387,7 +387,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                     Clear all filters
                   </Button>
                 ) : (
-                  <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={handleConsultation}>
+                  <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={handleConsultation}>
                     <Icon name="CalendarCheck" className="size-4" />
                     Request a consultation
                   </Button>
@@ -486,7 +486,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                           Check Eligibility
                         </Button>
                         <Button
- className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black"
+ className="flex-1 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white"
  onClick={() => handleApply(s)}
                         >
                           <Icon name="Send" className="size-4" />
@@ -519,7 +519,7 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                 </div>
               </div>
               <Button
-                className="h-12 shrink-0 bg-[var(--alo-cta)] px-6 text-black hover:bg-[var(--alo-cta)]/90"
+                className="h-12 shrink-0 bg-[var(--alo-cta)] px-6 text-white hover:bg-[var(--alo-cta)]/90"
                 onClick={handleConsultation}
               >
                 <Icon name="CalendarCheck" className="size-4" />

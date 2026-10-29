@@ -317,7 +317,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               <Button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-black hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
+                className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
               >
                 {loading ? (
                   <>

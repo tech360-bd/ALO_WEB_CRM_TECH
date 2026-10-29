@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { EnglishTest } from './types';
 import { hasCurrentLanguagePrepSourceReview, hasCurrentLanguagePrepVerification } from './verification';
+import { normalizeLanguagePrepSlug } from './slug-aliases';
 
 function isoDate(value: unknown): string | undefined {
   if (!value) return undefined;
@@ -64,7 +65,7 @@ export async function getAllEnglishPrepTestsFromDB(): Promise<EnglishTest[]> {
 export async function getEnglishPrepTestBySlugFromDB(slug: string): Promise<EnglishTest | null> {
   if (process.env.SKIP_CMS_DB === '1') return null;
   try {
-    const clean = slug.toLowerCase().trim();
+    const clean = normalizeLanguagePrepSlug(slug);
     const test = await (db as any).englishPrepTest?.findFirst?.({
       where: { slug: clean, status: 'active' },
     });

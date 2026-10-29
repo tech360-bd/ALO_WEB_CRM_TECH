@@ -773,7 +773,7 @@ function StartNewTest({ students }: { students: Student[] }) {
 
           <Button
             onClick={handleStart}
-            className="h-12 w-full bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+            className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
           >
             <Icon name="Play" className="size-5" />
             Start Mock Test
@@ -1082,7 +1082,7 @@ function MockExamDialog({
               </Button>
               <Button
                 onClick={handleSubmit}
-                className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Send" className="size-4" />
                 Submit Test

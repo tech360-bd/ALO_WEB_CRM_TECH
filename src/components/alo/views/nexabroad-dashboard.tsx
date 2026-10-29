@@ -192,7 +192,7 @@ export function NexAbroadDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] text-[var(--alo-page)]">
+    <div className="min-h-screen bg-[var(--alo-page)] text-[var(--alo-text)]">
       {/* ═══ GLOBAL NAVIGATION ═══ */}
       <NexAbroadNav />
 
@@ -225,7 +225,7 @@ export function NexAbroadDashboard() {
                   <Icon name="Sparkles" className="mr-2 size-4" />
                   Run AI Pipeline
                 </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-2xl px-6">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] rounded-2xl px-6">
                   <Icon name="Video" className="mr-2 size-4" />
                   Live Connect
                 </Button>
@@ -274,7 +274,7 @@ export function NexAbroadDashboard() {
 // ════════════════════════════════════════════════════════════════
 function NexAbroadNav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0A0E1A]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[var(--alo-border)] bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <div className="flex items-center gap-3">
@@ -294,9 +294,9 @@ function NexAbroadNav() {
             <input
               type="text"
               placeholder="Search students, universities, applications..."
-              className="h-9 w-full rounded-xl border border-white/5 bg-white/5 pl-9 pr-16 text-sm text-white placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-cta)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--alo-cta)]/20"
+              className="h-9 w-full rounded-xl border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] pl-9 pr-16 text-sm text-[var(--alo-text)] placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-cta)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--alo-cta)]/20"
             />
-            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-text-muted)]">⌘K</kbd>
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 rounded border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-text-muted)]">⌘K</kbd>
           </div>
         </div>
 
@@ -306,13 +306,13 @@ function NexAbroadNav() {
             <span className="nx-pulse flex size-2 rounded-full bg-[var(--alo-cta)]" />
             <span className="text-xs font-semibold text-[var(--alo-cta)]">AI Engine Active</span>
           </div>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative text-[var(--alo-placeholder)] hover:bg-white/5 hover:text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="relative text-[var(--alo-placeholder)] hover:bg-[var(--alo-page)] hover:text-[var(--alo-text)]">
             <Icon name="Bell" className="size-5" />
             <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[var(--alo-cta)]" />
           </Button>
-          <Avatar className="size-9 border border-white/10">
+          <Avatar className="size-9 border border-[var(--alo-border)]">
             <AvatarImage src="/images/testimonials/default.png" />
-            <AvatarFallback className="bg-[var(--alo-brand-hover)] text-xs font-bold text-white">RA</AvatarFallback>
+            <AvatarFallback className="bg-[var(--alo-brand-hover)] text-xs font-bold text-[var(--alo-text)]">RA</AvatarFallback>
           </Avatar>
         </div>
       </div>
@@ -333,13 +333,13 @@ function AIPipelineBar({ stats }: { stats: typeof AI_PIPELINE_STATS }) {
   ];
 
   return (
-    <div className="border-b border-white/5 bg-[var(--alo-text)]/50">
+    <div className="border-b border-[var(--alo-border)] bg-[var(--alo-page)]/50">
       <div className="mx-auto flex max-w-[1400px] items-center gap-6 overflow-x-auto px-4 py-2.5 lg:px-8">
         <span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)] whitespace-nowrap">AI Pipeline</span>
         {items.map((item) => (
           <div key={item.label} className="flex items-center gap-2 whitespace-nowrap">
             <Icon name={item.icon} className={cn("size-3.5", item.color)} />
-            <span className="text-sm font-bold text-white">{item.value}</span>
+            <span className="text-sm font-bold text-[var(--alo-text)]">{item.value}</span>
             <span className="text-xs text-[var(--alo-text-muted)]">{item.label}</span>
           </div>
         ))}
@@ -358,10 +358,10 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-cta)] to-[var(--alo-cta-hover)]">
-            <Icon name="BrainCircuit" className="size-5 text-white" />
+            <Icon name="BrainCircuit" className="size-5 text-[var(--alo-text)]" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">AI Eligibility Engine</h3>
+            <h3 className="text-base font-bold text-[var(--alo-text)]">AI Eligibility Engine</h3>
             <p className="text-xs text-[var(--alo-text-muted)]">Predictive match against 12,000+ universities</p>
           </div>
         </div>
@@ -376,7 +376,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
         {universities.map((uni, i) => (
           <div
             key={uni.name}
-            className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-3 transition-all hover:border-[var(--alo-cta)]/20 hover:bg-white/8"
+            className="group flex items-center gap-4 rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 transition-all hover:border-[var(--alo-cta)]/20 hover:bg-[var(--alo-brand-pale)]"
           >
             {/* Match Score Circle */}
             <div className="relative flex size-14 shrink-0 items-center justify-center">
@@ -391,14 +391,14 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
                   className="transition-all duration-1000"
                 />
               </svg>
-              <span className="absolute text-sm font-bold text-white">{uni.matchScore}%</span>
+              <span className="absolute text-sm font-bold text-[var(--alo-text)]">{uni.matchScore}%</span>
             </div>
 
             {/* Info */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm">{uni.flag}</span>
-                <p className="truncate text-sm font-bold text-white">{uni.name}</p>
+                <p className="truncate text-sm font-bold text-[var(--alo-text)]">{uni.name}</p>
               </div>
               <p className="text-xs text-[var(--alo-text-muted)]">{uni.tuition} · {uni.deadline}</p>
               <div className="mt-1 flex items-center gap-1">
@@ -420,7 +420,7 @@ function EligibilityEngineCard({ universities }: { universities: MatchedUniversi
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+      <div className="mt-4 flex items-center justify-between border-t border-[var(--alo-border)] pt-4">
         <span className="text-xs text-[var(--alo-text-muted)]">Visa probability calculated from 847 data points</span>
         <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-xs font-semibold text-[var(--alo-info)] hover:underline">
           View all 156 matches →
@@ -443,13 +443,13 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
           alt={`${university.name} campus`}
           className="size-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E1A] via-[#0A0E1A]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
         <div className="absolute bottom-3 left-4 right-4">
           <div className="flex items-center gap-2">
             <span className="text-2xl">{university.flag}</span>
             <div>
-              <h3 className="text-sm font-bold text-white drop-shadow-lg">{university.name}</h3>
-              <p className="text-xs text-white/70">{university.country}</p>
+              <h3 className="text-sm font-bold text-[var(--alo-text)] drop-shadow-lg">{university.name}</h3>
+              <p className="text-xs text-[var(--alo-text-secondary)]">{university.country}</p>
             </div>
           </div>
         </div>
@@ -461,7 +461,7 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--alo-placeholder)]">Tuition</span>
-            <span className="font-bold text-white">{university.tuition}</span>
+            <span className="font-bold text-[var(--alo-text)]">{university.tuition}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--alo-placeholder)]">Scholarship</span>
@@ -478,17 +478,17 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
           <Icon name="CalendarClock" className="size-4 text-[var(--alo-warning)]" />
           <div>
             <p className="text-xs font-semibold text-[var(--alo-warning)]">Application Deadline</p>
-            <p className="text-sm font-bold text-white">{university.deadline}</p>
+            <p className="text-sm font-bold text-[var(--alo-text)]">{university.deadline}</p>
           </div>
         </div>
 
         {/* Actions */}
         <div className="mt-4 flex gap-2">
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1 border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="flex-1 border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] rounded-xl">
             <Icon name="MapPin" className="mr-1 size-3" />
             Campus Tour
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand-hover)] text-white hover:bg-[#1E3A8A] rounded-xl">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand-hover)] text-[var(--alo-text)] hover:bg-[#1E3A8A] rounded-xl">
             <Icon name="BookOpen" className="mr-1 size-3" />
             Courses
           </Button>
@@ -514,10 +514,10 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-info)] to-[var(--alo-brand-hover)]">
-            <Icon name="ScanText" className="size-4 text-white" />
+            <Icon name="ScanText" className="size-4 text-[var(--alo-text)]" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">OCR Vault</h3>
+            <h3 className="text-sm font-bold text-[var(--alo-text)]">OCR Vault</h3>
             <p className="text-[11px] text-[var(--alo-text-muted)]">AI-extracted & verified</p>
           </div>
         </div>
@@ -532,17 +532,17 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
         {documents.map((doc) => (
           <div
             key={doc.id}
-            className="group rounded-xl border border-white/5 bg-white/5 p-3 transition-all hover:border-white/10 hover:bg-white/8"
+            className="group rounded-xl border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 transition-all hover:border-[var(--alo-border)] hover:bg-[var(--alo-brand-pale)]"
           >
             <div className="flex items-center gap-2.5">
               {/* Document Icon */}
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-surface-muted)]">
                 <Icon name={typeIcons[doc.type] || "File"} className="size-4 text-[var(--alo-info)]" />
               </div>
 
               {/* Name + Confidence */}
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold text-white">{doc.name}</p>
+                <p className="truncate text-xs font-semibold text-[var(--alo-text)]">{doc.name}</p>
                 <div className="mt-0.5 flex items-center gap-1">
                   <span className="text-[11px] text-[var(--alo-success)]">{doc.confidence}% confidence</span>
                 </div>
@@ -570,7 +570,7 @@ function OCRVaultCard({ documents }: { documents: OCRDocument[] }) {
       </div>
 
       {/* Upload */}
-      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-2.5 text-xs font-medium text-[var(--alo-text-muted)] transition-colors hover:border-[var(--alo-cta)]/30 hover:text-[var(--alo-cta)]">
+      <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--alo-border)] py-2.5 text-xs font-medium text-[var(--alo-text-muted)] transition-colors hover:border-[var(--alo-cta)]/30 hover:text-[var(--alo-cta)]">
         <Icon name="Upload" className="size-3.5" />
         Upload new document
       </button>
@@ -595,10 +595,10 @@ function FinTechCard() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-success)] to-[var(--alo-success-dark)]">
-            <Icon name="Wallet" className="size-5 text-white" />
+            <Icon name="Wallet" className="size-5 text-[var(--alo-text)]" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">FinTech & Blocked Account</h3>
+            <h3 className="text-base font-bold text-[var(--alo-text)]">FinTech & Blocked Account</h3>
             <p className="text-xs text-[var(--alo-text-muted)]">Germany Blocked Account + UK CAS financial readiness</p>
           </div>
         </div>
@@ -614,7 +614,7 @@ function FinTechCard() {
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-white">🇩🇪 Germany Blocked Account</span>
+              <span className="text-sm font-semibold text-[var(--alo-text)]">🇩🇪 Germany Blocked Account</span>
               {blockedPct === 100 && (
                 <Badge className="border-[var(--alo-success)]/20 bg-[var(--alo-success)]/10 px-1.5 py-0 text-[11px] text-[var(--alo-success)]">Verified</Badge>
               )}
@@ -630,7 +630,7 @@ function FinTechCard() {
         {/* UK Tuition Deposit */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-sm font-semibold text-white">🇬🇧 UK Tuition Deposit</span>
+            <span className="text-sm font-semibold text-[var(--alo-text)]">🇬🇧 UK Tuition Deposit</span>
             <span className="text-sm font-bold text-[var(--alo-cta)]">£{tuitionDeposit.current.toLocaleString()} / £{tuitionDeposit.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
@@ -642,7 +642,7 @@ function FinTechCard() {
         {/* Living Cost */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-sm font-semibold text-white">🏠 Living Cost Proof</span>
+            <span className="text-sm font-semibold text-[var(--alo-text)]">🏠 Living Cost Proof</span>
             <span className="text-sm font-bold text-[var(--alo-info)]">£{livingCost.current.toLocaleString()} / £{livingCost.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">
@@ -653,7 +653,7 @@ function FinTechCard() {
       </div>
 
       {/* Summary */}
-      <div className="mt-5 grid grid-cols-3 gap-3 border-t border-white/5 pt-4">
+      <div className="mt-5 grid grid-cols-3 gap-3 border-t border-[var(--alo-border)] pt-4">
         <div className="text-center">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">Total Ready</p>
           <p className="mt-0.5 text-lg font-bold text-[var(--alo-success)]">€17,208</p>
@@ -664,7 +664,7 @@ function FinTechCard() {
         </div>
         <div className="text-center">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">Visa Readiness</p>
-          <p className="mt-0.5 text-lg font-bold text-white">67%</p>
+          <p className="mt-0.5 text-lg font-bold text-[var(--alo-text)]">67%</p>
         </div>
       </div>
     </div>
@@ -686,10 +686,10 @@ function CounselorApprovalCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--alo-cta)] to-[var(--alo-cta-hover)]">
-            <Icon name="UserCheck" className="size-5 text-white" />
+            <Icon name="UserCheck" className="size-5 text-[var(--alo-text)]" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">Counselor Approval Panel</h3>
+            <h3 className="text-base font-bold text-[var(--alo-text)]">Counselor Approval Panel</h3>
             <p className="text-xs text-[var(--alo-text-muted)]">AI-prepared files ready for human review</p>
           </div>
         </div>
@@ -706,22 +706,22 @@ function CounselorApprovalCard({
             <div className="flex size-12 items-center justify-center rounded-full bg-[var(--alo-success)]/10">
               <Icon name="CheckCircle2" className="size-6 text-[var(--alo-success)]" />
             </div>
-            <p className="mt-3 text-sm font-semibold text-white">All caught up!</p>
+            <p className="mt-3 text-sm font-semibold text-[var(--alo-text)]">All caught up!</p>
             <p className="text-xs text-[var(--alo-text-muted)]">No applications pending approval.</p>
           </div>
         ) : (
           approvals.map((app) => (
-            <div key={app.id} className="rounded-2xl border border-white/5 bg-white/5 p-4">
+            <div key={app.id} className="rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-4">
               {/* Student Info */}
               <div className="flex items-center gap-3">
-                <Avatar className="size-10 border border-white/10">
+                <Avatar className="size-10 border border-[var(--alo-border)]">
                   <AvatarImage src={app.studentAvatar} />
-                  <AvatarFallback className="bg-[var(--alo-brand-hover)] text-xs font-bold text-white">
+                  <AvatarFallback className="bg-[var(--alo-brand-hover)] text-xs font-bold text-[var(--alo-text)]">
                     {app.studentName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-white">{app.studentName}</p>
+                  <p className="text-sm font-bold text-[var(--alo-text)]">{app.studentName}</p>
                   <p className="text-xs text-[var(--alo-text-muted)]">{app.university} · {app.course}</p>
                 </div>
                 {/* Overall Confidence */}
@@ -738,7 +738,7 @@ function CounselorApprovalCard({
                   { label: "OCR", value: app.ocrConfidence, color: "#0284C7" },
                   { label: "Match", value: app.matchConfidence, color: "#22C55E" },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-lg bg-white/5 p-2 text-center">
+                  <div key={item.label} className="rounded-lg bg-[var(--alo-surface-muted)] p-2 text-center">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-text-muted)]">{item.label}</p>
                     <p className="text-sm font-bold" style={{ color: item.color }}>{item.value}%</p>
                   </div>
@@ -747,11 +747,11 @@ function CounselorApprovalCard({
 
               {/* Actions */}
               <div className="mt-3 flex gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] rounded-xl">
                   <Icon name="Eye" className="mr-1 size-3" />
                   Preview
                 </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] rounded-xl">
                   <Icon name="Pencil" className="mr-1 size-3" />
                   Edit
                 </Button>
@@ -770,12 +770,12 @@ function CounselorApprovalCard({
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+      <div className="mt-4 flex items-center justify-between border-t border-[var(--alo-border)] pt-4">
         <span className="text-xs text-[var(--alo-text-muted)]">
           <Icon name="Info" className="mr-1 inline size-3" />
           AI prepares 70% · You approve the final 30%
         </span>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 rounded-xl">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-text)] hover:bg-[var(--alo-page)] rounded-xl">
           <Icon name="Video" className="mr-1 size-3" />
           1:1 Video Connect
         </Button>

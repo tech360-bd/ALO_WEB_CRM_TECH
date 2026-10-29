@@ -100,7 +100,7 @@ export default function ApplicationProcessPage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--alo-cta)] opacity-20 rounded-full blur-3xl -ml-20 -mb-20"></div>
         
         <div className="container mx-auto px-4 md:px-6 text-center max-w-4xl relative z-10">
-          <span className="inline-block bg-[var(--alo-cta)] text-black text-sm font-bold px-4 py-1.5 rounded-full mb-6 tracking-wide">YOUR PATHWAY TO SUCCESS</span>
+          <span className="inline-block bg-[var(--alo-cta)] text-white text-sm font-bold px-4 py-1.5 rounded-full mb-6 tracking-wide">YOUR PATHWAY TO SUCCESS</span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">International Study Application Process</h1>
           <p className="text-lg md:text-xl text-[var(--alo-brand-pale)] max-w-2xl mx-auto">
             A transparent, step-by-step roadmap to guide you from your first consultation to your first day on campus.
@@ -200,7 +200,7 @@ export default function ApplicationProcessPage() {
             Request guidance from ALO Education and ask about current service availability, timing, and any applicable fees.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/book-consultation" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
+            <Link href="/book-consultation" className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg hover:shadow-xl">
               Request a Consultation
             </Link>
             <Link href="/contact" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-8 rounded-xl text-lg transition-colors">

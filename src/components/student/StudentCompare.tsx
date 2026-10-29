@@ -322,12 +322,15 @@ export default function StudentCompare() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Header ───────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-slate-900 to-[#0a1628] px-4 py-8 md:py-10">
+      {/* Master §08-E inner-page hero: pale-blue band, breadcrumb-free,
+          navy title + secondary deck. No dark block, no photo scrim. */}
+      <section className="border-b border-[var(--alo-border)] bg-alo-hero px-4 py-8 md:py-10">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            Shortlist & Compare
+          <p className="caption-text mb-2">Course shortlist</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)] mb-2">
+            Shortlist &amp; Compare
           </h1>
-          <p className="text-[var(--alo-text-muted)] text-sm md:text-base max-w-xl">
+          <p className="text-[var(--alo-text-secondary)] text-sm md:text-base max-w-xl">
             Save your favorite courses and compare them side by side to make the best decision for your future.
           </p>
         </div>

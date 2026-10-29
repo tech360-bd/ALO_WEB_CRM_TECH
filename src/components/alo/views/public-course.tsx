@@ -219,7 +219,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             description="This course page may have been moved or is being updated. Browse all courses to find a verified programme."
             action={
               <div className="flex gap-2">
-                <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 " onClick={() => onNavigate("public-courses")}>
+                <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 " onClick={() => onNavigate("public-courses")}>
                   <Icon name="BookOpen" className="size-4" /> All courses
                 </Button>
                 <Button variant="outline" className="border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)] " onClick={() => onNavigate("public-universities")}>
@@ -278,7 +278,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">
-            <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => scrollToId("apply")}>
+            <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => scrollToId("apply")}>
               <Icon name="Send" className="size-4" /> Apply Now
             </Button>
             <Button
@@ -363,7 +363,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             <p className="mt-1 text-xs text-foreground/80">Run the AI Eligibility Checker — it assesses your profile against this course's requirements.</p>
           </div>
           <Button
- className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 "
+ className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 "
  onClick={() => scrollToId("eligibility")}
           >
             <Icon name="Sparkles" className="size-4" /> Check my eligibility
@@ -626,7 +626,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             </div>
           </div>
           <Button
- className="mt-3 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className="mt-3 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  disabled={eligLoading || !eligForm.academicLevel}
  onClick={runEligibility}
  >
@@ -754,7 +754,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
-                className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12"
+                className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12"
                 onClick={() => scrollToId("apply")}
               >
                 <Icon name="Send" className="size-4" /> Apply Now

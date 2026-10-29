@@ -350,7 +350,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={registerHref}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-black transition hover:brightness-95"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-white transition hover:brightness-95"
               >
                 Register &amp; continue <ArrowRight className="h-4 w-4" />
               </Link>
@@ -438,7 +438,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
                 <button
                   type="submit"
                   disabled={leadState === 'sending'}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-black transition hover:brightness-95 disabled:opacity-60"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-white transition hover:brightness-95 disabled:opacity-60"
                 >
                   {leadState === 'sending' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   Request a callback
@@ -540,7 +540,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
             type="button"
             onClick={submitApplication}
             disabled={submitting || !selectedIntake || (readiness ? !readiness.complete : false)}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3.5 text-sm font-bold text-black transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3.5 text-sm font-bold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             {needsProfile ? 'Complete Form B to enable Apply Now' : 'Apply Now — create my application draft'}

@@ -367,7 +367,7 @@ export default function AiCourseMatch({ countries }: { countries: CountryOption[
             <Button
               onClick={() => void runMatch()}
               disabled={!canRun}
-              className="h-12 rounded-button bg-alo-cta px-6 text-[15px] font-semibold text-black hover:bg-alo-cta-hover disabled:opacity-50"
+              className="h-12 rounded-button bg-alo-cta px-6 text-[15px] font-semibold text-white hover:bg-alo-cta-hover disabled:opacity-50"
             >
               {state.status === 'loading' ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />Matching…</>

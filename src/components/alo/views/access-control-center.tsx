@@ -725,7 +725,7 @@ export function AccessControlCenter() {
               title="No employees yet"
               description="Create your first employee account to assign roles and packages."
               action={
-                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setCreateOpen(true)}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => setCreateOpen(true)}>
                   <Icon name="Plus" className="size-4" />
                   Create Employee
                 </Button>
@@ -737,7 +737,7 @@ export function AccessControlCenter() {
               description="All ALO employees — designations, profile status, and account state."
               icon="Users"
               action={
-                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
                   <Icon name="Plus" className="size-4" />
                   Create Employee
                 </Button>
@@ -832,7 +832,7 @@ export function AccessControlCenter() {
               title="No partner packages defined"
               description="Create Starter, Growth, and Premium packages to assign to B2B partners."
               action={
-                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setNewPkgOpen(true)}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => setNewPkgOpen(true)}>
                   <Icon name="Plus" className="size-4" />
                   Create New Package
                 </Button>
@@ -841,7 +841,7 @@ export function AccessControlCenter() {
           ) : (
             <>
               <div className="flex items-center justify-end">
-                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12" onClick={() => setNewPkgOpen(true)}>
+                <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => setNewPkgOpen(true)}>
                   <Icon name="Plus" className="size-4" />
                   Create New Package
                 </Button>
@@ -1013,7 +1013,7 @@ export function AccessControlCenter() {
               icon="Inbox"
               action={
                 <Button
-                  className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-black h-12"
+                  className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12"
                   onClick={() => setNewReqOpen(true)}
                   disabled={partners.length === 0}
                 >
@@ -1360,7 +1360,7 @@ export function AccessControlCenter() {
                 <Button type="button" variant="outline" className="" onClick={() => setCreateOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={creating}>
+                <Button type="submit" className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={creating}>
                   {creating ? (
                     <>
                       <Icon name="Loader2" className="size-4 animate-spin" /> Creating…
@@ -1624,7 +1624,7 @@ function CreateEmployeeSuccess({
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
+        <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>
@@ -1725,7 +1725,7 @@ function EditPackageDialog({
         <DialogFooter className="border-t border-border/60 px-6 py-4">
           <Button variant="outline" className="" onClick={onClose}>Cancel</Button>
           <Button
- className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+ className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
  disabled={saving}
  onClick={() => onSave(pkg, form)}
           >
@@ -1849,7 +1849,7 @@ function NewPackageDialog({
         </ScrollArea>
         <DialogFooter className="border-t border-border/60 px-6 py-4">
           <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !form.name.trim()} onClick={submit}>
+          <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving || !form.name.trim()} onClick={submit}>
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
             ) : (
@@ -1948,7 +1948,7 @@ function NewQuotaRequestDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" className="" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className=" bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={saving || !partnerId} onClick={submit}>
+          <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={saving || !partnerId} onClick={submit}>
             {saving ? (
               <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting…</>
             ) : (

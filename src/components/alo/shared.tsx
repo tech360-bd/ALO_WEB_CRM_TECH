@@ -7,12 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import * as LucideIcons from "lucide-react";
+import { NamedIcon } from "@/components/ui/named-icon";
 
+/** Re-exported from the single canonical resolver (Master §10). */
 export function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (LucideIcons as any)[name] as React.ComponentType<{ className?: string }>;
-  if (!Cmp) return <LucideIcons.Circle className={className} />;
-  return <Cmp className={className} />;
+  return <NamedIcon name={name} className={className} />;
 }
 
 // ─── StatCard — Enterprise design with semantic accent colors ───────────────

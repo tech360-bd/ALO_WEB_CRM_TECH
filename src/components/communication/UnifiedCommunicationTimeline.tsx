@@ -77,9 +77,9 @@ const VISIBILITY_BADGES: Record<VisibilityLevel, { label: string; bg: string; te
   visa_team_visible: { label: 'Visa Team', bg: 'bg-cyan-50', text: 'text-cyan-700' },
   finance_visible: { label: 'Finance Team', bg: 'bg-teal-50', text: 'text-teal-700' },
   marketing_visible: { label: 'Marketing', bg: 'bg-pink-50', text: 'text-pink-700' },
-  b2b_confidential: { label: 'B2B Confidential 🔒', bg: 'bg-rose-100', text: 'text-rose-800' },
+  b2b_confidential: { label: 'B2B Confidential', bg: 'bg-rose-100', text: 'text-rose-800' },
   internal_only: { label: 'Internal Only', bg: 'bg-amber-100', text: 'text-amber-900' },
-  super_admin_only: { label: 'Super Admin 🔐', bg: 'bg-red-100', text: 'text-red-900' },
+  super_admin_only: { label: 'Super Admin', bg: 'bg-red-100', text: 'text-red-900' },
 };
 
 const TYPE_ICONS: Record<TimelineItemType, React.ElementType> = {
@@ -265,7 +265,7 @@ export default function UnifiedCommunicationTimeline({
                   <option value="application_team_visible">App Team Only</option>
                   <option value="internal_only">Internal Staff Only</option>
                   {userRole === 'APPLICATION_TEAM' || userRole === 'SUPER_ADMIN' ? (
-                    <option value="b2b_confidential">B2B Confidential 🔒</option>
+                    <option value="b2b_confidential">B2B Confidential</option>
                   ) : null}
                 </select>
               </div>
@@ -280,7 +280,7 @@ export default function UnifiedCommunicationTimeline({
 
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-[var(--alo-text-muted)]">
-                🔒 All communication is logged to database &amp; audit trail
+                All communication is logged to database &amp; audit trail
               </span>
               <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSend}>
                 <Send className="w-3.5 h-3.5 mr-1" />

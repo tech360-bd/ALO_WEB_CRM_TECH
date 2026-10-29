@@ -1,4 +1,5 @@
 import { applyReviewedFacts, CAMBRIDGE_TEST, reviewLanguageFaq, reviewLanguageAcceptance } from './editorial';
+import { normalizeLanguagePrepSlug } from './slug-aliases';
 import { EnglishTest, TestModule, TestFaq, TestAcceptance, TestResource } from './types';
 
 const BASE_ENGLISH_PREP_TESTS: EnglishTest[] = [
@@ -482,6 +483,38 @@ const BASE_ENGLISH_PREP_TESTS: EnglishTest[] = [
     seoTitle: 'MOI Guidance | Medium of Instruction for Study Abroad | ALO Education',
     seoDescription: 'MOI guidance resource — understand when universities accept Medium of Instruction and verification requirements.',
   },
+  {
+    id: 'test-password',
+    name: 'Password English Language Test',
+    slug: 'password',
+    shortName: 'Password',
+    shortDescription: 'An online, CEFR-aligned English test used by universities for admission. It is not a UKVI-approved SELT.',
+    longDescription: 'The Password English Language Test is an online, CEFR-aligned English proficiency assessment produced by Password English Language Testing Ltd and academically validated by CRELLA (Centre for Research in English Language Learning and Assessment) at the University of Bedfordshire. Password Skills Plus covers reading, writing, listening and speaking, is taken online under live proctoring by Meazure Learning, and result certificates are normally emailed within five working days. It is used by universities and pathway providers for admission and pre-sessional placement. It is not on the UK Home Office list of approved Secure English Language Tests, so it cannot be used where a visa route requires a SELT.',
+    testType: 'english_proficiency',
+    provider: 'Password English Language Testing Ltd',
+    officialUrl: 'https://passwordplus.englishlanguagetesting.co.uk/',
+    format: 'Online, live-proctored, taken at home or at an approved location',
+    durationMinutes: 185,
+    durationDisplay: 'About 3 hours 5 minutes',
+    scoringSystem: 'CEFR-aligned Password score across the four modules',
+    resultTimeline: 'Result certificates emailed within five working days',
+    costSummary: 'Check current provider information',
+    validitySummary: 'Recency rules are set by the receiving institution.',
+    bestFor: 'Applicants to universities and pathway providers that name the Password test.',
+    acceptanceSummary: 'Acceptance varies by university, course and visa route. Password is not a UKVI-approved SELT.',
+    difficultyLevel: 'Academic English across four skills',
+    status: 'active',
+    isPopular: false,
+    isFeatured: false,
+    sortOrder: 16,
+    sourceUrl: 'https://passwordplus.englishlanguagetesting.co.uk/',
+    sourceName: 'Password English Language Testing Ltd (official)',
+    verifiedBy: 'ALO Compliance Team',
+    verificationStatus: 'verified',
+    lastVerifiedAt: '2026-10-29',
+    seoTitle: 'Password English Language Test | Preparation & Acceptance | ALO Education',
+    seoDescription: 'Password English Language Test guidance — online format, modules, CEFR-aligned results, university acceptance and the UKVI SELT position.',
+  },
 ];
 
 export const ENGLISH_PREP_TESTS: EnglishTest[] = [...BASE_ENGLISH_PREP_TESTS, CAMBRIDGE_TEST].map(applyReviewedFacts);
@@ -857,44 +890,7 @@ export const ENGLISH_PREP_RESOURCES: TestResource[] = [
 export function getTestBySlug(slug: string): EnglishTest | undefined {
   if (!slug) return undefined;
   const clean = slug.toLowerCase().trim();
-  // Normalize aliases
-  const aliasMap: Record<string, string> = {
-    'ielts-academic': 'ielts',
-    'ielts-general': 'ielts',
-    'ukvi': 'ielts-ukvi',
-    'ielts-for-ukvi': 'ielts-ukvi',
-    'selt': 'ielts-ukvi',
-    'pte': 'pte-academic',
-    'pearson': 'pte-academic',
-    'toefl': 'toefl-ibt',
-    'toefl-ibt-home': 'toefl-ibt',
-    'det': 'duolingo',
-    'duolingo-english-test': 'duolingo',
-    'oietc-ellt': 'oietc',
-    'ellt': 'oietc',
-    'oxford-ellt': 'oxford-ellt',
-    'oietc': 'oietc',
-    'languagecert': 'languagecert',
-    'kaplan': 'kaplan',
-    'kaplan-english-test': 'kaplan',
-    'kite': 'kaplan',
-    'cambridge': 'cambridge-english',
-    'cae-cpe': 'cambridge-english',
-    'c1-advanced': 'cambridge-english',
-    'c2-proficiency': 'cambridge-english',
-    'cae': 'cambridge-english',
-    'cpe': 'cambridge-english',
-    'cambridge-english': 'cambridge-english',
-    'oet': 'oet',
-    'gre': 'gre',
-    'gmat': 'gmat',
-    'sat': 'sat',
-    'act': 'act',
-    'moi-guidance': 'moi',
-    'moi': 'moi',
-    'medium-of-instruction': 'moi',
-  };
-  const normalized = aliasMap[clean] || clean;
+  const normalized = normalizeLanguagePrepSlug(clean);
   return ENGLISH_PREP_TESTS.find(t => t.slug === normalized);
 }
 

@@ -434,7 +434,7 @@ function CreateUserDialog({
               </Button>
               <Button
                 size="sm"
-                className="flex-1 bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90"
+                className="flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                 onClick={() => { onOpenChange(false); onRequestSeats(); }}>
                 <Icon name="Armchair" className="size-4" />
                 Request Extra Seats
@@ -479,7 +479,7 @@ function CreateUserDialog({
         {!seatError && (
           <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={submitting} onClick={submit}>
+            <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={submitting} onClick={submit}>
               {submitting ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />
@@ -604,7 +604,7 @@ function GenerateVoucherDialog({
               Copy all codes
             </Button>
             <DialogFooter>
-              <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" onClick={() => { reset(); onOpenChange(false); }}>
+              <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" onClick={() => { reset(); onOpenChange(false); }}>
                 Done
               </Button>
             </DialogFooter>
@@ -667,7 +667,7 @@ function GenerateVoucherDialog({
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={submitting || eligibleStudents.length === 0} onClick={submit}>
+              <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={submitting || eligibleStudents.length === 0} onClick={submit}>
                 {submitting ? (
                   <>
                     <Icon name="Loader2" className="size-4 animate-spin" />
@@ -793,7 +793,7 @@ function RequestSeatDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90" disabled={submitting} onClick={submit}>
+          <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={submitting} onClick={submit}>
             {submitting ? (
               <>
                 <Icon name="Loader2" className="size-4 animate-spin" />
@@ -1051,7 +1051,7 @@ export function PartnerAdminDashboard() {
                 description="Default limit: 1 Partner Super Admin + 2 Partner Employees = 3"
                 icon="Armchair"
                 action={
-                  <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openCreateUser}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openCreateUser}>
                     <Icon name="UserPlus" className="size-4" />
                     Create User
                   </Button>
@@ -1099,7 +1099,7 @@ export function PartnerAdminDashboard() {
                     title="No team members yet"
                     description="Add counselors, application assistants, marketing assistants, and document assistants to your workspace."
                     action={
-                      <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openCreateUser}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openCreateUser}>
                         <Icon name="UserPlus" className="size-4" />
                         Create First User
                       </Button>
@@ -1329,7 +1329,7 @@ export function PartnerAdminDashboard() {
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openMarketingStudio}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openMarketingStudio}>
                     <Icon name="Megaphone" className="size-4" />
                     Open Marketing Studio
                   </Button>
@@ -1351,7 +1351,7 @@ export function PartnerAdminDashboard() {
                     title="No marketing requests yet"
                     description="Open the Marketing Studio to generate AI-powered campaigns for Facebook, Instagram, and LinkedIn."
                     action={
-                      <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openMarketingStudio}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openMarketingStudio}>
                         <Icon name="Sparkles" className="size-4" />
                         Open Marketing Studio
                       </Button>
@@ -1417,7 +1417,7 @@ export function PartnerAdminDashboard() {
                 description="Voucher codes for English mock tests, interview prep, and speaking practice"
                 icon="Ticket"
                 action={
-                  <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openVoucherDialog}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openVoucherDialog}>
                     <Icon name="Sparkles" className="size-4" />
                     Generate Vouchers
                   </Button>
@@ -1428,7 +1428,7 @@ export function PartnerAdminDashboard() {
                     title="No vouchers yet"
                     description="Generate mock test vouchers for students with active ALO applications."
                     action={
-                      <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openVoucherDialog}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openVoucherDialog}>
                         <Icon name="Sparkles" className="size-4" />
                         Generate First Vouchers
                       </Button>
@@ -1557,7 +1557,7 @@ export function PartnerAdminDashboard() {
                 description="Submit expansion requests to ALO Education Super Admin"
                 icon="Armchair"
                 action={
-                  <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openSeatDialog}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openSeatDialog}>
                     <Icon name="Send" className="size-4" />
                     Request Extra Seats
                   </Button>
@@ -1593,7 +1593,7 @@ export function PartnerAdminDashboard() {
                     title="No seat requests yet"
                     description="When you need more counselor seats beyond your plan limit, request them here."
                     action={
-                      <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={openSeatDialog}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openSeatDialog}>
                         <Icon name="Send" className="size-4" />
                         Request Extra Seats
                       </Button>
@@ -1689,7 +1689,7 @@ export function PartnerAdminDashboard() {
                     title="No social accounts connected"
                     description="Connect Facebook and Instagram to enable direct publishing from the Marketing Studio."
                     action={
-                      <Button className="bg-[var(--alo-cta)] text-black hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => toast({ title: "OAuth flow", description: "Connect Facebook — OAuth flow would start here." })}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => toast({ title: "OAuth flow", description: "Connect Facebook — OAuth flow would start here." })}>
                         <Icon name="Plus" className="size-4" />
                         Connect a Platform
                       </Button>

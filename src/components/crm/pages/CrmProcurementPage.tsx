@@ -243,7 +243,7 @@ export default function CrmProcurementPage() {
                 <label className="text-xs font-medium text-[var(--alo-body)]">Period (YYYY-MM)</label>
                 <Input value={period} onChange={(e) => setPeriod(e.target.value)} placeholder="2026-10" className="w-40" />
               </div>
-              <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black" disabled={busy} onClick={runDepreciation}>
+              <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white" disabled={busy} onClick={runDepreciation}>
                 <Package className="h-4 w-4" /> Run depreciation
               </Button>
               <p className="text-xs text-[var(--alo-text-muted)]">Posts DR 5200 / CR 1510 per asset; idempotent per asset and period.</p>

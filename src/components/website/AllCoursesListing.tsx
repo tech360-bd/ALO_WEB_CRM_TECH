@@ -241,7 +241,7 @@ export default function AllCoursesListing() {
           </p>
           <Link
  href="/book-consultation"
- className="mt-5 inline-flex items-center rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-sm font-bold text-black transition-colors hover:bg-[var(--alo-cta-hover)]"
+ className="mt-5 inline-flex items-center rounded-xl bg-[var(--alo-cta)] px-5 font-heading text-sm font-bold text-white transition-colors hover:bg-[var(--alo-cta-hover)]"
  >
             Request Counseling
           </Link>

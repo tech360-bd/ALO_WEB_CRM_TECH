@@ -1,4 +1,5 @@
 "use client";
+import { NamedIcon } from "@/components/ui/named-icon";
 
 // ═══════════════════════════════════════════════════════════════
 // ManagedContentManager — Virtual Editor §15 extension
@@ -15,12 +16,12 @@ import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
 const MANAGED_TYPES = [
-  { key: "navigation", label: "Navigation", icon: "🧭", desc: "Navbar destinations menu (section 'destinations')" },
-  { key: "footer", label: "Footer", icon: "🦶", desc: "Footer link columns (destinations / quickLinks / companyLinks)" },
-  { key: "seo-meta", label: "SEO Defaults", icon: "🔍", desc: "Site-wide title/description/canonical/OG (key 'site-defaults')" },
-  { key: "announcement", label: "Announcements", icon: "📣", desc: "Dismissible info bar above the navbar" },
-  { key: "banner", label: "Banners", icon: "🏷️", desc: "Persistent strip below the page" },
-  { key: "crm-label", label: "CRM Labels", icon: "🏷", desc: "CRM UI label overrides (e.g. crm.kpi.myLeads)" },
+  { key: "navigation", label: "Navigation", icon: "Compass", desc: "Navbar destinations menu (section 'destinations')" },
+  { key: "footer", label: "Footer", icon: "Footprints", desc: "Footer link columns (destinations / quickLinks / companyLinks)" },
+  { key: "seo-meta", label: "SEO Defaults", icon: "Search", desc: "Site-wide title/description/canonical/OG (key 'site-defaults')" },
+  { key: "announcement", label: "Announcements", icon: "Megaphone", desc: "Dismissible info bar above the navbar" },
+  { key: "banner", label: "Banners", icon: "Tag", desc: "Persistent strip below the page" },
+  { key: "crm-label", label: "CRM Labels", icon: "Tag", desc: "CRM UI label overrides (e.g. crm.kpi.myLeads)" },
   { key: "crm-template", label: "CRM Templates", icon: "✉️", desc: "Canned message templates for counselors" },
   { key: "crm-widget", label: "CRM Widgets", icon: "🧩", desc: "Dashboard widget toggles & ordering" },
 ];
@@ -186,7 +187,7 @@ export function ManagedContentManager() {
         {MANAGED_TYPES.map((t) => (
           <button key={t.key} onClick={() => setActiveType(t.key)}
             className={`px-3 py-2 rounded-xl text-sm font-medium border transition ${activeType === t.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)]" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)]"}`}>
-            {t.icon} {t.label}
+            <NamedIcon name={t.icon} className="size-4" /> {t.label}
           </button>
         ))}
       </div>

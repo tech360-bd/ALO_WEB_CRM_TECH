@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle2, AlertCircle, Globe, Clock, FileText, Award, Layers } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, CheckCircle2, AlertCircle, Globe, Clock, FileText, Award, Layers } from 'lucide-react';
 
 export default function ComparisonView() {
   const [tests, setTests] = useState<any[]>([]);
@@ -76,7 +76,7 @@ export default function ComparisonView() {
                   selected.includes(t.slug) ? 'bg-[var(--alo-brand)] text-white border-[var(--alo-brand)]' : 'bg-white text-[var(--alo-text)] border-[var(--alo-border)] hover:border-[var(--alo-brand)]'
                 }`}
               >
-                {t.name} {selected.includes(t.slug) && '✓'}
+                {t.name}{selected.includes(t.slug) && <Check className="ml-1 inline-block h-3.5 w-3.5" aria-label="Selected" />}
               </button>
             ))}
             </div>
@@ -117,7 +117,7 @@ export default function ComparisonView() {
                       <td className="p-4">
                         <a href={`/language-prep/${t.slug}`} className="font-bold text-[var(--alo-brand)] hover:underline">{t.name}</a>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{t.provider}</p>
-                        {t.isPopular && <Badge className="bg-[var(--alo-cta)] text-black text-[11px] mt-1">Popular</Badge>}
+                        {t.isPopular && <Badge className="bg-[var(--alo-cta)] text-white text-[11px] mt-1">Popular</Badge>}
                       </td>
                       <td className="p-4 text-[var(--alo-body)]">{t.duration}</td>
                       <td className="p-4 text-[var(--alo-body)]">{t.cost}</td>
@@ -139,7 +139,7 @@ export default function ComparisonView() {
                 <Card key={t.slug} className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
                   <div className="flex items-start justify-between mb-3">
                     <h4 className="font-bold text-sm text-[var(--alo-brand)]"><a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a></h4>
-                    {t.isPopular && <Badge className="bg-[var(--alo-cta)] text-black text-[11px]">Popular</Badge>}
+                    {t.isPopular && <Badge className="bg-[var(--alo-cta)] text-white text-[11px]">Popular</Badge>}
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-[11px]">
                     <div><span className="text-[var(--alo-text-muted)] block">Duration</span><span className="font-semibold">{t.duration}</span></div>

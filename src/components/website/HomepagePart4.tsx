@@ -107,7 +107,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Strategic Planning & Partnerships',
     bio: 'Founded ALO Education to make global education pathways clearer for Bangladeshi students.',
     initials: 'TA',
-    gradient: 'linear-gradient(135deg, #0066CC 0%, #0EA5E9 100%)',
+    gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
   },
   {
     name: 'Al Aminn',
@@ -115,7 +115,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Operations & Process Optimization',
     bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #F37021 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #E8501A 0%, #C93D13 100%)',
   },
   {
     name: 'Nusrat Jahan',
@@ -462,7 +462,7 @@ function TeamSection({ dbMembers }: { dbMembers?: Array<{ id: string; name: stri
         bio: m.bio,
         photo: m.photo,
         initials: m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-        gradient: 'linear-gradient(135deg, #0066CC 0%, #0EA5E9 100%)',
+        gradient: 'linear-gradient(135deg, #0057B8 0%, #0EA5E9 100%)',
       }))
     : TEAM_MEMBERS;
   return (

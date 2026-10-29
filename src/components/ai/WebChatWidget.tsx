@@ -46,14 +46,14 @@ export default function WebChatWidget({ channel = 'webchat' }: { senderId?: stri
       {!open && <Button onClick={() => setOpen(true)} className="fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full bg-[var(--alo-brand)] text-white shadow-xl"><MessageSquare className="h-5 w-5" /></Button>}
       {open && (
         <Card className="fixed bottom-4 right-4 z-50 flex h-[480px] w-[360px] max-w-[90vw] flex-col overflow-hidden rounded-2xl border-[var(--alo-border)] bg-white shadow-2xl">
-          <div className="flex items-center justify-between bg-[var(--alo-text)] px-3 py-2 text-white">
+          <div className="flex items-center justify-between bg-[var(--alo-page)] px-3 py-2 text-[var(--alo-text)]">
             <p className="text-xs font-bold">ALO Education — General Guidance</p>
             <button onClick={() => setOpen(false)} className="p-1" aria-label="Close chat"><X className="h-4 w-4" /></button>
           </div>
           <div className="flex-1 space-y-2 overflow-auto bg-[var(--alo-page)] p-3" aria-live="polite">
             {messages.map((message, index) => (
               <div key={index} className={message.role === 'user'
-                ? 'ml-auto max-w-[78%] rounded-2xl rounded-br-sm bg-[var(--alo-brand)] px-3 py-2 text-xs text-white'
+                ? 'ml-auto max-w-[78%] rounded-2xl rounded-br-sm bg-[var(--alo-brand)] px-3 py-2 text-xs text-[var(--alo-text)]'
                 : 'mr-auto max-w-[82%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-[var(--alo-border)] bg-white px-3 py-2 text-xs'}>{message.text}</div>
             ))}
             {busy && <div className="mr-auto rounded-2xl border border-[var(--alo-border)] bg-white px-3 py-2 text-xs text-[var(--alo-text-muted)]">Preparing a safe response…</div>}

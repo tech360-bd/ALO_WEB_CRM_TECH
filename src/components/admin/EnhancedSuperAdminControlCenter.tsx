@@ -228,13 +228,13 @@ export default function EnhancedSuperAdminControlCenter() {
                 <p className="text-xs mt-1">Real actor: {actingAs.realActor} • Effective: {actingAs.role} • Reason: {actingAs.reason} • Session: {actingAs.sessionId} • Expiry: {new Date(actingAs.expiry).toLocaleTimeString()} • Status: Active • Audit Logging Enabled • No privilege escalation • Secrets denied by default</p>
               </div>
             </div>
-            <Button size="sm" className="bg-[var(--alo-text)] text-white hover:bg-black font-bold" onClick={handleExitActingAs}><LogOut className="w-4 h-4 mr-1" />Exit Acting-As Mode — Returns to Real Identity</Button>
+            <Button size="sm" className="bg-[var(--alo-page)] text-[var(--alo-text)] hover:brightness-95 font-bold" onClick={handleExitActingAs}><LogOut className="w-4 h-4 mr-1" />Exit Acting-As Mode — Returns to Real Identity</Button>
           </CardContent>
         </Card>
       )}
 
       {/* SUPER ADMIN HEADER — Welcome + Real Name + SUPER_ADMIN Badge + Company/Branch Context + Notification + Global Search + Language + Profile + Session/Security Status + Logout — Metrics Only When  Data Available */}
-      <Card className="bg-[var(--alo-text)] text-white border-[var(--alo-text)] rounded-3xl shadow-xl">
+      <Card className="bg-[var(--alo-page)] text-[var(--alo-text)] border-[var(--alo-text)] rounded-3xl shadow-xl">
         <CardContent className="p-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
@@ -246,21 +246,21 @@ export default function EnhancedSuperAdminControlCenter() {
               </div>
               <p className="text-sm text-[var(--alo-placeholder)] mt-2 max-w-3xl">Central Super Admin Control Center — View company-wide operational health and real business metrics — Access every existing employee and department dashboard they are authorized to inspect — Manage employees, roles, permissions, branches, countries, departments, access policies — Open existing dashboards without duplicating them — Secure visible time-limited Acting-As mode where explicitly authorized — Manage students/leads/partners/applications/documents/marketing/visa/finance/HR/English Test/reports/other existing modules — Review approvals/security events/audit trails/integrations/AI jobs/system health — Govern AI agents and AI-generated changes through policies/approvals/sandboxing/audit records — Operate company-wide workflows without bypassing security — Real company-wide control, not simply more screens.</p>
               <div className="flex flex-wrap gap-2 mt-3">
-                <Badge className="bg-white/10 text-white border-white/20 text-[11px]">Company/Branch Context: Dhaka Main • Global</Badge>
-                <Badge className="bg-white/10 text-white border-white/20 text-[11px]">Session: Secure • RBAC: Enforced • Audit: Enabled</Badge>
-                <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-[11px]">Production</Badge>
+                <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] border-[var(--alo-border)] text-[11px]">Company/Branch Context: Dhaka Main • Global</Badge>
+                <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] border-[var(--alo-border)] text-[11px]">Session: Secure • RBAC: Enforced • Audit: Enabled</Badge>
+                <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">Production</Badge>
               </div>
             </div>
             <div className="flex flex-col gap-3 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)]" /><Input placeholder="Global Search — Student, Partner, Employee, Application, Document, Campaign, Visa, Invoice, Payment, Task, Report, Audit Logs — Auth Server-Side + Scope + Masked Sensitive + Audited + Pagination + No Leak Unauthorized" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} className="pl-9 bg-white/10 border-white/20 text-white placeholder-gray-400 h-11 w-64 md:w-80 rounded-xl text-xs" /></div>
+                <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)]" /><Input placeholder="Global Search — Student, Partner, Employee, Application, Document, Campaign, Visa, Invoice, Payment, Task, Report, Audit Logs — Auth Server-Side + Scope + Masked Sensitive + Audited + Pagination + No Leak Unauthorized" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} className="pl-9 bg-[var(--alo-surface-muted)] border-[var(--alo-border)] text-[var(--alo-text)] placeholder-gray-400 h-11 w-64 md:w-80 rounded-xl text-xs" /></div>
                 <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-white text-[var(--alo-text)] hover:bg-[var(--alo-surface-muted)] rounded-xl"><Search className="w-4 h-4 mr-1" />Search — Auth + RBAC + Scope + Masked + Audited</Button>
               </div>
               <div className="flex gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 ">Notifications</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 ">Profile</Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 "><LogOut className="w-4 h-4 mr-1" />Logout</Button>
-                <Button size="sm" className={`${lockdownActive ? 'bg-red-600 hover:bg-red-700' : 'bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]'} text-black font-bold`} onClick={handleToggleLockdown}><ShieldAlert className="w-4 h-4 mr-1" />{lockdownActive ? 'Lockdown ACTIVE — Recovery' : 'Emergency Lockdown — Confirmation + Reason + Audit'}</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] border-[var(--alo-border)] hover:bg-[var(--alo-brand-light)] ">Notifications</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] border-[var(--alo-border)] hover:bg-[var(--alo-brand-light)] ">Profile</Button>
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] border-[var(--alo-border)] hover:bg-[var(--alo-brand-light)] "><LogOut className="w-4 h-4 mr-1" />Logout</Button>
+                <Button size="sm" className={`${lockdownActive ? 'bg-red-600 hover:bg-red-700' : 'bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]'} text-white font-bold`} onClick={handleToggleLockdown}><ShieldAlert className="w-4 h-4 mr-1" />{lockdownActive ? 'Lockdown ACTIVE — Recovery' : 'Emergency Lockdown — Confirmation + Reason + Audit'}</Button>
               </div>
             </div>
           </div>

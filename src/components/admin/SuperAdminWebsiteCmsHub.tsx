@@ -1,4 +1,5 @@
 "use client";
+import { NamedIcon } from "@/components/ui/named-icon";
 
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -12,15 +13,15 @@ interface CmsItem {
 }
 
 const WEBSITE_TYPES = [
-  { key: "hero-slides", label: "Hero Slides", icon: "🎯", desc: "Homepage hero carousel" },
-  { key: "home-services", label: "Home Services", icon: "🛎️", desc: "Services section" },
-  { key: "success-stories", label: "Success Stories", icon: "🌟", desc: "Student testimonials" },
-  { key: "team-members", label: "Team Members", icon: "👥", desc: "Our team" },
-  { key: "faqs", label: "Homepage FAQs", icon: "❓", desc: "FAQ section" },
-  { key: "home-sections", label: "Home Sections", icon: "📄", desc: "Editable sections" },
-  { key: "english-tests", label: "English Tests", icon: "📝", desc: "IELTS, PTE etc" },
-  { key: "countries", label: "Countries", icon: "🌍", desc: "Destinations" },
-  { key: "services", label: "Services (Old)", icon: "⚙️", desc: "Legacy services" },
+  { key: "hero-slides", label: "Hero Slides", icon: "Target", desc: "Homepage hero carousel" },
+  { key: "home-services", label: "Home Services", icon: "BellRing", desc: "Services section" },
+  { key: "success-stories", label: "Success Stories", icon: "Star", desc: "Student testimonials" },
+  { key: "team-members", label: "Team Members", icon: "Users", desc: "Our team" },
+  { key: "faqs", label: "Homepage FAQs", icon: "CircleHelp", desc: "FAQ section" },
+  { key: "home-sections", label: "Home Sections", icon: "FileText", desc: "Editable sections" },
+  { key: "english-tests", label: "English Tests", icon: "FileEdit", desc: "IELTS, PTE etc" },
+  { key: "countries", label: "Countries", icon: "Globe", desc: "Destinations" },
+  { key: "services", label: "Services (Old)", icon: "Settings", desc: "Legacy services" },
 ];
 
 const COUNTRY_SUB_TYPES = [
@@ -374,7 +375,7 @@ export function SuperAdminWebsiteCmsHub() {
       <div className="flex flex-wrap gap-2">
         {WEBSITE_TYPES.map(t => (
           <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${activeType===t.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]"}`}>
-            <span className="mr-1">{t.icon}</span> {t.label}
+            <NamedIcon name={t.icon} className="mr-1 size-4" /> {t.label}
           </button>
         ))}
       </div>

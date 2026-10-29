@@ -46,7 +46,7 @@ const en = {
   'nav.contact': 'Contact',
   'nav.blog': 'Blog',
   'nav.more': 'More',
-  'cta.bookConsultation': 'Request Counseling',
+  'cta.bookConsultation': 'Book Free Counseling',
   'cta.findCourse': 'Find Your Course',
   'cta.checkEligibility': 'Check Eligibility',
   'cta.applyNow': 'Apply Now',

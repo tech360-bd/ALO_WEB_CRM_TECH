@@ -335,9 +335,9 @@ export default function AloShortFormBuilder() {
         <div className="flex min-h-[430px] flex-col items-center justify-center px-6 text-center">
           <div className="relative mb-6 h-48 w-full max-w-[330px] overflow-hidden rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-surface-muted)]">
             <Image src="/images/hero/study-abroad-hero.png" alt="Students preparing for an international study journey" fill sizes="330px" className="object-cover" />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-4 text-left text-white">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-white/70">Live page preview</div>
-              <div className="mt-1 text-base font-bold">Your structured page appears here</div>
+            <div className="absolute inset-x-0 bottom-0 rounded-b-2xl border-t border-[var(--alo-border)] bg-white/95 p-4 text-left">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--alo-text-muted)]">Live page preview</div>
+              <div className="mt-1 text-base font-bold text-[var(--alo-text)]">Your structured page appears here</div>
             </div>
           </div>
           <div className="max-w-xs text-sm font-semibold text-[var(--alo-text)]">Grounded content, connected pages, and a clear student next step.</div>
@@ -357,20 +357,24 @@ export default function AloShortFormBuilder() {
               </div>
             </div>
             <div className="max-h-[740px] overflow-y-auto">
-              <div className="relative min-h-[220px] overflow-hidden bg-[var(--alo-surface-muted)]">
-                {heroImage && <Image src={heroImage.url} alt={heroImage.alt || 'Study destination context'} fill sizes={previewMode === 'mobile' ? '390px' : '620px'} className="object-cover opacity-55" />}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/60 to-slate-950/15" />
-                <div className="relative z-10 p-6 sm:p-8">
-                  <div className="mb-5 flex flex-wrap items-center gap-1.5 text-[11px] text-white/65">
+              {/* Master §08-A: editorial split hero. The photograph keeps its
+                  own contrast; every piece of copy lives on the pale-blue
+                  surface beside it, never on a dark scrim. */}
+              <div className="grid gap-0 md:grid-cols-[minmax(0,1fr)_minmax(220px,0.72fr)]">
+                <div className="bg-[var(--alo-brand-pale)] p-6 sm:p-8">
+                  <div className="mb-5 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--alo-text-muted)]">
                     {document.breadcrumbs.map((crumb, index) => <span key={`${crumb.href}-${index}`} className="flex items-center gap-1.5">{index > 0 && <ChevronRight className="h-3 w-3" />}{crumb.label}</span>)}
                   </div>
-                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white ring-1 ring-white/20"><Sparkles className="h-3 w-3" />{document.hero.eyebrow || document.contentType}</div>
-                  <h2 className="max-w-lg text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl">{document.hero.title}</h2>
-                  <p className="mt-3 max-w-lg text-xs leading-5 text-white/80 sm:text-sm">{document.hero.description}</p>
+                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[var(--alo-brand-border)] bg-white px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-brand)]"><Sparkles className="h-3 w-3" />{document.hero.eyebrow || document.contentType}</div>
+                  <h2 className="max-w-lg text-2xl font-black leading-tight tracking-tight text-[var(--alo-text)] sm:text-3xl">{document.hero.title}</h2>
+                  <p className="mt-3 max-w-lg text-xs leading-5 text-[var(--alo-text-secondary)] sm:text-sm">{document.hero.description}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
-                    <span className="rounded-xl bg-[var(--alo-cta)] px-3.5 py-2 text-[11px] font-bold text-white">{document.input.cta || 'Explore your next step'}</span>
-                    <span className="rounded-xl border border-white/30 bg-white/10 px-3.5 py-2 text-[11px] font-semibold text-white">Explore connected courses</span>
+                    <span className="rounded-xl bg-alo-cta-solid px-3.5 py-2 text-[11px] font-bold text-white">{document.input.cta || 'Explore your next step'}</span>
+                    <span className="rounded-xl border border-[var(--alo-border)] bg-white px-3.5 py-2 text-[11px] font-semibold text-[var(--alo-body)]">Explore connected courses</span>
                   </div>
+                </div>
+                <div className="relative hidden min-h-[220px] md:block">
+                  {heroImage && <Image src={heroImage.url} alt={heroImage.alt || 'Study destination context'} fill sizes="620px" className="object-cover" />}
                 </div>
               </div>
               {document.facts.length > 0 && <div className="grid grid-cols-2 gap-2 border-b border-[var(--alo-border)] p-4 sm:grid-cols-3">
@@ -552,7 +556,8 @@ export default function AloShortFormBuilder() {
                 </Surface>
 
                 <Surface className="overflow-hidden">
-                  <div className="relative h-[120px]"><Image src="/images/services/english-test.png" alt="English test preparation as part of a study abroad plan" fill sizes="400px" className="object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/50 to-transparent" /><div className="absolute bottom-3 left-4 right-4"><div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-white/70"><Sparkles className="h-3 w-3" />Quality guardrail</div><div className="mt-1 text-[12px] font-bold text-white">Facts need a source. Pages need a reviewer.</div></div></div>
+                  <div className="relative h-[120px]"><Image src="/images/services/english-test.png" alt="English test preparation as part of a study abroad plan" fill sizes="400px" className="object-cover" /></div>
+                  <div className="border-t border-[var(--alo-border)] bg-white p-4"><div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)]"><Sparkles className="h-3 w-3" />Quality guardrail</div><div className="mt-1 text-[12px] font-bold text-[var(--alo-text)]">Facts need a source. Pages need a reviewer.</div></div>
                   <div className="grid grid-cols-3 divide-x divide-[var(--alo-border)] p-3 text-center"><div><div className="text-[11px] font-bold text-[var(--alo-text)]">FACTS</div><div className="mt-1 text-[11px] text-[var(--alo-text-muted)]">Evidence-linked</div></div><div><div className="text-[11px] font-bold text-[var(--alo-text)]">LINKS</div><div className="mt-1 text-[11px] text-[var(--alo-text-muted)]">Entity-aware</div></div><div><div className="text-[11px] font-bold text-[var(--alo-text)]">PUBLISH</div><div className="mt-1 text-[11px] text-[var(--alo-text-muted)]">Human-approved</div></div></div>
                 </Surface>
               </aside>

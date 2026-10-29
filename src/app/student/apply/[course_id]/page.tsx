@@ -68,7 +68,7 @@ export default function StudentApplyPage() {
               <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">University ID</p><p className="font-semibold">{course.universityId || course.university?.universityId}</p></div>
               <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)]">Intake ID</p><p className="font-semibold">From course_intakes — validated</p></div>
             </div>
-            <Button onClick={handleApply} disabled={applying} className="w-full mt-6 bg-[var(--alo-cta)] text-black h-12 font-bold">{applying ? 'Creating Application Draft...' : 'Apply Now — Creates Draft + Checklist + Timeline + Notify Counselor'}</Button>
+            <Button onClick={handleApply} disabled={applying} className="w-full mt-6 bg-[var(--alo-cta)] text-white h-12 font-bold">{applying ? 'Creating Application Draft...' : 'Apply Now — Creates Draft + Checklist + Timeline + Notify Counselor'}</Button>
             {result && (
               <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
                 {result.success ? <><CheckCircle2 className="w-4 h-4 inline mr-1" />Application draft created: {result.data?.applicationCode || result.data?.id} — linked student_id/course_id/university_id/intake_id, document checklist created, timeline entry created, counselor notified.</> : <><AlertTriangle className="w-4 h-4 inline mr-1" />{result.error || 'Failed'}</>}

@@ -267,9 +267,9 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
           <div className="grid grid-cols-2 gap-3">
             {[
               { name: 'IELTS', score: course.ieltsMin, icon: '🇬🇧' },
-              { name: 'PTE', score: course.pteMin, icon: '📝' },
+              { name: 'PTE', score: course.pteMin, icon: 'FileEdit' },
               { name: 'TOEFL', score: course.toeflMin, icon: '托福' },
-              { name: 'Duolingo', score: course.duolingoMin, icon: '🎯' },
+              { name: 'Duolingo', score: course.duolingoMin, icon: 'Target' },
             ].map(t => (
               <div key={t.name} className="bg-[var(--alo-page)] rounded-lg p-3 text-center">
                 <p className="text-xs text-[var(--alo-text-muted)]">{t.icon} {t.name}</p>

@@ -80,7 +80,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
       });
       const json = await res.json();
       if (json.success) {
-        setSeatMsg('✓ Extra seat request sent to ALO Super Admin for approval.');
+        setSeatMsg('Extra seat request sent to ALO Super Admin for approval.');
         fetchPartnerData();
       }
     } finally {
@@ -339,10 +339,10 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
 
           <div className="flex items-center gap-3 text-xs font-bold">
             <span className="p-2 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl">
-              📷 Images: {kpis.marketingQuota.imagesUsed} / {kpis.marketingQuota.monthlyImageLimit}
+              Images: {kpis.marketingQuota.imagesUsed} / {kpis.marketingQuota.monthlyImageLimit}
             </span>
             <span className="p-2 bg-rose-50 text-rose-800 border border-rose-200 rounded-xl">
-              🎥 30s Videos: {kpis.marketingQuota.videosUsed} / {kpis.marketingQuota.monthlyVideoLimit}
+              30s Videos: {kpis.marketingQuota.videosUsed} / {kpis.marketingQuota.monthlyVideoLimit}
             </span>
           </div>
         </div>
@@ -391,7 +391,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <Button
  onClick={handleGenerateMarketing}
  disabled={mGenerating}
- className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-black font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
+ className="w-full bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white font-bold rounded-xl py-2.5 flex items-center justify-center gap-2"
  >
               {mGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               {mGenerating ? 'Generating AI Draft...' : 'Generate AI Marketing Package'}

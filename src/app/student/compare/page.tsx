@@ -170,7 +170,7 @@ export default function StudentComparePage() {
                       <button
                         type="button"
                         onClick={() => void remove(course.courseId)}
-                        className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-red-600 hover:underline"
+                        className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-red-600 hover:underline"
                       >
                         <Trash2 className="h-3 w-3" /> Remove
                       </button>

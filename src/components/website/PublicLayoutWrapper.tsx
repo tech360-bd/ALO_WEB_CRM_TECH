@@ -86,7 +86,7 @@ function CmsBanner() {
   if (!banner) return null;
   const message = banner.data?.message || banner.label;
   return (
-    <div className="bg-[var(--alo-cta)] text-black text-xs sm:text-sm font-semibold px-4 py-1.5 text-center">
+    <div className="bg-[var(--alo-cta)] text-white text-xs sm:text-sm font-semibold px-4 py-1.5 text-center">
       {banner.data?.href ? (
         <Link href={banner.data.href} className="hover:underline">{message}</Link>
       ) : (
