@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  // The optional standalone design preview should not cover its wordmark with
+  // Next's development badge. Normal development and production are unchanged.
+  devIndicators: process.env.DREAMFRAME_PREVIEW === '1' ? false : undefined,
   // Dev-only origin allowlist. Next.js refuses HMR and dev-chunk requests from
   // any Origin not listed here, so a sandbox/preview host would render the
   // server HTML without hydrating. Set NEXT_DEV_ALLOWED_ORIGINS to a

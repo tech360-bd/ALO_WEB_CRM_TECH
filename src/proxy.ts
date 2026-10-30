@@ -166,6 +166,9 @@ function matchesPath(pathname: string, prefix: string): boolean {
 }
 
 export function isPublicPageRequest(pathname: string): boolean {
+  // Only the standalone DreamFrame landing page is public; do not implicitly
+  // expose any future nested studio or account routes.
+  if (pathname.replace(/\/+$/, '') === "/dreamframe") return true;
   return PUBLIC_ROUTES.some((route) => matchesPath(pathname, route));
 }
 
