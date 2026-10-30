@@ -96,14 +96,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import AloSiteOnly from "@/components/website/AloSiteOnly";
 import FloatingActionWidget from "@/components/website/FloatingActionWidget";
-import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { PwaRegister } from "@/components/pwa/PwaRegister";
+import ConsentBanner from "@/components/analytics/ConsentBanner";
+import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { I18nProvider } from "@/i18n";
 import { RealtimeNotificationProvider } from "@/components/realtime/RealtimeNotificationProvider";
 import GoogleTags from "@/components/analytics/GoogleTags";
 import AnalyticsPageView from "@/components/analytics/AnalyticsPageView";
-import ConsentBanner from "@/components/analytics/ConsentBanner";
 import AnalyticsClickTracker from "@/components/analytics/AnalyticsClickTracker";
 
 export default function RootLayout({
@@ -126,35 +127,36 @@ export default function RootLayout({
             sitewide entity to associate with the Business Profile listing.
             Serialised with < escaped so a value can never break out of the
             script element. */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema()).replace(/</g, "\\u003c"),
-          }}
-        />
-        <GoogleTags />
-        {/* Owns every page_view, including the SPA navigations the tag loader
-            cannot see. Skips the first view under GTM to avoid double counting. */}
-        <AnalyticsPageView />
-        {/* One delegated listener measures every WhatsApp / tel: / mailto: link
-            on the site, including ones on pages that predate this work. */}
-        <AnalyticsClickTracker />
+        <AloSiteOnly>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(organizationSchema()).replace(/</g, "\\u003c"),
+            }}
+          />
+          <GoogleTags />
+          {/* Owns every page_view, including the SPA navigations the tag loader
+              cannot see. Skips the first view under GTM to avoid double counting. */}
+          <AnalyticsPageView />
+          {/* One delegated listener measures every WhatsApp / tel: / mailto: link
+              on the site, including ones on pages that predate this work. */}
+          <AnalyticsClickTracker />
+        </AloSiteOnly>
         {/* Centralized English + বাংলা i18n (no per-language route forks) */}
         <I18nProvider>
           <PublicLayoutWrapper>
             {children}
           </PublicLayoutWrapper>
-          {/* Single global floating contact widget — the only AI / WhatsApp / Facebook control. */}
-          <FloatingActionWidget />
+          {/* ALO-specific floating widgets are suppressed on the standalone DreamFrame route. */}
+          <AloSiteOnly><FloatingActionWidget /></AloSiteOnly>
           {/* Live notification stream (spec s86). Renderless: it feeds the portal
               store that every shell's bell already reads, and opens no connection
               for a signed-out visitor. */}
-          <RealtimeNotificationProvider />
-          <PwaRegister />
+          <AloSiteOnly><RealtimeNotificationProvider /></AloSiteOnly>
+          <AloSiteOnly><PwaRegister /></AloSiteOnly>
           <Toaster />
-          {/* Analytics consent (Consent Mode v2). Tags already load with every
-              consent type denied; this is where a visitor grants or refuses. */}
-          <ConsentBanner />
+          {/* Consent and ALO analytics are both excluded from the standalone demo. */}
+          <AloSiteOnly><ConsentBanner /></AloSiteOnly>
         </I18nProvider>
       </body>
     </html>

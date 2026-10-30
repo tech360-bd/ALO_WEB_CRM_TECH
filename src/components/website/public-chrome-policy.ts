@@ -29,6 +29,8 @@ function matchesPrefix(pathname: string, prefix: string): boolean {
 export function isPublicChromeRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return true;
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  // DreamFrame is a separate, standalone creative experience.
+  if (matchesPrefix(path, '/dreamframe')) return false;
   // Portal sign-in / registration screens are pre-login pages too.
   if (/\/(login|register|forgot-password|reset-password|verify-email)$/.test(path)) return true;
   return !NON_PUBLIC_PREFIXES.some((prefix) => matchesPrefix(path, prefix));
